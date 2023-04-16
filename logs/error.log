@@ -1,0 +1,233 @@
+[16-Apr-2023 15:15:06 America/Los_Angeles] cron start
+[16-Apr-2023 15:15:06 America/Los_Angeles] 3 Connection: opening to email-smtp.us-west-2.amazonaws.com:587, timeout=20, options=array()
+[16-Apr-2023 15:15:06 America/Los_Angeles] 3 Connection: opened
+[16-Apr-2023 15:15:06 America/Los_Angeles] 4 SMTP INBOUND: "220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-4KG78QF1N bVFKTzwHhvM7nreggwHP"
+[16-Apr-2023 15:15:06 America/Los_Angeles] 2 SERVER -> CLIENT: 220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-4KG78QF1N bVFKTzwHhvM7nreggwHP
+
+[16-Apr-2023 15:15:06 America/Los_Angeles] 1 CLIENT -> SERVER: EHLO localhost
+
+[16-Apr-2023 15:15:06 America/Los_Angeles] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[16-Apr-2023 15:15:06 America/Los_Angeles] 4 SMTP INBOUND: "250-8BITMIME"
+[16-Apr-2023 15:15:06 America/Los_Angeles] 4 SMTP INBOUND: "250-STARTTLS"
+[16-Apr-2023 15:15:06 America/Los_Angeles] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[16-Apr-2023 15:15:06 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[16-Apr-2023 15:15:06 America/Los_Angeles] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[16-Apr-2023 15:15:06 America/Los_Angeles] 1 CLIENT -> SERVER: STARTTLS
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "220 Ready to start TLS"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 2 SERVER -> CLIENT: 220 Ready to start TLS
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 1 CLIENT -> SERVER: EHLO localhost
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "250-8BITMIME"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "250-STARTTLS"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 Auth method requested: UNSPECIFIED
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 Auth methods available on the server: PLAIN,LOGIN
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 Requested auth method not available: 
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 Auth method selected: LOGIN
+[16-Apr-2023 15:15:07 America/Los_Angeles] 1 CLIENT -> SERVER: AUTH LOGIN
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "334 VXNlcm5hbWU6"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 2 SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 1 CLIENT -> SERVER: QUtJQUk1VkZESktaSkxBU00zTVE=
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "334 UGFzc3dvcmQ6"
+[16-Apr-2023 15:15:07 America/Los_Angeles] 2 SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 1 CLIENT -> SERVER: QWxzWHd4c2RRd3E4TW5uVTc4VUcvOEN4SnRtbTVIck9vQnNjTDA1SjR2NG4=
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 4 SMTP INBOUND: "235 Authentication successful."
+[16-Apr-2023 15:15:07 America/Los_Angeles] 2 SERVER -> CLIENT: 235 Authentication successful.
+
+[16-Apr-2023 15:15:07 America/Los_Angeles] 1 CLIENT -> SERVER: MAIL FROM:<support@leantime.io>
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[16-Apr-2023 15:15:08 America/Los_Angeles] 2 SERVER -> CLIENT: 250 Ok
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: RCPT TO:<marcel+editor@leantime.io>
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[16-Apr-2023 15:15:08 America/Los_Angeles] 2 SERVER -> CLIENT: 250 Ok
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: DATA
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 4 SMTP INBOUND: "354 End data with <CR><LF>.<CR><LF>"
+[16-Apr-2023 15:15:08 America/Los_Angeles] 2 SERVER -> CLIENT: 354 End data with <CR><LF>.<CR><LF>
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: Date: Sun, 16 Apr 2023 15:15:06 -0700
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: To: marcel+editor@leantime.io
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: From: "Leantime System (Leantime)" <support@leantime.io>
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: Subject: Leantime - Latest updates
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: Message-ID: <nvCn15dZncwDJ3spZAMyB2d0dbrr09npHDKlUVZYZA@localhost>
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: MIME-Version: 1.0
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: Content-Type: text/html; charset=UTF-8
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: Content-Transfer-Encoding: quoted-printable
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: 
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =0A=09=09<table width=3D"100%" style=3D"background:#eeeeee; padding:15px; "=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: >=0A=09=09<tr>=0A=09=09=09<td align=3D"center" valign=3D"top">=0A=09=09=09=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =09<table width=3D"600"  style=3D"width:600px; background-color:#ffffff; bo=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: rder:1px solid #ccc;">=0A=09=09=09=09=09<tr>=0A=09=09=09=09=09=09<td style=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =3D"padding:3px 10px;">=0A=09=09=09=09=09=09=09<table>=0A=09=09=09=09=09=09=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =09=09<tr>=0A=09=09=09=09=09=09=09=09<td width=3D"150"><img alt=3D"Logo" sr=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: c=3D"https://localhost/leantime/userfiles/14d53a15303175052275e3362406654e.=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: png" width=3D"150" style=3D"width:150px;"></td>=0A=09=09=09=09=09=09=09=09<=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: td></td>=0A=09=09=09=09=09=09=09</tr>=0A=09=09=09=09=09=09=09</table>=0A=09=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =09=09=09=09=09</td>=0A=09=09=09=09=09</tr>=0A=09=09=09=09=09<tr>=0A=09=09=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =09=09=09=09<td style=3D"padding:10px; font-family:Arial; color:#666; font-=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: size:14px; line-height:1.7;">=0A=09=09=09=09=09=09=09Hi, =0A=09=09=09=09=09=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =09=09<br /><br />=0A=09=09=09=09=09=09=09News from your Leantime projects<=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: br/><br />=0A<div style=3D"border-top: 1px solid #ddd; margin: 3px; padding=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: : 3px;"><div style=3D"margin: 0px; padding: 0px; float : right">2023-04-16 =
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: 14:54:45</div><div><p><em>A new To-Do was added</em></p>Editor added a new =
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: To-Do: 'test'  <a href=3D'https://localhost/leantime/tickets/showTicket/57'=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: >Click here to see it</a></div></div><div style=3D"border-top: 1px solid #d=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: dd; margin: 3px; padding: 3px;"><div style=3D"margin: 0px; padding: 0px; fl=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: oat : right">2023-04-16 14:54:52</div><div><p><em>One of your To-Dos was up=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: dated [57] - test</em></p>Editor updated the To-Do: 'test' <a href=3D'https=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ://localhost/leantime/tickets/showTicket/57'>Click here to see it</a></div>=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: </div><div style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ><div style=3D"margin: 0px; padding: 0px; float : right">2023-04-16 14:54:5=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: 2</div><div><p><em>email_notifications.new_comment_todo_with_type_subject <=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: /em></p>Editor added a new comment to the label.Task 'test': <p>test</p> <a=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER:  href=3D'https://localhost/leantime/tickets/showTicket/57&projectId=3D4'>Cl=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ick here to open the conversation</a></div></div><div style=3D"border-top: =
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: 1px solid #ddd; margin: 3px; padding: 3px;"><div style=3D"margin: 0px; padd=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ing: 0px; float : right">2023-04-16 14:55:05</div><div><p><em>New comment w=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: as added to a milestone</em></p>Editor added a new comment to a milestone <=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: a href=3D'https://localhost/leantime/tickets/editMilestone/13'>Click here t=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: o see it</a></div></div><div style=3D"border-top: 1px solid #ddd; margin: 3=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: px; padding: 3px;"><div style=3D"margin: 0px; padding: 0px; float : right">=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: 2023-04-16 14:55:05</div><div><p><em>email_notifications.new_comment_todo_w=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ith_type_subject </em></p>Editor added a new comment to the Milestone 'test=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ': <p>test 2</p> <a href=3D'https://localhost/leantime/tickets/editMileston=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: e/13&projectId=3D4'>Click here to open the conversation</a></div></div><div=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER:  style=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div styl=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: e=3D"margin: 0px; padding: 0px; float : right">2023-04-16 14:55:14</div><di=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: v><p><em>A new To-Do was added</em></p>Editor added a new To-Do: 'test3'  <=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: a href=3D'https://localhost/leantime/tickets/showTicket/58'>Click here to s=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ee it</a></div></div><div style=3D"border-top: 1px solid #ddd; margin: 3px;=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER:  padding: 3px;"><div style=3D"margin: 0px; padding: 0px; float : right">202=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: 3-04-16 14:55:19</div><div><p><em>One of your To-Dos was updated [58] - tes=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: t3</em></p>Editor updated the To-Do: 'test3' <a href=3D'https://localhost/l=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: eantime/tickets/showTicket/58'>Click here to see it</a></div></div><div sty=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: le=3D"border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div style=3D=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: "margin: 0px; padding: 0px; float : right">2023-04-16 14:55:25</div><div><p=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ><em>email_notifications.new_comment_todo_with_type_subject </em></p>Editor=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER:  added a new comment to the Bug 'test3': <p>test bug</p> <a href=3D'https:/=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: /localhost/leantime/tickets/showTicket/58&projectId=3D4'>Click here to open=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER:  the conversation</a></div></div><div style=3D"border-top: 1px solid #ddd; =
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: margin: 3px; padding: 3px;"><div style=3D"margin: 0px; padding: 0px; float =
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: : right">2023-04-16 14:55:25</div><div><p><em>One of your To-Dos was update=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: d [58] - test3</em></p>Editor updated the To-Do: 'test3' <a href=3D'https:/=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: /localhost/leantime/tickets/showTicket/58'>Click here to see it</a></div></=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: div>=0A=09=09=09=09=09=09=09<br /><br />=0A=09=09=09=09=09=09</td>=0A=09=09=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =09=09=09</tr>=0A=09=09=09=09</table>=0A=09=09=09</td>=0A=09=09</tr>=0A=09=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =09<tr>=0A=09=09=09<td align=3D"center">=0A=09=09=09To <a href=3D'https://l=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ocalhost/leantime/users/editOwn/'>unsubscribe</a> from these types of notif=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: ications please login and edit your notifications settings=0A=09=09=09</td>=
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: =0A=09=09</tr>=0A=09=09</table>
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: .
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok 010101878c22e018-4fe971a2-9fa7-4019-8953-c052d437ab08-000000"
+[16-Apr-2023 15:15:08 America/Los_Angeles] 2 SERVER -> CLIENT: 250 Ok 010101878c22e018-4fe971a2-9fa7-4019-8953-c052d437ab08-000000
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 1 CLIENT -> SERVER: QUIT
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 4 SMTP INBOUND: "221 Bye"
+[16-Apr-2023 15:15:08 America/Los_Angeles] 2 SERVER -> CLIENT: 221 Bye
+
+[16-Apr-2023 15:15:08 America/Los_Angeles] 3 Connection: closed
+[16-Apr-2023 15:15:08 America/Los_Angeles] cron end
+[16-Apr-2023 15:32:24 America/Los_Angeles] cron start
+[16-Apr-2023 15:32:24 America/Los_Angeles] cron end
+[16-Apr-2023 15:38:32 America/Los_Angeles] cron start
+[16-Apr-2023 15:38:32 America/Los_Angeles] cron end

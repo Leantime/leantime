@@ -86,7 +86,7 @@ leantime.wikiController = (function () {
                 afterShowCont: function () {
 
                     leantime.generalController.initComplexEditor();
-                    jQuery(".formModal").nyroModal(articleModalConfig);
+                    jQuery(".formModal, .delete").nyroModal(articleModalConfig);
 
                 },
                 beforeClose: function () {
@@ -97,7 +97,7 @@ leantime.wikiController = (function () {
             },
             titleFromIframe: true
         };
-        jQuery(".articleModal").nyroModal(articleModalConfig);
+        jQuery(".articleModal, .delete, .formModal").nyroModal(articleModalConfig);
 
     }
 
