@@ -1275,7 +1275,7 @@ namespace leantime\domain\repositories {
             $errors = array();
 
             $sql = [
-                    " CREATE TABLE `zp_entity_relationship` (
+                    " CREATE TABLE `zp_entity_relationships` (
                         `id` INT NOT NULL AUTO_INCREMENT,
                         `enitityA` INT NULL,
                         `entityAType` VARCHAR(45) NULL,
@@ -1290,7 +1290,7 @@ namespace leantime\domain\repositories {
                         INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
                 ",
-                "CREATE TABLE `zp_integration` (
+                "CREATE TABLE `zp_integrations` (
                       `id` INT NOT NULL AUTO_INCREMENT,
                       `providerId` VARCHAR(45) NULL,
                       `method` VARCHAR(45) NULL,
