@@ -54,7 +54,7 @@ $moduleId = $_GET['id'] ?? '';
 
                             </ul>
                         </div>
-                        <a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                        <a class="imageLink" data-ext="<?php echo $file['extension'] ?>" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                             <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                                 <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                             <?php else : ?>
@@ -94,7 +94,13 @@ $moduleId = $_GET['id'] ?? '';
     <script type="text/javascript">
         jQuery(document).ready(function(){
 
-            jQuery(".imageLink").nyroModal();
+            let modalTypes = ["jpg", "jpeg", "png", "gif", "apng", "webp", "avif"];
+            jQuery(".imageLink").each(function(i) {
+                let ext = jQuery(this).attr("data-ext");
+                if(modalTypes.includes(ext)) {
+                    jQuery(this).nyroModal();
+                }
+            });
 
             //Replaces data-rel attribute to rel.
             //We use data-rel because of w3c validation issue
