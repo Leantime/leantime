@@ -220,7 +220,6 @@ class oidc {
 
         $tokenData = json_decode($this->decodeBase64Url($content), true);
 
-        die();
 
         if($this->trimTrailingSlash($tokenData['iss']) != $this->providerUrl) {
             $this->displayError('oidc.error.providerMismatch', $tokenData['iss'], $this->providerUrl);
@@ -287,7 +286,7 @@ class oidc {
             else if(!isset($kid[0]) || $kid == $key['kid']) {
                 $keySource = '';
                 if(isset($key['x5c'])) {
-                    $keySource = '-----BEGIN CERTIFICATE-----' . PHP_EOL . chunk_split( $key['x5c'][0], 64, PHP_EOL) . PHP_EOL . '-----END CERTIFICATE-----';
+                    $keySource = '-----BEGIN CERTIFICATE-----' . PHP_EOL . chunk_split( $key['x5c'][0], 64, PHP_EOL) . '-----END CERTIFICATE-----';
                 }
                 else if(isset($key['n'])) {
                     $this->displayError('oidc.error.unsupportedKeyFormat');
