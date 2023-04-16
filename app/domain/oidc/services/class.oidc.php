@@ -189,7 +189,11 @@ class oidc {
                 'client_secret' => $this->clientSecret
             ]
         ]);
-        $contentType = $response->getHeaders()['Content-Type'][0];
+        $headerArray = [];
+        foreach($response->getHeaders() as $header => $values) {
+            $headerArray[strtolower($header)] = $values;
+        }
+        $contentType = array_pop($headerArray['content-type']);
         switch($contentType) {
             case 'application/x-www-form-urlencoded; charset=utf-8':
             case 'application/x-www-form-urlencoded':
