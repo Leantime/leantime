@@ -785,3 +785,7 @@
 .submenuCaret {
 
 }
+
+.headmenu .dropdown-menu a span.notificationProfileImage {
+    margin-right:0px;
+}

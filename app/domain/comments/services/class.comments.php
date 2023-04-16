@@ -50,8 +50,8 @@ namespace leantime\domain\services {
 
                     switch ($module) {
                         case "ticket":
-                            $subject = sprintf($this->language->__("email_notifications.new_comment_todo_subject"), $entity->id, $entity->headline);
-                            $message = sprintf($this->language->__("email_notifications.new_comment_todo_message"), $_SESSION["userdata"]["name"], $entity->headline, $values['text']);
+                            $subject = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_subject "), $this->language->__("label.".$entity->type), $entity->id, $entity->headline);
+                            $message = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_message"), $_SESSION["userdata"]["name"], $this->language->__("label.".$entity->type), $entity->headline, $values['text']);
                             $linkLabel = $this->language->__("email_notifications.new_comment_todo_cta");
                             break;
                         case "project":
