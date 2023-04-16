@@ -29,7 +29,7 @@ $statusLabels = $this->get('statusLabels');
 
         <label><?php echo $this->__('label.todo_status'); ?></label>
         <select id="status-select" name="status" class="span11"
-                data-placeholder="<?php echo $statusLabels[$currentMilestone->status]["name"]; ?>">
+                data-placeholder="<?php echo isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]["name"] : ''; ?>">
 
             <?php  foreach ($statusLabels as $key => $label) {?>
                 <option value="<?php echo $key; ?>"

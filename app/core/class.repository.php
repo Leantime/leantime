@@ -4,17 +4,18 @@ namespace leantime\core;
 
 use PDO;
 use PDOStatement;
+use ReflectionProperty;
 
 abstract class repository
 {
     use eventhelpers;
 
     protected string $entity;
+    protected string $model;
 
     protected function dbcall(array $args)
     {
         return new class ($args, $this) {
-
             private PDOStatement $stmn;
 
             /**
@@ -85,6 +86,18 @@ abstract class repository
                 $this->stmn->bindValue($needle, $replace, $type);
             }
 
+
+            public function lastInsertId()
+            {
+
+                return $this->db->database->lastInsertId();
+            }
+
+            public function setFetchMode($mode, $class)
+            {
+                return $this->stmn->setFetchMode($mode, $class);
+            }
+
             /**
              * Gets the arguments to pass along to events/filter
              *
@@ -142,14 +155,15 @@ abstract class repository
         };
     }
 
-    public function patch(int $id, array $params): bool {
+    public function patch(int $id, array $params): bool
+    {
 
-        if($this->entity == ''){
+        if ($this->entity == '') {
             error_log("Patch not implemented for this entity");
             return false;
         }
 
-        $sql = "UPDATE zp_".$this->entity." SET ";
+        $sql = "UPDATE zp_" . $this->entity . " SET ";
 
         foreach ($params as $key => $value) {
             $sql .= "" . db::sanitizeToColumnString($key) . "=:" . db::sanitizeToColumnString($key) . ", ";
@@ -170,19 +184,125 @@ abstract class repository
         return $call->execute();
     }
 
-    public function create() {
+    public function insert(object $objectToInsert): false|int
+    {
+
+        if ($this->entity == '') {
+            error_log("Insert not implemented for this entity");
+            return false;
+        }
+
+        $sql = "INSERT INTO zp_" . $this->entity . " (";
+
+        $sqlArr = array();
+        foreach ($objectToInsert as $key => $value) {
+            if ($this->getFieldAttribute($objectToInsert, $key)) {
+                $sqlArr[] = "`" . db::sanitizeToColumnString($key) . "`";
+            }
+        }
+        $sql .= implode(",", $sqlArr);
+
+        $sql .= ") VALUES (";
+
+        $sqlArr2 = array();
+        foreach ($objectToInsert as $key => $value) {
+            if ($this->getFieldAttribute($objectToInsert, $key)) {
+                $sqlArr2[] = ":" . db::sanitizeToColumnString($key) . "";
+            }
+        }
+        $sql .= implode(",", $sqlArr2);
+
+        $sql .= ")";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($sql);
+
+        foreach ($objectToInsert as $key => $value) {
+            if ($this->getFieldAttribute($objectToInsert, $key)) {
+                $call->bindValue(':' . db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+            }
+        }
+
+        $call->execute();
+
+
+        return $call->lastInsertId();
+    }
+
+    public function delete($id)
+    {
+    }
+
+    public function get($id)
+    {
+        if ($this->entity == '' || $this->model == '') {
+            error_log("Get not implemented for this entity");
+            return false;
+        }
+
+        $sql = "SELECT ";
+
+        $entityModel = new $this->model();
+        $dbFields = $this->getDbFields($this->model);
+
+        $sql .= implode(",", $dbFields);
+
+        $sql .= " FROM zp_" . $this->entity . " WHERE id = :id ";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($sql);
+
+         $call->bindValue(':id', $id, PDO::PARAM_STR);
+
+         $call->execute();
+
+         $call->setFetchMode(PDO::FETCH_CLASS, $this->model);
+
+         return $call->fetch();
 
     }
 
-    public function delete($id) {
-
+    public function getAll($id)
+    {
     }
 
-    public function get($id) {
+    protected function getFieldAttribute($class, $property, $includeId = false): array|false
+    {
+        //Don't create or update id attributes
+        if($includeId === false && $property == "id") {
+            return false;
+        }
 
+        $property = new ReflectionProperty($class, $property);
+
+        $attributes = $property->getAttributes();
+        foreach ($attributes as $attribute) {
+            $name = $attribute->getName();
+            if (str_contains($name, "DbColumn")) {
+                return $attribute->getArguments();
+            }
+        }
+
+        return false;
     }
 
-    public function getAll($id) {
+    protected function getDbFields($class): array
+    {
+
+        $property = new \ReflectionClass($class);
+
+        $properties = $property->getProperties();
+
+        $propertyArray = array();
+        foreach($properties as $property) {
+            if($this->getFieldAttribute($class, $property->getName(), true)){
+                $propertyArray[] = $property->getName();
+            }
+        }
+
+        return $propertyArray;
 
     }
 }

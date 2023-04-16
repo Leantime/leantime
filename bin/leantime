@@ -19,6 +19,8 @@ $config = environment::getInstance();
 $settings = new leantime\core\appSettings();
 $settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
 
+define('BASE_URL', $config->appUrl);
+
 $application = new Application();
 $application->add(new addUserCommand());
 $application->add(new migrateCommand());

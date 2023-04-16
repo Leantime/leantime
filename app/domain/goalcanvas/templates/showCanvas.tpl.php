@@ -65,7 +65,7 @@ $elementName = 'goal';
 
                                         <?php
                                         if ($row["conclusion"] != 0 && is_numeric($row["data"]) && is_numeric($row["conclusion"])) {
-                                            $percentDone = $row["data"] / $row["conclusion"] * 100;
+                                            $percentDone = round($row["data"] / $row["conclusion"] * 100, 2);
                                         } else {
                                             $percentDone = 0;
                                         }

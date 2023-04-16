@@ -490,41 +490,43 @@ namespace leantime\domain\repositories {
 
 
 
-            if ($searchCriteria["currentProject"] != "") {
+            if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"] != "") {
                 $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
             }
 
-            if ($searchCriteria["milestone"]  != "") {
+            if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
                 $stmn->bindValue(':milestoneId', $searchCriteria["milestone"], PDO::PARAM_INT);
             }
 
-            if ($searchCriteria["type"]  != "") {
+            if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
                 $stmn->bindValue(':searchType', $searchCriteria["type"], PDO::PARAM_STR);
             }
-            if ($searchCriteria["priority"]  != "") {
+            if (isset($searchCriteria["priority"]) && $searchCriteria["priority"]  != "") {
                 $stmn->bindValue(':searchPriority', $searchCriteria["priority"], PDO::PARAM_STR);
             }
 
-            if ($searchCriteria["users"]  != "") {
+            if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
                 foreach (explode(",", $searchCriteria["users"]) as $key => $user) {
                     $stmn->bindValue(":users" . $key, $user, PDO::PARAM_STR);
                 }
             }
 
-            $statusArray = explode(",", $searchCriteria['status']);
-            if ($searchCriteria["status"]  != "" && array_search("not_done", $statusArray) === false) {
-                foreach (explode(",", $searchCriteria["status"]) as $key => $status) {
-                    $stmn->bindValue(":status" . $key, $status, PDO::PARAM_STR);
+            if(isset($searchCriteria['status'])) {
+                $statusArray = explode(",", $searchCriteria['status']);
+                if ($searchCriteria["status"] != "" && array_search("not_done", $statusArray) === false) {
+                    foreach (explode(",", $searchCriteria["status"]) as $key => $status) {
+                        $stmn->bindValue(":status" . $key, $status, PDO::PARAM_STR);
+                    }
                 }
             }
 
-            if ($searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
+            if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
                 foreach (explode(",", $searchCriteria["sprint"]) as $key => $sprint) {
                     $stmn->bindValue(":sprint" . $key, $sprint, PDO::PARAM_STR);
                 }
             }
 
-            if ($searchCriteria["term"]  != "") {
+            if (isset($searchCriteria["term"]) && $searchCriteria["term"]  != "") {
                 $termWild = "%" . $searchCriteria["term"] . "%";
                 $stmn->bindValue(':termWild', $termWild, PDO::PARAM_STR);
                 $stmn->bindValue(':termStandard', $searchCriteria["term"], PDO::PARAM_STR);

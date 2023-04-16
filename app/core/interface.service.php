@@ -54,7 +54,7 @@ interface service
      *
      * @return object|array|false returns object or array. False on failure or if item cannot be found
      */
-    public function get($id): object|array|false;
+    public function get(int $id): object|array|false;
 
     /**
      * Get all items
