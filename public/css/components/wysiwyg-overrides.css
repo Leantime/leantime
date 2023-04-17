@@ -3,6 +3,11 @@
     background:var(--secondary-background);
 }
 
+.commentContent .mce-content-body {
+    background: var(--col-title-bg);
+}
+
+
 .tox .tox-tbtn svg {
     display: block;
     fill: var(--primary-font-color);

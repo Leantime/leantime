@@ -317,7 +317,7 @@
                     <th style="max-width: 350px;"><?= $this->__("label.title"); ?></th>
                     <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
                     <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
-                    <th><?= $this->__("label.effort"); ?></th>
+                    <th class="effort-col"><?= $this->__("label.effort"); ?></th>
                     <th class="priority-col"><?= $this->__("label.priority"); ?></th>
                     <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
                     <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>

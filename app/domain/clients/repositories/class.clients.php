@@ -81,7 +81,7 @@ namespace leantime\domain\repositories {
             $row = $stmn->fetch();
             $stmn->closeCursor();
 
-            if (count($row) > 0) {
+            if ($row !== false && count($row) > 0) {
                 $this->name = $row['name'];
 
                 $this->id = $row['id'];

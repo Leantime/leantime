@@ -41,8 +41,10 @@ namespace leantime\domain\controllers {
 
                 if ($results) {
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
+                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
                 }
-                
+
+
             }
 
             if ($_SESSION['currentWiki'] != '') {
@@ -73,7 +75,7 @@ namespace leantime\domain\controllers {
                 $article->status = $params['status'];
                 $article->parent = $params['parent'];
                 $article->description = $params['description'];
-                $article->milestoneId = $params['milestoneId'] ?? '';
+                $article->milestoneId = $params['milestoneId'] ?? $article->milestoneId;
 
                 if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                     $params['headline'] = $params['newMilestone'];

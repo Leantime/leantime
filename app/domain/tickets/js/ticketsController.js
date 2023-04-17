@@ -1315,7 +1315,9 @@ leantime.ticketsController = (function () {
                         var visibleLoggedHoursIndex =  jQuery("#allTicketsTable thead").find(".booked-hours-col").index();
 
 
-                        var totalColumns = jQuery("#allTicketsTable thead th").length;
+                        //Remove one column count for action column at the end
+                        var totalColumns = jQuery("#allTicketsTable thead th").length - 1;
+
                         if (visiblePlannedHoursIndex > -1) {
                             totalColumns--;
                         }
