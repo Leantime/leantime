@@ -318,7 +318,7 @@
                     <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
                     <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
                     <th><?= $this->__("label.effort"); ?></th>
-                    <th><?= $this->__("label.priority"); ?></th>
+                    <th class="priority-col"><?= $this->__("label.priority"); ?></th>
                     <th class="user-col"><?= $this->__("label.editor"); ?>.</th>
                     <th class="sprint-col"><?= $this->__("label.sprint"); ?></th>
                     <th class="tags-col"><?= $this->__("label.tags"); ?></th>
@@ -354,7 +354,7 @@
                         }
 
                         ?>
-                        <td class="dropdown-cell" data-order="<?=$sortKey ?>">
+                        <td class="dropdown-cell" data-order="<?=$name ?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                 <a class="dropdown-toggle status <?=$class ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="text">
@@ -428,7 +428,12 @@
                             </div>
                         </td>
 
-                        <td class="dropdown-cell"  data-order="<?=$row['priority'] ?>">
+                        <td class="dropdown-cell"  data-order="<?php
+                        if ($row['priority'] != '' && $row['priority'] > 0) {
+                            echo $priorities[$row['priority']];
+                        } else {
+                            echo $this->__("label.priority_unkown");
+                        }?>">
                             <div class="dropdown ticketDropdown priorityDropdown show">
                                 <a class="dropdown-toggle label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text"><?php
