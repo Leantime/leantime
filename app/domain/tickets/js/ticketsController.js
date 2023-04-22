@@ -1843,6 +1843,15 @@ leantime.ticketsController = (function () {
         jQuery("#tags").tagsInput({
             'autocomplete_url': leantime.appUrl + '/api/tags',
         });
+
+        jQuery("#tags_tag").on("focusout", function(){
+           let tag = jQuery(this).val();
+
+           if(tag != ''){
+               jQuery("#tags").addTag(tag);
+           }
+        });
+
     };
 
     var addCommentTimesheetContent = function (commentId, taskId) {

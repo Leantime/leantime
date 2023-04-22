@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use leantime\core\frontcontroller;
 use leantime\core\language;
+use leantime\domain\models\auth\roles;
 use leantime\domain\services;
 use leantime\domain\repositories;
 
@@ -113,7 +114,7 @@ class oidc {
         } else {
             $this->displayError("oidc.error.unsupportedToken");
         }
-        
+
         if($userInfo != null) {
             $this->login($userInfo);
         } else {
@@ -136,7 +137,6 @@ class oidc {
         }
 
         $user = $this->userRepo->getUserByEmail($userName);
-
 
         if($user === false) {
             //create user if it doesn't exist yet
@@ -204,7 +204,7 @@ class oidc {
             case 'application/json':
                 return json_decode($response->getBody()->getContents(), true);
         }
-        
+
     }
 
     private function readMultilayerKey(array $topic, string $key): string {
@@ -257,7 +257,7 @@ class oidc {
             $this->displayError("oidc.error.unsupportedAlgorythm", $algorythmName);
         }
 
-        
+
         return $map[$algorythmName];
     }
 
@@ -317,7 +317,7 @@ class oidc {
 
     private function loadEndpoints(): void {
 
-        
+
         if($this->configLoaded) {
             return;
         }

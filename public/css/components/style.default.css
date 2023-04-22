@@ -3825,4 +3825,7 @@ h3.todaysDate {
     min-height:600px;
 }
 
-
+.stickyRow {
+    position: sticky;
+    top: 65px;
+}

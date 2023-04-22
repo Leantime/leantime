@@ -40,9 +40,7 @@
 <?php $jsUrl = $themeCore->getJsUrl(); if ($jsUrl !== false) { ?>
     <script src="<?=$jsUrl ?>"></script>
 <?php } ?>
-<?php $styleUrl = $themeCore->getStyleUrl(); if ($styleUrl !== false) { ?>
-    <link rel="stylesheet" id="themeStylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
-<?php } ?>
+
 
 <?php $this->dispatchTplEvent('afterThemeScripts'); ?>
 
@@ -57,6 +55,10 @@
         <?php } ?>
     }
 </style>
+<?php $styleUrl = $themeCore->getStyleUrl(); if ($styleUrl !== false) { ?>
+    <link rel="stylesheet" id="themeStylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
+<?php } ?>
+
 <?php $this->dispatchTplEvent('afterThemeColors'); ?>
 
 <!-- customize -->
