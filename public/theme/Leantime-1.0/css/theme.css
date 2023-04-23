@@ -463,3 +463,23 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 .sortableTicketList li:hover .ticketBox{
     background:var(--kanban-card-hover);
 }
+
+.dataTable tr td {
+    background:#fff;
+}
+
+.table th, .table td, table td {
+    border-top:1px solid #ccc;
+}
+
+.dataTable tr:hover td {
+    background:#ccc;
+}
+
+body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
+    border:1px solid #1b75bb;
+}
+
+.articleBody.mce-content-body {
+    background:transparent !important;
+}
