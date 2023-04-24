@@ -694,7 +694,7 @@ namespace leantime\domain\repositories {
 
             // Copy elements from existing canvas to new canvas
             $sql = "INSERT INTO " .
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneid) " .
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
               "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '' " .
               "FROM zp_canvas_items WHERE canvasId = $canvasId";
             $stmn = $this->db->database->prepare($sql);
@@ -718,7 +718,7 @@ namespace leantime\domain\repositories {
 
             // Copy elements from merge canvas into current canvas
             $sql = "INSERT INTO " .
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneid) " .
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
               "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '' " .
               "FROM zp_canvas_items WHERE canvasId = $mergeId";
             $stmn = $this->db->database->prepare($sql);
