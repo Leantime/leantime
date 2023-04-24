@@ -82,7 +82,7 @@ namespace leantime\domain\controllers\canvas {
                     'data' => '',
                     'conclusion' => '',
                     'milestoneHeadline' => '',
-                    'milestoneid' => ''
+                    'milestoneId' => ''
                 );
 
                 $comments = [];
@@ -121,7 +121,7 @@ namespace leantime\domain\controllers\canvas {
                             'itemId' => $params['itemId'],
                             'id' => $params['itemId'],
                             'canvasId' => $currentCanvasId,
-                            'milestoneid' => $params['milestoneid'],
+                            'milestoneId' => $params['milestoneId'],
                             'dependentMilstone' => ''
                         );
 

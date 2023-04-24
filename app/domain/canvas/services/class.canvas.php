@@ -142,7 +142,7 @@ namespace leantime\domain\services {
                                       'author' => $author,
                                       'status' => $status,
                                       'relates' => $relates,
-                                      'milestoneid' => '' ];
+                                      'milestoneId' => '' ];
                 }
             }
 
