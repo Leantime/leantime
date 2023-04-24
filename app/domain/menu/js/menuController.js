@@ -18,8 +18,12 @@ leantime.menuController = (function () {
 
     var toggleSubmenu = function (submenuName) {
 
+        if(submenuName === "") {
+            return;
+        }
+
         var submenuDisplay = jQuery('#submenu-' + submenuName).css('display');
-        var submenuStatee = '';
+        var submenuState = '';
 
         if (submenuDisplay == 'none') {
             jQuery('#submenu-' + submenuName).css('display', 'block');
