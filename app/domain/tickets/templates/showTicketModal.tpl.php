@@ -17,6 +17,9 @@
 
 <div style="min-width:90%">
 
+    <?php if($ticket->dependingTicketId > 0){ ?>
+        <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$ticket->dependingTicketId ?>"><?=$this->escape($ticket->parentHeadline) ?></a></small> //
+    <?php } ?>
     <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $this->e($ticket->headline); ?></h1>
 
     <?php echo $this->displayNotification(); ?>

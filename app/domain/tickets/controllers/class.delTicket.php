@@ -19,7 +19,6 @@ namespace leantime\domain\controllers {
             $this->ticketService = new services\tickets();
         }
 
-
         public function get()
         {
 

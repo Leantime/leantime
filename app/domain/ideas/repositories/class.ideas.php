@@ -37,7 +37,7 @@ namespace leantime\domain\repositories {
         public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
 
         private core\language $language;
-        
+
         /**
          * __construct - get db connection
          *
@@ -313,7 +313,7 @@ namespace leantime\domain\repositories {
 				zp_canvas_items
 
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 			    LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = 'idea'
 				WHERE zp_canvas_items.canvasId = :id
@@ -371,7 +371,7 @@ namespace leantime\domain\repositories {
 						END AS percentDone
 				FROM
 				zp_canvas_items
-			    LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+			    LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
 				WHERE zp_canvas_items.id = :id

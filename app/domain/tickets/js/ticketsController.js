@@ -776,7 +776,7 @@ leantime.ticketsController = (function () {
                         data:
                             {
                                 id : ticketId,
-                                dependingTicketId:milestoneId
+                                milestoneid:milestoneId
                         }
                         }
                 ).done(
@@ -1067,7 +1067,7 @@ leantime.ticketsController = (function () {
 
 
             let url = new URL(window.location.href);
-            const tab = url.searchParams.get("tab");
+            let tab = url.searchParams.get("tab");
 
             let activeTabIndex = 0;
             if(tab) {
@@ -1082,7 +1082,9 @@ leantime.ticketsController = (function () {
                 activate: function (event, ui) {
 
                     url = new URL(window.location.href);
+
                     url.searchParams.set('tab', ui.newPanel.selector.substring(1));
+
                     window.history.replaceState(null, null, url);
 
                 },
@@ -1843,6 +1845,15 @@ leantime.ticketsController = (function () {
         jQuery("#tags").tagsInput({
             'autocomplete_url': leantime.appUrl + '/api/tags',
         });
+
+        jQuery("#tags_tag").on("focusout", function(){
+           let tag = jQuery(this).val();
+
+           if(tag != ''){
+               jQuery("#tags").addTag(tag);
+           }
+        });
+
     };
 
     var addCommentTimesheetContent = function (commentId, taskId) {

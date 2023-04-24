@@ -316,7 +316,7 @@ body .maincontent .ticketDropdown .priority-bg-5{
 .sortableTicketList .row-fluid {
     width:100%;
     display:flex;
-    overflow-x:auto;
+    /*overflow-x:auto;*/
     padding-bottom: 130px;
 }
 

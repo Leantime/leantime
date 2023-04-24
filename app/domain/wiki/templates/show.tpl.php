@@ -127,7 +127,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                     if ($currentArticle && $currentArticle->id != null) { ?>
                     <div class="row">
                         <div class="col-md-3" >
-                            <div class="row">
+                            <div class="row stickyRow">
 
                                 <div class="col-md-12" style="border-right:1px solid var(--neutral);">
 

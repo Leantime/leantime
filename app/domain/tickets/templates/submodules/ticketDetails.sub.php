@@ -64,6 +64,29 @@
     <div class="span4">
         <div class="row-fluid marginBottom">
             <div class="span12">
+                <div class="form-group">
+                    <label class="span4 control-label"><?php echo $this->__('label.related_to'); ?></label>
+                    <div class="span6">
+                        <div class="form-group">
+                            <select  name="dependingTicketId"  class="span11" >
+                                <option value=""><?php echo $this->__('label.not_related'); ?></option>
+                                <?php foreach ($this->get('ticketParents') as $ticketRow) {
+
+                                    ?>
+                                    <?php echo"<option value='" . $ticketRow->id . "'";
+
+                                    if (($ticket->dependingTicketId == $ticketRow->id)) {
+                                        echo" selected='selected' ";
+                                    }
+
+                                    echo">" . $this->escape($ticketRow->headline) . "</option>"; ?>
+
+                                <?php
+                                } ?>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.todo_status'); ?></label>
@@ -139,18 +162,18 @@
                     <label class="span4 control-label"><?php echo $this->__('label.milestone'); ?></label>
                     <div class="span6">
                         <div class="form-group">
-                            <select  name="dependingTicketId"  class="span11" >
+                            <select  name="milestoneId"  class="span11" >
                                 <option value=""><?php echo $this->__('label.not_assigned_to_milestone'); ?></option>
                                 <?php foreach ($this->get('milestones') as $milestoneRow) {     ?>
                                     <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                    if (($ticket->dependingTicketId == $milestoneRow->id)) {
+                                    if (($ticket->milestoneid == $milestoneRow->id)) {
                                         echo" selected='selected' ";
                                     }
 
                                     echo">" . $this->escape($milestoneRow->headline) . "</option>"; ?>
 
-                                <?php }     ?>
+                                <?php } ?>
                             </select>
                         </div>
                     </div>
@@ -312,9 +335,12 @@
 <script>
     leantime.generalController.initComplexEditor();
 
-    jQuery(".viewDescription").click(function(e){
+    jQuery(document).ready(function(){
+        jQuery("select").chosen();
+    });
 
-        console.log(jQuery(e.target).not("a"));
+
+    jQuery(".viewDescription").click(function(e){
 
         if(!jQuery(e.target).is("a")) {
             e.stopPropagation();

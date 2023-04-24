@@ -504,7 +504,7 @@ namespace leantime\domain\repositories {
                   KEY `Sorting` (`sortindex`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`dependingTicketId`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values
+                insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`milestoneid`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values
                 (9,3,'Getting Started with Leantime','Look around and make yourself familiar with the system. ','','2015-11-30 00:00:00','1969-12-31 00:00:00',NULL,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
 
                 CREATE TABLE `zp_timesheets` (
@@ -1288,22 +1288,8 @@ namespace leantime\domain\repositories {
                         PRIMARY KEY (`id`),
                         INDEX `entityA` (`enitityA` ASC, `entityAType` ASC, `relationship` ASC),
                         INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
-                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-                ",
-                "CREATE TABLE `zp_integrations` (
-                      `id` INT NOT NULL AUTO_INCREMENT,
-                      `providerId` VARCHAR(45) NULL,
-                      `method` VARCHAR(45) NULL,
-                      `entity` VARCHAR(45) NULL,
-                      `fields` TEXT NULL,
-                      `schedule` VARCHAR(45) NULL,
-                      `notes` VARCHAR(45) NULL,
-                      `auth` TEXT NULL,
-                      `meta` VARCHAR(45) NULL,
-                      `createdOn` DATETIME NULL,
-                      `createdBy` INT NULL,
-                      PRIMARY KEY (`id`)
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+                    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+                "UPDATE `zp_tickets` SET milestoneid = dependingTicketId , dependingTicketId = '' WHERE type <> 'subtask' AND dependingTicketId > 0",
             ];
 
             foreach ($sql as $statement) {

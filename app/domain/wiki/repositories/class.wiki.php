@@ -10,7 +10,7 @@ namespace leantime\domain\repositories {
     {
 
         private core\db $db;
-        
+
         /**
          * __construct - get database connection
          *
@@ -64,7 +64,7 @@ namespace leantime\domain\repositories {
 				FROM zp_canvas_items
 				LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
 				LEFT JOIN zp_user ON zp_canvas_items.author = zp_user.id
-				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas_items.box = 'article'";
 

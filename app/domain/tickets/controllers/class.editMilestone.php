@@ -166,11 +166,6 @@ namespace leantime\domain\controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-
-
-
-
-
                         $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");

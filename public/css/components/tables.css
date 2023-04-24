@@ -441,9 +441,15 @@ table td{
     border:1px solid var(--neutral);
 }
 
+/*fake height to allow divs in tds to fill out space */
+.table tr {
+    height:1px;
+}
+
 .table td.dropdown-cell {
     padding:0px;
     font-weight: 400;
+    height: inherit;
 }
 
 .table td.dropdown-cell .dropdown {

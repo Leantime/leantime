@@ -130,7 +130,7 @@
                             <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
                             <td data-order="<?=$this->e($row->headline); ?>"><a href="<?=BASE_URL ?>/tickets/editMilestone/<?=$this->e($row->id); ?>" class="milestoneModal"><?=$this->e($row->headline); ?></a></td>
                             <?php
-                            if ($row->dependingTicketId != "" && $row->dependingTicketId != 0) {
+                            if ($row->milestoneid != "" && $row->milestoneid != 0) {
                                 $milestoneHeadline = $this->escape($row->milestoneHeadline);
                             } else {
                                 $milestoneHeadline = $this->__("label.no_milestone");

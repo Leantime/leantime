@@ -37,7 +37,7 @@ namespace leantime\domain\repositories\connector {
                         "tags" =>           ["name" => "tags", "accepts" => fieldTypes::$text, "default" => ""],
                         "editFrom" =>       ["name" => "Edit From", "accepts" => fieldTypes::$dateTime, "default" => ""],
                         "editTo" =>         ["name" => "Edit To", "accepts" => fieldTypes::$dateTime, "default" => ""],
-                        "dependingTicketId" =>   ["name" => "Milestone", "accepts" => fieldTypes::$shortString, "default" => ""],
+                        "milestoneid" =>   ["name" => "Milestone", "accepts" => fieldTypes::$shortString, "default" => ""],
                         "projectName" =>    ["name" => "Project", "accepts" => fieldTypes::$shortString, "default" => ""],
                     )
                 ),

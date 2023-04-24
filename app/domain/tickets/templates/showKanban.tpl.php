@@ -315,10 +315,13 @@ if ($numberofColumns > 0) {
                                                         </ul>
                                                     </div>
                                                 <?php } ?>
+                                                <?php if($row['dependingTicketId'] > 0){ ?>
+                                                    <small><a href="<?=BASE_URL?>/tickets/showKanban/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$this->escape($row['parentHeadline']) ?></a></small> //
+                                                <?php } ?>
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label." . strtolower($row['type'])); ?></small>
                                                 <small>#<?php echo $row['id']; ?></small>
                                                 <div class="kanbanCardContent">
-                                                    <h4><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
+                                                    <h4><a href="<?=BASE_URL?>/tickets/showKanban/#/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
 
                                                     <div class="kanbanContent" style="margin-bottom: 20px">
                                                         <?php echo $this->escapeMinimal($row['description']); ?>
@@ -343,7 +346,7 @@ if ($numberofColumns > 0) {
                                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
                                                     <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text"><?php
-                                                        if ($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0) {
+                                                        if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
                                                             $this->e($row['milestoneHeadline']);
                                                         } else {
                                                             echo $this->__("label.no_milestone");
@@ -451,11 +454,11 @@ if ($numberofColumns > 0) {
 
                                             <div class="col-md-12 border-top" style="white-space: nowrap;">
                                                 <?php if ($row["commentCount"] > 0) {?>
-                                                    <a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#comments" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
+                                                    <a href="<?=CURRENT_URL ?>?tab=comments#/tickets/showTicket/<?php echo $row["id"];?>" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
                                                 <?php } ?>
 
                                                 <?php if ($row["subtaskCount"] > 0) {?>
-                                                    <a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#subtasks" class="ticketModal"> <span class="fa fa-code-branch"></span> <?php echo $row["subtaskCount"] ?></a>&nbsp;
+                                                    <a id="subtaskLink_<?php echo $row["id"];?>" href="<?=CURRENT_URL ?>?tab=subtasks#/tickets/showTicket/<?php echo $row["id"];?>" class="subtaskLineLink"> <span class="fa fa-diagram-successor"></span> <?php echo $row["subtaskCount"] ?></a>&nbsp;
                                                 <?php } ?>
                                                 <?php if ($row['tags'] != '') {?>
                                                     <?php  $tagsArray = explode(",", $row['tags']); ?>
@@ -544,6 +547,60 @@ if ($numberofColumns > 0) {
         window.history.pushState({},document.title, '<?=BASE_URL ?>/tickets/showKanban');
 
         <?php } ?>
+
+
+        <?php foreach($this->get('allTickets') as $ticket) {
+            if($ticket['dependingTicketId'] > 0){
+            ?>
+            var startElement = jQuery('#subtaskLink_<?=$ticket['dependingTicketId']; ?>')[0];
+            var endElement =  document.getElementById('ticket_<?=$ticket['id']; ?>');
+
+            var startAnchor = LeaderLine.mouseHoverAnchor({
+                element: startElement,
+                showEffectName: 'draw',
+                style: {background:'none', backgroundColor:'none'},
+                hoverStyle: {background:'none', backgroundColor:'none', cursor: 'pointer'}
+            });
+
+            var line<?=$ticket['id'] ?> = new LeaderLine(startAnchor, endElement, {
+                startPlugColor: 'var(--accent1)',
+                endPlugColor: 'var(--accent2)',
+                gradient: true,
+                size: 2,
+                path: "grid",
+                startSocket: 'bottom',
+                endSocket: 'auto'
+            });
+
+            jQuery("#ticket_<?=$ticket['id'] ?>").mousedown(function() {
+                isDragging = false;
+            })
+            .mousemove(function() {
+                isDragging = true;
+                line<?=$ticket['id'] ?>.position();
+            })
+            .mouseup(function() {
+                line<?=$ticket['id'] ?>.position();
+            });
+
+            jQuery("#ticket_<?=$ticket['dependingTicketId'] ?>").mousedown(function() {
+
+            })
+            .mousemove(function() {
+
+                line<?=$ticket['id'] ?>.position();
+            })
+            .mouseup(function() {
+                line<?=$ticket['id'] ?>.position();
+
+            });
+
+
+        <?php }
+        } ?>
+
+
+
 
     });
 </script>

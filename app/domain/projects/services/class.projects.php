@@ -535,7 +535,7 @@ namespace leantime\domain\services {
 
             //Iterate through root tickets first
             foreach ($allTickets as $ticket) {
-                if ($ticket->dependingTicketId == 0 || $ticket->dependingTicketId == "" || $ticket->dependingTicketId == null) {
+                if ($ticket->milestoneid == 0 || $ticket->milestoneid == "" || $ticket->milestoneid == null) {
                     $dateToFinishValue = "";
                     if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
                         $dateToFinish = new DateTime($ticket->dateToFinish);
@@ -577,6 +577,7 @@ namespace leantime\domain\services {
                         'editFrom' => $editFromValue,
                         'editTo' => $editToValue,
                         'dependingTicketId' => "",
+                        'milestoneid' => ''
                     );
 
                     $newTicketId = $this->ticketRepository->addTicket($ticketValues);
@@ -587,7 +588,7 @@ namespace leantime\domain\services {
 
             //Iterate through childObjects
             foreach ($allTickets as $ticket) {
-                if ($ticket->dependingTicketId != "" && $ticket->dependingTicketId > 0) {
+                if ($ticket->milestoneid != "" && $ticket->milestoneid > 0) {
                     $dateToFinishValue = "";
                     if ($ticket->dateToFinish != null && $ticket->dateToFinish != "" && $ticket->dateToFinish != "0000-00-00 00:00:00" && $ticket->dateToFinish != "1969-12-31 00:00:00") {
                         $dateToFinish = new DateTime($ticket->dateToFinish);
@@ -628,7 +629,7 @@ namespace leantime\domain\services {
                         'tags' => $ticket->tags,
                         'editFrom' => $editFromValue,
                         'editTo' => $editToValue,
-                        'dependingTicketId' => $ticketIdList[$ticket->dependingTicketId],
+                        'milestoneid' => $ticketIdList[$ticket->milestoneid],
                     );
 
                     $newTicketId = $this->ticketRepository->addTicket($ticketValues);
@@ -661,9 +662,9 @@ namespace leantime\domain\services {
 
                 if ($canvasItems != false && count($canvasItems) > 0) {
                     foreach ($canvasItems as $item) {
-                        $milestoneId = "";
-                        if (isset($ticketIdList[$item['milestoneId']])) {
-                            $milestoneId = $ticketIdList[$item['milestoneId']];
+                        $milestoneid = "";
+                        if (isset($ticketIdList[$item['milestoneid']])) {
+                            $milestoneid = $ticketIdList[$item['milestoneid']];
                         }
 
                         $canvasItemValues = array(
@@ -679,7 +680,7 @@ namespace leantime\domain\services {
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],
-                            "milestoneId" => $milestoneId
+                            "milestoneId" => $milestoneid
                         );
 
                         $leancanvasRepo->addCanvasItem($canvasItemValues);
@@ -707,8 +708,8 @@ namespace leantime\domain\services {
                 if ($canvasItems != false && count($canvasItems) > 0) {
                     foreach ($canvasItems as $item) {
                         $milestoneId = "";
-                        if (isset($ticketIdList[$item['milestoneId']])) {
-                            $milestoneId = $ticketIdList[$item['milestoneId']];
+                        if (isset($ticketIdList[$item['milestoneid']])) {
+                            $milestoneId = $ticketIdList[$item['milestoneid']];
                         }
 
                         $canvasItemValues = array(
