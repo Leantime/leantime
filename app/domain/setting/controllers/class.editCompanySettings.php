@@ -17,6 +17,7 @@ namespace leantime\domain\controllers {
         private $config;
         private $settingsRepo;
         private services\api $APIService;
+        private services\setting $settingsSvc;
 
         /**
          * constructor - initialize private variables
@@ -33,6 +34,7 @@ namespace leantime\domain\controllers {
             $this->config = \leantime\core\environment::getInstance();
             $this->settingsRepo = new repositories\setting();
             $this->APIService = new services\api();
+            $this->settingsSvc = new services\setting();
         }
 
         /**
@@ -46,6 +48,13 @@ namespace leantime\domain\controllers {
 
 
             if (auth::userIsAtLeast(roles::$owner)) {
+
+
+                if(isset($_GET['resetLogo'])) {
+                    $this->settingsSvc->resetLogo();
+                    $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings#look");
+                }
+
                 $companySettings = array(
                     "logo" => $_SESSION["companysettings.logoPath"],
                     "primarycolor" => $_SESSION["companysettings.primarycolor"],

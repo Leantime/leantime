@@ -320,7 +320,11 @@ namespace leantime\domain\services {
                         'isLdap' => $isLdap
             ]);
 
-            $this->authRepo->updateUserSession($this->userId, $this->session, time());
+            $this->updateUserSessionDB($this->userId, $this->session);
+        }
+
+        public function updateUserSessionDB($userId, $sessionID) {
+            return $this->authRepo->updateUserSession($userId, $sessionID, time());
         }
 
         /**
@@ -340,6 +344,10 @@ namespace leantime\domain\services {
             } else {
                 return false;
             }
+        }
+
+        public function getSessionId() {
+            return $this->session;
         }
 
         /**

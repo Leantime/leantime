@@ -168,6 +168,8 @@ namespace leantime\domain\services {
          */
         public function addUser(array $values): bool|int
         {
+            //Hash password
+            $values['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
             return $this->userRepo->addUser($values);
         }
 

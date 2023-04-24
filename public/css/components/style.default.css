@@ -969,9 +969,7 @@ a .label-default:after, a .label-primary:after {
 /*** LEFT ***/
 
 
-.chzn-container-single .chzn-search input {
-    width:95% !important;
-}
+
 
 
 /*** MAIN PANEL ***/
@@ -3392,10 +3390,6 @@ body .widgettitle .editHeadline:hover {
 .showDialogOnLoad {
 }
 
-.chzn-container-single .chzn-search input {
-    width:95% !important;
-}
-
 .inlineDropDownContainer {
     float:right;
     position:relative;
@@ -3549,19 +3543,19 @@ body .widgettitle .editHeadline:hover {
     clear:both;
 }
 
-.maincontent .chzn-container .chzn-results li {
+.maincontent .chosen-container .chosen-results li {
     margin-bottom:2px;
     list-style-type:none;
     padding:5px;
 }
 
-.maincontent .chzn-container .chzn-results li span,
-.maincontent .chzn-container .chzn-single span{
+.maincontent .chosen-container .chosen-results li span,
+.maincontent .chosen-container .chosen-single span{
     margin-left:0px !important;
 }
 
-.maincontent .chzn-container .chzn-results li span:after,
-.maincontent .chzn-container .chzn-single span:after{
+.maincontent .chosen-container .chosen-results li span:after,
+.maincontent .chosen-container .chosen-single span:after{
     border-color:transparent;
 }
 

@@ -183,18 +183,18 @@ $companySettings = $this->get('companySettings');
                                                             <span class="fileupload-preview"></span>
                                                         </div>
                                                         <span class="btn btn-default btn-file">
-                                        <span class="fileupload-new"><?=$this->__("buttons.select_file")?></span>
-                                        <span class='fileupload-exists'><?=$this->__("buttons.change")?></span>
-                                        <input type='file' name='file' onchange="leantime.settingController.readURL(this)" />
-                                    </span>
+                                                            <span class="fileupload-new"><?=$this->__("buttons.select_file")?></span>
+                                                            <span class='fileupload-exists'><?=$this->__("buttons.change")?></span>
+                                                            <input type='file' name='file' onchange="leantime.settingController.readURL(this)" />
+                                                        </span>
 
                                                         <a href='#' style="margin-left:5px;" class='btn btn-default fileupload-exists' data-dismiss='fileupload' onclick="leantime.usersController.clearCroppie()"><?=$this->__("buttons.remove")?></a>
                                                     </div>
                                                     <p class='stdformbutton'>
-                                    <span id="save-logo" class="btn btn-primary fileupload-exists ld-ext-right">
-                                        <span onclick="leantime.settingController.saveCroppie()"><?=$this->__("buttons.save")?></span>
-                                        <span class="ld ld-ring ld-spin"> </span>
-                                    </span>
+                                                        <span id="save-logo" class="btn btn-primary fileupload-exists ld-ext-right">
+                                                            <span onclick="leantime.settingController.saveCroppie()"><?=$this->__("buttons.save")?></span>
+                                                            <span class="ld ld-ring ld-spin"> </span>
+                                                        </span>
 
                                                         <input id="picSubmit" type="submit" name="savePic" class="hidden" value="<?=$this->__("buttons.upload")?>" />
                                                     </p>
@@ -203,7 +203,9 @@ $companySettings = $this->get('companySettings');
                                         </div>
                                     </div>
                                 </form>
-
+                                <hr />
+                                <?=$this->__("text.logo_reset")?><br /><br />
+                                <a href="<?=CURRENT_URL ?>&resetLogo=1" class="btn btn-default"><?=$this->__("buttons.reset_logo")?></a>
                             </div>
                         </div>
 

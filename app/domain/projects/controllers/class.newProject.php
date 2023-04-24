@@ -88,7 +88,7 @@ namespace leantime\domain\controllers {
                     'dollarBudget' => $_POST['dollarBudget'] ?? 0,
                     'state' => $_POST['projectState'],
                     'psettings' => $_POST['globalProjectUserAccess'],
-                    'menuType' => $_POST['menuType']
+                    'menuType' => $_POST['menuType'] ?? 'default'
                 );
 
                 if ($values['name'] === '') {

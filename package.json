@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "2.3.16",
+  "version": "2.3.17",
   "description": "Open source innovation management system",
   "main": "gruntfile.js",
   "dependencies": {
@@ -9,6 +9,7 @@
     "@popperjs/core": "^2.11.6",
     "chart.js": "^3.8.0",
     "chartjs-adapter-moment": "^1.0.0",
+    "chosen-js": "^1.8.7",
     "composer": "^4.1.0",
     "croppie": "^2.6.5",
     "datatables.net": "^1.12.1",

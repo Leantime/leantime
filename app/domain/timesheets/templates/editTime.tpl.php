@@ -17,9 +17,9 @@ $values = $this->get('values');
             jQuery(".ticket-select").trigger("liszt:updated");
 
             jQuery(".ticket-select option").show();
-            jQuery("#ticketSelect .chzn-results li").show();
+            jQuery("#ticketSelect .chosen-results li").show();
             var selectedValue = jQuery(this).find("option:selected").val();
-            jQuery("#ticketSelect .chzn-results li").not(".project_" + selectedValue).hide();
+            jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
 
 
         });

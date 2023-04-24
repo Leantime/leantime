@@ -145,12 +145,12 @@ leantime.projectsController = (function () {
 
         jQuery(document).ready(function () {
 
-            jQuery("#todosettings select.colorChosen").on('chosen:ready', function (e, chosen) {
+            jQuery("#todosettings select.colorChosen").on('chosen:ready', function (e, params) {
 
                 var id = jQuery(this).attr('id').replace("-", "_");
 
-                jQuery("#" + id + "_chzn a span").removeClass();
-                jQuery("#" + id + "_chzn a span").addClass(params.selected);
+                jQuery("#" + id + "_chosen a span").removeClass();
+                jQuery("#" + id + "_chosen a span").addClass(params.selected);
 
             }).chosen({
                 disable_search_threshold: 10
@@ -160,8 +160,8 @@ leantime.projectsController = (function () {
 
                 var id = jQuery(this).attr('id').replace("-", "_");
 
-                jQuery("#" + id + "_chzn a span").removeClass();
-                jQuery("#" + id + "_chzn a span").addClass(params.selected);
+                jQuery("#" + id + "_chosen a span").removeClass();
+                jQuery("#" + id + "_chosen a span").addClass(params.selected);
 
             });
         });

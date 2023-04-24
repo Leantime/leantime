@@ -351,6 +351,10 @@ namespace leantime\domain\services {
         public function changeCurrentSessionProject($projectId)
         {
 
+            if(isset($_SESSION["currentProjectName"]) === false){
+                $_SESSION["currentProjectName"] = '';
+            }
+
             if ($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
                 //Get user project role
 
