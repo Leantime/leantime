@@ -35,8 +35,8 @@ body.loginpage,
 .nav-list > .active > a,
 .nav-list > .active > a:hover,
 .nav-list > .active > a:focus,
-.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chzn-container-multi .chzn-choices .search-choice,
-div.tagsinput span.tag, .chzn-container .chzn-results .highlighted
+.fc-widget-header, .fc-widget-header.fc-agenda-gutter.fc-last, .chosen-container-multi .chosen-choices .search-choice,
+div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 { background-color: var(--primary-color) }
 
 
@@ -99,7 +99,7 @@ button:hover {
 	color:#fff;
 }
 
-.chzn-container-multi .chzn-choices .search-choice {
+.chosen-container-multi .chosen-choices .search-choice {
 	color:#fff;
 }
 

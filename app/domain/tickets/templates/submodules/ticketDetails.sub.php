@@ -221,7 +221,7 @@
                     <div class="span6">
 
                         <select data-placeholder="<?php echo $this->__('label.filter_by_user'); ?>" style="width:175px;"
-                                name="editorId" class="user-select span11">
+                                name="editorId" id="editorId" class="user-select span11">
                             <option value=""><?php echo $this->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($this->get('users') as $userRow) { ?>
                                 <?php echo "<option value='" . $userRow["id"] . "'";
@@ -233,9 +233,9 @@
                                 echo ">" . $this->escape($userRow["firstname"] . " " . $userRow["lastname"]) . "</option>"; ?>
 
                             <?php } ?>
-                        </select>
+                        </select><br />
                         <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                            <a href="javascript:void(0);" onclick="jQuery('select[name=editorId]').val('<?php echo $_SESSION['userdata']['id']; ?>')"><?php echo $this->__('label.assign_to_me'); ?></a>
+                            <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo $_SESSION['userdata']['id']; ?>).trigger('chosen:updated');"><?php echo $this->__('label.assign_to_me'); ?></a></small>
                         <?php } ?>
                     </div>
                 </div>
