@@ -56,7 +56,7 @@ namespace leantime\domain\controllers {
                 //Delete milestone relationship
                 if (isset($params['removeMilestone']) === true) {
                     $milestoneId = (int)($params['removeMilestone']);
-                    $this->ideaRepo->patchCanvasItem($params['id'], array("milestoneid" => ''));
+                    $this->ideaRepo->patchCanvasItem($params['id'], array("milestoneId" => ''));
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
                 }
 
@@ -82,7 +82,7 @@ namespace leantime\domain\controllers {
                     "data" => "",
                     "conclusion" => "",
                     "milestoneHeadline" => "",
-                    "milestoneid" => ""
+                    "milestoneId" => ""
                 );
 
                 $comments = [];
@@ -120,7 +120,7 @@ namespace leantime\domain\controllers {
                             "conclusion" => "",
                             "itemId" => $params['itemId'],
                             "canvasId" => $currentCanvasId,
-                            "milestoneid" => $params['milestoneid'],
+                            "milestoneId" => $params['milestoneId'],
                             "id" => $params['itemId']
                         );
 

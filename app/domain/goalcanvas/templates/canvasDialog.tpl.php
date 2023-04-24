@@ -127,7 +127,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
             <ul class="sortableTicketList" style="width: 100%">
 
-            <?php if ($canvasItem['milestoneid'] == '') {?>
+            <?php if ($canvasItem['milestoneId'] == '') {?>
                 <li class="ui-state-default center" id="milestone_0">
                     <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
                         <div class="row" id="milestoneSelectors">

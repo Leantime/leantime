@@ -201,7 +201,7 @@ namespace leantime\domain\repositories {
 					conclusion =			:conclusion,
 					modified =			NOW(),
 					status =			:status,
-					milestoneid =			:milestoneid
+					milestoneId =			:milestoneId
 					WHERE id = :id LIMIT 1	";
 
             $stmn = $this->db->database->prepare($sql);
@@ -212,7 +212,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
             $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneid', $values['milestoneid'], PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
 
 
             $stmn->execute();
@@ -401,7 +401,7 @@ namespace leantime\domain\repositories {
 						modified,
 						canvasId,
 						status,
-						milestoneid
+						milestoneId
 				) VALUES (
 						:description,
 						:assumptions,
@@ -413,7 +413,7 @@ namespace leantime\domain\repositories {
 						NOW(),
 						:canvasId,
 						:status,
-						:milestoneid
+						:milestoneId
 				)";
 
             $stmn = $this->db->database->prepare($query);
@@ -426,7 +426,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneid', $values['milestoneid'] ?? "", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();

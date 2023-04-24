@@ -629,7 +629,7 @@ namespace leantime\domain\services {
                         'tags' => $ticket->tags,
                         'editFrom' => $editFromValue,
                         'editTo' => $editToValue,
-                        'milestoneid' => $ticketIdList[$ticket->milestoneId],
+                        'milestoneid' => $ticketIdList[$ticket->milestoneid],
                     );
 
                     $newTicketId = $this->ticketRepository->addTicket($ticketValues);
@@ -680,7 +680,7 @@ namespace leantime\domain\services {
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],
-                            "milestoneid" => $milestoneId
+                            "milestoneId" => $milestoneId
                         );
 
                         $leancanvasRepo->addCanvasItem($canvasItemValues);
@@ -723,7 +723,7 @@ namespace leantime\domain\services {
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],
-                            "milestoneid" => $milestoneId
+                            "milestoneId" => $milestoneId
                         );
 
                         $ideaRepo->addCanvasItem($canvasItemValues);

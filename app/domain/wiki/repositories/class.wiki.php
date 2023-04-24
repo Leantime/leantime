@@ -293,7 +293,7 @@ namespace leantime\domain\repositories {
                      tags = :tags,
                      status = :status,
                      modified = :modified,
-                     milestoneid = :milestoneid
+                     milestoneId = :milestoneId
 
                         WHERE id = :id LIMIT 1";
 
@@ -306,7 +306,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':status', $article->status, PDO::PARAM_STR);
             $stmn->bindValue(':modified', date("Y-m-d"), PDO::PARAM_STR);
             $stmn->bindValue(':id', $article->id, PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneid', $article->milestoneId, PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $article->milestoneId, PDO::PARAM_STR);
 
             $execution = $stmn->execute();
 
