@@ -142,11 +142,11 @@ namespace leantime\domain\controllers\canvas {
                             $id = $this->ticketService->quickAddMilestone($params);
 
                             if ($id !== false) {
-                                $canvasItem['milestoneid'] = $id;
+                                $canvasItem['milestoneId'] = $id;
                             }
                         }
                         if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
-                            $canvasItem['milestoneid'] = $params['existingMilestone'];
+                            $canvasItem['milestoneId'] = $params['existingMilestone'];
                         }
 
                         $this->canvasRepo->editCanvasItem($canvasItem);

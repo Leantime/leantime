@@ -46,7 +46,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <textarea rows="3" cols="10" name="data" class="tinymceSimple"
                   placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
 
-        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneid'] ?>"/>
+        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
         <input type="hidden" name="changeItem" value="1"/>
 
         <?php if ($id != '') { ?>
@@ -129,16 +129,16 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                     ?>
 
-                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneid']; ?>"
+                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>"
                         class="leanCanvasMilestone">
                         <div class="ticketBox fixed">
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneid']; ?>"><?php $this->e($canvasItem['milestoneHeadline']); ?></a></strong>
+                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId']; ?>"><?php $this->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneid']; ?>"
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
                                        class="ideaModal delete"><i class="fa fa-close"></i> <?php echo $this->__("links.remove")?></a>
                                 </div>
                             </div>

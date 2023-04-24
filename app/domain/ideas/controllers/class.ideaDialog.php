@@ -131,12 +131,12 @@ namespace leantime\domain\controllers {
                             $params['editTo'] = date("Y-m-d", strtotime("+1 week"));
                             $id = $this->ticketService->quickAddMilestone($params);
                             if ($id !== false) {
-                                $canvasItem['milestoneid'] = $id;
+                                $canvasItem['milestoneId'] = $id;
                             }
                         }
 
                         if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
-                            $canvasItem['milestoneid'] = $params['existingMilestone'];
+                            $canvasItem['milestoneId'] = $params['existingMilestone'];
                         }
 
                         $this->ideaRepo->editCanvasItem($canvasItem);
