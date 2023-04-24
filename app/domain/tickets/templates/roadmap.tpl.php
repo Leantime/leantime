@@ -185,6 +185,5 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
     <?php } ?>
 
-
-
+    
 </script>
