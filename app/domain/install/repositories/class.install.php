@@ -493,7 +493,7 @@ namespace leantime\domain\repositories {
                   `sortindex` bigint(20) DEFAULT NULL,
                   `kanbanSortIndex` bigint(20) DEFAULT NULL,
                   `tags` varchar(255) DEFAULT NULL,
-                  `milestoneId` INT NULL,
+                  `milestoneid` INT NULL,
                   `leancanvasitemid` INT NULL,
                   `retrospectiveid` INT NULL,
                   `ideaid` INT NULL,
