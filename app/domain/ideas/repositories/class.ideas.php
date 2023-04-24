@@ -313,8 +313,8 @@ namespace leantime\domain\repositories {
 				zp_canvas_items
 
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneid AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
-			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneid
+				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 			    LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = 'idea'
 				WHERE zp_canvas_items.canvasId = :id
 				GROUP BY zp_canvas_items.id
@@ -349,7 +349,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.milestoneId,
 						t1.firstname AS authorFirstname,
 						t1.lastname AS authorLastname,
-						zp_canvas_items.milestoneid,
+						zp_canvas_items.milestoneId,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
@@ -372,7 +372,7 @@ namespace leantime\domain\repositories {
 				FROM
 				zp_canvas_items
 			    LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
-			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneid
+			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
 				WHERE zp_canvas_items.id = :id
 				";

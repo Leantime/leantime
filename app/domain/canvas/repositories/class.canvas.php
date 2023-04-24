@@ -509,7 +509,7 @@ namespace leantime\domain\repositories {
                 FROM
                 zp_canvas_items
                 LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
-                LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneid
+                LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
                 WHERE zp_canvas_items.id = :id
                 ";
