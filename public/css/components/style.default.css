@@ -3829,3 +3829,7 @@ h3.todaysDate {
     position: sticky;
     top: 65px;
 }
+
+.subtaskLineLink {
+    cursor:pointer;
+}

@@ -334,9 +334,12 @@
             <tbody>
                 <?php $this->dispatchTplEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets]); ?>
                 <?php foreach ($allTickets as $rowNum => $row) {?>
-                    <tr>
+                    <tr style="height:1px;">
                         <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
                         <td data-order="<?=$this->e($row['headline']); ?>">
+                            <?php if($row['dependingTicketId'] > 0){ ?>
+                                <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a></small> //<br />
+                            <?php } ?>
                             <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
 
 
@@ -357,6 +360,8 @@
                         <td class="dropdown-cell" data-order="<?=$name ?>">
                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                 <a class="dropdown-toggle status <?=$class ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+
                                     <span class="text">
                                         <?php
 
@@ -381,7 +386,7 @@
 
 
                         <?php
-                        if ($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0) {
+                        if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
                             $milestoneHeadline = $this->escape($row['milestoneHeadline']);
                         } else {
                             $milestoneHeadline = $this->__("label.no_milestone");

@@ -96,13 +96,13 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $type = array('task', 'story', 'bug');
+        public $type = array('task', 'subtask', 'story', 'bug');
 
         /**
          * @access public
          * @var    array
          */
-        public $typeIcons = array('story' => 'fa-book', 'task' => 'fa-check-square', 'bug' => 'fa-bug');
+        public $typeIcons = array('story' => 'fa-book', 'task' => 'fa-check-square', 'subtask' => 'fa-diagram-successor', 'bug' => 'fa-bug');
 
         /**
          * @access private
@@ -303,7 +303,7 @@ namespace leantime\domain\repositories {
 				                OR (project.psettings = 'client' AND project.clientId = :clientId)
 						        )
 
-				  AND ticket.type <> 'Milestone' AND ticket.type <> 'Subtask'
+				  AND ticket.type <> 'milestone'
 				GROUP BY ticket.id
 				ORDER BY ticket.id DESC";
 
@@ -356,6 +356,7 @@ namespace leantime\domain\repositories {
 							zp_tickets.tags,
 							zp_tickets.editorId,
 							zp_tickets.dependingTicketId,
+							zp_tickets.milestoneid,
 							zp_tickets.planHours,
 							zp_tickets.editFrom,
 							zp_tickets.editTo,
@@ -375,7 +376,8 @@ namespace leantime\domain\repositories {
 							IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,
 							COUNT(DISTINCT zp_comment.id) AS commentCount,
 							COUNT(DISTINCT zp_file.id) AS fileCount,
-							COUNT(DISTINCT subtasks.id) AS subtaskCount
+							COUNT(DISTINCT subtasks.id) AS subtaskCount,
+							parent.headline AS parentHeadline
 						FROM
 							zp_tickets
 						LEFT JOIN zp_relationuserproject USING (projectId)
@@ -386,8 +388,9 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_comment ON zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket'
 						LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
 						LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
-						LEFT JOIN zp_tickets AS milestone ON zp_tickets.dependingTicketId = milestone.id AND zp_tickets.dependingTicketId > 0 AND milestone.type = 'milestone'
-						LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0 AND subtasks.type = 'subtask'
+						LEFT JOIN zp_tickets AS milestone ON zp_tickets.milestoneid = milestone.id AND zp_tickets.milestoneid > 0 AND milestone.type = 'milestone'
+						LEFT JOIN zp_tickets AS parent ON zp_tickets.dependingTicketId = parent.id
+						LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0
 						LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
 						WHERE
 						    (zp_relationuserproject.userId = :userId
@@ -395,7 +398,7 @@ namespace leantime\domain\repositories {
 				                OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
 						        )
 
-						  AND zp_tickets.type <> 'subtask' AND zp_tickets.type <> 'milestone'";
+						 AND zp_tickets.type <> 'milestone'";
 
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"]  != "") {
                 $query .= " AND zp_tickets.projectId = :projectId";
@@ -408,7 +411,7 @@ namespace leantime\domain\repositories {
             }
 
             if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
-                $query .= " AND zp_tickets.dependingTicketId = :milestoneId";
+                $query .= " AND zp_tickets.milestoneid = :milestoneid";
             }
 
 
@@ -495,7 +498,7 @@ namespace leantime\domain\repositories {
             }
 
             if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
-                $stmn->bindValue(':milestoneId', $searchCriteria["milestone"], PDO::PARAM_INT);
+                $stmn->bindValue(':milestoneid', $searchCriteria["milestone"], PDO::PARAM_INT);
             }
 
             if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
@@ -572,6 +575,7 @@ namespace leantime\domain\repositories {
 						zp_tickets.editFrom,
 						zp_tickets.editTo,
 						zp_tickets.dependingTicketId,
+						zp_tickets.milestoneid,
 						zp_projects.name AS projectName,
 						zp_clients.name AS clientName,
 						zp_user.firstname AS userFirstname,
@@ -652,17 +656,20 @@ namespace leantime\domain\repositories {
 						zp_tickets.editFrom,
 						zp_tickets.editTo,
 						zp_tickets.dependingTicketId,
+						zp_tickets.milestoneid,
 						zp_projects.name AS projectName,
 						zp_clients.name AS clientName,
 						zp_user.firstname AS userFirstname,
 						zp_user.lastname AS userLastname,
 						t3.firstname AS editorFirstname,
-						t3.lastname AS editorLastname
+						t3.lastname AS editorLastname,
+						parent.headline AS parentHeadline
 					FROM
 						zp_tickets LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
+					    Left JOIN zp_tickets AS parent on zp_tickets.dependingTicketId = parent.id
 					WHERE
 						zp_tickets.id = :ticketId
 					GROUP BY
@@ -707,6 +714,7 @@ namespace leantime\domain\repositories {
 						zp_tickets.editFrom,
 						zp_tickets.editTo,
 						zp_tickets.dependingTicketId,
+						zp_tickets.milestoneid,
 						zp_projects.name AS projectName,
 						zp_clients.name AS clientName,
 						zp_user.firstname AS userFirstname,
@@ -719,7 +727,7 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 					WHERE
-						zp_tickets.dependingTicketId = :ticketId AND zp_tickets.type = 'subtask'
+						zp_tickets.dependingTicketId = :ticketId
 					GROUP BY
 						zp_tickets.id ORDER BY zp_tickets.date DESC";
 
@@ -728,6 +736,63 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
             $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        public function getAllPossibleParents(\leantime\domain\models\tickets $ticket) {
+
+            $query = "SELECT
+						zp_tickets.id,
+						zp_tickets.headline,
+						zp_tickets.type,
+						zp_tickets.description,
+						zp_tickets.date,
+						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
+						DATE_FORMAT(zp_tickets.dateToFinish, '%Y,%m,%e') AS timelineDateToFinish,
+						zp_tickets.dateToFinish,
+						zp_tickets.projectId,
+						zp_tickets.priority,
+						zp_tickets.status,
+						zp_tickets.sprint,
+						zp_tickets.storypoints,
+						IFNULL(zp_tickets.hourRemaining, 0) AS hourRemaining,
+						zp_tickets.acceptanceCriteria,
+						zp_tickets.userId,
+						zp_tickets.editorId,
+						IFNULL(zp_tickets.planHours, 0) AS planHours,
+						zp_tickets.tags,
+						zp_tickets.url,
+						zp_tickets.editFrom,
+						zp_tickets.editTo,
+						zp_tickets.dependingTicketId,
+						zp_tickets.milestoneid,
+						zp_projects.name AS projectName,
+						zp_clients.name AS clientName,
+						zp_user.firstname AS userFirstname,
+						zp_user.lastname AS userLastname,
+						t3.firstname AS editorFirstname,
+						t3.lastname AS editorLastname
+					FROM
+						zp_tickets LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
+						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
+					WHERE
+						zp_tickets.id <> :ticketId
+					    AND zp_tickets.type <> 'milestone'
+					    AND (zp_tickets.dependingTicketId <> :ticketId OR zp_tickets.dependingTicketId IS NULL)
+
+					GROUP BY
+						zp_tickets.id ORDER BY zp_tickets.date DESC";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':ticketId', $ticket->id, PDO::PARAM_INT);
+            $stmn->bindValue(':dependingId', $ticket->dependingTicketId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll(PDO::FETCH_CLASS, 'leantime\domain\models\tickets');
             $stmn->closeCursor();
 
             return $values;
@@ -766,6 +831,7 @@ namespace leantime\domain\repositories {
 						zp_tickets.editTo,
 						zp_tickets.sortIndex,
 						zp_tickets.dependingTicketId,
+						zp_tickets.milestoneid,
 						zp_projects.name AS projectName,
 						zp_clients.name AS clientName,
 						zp_user.firstname AS userFirstname,
@@ -774,8 +840,8 @@ namespace leantime\domain\repositories {
 						t3.lastname AS editorLastname,
 						t3.profileId AS editorProfileId,
 
-						(SELECT SUM(progressSub.planHours) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS planHours,
-						(SELECT SUM(progressSub.hourRemaining) FROM zp_tickets as progressSub WHERE progressSub.dependingTicketId = zp_tickets.id) AS hourRemaining,
+						(SELECT SUM(progressSub.planHours) FROM zp_tickets as progressSub WHERE progressSub.milestoneid = zp_tickets.id) AS planHours,
+						(SELECT SUM(progressSub.hourRemaining) FROM zp_tickets as progressSub WHERE progressSub.milestoneid = zp_tickets.id) AS hourRemaining,
 						SUM(ROUND(timesheets.hours, 2)) AS bookedHours,
 
 						COUNT(DISTINCT progressTickets.id) AS allTickets,
@@ -792,15 +858,15 @@ namespace leantime\domain\repositories {
                             ELSE
                               0
                             END) AS percentDone
-                        FROM zp_tickets AS progressSub WHERE progressSub.dependingTicketId = zp_tickets.id AND progressSub.type <> 'milestone') AS percentDone
+                        FROM zp_tickets AS progressSub WHERE progressSub.milestoneid = zp_tickets.id AND progressSub.type <> 'milestone') AS percentDone
 					FROM
 						zp_tickets
 						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-						LEFT JOIN zp_tickets AS depMilestone ON zp_tickets.dependingTicketId = depMilestone.id
+						LEFT JOIN zp_tickets AS depMilestone ON zp_tickets.milestoneid = depMilestone.id
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user ON zp_tickets.userId = zp_user.id
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
-						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_tickets.id AND progressTickets.type <> 'Milestone' AND progressTickets.type <> 'Subtask'
+						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_tickets.id AND progressTickets.type <> 'milestone'
 						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
 						WHERE 1 = 1 ";
 
@@ -822,10 +888,10 @@ namespace leantime\domain\repositories {
             }
 
                 $query .= "	GROUP BY
-						zp_tickets.id, progressTickets.dependingTicketId";
+						zp_tickets.id, progressTickets.milestoneid";
 
             if ($sortBy == "date") {
-                $query .= "	ORDER BY TO_DAYS(IF(zp_tickets.editFrom <> '0000-00-00 00:00:00', zp_tickets.editFrom, NOW())) ASC, zp_tickets.dependingTicketId ASC";
+                $query .= "	ORDER BY TO_DAYS(IF(zp_tickets.editFrom <> '0000-00-00 00:00:00', zp_tickets.editFrom, NOW())) ASC, zp_tickets.milestoneid ASC";
             } elseif ($sortBy == "duedate") {
                 $query .= "	ORDER BY TO_DAYS(zp_tickets.editTo) ASC";
             } elseif ($sortBy == "headline") {
@@ -905,12 +971,13 @@ namespace leantime\domain\repositories {
 						zp_tickets.url,
 						zp_tickets.editFrom,
 						zp_tickets.editTo,
-						zp_tickets.dependingTicketId
+						zp_tickets.dependingTicketId,
+						zp_tickets.milestoneid
 
 					FROM
 						zp_tickets
 					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
+						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
                     ORDER BY
 					    zp_tickets.date ASC
 					LIMIT 1";
@@ -934,7 +1001,7 @@ namespace leantime\domain\repositories {
 					FROM
 						zp_tickets
 					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask'";
+						zp_tickets.type <> 'milestone'";
 
             if (!is_null($projectId)) {
                 $query .= "AND zp_tickets.projectId = :projectId ";
@@ -992,7 +1059,7 @@ namespace leantime\domain\repositories {
 					FROM
 						zp_tickets
 					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
+						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
 						AND zp_tickets.status " . $statusGroups["DONE"] . "
                     ORDER BY
 					    zp_tickets.date ASC
@@ -1019,7 +1086,7 @@ namespace leantime\domain\repositories {
 					FROM
 						zp_tickets
 					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
+						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
 						AND zp_tickets.status " . $statusGroups["DONE"] . "
                     ORDER BY
 					    zp_tickets.date ASC
@@ -1046,7 +1113,7 @@ namespace leantime\domain\repositories {
 					FROM
 						zp_tickets
 					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND zp_tickets.projectId = :projectId
+						zp_tickets.type <> 'milestone' AND zp_tickets.projectId = :projectId
                     ORDER BY
 					    zp_tickets.date ASC
 					LIMIT 1";
@@ -1070,7 +1137,7 @@ namespace leantime\domain\repositories {
 					FROM
 						zp_tickets
 					WHERE
-						zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' AND
+						zp_tickets.type <> 'milestone' AND
 						(zp_tickets.storypoints <> '' AND zp_tickets.storypoints IS NOT NULL) AND zp_tickets.projectId = :projectId
                     ORDER BY
 					    zp_tickets.date ASC
@@ -1118,6 +1185,7 @@ namespace leantime\domain\repositories {
 						editTo,
 						editorId,
 						dependingTicketId,
+                        milestoneid,
 						sortindex,
 						kanbanSortindex
 				) VALUES (
@@ -1140,6 +1208,7 @@ namespace leantime\domain\repositories {
 						:editTo,
 						:editorId,
 						:dependingTicketId,
+				         :milestoneid,
 						0,
 						0
 				)";
@@ -1174,6 +1243,14 @@ namespace leantime\domain\repositories {
             }
 
             $stmn->bindValue(':dependingTicketId', $depending, PDO::PARAM_STR);
+
+            if (isset($values['milestoneid'])) {
+                $milestoneId = $values['milestoneid'];
+            } else {
+                $milestoneId = "";
+            }
+
+            $stmn->bindValue(':milestoneid', $milestoneId, PDO::PARAM_STR);
 
             $stmn->execute();
 
@@ -1239,7 +1316,8 @@ namespace leantime\domain\repositories {
 				editFrom = :editFrom,
 				editTo = :editTo,
 				acceptanceCriteria = :acceptanceCriteria,
-				dependingTicketId = :dependingTicketId
+				dependingTicketId = :dependingTicketId,
+				milestoneid = :milestoneid
 			WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -1262,6 +1340,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':editTo', $values['editTo'], PDO::PARAM_STR);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
             $stmn->bindValue(':dependingTicketId', $values['dependingTicketId'], PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneid', $values['milestoneid'], PDO::PARAM_STR);
 
 
             $result = $stmn->execute();
@@ -1398,8 +1477,8 @@ namespace leantime\domain\repositories {
 
             $query = "UPDATE zp_tickets
                 SET
-                    dependingTicketId = ''
-                WHERE dependingTicketId = :id";
+                    milestoneid = ''
+                WHERE milestoneid = :id";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
@@ -1408,8 +1487,8 @@ namespace leantime\domain\repositories {
 
             $query = "UPDATE zp_canvas_items
                 SET
-                    milestoneId = ''
-                WHERE milestoneId = :id";
+                    milestoneid = ''
+                WHERE milestoneid = :id";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);

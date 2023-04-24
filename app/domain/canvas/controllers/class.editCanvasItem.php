@@ -57,7 +57,7 @@ namespace leantime\domain\controllers\canvas {
 
                 // Delete milestone relationship
                 if (isset($params['removeMilestone'])) {
-                    $this->canvasRepo->patchCanvasItem($params['id'], array('milestoneId' => ''));
+                    $this->canvasRepo->patchCanvasItem($params['id'], array('milestoneid' => ''));
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), 'success');
                 }
 
@@ -85,7 +85,7 @@ namespace leantime\domain\controllers\canvas {
                     'data' => '',
                     'conclusion' => '',
                     'milestoneHeadline' => '',
-                    'milestoneId' => ''
+                    'milestoneid' => ''
                 );
 
                 $comments = [];
@@ -128,7 +128,7 @@ namespace leantime\domain\controllers\canvas {
                             'conclusion' => $params['conclusion'],
                             'itemId' => $params['itemId'],
                             'canvasId' => $currentCanvasId,
-                            'milestoneId' => $params['milestoneId'],
+                            'milestoneid' => $params['milestoneid'],
                             'dependentMilstone' => '',
                             "id" => $params['itemId']
                         );
@@ -142,11 +142,11 @@ namespace leantime\domain\controllers\canvas {
                             $id = $this->ticketService->quickAddMilestone($params);
 
                             if ($id !== false) {
-                                $canvasItem['milestoneId'] = $id;
+                                $canvasItem['milestoneid'] = $id;
                             }
                         }
                         if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
-                            $canvasItem['milestoneId'] = $params['existingMilestone'];
+                            $canvasItem['milestoneid'] = $params['existingMilestone'];
                         }
 
                         $this->canvasRepo->editCanvasItem($canvasItem);
@@ -296,7 +296,7 @@ namespace leantime\domain\controllers\canvas {
                     'data' => '',
                     'conclusion' => '',
                     'milestoneHeadline' => '',
-                    'milestoneId' => ''
+                    'milestoneid' => ''
                 );
                 $comments = array();
                 $this->tpl->assign('canvasItem', $value);

@@ -121,6 +121,8 @@ module.exports = function (grunt) {
                     "node_modules/jstree/dist/jstree.js",
                     "node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
 
+                    "node_modules/leader-line/leader-line.min.js",
+
                     "public/js/libs/tinymce-plugins/helper.js",
                     "public/js/libs/tinymce-plugins/checklist/index.js",
                     "public/js/libs/tinymce-plugins/shortlink/index.js",

@@ -37,7 +37,7 @@ namespace leantime\domain\repositories {
         public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
 
         private core\language $language;
-        
+
         /**
          * __construct - get db connection
          *
@@ -201,7 +201,7 @@ namespace leantime\domain\repositories {
 					conclusion =			:conclusion,
 					modified =			NOW(),
 					status =			:status,
-					milestoneId =			:milestoneId
+					milestoneid =			:milestoneid
 					WHERE id = :id LIMIT 1	";
 
             $stmn = $this->db->database->prepare($sql);
@@ -212,7 +212,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
             $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneid', $values['milestoneid'], PDO::PARAM_STR);
 
 
             $stmn->execute();
@@ -313,8 +313,8 @@ namespace leantime\domain\repositories {
 				zp_canvas_items
 
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
-			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneid AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneid
 			    LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = 'idea'
 				WHERE zp_canvas_items.canvasId = :id
 				GROUP BY zp_canvas_items.id
@@ -349,7 +349,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.milestoneId,
 						t1.firstname AS authorFirstname,
 						t1.lastname AS authorLastname,
-						zp_canvas_items.milestoneId,
+						zp_canvas_items.milestoneid,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
 						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
@@ -371,8 +371,8 @@ namespace leantime\domain\repositories {
 						END AS percentDone
 				FROM
 				zp_canvas_items
-			    LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
-			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+			    LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneid
 				LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
 				WHERE zp_canvas_items.id = :id
 				";
@@ -401,7 +401,7 @@ namespace leantime\domain\repositories {
 						modified,
 						canvasId,
 						status,
-						milestoneId
+						milestoneid
 				) VALUES (
 						:description,
 						:assumptions,
@@ -413,7 +413,7 @@ namespace leantime\domain\repositories {
 						NOW(),
 						:canvasId,
 						:status,
-						:milestoneId
+						:milestoneid
 				)";
 
             $stmn = $this->db->database->prepare($query);
@@ -426,7 +426,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneid', $values['milestoneid'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();

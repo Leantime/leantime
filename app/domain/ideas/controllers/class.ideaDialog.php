@@ -56,7 +56,7 @@ namespace leantime\domain\controllers {
                 //Delete milestone relationship
                 if (isset($params['removeMilestone']) === true) {
                     $milestoneId = (int)($params['removeMilestone']);
-                    $this->ideaRepo->patchCanvasItem($params['id'], array("milestoneId" => ''));
+                    $this->ideaRepo->patchCanvasItem($params['id'], array("milestoneid" => ''));
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
                 }
 
@@ -82,7 +82,7 @@ namespace leantime\domain\controllers {
                     "data" => "",
                     "conclusion" => "",
                     "milestoneHeadline" => "",
-                    "milestoneId" => ""
+                    "milestoneid" => ""
                 );
 
                 $comments = [];
@@ -120,7 +120,7 @@ namespace leantime\domain\controllers {
                             "conclusion" => "",
                             "itemId" => $params['itemId'],
                             "canvasId" => $currentCanvasId,
-                            "milestoneId" => $params['milestoneId'],
+                            "milestoneid" => $params['milestoneid'],
                             "id" => $params['itemId']
                         );
 
@@ -131,12 +131,12 @@ namespace leantime\domain\controllers {
                             $params['editTo'] = date("Y-m-d", strtotime("+1 week"));
                             $id = $this->ticketService->quickAddMilestone($params);
                             if ($id !== false) {
-                                $canvasItem['milestoneId'] = $id;
+                                $canvasItem['milestoneid'] = $id;
                             }
                         }
 
                         if (isset($params['existingMilestone']) && $params['existingMilestone'] != '') {
-                            $canvasItem['milestoneId'] = $params['existingMilestone'];
+                            $canvasItem['milestoneid'] = $params['existingMilestone'];
                         }
 
                         $this->ideaRepo->editCanvasItem($canvasItem);

@@ -259,6 +259,12 @@ namespace leantime\domain\services {
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
+        public function getAllPossibleParents(models\tickets $ticket) {
+
+            return $this->ticketRepository->getAllPossibleParents($ticket);
+
+        }
+
         public function getTicket($id)
         {
 
@@ -457,7 +463,8 @@ namespace leantime\domain\services {
                 'tags' => '',
                 'editFrom' => '',
                 'editTo' => '',
-                'dependingTicketId' => isset($params['milestone']) ? (int) $params['milestone'] : ""
+                'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : "",
+                'dependingTicketId' => ''
             );
 
             if ($values['headline'] == "") {
@@ -512,7 +519,8 @@ namespace leantime\domain\services {
                 'planHours' => '',
                 'sprint' => '',
                 'priority' => 3,
-                'dependingTicketId' => $params['dependentMilestone'],
+                'dependingTicketId' => '',
+                'milestoneid' => $params['dependentMilestone'],
                 'acceptanceCriteria' => '',
                 'tags' => $params['tags'],
                 'editFrom' => $this->language->getISODateString($params['editFrom']),
@@ -554,7 +562,8 @@ namespace leantime\domain\services {
                 'timeFrom' => $values['timeFrom'],
                 'editTo' => $values['editTo'],
                 'timeTo' => $values['timeTo'],
-                'dependingTicketId' => $values['dependingTicketId']
+                'dependingTicketId' => $values['dependingTicketId'],
+                'milestoneid' => $values['milestoneid'],
             );
 
             if (!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $values['projectId'])) {
@@ -642,7 +651,8 @@ namespace leantime\domain\services {
                 'timeFrom' => $values['timeFrom'],
                 'editTo' => $values['editTo'],
                 'timeTo' => $values['timeTo'],
-                'dependingTicketId' => $values['dependingTicketId']
+                'dependingTicketId' => $values['dependingTicketId'],
+                'milestoneid' => $values['milestoneid'],
             );
 
             if (!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $values['projectId'])) {
@@ -738,7 +748,7 @@ namespace leantime\domain\services {
                 }
 
                 //Update ticket
-                return $this->patchTicket($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => ""]);
+                return $this->patchTicket($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => "", 'milestoneid' => '']);
 
 
             }
@@ -766,7 +776,7 @@ namespace leantime\domain\services {
                 'sprint' => '',
                 'acceptanceCriteria' => '',
                 'priority' => 3,
-                'dependingTicketId' => $params['dependentMilestone'],
+                'milestoneid' => $params['dependentMilestone'],
                 'tags' => $params['tags'],
                 'editFrom' => $this->language->getISODateString($params['editFrom']),
                 'editTo' => $this->language->getISODateString($params['editTo'])
@@ -806,6 +816,7 @@ namespace leantime\domain\services {
                 'editFrom' => "",
                 'editTo' => "",
                 'dependingTicketId' => $parentTicket->id,
+                'milestoneid' => $parentTicket->milestoneId
             );
 
             if ($subtaskId == "new" || $subtaskId == "") {

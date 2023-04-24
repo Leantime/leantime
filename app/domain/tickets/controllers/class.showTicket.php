@@ -85,6 +85,7 @@ namespace leantime\domain\controllers {
                 }
 
                 $this->tpl->assign('ticket', $ticket);
+                $this->tpl->assign('ticketParents', $this->ticketService->getAllPossibleParents($ticket));
                 $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                 $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                 $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());

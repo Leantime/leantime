@@ -146,13 +146,22 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     $sortIndex = $mlst->sortIndex;
                 }
 
+                $dependencyList = array();
+                if($mlst->milestoneid != 0){
+                    $dependencyList[] = $mlst->milestoneid;
+                }
+
+                if($mlst->dependingTicketId != 0) {
+                    $dependencyList[] = $mlst->dependingTicketId;
+                }
+
                 echo"{
                     id :'" . $mlst->id . "',
                     name :" . json_encode($headline) .",
                     start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',
                     end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time()))) . "',
                     progress :'" . $mlst->percentDone . "',
-                    dependencies :'" . ($mlst->dependingTicketId != 0 ? $mlst->dependingTicketId : '') . "',
+                    dependencies :'" . implode(",", $dependencyList) . "',
                     custom_class :'',
                     type: '" . strtolower($mlst->type) . "',
                     bg_color: '" . $color . "',

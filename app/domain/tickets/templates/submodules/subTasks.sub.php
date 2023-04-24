@@ -62,7 +62,9 @@ foreach ($this->get('allSubTasks') as $subticket) {
                             </ul>
                         </div>
                     <?php } ?>
-                    <input type="text" name="subtaskheadline" value="<?=$this->escape($subticket['headline'])?>" data-label="headline-<?=$subticket['id']?>" class="asyncInputUpdate"/>
+
+                    <a href="<?=$_SESSION['lastPage']?>#/tickets/showTicket/<?=$subticket['id']?>"><?=$this->escape($subticket['headline'])?></a>
+
                 </div>
             </div>
             <div class="row">

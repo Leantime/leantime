@@ -31,6 +31,8 @@ namespace leantime\domain\models {
         public $timeFrom;
         public $timeTo;
         public $dependingTicketId;
+        public $parentHeadline;
+        public $milestoneid;
 
         public $projectName;
         public $clientName;
@@ -66,7 +68,7 @@ namespace leantime\domain\models {
                 $this->editFrom = $values["editFrom"] ?? '';
                 $this->editTo = $values["editTo"] ?? '';
                 $this->dependingTicketId = $values["dependingTicketId"] ?? '';
-
+                $this->milestoneid = $values["milestoneid"] ?? '';
                 $this->projectName = $values["projectName"] ?? '';
                 $this->clientName = $values["clientName"] ?? '';
                 $this->userFirstname = $values["userFirstname"] ?? '';
@@ -74,6 +76,7 @@ namespace leantime\domain\models {
                 $this->editorFirstname = $values["editorFirstname"] ?? '';
                 $this->editorLastname = $values["editorLastname"] ?? '';
             }
+
         }
     }
 

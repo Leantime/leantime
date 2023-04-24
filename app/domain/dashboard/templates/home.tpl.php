@@ -206,7 +206,10 @@
 
                                                         <?php } ?>
                                                         <small><?=$this->e($row['projectName']) ?></small><br />
-                                                        <strong><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                        <?php if($row['dependingTicketId'] > 0){ ?>
+                                                            <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$this->escape($row['parentHeadline']) ?></a> //
+                                                        <?php } ?>
+                                                        <strong><a class='ticketModal' href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                     </div>
                                                 </div>
@@ -242,7 +245,7 @@
                                                             <div class="dropdown ticketDropdown milestoneDropdown colorized show">
                                                                 <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                if ($row['dependingTicketId'] != "" && $row['dependingTicketId'] != 0) {
+                                                                if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
                                                                     $this->e($row['milestoneHeadline']);
                                                                 } else {
                                                                     echo $this->__("label.no_milestone");

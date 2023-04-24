@@ -90,8 +90,8 @@
     leantime.ticketsController.initTagsInput();
 
     jQuery(window).load(function () {
-        jQuery(window).resize();
 
+        jQuery(window).resize();
 
     });
 

@@ -103,7 +103,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
 
-        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
+        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneid'] ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if ($id != '') {?>
@@ -121,7 +121,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
             <ul class="sortableTicketList" style="width: 100%">
 
-            <?php if ($canvasItem['milestoneId'] == '') {?>
+            <?php if ($canvasItem['milestoneid'] == '') {?>
                 <li class="ui-state-default center" id="milestone_0">
                     <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
                         <div class="row" id="milestoneSelectors">
@@ -178,15 +178,15 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                 ?>
 
-                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
+                    <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneid']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
                         <div class="ticketBox fixed">
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php echo $canvasItem['milestoneHeadline']; ?></a></strong>
+                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneid'];?>" ><?php echo $canvasItem['milestoneHeadline']; ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
+                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneid'];?>" class="<?=$canvasName ?>CanvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
                                 </div>
                             </div>
                             <div class="row">

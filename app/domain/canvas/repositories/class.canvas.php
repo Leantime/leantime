@@ -356,7 +356,7 @@ namespace leantime\domain\repositories {
                     modified =            NOW(),
                     status =            :status,
                     relates =            :relates,
-                    milestoneId =            :milestoneId
+                    milestoneid =            :milestoneid
                     WHERE id = :id LIMIT 1    ";
 
             $stmn = $this->db->database->prepare($sql);
@@ -368,7 +368,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneid', $values['milestoneid'], PDO::PARAM_STR);
 
             $stmn->execute();
             $stmn->closeCursor();
@@ -450,8 +450,8 @@ namespace leantime\domain\repositories {
                 zp_canvas_items
 
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-                LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
-                LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+                LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+                LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneid
                 LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = '" . static::CANVAS_NAME . "canvasitem'
                 WHERE zp_canvas_items.canvasId = :id
                 GROUP BY zp_canvas_items.id
@@ -508,8 +508,8 @@ namespace leantime\domain\repositories {
                         END AS percentDone
                 FROM
                 zp_canvas_items
-                LEFT JOIN zp_tickets AS progressTickets ON progressTickets.dependingTicketId = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
-                LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+                LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
+                LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneid
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
                 WHERE zp_canvas_items.id = :id
                 ";
@@ -539,7 +539,7 @@ namespace leantime\domain\repositories {
                         canvasId,
                         status,
                         relates,
-                        milestoneId
+                        milestoneid
                 ) VALUES (
                         :description,
                         :assumptions,
@@ -552,7 +552,7 @@ namespace leantime\domain\repositories {
                         :canvasId,
                         :status,
                         :relates,
-                        :milestoneId
+                        :milestoneid
                 )";
 
             $stmn = $this->db->database->prepare($query);
@@ -566,7 +566,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneid', $values['milestoneid'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();
@@ -694,7 +694,7 @@ namespace leantime\domain\repositories {
 
             // Copy elements from existing canvas to new canvas
             $sql = "INSERT INTO " .
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneid) " .
               "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '' " .
               "FROM zp_canvas_items WHERE canvasId = $canvasId";
             $stmn = $this->db->database->prepare($sql);
@@ -718,7 +718,7 @@ namespace leantime\domain\repositories {
 
             // Copy elements from merge canvas into current canvas
             $sql = "INSERT INTO " .
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
+              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneid) " .
               "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '' " .
               "FROM zp_canvas_items WHERE canvasId = $mergeId";
             $stmn = $this->db->database->prepare($sql);

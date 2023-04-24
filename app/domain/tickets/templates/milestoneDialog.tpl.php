@@ -47,7 +47,7 @@ $statusLabels = $this->get('statusLabels');
                 if ($milestoneRow->id !== $currentMilestone->id) {
                     echo "<option value='" . $milestoneRow->id . "'";
 
-                    if ($currentMilestone->dependingTicketId == $milestoneRow->id) {
+                    if ($currentMilestone->milestoneId == $milestoneRow->id) {
                         echo " selected='selected' ";
                     }
 
