@@ -555,46 +555,50 @@ if ($numberofColumns > 0) {
             var startElement = jQuery('#subtaskLink_<?=$ticket['dependingTicketId']; ?>')[0];
             var endElement =  document.getElementById('ticket_<?=$ticket['id']; ?>');
 
-            var startAnchor = LeaderLine.mouseHoverAnchor({
-                element: startElement,
-                showEffectName: 'draw',
-                style: {background:'none', backgroundColor:'none'},
-                hoverStyle: {background:'none', backgroundColor:'none', cursor: 'pointer'}
-            });
+            if ( startElement != null && endElement != undefined) {
 
-            var line<?=$ticket['id'] ?> = new LeaderLine(startAnchor, endElement, {
-                startPlugColor: 'var(--accent1)',
-                endPlugColor: 'var(--accent2)',
-                gradient: true,
-                size: 2,
-                path: "grid",
-                startSocket: 'bottom',
-                endSocket: 'auto'
-            });
 
-            jQuery("#ticket_<?=$ticket['id'] ?>").mousedown(function() {
-                isDragging = false;
-            })
-            .mousemove(function() {
-                isDragging = true;
-                line<?=$ticket['id'] ?>.position();
-            })
-            .mouseup(function() {
-                line<?=$ticket['id'] ?>.position();
-            });
+                var startAnchor = LeaderLine.mouseHoverAnchor({
+                    element: startElement,
+                    showEffectName: 'draw',
+                    style: {background: 'none', backgroundColor: 'none'},
+                    hoverStyle: {background: 'none', backgroundColor: 'none', cursor: 'pointer'}
+                });
 
-            jQuery("#ticket_<?=$ticket['dependingTicketId'] ?>").mousedown(function() {
+                var line<?=$ticket['id'] ?> = new LeaderLine(startAnchor, endElement, {
+                    startPlugColor: 'var(--accent1)',
+                    endPlugColor: 'var(--accent2)',
+                    gradient: true,
+                    size: 2,
+                    path: "grid",
+                    startSocket: 'bottom',
+                    endSocket: 'auto'
+                });
 
-            })
-            .mousemove(function() {
+                jQuery("#ticket_<?=$ticket['id'] ?>").mousedown(function () {
+                    isDragging = false;
+                })
+                    .mousemove(function () {
+                        isDragging = true;
+                        line<?=$ticket['id'] ?>.position();
+                    })
+                    .mouseup(function () {
+                        line<?=$ticket['id'] ?>.position();
+                    });
 
-                line<?=$ticket['id'] ?>.position();
-            })
-            .mouseup(function() {
-                line<?=$ticket['id'] ?>.position();
+                jQuery("#ticket_<?=$ticket['dependingTicketId'] ?>").mousedown(function () {
 
-            });
+                })
+                    .mousemove(function () {
 
+                        line<?=$ticket['id'] ?>.position();
+                    })
+                    .mouseup(function () {
+                        line<?=$ticket['id'] ?>.position();
+
+                    });
+
+            }
 
         <?php }
         } ?>

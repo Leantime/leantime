@@ -741,7 +741,7 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllPossibleParents(\leantime\domain\models\tickets $ticket) {
+        public function getAllPossibleParents(\leantime\domain\models\tickets $ticket, $projectId) {
 
             $query = "SELECT
 						zp_tickets.id,
@@ -783,13 +783,23 @@ namespace leantime\domain\repositories {
 						zp_tickets.id <> :ticketId
 					    AND zp_tickets.type <> 'milestone'
 					    AND (zp_tickets.dependingTicketId <> :ticketId OR zp_tickets.dependingTicketId IS NULL)
+                    ";
 
-					GROUP BY
+                    if($projectId !== 0){
+                        $query .= " AND zp_tickets.projectId = :projectId";
+                    }
+
+                    $query .= " GROUP BY
 						zp_tickets.id ORDER BY zp_tickets.date DESC";
 
             $stmn = $this->db->database->prepare($query);
+
             $stmn->bindValue(':ticketId', $ticket->id, PDO::PARAM_INT);
             $stmn->bindValue(':dependingId', $ticket->dependingTicketId, PDO::PARAM_INT);
+
+            if($projectId !== 0){
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
             $values = $stmn->fetchAll(PDO::FETCH_CLASS, 'leantime\domain\models\tickets');

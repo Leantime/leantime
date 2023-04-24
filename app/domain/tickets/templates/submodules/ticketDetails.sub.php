@@ -162,7 +162,7 @@
                     <label class="span4 control-label"><?php echo $this->__('label.milestone'); ?></label>
                     <div class="span6">
                         <div class="form-group">
-                            <select  name="milestoneId"  class="span11" >
+                            <select  name="milestoneid"  class="span11" >
                                 <option value=""><?php echo $this->__('label.not_assigned_to_milestone'); ?></option>
                                 <?php foreach ($this->get('milestones') as $milestoneRow) {     ?>
                                     <?php echo"<option value='" . $milestoneRow->id . "'";

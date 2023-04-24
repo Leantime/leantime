@@ -259,9 +259,13 @@ namespace leantime\domain\services {
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
-        public function getAllPossibleParents(models\tickets $ticket) {
+        public function getAllPossibleParents(models\tickets $ticket, $projectId = 'currentProject') {
 
-            return $this->ticketRepository->getAllPossibleParents($ticket);
+            if($projectId == 'currentProject') {
+                $projectId = $_SESSION['currentProject'];
+            }
+
+            return $this->ticketRepository->getAllPossibleParents($ticket, $projectId);
 
         }
 
