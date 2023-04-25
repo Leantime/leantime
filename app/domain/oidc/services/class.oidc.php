@@ -200,8 +200,7 @@ class oidc {
                 $result = [];
                 parse_str($response->getBody()->getContents(), $result);
                 return $result;
-
-            case 'application/json':
+            default:
                 return json_decode($response->getBody()->getContents(), true);
         }
 
