@@ -76,9 +76,9 @@
                                         <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
                                             <link rel="preload" href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['id'];?>" as="fetch" crossorigin="">
                                             <?php if($row['dependingTicketId'] > 0){ ?>
-                                                <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$this->escape($row['parentHeadline']) ?></a> //
+                                                <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a> //
                                             <?php } ?>
-                                            <strong><a class='ticketModal' href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                            <strong><a href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                             <?php if ($login::userIsAtLeast($roles::$editor)) {
                                                 $clockedIn = $this->get("onTheClock");

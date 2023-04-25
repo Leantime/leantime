@@ -207,9 +207,9 @@
                                                         <?php } ?>
                                                         <small><?=$this->e($row['projectName']) ?></small><br />
                                                         <?php if($row['dependingTicketId'] > 0){ ?>
-                                                            <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$this->escape($row['parentHeadline']) ?></a> //
+                                                            <a href="<?=BASE_URL?>/dashboard/home/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a> //
                                                         <?php } ?>
-                                                        <strong><a class='ticketModal' href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                                        <strong><a href="<?=BASE_URL ?>/dashboard/home/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
 
                                                     </div>
                                                 </div>
