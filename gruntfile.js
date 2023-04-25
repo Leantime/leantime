@@ -64,15 +64,14 @@ module.exports = function (grunt) {
                     "public/js/libs/jquery.tagsinput.min.js",
                     "public/js/libs/confetti/js/confetti.js",
                     "node_modules/fullcalendar/index.global.min.js",
-
                 ],
                 dest: "public/js/compiled-base-libs.min.js"
             },
             extended_lib_src: {
                 options: {
                     sourceMap: true,
-                    sourceMapName: "public/js/jsSourceMapExtendedSrc.map"
-                    , sourceMapUrl: "jsSourceMapExtendedSrc.map",
+                    sourceMapName: "public/js/jsSourceMapExtendedSrc.map",
+                    sourceMapUrl: "jsSourceMapExtendedSrc.map",
                     mangle: false
                 },
                 src: [
@@ -111,12 +110,9 @@ module.exports = function (grunt) {
                     "node_modules/tinymce/plugins/visualchars/plugin.js",
                     "node_modules/tinymce/plugins/emoticons/plugin.js",
                     "node_modules/tinymce/plugins/emoticons/js/emojis.min.js",
-
                     "node_modules/tinymce/plugins/advlist/plugin.js",
                     "node_modules/tinymce/plugins/autoresize/plugin.js",
                     "node_modules/tinymce/plugins/codesample/plugin.js",
-
-
                     "node_modules/isotope-layout/dist/isotope.pkgd.js",
                     "node_modules/jstree/dist/jstree.js",
                     "node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
