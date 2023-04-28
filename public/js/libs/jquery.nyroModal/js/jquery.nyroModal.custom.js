@@ -847,12 +847,16 @@ jQuery(function($, undefined) {
                     clb();
                 },
                 showCont: function(nm, clb) {
-                    nm.elts.cont.show();
-                    clb();
+                    if(nm.elts.cont != null) {
+                        nm.elts.cont.show();
+                        clb();
+                    }
                 },
                 hideCont: function(nm, clb) {
-                    nm.elts.cont.hide();
-                    clb();
+                    if(nm.elts.cont != null) {
+                        nm.elts.cont.hide();
+                        clb();
+                    }
                 },
                 showTrans: function(nm, clb) {
                     nm.elts.cont.hide();
@@ -860,9 +864,13 @@ jQuery(function($, undefined) {
                     clb();
                 },
                 hideTrans: function(nm, clb) {
-                    nm.elts.cont.show();
-                    nm.elts.load.hide();
-                    clb();
+
+                    if(nm.elts.cont != null && nm.elts.load != null) {
+                        nm.elts.cont.show();
+                        nm.elts.load.hide();
+                        clb();
+                    }
+
                 },
                 resize: function(nm, clb) {
 
@@ -915,15 +923,18 @@ jQuery(function($, undefined) {
                 },
                 beforeShowCont: function(nm) {
                     $('body').css('overflow', "hidden");
-                    nm.elts.cont
-                        .find('.nyroModal').each(function() {
-                        var cur = $(this);
-                        cur.nyroModal(nm.getForNewLinks(cur), true);
-                    }).end()
-                        .find('.nyroModalClose').bind('click.nyroModal', function(e) {
-                        e.preventDefault();
-                        nm.close();
-                    });
+
+                    if(nm.elts.cont != null) {
+                        nm.elts.cont
+                            .find('.nyroModal').each(function () {
+                            var cur = $(this);
+                            cur.nyroModal(nm.getForNewLinks(cur), true);
+                        }).end()
+                            .find('.nyroModalClose').bind('click.nyroModal', function (e) {
+                            e.preventDefault();
+                            nm.close();
+                        });
+                    }
                 },
                 keyHandle: function(nm) {
                     // used for escape key

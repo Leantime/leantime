@@ -91,6 +91,9 @@ class environment
     public string $oidcFieldFirstName;
     public string $oidcFieldLastName;
 
+    public bool $useRedis;
+    public string $redisURL;
+
     private function __construct()
     {
 
@@ -191,6 +194,11 @@ class environment
             $this->oidcFieldEmail = $this->getString('LEAN_OIDC_FIELD_EMAIL', 'email');
             $this->oidcFieldFirstName = $this->getString('LEAN_OIDC_FIELD_FIRSTNAME', 'given_name');
             $this->oidcFieldLastName = $this->getString('LEAN_OIDC_FIELD_LASTNAME', 'family_name');
+        }
+
+        $this->useRedis = $this->getBool('LEAN_USE_REDIS', false);
+        if($this->useRedis) {
+            $this->redisURL = $this->getString('LEAN_REDIS_URL', '');
         }
     }
 

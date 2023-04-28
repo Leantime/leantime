@@ -27,21 +27,26 @@ namespace leantime\core {
          * loadSettings - load all appSettings and set ini
          *
          */
-        public function loadSettings($timezone, $debug, $logPath)
+        public function loadSettings(environment $config)
         {
 
-            if ($timezone != '') {
-                date_default_timezone_set($timezone);
+            if ($config->defaultTimezone != '') {
+                date_default_timezone_set($config->defaultTimezone);
             } else {
                 date_default_timezone_set('America/Los_Angeles');
             }
 
-            if ($debug === 1 || $debug === true) {
+            if ($config->debug === 1 || $config->debug === true) {
                 error_reporting(E_ALL);
                 ini_set('display_errors', 1);
             } else {
                 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
                 ini_set('display_errors', 0);
+            }
+
+            if($config->useRedis !== false) {
+                ini_set('session.save_handler', 'redis');
+                ini_set('session.save_path', $config->redisURL);
             }
 
             if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -53,8 +58,8 @@ namespace leantime\core {
 
             ini_set("log_errors", 1);
 
-            if($logPath != '') {
-                ini_set('error_log', $logPath);
+            if($config->logPath != '') {
+                ini_set('error_log', $config->logPath);
             }else{
                 ini_set('error_log', APP_ROOT."/logs/error.log");
             }
