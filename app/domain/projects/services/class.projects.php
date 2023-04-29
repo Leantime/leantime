@@ -747,6 +747,15 @@ namespace leantime\domain\services {
         {
             return $this->projectRepository->patch($id, $params);
         }
+
+        public function getProjectAvatar($id)
+        {
+            return $this->projectRepository->getProjectAvatar($id);
+        }
+
+        public function setProjectAvatar($file, $project) {
+            return $this->projectRepository->setPicture($file, $project);
+        }
     }
 
 }

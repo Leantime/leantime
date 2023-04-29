@@ -38,6 +38,52 @@ $menuTypes = $this->get('menuTypes');
         <div class="span4">
 
             <div class="row-fluid marginBottom">
+                <h4 class="widgettitle title-light"><span
+                        class="fa fa-picture-o"></span><?php echo $this->__('label.project_avatar'); ?></h4>
+                <div class="span12 center">
+
+
+
+                    <img src='<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']; ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                        <div id="projectAvatar">
+                        </div>
+
+                    <div class="par">
+
+                        <div class='fileupload fileupload-new' data-provides='fileupload'>
+                            <input type="hidden"/>
+                            <div class="input-append">
+                                <div class="uneditable-input span3">
+                                    <i class="fa-file fileupload-exists"></i>
+                                    <span class="fileupload-preview"></span>
+                                </div>
+                                <span class="btn btn-file">
+                                        <span class="fileupload-new"><?php echo $this->__('buttons.select_file') ?></span>
+                                        <span class='fileupload-exists'><?php echo $this->__('buttons.change') ?></span>
+                                        <input type='file' name='file' onchange="leantime.projectsController.readURL(this)" accept=".jpg,.png,.gif,.webp"/>
+                                    </span>
+
+                                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload' onclick="leantime.projectsController.clearCroppie()"><?php echo $this->__('buttons.remove') ?></a>
+                            </div>
+
+                            <span id="save-picture" class="btn btn-primary fileupload-exists ld-ext-right">
+                                <span onclick="leantime.projectsController.saveCroppie()"><?php echo $this->__('buttons.save') ?></span>
+                                <span class="ld ld-ring ld-spin"></span>
+                            </span>
+                        <input type="hidden" name="profileImage" value="1" />
+                        <input id="picSubmit" type="submit" name="savePic" class="hidden"
+                               value="<?php echo $this->__('buttons.upload'); ?>"/>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
                 <div class="span12 ">
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-building"></span><?php echo $this->__('label.client_product'); ?></h4>

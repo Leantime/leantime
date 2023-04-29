@@ -419,6 +419,8 @@ namespace leantime\domain\repositories {
                    `end` DATETIME NULL,
                     `created` DATETIME NULL,
                     `modified` DATETIME NULL,
+                    `avatar` MEDIUMTEXT NULL ,
+                    `cover` MEDIUMTEXT NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1340,7 +1342,10 @@ namespace leantime\domain\repositories {
                       PRIMARY KEY (`id`),
                       INDEX `entity` (`entityId` ASC, `module` ASC, `reaction` ASC),
                       INDEX `user` (`userId` ASC, `entityId` ASC, `module` ASC, `reaction` ASC)
-                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+                "ALTER TABLE `zp_projects`
+                ADD COLUMN `avatar` MEDIUMTEXT NULL AFTER `modified`,
+                ADD COLUMN `cover` MEDIUMTEXT NULL AFTER `avatar`;"
 
             ];
 

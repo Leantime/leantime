@@ -80,7 +80,7 @@
     width: 240px;
     text-align: center;
     height: 50px;
-    padding:10px 5px 5px 10px;
+    padding:10px 5px 5px 15px;
     margin-left: 0px;
     display: flex;
 
@@ -191,6 +191,16 @@
     min-width:480px;
 }
 
+.leftmenu .nav-tabs.nav-stacked .bigProjectSelector .projectAvatar {
+    float:left;
+    margin-top:15px;
+    margin-right:10px;
+}
+
+.leftmenu .bigProjectSelector .projectAvatar img {
+
+}
+
 .leftmenu .projectselector::after {
     position: absolute;
     top: 30px;
@@ -286,15 +296,27 @@
     font-size:14px;
     line-height:30px;
     text-align:center;
-    background:#555;
+    background:#ccc;
     color:var(--main-action-color);
     display:inline-block;
+    border-radius:var(--box-radius-small);
+}
+
+.leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar img {
+    width:30px;
+    height:30px;
     border-radius:var(--box-radius-small);
 }
 
 .leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar .fa {
    font-weight:900;
     color:#fff;
+}
+
+.leftmenu .nav-tabs.nav-stacked#minimizedMenu  .bigProjectSelector > .projectAvatar {
+    float:none;
+    margin: 0px;
+    margin-top: 10px;
 }
 
 .leftmenu .nav-tabs.nav-stacked a {

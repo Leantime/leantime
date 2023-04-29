@@ -8,9 +8,10 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class files extends controller
+    class projects extends controller
     {
-        private $usersService;
+        private services\projects $projectService;
+        private repositories\files $filesRepository;
 
         /**
          * init - initialize private variables
@@ -21,7 +22,8 @@ namespace leantime\domain\controllers {
         public function init()
         {
 
-            $this->fileRepo = new repositories\files();
+            $this->projectService = new services\projects();
+            $this->filesRepository = new repositories\files();
         }
 
 
@@ -33,6 +35,19 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+
+            if (isset($params["projectAvatar"])) {
+
+                $return = $this->projectService->getProjectAvatar($params["projectAvatar"]);
+
+
+                if (is_string($return)) {
+                    $this->tpl->redirect($return);
+                } else if(is_object($return)){
+                    header('Content-type: image/svg+xml');
+                    echo $return->toXMLString();
+                }
+            }
         }
 
         /**
@@ -44,20 +59,16 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            //FileUpload
-            if (isset($_FILES['file']) && isset($_GET['module']) && isset($_GET['moduleId'])) {
-                $module = htmlentities($_GET['module']);
-                $id = (int) $_GET['moduleId'];
-                echo json_encode($this->fileRepo->upload($_FILES, $module, $id));
-                return;
-            }
-
+            //Updatind User Image
             if (isset($_FILES['file'])) {
-                $_FILES['file']['name'] = "pastedImage.png";
+                $_FILES['file']['name'] = "profileImage-". $_SESSION['currentProject'] .".png";
 
-                $file = $this->fileRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
+                $this->projectService->setProjectAvatar($_FILES, $_SESSION['currentProject']);
 
-                echo BASE_URL . "/download.php?module=private&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'] . "";
+                $_SESSION['msg'] = "PICTURE_CHANGED";
+                $_SESSION['msgT'] = "success";
+
+                echo "{status:ok}";
             }
         }
 
@@ -73,6 +84,18 @@ namespace leantime\domain\controllers {
 
             if (isset($params['patchModalSettings'])) {
                 if ($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
+                    echo "{status:ok}";
+                }
+            }
+
+            if (isset($params['patchViewSettings'])) {
+                if ($this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value'])) {
+                    echo "{status:ok}";
+                }
+            }
+
+            if (isset($params['patchMenuStateSettings'])) {
+                if ($this->usersService->updateUserSettings("views", "menuState", $params['value'])) {
                     echo "{status:ok}";
                 }
             }

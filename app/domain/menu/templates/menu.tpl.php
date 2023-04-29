@@ -32,7 +32,7 @@ if (is_array($currentLink)) {
         <div class="form-group">
             <form action="" method="post">
                 <a href="javascript:void(0)" class="dropdown-toggle bigProjectSelector" data-toggle="dropdown">
-                    <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
+                    <span class='projectAvatar'><img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$_SESSION['currentProject']?>' /></span><?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
                 </a>
 
                 <?php $this->displaySubmodule('menu-projectSelector') ?>
@@ -98,7 +98,9 @@ if (is_array($currentLink)) {
 
                 <div class="form-group">
                     <form action="" method="post">
-                        <a href="javascript:void(0)" class="dropdown-toggle bigProjectSelector" data-toggle="dropdown" data-tippy-content="<?php $this->e($_SESSION['currentProjectName']); ?>" data-tippy-placement="right"><i class="fa fa-briefcase"></i></a>
+                        <a href="javascript:void(0)" class="dropdown-toggle bigProjectSelector" data-toggle="dropdown" data-tippy-content="<?php $this->e($_SESSION['currentProjectName']); ?>" data-tippy-placement="right">
+                            <span class='projectAvatar'><img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$_SESSION['currentProject']?>' /></span>
+                        </a>
 
                         <?php $this->displaySubmodule('menu-projectSelector') ?>
                     </form>
@@ -156,11 +158,8 @@ if (is_array($currentLink)) {
 <script>
     jQuery('.projectSelectorTabs').tabs();
 
-
     let clientId = <?=$this->get('currentClient') ?>;
-    console.log(jQuery(".clientId-"+clientId))
     leantime.menuController.toggleClientList(clientId, ".clientIdHead-"+clientId, "open");
-
 
     <?php
     $lastClient = "";

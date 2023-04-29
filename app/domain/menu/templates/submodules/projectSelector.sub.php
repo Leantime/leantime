@@ -43,7 +43,8 @@ if(str_contains($redirectUrl, "showProject")) {
                     if ($this->get('currentProject') == $projectRow["id"]) {
                         echo " active ";
                     }
-                    echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'></span> " . $this->escape($projectRow["name"]) . "</a></li>";
+                    echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'><img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
+                   </span> " . $this->escape($projectRow["name"]) . "</a></li>";
                 }
             } else {
                 echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";

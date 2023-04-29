@@ -253,14 +253,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return Growl;
         }();
 
-        ;
 
         Growl.settings = {
             namespace: 'growl',
             duration: 3200,
             close: "&#215;",
             location: "default",
-            style: "default",
+            style: "success",
             size: "medium",
             delayOnHover: true
         };
