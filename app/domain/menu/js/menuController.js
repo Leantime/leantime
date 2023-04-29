@@ -93,8 +93,9 @@ leantime.menuController = (function () {
                 jQuery("#minimizedMenu").css({display: 'none'});
                 jQuery('.logo, #expandedMenu').css({display: 'block'});
 
-                jQuery('.header').animate({marginLeft: '240px'}, 'fast');
-                jQuery('.header').css({width:'calc(100% - 240px)'});
+                var newWidth =  jQuery('.header').parent().width() - 240;
+                jQuery('.header').animate({marginLeft: '240px', width: newWidth}, 'fast');
+
                 jQuery('.leftpanel').animate({width: "240px"}, 'fast');
 
                 jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function () {
@@ -112,8 +113,9 @@ leantime.menuController = (function () {
                     jQuery('.barmenu').removeClass('open');
                 });
 
-                jQuery('.header').animate({marginLeft: '68px'}, 'fast');
-                jQuery('.header').css({width:'calc(100% - 68px)'});
+                var newWidth =  jQuery('.header').parent().width() - 68;
+                jQuery('.header').animate({marginLeft: '68px', width: newWidth}, 'fast');
+
                 jQuery('.leftpanel').animate({width:'68px'}, 'fast');
 
                 leantime.menuRepository.updateUserMenuSettings("closed");

@@ -58,11 +58,17 @@ namespace leantime\domain\controllers {
 
                 $return = $this->usersService->getProfilePicture($params["profileImage"]);
 
-
                 if (is_string($return)) {
-                    $this->tpl->redirect($return);
+
+                    $file = new core\fileupload();
+                    $file->displayImageFile($return);
+
                 } else if(is_object($return)){
-                    header('Content-type: image/svg+xml');
+                  header('Pragma: public');
+                  header('Cache-Control: max-age=86400');
+                  header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+
+                  header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
                 }
             }

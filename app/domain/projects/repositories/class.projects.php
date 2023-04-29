@@ -948,7 +948,7 @@ namespace leantime\domain\repositories {
                 $file = $files->getFile($value['avatar']);
 
                 if ($file) {
-                    $return = BASE_URL . "/download.php?module=" . $file['module'] . "&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'];
+                    $return = $file['encName'].".".$file['extension'];
                 }
 
                 $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
