@@ -48,8 +48,11 @@ namespace leantime\domain\controllers {
                 $menuType = ($project !== false && isset($project['menuType']))
                     ? $project['menuType']
                     : repositories\menu::DEFAULT_MENU;
+
+                $this->tpl->assign('currentClient', $project["clientId"]);
             } else {
                 $menuType = repositories\menu::DEFAULT_MENU;
+                $this->tpl->assign('currentClient', "");
             }
 
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));

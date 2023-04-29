@@ -16,6 +16,11 @@ min-width: 1200px
         overflow:auto;
     }
 
+    .leftmenu .projectselector {
+        width:calc(100% - 70px);
+        min-width: 360px;
+    }
+
     .tabbedwidget ul li {
         width:100%;
     }
@@ -62,22 +67,10 @@ min-width: 1200px
     }
 
     .leftpanel a.barmenu {
-        position: fixed;
-        left: 0px;
-        top: 5px;
-        margin-left:0px;
-        padding-left:15px;
-        width:50px;
-        transition: left 0.2s;
+
     }
 
     .leftpanel a.barmenu.open {
-        left:240px;
-
-        background:var(--primary-color);
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        box-shadow:var(--regular-shadow);
 
     }
 
@@ -86,7 +79,7 @@ min-width: 1200px
     }
 
     .leftpanel {
-        position:absolute;
+
     }
 
     .header {
@@ -96,8 +89,7 @@ min-width: 1200px
     }
 
     .rightpanel {
-        margin-left:0px !important;
-        width:100% !important;
+
     }
 
     .headmenu > li > a {

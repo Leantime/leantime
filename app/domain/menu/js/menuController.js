@@ -57,18 +57,28 @@ leantime.menuController = (function () {
 
 
         if(window.innerWidth < 576) {
-            jQuery('.barmenu').removeClass('open')
+            jQuery('.barmenu').removeClass('open');
         }
 
         if (jQuery('.barmenu').hasClass('open')) {
+
             jQuery('.rightpanel').css({marginLeft: '240px'});
-            jQuery('.header').css({marginLeft: '240px', width:'calc(100%-240px)'});
+            jQuery('.header').css({marginLeft: '240px', width:'calc(100% - 240px)'});
             jQuery('.logo, .leftpanel').css({marginLeft: 0});
             leantime.menuRepository.updateUserMenuSettings("open");
+            jQuery('.logo').show();
+            jQuery('.logo, #expandedMenu').css({display: 'block'});
+            jQuery("#minimizedMenu").css({display: 'none'});
+
         } else {
-            jQuery('.rightpanel, .header').css({marginLeft: 0});
-            jQuery('.header').css({marginLeft: 0, width:'100%'});
-            jQuery('.logo, .leftpanel').css({marginLeft: '-240px'});
+
+            jQuery('.rightpanel, .header').css({marginLeft: '68px'});
+            jQuery('.header').css({marginLeft: '68px', width:'calc(100% - 68px)'});
+            jQuery('.logo, .leftpanel').css({marginLeft: '0'});
+            jQuery('.logo').hide();
+            jQuery('.logo, #expandedMenu').css({display: 'none'});
+            jQuery("#minimizedMenu").css({display: 'block'});
+
             leantime.menuRepository.updateUserMenuSettings("closed");
         }
 
@@ -76,28 +86,36 @@ leantime.menuController = (function () {
 
             var lwidth = '240px';
 
-
             if (!jQuery(this).hasClass('open')) {
-                jQuery('.header').animate({marginLeft: '240px', width:'-=240px'}, 'fast');
 
-                jQuery('.logo, .leftpanel').animate({marginLeft: 0}, 'fast');
+                jQuery("#minimizedMenu").css({display: 'none'});
+                jQuery('.logo, #expandedMenu').css({display: 'block'});
+
+                jQuery('.header').animate({marginLeft: '240px', width:'calc(100% - 240px)'}, 'fast');
+                jQuery('.leftpanel').animate({width: "240px"}, 'fast');
 
                 jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function () {
                     jQuery('.barmenu').addClass('open');
                 });
 
-
                 leantime.menuRepository.updateUserMenuSettings("open");
+
             } else {
-                jQuery('.rightpanel').animate({marginLeft: 0}, 'fast', function () {
+
+                jQuery('.logo, #expandedMenu').css({display: 'none'});
+                jQuery("#minimizedMenu").show();
+
+                jQuery('.rightpanel').animate({marginLeft: '68px'}, 'fast', function () {
                     jQuery('.barmenu').removeClass('open');
                 });
 
-                jQuery('.header').animate({marginLeft: '0', width:'100%'}, 'fast');
-                jQuery('.logo, .leftpanel').animate({marginLeft: '-' + '240px'}, 'fast');
+                jQuery('.header').animate({marginLeft: '0', width:'calc(100% - 68px)'}, 'fast');
+                jQuery('.leftpanel').animate({width:'68px'}, 'fast');
 
                 leantime.menuRepository.updateUserMenuSettings("closed");
+
             }
+
         });
 
     };
@@ -112,17 +130,16 @@ leantime.menuController = (function () {
 
     var toggleClientList = function (id, element) {
 
-        jQuery(".client_" + id).toggle("fast");
+        jQuery(".selectorList.projectList li").not(".nav-header, .fixedBottom").hide();
 
-        if (jQuery(element).find("i").hasClass("fa-angle-down")) {
-            jQuery(element).find("i").removeClass("fa-angle-down");
-            jQuery(element).find("i").addClass("fa-angle-up");
-        } else {
-            jQuery(element).find("i").removeClass("fa-angle-up");
-            jQuery(element).find("i").addClass("fa-angle-down");
-        }
+        jQuery(".client_" + id).show();
+        jQuery(".client_" + id).show();
 
-    }
+        jQuery(".selectorList.clientList li").removeClass("active");
+        jQuery(element).addClass("active");
+
+
+    };
 
     // Make public what you want to have public, everything else is private
     return {
