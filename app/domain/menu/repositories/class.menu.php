@@ -130,6 +130,28 @@ namespace leantime\domain\repositories {
         }
 
         /**
+         * getSubmenuState - Gets the state of the submenu (open or closed)
+         *
+         * @access public
+         * @param  string $submenu Submenu identifier
+         */
+        public function getSubmenuState(string $submenu)
+        {
+
+            $setting = new setting();
+            $subStructure = $setting->getSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle");
+
+            $_SESSION['submenuToggle'] = unserialize($subStructure);
+
+            if(isset($_SESSION['submenuToggle'][$submenu])) {
+                return $_SESSION['submenuToggle'][$submenu];
+            }else{
+                return false;
+            }
+
+        }
+
+        /**
          * getMenu - Return a specific menu structure
          *
          * @access public

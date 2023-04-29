@@ -63,7 +63,8 @@ leantime.menuController = (function () {
         if (jQuery('.barmenu').hasClass('open')) {
 
             jQuery('.rightpanel').css({marginLeft: '240px'});
-            jQuery('.header').css({marginLeft: '240px', width:'calc(100% - 240px)'});
+            jQuery('.header').animate({marginLeft: '240px'}, 'fast');
+            jQuery('.header').animate({width:'calc(100% - 240px)'}, 'fast');
             jQuery('.logo, .leftpanel').css({marginLeft: 0});
             leantime.menuRepository.updateUserMenuSettings("open");
             jQuery('.logo').show();
@@ -72,8 +73,9 @@ leantime.menuController = (function () {
 
         } else {
 
-            jQuery('.rightpanel, .header').css({marginLeft: '68px'});
-            jQuery('.header').css({marginLeft: '68px', width:'calc(100% - 68px)'});
+            jQuery('.rightpanel').css({marginLeft: '68px'});
+            jQuery('.header').animate({marginLeft: '68px'}, 'fast');
+            jQuery('.header').animate({width:'calc(100% - 68px)'}, 'fast');
             jQuery('.logo, .leftpanel').css({marginLeft: '0'});
             jQuery('.logo').hide();
             jQuery('.logo, #expandedMenu').css({display: 'none'});
@@ -91,7 +93,8 @@ leantime.menuController = (function () {
                 jQuery("#minimizedMenu").css({display: 'none'});
                 jQuery('.logo, #expandedMenu').css({display: 'block'});
 
-                jQuery('.header').animate({marginLeft: '240px', width:'calc(100% - 240px)'}, 'fast');
+                jQuery('.header').animate({marginLeft: '240px'}, 'fast');
+                jQuery('.header').css({width:'calc(100% - 240px)'});
                 jQuery('.leftpanel').animate({width: "240px"}, 'fast');
 
                 jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function () {
@@ -109,7 +112,8 @@ leantime.menuController = (function () {
                     jQuery('.barmenu').removeClass('open');
                 });
 
-                jQuery('.header').animate({marginLeft: '0', width:'calc(100% - 68px)'}, 'fast');
+                jQuery('.header').animate({marginLeft: '68px'}, 'fast');
+                jQuery('.header').css({width:'calc(100% - 68px)'});
                 jQuery('.leftpanel').animate({width:'68px'}, 'fast');
 
                 leantime.menuRepository.updateUserMenuSettings("closed");
@@ -128,7 +132,7 @@ leantime.menuController = (function () {
 
     };
 
-    var toggleClientList = function (id, element) {
+    var toggleClientListHorizontal = function (id, element) {
 
         jQuery(".selectorList.projectList li").not(".nav-header, .fixedBottom").hide();
 
@@ -138,6 +142,60 @@ leantime.menuController = (function () {
         jQuery(".selectorList.clientList li").removeClass("active");
         jQuery(element).addClass("active");
 
+
+    };
+
+    var toggleClientList = function (id, element, set="") {
+
+        //MEthod is executed on click and does the oposite of the current state.
+        //(eg when closed->open; when open->close)
+        //To force a state we need to ensure it is the oposite of the state requested
+        if(set === "closed") {
+            jQuery(element).removeClass("closed");
+            jQuery(element).removeClass("open");
+            jQuery(element).addClass("open");
+        }else if(set === "open"){
+            jQuery(element).removeClass("open");
+            jQuery(element).removeClass("closed");
+            jQuery(element).addClass("closed");
+        }
+
+        if(jQuery(element).hasClass("open")){
+
+            jQuery(".client_" + id).hide("fast");
+            jQuery(element).removeClass("open");
+            jQuery(element).addClass("closed");
+
+            jQuery(element).find("i").removeClass("fa-angle-down");
+            jQuery(element).find("i").addClass("fa-angle-right");
+
+            updateClientDropdownSetting(id, "closed");
+
+        }else{
+
+            jQuery(".client_" + id).show("fast");
+            jQuery(element).removeClass("closed");
+            jQuery(element).addClass("open");
+
+            jQuery(element).find("i").removeClass("fa-angle-right");
+            jQuery(element).find("i").addClass("fa-angle-down");
+
+            updateClientDropdownSetting(id, "open");
+
+        }
+
+    };
+
+    let updateClientDropdownSetting = function(clientId, state) {
+
+        jQuery.ajax({
+            type : 'PATCH',
+            url  : leantime.appUrl + '/api/submenu',
+            data : {
+                submenu : "clientDropdown-"+clientId,
+                state   : state
+            }
+        });
 
     };
 

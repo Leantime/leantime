@@ -327,6 +327,8 @@
 
 }
 
+
+
 .leftmenu .nav-tabs.nav-stacked {
     background-color:var(--left-panel-bg);
 }
@@ -693,9 +695,33 @@
     list-style-type: none;
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem {
+    display:none;
+    padding-left:30px;
+    height:50px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem a {
+    line-height:30px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem .projectAvatar {
+    height:30px;
+    width:30px;
+    display:block;
+    float:left;
+    margin-right:10px;
+    background:#ccc;
+    border-radius:5px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li {
+    cursor:pointer;
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li .fas {
-    float:right;
-    padding-right:15px;
+
+    padding-right:10px;
     padding-top:5px;
 }
 
@@ -740,6 +766,11 @@
     bottom:0px;
     display:block;
 
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector .projectSelectorTabs .scrollingTab {
+    height:475px;
+    overflow:auto;
 }
 
 .no-pd-left {

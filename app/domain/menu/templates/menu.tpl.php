@@ -159,7 +159,29 @@ if (is_array($currentLink)) {
 
     let clientId = <?=$this->get('currentClient') ?>;
     console.log(jQuery(".clientId-"+clientId))
-    leantime.menuController.toggleClientList(clientId, ".clientId-"+clientId);
+    leantime.menuController.toggleClientList(clientId, ".clientIdHead-"+clientId, "open");
+
+
+    <?php
+    $lastClient = "";
+
+    if ($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) >= 1) {
+        foreach ($this->get('allAssignedProjects') as $projectRow) {
+            if ($lastClient != $projectRow['clientName']) {
+                $lastClient = $projectRow['clientName'];
+                if(isset($_SESSION['submenuToggle']["clientDropdown-".$projectRow['clientId']])
+                && $_SESSION['submenuToggle']["clientDropdown-".$projectRow['clientId']] == "open"){
+
+                ?>
+                    leantime.menuController.toggleClientList(<?=$projectRow['clientId']?>, ".clientIdHead-<?=$projectRow['clientId']?>", "open");
+
+                <?php
+                }
+            }
+        }
+    }
+
+    ?>
 
 </script>
 

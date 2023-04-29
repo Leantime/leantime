@@ -27,8 +27,40 @@ if(str_contains($redirectUrl, "showProject")) {
             <li><a href="#favoriteProjects">Favorites</a></li>
         </ul>
 
-        <div id="allProjects">
+        <div id="allProjects" class="scrollingTab">
 
+            <ul class="selectorList clientList">
+            <?php
+            $lastClient = "";
+
+            if ($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) >= 1) {
+                foreach ($this->get('allAssignedProjects') as $projectRow) {
+                    if ($lastClient != $projectRow['clientName']) {
+                        $lastClient = $projectRow['clientName'];
+                        echo "<li class='clientIdHead-" . $projectRow['clientId'] . "' onclick='leantime.menuController.toggleClientList(" . $projectRow['clientId'] . ", this)'><i class=\"fas fa-angle-right\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
+                    }
+                    echo "<li class='projectLineItem client_" . $projectRow['clientId'] . "";
+                    if ($this->get('currentProject') == $projectRow["id"]) {
+                        echo " active ";
+                    }
+                    echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'></span> " . $this->escape($projectRow["name"]) . "</a></li>";
+                }
+            } else {
+                echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
+            }
+            ?>
+            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                <li class='nav-header border'></li>
+                <li><a href="<?=BASE_URL ?>/projects/newProject/"><?=$this->__("menu.create_project") ?></a></li>
+                <li><a href="<?=BASE_URL ?>/projects/showAll"><?=$this->__("menu.view_all_projects") ?></a></li>
+            <?php } ?>
+            <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                <li><a href="<?=BASE_URL ?>/clients/showAll"><?=$this->__("menu.view_all_clients") ?></a></li>
+            <?php } ?>
+
+
+            </ul>
+            <?php /*
             <div class="row">
                 <div class="col-md-6 border-right no-pd-right">
                     <ul class="selectorList clientList">
@@ -86,22 +118,16 @@ if(str_contains($redirectUrl, "showProject")) {
 
             <?php
 
-            /*
-
-            <ul>
-
-
-
-            </ul>*/?>
+            */ ?>
 
         </div>
 
-        <div id="recentProjects">
+        <div id="recentProjects" class="scrollingTab">
 
 
         </div>
 
-        <div id="favoriteProjects">
+        <div id="favoriteProjects" class="scrollingTab">
 
 
         </div>

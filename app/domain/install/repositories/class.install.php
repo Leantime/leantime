@@ -81,7 +81,8 @@ namespace leantime\domain\repositories {
             20112,
             20113,
             20114,
-            20115
+            20115,
+            20116
         );
 
         /**
@@ -702,6 +703,19 @@ namespace leantime\domain\repositories {
                       `createdBy` INT NULL,
                       PRIMARY KEY (`id`)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+                  CREATE TABLE `zp_reactions` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `userId` INT NULL,
+                      `entityId` INT NULL,
+                      `module` VARCHAR(45) NULL,
+                      `reaction` VARCHAR(45) NULL,
+                      `date` DATETIME NULL,
+                      PRIMARY KEY (`id`),
+                      INDEX `entity` (`entityId` ASC, `module` ASC, `reaction` ASC),
+                      INDEX `user` (`userId` ASC, `entityId` ASC, `module` ASC, `reaction` ASC)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ";
 
             return $sql;
@@ -1291,6 +1305,43 @@ namespace leantime\domain\repositories {
                         INDEX `entityB` (`entityB` ASC, `entityBType` ASC, `relationship` ASC)
                     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
                 "UPDATE `zp_tickets` SET milestoneid = dependingTicketId , dependingTicketId = '' WHERE type <> 'subtask' AND dependingTicketId > 0",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        public function update_sql_20116(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                " CREATE TABLE `zp_reactions` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `userId` INT NULL,
+                      `entityId` INT NULL,
+                      `module` VARCHAR(45) NULL,
+                      `reaction` VARCHAR(45) NULL,
+                      `date` DATETIME NULL,
+                      PRIMARY KEY (`id`),
+                      INDEX `entity` (`entityId` ASC, `module` ASC, `reaction` ASC),
+                      INDEX `user` (`userId` ASC, `entityId` ASC, `module` ASC, `reaction` ASC)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+
             ];
 
             foreach ($sql as $statement) {

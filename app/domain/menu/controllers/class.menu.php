@@ -9,10 +9,10 @@ namespace leantime\domain\controllers {
 
     class menu extends controller
     {
-        private $projectService;
-        private $ticketService;
-        private $menuRepo;
-        private $projectRepo;
+        private services\projects $projectService;
+        private services\tickets $ticketService;
+        private repositories\menu $menuRepo;
+
 
         public function init()
         {
@@ -20,7 +20,7 @@ namespace leantime\domain\controllers {
             $this->projectService = new services\projects();
             $this->ticketService = new services\tickets();
             $this->menuRepo = new repositories\menu();
-            $this->projectRepo = new repositories\projects();
+
         }
 
         public function run()
@@ -40,10 +40,12 @@ namespace leantime\domain\controllers {
                     'open',
                     $_SESSION['userdata']['clientId']
                 );
+
+                $_SESSION['menuState'] = $this->menuRepo->getSubmenuState("mainMenu");
             }
 
             if (isset($_SESSION['currentProject'])) {
-                $project = $this->projectRepo->getProject($_SESSION['currentProject']);
+                $project = $this->projectService->getProject($_SESSION['currentProject']);
 
                 $menuType = ($project !== false && isset($project['menuType']))
                     ? $project['menuType']
