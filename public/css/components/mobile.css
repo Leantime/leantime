@@ -3,9 +3,10 @@
 Mobile Stylesheet
 Available Breakpoints
 
+min-width: 375px lowest tested resolution
 min-width: 576px
-min-width: 768px
-min-width: 992px
+min-width: 768px //Not used
+min-width: 992px //Not used
 min-width: 1200px
  */
 
@@ -16,14 +17,25 @@ min-width: 1200px
         overflow:auto;
     }
 
-    .leftmenu .projectselector {
-        width:calc(100% - 70px);
-        min-width: 360px;
-    }
-
     .tabbedwidget ul li {
         width:100%;
     }
+
+    .leftmenu .projectselector {
+        width:297px;
+        min-width: 297px;
+    }
+
+    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+        width:auto;
+    }
+
+    .barmenu,
+    .headerCTA{
+        display:none;
+    }
+
+
 
     .col-md-4 > .pull-right,
     .col-md-6 > .pull-right{
@@ -66,31 +78,13 @@ min-width: 1200px
         margin:0px;
     }
 
-    .leftpanel a.barmenu {
 
-    }
-
-    .leftpanel a.barmenu.open {
-
-    }
 
     .profileHandler .username {
         display:none;
     }
 
-    .leftpanel {
 
-    }
-
-    .header {
-        margin-left:0px !important;
-        width:100% !important;
-
-    }
-
-    .rightpanel {
-
-    }
 
     .headmenu > li > a {
         padding: 15px 10px 9px;
@@ -98,6 +92,7 @@ min-width: 1200px
 
     .maincontent {
         margin-top:0px;
+        padding: 10px 10px;
     }
 
     /* buttons */
@@ -410,7 +405,7 @@ min-width: 1200px
 
     .headmenu > li {
         padding: unset;
-        width: 50px;
+        width: 40px;
     }
 
     .headmenu > li > a {
@@ -451,10 +446,6 @@ min-width: 1200px
 
     .header .logo {
         padding-top: 0;
-    }
-
-    .headmenu .dropdown-menu:after {
-        left: 25px;
     }
 
 
@@ -732,6 +723,20 @@ min-width: 1200px
 
 @media (min-width: 576px) and (max-width:1200px) {
 
+    .leftmenu .projectselector {
+        width:297px;
+        min-width: 297px;
+    }
+
+    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+        width:auto;
+    }
+
+    .barmenu,
+    .headerCTA{
+        display:none;
+    }
+
     .hidden-sm {
         display:none;
     }
@@ -800,18 +805,18 @@ min-width: 1200px
     }
 
     .header {
-        margin-left:0px !important;
-        width:100% !important;
+
 
     }
 
     .rightpanel {
-        margin-left:0px !important;
-        width:100% !important;
+        width:calc(100% - 63px);
+
     }
 
     .maincontent {
         margin-top:0px;
+        padding: 10px 10px;
     }
 
     .col-sm {
@@ -1112,7 +1117,7 @@ min-width: 1200px
     }
 
     .maincontentinner {
-        padding: 5px;
+
     }
 
     .tabbedwidget .btn-group {
@@ -1304,7 +1309,7 @@ min-width: 1200px
 
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1201px) {
     .col-md {
         -webkit-flex-basis: 0;
         -ms-flex-preferred-size: 0;
