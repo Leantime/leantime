@@ -85,6 +85,9 @@
 
                         <div class="row " id="projectProgressContainer">
                             <div class="col-md-12">
+                                <div class="projectAvatar">
+                                    <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>"/>
+                                </div>
                                 <small><?php $this->e($project['clientName'])?></small>
                                 <h4>
                                     <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"><?php $this->e($project['name'])?></a>
