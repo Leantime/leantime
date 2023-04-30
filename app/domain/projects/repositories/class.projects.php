@@ -139,11 +139,19 @@ namespace leantime\domain\repositories {
 				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId
+					client.id AS clientId,
+					comments.status as status
 				FROM zp_relationuserproject AS relation
 				LEFT JOIN zp_projects as project ON project.id = relation.projectId
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				LEFT JOIN zp_comment as comments ON comments.id = (
+                      SELECT
+						id
+                      FROM zp_comment
+                      WHERE module = 'project' AND moduleId = project.id
+                      ORDER BY date DESC LIMIT 1
+                    )
 				WHERE relation.userId = :id AND (project.active > '-1' OR project.active IS NULL)";
 
             if ($status == "open") {

@@ -60,7 +60,7 @@ $elementName = 'goal';
                                                class="<?=$canvasName ?>CanvasModal"
                                                data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
                                         <br />
-                                        <?=$row["assumptions"] ?>
+                                        <?=$this->escape($row["assumptions"]) ?>
                                         <br />
 
                                         <?php

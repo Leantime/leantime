@@ -2778,10 +2778,10 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .label {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    font-size: 10px;
+    -moz-border-radius: var(--box-radius-small);
+    -webkit-border-radius: var(--box-radius-small);
+    border-radius:  var(--box-radius-small);
+    font-size: var(--font-size-xs);
     text-shadow: none;
     font-weight: normal;
     text-transform: uppercase;
