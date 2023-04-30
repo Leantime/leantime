@@ -1031,3 +1031,7 @@
 }
 
 
+.scrollableMenu {
+    height:calc(100% - 60px);
+    overflow:auto;
+}

@@ -39,7 +39,7 @@ if (is_array($currentLink)) {
             </form>
         </div>
     </li>
-    <li class="dropdown">
+    <li class="dropdown scrollableMenu">
         <?php $currentProjectType = $this->get('currentProjectType'); ?>
         <ul style='display:block;'>
             <?php foreach ($menuStructure as $key => $menuItem) { ?>
