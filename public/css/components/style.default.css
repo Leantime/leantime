@@ -381,7 +381,7 @@ a, a:hover, a:link, a:active, a:focus {
 body a:hover {
     text-decoration: none;
     color:var(--primary-font-color);
-    transition: color 0.25s;
+
 }
 
 label, input, textarea, select, button {
