@@ -72,8 +72,8 @@
     --font-size-xxxl: 26px;
 
     --main-border-color:var(--neutral);
-    --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%);
-    --regular-shadow: 0px 2px 3px rgba(0 0 0 / 20%);
+    --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%), 0px 0px 1px rgba(0 0 0 / 5%);
+    --regular-shadow: 0px 1px 3px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 10%);
     --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 15%);
     --box-radius-large:10px;
     --box-radius: 5px;

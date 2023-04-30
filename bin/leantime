@@ -17,7 +17,7 @@ use Symfony\Component\Console\Application;
 
 $config = environment::getInstance();
 $settings = new leantime\core\appSettings();
-$settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
+$settings->loadSettings($config);
 
 define('BASE_URL', $config->appUrl);
 

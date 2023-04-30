@@ -29,32 +29,40 @@ class testEmailCommand extends Command
    * @return int 0 if everything went fine, or an exit code.
    */
   protected function execute(InputInterface $input, OutputInterface $output): int
-  { 
-    define('BASE_URL', "");
-    define('CURRENT_URL', "");
-    $io = new SymfonyStyle($input, $output);
-    
-    $address = $input->getOption('address');
+  {
 
-    if($address == '') {
-      $io->error("address parameter needs to be set");
-      return Command::INVALID;
-    } 
+      //Depending on the entry point, the constants may not be defined
+      if (!defined('BASE_URL')) {
+          define('BASE_URL', "");
+      }
 
-    $config = \leantime\core\environment::getInstance();
-    
-    // force debug output from mailer subsystem
-    $config->debug = 1;
-    $mailer = new Mailer();
+      if (!defined('CURRENT_URL')) {
+          define('CURRENT_URL', "");
+      }
 
-    $io = new SymfonyStyle($input, $output);
-    $io->writeln('Sending a test email using current configuration');
+        $io = new SymfonyStyle($input, $output);
 
-    $mailer = new Mailer();
-    $mailer->setSubject('Leantime email test');
-    $mailer->setHtml('This is a test of the leantime mailer configuration. If you have received this email, then the mail configuration is correct.');
-    $mailer->sendMail(Array($input->getOption('address')), 'Command-line test');
+        $address = $input->getOption('address');
 
-    return Command::SUCCESS;
+        if($address == '') {
+          $io->error("address parameter needs to be set");
+          return Command::INVALID;
+        }
+
+        $config = \leantime\core\environment::getInstance();
+
+        // force debug output from mailer subsystem
+        $config->debug = 1;
+        $mailer = new Mailer();
+
+        $io = new SymfonyStyle($input, $output);
+        $io->writeln('Sending a test email using current configuration');
+
+        $mailer = new Mailer();
+        $mailer->setSubject('Leantime email test');
+        $mailer->setHtml('This is a test of the leantime mailer configuration. If you have received this email, then the mail configuration is correct.');
+        $mailer->sendMail(Array($input->getOption('address')), 'Command-line test');
+
+        return Command::SUCCESS;
   }
 }

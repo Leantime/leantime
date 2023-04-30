@@ -9,7 +9,7 @@ require_once APP_ROOT . '/config/appSettings.php';
 
 $config = \leantime\core\environment::getInstance();
 $settings = new leantime\core\appSettings();
-$settings->loadSettings($config->defaultTimezone, $config->debug, $config->logPath);
+$settings->loadSettings($config);
 $incomingRequest = new leantime\core\IncomingRequest();
 
 if(isset($config->appUrl) && $config->appUrl != ""){
