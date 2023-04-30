@@ -73,7 +73,7 @@ namespace leantime\domain\controllers {
 
                 $canvasItem = array(
                     "id" => "",
-                    "box" => $params['type'],
+                    "box" => $type,
                     "tags" => '',
                     "description" => "",
                     "status" => "idea",
