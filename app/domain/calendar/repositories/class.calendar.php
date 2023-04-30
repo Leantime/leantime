@@ -90,9 +90,6 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
-
-
-
             $newValues = array();
             foreach ($values as $value) {
                 $dateFrom     = strtotime($value['dateFrom']);
@@ -127,6 +124,8 @@ namespace leantime\domain\repositories {
             }
 
             if (count($tickets)) {
+                $statusLabelsArray = array();
+
                 foreach ($tickets as $ticket) {
                     $context = "";
                     if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
@@ -134,8 +133,20 @@ namespace leantime\domain\repositories {
                         $dateTo = strtotime($ticket['dateToFinish']);
                         $context = '❕ '.$this->language->__("label.due_todo");
 
+                        if(!isset($statusLabelsArray[$ticket['projectId']])) {
+                            $statusLabelsArray[$ticket['projectId']] = $ticketService->getStatusLabels(
+                                $ticket['projectId']
+                            );
+                        }
+
+                        if(isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
+                            $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]["name"];
+                        }else{
+                            $statusName = "";
+                        }
+
                         $newValues[] = array(
-                            'title'  => $context . $ticket['headline'],
+                            'title'  => $context . $ticket['headline'] . " (".$statusName.")",
                             'allDay' => false,
                             'dateFrom' => array(
                                 'y' => date('Y', $dateFrom),

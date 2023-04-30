@@ -36,10 +36,10 @@ namespace leantime\domain\services {
          * @access public
          * @return array
          */
-        public function getStatusLabels(): array
+        public function getStatusLabels($projectId = null): array
         {
 
-            return $this->ticketRepository->getStateLabels();
+            return $this->ticketRepository->getStateLabels($projectId);
         }
 
         /**
