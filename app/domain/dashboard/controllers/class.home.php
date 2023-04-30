@@ -10,11 +10,11 @@ namespace leantime\domain\controllers {
 
     class home extends controller
     {
-        private $projectsService;
+        private services\projects $projectsService;
         private services\tickets $ticketsService;
-        private $usersService;
-        private $timesheetsService;
-        private $reportsService;
+        private services\users $usersService;
+        private services\timesheets $timesheetsService;
+        private services\reports $reportsService;
         private repositories\setting $settingRepo;
 
         public function init()
