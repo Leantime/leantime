@@ -338,11 +338,26 @@
                                                             <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']?>" />
                                                         </span>
                                                         <small><?php $this->e($project['clientName'])?></small><br />
-                                                        <?php $this->e($project['name'])?>
+                                                        <strong><?php $this->e($project['name'])?></strong>
                                                     </a>
                                                 </div>
                                                 <div class="col-md-4" style="text-align:right">
-                                                    <?=sprintf($this->__("text.percent_complete"), $percentDone)?>
+                                                    <?php if($project['status'] !== null && $project['status'] != ''){?>
+                                                        <span class="label label-<?php $this->e($project['status'])?>"><?=$this->__("label.project_status_".$project['status']) ?></span><br />
+
+                                                    <?php }else{ ?>
+                                                        <span class="label label-grey"><?=$this->__("label.no_status")?></span><br />
+                                                    <?php } ?>
+
+                                                </div>
+                                            </div>
+                                            <div class="row">
+
+                                                <div class="col-md-7">
+                                                    <?=$this->__("subtitles.project_progress") ?>
+                                                </div>
+                                                <div class="col-md-5" style="text-align:right">
+                                                    <?=sprintf($this->__("text.percent_complete"), round($percentDone))?>
                                                 </div>
                                             </div>
                                             <div class="progress">

@@ -20,7 +20,7 @@ $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
 <h1><strong>'.$this->__("templates.prd.title_for_prd").'<br /></strong></h1>
 <p>'.$this->__("templates.author").' '.$author.'<br />
 '.$this->__("templates.dates").' '.$today.'<br />
-'.$this->__("templates.status").' <label class="label-default">'.$this->__("templates.status.draft").'</label><br />
+'.$this->__("templates.status").' <span class="label label-default">'.$this->__("templates.status.draft").'</span><br />
 
 <table style="border-collapse: collapse; width: 100%;" border="1">
 <thead>
@@ -163,7 +163,7 @@ $projectOutline->content = '
 <h1><strong>Project Outline<br /></strong></h1>
 <p>Author: '.$author.'<br />
 Date: '.$today.'<br />
-Status: <label class="label-default">Draft</label><br />
+Status: <span class="label label-default">Draft</span><br />
 <table style="border-collapse: collapse; width: 100.146%; background-color: #ffffff; height: 182px;" border="1">
 <tbody>
 <tr style="height: 17px;">
@@ -439,28 +439,28 @@ $labelGreen = new \leantime\domain\models\wiki\template();
 $labelGreen->title = $this->__("templates.titles.green_status");
 $labelGreen->category = $this->__("templates.elements");
 $labelGreen->description = $this->__("templates.titles.green_status_description");
-$labelGreen->content = '<label class="label-success">Green</label>';
+$labelGreen->content = '<span class="label label-success">Green</span>';
 $templates[] = $labelGreen;
 
 $labelYellow = new \leantime\domain\models\wiki\template();
 $labelYellow->title = $this->__("templates.titles.yellow_status");
 $labelYellow->category = $this->__("templates.elements");
 $labelYellow->description = $this->__("templates.titles.yellow_status_description");
-$labelYellow->content = '<label class="label-warning">Yellow</label>';
+$labelYellow->content = '<span class="label label-warning">Yellow</span>';
 $templates[] = $labelYellow;
 
 $labelRed = new \leantime\domain\models\wiki\template();
 $labelRed->title = $this->__("templates.titles.red_status");
 $labelRed->category = $this->__("templates.elements");
 $labelRed->description = $this->__("templates.titles.red_status_description");
-$labelRed->content = '<label class="label-danger">Red</label>';
+$labelRed->content = '<span class="label label-danger">Red</span>';
 $templates[] = $labelRed;
 
 $labelGray = new \leantime\domain\models\wiki\template();
 $labelGray->title = $this->__("templates.titles.gray_status");
 $labelGray->category = $this->__("templates.elements");
 $labelGray->description = $this->__("templates.titles.gray_status_description");
-$labelGray->content = '<label class="label-default">Gray</label>';
+$labelGray->content = '<span class="label label-default">Gray</span>';
 $templates[] = $labelGray;
 
 

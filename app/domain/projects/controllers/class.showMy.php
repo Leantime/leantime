@@ -22,6 +22,7 @@ namespace leantime\domain\controllers {
             $this->ticketService = new services\tickets();
             $this->reportService = new services\reports();
             $this->commentService = new services\comments();
+            $this->clientRepo = new repositories\clients();
         }
 
         /**
@@ -34,8 +35,14 @@ namespace leantime\domain\controllers {
         {
 
             $clientId = "";
+            $currentClientName = "";
+
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int)$_GET['client'];
+                $currentClient = $this->clientRepo->getClient($clientId);
+                if(is_array($currentClient) && count($currentClient) >0) {
+                    $currentClientName = $currentClient['name'];
+                }
             }
 
             $allprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
@@ -51,6 +58,7 @@ namespace leantime\domain\controllers {
                     }
 
                     if ($clientId == "" || $project["clientId"] == $clientId) {
+
                         $projectResults[$i] = $project;
                         $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
                         $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
@@ -71,6 +79,7 @@ namespace leantime\domain\controllers {
                 }
             }
 
+            $this->tpl->assign("currentClientName", $currentClientName);
             $this->tpl->assign("currentClient", $clientId);
             $this->tpl->assign("clients", $clients);
             $this->tpl->assign("allProjects", $projectResults);

@@ -182,7 +182,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .chosen-results li.label-warning,
 .maincontentinner .ticketDropdown a.label-warning,
 .nyroModalCont .ticketDropdown a.label-warning,
-.label-warning{
+.label-warning,
+.label-yellow{
     background:var(--yellow);
     color:var(--yellow-text-color);
 }
@@ -205,7 +206,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .chosen-results li.label-danger,
 .maincontentinner .ticketDropdown a.label-danger,
 .nyroModalCont .ticketDropdown a.label-danger,
-.label-danger{
+.label-danger,
+.label-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
@@ -213,7 +215,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .chosen-results li.label-success,
 .maincontentinner .ticketDropdown a.label-success,
 .nyroModalCont .ticketDropdown a.label-success,
-.label-success{
+.label-success,
+.label-green {
     background:var(--green);
     color:var(--green-text-color);
 }

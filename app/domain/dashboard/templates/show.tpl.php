@@ -294,9 +294,9 @@
                                 <div id="comment0" class="commentBox" style="display:none;">
                                     <label for="projectStatus" style="display:inline"><?=$this->__('label.project_status_is') ?></label>
                                     <select name="status" id="projectStatus" style="margin-left: 0px; margin-bottom:10px;">
-                                        <option value="green"><?=$this->__('label.green') ?></option>
-                                        <option value="yellow"><?=$this->__('label.yellow') ?></option>
-                                        <option value="red"><?=$this->__('label.red') ?></option>
+                                        <option value="green"><?=$this->__('label.project_status_green') ?></option>
+                                        <option value="yellow"><?=$this->__('label.project_status_yellow') ?></option>
+                                        <option value="red"><?=$this->__('label.project_status_red') ?></option>
                                     </select>
                                     <div class="commentReply">
 
