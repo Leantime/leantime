@@ -2374,8 +2374,7 @@ ul.list-inline li {
 .tab-primary.ui-tabs .ui-tabs-nav li,
 .tab-primary.ui-tabs .ui-tabs-nav li a,
 .sortableTicketList li,
-.sortableTicketList li .ticketBox,
-:hover{
+.sortableTicketList li .ticketBox {
     -moz-transition: all 0.2s ease-in-out 0s;
     -webkit-transition: all 0.2s ease-in-out 0s;
     transition: all 0.2s ease-in-out 0s;
