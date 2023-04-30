@@ -66,7 +66,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
             <div class="col-md-4">
                 <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                     <?php if (count($this->get('allCanvas')) > 0) { ?>
-                        <a href="<?=BASE_URL ?>/ideas/showBoards/?type=idea#ideas/ideaDialog" class="btn btn-primary" id="customersegment"><span
+                        <a href="<?=BASE_URL ?>/ideas/showBoards/#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span
                                     class="far fa-lightbulb"></span><?php echo $this->__("buttons.add_idea") ?></a>
                     <?php } ?>
                 <?php } ?>
