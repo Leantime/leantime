@@ -201,7 +201,8 @@ namespace leantime\domain\repositories {
 					conclusion =			:conclusion,
 					modified =			NOW(),
 					status =			:status,
-					milestoneId =			:milestoneId
+					milestoneId =			:milestoneId,
+					tags = :tags
 					WHERE id = :id LIMIT 1	";
 
             $stmn = $this->db->database->prepare($sql);
@@ -213,6 +214,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
+            $stmn->bindValue(':tags', $values['tags'], PDO::PARAM_STR);
 
 
             $stmn->execute();
@@ -346,6 +348,7 @@ namespace leantime\domain\repositories {
 						zp_canvas_items.canvasId,
 						zp_canvas_items.sortindex,
 						zp_canvas_items.status,
+						zp_canvas_items.tags,
 						zp_canvas_items.milestoneId,
 						t1.firstname AS authorFirstname,
 						t1.lastname AS authorLastname,

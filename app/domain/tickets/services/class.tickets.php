@@ -524,7 +524,7 @@ namespace leantime\domain\services {
                 'sprint' => '',
                 'priority' => 3,
                 'dependingTicketId' => '',
-                'milestoneid' => $params['dependentMilestone'],
+                'milestoneid' => $params['dependentMilestone'] ?? '',
                 'acceptanceCriteria' => '',
                 'tags' => $params['tags'],
                 'editFrom' => $this->language->getISODateString($params['editFrom']),
