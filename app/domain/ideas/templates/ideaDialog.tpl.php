@@ -17,50 +17,56 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     }
 </script>
 
-<div class="showDialogOnLoad" >
+<?php echo $this->displayNotification(); ?>
 
-    <h4 class="widgettitle title-light"><i
-                class="fa fa-columns"></i>
-        <?php
-        if ($canvasItem['description'] == "") {
-                echo $this->__("headlines.ideas");
-        } else {
-            $this->e($canvasItem['description']);
-        } ?>
-    </h4>
 
-    <?php echo $this->displayNotification(); ?>
+<form class="formModal" method="post" action="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>">
 
-    <form class="ideaModal" method="post" action="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>">
 
+<div class="row">
+
+    <div class="col-md-8">
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId"/>
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?>" />
-        <label><?php echo $this->__("label.name") ?></label>
-        <input type="text" name="description" value="<?php $this->e($canvasItem['description']); ?>"
-               placeholder="<?php echo $this->__("input.placeholders.short_name") ?>"/><br/>
-
-        <label><?php echo $this->__("label.description") ?></label>
-        <textarea rows="3" cols="10" name="data" class="tinymceSimple"
-                  placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
 
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>"/>
         <input type="hidden" name="changeItem" value="1"/>
 
-        <?php if ($id != '') { ?>
-            <a href="<?=BASE_URL ?>/ideas/delCanvasItem/<?php echo $id; ?>" class="ideaModal delete right"><i
-                        class="fa fa-trash"></i> <?php echo $this->__("links.delete") ?></a>
-        <?php } ?>
+        <input type="text" name="description" class="main-title-input" style="width:99%;" value="<?php $this->e($canvasItem['description']); ?>"
+               placeholder="<?php echo $this->__("input.placeholders.short_name") ?>"/><br/>
+
+        <input type="text" value="<?php $this->e($canvasItem['tags']); ?>" name="tags" id="tags" />
+
+
+        <textarea rows="3" cols="10" name="data" class="complexEditor"
+                  placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
+
         <input type="submit" value="<?php echo $this->__("buttons.save")?>" id="primaryCanvasSubmitButton"/>
         <input type="submit" value="<?php echo $this->__("buttons.save_and_close")?>" id="saveAndClose"
                onclick="leantime.ideasController.setCloseModal();"/>
 
         <?php if ($id !== '') { ?>
+            <br/>
+            <hr>
+            <input type="hidden" name="comment" value="1"/>
+
+            <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
+            <?php
+            $this->assign("formUrl", BASE_URL . "/ideas/ideaDialog/" . $id . "");
+
+            $this->displaySubmodule('comments-generalComment'); ?>
+        <?php } ?>
+
+    </div>
+
+    <div class="col-md-4">
+        <?php if ($id !== '') { ?>
             <br/><br/>
             <h4 class="widgettitle title-light"><span
-                        class="fas fa-map"></span> <?php echo $this->__("headlines.attached_milestone") ?></h4>
+                    class="fas fa-map"></span> <?php echo $this->__("headlines.attached_milestone") ?></h4>
 
 
             <ul class="sortableTicketList" style="width:99%">
@@ -70,12 +76,12 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                         <?php echo $this->__("text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                            <div class="col-md-12">
-                                <a href="javascript:void(0);"
-                                   onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $this->__("links.create_attach_milestone") ?></a>
-                                | <a href="javascript:void(0);"
-                                     onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $this->__("links.attach_existing_milestone") ?></a>
-                            </div>
+                                <div class="col-md-12">
+                                    <a href="javascript:void(0);"
+                                       onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $this->__("links.create_attach_milestone") ?></a>
+                                    | <a href="javascript:void(0);"
+                                         onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $this->__("links.attach_existing_milestone") ?></a>
+                                </div>
                             <?php } ?>
                         </div>
                         <div class="row" id="newMilestone" style="display:none;">
@@ -171,29 +177,49 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             </ul>
 
         <?php } ?>
+    </div>
 
-    </form>
 
-    <?php if ($id !== '') { ?>
-        <br/>
-        <input type="hidden" name="comment" value="1"/>
 
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
-        <?php
-            $this->assign("formUrl", BASE_URL . "/ideas/ideaDialog/" . $id . "");
 
-            $this->displaySubmodule('comments-generalComment'); ?>
-    <?php } ?>
+</div>
+
+
+</form>
+
+
+<div class="showDialogOnLoad" >
+
+
+
+
+
+
+
+
+
+        <?php if ($id != '') { ?>
+            <a href="<?=BASE_URL ?>/ideas/delCanvasItem/<?php echo $id; ?>" class="ideaModal delete right"><i
+                        class="fa fa-trash"></i> <?php echo $this->__("links.delete") ?></a>
+        <?php } ?>
+
+
+
+
+
+
 
 </div>
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
-        leantime.generalController.initSimpleEditor();
+        leantime.generalController.initComplexEditor();
+        leantime.ticketsController.initTagsInput();
 
         <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
-        leantime.generalController.makeInputReadonly(".nyroModalCont");
+            leantime.generalController.makeInputReadonly(".nyroModalCont");
+
 
         <?php } ?>
 

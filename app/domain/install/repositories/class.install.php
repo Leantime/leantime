@@ -710,13 +710,13 @@ namespace leantime\domain\repositories {
                   CREATE TABLE `zp_reactions` (
                       `id` INT NOT NULL AUTO_INCREMENT,
                       `userId` INT NULL,
-                      `entityId` INT NULL,
+                      `moduleId` INT NULL,
                       `module` VARCHAR(45) NULL,
                       `reaction` VARCHAR(45) NULL,
                       `date` DATETIME NULL,
                       PRIMARY KEY (`id`),
-                      INDEX `entity` (`entityId` ASC, `module` ASC, `reaction` ASC),
-                      INDEX `user` (`userId` ASC, `entityId` ASC, `module` ASC, `reaction` ASC)
+                      INDEX `entity` (`moduleId` ASC, `module` ASC, `reaction` ASC),
+                      INDEX `user` (`userId` ASC, `moduleId` ASC, `module` ASC, `reaction` ASC)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ";
 
@@ -1335,13 +1335,13 @@ namespace leantime\domain\repositories {
                 " CREATE TABLE `zp_reactions` (
                       `id` INT NOT NULL AUTO_INCREMENT,
                       `userId` INT NULL,
-                      `entityId` INT NULL,
+                      `moduleId` INT NULL,
                       `module` VARCHAR(45) NULL,
                       `reaction` VARCHAR(45) NULL,
                       `date` DATETIME NULL,
                       PRIMARY KEY (`id`),
-                      INDEX `entity` (`entityId` ASC, `module` ASC, `reaction` ASC),
-                      INDEX `user` (`userId` ASC, `entityId` ASC, `module` ASC, `reaction` ASC)
+                      INDEX `entity` (`moduleId` ASC, `module` ASC, `reaction` ASC),
+                      INDEX `user` (`userId` ASC, `moduleId` ASC, `module` ASC, `reaction` ASC)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
                 "ALTER TABLE `zp_projects`
                 ADD COLUMN `avatar` MEDIUMTEXT NULL AFTER `modified`,

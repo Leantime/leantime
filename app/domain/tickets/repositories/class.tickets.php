@@ -878,7 +878,7 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_user AS t3 ON zp_tickets.editorId = t3.id
 						LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_tickets.id AND progressTickets.type <> 'milestone'
 						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
-						WHERE 1 = 1 ";
+						WHERE (zp_projects.state <> -1 OR zp_projects.state IS NULL)";
 
             if($projectId !== 0){
                 $query .= " AND zp_tickets.projectId = :projectId";

@@ -5,7 +5,7 @@ function openModal() {
     var modalOptions = {
         sizes: {
             minW: 500,
-            minH: 200
+            minH: 500
         },
         resizable: true,
         autoSizable: true,
@@ -34,7 +34,8 @@ function openModal() {
     };
 
     var url = window.location.hash.substring(1);
-    if(url.includes("showTicket")) {
+    if(url.includes("showTicket") ||
+        url.includes("ideaDialog")) {
         modalOptions.sizes.minW = 1500;
     }
 
