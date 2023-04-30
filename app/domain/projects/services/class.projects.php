@@ -403,6 +403,23 @@ namespace leantime\domain\services {
                     $_SESSION['currentRETROSCanvas'] = "";
                     $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject", $_SESSION["currentProject"]);
 
+
+                    $recentProjects =  $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
+                    $recent = unserialize($recentProjects);
+
+                    if(is_array($recent) === false) {
+                        $recent = array();
+                    }
+                    $key = array_search($_SESSION["currentProject"], $recent);
+                    if ($key !== false) {
+                        unset($recent[$key]);
+                    }
+                    array_unshift($recent, $_SESSION["currentProject"]);
+
+                    $recent = array_slice($recent, 0, 20);
+
+                    $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects", serialize($recent));
+
                     unset($_SESSION["projectsettings"]);
 
                     self::dispatch_event("projects.setCurrentProject");
@@ -746,6 +763,15 @@ namespace leantime\domain\services {
         public function patch($id, $params)
         {
             return $this->projectRepository->patch($id, $params);
+        }
+
+        public function getProjectAvatar($id)
+        {
+            return $this->projectRepository->getProjectAvatar($id);
+        }
+
+        public function setProjectAvatar($file, $project) {
+            return $this->projectRepository->setPicture($file, $project);
         }
     }
 

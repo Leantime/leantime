@@ -10,24 +10,24 @@ namespace leantime\domain\controllers {
 
     class show extends controller
     {
-        private $dashboardRepo;
+
         private services\projects $projectService;
-        private $sprintService;
-        private $ticketService;
-        private $userService;
-        private $timesheetService;
-        private $commentService;
+        private services\tickets $ticketService;
+        private services\users $userService;
+        private services\timesheets $timesheetService;
+        private services\comments $commentService;
+        private services\reactions $reactionsService;
 
         public function init()
         {
 
-            $this->dashboardRepo = new repositories\dashboard();
+
             $this->projectService = new services\projects();
-            $this->sprintService = new services\sprints();
             $this->ticketService = new services\tickets();
             $this->userService = new services\users();
             $this->timesheetService = new services\timesheets();
             $this->commentService = new services\comments();
+            $this->reactionsService = new services\reactions();
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
 
@@ -53,16 +53,19 @@ namespace leantime\domain\controllers {
             $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
             $this->tpl->assign('project', $project);
 
+            $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $_SESSION['currentProject'], \leantime\domain\models\reactions::$favorite);
+            if($userReaction && is_array($userReaction) && count($userReaction) >0) {
+                $this->tpl->assign("isFavorite", true);
+            }else{
+                $this->tpl->assign("isFavorite", false);
+            }
+
             $this->tpl->assign('allUsers', $this->userService->getAll());
 
             //Project Progress
             $progress = $this->projectService->getProjectProgress($_SESSION['currentProject']);
-
             $this->tpl->assign('projectProgress', $progress);
             $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
-
-
-
 
             //Milestones
             $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");

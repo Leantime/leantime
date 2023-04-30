@@ -381,7 +381,7 @@ a, a:hover, a:link, a:active, a:focus {
 body a:hover {
     text-decoration: none;
     color:var(--primary-font-color);
-    transition: color 0.25s;
+
 }
 
 label, input, textarea, select, button {
@@ -2374,10 +2374,11 @@ ul.list-inline li {
 .tab-primary.ui-tabs .ui-tabs-nav li,
 .tab-primary.ui-tabs .ui-tabs-nav li a,
 .sortableTicketList li,
-.sortableTicketList li .ticketBox{
-    -moz-transition: all 0.2s ease-out 0s;
-    -webkit-transition: all 0.2s ease-out 0s;
-    transition: all 0.2s ease-out 0s;
+.sortableTicketList li .ticketBox,
+:hover{
+    -moz-transition: all 0.2s ease-in-out 0s;
+    -webkit-transition: all 0.2s ease-in-out 0s;
+    transition: all 0.2s ease-in-out 0s;
 }
 
 /*** BOOTSTRAP OVERRIDE ***/
@@ -3765,6 +3766,22 @@ a.titleInsertLink:hover {
 
 .projectBox .lastStatus [class*="commentStatus-"]{
     padding-left:10px;
+}
+
+.projectBox .projectAvatar,
+.ticketBox .projectAvatar{
+    width:50px;
+    height:50px;
+    float:left;
+    margin-right:10px;
+    border-radius:var(--box-radius-small);
+    background:var(--neutral);
+}
+
+.projectBox .projectAvatar img,
+.ticketBox .projectAvatar img{
+    width:50px;
+    border-radius:var(--box-radius-small);
 }
 
 .stickyColumn {

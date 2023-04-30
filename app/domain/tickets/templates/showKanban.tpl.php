@@ -454,7 +454,7 @@ if ($numberofColumns > 0) {
 
                                             <div class="col-md-12 border-top" style="white-space: nowrap;">
                                                 <?php if ($row["commentCount"] > 0) {?>
-                                                    <a href="<?=CURRENT_URL ?>?tab=comments#/tickets/showTicket/<?php echo $row["id"];?>" class="ticketModal"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
+                                                    <a href="<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $row["id"];?>"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
                                                 <?php } ?>
 
                                                 <?php if ($row["subtaskCount"] > 0) {?>

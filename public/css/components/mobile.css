@@ -3,9 +3,10 @@
 Mobile Stylesheet
 Available Breakpoints
 
+min-width: 375px lowest tested resolution
 min-width: 576px
-min-width: 768px
-min-width: 992px
+min-width: 768px //Not used
+min-width: 992px //Not used
 min-width: 1200px
  */
 
@@ -19,6 +20,22 @@ min-width: 1200px
     .tabbedwidget ul li {
         width:100%;
     }
+
+    .leftmenu .projectselector {
+        width:297px;
+        min-width: 297px;
+    }
+
+    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+        width:auto;
+    }
+
+    .barmenu,
+    .headerCTA{
+        display:none;
+    }
+
+
 
     .col-md-4 > .pull-right,
     .col-md-6 > .pull-right{
@@ -61,44 +78,13 @@ min-width: 1200px
         margin:0px;
     }
 
-    .leftpanel a.barmenu {
-        position: fixed;
-        left: 0px;
-        top: 5px;
-        margin-left:0px;
-        padding-left:15px;
-        width:50px;
-        transition: left 0.2s;
-    }
 
-    .leftpanel a.barmenu.open {
-        left:240px;
-
-        background:var(--primary-color);
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        box-shadow:var(--regular-shadow);
-
-    }
 
     .profileHandler .username {
         display:none;
     }
 
-    .leftpanel {
-        position:absolute;
-    }
 
-    .header {
-        margin-left:0px !important;
-        width:100% !important;
-
-    }
-
-    .rightpanel {
-        margin-left:0px !important;
-        width:100% !important;
-    }
 
     .headmenu > li > a {
         padding: 15px 10px 9px;
@@ -106,6 +92,7 @@ min-width: 1200px
 
     .maincontent {
         margin-top:0px;
+        padding: 10px 10px;
     }
 
     /* buttons */
@@ -418,7 +405,7 @@ min-width: 1200px
 
     .headmenu > li {
         padding: unset;
-        width: 50px;
+        width: 40px;
     }
 
     .headmenu > li > a {
@@ -459,10 +446,6 @@ min-width: 1200px
 
     .header .logo {
         padding-top: 0;
-    }
-
-    .headmenu .dropdown-menu:after {
-        left: 25px;
     }
 
 
@@ -740,6 +723,20 @@ min-width: 1200px
 
 @media (min-width: 576px) and (max-width:1200px) {
 
+    .leftmenu .projectselector {
+        width:297px;
+        min-width: 297px;
+    }
+
+    .leftmenu .projectselector .projectSelectorTabs .tabs li{
+        width:auto;
+    }
+
+    .barmenu,
+    .headerCTA{
+        display:none;
+    }
+
     .hidden-sm {
         display:none;
     }
@@ -808,18 +805,18 @@ min-width: 1200px
     }
 
     .header {
-        margin-left:0px !important;
-        width:100% !important;
+
 
     }
 
     .rightpanel {
-        margin-left:0px !important;
-        width:100% !important;
+        width:calc(100% - 63px);
+
     }
 
     .maincontent {
         margin-top:0px;
+        padding: 10px 10px;
     }
 
     .col-sm {
@@ -1120,7 +1117,7 @@ min-width: 1200px
     }
 
     .maincontentinner {
-        padding: 5px;
+
     }
 
     .tabbedwidget .btn-group {
@@ -1312,7 +1309,7 @@ min-width: 1200px
 
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1201px) {
     .col-md {
         -webkit-flex-basis: 0;
         -ms-flex-preferred-size: 0;

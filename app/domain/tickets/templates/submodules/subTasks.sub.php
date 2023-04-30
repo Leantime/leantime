@@ -52,12 +52,12 @@ foreach ($this->get('allSubTasks') as $subticket) {
             <div class="row">
                 <div class="col-md-12" style="padding:0 15px;">
                     <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                        <div class="inlineDropDownContainer">
+                        <div class="inlineDropDownContainer" >
                             <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete modal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?=$ticket->id ?>?delSubtask=<?php echo $subticket["id"]; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
 
                             </ul>
                         </div>

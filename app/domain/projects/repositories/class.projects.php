@@ -192,11 +192,13 @@ namespace leantime\domain\repositories {
 				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId
+					client.id AS clientId,
+					IF(favorite.id IS NULL, false, true) as isFavorite
 				FROM zp_projects AS project
 				LEFT JOIN zp_relationuserproject as relation ON project.id = relation.projectId
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId AND favorite.module = 'project' AND favorite.reaction = 'favorite' AND favorite.userId = :id
 				WHERE
 				    (   relation.userId = :id
 				        OR project.psettings = 'all'
@@ -305,6 +307,8 @@ namespace leantime\domain\repositories {
 					zp_projects.dollarBudget,
 					zp_projects.psettings,
 				    zp_projects.menuType,
+				    zp_projects.avatar,
+				    zp_projects.cover,
 					zp_clients.name AS clientName,
 					SUM(case when zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' then 1 else 0 end) as numberOfTickets
 				FROM zp_projects
@@ -884,6 +888,88 @@ namespace leantime\domain\repositories {
 
             $return = $stmn->execute();
             $stmn->closeCursor();
+
+            return $return;
+        }
+
+        /**
+         * setPicture - set the profile picture for an individual
+         *
+         * @access public
+         * @param  string
+         */
+        public function setPicture($_FILE, $id)
+        {
+
+            $project = $this->getProject($id);
+
+            $files = new files();
+
+            if (isset($values['profileId']) && $values['profileId'] > 0) {
+                $file = $files->getFile($values['profileId']);
+                $img = 'userdata/' . $file['encName'] . $file['extension'];
+
+                $files->deleteFile($values['avatar']);
+            }
+
+
+            $lastId = $files->upload($_FILE, 'project', $id, true, 300, 300);
+
+            if (isset($lastId['fileId'])) {
+                $sql = 'UPDATE `zp_projects` SET avatar = :fileId WHERE id = :userId';
+
+                $stmn = $this->db->database->prepare($sql);
+                $stmn->bindValue(':fileId', $lastId['fileId'], PDO::PARAM_INT);
+                $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
+
+                $stmn->execute();
+                $stmn->closeCursor();
+            }
+        }
+
+        public function getProjectAvatar($id)
+        {
+
+            $return = BASE_URL . '/images/default-user.png';
+
+            if ($id === false) {
+                return $return;
+            }
+
+            $sql = "SELECT avatar, name FROM `zp_projects` WHERE id = :id LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $value = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if ($value !== false && $value['avatar'] != '') {
+                $files = new files();
+                $file = $files->getFile($value['avatar']);
+
+                if ($file) {
+                    $return = $file['encName'].".".$file['extension'];
+                }
+
+                $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
+                $type = $file['extension'];
+
+                return $return;
+
+            } else if ($value['avatar'] === '' || $value['avatar'] == null) {
+
+                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                $image = $avatar
+                    ->name($value['name'])
+                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                    ->fontName("Verdana")
+                    ->background('#555555')->color("#fff")
+                    ->generateSvg();
+
+                return $image;
+            }
 
             return $return;
         }

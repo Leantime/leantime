@@ -10,7 +10,9 @@ namespace leantime\domain\controllers {
 
     class sessions extends controller
     {
-        private $usersService;
+        private services\users $usersService;
+
+        private repositories\menu $menu;
 
         /**
          * init - initialize private variables
@@ -22,6 +24,7 @@ namespace leantime\domain\controllers {
         {
 
             $this->usersService = new services\users();
+            $this->menu = new repositories\menu();
         }
 
 
@@ -62,7 +65,9 @@ namespace leantime\domain\controllers {
 
             if (isset($params['menuState'])) {
                 $_SESSION['menuState'] = htmlentities($params['menuState']);
+                $this->menu->setSubmenuState("mainMenu", $params['menuState']);
             }
+
         }
 
         /**

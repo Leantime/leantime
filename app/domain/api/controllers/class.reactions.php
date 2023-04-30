@@ -8,9 +8,9 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class files extends controller
+    class reactions extends controller
     {
-        private $usersService;
+        private services\reactions $reactionsService;
 
         /**
          * init - initialize private variables
@@ -21,7 +21,7 @@ namespace leantime\domain\controllers {
         public function init()
         {
 
-            $this->fileRepo = new repositories\files();
+            $this->reactionsService = new services\reactions();
         }
 
 
@@ -43,22 +43,17 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
+            if($params["action"] == "add") {
+               return $this->reactionsService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
 
-            //FileUpload
-            if (isset($_FILES['file']) && isset($_GET['module']) && isset($_GET['moduleId'])) {
-                $module = htmlentities($_GET['module']);
-                $id = (int) $_GET['moduleId'];
-                echo json_encode($this->fileRepo->upload($_FILES, $module, $id));
-                return;
             }
 
-            if (isset($_FILES['file'])) {
-                $_FILES['file']['name'] = "pastedImage.png";
+            if($params["action"] == "remove") {
+                return $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
 
-                $file = $this->fileRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
-
-                echo BASE_URL . "/download.php?module=private&encName=" . $file['encName'] . "&ext=" . $file['extension'] . "&realName=" . $file['realName'] . "";
             }
+
+
         }
 
         /**
@@ -69,13 +64,6 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-            //Special handling for settings
-
-            if (isset($params['patchModalSettings'])) {
-                if ($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
-                    echo "{status:ok}";
-                }
-            }
         }
 
         /**

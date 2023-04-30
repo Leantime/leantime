@@ -334,7 +334,10 @@
 
                                                 <div class="col-md-8">
                                                     <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>">
-                                                        <?php $this->e($project['clientName'])?> \\
+                                                        <span class="projectAvatar">
+                                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']?>" />
+                                                        </span>
+                                                        <small><?php $this->e($project['clientName'])?></small><br />
                                                         <?php $this->e($project['name'])?>
                                                     </a>
                                                 </div>

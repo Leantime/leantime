@@ -71,7 +71,7 @@ leantime.timesheetsController = (function () {
                         if (hoursLogged == 0) {
                             jQuery.growl({message: leantime.i18n.__("short_notifications.not_enough_time_logged")});
                         } else {
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.logged_x_hours").replace("%1$s", hoursLogged)});
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.logged_x_hours").replace("%1$s", hoursLogged), fixed: false});
                         }
 
                     }

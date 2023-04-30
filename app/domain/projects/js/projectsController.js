@@ -204,6 +204,89 @@ leantime.projectsController = (function () {
 
     };
 
+    var readURL = function (input) {
+
+        clearCroppie();
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            var profileImg = jQuery('#projectAvatar');
+            reader.onload = function (e) {
+                //profileImg.attr('src', e.currentTarget.result);
+
+                _uploadResult = profileImg
+                    .croppie(
+                        {
+                            enableExif: true,
+                            viewport: {
+                                width: 200,
+                                height: 200,
+                                type: 'rectangle'
+                            },
+                            boundary: {
+                                width: 250,
+                                height: 250
+                            }
+                        }
+                    );
+
+                _uploadResult.croppie(
+                    'bind',
+                    {
+                        url: e.currentTarget.result
+                    }
+                );
+
+                jQuery("#previousImage").hide();
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    var clearCroppie = function () {
+        jQuery('#profileImg').croppie('destroy');
+        jQuery("#previousImage").show();
+    };
+
+    var saveCroppie = function () {
+
+        jQuery('#save-picture').addClass('running');
+
+        jQuery('#profileImg').attr('src', leantime.appUrl + '/images/loaders/loader28.gif');
+        _uploadResult.croppie(
+            'result',
+            {
+                type: "blob",
+                circle: false
+            }
+        ).then(
+            function (result) {
+                var formData = new FormData();
+                formData.append('file', result);
+                jQuery.ajax(
+                    {
+                        type: 'POST',
+                        url: leantime.appUrl + '/api/projects',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (resp) {
+
+                            jQuery('#save-picture').removeClass('running');
+
+                            location.reload();
+                        },
+                        error:  function (err) {
+                            console.log(err);
+                        }
+                    }
+                );
+            }
+        );
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         initDates:initDates,
@@ -215,6 +298,9 @@ leantime.projectsController = (function () {
         initTodoStatusSortable:initTodoStatusSortable,
         initSelectFields:initSelectFields,
         removeStatus:removeStatus,
-        addToDoStatus:addToDoStatus
+        addToDoStatus:addToDoStatus,
+        saveCroppie:saveCroppie,
+        clearCroppie:clearCroppie,
+        readURL:readURL
     };
 })();

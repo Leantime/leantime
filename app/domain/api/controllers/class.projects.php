@@ -8,9 +8,9 @@ namespace leantime\domain\controllers {
     use leantime\domain\services;
     use leantime\domain\models;
 
-    class users extends controller
+    class projects extends controller
     {
-        private services\users $usersService;
+        private services\projects $projectService;
         private repositories\files $filesRepository;
 
         /**
@@ -22,7 +22,7 @@ namespace leantime\domain\controllers {
         public function init()
         {
 
-            $this->usersService = new services\users();
+            $this->projectService = new services\projects();
             $this->filesRepository = new repositories\files();
         }
 
@@ -36,27 +36,9 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if (isset($params['assignedProjectUsersAssigned'])) {
-            }
+            if (isset($params["projectAvatar"])) {
 
-            if (isset($params['projectUsersAccess'])) {
-                if ($params['projectUsersAccess'] == 'current') {
-                    $projectId = $_SESSION['currentProject'];
-                } else {
-                    $projectId = $params['projectUsersAccess'];
-                }
-
-                $users = $this->usersService->getUsersWithProjectAccess($_SESSION['userdata']['id'], $projectId);
-
-                $this->tpl->displayJson(json_encode($users));
-
-                return;
-            }
-
-            if (isset($params["profileImage"])) {
-                //var_dump("asdf");
-
-                $return = $this->usersService->getProfilePicture($params["profileImage"]);
+                $return = $this->projectService->getProjectAvatar($params["projectAvatar"]);
 
                 if (is_string($return)) {
 
@@ -64,11 +46,11 @@ namespace leantime\domain\controllers {
                     $file->displayImageFile($return);
 
                 } else if(is_object($return)){
-                  header('Pragma: public');
-                  header('Cache-Control: max-age=86400');
-                  header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+                    header('Pragma: public');
+                    header('Cache-Control: max-age=86400');
+                    header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
 
-                  header('Content-type: image/svg+xml');
+                    header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
                 }
             }
@@ -85,9 +67,9 @@ namespace leantime\domain\controllers {
 
             //Updatind User Image
             if (isset($_FILES['file'])) {
-                $_FILES['file']['name'] = "userPicture.png";
+                $_FILES['file']['name'] = "profileImage-". $_SESSION['currentProject'] .".png";
 
-                $this->usersService->setProfilePicture($_FILES, $_SESSION['userdata']['id']);
+                $this->projectService->setProjectAvatar($_FILES, $_SESSION['currentProject']);
 
                 $_SESSION['msg'] = "PICTURE_CHANGED";
                 $_SESSION['msgT'] = "success";
