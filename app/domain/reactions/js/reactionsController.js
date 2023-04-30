@@ -3,7 +3,7 @@ leantime.reactionsController = (function () {
 
     //Functions
 
-    let addReactions = function (module, moduleId, reaction) {
+    let addReactions = function (module, moduleId, reaction, clb) {
 
         jQuery.ajax({
             type: 'POST',
@@ -15,22 +15,25 @@ leantime.reactionsController = (function () {
                 'reaction': reaction
             }
 
+        }).done(function() {
+            clb();
         });
 
     };
 
-    let removeReaction = function (module, moduleId, reaction) {
+    let removeReaction = function (module, moduleId, reaction, clb) {
 
         jQuery.ajax({
             type: 'POST',
             url: leantime.appUrl + '/api/reactions',
             data: {
-                'action': 'add',
+                'action': 'remove',
                 'module': module,
                 'moduleId': moduleId,
                 'reaction': reaction
             }
-
+        }).done(function() {
+            clb();
         });
 
     };

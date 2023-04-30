@@ -44,7 +44,7 @@ if(str_contains($redirectUrl, "showProject")) {
                         echo " active ";
                     }
                     echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'><img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
-                   </span> " . $this->escape($projectRow["name"]) . "</a></li>";
+                   </span><span class='projectName'> " . $this->escape($projectRow["name"]) . "</span></a></li>";
                 }
             } else {
                 echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
@@ -124,12 +124,52 @@ if(str_contains($redirectUrl, "showProject")) {
         </div>
 
         <div id="recentProjects" class="scrollingTab">
+            <ul class="selectorList clientList">
+                <?php
+                $lastClient = "";
 
+                if ($this->get('recentProjects') !== false && count($this->get('recentProjects')) >= 1) {
+                    foreach ($this->get('recentProjects') as $projectRow) {
+
+                        echo "<li class='projectLineItem visible noParent hasSubtitle";
+                        if ($this->get('currentProject') == $projectRow["id"]) {
+                            echo " active ";
+                        }
+                        echo "'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'><img src='" . BASE_URL . "/api/projects?projectAvatar=" . $projectRow['id'] . "' />
+                        </span><span class='projectName'><small>" . $this->escape($projectRow["clientName"]) . "</small><br />" . $this->escape($projectRow["name"]) . "</span></a></li>";
+
+                    }
+                } else {
+                    echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
+                }
+                ?>
+
+            </ul>
 
         </div>
 
         <div id="favoriteProjects" class="scrollingTab">
+            <ul class="selectorList clientList">
+                <?php
+                $lastClient = "";
 
+                if ($this->get('allAvailableProjects') !== false && count($this->get('allAvailableProjects')) >= 1) {
+                    foreach ($this->get('allAvailableProjects') as $projectRow) {
+                        if($projectRow['isFavorite']) {
+                            echo "<li class='projectLineItem visible noParent hasSubtitle";
+                            if ($this->get('currentProject') == $projectRow["id"]) {
+                                echo " active ";
+                            }
+                            echo "'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'><img src='" . BASE_URL . "/api/projects?projectAvatar=" . $projectRow['id'] . "' />
+                            </span><span class='projectName'><small>" . $this->escape($projectRow["clientName"]) . "</small><br />" . $this->escape($projectRow["name"]) . "</span></a></li>";
+                        }
+                    }
+                } else {
+                    echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
+                }
+                ?>
+
+            </ul>
 
         </div>
     </div>

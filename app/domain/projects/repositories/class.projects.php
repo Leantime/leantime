@@ -192,11 +192,13 @@ namespace leantime\domain\repositories {
 				    project.menuType,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId
+					client.id AS clientId,
+					IF(favorite.id IS NULL, false, true) as isFavorite
 				FROM zp_projects AS project
 				LEFT JOIN zp_relationuserproject as relation ON project.id = relation.projectId
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId AND favorite.module = 'project' AND favorite.reaction = 'favorite' AND favorite.userId = :id
 				WHERE
 				    (   relation.userId = :id
 				        OR project.psettings = 'all'

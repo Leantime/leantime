@@ -1,5 +1,4 @@
 .btn:hover,
-.btn:focus,
 .btn:active,
 .btn.active {
     background:var(--main-action-hover-bg);

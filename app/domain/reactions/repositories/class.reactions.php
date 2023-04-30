@@ -13,31 +13,7 @@ namespace leantime\domain\repositories {
          */
         private core\db $db;
 
-        /**
-         * @access public
-         * @var    array $reactionTypes list of available reactions by reaction type
-         */
-        public array $reactionTypes = array(
-            "sentimentReactions" => array(
-                "like" => "👍",
-                "anger" => "😡",
-                "love" => "❤",
-                "support" => "💯",
-                "celebrate" => "🎉",
-                "interesting" => "💡",
-                "sad" => "😥",
-                "funny" => "😂"
-            ),
-            "contentReactions" => array(
-                "upvote" => "<i class='fa-solid fa-up'></i>",
-                "downvote" => "<i class='fa-solid fa-down'></i>",
-            ),
-            "entityReactions" => array(
-                "favorite" => "<i class='fa fa-star'></i>",
-                "watch" => "<i class='fa fa-eye'></i>"
-            ),
 
-        );
 
         public function __construct()
         {
@@ -56,7 +32,7 @@ namespace leantime\domain\repositories {
          *
          * @return bool
          */
-        public function addReaction(string $module, int $moduleId, int $userId, string $reaction): bool
+        public function addReaction(int $userId, string $module, int $moduleId,  string $reaction): bool
         {
 
             $sql = 'INSERT INTO zp_reactions
@@ -118,7 +94,7 @@ namespace leantime\domain\repositories {
          *
          * @return array|false
          */
-        public function getMyReactions(int $userId, string $module = '', ?int $moduleId = null, string $reaction = ''): array|false
+        public function getUserReactions(int $userId, string $module = '', ?int $moduleId = null, string $reaction = ''): array|false
         {
 
             $sql = "SELECT
@@ -165,20 +141,50 @@ namespace leantime\domain\repositories {
         }
 
         /**
-         * removeReaction - removes a reaction
+         * removeReactionById - removes a reaction by reaction id
          * @access public
          *
          * @param int $id
          *
          * @return bool
          */
-        public function removeReaction(string $id): bool
+        public function removeReactionById(int $id): bool
         {
 
             $sql = 'DELETE FROM zp_reactions WHERE id = :id LIMIT 1';
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+
+            $return = $stmn->execute();
+            $stmn->closeCursor();
+
+            return $return;
+        }
+
+        /**
+         * removeUserReaction - removes a users reaction to an entity
+         * @access public
+         *
+         * @param int $id
+         *
+         * @return bool
+         */
+        public function removeUserReaction(int $userId, string $module, int $moduleId, string $reaction): bool
+        {
+
+            $sql = 'DELETE FROM zp_reactions WHERE
+                             module = :module
+                         AND moduleId = :moduleId
+                          AND userId = :userId
+                          AND reaction = :reaction
+                         LIMIT 1';
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':module', $module, PDO::PARAM_STR);
+            $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmn->bindValue(':reaction', $reaction, PDO::PARAM_STR);
 
             $return = $stmn->execute();
             $stmn->closeCursor();

@@ -717,14 +717,42 @@
     list-style-type: none;
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li {
+
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem {
     display:none;
     padding-left:30px;
     height:50px;
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.visible {
+    display:block;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.noParent {
+    padding-left:15px;
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem a {
     line-height:30px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a .projectName {
+    display:block;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a .projectName {
+    line-height:12px;
+    display:block;
+    margin-top: -4px;
+    float: left;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a small {
+    font-size:var(--font-size-xs);
+    opacity:0.5;
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem .projectAvatar {
