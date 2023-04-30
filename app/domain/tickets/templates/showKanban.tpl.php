@@ -576,11 +576,10 @@ if ($numberofColumns > 0) {
                 });
 
                 jQuery("#ticket_<?=$ticket['id'] ?>").mousedown(function () {
-                    isDragging = false;
+
                 })
                     .mousemove(function () {
-                        isDragging = true;
-                        line<?=$ticket['id'] ?>.position();
+
                     })
                     .mouseup(function () {
                         line<?=$ticket['id'] ?>.position();
@@ -588,10 +587,10 @@ if ($numberofColumns > 0) {
 
                 jQuery("#ticket_<?=$ticket['dependingTicketId'] ?>").mousedown(function () {
 
-                })
+                    })
                     .mousemove(function () {
 
-                        line<?=$ticket['id'] ?>.position();
+
                     })
                     .mouseup(function () {
                         line<?=$ticket['id'] ?>.position();
