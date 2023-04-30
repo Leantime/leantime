@@ -50,34 +50,34 @@ namespace leantime\domain\repositories {
             'full_menu' => [
                 10 => ['type' => 'submenu', 'id' => 'planning', 'title' => 'menu.planning_execution', 'visual' => 'open',
                     'submenu' => [
-                        11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'href' => '/dashboard/show', 'active' => ['show']],
-                        21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
-                        31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
-                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'href' => '/goalcanvas/showCanvas']
+                        11 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.dashboard', 'icon' => 'fa fa-fw fa-home', 'tooltip' => 'menu.dashboard_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
+                        21 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket']],
+                        31 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-sliders', 'tooltip' => 'menu.milestones_tooltip','href' => '/tickets/roadmap', 'active' => ['roadmap']],
+                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/showCanvas']
                     ]],
 
                 50 => ['type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'closed',
                     'submenu' => [
-                        51 => ['type' => 'item', 'module' => 'insightscanvas', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas'],
-                        52 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideation', 'href' => '/ideas/showBoards']]],
-                60 => ['type' => 'submenu', 'id' => 'dts-frameworks', 'title' => 'menu.dts.frameworks', 'visual' => 'closed',
+                        51 => ['type' => 'item', 'module' => 'insightscanvas', 'icon' => 'far fa-fw fa-note-sticky', 'tooltip' => 'menu.insightscanvas_tooltip', 'title' => 'menu.insightscanvas', 'href' => '/insightscanvas/showCanvas'],
+                        52 => ['type' => 'item', 'module' => 'ideas', 'icon' => 'fa fa-fw fa-lightbulb', 'tooltip' => 'menu.ideas_tooltip', 'title' => 'menu.ideation', 'href' => '/ideas/showBoards']]],
+                60 => ['type' => 'submenu', 'id' => 'dts-frameworks',  'title' => 'menu.dts.frameworks', 'visual' => 'closed',
                     'submenu' => [
                         61 => ['type' => 'header', 'title' => 'menu.dts.observe'],
-                        62 => ['type' => 'item', 'module' => 'sbcanvas', 'title' => 'menu.sbcanvas', 'href' => '/sbcanvas/showCanvas'],
-                        63 => ['type' => 'item', 'module' => 'riskscanvas', 'title' => 'menu.riskscanvas', 'href' => '/riskscanvas/showCanvas'],
-                        64 => ['type' => 'item', 'module' => 'eacanvas', 'title' => 'menu.eacanvas', 'href' => '/eacanvas/showCanvas'],
+                        62 => ['type' => 'item', 'module' => 'sbcanvas', 'title' => 'menu.sbcanvas', 'icon' => 'fas fa-fw fa-list-check', 'tooltip' => 'menu.sbcanvas_tooltip', 'href' => '/sbcanvas/showCanvas'],
+                        63 => ['type' => 'item', 'module' => 'riskscanvas', 'title' => 'menu.riskscanvas', 'icon' => 'fas fa-fw fa-person-falling', 'tooltip' => 'menu.riskscanvas_tooltip', 'href' => '/riskscanvas/showCanvas'],
+                        64 => ['type' => 'item', 'module' => 'eacanvas', 'title' => 'menu.eacanvas', 'icon' => 'fas fa-fw fa-tree', 'tooltip' => 'menu.eacanvas_tooltip', 'href' => '/eacanvas/showCanvas'],
                         65 => ['type' => 'header', 'title' => 'menu.dts.design'],
-                        66 => ['type' => 'item', 'module' => 'lbmcanvas', 'title' => 'menu.lbmcanvas', 'href' => '/lbmcanvas/showCanvas'],
-                        67 => ['type' => 'item', 'module' => 'dbmcanvas', 'title' => 'menu.dbmcanvas', 'href' => '/dbmcanvas/showCanvas'],
-                        68 => ['type' => 'item', 'module' => 'cpcanvas', 'title' => 'menu.cpcanvas', 'href' => '/cpcanvas/showCanvas'],
+                        66 => ['type' => 'item', 'module' => 'lbmcanvas', 'title' => 'menu.lbmcanvas', 'icon' => 'fas fa-fw fa-building', 'tooltip' => 'menu.lbmcanvas_tooltip', 'href' => '/lbmcanvas/showCanvas'],
+                        67 => ['type' => 'item', 'module' => 'dbmcanvas', 'title' => 'menu.dbmcanvas', 'icon' => 'fas fa-fw fa-building', 'tooltip' => 'menu.dbmcanvas_tooltip', 'href' => '/dbmcanvas/showCanvas'],
+                        68 => ['type' => 'item', 'module' => 'cpcanvas', 'title' => 'menu.cpcanvas', 'icon' => 'fas fa-fw fa-city', 'tooltip' => 'menu.cpcanvas_tooltip', 'href' => '/cpcanvas/showCanvas'],
                         69 => ['type' => 'header', 'title' => 'menu.dts.validate'],
-                        70 => ['type' => 'item', 'module' => 'sqcanvas', 'title' => 'menu.sqcanvas', 'href' => '/sqcanvas/showCanvas'],
-                        71 => ['type' => 'item', 'module' => 'smcanvas', 'title' => 'menu.smcanvas', 'href' => '/smcanvas/showCanvas']]],
+                        70 => ['type' => 'item', 'module' => 'sqcanvas', 'title' => 'menu.sqcanvas', 'icon' => 'fas fa-fw fa-chess', 'tooltip' => 'menu.sqcanvas_tooltip', 'href' => '/sqcanvas/showCanvas'],
+                        71 => ['type' => 'item', 'module' => 'smcanvas', 'title' => 'menu.smcanvas', 'icon' => 'fas fa-fw fa-message', 'tooltip' => 'menu.smcanvas_tooltip', 'href' => '/smcanvas/showCanvas']]],
                 80 => ['type' => 'submenu', 'id' => 'dts-admin', 'title' => 'menu.dts.admin', 'visual' => 'open',
                     'submenu' => [
-                        81 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'href' => '/wiki/show'],
-                        82 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'href' => '/retroscanvas/showCanvas'],
-                        83 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'href' => '/reports/show', 'role' => 'editor']]]]
+                        81 => ['type' => 'item', 'module' => 'wiki', 'title' => 'menu.wiki', 'icon' => 'fa fa-fw fa-book', 'tooltip' => 'menu.wiki_tooltip', 'href' => '/wiki/show'],
+                        82 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'icon' => 'fa fa-fw fa-hand-spock', 'tooltip' => 'menu.retroscanvas_tooltip', 'href' => '/retroscanvas/showCanvas'],
+                        83 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/show', 'role' => 'editor']]]]
         ];
 
         public function __construct(){
