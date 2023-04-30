@@ -820,7 +820,7 @@ namespace leantime\domain\services {
                 'editFrom' => "",
                 'editTo' => "",
                 'dependingTicketId' => $parentTicket->id,
-                'milestoneid' => $parentTicket->milestoneId
+                'milestoneid' => $parentTicket->milestoneid
             );
 
             if ($subtaskId == "new" || $subtaskId == "") {
