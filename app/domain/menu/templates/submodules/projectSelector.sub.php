@@ -47,7 +47,7 @@ if(str_contains($redirectUrl, "showProject")) {
                    </span><span class='projectName'> " . $this->escape($projectRow["name"]) . "</span></a></li>";
                 }
             } else {
-                echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
+                echo "<li class='nav-header'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
             }
             ?>
             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
@@ -140,7 +140,7 @@ if(str_contains($redirectUrl, "showProject")) {
 
                     }
                 } else {
-                    echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
+                    echo "<li class='nav-header'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
                 }
                 ?>
 
@@ -165,7 +165,7 @@ if(str_contains($redirectUrl, "showProject")) {
                         }
                     }
                 } else {
-                    echo "<li class='nav-header border'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
+                    echo "<li class='nav-header'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
                 }
                 ?>
 
