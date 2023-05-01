@@ -66,7 +66,7 @@ namespace leantime\domain\repositories {
             */
 
             $ticketService = new \leantime\domain\services\tickets();
-            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "");
+            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
 
             if (!empty($ticketArray)) {
                 if (isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {

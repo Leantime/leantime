@@ -296,10 +296,15 @@ namespace leantime\domain\services {
             return false;
         }
 
-        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId)
+        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, $includeDoneTickets = false)
         {
 
-            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "currentUser"=> $userId, "users" => $userId, "status" => "not_done", "sprint" => ""));
+            if($includeDoneTickets === true){
+                $searchStatus = "all";
+            }else{
+                $searchStatus = "not_done";
+            }
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "currentUser"=> $userId, "users" => $userId, "status" => $searchStatus, "sprint" => ""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
@@ -315,7 +320,7 @@ namespace leantime\domain\services {
                 }
 
                 //There is a chance that the status was removed after it was assigned to a ticket
-                if (isset($statusLabels[$row['projectId']][$row['status']]) && $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE") {
+                if (isset($statusLabels[$row['projectId']][$row['status']]) && ($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" || $includeDoneTickets === true)) {
                     if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
                         if (isset($tickets["later"]["tickets"])) {
                             $tickets["later"]["tickets"][] = $row;
