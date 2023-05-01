@@ -938,22 +938,22 @@ namespace leantime\domain\repositories {
         public function getProjectAvatar($id)
         {
 
-            $return = BASE_URL . '/images/default-user.png';
+            $value=false;
 
-            if ($id === false) {
-                return $return;
+            if ($id !== false) {
+
+                $sql = "SELECT avatar, name FROM `zp_projects` WHERE id = :id LIMIT 1";
+
+                $stmn = $this->db->database->prepare($sql);
+                $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+
+                $stmn->execute();
+                $value = $stmn->fetch();
+                $stmn->closeCursor();
             }
 
-            $sql = "SELECT avatar, name FROM `zp_projects` WHERE id = :id LIMIT 1";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $value = $stmn->fetch();
-            $stmn->closeCursor();
-
             if ($value !== false && $value['avatar'] != '') {
+
                 $files = new files();
                 $file = $files->getFile($value['avatar']);
 
@@ -966,7 +966,7 @@ namespace leantime\domain\repositories {
 
                 return $return;
 
-            } else if ($value['avatar'] === '' || $value['avatar'] == null) {
+            } else if ($value == false || $value['avatar'] === '' || $value['avatar'] == null) {
 
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
@@ -977,9 +977,21 @@ namespace leantime\domain\repositories {
                     ->generateSvg();
 
                 return $image;
+
+            }else {
+
+                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                $image = $avatar
+                    ->name("🦄")
+                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                    ->fontName("Verdana")
+                    ->background('#555555')->color("#fff")
+                    ->generateSvg();
+
+                return $image;
+
             }
 
-            return $return;
         }
     }
 
