@@ -15,7 +15,7 @@ namespace leantime\domain\controllers {
 
     class showMyCalendar extends controller
     {
-        private $calendarRepo;
+        private repositories\calendar $calendarRepo;
 
         /**
          * init - initialize private variables

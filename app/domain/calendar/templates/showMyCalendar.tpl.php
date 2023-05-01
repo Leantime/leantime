@@ -134,11 +134,6 @@
                         nextYear: 'fa-angle-double-right'
                     },
                     eventDrop: function (event) {
-                        console.log(event.event);
-                        console.log(event.event.startStr);
-                        console.log(event.event.endStr);
-                        console.log(event.event.extendedProps.enitityType);
-                        console.log(event.event.extendedProps.enitityId);
 
                         if(event.event.extendedProps.enitityType == "ticket") {
                             jQuery.ajax({
@@ -165,11 +160,6 @@
                         }
                     },
                     eventResize: function (event) {
-                        console.log(event.event);
-                        console.log(event.event.startStr);
-                        console.log(event.event.endStr);
-                        console.log(event.event.extendedProps.enitityType);
-                        console.log(event.event.extendedProps.enitityId);
 
                         if(event.event.extendedProps.enitityType == "ticket") {
                             jQuery.ajax({

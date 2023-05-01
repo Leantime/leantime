@@ -414,13 +414,15 @@ namespace leantime\domain\repositories {
                 $query .= " AND zp_tickets.milestoneid = :milestoneid";
             }
 
+            if (isset($searchCriteria["status"]) && $searchCriteria["status"]  == "all") {
+                $query .= " ";
 
-            if (isset($searchCriteria["status"]) && $searchCriteria["status"]  != "") {
+            }else if (isset($searchCriteria["status"]) && $searchCriteria["status"]  != "") {
                 $statusArray = explode(",", $searchCriteria['status']);
 
                 if (array_search("not_done", $statusArray) !== false) {
                     //Project Id needs to be set to search for not_done due to custom done states across projects
-                    if ($searchCriteria["currentProject"]  != "") {
+                    if ($searchCriteria["currentProject"] != "") {
                         $statusLabels = $this->getStateLabels($searchCriteria["currentProject"]);
 
                         $statusList = array();
@@ -433,7 +435,10 @@ namespace leantime\domain\repositories {
                         $query .= " AND zp_tickets.status IN(" . implode(",", $statusList) . ")";
                     }
                 } else {
-                    $statusIn = core\db::arrayToPdoBindingString("status", count(explode(",", $searchCriteria["status"])));
+                    $statusIn = core\db::arrayToPdoBindingString(
+                        "status",
+                        count(explode(",", $searchCriteria["status"]))
+                    );
                     $query .= " AND zp_tickets.status IN(" . $statusIn . ")";
                 }
             } else {
@@ -514,7 +519,8 @@ namespace leantime\domain\repositories {
                 }
             }
 
-            if(isset($searchCriteria['status'])) {
+            if(isset($searchCriteria['status']) && $searchCriteria["status"]  != "all") {
+
                 $statusArray = explode(",", $searchCriteria['status']);
                 if ($searchCriteria["status"] != "" && array_search("not_done", $statusArray) === false) {
                     foreach (explode(",", $searchCriteria["status"]) as $key => $status) {
