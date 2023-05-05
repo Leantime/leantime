@@ -353,7 +353,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':wage', $values['wage'], PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
+            $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
 
             $result = $stmn->execute();
             $stmn->closeCursor();
@@ -433,7 +433,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
             if ($values['password'] != '') {
-                $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
+                $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
             }
 
             $stmn->execute();
@@ -485,7 +485,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':user', $values['user'], PDO::PARAM_STR);
             $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
 
-            $stmn->bindValue(':password', $values['password'], PDO::PARAM_STR);
+            $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_INT);
 
             if (isset($values['source'])) {
@@ -627,7 +627,11 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':id2', $id, PDO::PARAM_STR);
 
             foreach ($params as $key => $value) {
-                $stmn->bindValue(':' . core\db::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
+                $cleanKey = core\db::sanitizeToColumnString($key);
+                $val = $value;
+                if ($cleanKey == 'password')
+                    $val = password_hash($value, PASSWORD_DEFAULT);
+                $stmn->bindValue(':' . $cleanKey, $val, PDO::PARAM_STR);
             }
 
             $return = $stmn->execute();
