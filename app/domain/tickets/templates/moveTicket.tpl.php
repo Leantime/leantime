@@ -25,6 +25,7 @@
         <select id="projectSelector" name="projectId">
         <?php
         $i=0;
+        $lastClient = '';
         foreach ($this->get('projects') as $projectRow) {
             if ($lastClient != $projectRow['clientName']) {
                 $lastClient = $projectRow['clientName'];

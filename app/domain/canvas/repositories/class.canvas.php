@@ -469,7 +469,6 @@ namespace leantime\domain\repositories {
 
         public function getSingleCanvasItem($id)
         {
-
             $sql = "SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.description,
@@ -520,8 +519,11 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
-
-            return $values;
+            if ($values !== false && $values['id'] != null) {
+                return $values;
+            } else {
+                return false;
+            }
         }
 
         public function addCanvasItem($values)

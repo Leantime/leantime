@@ -63,11 +63,22 @@ namespace leantime\domain\controllers\canvas {
 
                 $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
 
-                $comments = $this->commentsRepo->getComments(static::CANVAS_NAME . 'canvas' . 'item', $canvasItem['id']);
-                $this->tpl->assign('numComments', $this->commentsRepo->countComments(
-                    static::CANVAS_NAME . 'canvas' . 'item',
-                    $canvasItem['id']
-                ));
+                if($canvasItem) {
+                    $comments = $this->commentsRepo->getComments(
+                        static::CANVAS_NAME . 'canvas' . 'item',
+                        $canvasItem['id']
+                    );
+                    $this->tpl->assign(
+                        'numComments',
+                        $this->commentsRepo->countComments(
+                            static::CANVAS_NAME . 'canvas' . 'item',
+                            $canvasItem['id']
+                        )
+                    );
+                }else{
+                    $this->tpl->displayPartial('errors.error404');
+                    exit();
+                }
             } else {
                 if (isset($params['type'])) {
                     $type = strip_tags($params['type']);

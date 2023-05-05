@@ -40,6 +40,11 @@ namespace leantime\domain\controllers {
 
                 $row = $this->calendarRepo->getEvent($id);
 
+                if($row === false){
+                    $this->tpl->displayPartial('errors.error404');
+                    exit();
+                }
+
                 $values = array(
                     'description' => $row['description'],
                     'dateFrom' => $row['dateFrom'],

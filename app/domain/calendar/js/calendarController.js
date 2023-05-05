@@ -82,15 +82,19 @@ leantime.calendarController = (function () {
 
     var initEventDatepickers = function () {
 
-        Date.prototype.addDays = function (days) {
-            this.setDate(this.getDate() + days);
-            return this;
-        };
-        jQuery.datepicker.setDefaults(
-            { beforeShow: function (i) {
-                if (jQuery(i).attr('readonly')) {
-                    return false; } } }
-        );
+        jQuery(document).ready(function() {
+            Date.prototype.addDays = function (days) {
+                this.setDate(this.getDate() + days);
+                return this;
+            };
+            jQuery.datepicker.setDefaults(
+                { beforeShow: function (i) {
+                        if (jQuery(i).attr('readonly')) {
+                            return false; } } }
+            );
+
+
+
 
         var dateFormat = leantime.i18n.__("language.jsdateformat"),
 
@@ -147,18 +151,21 @@ leantime.calendarController = (function () {
                     }
                 );
 
-        function getDate( element )
-        {
-            var date;
-            try {
-                date = jQuery.datepicker.parseDate(dateFormat, element.value);
-            } catch ( error ) {
-                date = null;
-                console.log(error);
+            function getDate( element )
+            {
+                var date;
+                try {
+                    date = jQuery.datepicker.parseDate(dateFormat, element.value);
+                } catch ( error ) {
+                    date = null;
+                    console.log(error);
+                }
+                return date;
             }
-            return date;
-        }
-    }
+        });
+
+
+    };
 
     var initExportModal = function () {
 

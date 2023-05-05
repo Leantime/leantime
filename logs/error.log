@@ -200,3 +200,219 @@ Stack trace:
 [05-May-2023 04:16:08 America/Los_Angeles] PHP Warning:  Attempt to read property "id" on bool in /Users/marcel/Sites/leantime-oss/app/domain/wiki/templates/show.tpl.php on line 58
 [05-May-2023 04:16:58 America/Los_Angeles] PHP Warning:  Undefined variable $currentArticle in /Users/marcel/Sites/leantime-oss/app/domain/wiki/controllers/class.show.php on line 175
 [05-May-2023 04:16:58 America/Los_Angeles] PHP Warning:  Undefined variable $wikiHeadlines in /Users/marcel/Sites/leantime-oss/app/domain/wiki/controllers/class.show.php on line 178
+[05-May-2023 04:19:59 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: array_column(): Argument #1 ($array) must be of type array, bool given in /Users/marcel/Sites/leantime-oss/app/domain/menu/controllers/class.menu.php:54
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/menu/controllers/class.menu.php(54): array_column(false, 'id')
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(63): leantime\domain\controllers\menu->run()
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(33): leantime\core\controller->executeActions('get', Array)
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(176): leantime\core\controller->__construct('get', Array)
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(237): leantime\core\frontcontroller::executeAction('menu.menu', Array)
+#5 /Users/marcel/Sites/leantime-oss/public/theme/default/layout/app.php(23): leantime\core\frontcontroller::includeAction('menu.menu')
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(232): require('/Users/marcel/S...')
+#7 /Users/marcel/Sites/leantime-oss/app/domain/projects/controllers/class.showAll.php(59): leantime\core\template->display('projects.showAl...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(63): leantime\domain\controllers\showAll->run()
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(33): leantime\core\controller->executeActions('get', Array)
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(176): leantime\core\controller->__construct('get', Array)
+#11 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(98): leantime\core\frontcontroller::executeAction('projects.showAl...', Array, 200)
+#12 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(127): leantime\core\frontcontroller::dispatch()
+#13 /Users/marcel/Sites/leantime-oss/public/index.php(26): leantime\core\application->start()
+#14 {main}
+  thrown in /Users/marcel/Sites/leantime-oss/app/domain/menu/controllers/class.menu.php on line 54
+[05-May-2023 04:21:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type bool in /Users/marcel/Sites/leantime-oss/app/domain/menu/controllers/class.menu.php on line 71
+[05-May-2023 04:21:25 America/Los_Angeles] cron start
+[05-May-2023 04:21:25 America/Los_Angeles] cron end
+[05-May-2023 04:28:43 America/Los_Angeles] cron start
+[05-May-2023 04:28:43 America/Los_Angeles] 3 Connection: opening to email-smtp.us-west-2.amazonaws.com:587, timeout=20, options=array()
+[05-May-2023 04:28:43 America/Los_Angeles] 3 Connection: opened
+[05-May-2023 04:28:43 America/Los_Angeles] 4 SMTP INBOUND: "220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-R6NM4OUFN MN9NW8YPT4OZe415ePqe"
+[05-May-2023 04:28:43 America/Los_Angeles] 2 SERVER -> CLIENT: 220 email-smtp.amazonaws.com ESMTP SimpleEmailService-d-R6NM4OUFN MN9NW8YPT4OZe415ePqe
+
+[05-May-2023 04:28:43 America/Los_Angeles] 1 CLIENT -> SERVER: EHLO localhost
+
+[05-May-2023 04:28:43 America/Los_Angeles] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[05-May-2023 04:28:43 America/Los_Angeles] 4 SMTP INBOUND: "250-8BITMIME"
+[05-May-2023 04:28:43 America/Los_Angeles] 4 SMTP INBOUND: "250-STARTTLS"
+[05-May-2023 04:28:43 America/Los_Angeles] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[05-May-2023 04:28:43 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[05-May-2023 04:28:43 America/Los_Angeles] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[05-May-2023 04:28:43 America/Los_Angeles] 1 CLIENT -> SERVER: STARTTLS
+
+[05-May-2023 04:28:43 America/Los_Angeles] 4 SMTP INBOUND: "220 Ready to start TLS"
+[05-May-2023 04:28:43 America/Los_Angeles] 2 SERVER -> CLIENT: 220 Ready to start TLS
+
+[05-May-2023 04:28:43 America/Los_Angeles] 1 CLIENT -> SERVER: EHLO localhost
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "250-email-smtp.amazonaws.com"
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "250-8BITMIME"
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "250-STARTTLS"
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "250-AUTH PLAIN LOGIN"
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[05-May-2023 04:28:44 America/Los_Angeles] 2 SERVER -> CLIENT: 250-email-smtp.amazonaws.com
+250-8BITMIME
+250-STARTTLS
+250-AUTH PLAIN LOGIN
+250 Ok
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 Auth method requested: UNSPECIFIED
+[05-May-2023 04:28:44 America/Los_Angeles] 4 Auth methods available on the server: PLAIN,LOGIN
+[05-May-2023 04:28:44 America/Los_Angeles] 4 Requested auth method not available: 
+[05-May-2023 04:28:44 America/Los_Angeles] 4 Auth method selected: LOGIN
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: AUTH LOGIN
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "334 VXNlcm5hbWU6"
+[05-May-2023 04:28:44 America/Los_Angeles] 2 SERVER -> CLIENT: 334 VXNlcm5hbWU6
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: QUtJQUk1VkZESktaSkxBU00zTVE=
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "334 UGFzc3dvcmQ6"
+[05-May-2023 04:28:44 America/Los_Angeles] 2 SERVER -> CLIENT: 334 UGFzc3dvcmQ6
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: QWxzWHd4c2RRd3E4TW5uVTc4VUcvOEN4SnRtbTVIck9vQnNjTDA1SjR2NG4=
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "235 Authentication successful."
+[05-May-2023 04:28:44 America/Los_Angeles] 2 SERVER -> CLIENT: 235 Authentication successful.
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: MAIL FROM:<support@leantime.io>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[05-May-2023 04:28:44 America/Los_Angeles] 2 SERVER -> CLIENT: 250 Ok
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: RCPT TO:<marcel@leantime.io>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok"
+[05-May-2023 04:28:44 America/Los_Angeles] 2 SERVER -> CLIENT: 250 Ok
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: DATA
+
+[05-May-2023 04:28:44 America/Los_Angeles] 4 SMTP INBOUND: "354 End data with <CR><LF>.<CR><LF>"
+[05-May-2023 04:28:44 America/Los_Angeles] 2 SERVER -> CLIENT: 354 End data with <CR><LF>.<CR><LF>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: Date: Fri, 5 May 2023 04:28:43 -0700
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: To: marcel@leantime.io
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: From: "Leantime System (Leantime)" <support@leantime.io>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: Subject: Leantime - Latest updates
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: Message-ID: <kUBx7dk4Bf9uCQ2EZNIOucEe7352azmEHKOHBwFgs@localhost>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: X-Mailer: PHPMailer 6.6.0 (https://github.com/PHPMailer/PHPMailer)
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: MIME-Version: 1.0
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: Content-Type: text/html; charset=UTF-8
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 		<table width="100%" style="background:#eeeeee; padding:15px; ">
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 		<tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 			<td align="center" valign="top">
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 					<tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 						<td style="padding:3px 10px;">
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 							<table>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 								<tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 								<td width="150"><img alt="Logo" src="https://localhost/leantime/images/logo.svg" width="150" style="width:150px;"></td>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 								<td></td>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 							</tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 							</table>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 						</td>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 					</tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 					<tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 						<td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 							Hi, 
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 							<br /><br />
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 							News from your Leantime projects<br/><br />
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: <div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div style="margin: 0px; padding: 0px; float : right">2023-05-05 04:23:04</div><div><p><em>You have been added to a new project</em></p>A new project was created and you are on it! Project name is <a href='https://localhost/leantime/projects/showProject/4'>[4] - test</a> and it was created by Marcel<br/></div></div><div style="border-top: 1px solid #ddd; margin: 3px; padding: 3px;"><div style="margin: 0px; padding: 0px; float : right">2023-05-05 04:23:14</div><div><p><em>You have been added to a new project</em></p>A new project was created and you are on it! Project name is <a href='https://localhost/leantime/projects/showProject/5'>[5] - test3</a> and it was created by Marcel<br/></div></div>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 							<br /><br />
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 						</td>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 					</tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 				</table>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 			</td>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 		</tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 		<tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 			<td align="center">
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 			To <a href='https://localhost/leantime/users/editOwn/'>unsubscribe</a> from these types of notifications please login and edit your notifications settings
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 			</td>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 		</tr>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 		</table>
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: 
+
+[05-May-2023 04:28:44 America/Los_Angeles] 1 CLIENT -> SERVER: .
+
+[05-May-2023 04:28:45 America/Los_Angeles] 4 SMTP INBOUND: "250 Ok 01010187ebabe9de-d3e49bd5-cf4f-40f6-8080-9e6c7ea6e95c-000000"
+[05-May-2023 04:28:45 America/Los_Angeles] 2 SERVER -> CLIENT: 250 Ok 01010187ebabe9de-d3e49bd5-cf4f-40f6-8080-9e6c7ea6e95c-000000
+
+[05-May-2023 04:28:45 America/Los_Angeles] 1 CLIENT -> SERVER: QUIT
+
+[05-May-2023 04:28:45 America/Los_Angeles] 4 SMTP INBOUND: "221 Bye"
+[05-May-2023 04:28:45 America/Los_Angeles] 2 SERVER -> CLIENT: 221 Bye
+
+[05-May-2023 04:28:45 America/Los_Angeles] 3 Connection: closed
+[05-May-2023 04:28:45 America/Los_Angeles] cron end
+[05-May-2023 04:33:58 America/Los_Angeles] cron start
+[05-May-2023 04:33:58 America/Los_Angeles] cron end
+[05-May-2023 04:39:13 America/Los_Angeles] cron start
+[05-May-2023 04:39:13 America/Los_Angeles] cron end
+[05-May-2023 04:40:28 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type bool in /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php on line 48
+[05-May-2023 04:40:28 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type bool in /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php on line 49
+[05-May-2023 04:40:28 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type bool in /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php on line 50
+[05-May-2023 04:40:28 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type bool in /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php on line 51
+[05-May-2023 04:40:28 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type bool in /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php on line 52
+[05-May-2023 04:44:07 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:44:07 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:44:07 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:44:07 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:44:33 America/Los_Angeles] cron start
+[05-May-2023 04:44:33 America/Los_Angeles] cron end
+[05-May-2023 04:44:44 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:44:44 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:44:44 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:44:44 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:47:24 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:47:24 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:47:24 America/Los_Angeles] PHP Warning:  Undefined array key "" in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:47:24 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/goalcanvas/templates/canvasDialog.tpl.php on line 43
+[05-May-2023 04:55:47 America/Los_Angeles] Tried loading . File not found
+[05-May-2023 05:01:38 America/Los_Angeles] cron start
+[05-May-2023 05:01:38 America/Los_Angeles] cron end

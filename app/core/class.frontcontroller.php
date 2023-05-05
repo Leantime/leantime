@@ -302,7 +302,7 @@ namespace leantime\core {
         public static function redirect($url, $http_response_code = 303): void
         {
 
-            header("Location:" . trim($url), true, $http_response_code);
+            header("Location:" . trim(preg_replace('/\s\s+/', '', strip_tags($url))), true, $http_response_code);
             exit();
         }
 

@@ -50,7 +50,7 @@ namespace leantime\domain\controllers {
                 $recent = $this->settingSvc->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
                 $recentArr = unserialize($recent);
 
-                if(is_array($recentArr)) {
+                if(is_array($recentArr) && is_array($allAvailableProjects)) {
                     $availableProjectColumn = array_column($allAvailableProjects, 'id');
                     foreach ($recentArr as $recentItem) {
                         $found_key = array_search($recentItem, $availableProjectColumn);
@@ -68,7 +68,11 @@ namespace leantime\domain\controllers {
                     ? $project['menuType']
                     : repositories\menu::DEFAULT_MENU;
 
-                $this->tpl->assign('currentClient', $project["clientId"]);
+                if($project !== false && isset($project["clientId"])) {
+                    $this->tpl->assign('currentClient', $project["clientId"]);
+                }else{
+                    $this->tpl->assign('currentClient', '');
+                }
             } else {
                 $menuType = repositories\menu::DEFAULT_MENU;
                 $this->tpl->assign('currentClient', "");
