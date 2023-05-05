@@ -169,9 +169,9 @@ namespace leantime\domain\repositories {
 				ORDER BY clientName, project.name";
 
             $stmn = $this->db->database->prepare($query);
-            if($userId == ''){
+            if ($userId == '') {
                 $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
-            }else{
+            } else {
                 $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
             }
 
@@ -684,13 +684,20 @@ namespace leantime\domain\repositories {
             $userRepo = new users();
             $user = $userRepo->getUser($userId);
 
+            if ($user === false) {
+                return false;
+            }
+
             //admins owners and managers can access everything
-            if (in_array(roles::getRoleString($user['role']), array(roles::$admin, roles::$owner, roles::$manager)))
-            {
+            if (in_array(roles::getRoleString($user['role']), array(roles::$admin, roles::$owner, roles::$manager))) {
                 return true;
             }
 
             $project = $this->getProject($projectId);
+
+            if ($project === false) {
+                return false;
+            }
 
             //Everyone in org is allowed to see the project
             if ($project['psettings'] == 'all') {
@@ -938,10 +945,9 @@ namespace leantime\domain\repositories {
         public function getProjectAvatar($id)
         {
 
-            $value=false;
+            $value = false;
 
             if ($id !== false) {
-
                 $sql = "SELECT avatar, name FROM `zp_projects` WHERE id = :id LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
@@ -953,21 +959,18 @@ namespace leantime\domain\repositories {
             }
 
             if ($value !== false && $value['avatar'] != '') {
-
                 $files = new files();
                 $file = $files->getFile($value['avatar']);
 
                 if ($file) {
-                    $return = $file['encName'].".".$file['extension'];
+                    $return = $file['encName'] . "." . $file['extension'];
                 }
 
                 $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
                 $type = $file['extension'];
 
                 return $return;
-
-            } else if ($value == false || $value['avatar'] === '' || $value['avatar'] == null) {
-
+            } elseif ($value !== false && ($value['avatar'] === '' || $value['avatar'] == null)) {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name($value['name'])
@@ -977,9 +980,7 @@ namespace leantime\domain\repositories {
                     ->generateSvg();
 
                 return $image;
-
-            }else {
-
+            } else {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name("🦄")
@@ -989,9 +990,7 @@ namespace leantime\domain\repositories {
                     ->generateSvg();
 
                 return $image;
-
             }
-
         }
     }
 

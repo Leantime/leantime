@@ -1,2 +1,202 @@
 [24-Apr-2023 17:55:52 America/Los_Angeles] cron start
 [24-Apr-2023 17:55:52 America/Los_Angeles] cron end
+[04-May-2023 07:03:28 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 07:03:57 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[04-May-2023 07:03:57 America/Los_Angeles] Invalid DN syntax
+[04-May-2023 07:03:57 America/Los_Angeles] invalid DN
+[04-May-2023 07:03:58 America/Los_Angeles] cron start
+[04-May-2023 07:03:58 America/Los_Angeles] cron end
+[04-May-2023 07:04:13 America/Los_Angeles] PHP Warning:  Attempt to read property "id" on bool in /Users/marcel/Sites/leantime-oss/app/domain/wiki/templates/show.tpl.php on line 57
+[04-May-2023 07:04:13 America/Los_Angeles] PHP Warning:  Attempt to read property "id" on bool in /Users/marcel/Sites/leantime-oss/app/domain/wiki/templates/show.tpl.php on line 58
+[04-May-2023 07:39:17 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 08:33:28 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 11:03:54 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 11:55:29 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 12:06:48 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 12:31:55 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 13:06:22 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 14:03:00 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 14:18:30 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 14:41:30 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 16:22:40 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 17:28:57 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 19:16:06 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[04-May-2023 20:35:35 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Users/marcel/Sites/leantime-oss/app/core/class.db.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(74): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.db.php(99): leantime\core\db->__construct()
+#2 /Users/marcel/Sites/leantime-oss/app/domain/setting/repositories/class.setting.php(25): leantime\core\db::getInstance()
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 /Users/marcel/Sites/leantime-oss/app/core/class.language.php(162): leantime\core\language->__construct()
+#5 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(142): leantime\core\language::getInstance()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/auth/services/class.auth.php(154): leantime\domain\services\auth->__construct('a56ff1e6c4a8a8d...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.application.php(46): leantime\domain\services\auth::getInstance('a56ff1e6c4a8a8d...')
+#8 /Users/marcel/Sites/leantime-oss/public/index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[05-May-2023 04:15:40 America/Los_Angeles] cron start
+[05-May-2023 04:15:40 America/Los_Angeles] cron end
+[05-May-2023 04:15:46 America/Los_Angeles] Last cron execution was on 2023-05-05 04:15:40 plz come back later
+[05-May-2023 04:15:53 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[05-May-2023 04:15:53 America/Los_Angeles] Invalid DN syntax
+[05-May-2023 04:15:53 America/Los_Angeles] invalid DN
+[05-May-2023 04:15:59 America/Los_Angeles] PHP Warning:  ldap_bind(): Unable to bind to server: Invalid DN syntax in /Users/marcel/Sites/leantime-oss/app/domain/ldap/services/class.ldap.php on line 115
+[05-May-2023 04:15:59 America/Los_Angeles] Invalid DN syntax
+[05-May-2023 04:15:59 America/Los_Angeles] invalid DN
+[05-May-2023 04:16:08 America/Los_Angeles] PHP Warning:  Attempt to read property "id" on bool in /Users/marcel/Sites/leantime-oss/app/domain/wiki/templates/show.tpl.php on line 57
+[05-May-2023 04:16:08 America/Los_Angeles] PHP Warning:  Attempt to read property "id" on bool in /Users/marcel/Sites/leantime-oss/app/domain/wiki/templates/show.tpl.php on line 58
+[05-May-2023 04:16:58 America/Los_Angeles] PHP Warning:  Undefined variable $currentArticle in /Users/marcel/Sites/leantime-oss/app/domain/wiki/controllers/class.show.php on line 175
+[05-May-2023 04:16:58 America/Los_Angeles] PHP Warning:  Undefined variable $wikiHeadlines in /Users/marcel/Sites/leantime-oss/app/domain/wiki/controllers/class.show.php on line 178
