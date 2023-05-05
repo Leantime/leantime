@@ -1,4 +1,9 @@
+var pjson = require('./package.json');
+var version = pjson.version;
+
 module.exports = function (grunt) {
+
+
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-contrib-less");
@@ -9,20 +14,20 @@ module.exports = function (grunt) {
                 options: {
                     sourceMap: true,
                     sourceMapName: "public/js/jsSourceMapFooterSrc.map",
-                    sourceMapUrl: "jsSourceMapFooterSrc.map",
+                    sourceMapUrl: "compiled-jsSourceMapFooterSrc.map",
                     mangle: false
                 },
                 src: [
                     "public/js/libs/prism/prism.js",
 
                 ],
-                dest: "public/js/compiled-footer.min.js"
+                dest: "public/js/compiled-footer."+version+".min.js"
             },
             app_src: {
                 options: {
                     sourceMap: true,
                     sourceMapName: "public/js/jsSourceMapAppSrc.map",
-                    sourceMapUrl: "jsSourceMapAppSrc.map",
+                    sourceMapUrl: "compiled-jsSourceMapAppSrc.map",
                     mangle: false
                 },
                 src: [
@@ -36,13 +41,13 @@ module.exports = function (grunt) {
                     "app/plugin/**/*.js",
                     "custom/plugin/**/*.js"
                 ],
-                dest: "public/js/compiled-app.min.js"
+                dest: "public/js/compiled-app."+version+".min.js"
             },
             base_lib_src: {
                 options: {
                     sourceMap: true,
                     sourceMapName: "public/js/jsSourceMapBaseLib.map",
-                    sourceMapUrl: "jsSourceMapBaseLib.map",
+                    sourceMapUrl: "compiled-jsSourceMapBaseLib.map",
                     mangle: false
                 },
                 src: [
@@ -65,13 +70,13 @@ module.exports = function (grunt) {
                     "public/js/libs/confetti/js/confetti.js",
                     "node_modules/fullcalendar/index.global.min.js",
                 ],
-                dest: "public/js/compiled-base-libs.min.js"
+                dest: "public/js/compiled-base-libs."+version+".min.js"
             },
             extended_lib_src: {
                 options: {
                     sourceMap: true,
                     sourceMapName: "public/js/jsSourceMapExtendedSrc.map",
-                    sourceMapUrl: "jsSourceMapExtendedSrc.map",
+                    sourceMapUrl: "compiled-jsSourceMapExtendedSrc.map",
                     mangle: false
                 },
                 src: [
@@ -137,42 +142,42 @@ module.exports = function (grunt) {
                     "public/js/libs/uppy/uppy.js",
 
                 ]
-                , dest: "public/js/compiled-extended-libs.min.js"
+                , dest: "public/js/compiled-extended-libs."+version+".min.js"
             }
         }
         , jshint: {
             options: {
-                curly: false
-                , eqeqeq: false
-                , eqnull: true
-                , browser: true
-                , laxcomma: true
-                , globals: {
+                curly: false,
+                eqeqeq: false,
+                eqnull: true,
+                browser: true,
+                laxcomma: true,
+                globals: {
                     jQuery: true
-                }
-                , ignores: [
+                },
+                ignores: [
                 ]
-            }
-            , app: [
+            },
+            app: [
                 "public/js/app/**/*.js"
             ]
-        }
-        , less: {
+        },
+        less: {
             dev: {
                 options: {
-                    compress: true
-                    , yuicompress: true
-                    , optimization: 2
-                    , autoPrefix: ">1%"
-                    , cssComb: "none"
-                    , ieCompat: true
-                    , strictMath: false
-                    , strictUnits: false
-                    , relativeUrls: true
-                    , rootPath: ""
-                }
-                , files: {
-                    "public/css/main.css": "public/less/main.less"
+                    compress: true,
+                    yuicompress: true,
+                    optimization: 2,
+                    autoPrefix: ">1%",
+                    cssComb: "none",
+                    ieCompat: true,
+                    strictMath: false,
+                    strictUnits: false,
+                    relativeUrls: true,
+                    rootPath: ""
+                },
+                files: {
+                    ["public/css/main."+version+".css"]: "public/less/main.less"
                 }
             }
         },

@@ -82,7 +82,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('allAssignedProjects', $allAssignedprojects);
             $this->tpl->assign('allAvailableProjects', $allAvailableProjects);
             $this->tpl->assign('recentProjects', $recentProjects);
-            $this->tpl->assign('currentProject', $_SESSION['currentProject']);
+            $this->tpl->assign('currentProject', $_SESSION['currentProject'] ?? null);
             $this->tpl->assign('menuStructure', $this->menuRepo->getMenuStructure($menuType));
 
             $this->tpl->displayPartial('menu.menu');

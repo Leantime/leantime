@@ -18,7 +18,7 @@ namespace leantime\domain\controllers {
 
         public function run()
         {
-
+            $this->tpl->assign("appSettings", $this->settings);
             $this->tpl->displayPartial('pageparts.pageBottom');
         }
     }

@@ -158,16 +158,20 @@ if ($numberofColumns > 0) {
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  id="milestoneSelect">
                                 <option value=""><?=$this->__("label.all_milestones") ?></option>
-                                <?php foreach ($this->get('milestones') as $milestoneRow) {   ?>
-                                    <?php echo"<option value='" . $milestoneRow->id . "'";
+                                <?php if($this->get('milestones')){
 
-                                    if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                        echo" selected='selected' ";
-                                    }
+                                    foreach ($this->get('milestones') as $milestoneRow) {   ?>
+                                        <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                    echo">" . $this->escape($milestoneRow->headline) . "</option>"; ?>
+                                        if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
+                                            echo" selected='selected' ";
+                                        }
 
-                                <?php }     ?>
+                                        echo">" . $this->escape($milestoneRow->headline) . "</option>"; ?>
+
+                                    <?php }
+
+                                }     ?>
                             </select>
                         </div>
 
