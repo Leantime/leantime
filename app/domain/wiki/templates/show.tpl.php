@@ -68,7 +68,9 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
              //
             <span class="dropdown dropdownWrapper">
                 <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                    <?php $this->e($currentWiki->title) ?> <i class="fa fa-caret-down"></i>
+                    <?php
+                    if($currentWiki !== false) $this->e($currentWiki->title); else $this->__('label.select_board'); ?>
+                    <i class="fa fa-caret-down"></i>
                 </a>
 
                 <ul class="dropdown-menu">

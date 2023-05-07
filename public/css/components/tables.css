@@ -254,6 +254,15 @@
     border-right:1px solid var(--secondary-background);
 }
 
+.maincontentinner table.fc-scrollgrid td,
+.maincontentinner table.fc-scrollgrid th{
+    padding:0px;
+}
+
+.maincontentinner table.fc-scrollgrid th {
+    padding:2px;
+}
+
 .maincontentinner .table td input {
     margin-bottom:0px;
 }

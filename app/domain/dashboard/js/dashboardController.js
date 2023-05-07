@@ -321,6 +321,9 @@ leantime.dashboardController = (function () {
     };
 
     var _initDueDateTimePickers = function () {
+        jQuery(document).ready(function() {
+
+
         jQuery(".duedates").datepicker(
             {
                 dateFormat: leantime.i18n.__("language.jsdateformat"),
@@ -355,6 +358,7 @@ leantime.dashboardController = (function () {
                 }
             }
         );
+        });
     };
 
     // Make public what you want to have public, everything else is private

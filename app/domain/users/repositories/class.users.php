@@ -568,22 +568,22 @@ namespace leantime\domain\repositories {
         public function getProfilePicture($id)
         {
 
-            $return = BASE_URL . '/images/default-user.png';
+            $value = false;
+            if ($id !== false) {
 
-            if ($id === false) {
-                return $return;
+                $sql = "SELECT profileId, firstname, lastname FROM `zp_user` WHERE id = :id LIMIT 1";
+
+                $stmn = $this->db->database->prepare($sql);
+                $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+
+                $stmn->execute();
+                $value = $stmn->fetch();
+                $stmn->closeCursor();
+
             }
 
-            $sql = "SELECT profileId, firstname, lastname FROM `zp_user` WHERE id = :id LIMIT 1";
-
-            $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $value = $stmn->fetch();
-            $stmn->closeCursor();
-
             if ($value !== false && $value['profileId'] != '') {
+
                 $files = new files();
                 $file = $files->getFile($value['profileId']);
 
@@ -597,9 +597,22 @@ namespace leantime\domain\repositories {
                 return $return;
 
             } elseif (isset($value['profileId']) && $value['profileId'] == '') {
+
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name($value['firstname'] . " " . $value['lastname'])
+                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                    ->fontName("Verdana")
+                    ->background('#81B1A8')->color("#fff")
+                    ->generateSvg();
+
+                return $image;
+
+            } else{
+
+                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                $image = $avatar
+                    ->name("👻")
                     ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
                     ->fontName("Verdana")
                     ->background('#81B1A8')->color("#fff")

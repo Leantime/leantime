@@ -22,18 +22,18 @@
 <link rel="shortcut icon" href="<?=BASE_URL?>/images/favicon.png"/>
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="<?=BASE_URL?>/css/main.css?v=<?php echo $settings->appVersion; ?>"/>
+<link rel="stylesheet" href="<?=BASE_URL?>/css/main.<?php echo $settings->appVersion; ?>.css"/>
 <?php $this->dispatchTplEvent('afterLinkTags'); ?>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
 
 <!-- libs -->
-<script src="<?=BASE_URL?>/js/compiled-base-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
-<script src="<?=BASE_URL?>/js/compiled-extended-libs.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+<script src="<?=BASE_URL?>/js/compiled-base-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/js/compiled-extended-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
 <?php $this->dispatchTplEvent('afterScriptLibTags'); ?>
 
 <!-- app -->
-<script src="<?=BASE_URL?>/js/compiled-app.min.js?v=<?php echo $settings->appVersion; ?>"></script>
+<script src="<?=BASE_URL?>/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>
 <?php $this->dispatchTplEvent('afterMainScriptTag'); ?>
 
 <!-- theme -->

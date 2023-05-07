@@ -1,4 +1,8 @@
-<?php defined('RESTRICTED') or die('Restricted access'); ?>
+<?php
+defined('RESTRICTED') or die('Restricted access');
+
+$appSettings = $this->get('appSettings');
+?>
 
 <?php if (isset($_SESSION['do_cron'])) { ?>
     <script>
@@ -21,6 +25,6 @@
 
 <?php $this->dispatchTplEvent('beforeBodyClose'); ?>
 
-<script src="<?=BASE_URL?>/js/compiled-footer.min.js"> </script>
+<script src="<?=BASE_URL?>/js/compiled-footer.<?php echo $appSettings->appVersion; ?>.min.js"> </script>
 </body>
 </html>
