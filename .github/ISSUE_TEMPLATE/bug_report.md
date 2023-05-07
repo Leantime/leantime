@@ -9,6 +9,10 @@ assignees: ''
 
 *If you have problems with the installation please use our [community forum](https://community.leantime.io)*
 
+**What set up are you using**
+* [ ] Cloud Hosted Version
+* [ ] Self Hosted
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
