@@ -82,7 +82,7 @@ namespace leantime\domain\controllers {
                             $user["lastname"] = $_POST["lastname"];
                             $user["status"] = "A";
                             $user["user"] =  $user["username"];
-                            $user["password"] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                            $user["password"] = $_POST['password'];
 
                             if ($this->usersService->editUser($user, $user["id"])) {
                                 $this->tpl->setNotification(

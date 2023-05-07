@@ -75,7 +75,7 @@ namespace leantime\domain\services;
             $values["user"] = $user;
             $values["lastname"] = '';
             $values["passwordClean"] = $password;
-            $values["password"] = password_hash($password, PASSWORD_DEFAULT);
+            $values["password"] = $password;
             $values["status"] = 'a';
             $values["clientId"] = '';
             $values["phone"] = '';

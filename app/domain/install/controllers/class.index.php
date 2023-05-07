@@ -74,7 +74,7 @@ namespace leantime\domain\controllers {
                                     $this->tpl->setNotification("notification.enter_company", "error");
                                     ;
                                 } else {
-                                    $values['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                                    $values['password'] = $_POST['password'];
 
                                     if ($this->installRepo->setupDB($values)) {
                                         $this->tpl->setNotification(sprintf($this->language->__("notifications.installation_success"), BASE_URL), "success");

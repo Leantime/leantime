@@ -78,7 +78,7 @@ class migrateCommand extends Command
 
                     $setupConfig = array(
                         "email" => $adminEmail,
-                        "password" => password_hash($adminPassword, PASSWORD_DEFAULT),
+                        "password" => $adminPassword,
                         "firstname" => $adminFirstName,
                         "lastname" => $adminLastName,
                         "company" => $companyName
