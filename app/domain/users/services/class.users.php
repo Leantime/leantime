@@ -125,7 +125,7 @@ namespace leantime\domain\services {
             $tempPasswordVar =  Uuid::uuid4()->toString();
             $inviteCode = Uuid::uuid4()->toString();
 
-            $values['password'] = password_hash($tempPasswordVar, PASSWORD_DEFAULT);
+            $values['password'] = $tempPasswordVar;
             $values['status'] = "i";
             $values['pwReset'] = $inviteCode;
 
@@ -168,8 +168,6 @@ namespace leantime\domain\services {
          */
         public function addUser(array $values): bool|int
         {
-            //Hash password
-            $values['password'] = password_hash($values['password'], PASSWORD_DEFAULT);
             return $this->userRepo->addUser($values);
         }
 

@@ -148,7 +148,7 @@ namespace leantime\domain\controllers {
                     if (password_verify($_POST['currentPassword'], $values['password'])) {
                         if ($_POST['newPassword'] == $_POST['confirmPassword']) {
                             if ($this->userService->checkPasswordStrength($_POST['newPassword'])) {
-                                $values['password'] = password_hash($_POST['newPassword'], PASSWORD_DEFAULT);
+                                $values['password'] = $_POST['newPassword'];
                                 $this->userRepo->editOwn($values, $this->userId);
                                 $this->tpl->setNotification(
                                     $this->language->__("notifications.password_changed"),
