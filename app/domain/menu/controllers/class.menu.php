@@ -34,6 +34,7 @@ namespace leantime\domain\controllers {
             $recentProjects = array();
 
             if (isset($_SESSION['userdata'])) {
+
                 $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(
                     $_SESSION['userdata']['id'],
                     'open'
@@ -44,8 +45,6 @@ namespace leantime\domain\controllers {
                     'open',
                     $_SESSION['userdata']['clientId']
                 );
-
-                $_SESSION['menuState'] = $this->menuRepo->getSubmenuState("mainMenu");
 
                 $recent = $this->settingSvc->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
                 $recentArr = unserialize($recent);
