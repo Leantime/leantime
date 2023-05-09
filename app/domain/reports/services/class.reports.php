@@ -53,6 +53,7 @@ namespace leantime\domain\services {
             $this->settings = new repositories\setting();
             $this->appSettings = new core\appSettings();
             $this->ticketRepository = new repositories\tickets();
+            $this->config = core\environment::getInstance();
         }
 
         public function dailyIngestion()
