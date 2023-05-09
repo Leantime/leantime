@@ -353,10 +353,6 @@ class fileupload
                 $ext = $path_parts["extension"];
 
                 if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
-                    header('Pragma: private');
-                    header('Cache-Control: max-age=86400');
-                    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
-
                     header('Content-type: ' . $mimes[$ext]);
                     header('Content-disposition: inline; filename="' . $imageName . '";');
 
@@ -370,7 +366,6 @@ class fileupload
                 }
             }
         }
-
 
     }
 }

@@ -81,13 +81,8 @@ function getFileLocally(){
 
             }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png'){
 
-                header('Pragma: private');
-                header('Cache-Control: max-age=86400');
-                header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
-
                 header('Content-type: '. $mimes[$ext]);
                 header('Content-disposition: inline; filename="'.$realName.".".$ext.'";');
-
 
             }else{
 
@@ -159,9 +154,7 @@ function getFileFromS3(){
 
         if($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
             header('Content-Type: ' . $result['ContentType']);
-            header('Pragma: public');
-            header('Cache-Control: max-age=86400');
-            header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+            header("Content-Disposition: inline; filename=\"".$fileName."\"");
         }
 
 
