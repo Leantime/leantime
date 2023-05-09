@@ -73,8 +73,9 @@ $companySettings = $this->get('companySettings');
                                 </div>
                                 <div class="col-md-8">
                                     <input type="checkbox" name="telemetryActive" id="telemetryActive"  <?=$companySettings['telemetryActive'] == true ? 'checked="checked"' : '';?> />
-                                    <div class="clearall"></div>
-                                    <small style="vertical-align: text-top;"><?=$this->__("label.telemetry_background")?></small>
+
+                                    <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($this->__("label.telemetry_background")) ?>"></i>
+                                    <div class="clearall"></div><br />
                                 </div>
                             </div>
                             <h4 class="widgettitle title-light"><span

@@ -276,6 +276,112 @@ namespace leantime\domain\services {
             $_SESSION['skipTelemetry'] = true;
             return false;
         }
+
+        public function optOutTelemetry()
+        {
+            $date_utc = new \DateTime("now", new \DateTimeZone("UTC"));
+            $today = $date_utc->format("Y-m-d");
+
+            $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");
+            if ($companyId === false) {
+                $uuid = Uuid::uuid4();
+                $companyId = $uuid->toString();
+                $this->settings->saveSetting("companysettings.telemetry.anonymousId", $companyId);
+            }
+
+            $telemetry = array(
+                'date' => '',
+                'companyId' => $companyId,
+                'version' => $this->appSettings->appVersion,
+                'language' => '',
+                'numUsers' => 0,
+                'lastUserLogin' => 0,
+                'numProjects' => 0,
+                'numClients' => 0,
+                'numComments' => 0,
+                'numMilestones' => 0,
+                'numTickets' => 0,
+
+                'numBoards' => 0,
+
+                'numIdeaItems' => 0,
+                'numHoursBooked' => 0,
+
+                'numResearchBoards' => 0,
+                'numResearchItems' => 0,
+
+                'numRetroBoards' => 0,
+                'numRetroItems' => 0,
+
+                'numGoalBoards' => 0,
+                'numGoalItems' => 0,
+
+                'numValueCanvasBoards' => 0,
+                'numValueCanvasItems' => 0,
+
+                'numMinEmpathyBoards' => 0,
+                'numMinEmpathyItems' => 0,
+
+                'numOBMBoards' => 0,
+                'numOBMItems' => 0,
+
+                'numSWOTBoards' => 0,
+                'numSWOTItems' => 0,
+
+                'numSBBoards' => 0,
+                'numSBItems' => 0,
+
+                'numRISKSBoards' => 0,
+                'numRISKSItems' => 0,
+
+                'numEABoards' => 0,
+                'numEAItems' => 0,
+
+                'numINSIGHTSBoards' => 0
+            );
+
+            $telemetry['date'] = $today;
+
+            //Do the curl
+            $httpClient = new Client();
+
+            try {
+                $data_string = json_encode($telemetry);
+
+                $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
+                    'form_params' => [
+                        'telemetry' => $data_string
+                    ],
+                    'timeout' => 5
+                ])->then(function ($response) use ($today) {
+
+                    $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
+                    $_SESSION['skipTelemetry'] = true;
+                });
+
+            } catch (\Exception $e) {
+                error_log($e);
+
+                $_SESSION['skipTelemetry'] = true;
+                return false;
+            }
+
+            $this->settings->saveSetting("companysettings.telemetry.active", false);
+            $this->settings->deleteSetting("companysettings.telemetry.active");
+            $this->settings->deleteSetting("companysettings.telemetry.lastUpdate");
+            $this->settings->deleteSetting("companysettings.telemetry.anonymousId");
+
+            $_SESSION['skipTelemetry'] = true;
+
+            try {
+                $promise->wait();
+            } catch (\Exception $e) {
+                error_log($e);
+            }
+
+            return;
+
+        }
     }
 
 }
