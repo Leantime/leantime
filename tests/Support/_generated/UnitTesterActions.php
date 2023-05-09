@@ -1,4 +1,4 @@
-<?php  //[STAMP] baec9e6a21418da9ad50b44fb0509bfd
+<?php  //[STAMP] c88df6276d692f56f969ded5a485a1b6
 // phpcs:ignoreFile
 namespace Tests\Support\_generated;
 
@@ -139,7 +139,7 @@ trait UnitTesterActions
      * Asserts that an array has a specified key.
      *
      * @param int|string $key
-     * @param array|ArrayAccess $array
+     * @param array|\ArrayAccess $array
      * @see \Codeception\Module\AbstractAsserts::assertArrayHasKey()
      */
     public function assertArrayHasKey($key, $array, string $message = "") {
@@ -153,7 +153,7 @@ trait UnitTesterActions
      * Asserts that an array does not have a specified key.
      *
      * @param int|string $key
-     * @param array|ArrayAccess $array
+     * @param array|\ArrayAccess $array
      * @see \Codeception\Module\AbstractAsserts::assertArrayNotHasKey()
      */
     public function assertArrayNotHasKey($key, $array, string $message = "") {
@@ -256,7 +256,7 @@ trait UnitTesterActions
      *
      * Asserts the number of elements of an array, Countable or Traversable.
      *
-     * @param Countable|iterable $haystack
+     * @param \Countable|iterable $haystack
      * @see \Codeception\Module\AbstractAsserts::assertCount()
      */
     public function assertCount(int $expectedCount, $haystack, string $message = "") {
@@ -1147,7 +1147,7 @@ trait UnitTesterActions
      *
      * Asserts the number of elements of an array, Countable or Traversable.
      *
-     * @param Countable|iterable $haystack
+     * @param \Countable|iterable $haystack
      * @see \Codeception\Module\AbstractAsserts::assertNotCount()
      */
     public function assertNotCount(int $expectedCount, $haystack, string $message = "") {
@@ -1282,8 +1282,8 @@ trait UnitTesterActions
      *
      * Assert that the size of two arrays (or `Countable` or `Traversable` objects) is not the same.
      *
-     * @param Countable|iterable $expected
-     * @param Countable|iterable $actual
+     * @param \Countable|iterable $expected
+     * @param \Countable|iterable $actual
      * @see \Codeception\Module\AbstractAsserts::assertNotSameSize()
      */
     public function assertNotSameSize($expected, $actual, string $message = "") {
@@ -1358,8 +1358,8 @@ trait UnitTesterActions
      *
      * Assert that the size of two arrays (or `Countable` or `Traversable` objects) is the same.
      *
-     * @param Countable|iterable $expected
-     * @param Countable|iterable $actual
+     * @param \Countable|iterable $expected
+     * @param \Countable|iterable $actual
      * @see \Codeception\Module\AbstractAsserts::assertSameSize()
      */
     public function assertSameSize($expected, $actual, string $message = "") {
@@ -1618,7 +1618,7 @@ trait UnitTesterActions
      *
      * Asserts that two XML documents are equal.
      *
-     * @param DOMDocument|string $actualXml
+     * @param \DOMDocument|string $actualXml
      * @see \Codeception\Module\AbstractAsserts::assertXmlStringEqualsXmlFile()
      */
     public function assertXmlStringEqualsXmlFile(string $expectedFile, $actualXml, string $message = "") {
@@ -1631,8 +1631,8 @@ trait UnitTesterActions
      *
      * Asserts that two XML documents are equal.
      *
-     * @param DOMDocument|string $expectedXml
-     * @param DOMDocument|string $actualXml
+     * @param \DOMDocument|string $expectedXml
+     * @param \DOMDocument|string $actualXml
      * @see \Codeception\Module\AbstractAsserts::assertXmlStringEqualsXmlString()
      */
     public function assertXmlStringEqualsXmlString($expectedXml, $actualXml, string $message = "") {
@@ -1645,7 +1645,7 @@ trait UnitTesterActions
      *
      * Asserts that two XML documents are not equal.
      *
-     * @param DOMDocument|string $actualXml
+     * @param \DOMDocument|string $actualXml
      * @see \Codeception\Module\AbstractAsserts::assertXmlStringNotEqualsXmlFile()
      */
     public function assertXmlStringNotEqualsXmlFile(string $expectedFile, $actualXml, string $message = "") {
@@ -1658,8 +1658,8 @@ trait UnitTesterActions
      *
      * Asserts that two XML documents are not equal.
      *
-     * @param DOMDocument|string $expectedXml
-     * @param DOMDocument|string $actualXml
+     * @param \DOMDocument|string $expectedXml
+     * @param \DOMDocument|string $actualXml
      * @see \Codeception\Module\AbstractAsserts::assertXmlStringNotEqualsXmlString()
      */
     public function assertXmlStringNotEqualsXmlString($expectedXml, $actualXml, string $message = "") {

@@ -503,6 +503,36 @@ namespace leantime\domain\repositories {
             }
         }
 
+        public function getNumberOfBoards($projectId = null)
+        {
+
+            $sql = "SELECT
+                        count(zp_canvas.id) AS boardCount
+                FROM
+                    zp_canvas
+                ";
+
+            if (!is_null($projectId)) {
+                $sql .= " WHERE canvasBoard.projectId = :projectId and canvasBoard.type = 'idea' ";
+            }
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if (!is_null($projectId)) {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if (isset($values['boardCount'])) {
+                return $values['boardCount'];
+            }
+
+            return 0;
+        }
+
         public function bulkUpdateIdeaStatus($params)
         {
 
