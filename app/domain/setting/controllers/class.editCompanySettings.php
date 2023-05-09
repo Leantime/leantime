@@ -165,12 +165,15 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
                 if (isset($_POST['telemetryActive'])) {
+
                     $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");
+
                 } else {
-                    //When opting out, delete all telemetry related settings including UUID
-                    $this->settingsRepo->deleteSetting("companysettings.telemetry.active");
-                    $this->settingsRepo->deleteSetting("companysettings.telemetry.lastUpdate");
-                    $this->settingsRepo->deleteSetting("companysettings.telemetry.anonymousId");
+
+                    //Set remote telemetry to false:
+                    $reports = new services\reports();
+                    $reports->optOutTelemetry();
+
                 }
 
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");

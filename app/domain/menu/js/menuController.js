@@ -56,17 +56,22 @@ leantime.menuController = (function () {
     var _initLeftMenuHamburgerButton = function () {
 
 
+        var newWidth = 68;
         if(window.innerWidth < 576) {
-            jQuery('.barmenu').removeClass('open');
+
         }
+
+
+        /*
 
         if (jQuery('.barmenu').hasClass('open')) {
 
             jQuery('.rightpanel').css({marginLeft: '240px'});
             jQuery('.header').animate({marginLeft: '240px'}, 'fast');
-            jQuery('.header').animate({width:'calc(100% - 240px)'}, 'fast');
+            newWidth =  jQuery('.header').parent().width() - 240;
+            jQuery('.header').animate({width:newWidth}, 'fast');
             jQuery('.logo, .leftpanel').css({marginLeft: 0});
-            leantime.menuRepository.updateUserMenuSettings("open");
+
             jQuery('.logo').show();
             jQuery('.logo, #expandedMenu').css({display: 'block'});
             jQuery("#minimizedMenu").css({display: 'none'});
@@ -75,50 +80,33 @@ leantime.menuController = (function () {
 
             jQuery('.rightpanel').css({marginLeft: '68px'});
             jQuery('.header').animate({marginLeft: '68px'}, 'fast');
-            jQuery('.header').animate({width:'calc(100% - 68px)'}, 'fast');
+
+            newWidth =  jQuery('.header').parent().width() - 68;
+            jQuery('.header').animate({width:newWidth}, 'fast');
             jQuery('.logo, .leftpanel').css({marginLeft: '0'});
             jQuery('.logo').hide();
             jQuery('.logo, #expandedMenu').css({display: 'none'});
             jQuery("#minimizedMenu").css({display: 'block'});
 
-            leantime.menuRepository.updateUserMenuSettings("closed");
-        }
+        }*/
 
         jQuery('.barmenu').click(function () {
 
-            var lwidth = '240px';
+            if (jQuery(".mainwrapper").hasClass('menuopen')) {
 
-            if (!jQuery(this).hasClass('open')) {
+                jQuery(".mainwrapper").removeClass("menuopen");
+                jQuery(".mainwrapper").addClass("menuclosed");
 
-                jQuery("#minimizedMenu").css({display: 'none'});
-                jQuery('.logo, #expandedMenu').css({display: 'block'});
-
-                var newWidth =  jQuery('.header').parent().width() - 240;
-                jQuery('.header').animate({marginLeft: '240px', width: newWidth}, 'fast');
-
-                jQuery('.leftpanel').animate({width: "240px"}, 'fast');
-
-                jQuery('.rightpanel').animate({marginLeft: '240px'}, 'fast', function () {
-                    jQuery('.barmenu').addClass('open');
-                });
-
-                leantime.menuRepository.updateUserMenuSettings("open");
+                //If it doesn't have the class open, the user wants it to be open.
+                leantime.menuRepository.updateUserMenuSettings("closed");
 
             } else {
 
-                jQuery('.logo, #expandedMenu').css({display: 'none'});
-                jQuery("#minimizedMenu").show();
+                jQuery(".mainwrapper").removeClass("menuclosed");
+                jQuery(".mainwrapper").addClass("menuopen");
 
-                jQuery('.rightpanel').animate({marginLeft: '68px'}, 'fast', function () {
-                    jQuery('.barmenu').removeClass('open');
-                });
-
-                var newWidth =  jQuery('.header').parent().width() - 68;
-                jQuery('.header').animate({marginLeft: '68px', width: newWidth}, 'fast');
-
-                jQuery('.leftpanel').animate({width:'68px'}, 'fast');
-
-                leantime.menuRepository.updateUserMenuSettings("closed");
+                //If it doesn't have the class open, the user wants it to be open.
+                leantime.menuRepository.updateUserMenuSettings("open");
 
             }
 

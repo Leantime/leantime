@@ -1,3 +1,12 @@
+<?php
+$menuRepo = new \leantime\domain\repositories\menu();
+$_SESSION['menuState'] = $menuRepo->getSubmenuState("mainMenu");
+if(!$_SESSION['menuState']) {
+    $_SESSION['menuState'] = "open";
+}
+
+?>
+
 <!DOCTYPE html>
 <html dir="<?php echo $this->language->__("language.direction"); ?>" lang="<?php echo $this->language->__("language.code"); ?>">
 <head>
@@ -5,15 +14,15 @@
 </head>
 
 <body>
-<div class="mainwrapper">
+<div class="mainwrapper menu<?=$_SESSION['menuState']; ?> ">
 
-    <div class="leftpanel" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'width:68px;'; ?>">
+    <div class="leftpanel">
 
-        <a class="barmenu <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'open'; ?>" href="javascript:void(0);">
+        <a class="barmenu"  href="javascript:void(0);">
             <span class="fa fa-bars"></span>
         </a>
 
-        <div class="logo" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:-260px;'; ?>">
+        <div class="logo">
 
             <a href="<?=BASE_URL ?>" style="background-image:url('<?php echo str_replace('http:','',htmlentities($_SESSION["companysettings.logoPath"])); ?>')">&nbsp;</a>
         </div>
@@ -26,16 +35,16 @@
 
     </div><!-- leftpanel -->
 
-    <div class="header" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:68px; width:calc(100% - 68px);'; ?>">
+    <div class="header">
 
-        <div class="headerinner" style="<?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
+        <div class="headerinner">
 
             <?php echo $this->frontcontroller->includeAction('menu.headMenu'); ?>
 
         </div>
     </div>
 
-    <div class="rightpanel" style="position: relative; <?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'margin-left:0px;'; ?>">
+    <div class="rightpanel" style="position: relative;">
 
         <!--###MAINCONTENT###-->
         <?php echo $this->frontcontroller->includeAction('pageparts.footer'); ?>

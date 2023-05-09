@@ -1035,3 +1035,48 @@
     height:calc(100% - 60px);
     overflow:auto;
 }
+
+.mainwrapper.menuclosed .barmenu {}
+
+.mainwrapper.menuclosed .rightpanel {
+    margin-left:68px;
+}
+.mainwrapper.menuclosed .header {
+    margin-left:68px;
+    width:calc(100% - 68px);
+}
+.mainwrapper.menuclosed .logo {
+    display:none;
+}
+.mainwrapper.menuclosed .leftpanel {
+    width:68px;
+}
+
+.mainwrapper.menuclosed #minimizedMenu {
+    display:block;
+}
+.mainwrapper.menuclosed #expandedMenu {
+    display:none;
+}
+
+.mainwrapper.menuopen .barmenu {}
+.mainwrapper.menuopen .rightpanel {
+    margin-left:240px;
+}
+.mainwrapper.menuopen .header {
+    margin-left:240px;
+    width:calc(100% - 240px);
+}
+.mainwrapper.menuopen .logo {
+    display:block;
+}
+.mainwrapper.menuopen .leftpanel {
+    width:240px;
+}
+.mainwrapper.menuopen #expandedMenu {
+    display:none;
+}
+.mainwrapper.menuopen #expandedMenu {
+    display:block;
+}
+

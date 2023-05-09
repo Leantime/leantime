@@ -158,6 +158,25 @@ namespace leantime\domain\repositories {
             }
         }
 
+        public function createDB($dbName) {
+
+            try {
+
+
+                $stmn = $this->database->prepare("CREATE SCHEMA :schemaName ;");
+                $stmn->bindValue(':dbName',$dbName, PDO::PARAM_STR);
+
+                $stmn->execute();
+
+                $stmn->closeCursor();
+
+                return true;
+            } catch (PDOException $e) {
+                error_log($e);
+                return false;
+            }
+        }
+
         /**
          * setupDB installs database
          *
@@ -176,7 +195,7 @@ namespace leantime\domain\repositories {
 
                 $stmn = $this->database->prepare($sql);
                 $stmn->bindValue(':email', $values["email"], PDO::PARAM_STR);
-                $stmn->bindValue(':password', $values["password"], PDO::PARAM_STR);
+                $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
                 $stmn->bindValue(':firstname', $values["firstname"], PDO::PARAM_STR);
                 $stmn->bindValue(':lastname', $values["lastname"], PDO::PARAM_STR);
                 $stmn->bindValue(':dbVersion', $this->settings->dbVersion, PDO::PARAM_STR);

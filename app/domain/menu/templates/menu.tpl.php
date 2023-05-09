@@ -23,7 +23,7 @@ if (is_array($currentLink)) {
 
 <?php if (isset($_SESSION['currentProjectName'])) { ?>
     <?php $this->dispatchTplEvent('beforeMenu'); ?>
-    <ul class="nav nav-tabs nav-stacked" id="expandedMenu"  <?php if(!isset($_SESSION['menuState']) || $_SESSION['menuState'] == 'open') echo 'style="display:block;"'; else echo 'style="display:none;"'; ?>>
+    <ul class="nav nav-tabs nav-stacked" id="expandedMenu">
     <?php $this->dispatchTplEvent('afterMenuOpen'); ?>
 
     <?php if ($this->get('allAvailableProjects') !== false || $_SESSION['currentProject'] != "") {?>
@@ -90,7 +90,7 @@ if (is_array($currentLink)) {
     <?php $this->dispatchTplEvent('beforeMenuClose'); ?>
 </ul>
 
-    <ul class="nav nav-tabs nav-stacked" id="minimizedMenu" <?php if(isset($_SESSION['menuState']) && $_SESSION['menuState'] == 'closed') echo 'style="display:block;"'; else echo 'style="display:none;"'; ?>>
+    <ul class="nav nav-tabs nav-stacked" id="minimizedMenu">
 
         <?php $this->dispatchTplEvent('afterMenuOpen'); ?>
         <?php if ($this->get('allAvailableProjects') !== false || $_SESSION['currentProject'] != "") {?>
