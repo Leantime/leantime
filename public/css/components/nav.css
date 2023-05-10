@@ -1073,7 +1073,7 @@
 .mainwrapper.menuopen .leftpanel {
     width:240px;
 }
-.mainwrapper.menuopen #expandedMenu {
+.mainwrapper.menuopen #minimizedMenu {
     display:none;
 }
 .mainwrapper.menuopen #expandedMenu {
