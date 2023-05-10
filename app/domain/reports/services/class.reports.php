@@ -42,6 +42,7 @@ namespace leantime\domain\services {
         private repositories\goalcanvas $goalCanvasRepo;
         private repositories\valuecanvas $valueCanvasRepo;
         private repositories\minempathycanvas $minEmpathyCanvasRepo;
+        private repositories\wiki $wikiRepo;
 
         public function __construct()
         {
@@ -139,6 +140,8 @@ namespace leantime\domain\services {
             $this->sqCanvasRepo = new repositories\sqcanvas();
             $this->swotCanvasRepo = new repositories\swotcanvas();
 
+            $this->wikiRepo = new repositories\wiki();
+
             $companyLang = $this->settings->getSetting("companysettings.language");
             if ($companyLang != "" && $companyLang !== false) {
                 $currentLanguage = $companyLang;
@@ -196,6 +199,9 @@ namespace leantime\domain\services {
 
                 'numINSIGHTSBoards' => $this->insightsCanvasRepo->getNumberOfBoards(),
                 'numINSIGHTSItems' => $this->insightsCanvasRepo->getNumberOfCanvasItems(),
+
+                'numWikiBoards' => $this->wikiRepo->getNumberOfBoards(),
+                'numWikiItems' => $this->wikiRepo->getNumberOfCanvasItems(),
 
 
                 /*
