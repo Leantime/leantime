@@ -37,9 +37,9 @@ if(str_contains($redirectUrl, "showProject")) {
                 foreach ($this->get('allAssignedProjects') as $projectRow) {
                     if ($lastClient != $projectRow['clientName']) {
                         $lastClient = $projectRow['clientName'];
-                        echo "<li class='clientIdHead-" . $projectRow['clientId'] . "' onclick='leantime.menuController.toggleClientList(" . $projectRow['clientId'] . ", this)'><i class=\"fas fa-angle-right\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
+                        echo "<li class='clientIdHead-" . $projectRow['clientId'] . " ' onclick='leantime.menuController.toggleClientList(" . $projectRow['clientId'] . ", this)'><i class=\"fas fa-angle-right\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
                     }
-                    echo "<li class='projectLineItem client_" . $projectRow['clientId'] . "";
+                    echo "<li class='projectLineItem client_" . $projectRow['clientId'] . " ". $projectRow['type'] ." ";
                     if ($this->get('currentProject') == $projectRow["id"]) {
                         echo " active ";
                     }

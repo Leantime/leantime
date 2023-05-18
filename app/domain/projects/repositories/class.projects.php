@@ -137,12 +137,16 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 				    project.menuType,
+				    project.type,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
+					parent.id AS parentId,
+					parent.name as parentName,
 					comments.status as status
 				FROM zp_relationuserproject AS relation
 				LEFT JOIN zp_projects as project ON project.id = relation.projectId
+				LEFT JOIN zp_projects as parent ON parent.id = project.parent
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				LEFT JOIN zp_comment as comments ON comments.id = (
@@ -166,7 +170,7 @@ namespace leantime\domain\repositories {
 
             $query .= " GROUP BY
 					project.id
-				ORDER BY clientName, project.name";
+				ORDER BY clientName, parentName, project.name";
 
             $stmn = $this->db->database->prepare($query);
             if ($userId == '') {
@@ -198,6 +202,7 @@ namespace leantime\domain\repositories {
 					project.hourBudget,
 					project.dollarBudget,
 				    project.menuType,
+				    project.type,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
