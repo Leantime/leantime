@@ -72,7 +72,6 @@ namespace leantime\domain\controllers {
                             'hours' => ($_POST['hours'] ?? $row['hours']),
                             'wage' => ($_POST['wage'] ?? $row['wage']),
                             'clientId' => ($_POST['client'] ?? $row['clientId']),
-                            'password' => ($row['password']),
                             'source' =>  $row['source'],
                             'pwReset' => $row['pwReset']
                         );
