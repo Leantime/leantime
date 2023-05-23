@@ -510,10 +510,11 @@ namespace leantime\domain\repositories {
                         count(zp_canvas.id) AS boardCount
                 FROM
                     zp_canvas
+                  WHERE zp_canvas.type = 'idea'
                 ";
 
             if (!is_null($projectId)) {
-                $sql .= " WHERE canvasBoard.projectId = :projectId and canvasBoard.type = 'idea' ";
+                $sql .= " WHERE zp_canvas.projectId = :projectId";
             }
 
             $stmn = $this->db->database->prepare($sql);

@@ -500,8 +500,13 @@ namespace leantime\core {
                 'deny_attribute' => '* -href -style',
                 'keep_bad' => 0);
 
+
             if (!is_null($content)) {
-                return htmLawed($content, array('valid_xhtml' => 1));
+                return htmLawed($content, array('comments'=>0,
+                                            'cdata'=>0,
+                                            'deny_attribute'=>'on*',
+                                            'elements'=>'* -applet -canvas -embed -object -script',
+                                            'schemes'=>'href: aim, feed, file, ftp, gopher, http, https, irc, mailto, news, nntp, sftp, ssh, tel, telnet; style: !; *:file, http, https'));
             }
 
             return '';

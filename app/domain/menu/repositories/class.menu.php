@@ -6,6 +6,7 @@
 
 namespace leantime\domain\repositories {
 
+    use leantime\core\eventhelpers;
     use leantime\core;
     use leantime\domain\repositories;
     use leantime\domain\services;
@@ -13,6 +14,8 @@ namespace leantime\domain\repositories {
 
     class menu
     {
+        use eventhelpers;
+
         // Default menu
         public const DEFAULT_MENU = 'default';
 
@@ -162,6 +165,9 @@ namespace leantime\domain\repositories {
         {
 
             $language = core\language::getInstance();
+
+            $this->menuStructures = self::dispatch_filter('menuStructures', $this->menuStructures, array("menuType" => $menuType));
+
 
             if (!isset($this->menuStructures[$menuType]) || empty($menuType)) {
                 $menuType = self::DEFAULT_MENU;

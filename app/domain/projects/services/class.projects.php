@@ -773,6 +773,45 @@ namespace leantime\domain\services {
         public function setProjectAvatar($file, $project) {
             return $this->projectRepository->setPicture($file, $project);
         }
+
+        public function getProjectSetupChecklist($projectId) {
+
+            $progressSteps = array(
+                "define" => array(
+                    "title"=>"label.define",
+                    "tasks" => array(
+                        array("title"=>"description", "status"=>""),
+                        array("title"=>"defineTeam", "status"=>""),
+                        array("title"=>"createBlueprint", "status"=>""),
+                        array("title"=>"", "status"=>""),
+
+                    )
+                ),
+                "goals" => array(
+                    "title"=>"label.setGoals",
+                    "tasks" => array(
+                        array("title"=>"Set goals", "status"=>""),
+                    )
+                ),
+                "timeline" => array(
+                    "title"=>"label.setTimeline",
+                    "tasks" => array(
+                        array("title"=>"createMilestones", "status"=>""),
+                        array("title"=>"connectWithGoals", "status"=>""),
+                    )
+                ),
+                "implementation" => array(
+                    "title"=>"label.implementation",
+                    "tasks" => array(
+                        array("title"=>"createTasks", "status"=>""),
+                        array("title"=>"assignTasks", "status"=>""),
+                        array("title"=>"finish80percent", "status"=>""),
+                    )
+                )
+            );
+
+        }
+
     }
 
 }

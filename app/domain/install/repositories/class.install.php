@@ -82,7 +82,8 @@ namespace leantime\domain\repositories {
             20113,
             20114,
             20115,
-            20116
+            20116,
+            20117
         );
 
         /**
@@ -433,7 +434,8 @@ namespace leantime\domain\repositories {
                   `active` int(11) DEFAULT NULL,
 				  `menuType` MEDIUMTEXT DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
-                   `type` VARCHAR(45) NULL,
+                  `parent` VARCHAR(45) NULL,
+                   `type` INT(11) NULL,
                    `start` DATETIME NULL,
                    `end` DATETIME NULL,
                     `created` DATETIME NULL,
@@ -1365,6 +1367,34 @@ namespace leantime\domain\repositories {
                 "ALTER TABLE `zp_projects`
                 ADD COLUMN `avatar` MEDIUMTEXT NULL AFTER `modified`,
                 ADD COLUMN `cover` MEDIUMTEXT NULL AFTER `avatar`;"
+
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        public function update_sql_20117(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_projects`
+                ADD COLUMN `parent` INT(11) NULL;"
 
             ];
 
