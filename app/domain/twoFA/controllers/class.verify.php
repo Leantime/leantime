@@ -10,7 +10,7 @@ namespace leantime\domain\controllers {
 
     class verify extends controller
     {
-        private $authService;
+        private services\auth $authService;
 
 
         /**

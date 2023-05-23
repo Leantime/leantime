@@ -776,39 +776,132 @@ namespace leantime\domain\services {
 
         public function getProjectSetupChecklist($projectId) {
 
+
+
             $progressSteps = array(
                 "define" => array(
                     "title"=>"label.define",
                     "tasks" => array(
-                        array("title"=>"description", "status"=>""),
-                        array("title"=>"defineTeam", "status"=>""),
-                        array("title"=>"createBlueprint", "status"=>""),
-                        array("title"=>"", "status"=>""),
-
-                    )
+                        "description"=> array("title"=>"label.projectDescription", "status"=>""),
+                        "defineTeam"=> array("title"=>"label.defineTeam", "status"=>""),
+                        "createBlueprint"=> array("title"=>"label.createBlueprint", "status"=>""),
+                    ),
+                    "status" => '',
                 ),
                 "goals" => array(
                     "title"=>"label.setGoals",
                     "tasks" => array(
-                        array("title"=>"Set goals", "status"=>""),
-                    )
+                        "setGoals"=> array("title"=>"label.setGoals", "status"=>""),
+                    ),
+                    "status" => ''
                 ),
                 "timeline" => array(
                     "title"=>"label.setTimeline",
                     "tasks" => array(
-                        array("title"=>"createMilestones", "status"=>""),
-                        array("title"=>"connectWithGoals", "status"=>""),
-                    )
+                        "createMilestones"=> array("title"=>"label.createMilestones", "status"=>""),
+
+                    ),
+                    "status" => '',
                 ),
                 "implementation" => array(
                     "title"=>"label.implementation",
                     "tasks" => array(
-                        array("title"=>"createTasks", "status"=>""),
-                        array("title"=>"assignTasks", "status"=>""),
-                        array("title"=>"finish80percent", "status"=>""),
-                    )
+                        "createTasks"=>  array("title"=>"label.createTasks", "status"=>""),
+
+                        "finish80percent"=>  array("title"=>"label.finish80percent", "status"=>""),
+                    ),
+                    "status" => '',
                 )
             );
+
+            //Todo determine tasks that are done.
+            $project = $this->getProject($projectId);
+            //Project Description
+            if($project['details'] != ''){
+                $progressSteps["define"]["tasks"]["description"]["status"] = "done";
+            }
+
+            if($project['numUsers'] > 1){
+                $progressSteps["define"]["tasks"]["defineTeam"]["status"] = "done";
+            }
+
+            if($project['numDefinitionCanvas'] >= 1){
+                $progressSteps["define"]["tasks"]["createBlueprint"]["status"] = "done";
+            }
+
+            $goals = new repositories\goalcanvas();
+            $allCanvas = $goals->getAllCanvas($projectId);
+
+            $totalGoals = 0;
+            foreach($allCanvas as $goalsCanvas){
+
+                $totalGoals = $totalGoals + $goalsCanvas['boxItems'];
+            }
+            if($totalGoals > 0){
+                $progressSteps["define"]["tasks"]["setGoals"]["status"] = "done";
+            }
+
+            if($project['numberMilestones'] >= 1){
+                $progressSteps["timeline"]["tasks"]["createMilestones"]["status"] = "done";
+            }
+
+            if($project['numberOfTickets'] >= 1){
+                $progressSteps["implementation"]["tasks"]["createTasks"]["status"] = "done";
+            }
+
+            $percentDone = $this->getProjectProgress($projectId);
+            if($percentDone['percent'] >= 80){
+                $progressSteps["implementation"]["tasks"]["finish80percent"]["status"] = "done";
+            }
+
+            //Add overrides
+            $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.".$projectId.".stepsComplete");
+
+            if($stepsCompleted !== false) {
+                $stepsCompleted = unserialize($stepsCompleted);
+                foreach ($progressSteps as $key => $step) {
+
+                    $progressSteps[$key]["tasks"] = $step['tasks'];
+
+                    $stepCompleted = true;
+                    foreach($progressSteps[$key]["tasks"] as $taskKey => $task) {
+
+                        if (isset($stepsCompleted[$taskKey])) {
+                            $progressSteps[$key]["tasks"][$taskKey]['status'] = "done";
+                        }else if($progressSteps[$key]["tasks"][$taskKey]['status'] == 'done'){
+
+                        }else{
+                            $stepCompleted = false;
+                        }
+
+                    }
+
+                    if($stepCompleted) {
+                        $progressSteps[$key]['status'] = 'done';
+                    }
+
+                }
+            }
+
+            return $progressSteps;
+
+
+        }
+
+        public function updateProjectProgress($stepsComplete, $projectId) {
+
+            $stepsDoneArray = array();
+
+            if($stepsComplete != '') {
+                //Steps complete comes in as serialized js string: key=on&key2=on etc. Only on keys will be submitted
+                parse_str($stepsComplete, $stepsDoneArray);
+                $this->settingsRepo->saveSetting(
+                    "projectsettings." . $projectId . ".stepsComplete",
+                    serialize($stepsDoneArray)
+                );
+            }else{
+                return;
+            }
 
         }
 

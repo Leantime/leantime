@@ -101,6 +101,12 @@ namespace leantime\domain\controllers {
                     echo "{status:ok}";
                 }
             }
+
+            if (isset($params['patchProjectProgress'])) {
+                if ($this->projectService->updateProjectProgress($params['values'], $_SESSION['currentProject'])) {
+                    echo "{status:ok}";
+                }
+            }
         }
 
         /**

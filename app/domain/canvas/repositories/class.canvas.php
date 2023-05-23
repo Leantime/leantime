@@ -233,12 +233,15 @@ namespace leantime\domain\repositories {
                         zp_canvas.author,
                         zp_canvas.created,
                         t1.firstname AS authorFirstname,
-                        t1.lastname AS authorLastname
-
+                        t1.lastname AS authorLastname,
+                        count(zp_canvas_items.id) AS boxItems
                 FROM
-                zp_canvas
-                LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
+                    zp_canvas
+                    LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
+                    LEFT JOIN zp_canvas_items ON zp_canvas.id = zp_canvas_items.canvasId
                 WHERE type = '" . static::CANVAS_NAME . "canvas' AND projectId = :projectId
+                GROUP BY
+					zp_canvas.id
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
             $stmn = $this->db->database->prepare($sql);

@@ -323,10 +323,15 @@ namespace leantime\domain\repositories {
 				    zp_projects.avatar,
 				    zp_projects.cover,
 					zp_clients.name AS clientName,
-					SUM(case when zp_tickets.type <> 'milestone' AND zp_tickets.type <> 'subtask' then 1 else 0 end) as numberOfTickets
+					SUM(case when zp_tickets.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
+                    SUM(case when zp_tickets.type = 'milestone' then 1 else 0 end) as numberMilestones,
+                    COUNT(relation.projectId) AS numUsers,
+                    COUNT(definitionCanvas.id) AS numDefinitionCanvas
 				FROM zp_projects
 				  LEFT JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId
 				  LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+				  LEFT JOIN zp_relationuserproject as relation ON zp_projects.id = relation.projectId
+				  LEFT JOIN zp_canvas as definitionCanvas ON zp_projects.id = definitionCanvas.projectId AND definitionCanvas.type NOT IN('idea', 'retroscanvas', 'goalcanvas', 'wiki')
 				WHERE zp_projects.id = :projectId
 				GROUP BY
 					zp_projects.id,

@@ -38,6 +38,7 @@
         <div class="row">
 
             <div class="col-md-8">
+
                 <div class="maincontentinner">
 
                     <div class="pull-right dropdownWrapper">
@@ -53,8 +54,115 @@
                     </a>
                     <h3><?php $this->e($_SESSION["currentProjectClient"]); ?></h3>
                     <h1 class="articleHeadline"><?php $this->e($this->get('currentProjectName')); ?></h1>
-                    <?=$this->escapeMinimal($project['details']) ?>
                     <br />
+                    <strong>Project Checklist</strong><br /><br />
+                    <form name="progressForm" id="progressForm">
+                        <div class="projectSteps">
+                            <div class="progressWrapper">
+
+                                <div class="progress">
+                                    <?php
+
+                                    $progressSteps = $this->get("progressSteps");
+                                    $progress = 0;
+                                    $totalSteps = 0;
+                                    $stepsDone = 1;
+
+                                    foreach($progressSteps as $step){
+
+
+                                        if($step['status'] == "done") {
+                                            $stepsDone++;
+                                        }
+                                        $totalSteps++;
+
+                                    }
+
+                                    //Reduce half step to allow for spacing
+                                    $halfStep = (1/$totalSteps)/2 *100;
+
+                                    $percentDone = ($stepsDone / $totalSteps * 100)-$halfStep;
+                                    ?>
+
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <?=$percentDone ?>%">
+                                        <span class="sr-only"><?=$percentDone ?></span>
+                                    </div>
+
+                                </div>
+                                <?php
+
+                                $currentStep = 1;
+                                foreach($progressSteps as $step){
+
+                                    $positionLeft = ($currentStep / $totalSteps * 100) -$halfStep;
+
+
+                                    if($step['status'] == "done") {
+                                        echo "<div class='step complete' style='left:".$positionLeft."%'>";
+                                        echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
+                                            <span class='innerCircle'></span>
+                                            <span class='title'>
+                                               <i class='fa fa-check'></i> ".$this->__($step['title'])." <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                            </span>
+                                         </a>";
+
+                                    }else if($positionLeft == $percentDone ){
+                                        echo "<div class='step current' style='left:".$positionLeft."%'>";
+                                        echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
+                                            <span class='innerCircle'></span>
+                                            <span class='title'>
+                                                ".$this->__($step['title'])." <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                            </span>
+                                          </a>";
+                                    }else{
+                                        echo "<div class='step' style='left:".$positionLeft."%'>";
+                                        echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
+                                            <span class='innerCircle'></span>
+                                            <span class='title'>
+                                                ".$this->__($step['title'])." <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                            </span>
+                                          </a>";
+                                    }
+
+                                    echo "<ul class='dropdown-menu'>";
+                                    foreach($step['tasks'] as $key => $task){
+
+                                        if($task['status'] == "done"){
+                                            echo"<li class='done'>";
+                                        }else{
+                                            echo"<li>";
+                                        }
+
+                                        echo "<input type='checkbox' name='".$key."' id='progress_".$key."' ";
+
+                                        if($task['status'] == "done"){
+                                            echo"checked='checked'";
+                                        }
+
+                                        echo"/><label for='progress_".$key."'>".$this->__($task['title'])."</label>";
+                                        echo"</li>";
+                                    }
+                                    echo "</ul>";
+                                    echo"</div>";
+
+                                    $currentStep++;
+                                }
+
+                                $percentDone = $stepsDone / $totalSteps * 100;
+                                ?>
+
+                            </div>
+                        </div>
+                    </form>
+                    <br /><br />
+                    <strong>Background</strong><br />
+                    <?=$this->escapeMinimal($project['details']) ?>
+
+
+                    <br />
+
+
+
                 </div>
 
                 <div class="maincontentinner">
@@ -557,6 +665,31 @@
     <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
     jQuery(document).ready(function() {
+
+        jQuery('.progressWrapper .dropdown-menu li input').change(function(e){
+
+            if(jQuery(this).parent().hasClass("done")) {
+                jQuery(this).parent().removeClass('done');
+            }else{
+                jQuery(this).parent().addClass('done');
+            }
+
+            jQuery.ajax({
+                type : 'PATCH',
+                url  : leantime.appUrl + '/api/projects',
+                data : {
+                    patchProjectProgress : "true",
+                    values   : jQuery("form#progressForm").serialize()
+                }
+            });
+
+        });
+
+        jQuery(document).on('click', '.progressWrapper .dropdown-menu', function (e) {
+            e.stopPropagation();
+        });
+
+
 
         leantime.ticketsController.initModals();
 
