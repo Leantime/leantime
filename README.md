@@ -1,6 +1,7 @@
 
 <div align="center">
-<a href="https://leantime.io"><img src="https://leantime.io/logos/leantime-logo-transparentBg-landscape-1500.png" alt="Leantime Logo" width="300"/></a>
+<a href="https://leantime.io"><img src="https://cloud.leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
+<a href="https://leantime.io"><img src="" alt="Leantime Logo" width="300"/></a>
 
 ### Leantime&trade; ###
 Leantime is a lean open source project management system for startups and innovators. <br />It's an alternative to ClickUp, Notion, and Asana.<br />[https://leantime.io](https://leantime.io)<br />
