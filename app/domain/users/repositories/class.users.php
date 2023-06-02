@@ -191,7 +191,10 @@ namespace leantime\domain\repositories {
             $sql = "SELECT
 			zp_user.id,
 			zp_user.firstname,
-			zp_user.lastname
+			zp_user.lastname,
+			zp_user.jobTitle,
+			zp_user.jobLevel,
+			zp_user.department
 		 FROM zp_user
 		    ORDER BY lastname";
 
@@ -223,7 +226,10 @@ namespace leantime\domain\repositories {
                       username,
                       twoFAEnabled,
                       clientId,
-                      zp_clients.name AS clientName
+                      zp_clients.name AS clientName,
+                      jobTitle,
+                      jobLevel,
+                      department
 					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
 					WHERE !(source <=> 'api')
@@ -250,7 +256,10 @@ namespace leantime\domain\repositories {
                       status,
                       username,
                       lastlogin,
-                      createdOn
+                      createdOn,
+                      jobTitle,
+                      jobLevel,
+                      department
 					FROM `zp_user`
                     WHERE source <=> :source
 					ORDER BY lastname";
@@ -283,7 +292,10 @@ namespace leantime\domain\repositories {
                         status,
                         username,
                         twoFAEnabled,
-                        zp_clients.name AS clientName
+                        zp_clients.name AS clientName,
+                        jobTitle,
+                        jobLevel,
+                        department
 					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
 					WHERE clientId = :clientId
@@ -328,12 +340,12 @@ namespace leantime\domain\repositories {
          */
         public function editUser(array $values, $id)
         {
-            if ($values['password'] != '') {
+            if (isset($values['password']) && $values['password'] != '') {
                 $chgPW = " password = :password, ";
             } else {
                 $chgPW = "";
             }
-            
+
             $query = "UPDATE `zp_user` SET
 				firstname = :firstname,
 				lastname = :lastname,
@@ -343,6 +355,9 @@ namespace leantime\domain\repositories {
 				role = :role,
 				hours = :hours,
 				wage = :wage,
+				jobTitle = :jobTitle,
+				jobLevel = :jobLevel,
+				department = :department,
                 " . $chgPW . "
 				clientId = :clientId
 			 WHERE id = :id LIMIT 1";
@@ -357,8 +372,13 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
             $stmn->bindValue(':wage', $values['wage'], PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
+            $stmn->bindValue(':jobTitle', $values['jobTitle'], PDO::PARAM_STR);
+            $stmn->bindValue(':jobLevel', $values['jobLevel'], PDO::PARAM_STR);
+            $stmn->bindValue(':department', $values['department'], PDO::PARAM_STR);
+
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            if ($values['password'] != '') {
+
+            if (isset($values['password']) && $values['password'] != '') {
                 $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
             }
 
@@ -468,7 +488,10 @@ namespace leantime\domain\repositories {
 							source,
                             pwReset,
                             status,
-                            createdOn
+                            createdOn,
+                            jobTitle,
+                            jobLevel,
+                            department
 						) VALUES (
 							:firstname,
 							:lastname,
@@ -481,7 +504,10 @@ namespace leantime\domain\repositories {
 							:source,
 							:pwReset,
 						    :status,
-						    NOW()
+						    NOW(),
+                            :jobTitle,
+                            :jobLevel,
+                            :department
 						)";
 
             $stmn = $this->db->database->prepare($query);
@@ -494,6 +520,10 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_INT);
+
+            $stmn->bindValue(':jobTitle', $values['jobTitle'], PDO::PARAM_STR);
+            $stmn->bindValue(':jobLevel', $values['jobLevel'], PDO::PARAM_STR);
+            $stmn->bindValue(':department', $values['department'], PDO::PARAM_STR);
 
             if (isset($values['source'])) {
                 $stmn->bindValue(':source', $values['source'], PDO::PARAM_STR);

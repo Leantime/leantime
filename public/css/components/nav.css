@@ -163,9 +163,9 @@
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector .fa {
     font-size: var(--base-font-size);
-    padding-left:5px;
-    float:right;
-    margin-top:24px;
+    position: absolute;
+    top: 25px;
+    right: 10px;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector:hover,

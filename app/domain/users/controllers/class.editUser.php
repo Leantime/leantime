@@ -57,7 +57,11 @@ namespace leantime\domain\controllers {
                     'wage' => $row['wage'],
                     'clientId' => $row['clientId'],
                     'source' =>  $row['source'],
-                    'pwReset' => $row['pwReset']
+                    'pwReset' => $row['pwReset'],
+                    'jobTitle' => $row['jobTitle'],
+                    'jobLevel' => $row['jobLevel'],
+                    'department' => $row['department'],
+
                 );
 
                 if (isset($_POST['save'])) {
@@ -73,7 +77,10 @@ namespace leantime\domain\controllers {
                             'wage' => ($_POST['wage'] ?? $row['wage']),
                             'clientId' => ($_POST['client'] ?? $row['clientId']),
                             'source' =>  $row['source'],
-                            'pwReset' => $row['pwReset']
+                            'pwReset' => $row['pwReset'],
+                            'jobTitle' => ($_POST['jobTitle'] ?? $row['jobTitle']),
+                            'jobLevel' => ($_POST['jobLevel'] ?? $row['jobLevel']),
+                            'department' => ($_POST['department'] ?? $row['department'])
                         );
 
                         $changedEmail = 0;

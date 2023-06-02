@@ -42,7 +42,11 @@ namespace leantime\domain\controllers {
                 'phone' => "",
                 'role' => "",
                 'password' => "",
-                'clientId' => ""
+                'clientId' => "",
+                'jobTitle' => '',
+                'jobLevel' => '',
+                'department' => '',
+
             );
 
             //only Admins
@@ -59,6 +63,9 @@ namespace leantime\domain\controllers {
                         'password' => '',
                         'pwReset' => '',
                         'status' => '',
+                        'jobTitle' => ($_POST['jobTitle']),
+                        'jobLevel' => ($_POST['jobLevel']),
+                        'department' => ($_POST['department']),
                         'clientId' => ($_POST['client'])
                     );
                     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
