@@ -442,6 +442,7 @@ namespace leantime\domain\repositories {
                     `modified` DATETIME NULL,
                     `avatar` MEDIUMTEXT NULL ,
                     `cover` MEDIUMTEXT NULL,
+                    `sortIndex` INT(11) NULL,
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1394,7 +1395,9 @@ namespace leantime\domain\repositories {
 
             $sql = [
                 "ALTER TABLE `zp_projects`
-                ADD COLUMN `parent` INT(11) NULL;"
+                ADD COLUMN `parent` INT(11) NULL;".
+                "ALTER TABLE `zp_projects`
+                ADD COLUMN `sortIndex` INT(11) NULL;"
 
             ];
 

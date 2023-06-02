@@ -50,6 +50,9 @@ namespace leantime\domain\controllers {
                 core\frontcontroller::redirect(BASE_URL . "/dashboard/home");
             }
 
+            $progressSteps = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
+            $this->tpl->assign("progressSteps", $progressSteps);
+
             $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
             $this->tpl->assign('project', $project);
 

@@ -20,7 +20,7 @@ body .gantt .upper-text {
 }
 
 body .gantt .upper-text {
-    fill:var(--col-title-bg);
+    fill:var(--kanban-col-title-color);
     opacity:0.7;
 }
 
@@ -65,6 +65,11 @@ body .gantt #details .details-container {
 .gantt .grid-header {
     fill:var(--col-title-bg) !important;
     stroke:none;
+    filter: drop-shadow(var(--regular-shadow));
+}
+
+.gantt .grid-header-line {
+    fill:var(--neutral) !important;
     filter: drop-shadow(var(--regular-shadow));
 }
 

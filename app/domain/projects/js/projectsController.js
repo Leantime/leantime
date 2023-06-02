@@ -13,6 +13,16 @@ leantime.projectsController = (function () {
 
     })();
 
+    function countTickets()
+    {
+
+        jQuery("#sortableTicketKanban .column").each(function () {
+            var counting = jQuery(this).find('.moveable').length;
+            jQuery(this).find(' .count').text(counting);
+        });
+
+    }
+
     //Functions
 
     var initDates = function () {
@@ -287,6 +297,296 @@ leantime.projectsController = (function () {
         );
     };
 
+
+    var initGanttChart = function (projects, viewMode, readonly) {
+
+        function htmlEntities(str)
+        {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        jQuery(document).ready(
+            function () {
+
+                if (readonly === false) {
+                    var gantt_chart = new Gantt(
+                        "#gantt",
+                        projects,
+                        {
+                            header_height: 55,
+                            column_width: 20,
+                            step: 24,
+                            view_modes: ['Day', 'Week', 'Month'],
+                            bar_height: 40,
+                            static_progress_indicator: true,
+                            bar_corner_radius: 5,
+                            arrow_curve: 5,
+                            padding:20,
+                            view_mode: 'Month',
+                            date_format: leantime.i18n.__("language.momentJSDate"),
+                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
+                            additional_rows: 5,
+                            custom_popup_html: function (project) {
+
+                                // the task object will contain the updated
+                                // dates and progress value
+                                var end_date = project._end;
+
+                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
+
+
+                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
+
+                                if(project.projectName !== undefined){
+                                    popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
+                                }
+
+                                popUpHTML += '<h4>' + htmlEntities(project.name) + '</a></h4><br /> ';
+
+                                popUpHTML += '</div>';
+
+                                return popUpHTML;
+                            },
+                            on_click: function (project) {
+                                //_initModals();
+                            },
+                            on_date_change: function (project, start, end) {
+
+                                jQuery.ajax(
+                                    {
+                                        type: 'PATCH',
+                                        url: leantime.appUrl + '/api/projects',
+                                        data:
+                                            {
+                                                id : project.id,
+                                                start:start,
+                                                end:end,
+                                                sortIndex: project._index
+                                            }
+                                    }
+                                ).done(
+                                    function () {
+                                        //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
+
+                                    }
+                                );
+
+                                //leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
+                                //_initModals();
+
+                            },
+                            on_sort_change: function (projects) {
+
+                                var statusPostData = {
+                                    action: "ganttSort",
+                                    payload: {}
+                                };
+
+                                for (var i = 0; i < projects.length; i++) {
+
+                                    statusPostData.payload[projects[i].id] = projects[i]._index;
+
+                                }
+
+                                // POST to server using $.post or $.ajax
+                                jQuery.ajax({
+                                    type: 'POST',
+                                    url: leantime.appUrl + '/api/projects',
+                                    data: statusPostData
+
+                                });
+
+                            },
+                            on_progress_change: function (project, progress) {
+
+                                //_initModals();
+                            },
+                            on_view_change: function (mode) {
+
+                                leantime.usersRepository.updateUserViewSettings("projectGantt", mode);
+
+                            },
+                            on_popup_show: function (project) {
+
+                            }
+                        }
+                    );
+                } else {
+                    var gantt_chart = new Gantt(
+                        "#gantt",
+                        projects,
+                        {
+                            readonlyGantt: true,
+                            resizing: false,
+                            progress: false,
+                            is_draggable: false,
+                            custom_popup_html: function (project) {
+                                // the task object will contain the updated
+                                // dates and progress value
+                                var end_date = task._end;
+                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
+
+
+
+                                var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
+
+                                if(task.projectName !== undefined){
+                                    popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
+                                }
+
+                                popUpHTML += '<h4>' + htmlEntities(project.name) + '</a></h4><br /> ';
+
+                                popUpHTML += '</div>';
+
+                                return popUpHTML;
+                            },
+                            on_click: function (project) {
+
+                            },
+                            on_date_change: function (project, start, end) {
+
+
+                            },
+                            on_progress_change: function (project, progress) {
+
+                                //_initModals();
+                            },
+                            on_view_change: function (mode) {
+
+                                leantime.usersRepository.updateUserViewSettings("projectGantt", mode);
+
+                            }
+                        }
+                    );
+                }
+
+                jQuery("#ganttTimeControl").on(
+                    "click",
+                    "a",
+                    function () {
+
+                        var $btn = jQuery(this);
+                        var mode = $btn.attr("data-value");
+                        gantt_chart.change_view_mode(mode);
+                        $btn.parent().parent().find('a').removeClass('active');
+                        $btn.addClass('active');
+                        var label = $btn.text();
+                        jQuery(".viewText").text(label);
+                    }
+                );
+
+                gantt_chart.change_view_mode(viewMode);
+
+            }
+        );
+
+    };
+
+    var setUpKanbanColumns = function () {
+
+        jQuery(document).ready(function () {
+
+            countTickets();
+            jQuery(".filterBar .row-fluid").css("opacity", "1");
+
+            var height = jQuery("html").height() - 250;
+
+            jQuery("#sortableProjectKanban .column .contentInner").each(function(){
+                if(jQuery(this).height() > height){
+                    height = jQuery(this).height();
+                }
+            });
+            height = height + 50;
+            jQuery("#sortableProjectKanban .column .contentInner").css("min-height", height);
+
+        });
+
+    };
+
+    var initProjectsKanban = function (statusList) {
+
+        jQuery("#sortableProjectKanban .projectBox").hover(function () {
+            jQuery(this).css("background", "var(--kanban-card-hover)");
+        },function () {
+            jQuery(this).css("background", "var(--kanban-card-bg)");
+        });
+
+        var position_updated = false;
+
+        jQuery("#sortableProjectKanban .contentInner").sortable({
+            connectWith: ".contentInner",
+            items: "> .moveable",
+            tolerance: 'intersect',
+            placeholder: "ui-state-highlight",
+            forcePlaceholderSize: true,
+            cancel: ".portlet-toggle,:input,a,input",
+            distance: 25,
+
+            start: function (event, ui) {
+                ui.item.addClass('tilt');
+                tilt_direction(ui.item);
+            },
+            stop: function (event, ui) {
+                ui.item.removeClass("tilt");
+                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
+                ui.item.removeData("move_handler");
+
+                countTickets();
+
+                var statusPostData = {
+                    action: "sortIndex",
+                    payload: {},
+                    handler: ui.item[0].id
+                };
+
+                for (var i = 0; i < statusList.length; i++) {
+                    if (jQuery(".contentInner.status_" + statusList[i]).length) {
+                        statusPostData.payload[statusList[i]] = jQuery(".contentInner.status_" + statusList[i]).sortable('serialize');
+                    }
+                }
+
+                // POST to server using $.post or $.ajax
+                jQuery.ajax({
+                    type: 'POST',
+                    url: leantime.appUrl + '/api/projects',
+                    data: statusPostData
+
+                });
+
+            }
+        });
+
+        function tilt_direction(item)
+        {
+            var left_pos = item.position().left,
+                move_handler = function (e) {
+                    if (e.pageX >= left_pos) {
+                        item.addClass("right");
+                        item.removeClass("left");
+                    } else {
+                        item.addClass("left");
+                        item.removeClass("right");
+                    }
+                    left_pos = e.pageX;
+                };
+            jQuery("html").bind("mousemove", move_handler);
+            item.data("move_handler", move_handler);
+        }
+
+        jQuery(".portlet")
+            .addClass("ui-widget ui-widget-content ui-helper-clearfix ui-corner-all")
+            .find(".portlet-header")
+            .addClass("ui-widget-header ui-corner-all")
+            .prepend("<span class='ui-icon ui-icon-minusthick portlet-toggle'></span>");
+
+        jQuery(".portlet-toggle").click(function () {
+            var icon = jQuery(this);
+            icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
+            icon.closest(".portlet").find(".portlet-content").toggle();
+        });
+
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         initDates:initDates,
@@ -301,6 +601,10 @@ leantime.projectsController = (function () {
         addToDoStatus:addToDoStatus,
         saveCroppie:saveCroppie,
         clearCroppie:clearCroppie,
-        readURL:readURL
+        readURL:readURL,
+        initGanttChart:initGanttChart,
+        setUpKanbanColumns:setUpKanbanColumns,
+        initProjectsKanban:initProjectsKanban
+
     };
 })();

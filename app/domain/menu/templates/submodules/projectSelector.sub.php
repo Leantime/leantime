@@ -3,6 +3,7 @@ $redirectUrl = $this->incomingRequest->getRequestURI(BASE_URL);
 //Don't redirect if redirect goes to showProject.
 if(str_contains($redirectUrl, "showProject")) {
     $redirectUrl = "/dashboard/show";
+
 }
 ?>
 
@@ -40,10 +41,14 @@ if(str_contains($redirectUrl, "showProject")) {
                         echo "<li class='clientIdHead-" . $projectRow['clientId'] . " ' onclick='leantime.menuController.toggleClientList(" . $projectRow['clientId'] . ", this)'><i class=\"fas fa-angle-right\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
                     }
                     echo "<li class='projectLineItem client_" . $projectRow['clientId'] . " ". $projectRow['type'] ." ";
+                    if($projectRow['parent'] > 0){
+                        echo " projectChild ";
+                    }
                     if ($this->get('currentProject') == $projectRow["id"]) {
                         echo " active ";
                     }
-                    echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'><img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
+                    $redirectUpdate = \leantime\core\eventhelpers::dispatch_filter('defaultProjectRedirect', $redirectUrl, array("type" => $projectRow['type']));
+                    echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUpdate . "'><span class='projectAvatar'><img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
                    </span><span class='projectName'> " . $this->escape($projectRow["name"]) . "</span></a></li>";
                 }
             } else {

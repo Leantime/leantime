@@ -72,6 +72,34 @@ namespace leantime\domain\controllers {
 
                 echo "{status:ok}";
             }
+
+            if (isset($params['action']) && $params['action'] == "sortIndex" && isset($params["payload"]) === true) {
+                $handler = null;
+                if (isset($params["handler"]) == true) {
+                    $handler = $params["handler"];
+                }
+
+                $results = $this->projectService->updateProjectStatusAndSorting($params["payload"], $handler);
+
+                if ($results === true) {
+                    echo "{status:ok}";
+                } else {
+                    echo "{status:failure}";
+                }
+            }
+
+            if (isset($params['action']) && $params['action'] == "ganttSort") {
+
+                $results = $this->projectService->updateProjectSorting($params["payload"]);
+
+                if ($results === true) {
+                    echo "{status:ok}";
+                } else {
+                    echo "{status:failure}";
+                }
+
+            }
+
         }
 
         /**
@@ -101,7 +129,24 @@ namespace leantime\domain\controllers {
                     echo "{status:ok}";
                 }
             }
+
+            if (isset($params['patchProjectProgress'])) {
+                if ($this->projectService->updateProjectProgress($params['values'], $_SESSION['currentProject'])) {
+                    echo "{status:ok}";
+                }
+            }
+
+
+            if (isset($params['id'])) {
+                $results = $this->projectService->patch($params['id'], $params);
+            } else {
+                echo "{status:failure, message: 'ID not set'}";
+            }
+
         }
+
+
+
 
         /**
          * delete - handle delete requests
