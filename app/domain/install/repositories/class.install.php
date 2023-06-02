@@ -1394,7 +1394,9 @@ namespace leantime\domain\repositories {
 
             $sql = [
                 "ALTER TABLE `zp_projects`
-                ADD COLUMN `parent` INT(11) NULL;"
+                ADD COLUMN `parent` INT(11) NULL;".
+                "ALTER TABLE `zp_projects`
+                ADD COLUMN `sortIndex` INT(11) NULL;"
 
             ];
 

@@ -138,6 +138,7 @@ namespace leantime\domain\repositories {
 					project.dollarBudget,
 				    project.menuType,
 				    project.type,
+				    project.parent,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,

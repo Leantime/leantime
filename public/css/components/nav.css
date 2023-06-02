@@ -765,6 +765,10 @@
     border-radius:5px;
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.projectChild {
+    padding-left:60px;
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li {
     cursor:pointer;
 }
