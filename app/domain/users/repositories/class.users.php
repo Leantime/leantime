@@ -328,7 +328,12 @@ namespace leantime\domain\repositories {
          */
         public function editUser(array $values, $id)
         {
-
+            if ($values['password'] != '') {
+                $chgPW = " password = :password, ";
+            } else {
+                $chgPW = "";
+            }
+            
             $query = "UPDATE `zp_user` SET
 				firstname = :firstname,
 				lastname = :lastname,
@@ -338,8 +343,8 @@ namespace leantime\domain\repositories {
 				role = :role,
 				hours = :hours,
 				wage = :wage,
-				clientId = :clientId,
-				password = :password
+                " . $chgPW . "
+				clientId = :clientId
 			 WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -353,7 +358,9 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':wage', $values['wage'], PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
+            if ($values['password'] != '') {
+                $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
+            }
 
             $result = $stmn->execute();
             $stmn->closeCursor();
