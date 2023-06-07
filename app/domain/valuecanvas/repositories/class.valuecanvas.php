@@ -29,6 +29,13 @@ namespace leantime\domain\repositories {
          */
         protected string $disclaimer = '';
 
+
+        protected array $dataLabels = [
+            1 => [ 'title' => 'label.valueCanvas.assumptions', 'field' => 'assumptions', 'active' => true],
+            2 => [ 'title' => 'label.valueCanvas.data',        'field' => 'data',        'active' => true],
+            3 => [ 'title' => 'label.valueCanvas.conclusion',  'field' => 'conclusion',  'active' => true]
+        ];
+
         /**
          * canvasTypes - Must be extended
          *
