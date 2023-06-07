@@ -109,6 +109,19 @@ namespace leantime\domain\services {
                 $plugin->homepage = $pluginFile['homepage'];
                 $plugin->authors = json_encode($pluginFile['authors']);
 
+                //Any installation calls should happen right here.
+                $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
+                $newPluginSvc = new $pluginClassName;
+
+                if(method_exists($newPluginSvc, "install")) {
+                    try {
+                        $newPluginSvc->install();
+                    }catch(\Exception $e){
+                        error_log($e);
+                        return false;
+                    }
+                }
+
                 return $this->pluginRepository->addPlugin($plugin);
             }
 
@@ -130,6 +143,21 @@ namespace leantime\domain\services {
         public function removePlugin(int $id)
         {
             unset($_SESSION['enabledPlugins']);
+            $plugin = $this->pluginRepository->getRepository($id);
+
+            //Any installation calls should happen right here.
+            $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
+            $newPluginSvc = new $pluginClassName;
+
+            if(method_exists($newPluginSvc, "uninstall")) {
+                try {
+                    $newPluginSvc->install();
+                }catch(\Exception $e){
+                    error_log($e);
+                    return false;
+                }
+            }
+
             return $this->pluginRepository->removePlugin($id);
 
             //TODO remove files savely

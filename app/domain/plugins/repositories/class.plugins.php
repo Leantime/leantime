@@ -9,9 +9,8 @@ namespace leantime\domain\repositories {
 
     class plugins
     {
-
         private core\db $db;
-        
+
         /**
          * __construct - get database connection
          *
@@ -57,6 +56,32 @@ namespace leantime\domain\repositories {
             }
 
             return $allPlugins;
+        }
+
+        public function getPlugin(int $id): \leantime\domain\models\plugins|false
+        {
+
+            $query = "SELECT
+                    id,
+                  name,
+                  enabled,
+                  description,
+                  version,
+                  installdate,
+                  foldername,
+                  homepage,
+                  authors
+
+                FROM zp_plugins";
+
+
+            $stmn = $this->db->database->prepare($query);
+
+            $stmn->execute();
+            $stmn->setFetchMode(PDO::FETCH_CLASS, "leantime\domain\models\plugins");
+            $plugin = $stmn->fetch();
+
+            return $plugin;
         }
 
         public function addPlugin(\leantime\domain\models\plugins $plugin)

@@ -216,7 +216,14 @@ class events
         }
 
         $sorter = function ($a, $b) {
-            return $a['priority'] > $b['priority'];
+            if($a['priority'] > $b['priority']){
+                return 1;
+            }else if($a['priority'] == $b['priority']){
+                return 0;
+            }else{
+                return -1;
+            }
+
         };
 
         if ($type == 'filters') {

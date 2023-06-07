@@ -30,12 +30,7 @@
                         type="text" name="lastname" id="lastname"
                         value="<?php echo $values['lastname'] ?>" /><br />
 
-                    <label for="user"><?php echo $this->__('label.email'); ?></label> <input
-                        type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
 
-                    <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input
-                        type="text" name="phone" id="phone"
-                        value="<?php echo $values['phone'] ?>" /><br />
 
                     <label for="role"><?php echo $this->__('label.role'); ?></label>
                     <select name="role" id="role">
@@ -102,6 +97,29 @@
                                            endif; ?>><?php $this->e($client['name']) ?></option>
                         <?php endforeach; ?>
                     </select><br/>
+                        <br/>
+
+                        <h4 class="widgettitle title-light"><?php echo $this->__('label.contact_information'); ?></h4>
+
+                        <label for="user"><?php echo $this->__('label.email'); ?></label> <input
+                            type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
+
+                        <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input
+                            type="text" name="phone" id="phone"
+                            value="<?php echo $values['phone'] ?>" /><br /><br />
+
+
+                        <h4 class="widgettitle title-light"><?php echo $this->__('label.employee_information'); ?></h4>
+                        <label for="jobTitle"><?php echo $this->__('label.jobTitle'); ?></label> <input
+                            type="text" name="jobTitle" id="jobTitle" value="<?php echo $values['jobTitle'] ?>" /><br />
+
+                        <label for="jobLevel"><?php echo $this->__('label.jobLevel'); ?></label> <input
+                            type="text" name="jobLevel" id="jobLevel" value="<?php echo $values['jobLevel'] ?>" /><br />
+
+                        <label for="department"><?php echo $this->__('label.department'); ?></label> <input
+                            type="text" name="department" id="department" value="<?php echo $values['department'] ?>" /><br />
+
+
 
                     <p class="stdformbutton">
                         <input type="submit" name="save" id="save" value="<?php echo $this->__('buttons.save'); ?>" class="button" />

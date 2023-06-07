@@ -81,38 +81,55 @@ $projects = $this->get('relations');
                         type="text" name="lastname" id="lastname"
                         value="<?php echo $values['lastname'] ?>" /><br />
 
+            <label for="role"><?php echo $this->__('label.role'); ?></label>
+            <select name="role" id="role">
+
+                <?php foreach ($this->get('roles') as $key => $role) { ?>
+                    <option value="<?php  echo $key; ?>"
+                        <?php if ($key == $values['role']) {
+                            ?> selected="selected" <?php
+                        } ?>>
+                        <?=$this->__("label.roles." . $role) ?>
+                    </option>
+                <?php } ?>
+
+            </select> <br />
+
+            <label for="client"><?php echo $this->__('label.client') ?></label>
+            <select name='client' id="client">
+                <?php if ($login::userIsAtLeast("manager")) {?>
+                    <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
+                <?php } ?>
+                <?php foreach ($this->get('clients') as $client) : ?>
+                    <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
+                    ?>selected="selected"<?php
+                    endif; ?>><?php $this->e($client['name']) ?></option>
+                <?php endforeach; ?>
+            </select><br/>
+            <br/>
+
+
+                <h4 class="widgettitle title-light"><?php echo $this->__('label.contact_information'); ?></h4>
+
+
                     <label for="user"><?php echo $this->__('label.email'); ?></label> <input
                         type="text" name="user" id="user" value="<?php echo $values['user'] ?>" /><br />
 
                     <label for="phone"><?php echo $this->__('label.phone'); ?></label> <input
                         type="text" name="phone" id="phone"
                         value="<?php echo $values['phone'] ?>" /><br />
+            <br/>
 
-                    <label for="role"><?php echo $this->__('label.role'); ?></label>
-                    <select name="role" id="role">
+            <h4 class="widgettitle title-light"><?php echo $this->__('label.employee_information'); ?></h4>
+                <label for="jobTitle"><?php echo $this->__('label.jobTitle'); ?></label> <input
+                    type="text" name="jobTitle" id="jobTitle" value="<?php echo $values['jobTitle'] ?>" /><br />
 
-                            <?php foreach ($this->get('roles') as $key => $role) { ?>
-                                <option value="<?php  echo $key; ?>"
-                                    <?php if ($key == $values['role']) {
-                                        ?> selected="selected" <?php
-                                    } ?>>
-                                    <?=$this->__("label.roles." . $role) ?>
-                                   </option>
-                            <?php } ?>
+                <label for="jobLevel"><?php echo $this->__('label.jobLevel'); ?></label> <input
+                    type="text" name="jobLevel" id="jobLevel" value="<?php echo $values['jobLevel'] ?>" /><br />
 
-                    </select> <br />
+                <label for="department"><?php echo $this->__('label.department'); ?></label> <input
+                    type="text" name="department" id="department" value="<?php echo $values['department'] ?>" /><br />
 
-                    <label for="client"><?php echo $this->__('label.client') ?></label>
-                    <select name='client' id="client">
-                        <?php if ($login::userIsAtLeast("manager")) {?>
-                            <option value="0" selected="selected"><?php echo $this->__('label.no_clients') ?></option>
-                        <?php } ?>
-                        <?php foreach ($this->get('clients') as $client) : ?>
-                            <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
-                                ?>selected="selected"<?php
-                                           endif; ?>><?php $this->e($client['name']) ?></option>
-                        <?php endforeach; ?>
-                    </select><br/>
 
                     <p class="stdformbutton">
                         <input type="hidden" name="save" value="1" />

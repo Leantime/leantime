@@ -581,6 +581,9 @@ namespace leantime\domain\repositories {
                   `twoFASecret` varchar(200) DEFAULT NULL,
                   `createdOn` DATETIME DEFAULT NULL,
                   `source` varchar(200) DEFAULT NULL,
+                  `jobTitle` VARCHAR(200) NULL,
+                  `jobLevel` VARCHAR(50) NULL,
+                  `department` VARCHAR(200) NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1395,9 +1398,15 @@ namespace leantime\domain\repositories {
 
             $sql = [
                 "ALTER TABLE `zp_projects`
-                ADD COLUMN `parent` INT(11) NULL;".
+                ADD COLUMN `parent` INT(11) NULL;",
+
                 "ALTER TABLE `zp_projects`
-                ADD COLUMN `sortIndex` INT(11) NULL;"
+                ADD COLUMN `sortIndex` INT(11) NULL;",
+
+                "ALTER TABLE `zp_user`
+                ADD COLUMN `jobTitle` VARCHAR(200) NULL ,
+                ADD COLUMN `jobLevel` VARCHAR(50) NULL ,
+                ADD COLUMN `department` VARCHAR(200) NULL ;"
 
             ];
 

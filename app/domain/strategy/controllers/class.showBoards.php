@@ -76,10 +76,11 @@ namespace leantime\domain\controllers {
                 "valuecanvas" =>
                 //Empathy Min
                 array('module' => 'valuecanvas',       'name' => 'label.valuecanvas',  'description' => 'description.valuecanvas', 'icon' => 'fa-solid fa-ranking-star',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
-                "minempathycanvas" =>
-                //Empathy Min
-                array('module' => 'minempathycanvas',       'name' => 'label.minempathycanvas',  'description' => 'description.minempathycanvas', 'icon' => 'fa-solid fa-heart-circle-check',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
-                "obmcanvas" =>
+                "swotcanvas" =>
+                //Swot Analysis
+                array('module' => 'swotcanvas',     'name' => 'label.swotcanvas', 'description' => 'description.swotcanvas', 'icon' => 'fa-solid fa-dumbbell',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+
+                  "obmcanvas" =>
                 //Lean Canvas
                 array('module' => 'obmcanvas',     'name' => 'label.obmcanvas',       'description' => 'description.obmcanvas', 'icon' => 'fa-solid fa-object-group', 'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
 
@@ -87,9 +88,9 @@ namespace leantime\domain\controllers {
                 "leancanvas" =>
                 //Lean Canvas
                 array('module' => 'leancanvas',     'name' => 'label.leancanvas',       'description' => 'description.leancanvas', 'icon' => 'fa-solid fa-person-circle-question', 'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
-                "swotcanvas" =>
-                //Swot Analysis
-                array('module' => 'swotcanvas',     'name' => 'label.swotcanvas', 'description' => 'description.swotcanvas', 'icon' => 'fa-solid fa-dumbbell',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
+                "minempathycanvas" =>
+                //Empathy Min
+                    array('module' => 'minempathycanvas',       'name' => 'label.minempathycanvas',  'description' => 'description.minempathycanvas', 'icon' => 'fa-solid fa-heart-circle-check',  'numberOfBoards' => '', "lastTitle"=>"", "lastCanvasId"=>"", "lastlastUpdate" =>''),
 
                 "sbcanvas" =>
                 //Project Brief<i class=""></i>

@@ -6,9 +6,9 @@ $canvasProgress = $this->get('canvasProgress');
 
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa-solid fa-compass-drafting"></span></div>
+    <div class="pageicon"><span class="fa-solid fa-chess"></span></div>
     <div class="pagetitle">
-        <h1><?=$this->__('headlines.blueprints') ?></h1>
+        <h1><?=$this->__('headlines.strategies') ?></h1>
     </div>
 </div>
 
@@ -119,11 +119,11 @@ $canvasProgress = $this->get('canvasProgress');
             <div class="maincontentinner">
                 <h5 class="accordionTitle" id="accordion_link_other">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_other" onclick="accordionToggle('other');">
-                        <i class="fa fa-angle-right"></i> More Blueprints
+                        <i class="fa fa-angle-down"></i> Templates
                     </a>
                 </h5>
                 <p style="padding-left:19px;"><?=$this->__('description.other_tools') ?></p>
-                <div id="accordion_other" class="row teamBox" style="display:none; padding-left:19px;">
+                <div id="accordion_other" class="row teamBox" style="padding-left:19px;">
 
 
                     <?php foreach ($this->get('otherBoards') as $board) {
