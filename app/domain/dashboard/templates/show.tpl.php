@@ -157,8 +157,13 @@
                         </div>
                     </form>
                     <br /><br />
-                    <strong>Background</strong><br />
+                    <strong><?=$this->__("label.background"); ?></strong><br />
+                    <div class="mce-content-body kanbanContent closed" style="max-height:200px;" id="projectDescription">
                     <?=$this->escapeMinimal($project['details']) ?>
+                    </div>
+                    <div class="center">
+                        <a href="javascript:void(0);" id="descriptionReadMoreToggle"><?=$this->__("label.read_more") ?></a>
+                    </div>
 
 
                     <br />
@@ -667,6 +672,19 @@
     <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
     jQuery(document).ready(function() {
+
+        jQuery("#descriptionReadMoreToggle").click(function(){
+            if(jQuery("#projectDescription").hasClass("closed")){
+                jQuery("#projectDescription").css("max-height", "100%");
+                jQuery("#projectDescription").removeClass("closed");
+                jQuery("#projectDescription").removeClass("kanbanContent");
+            }else{
+                jQuery("#projectDescription").css("max-height", "200px");
+                jQuery("#projectDescription").addClass("closed");
+                jQuery("#projectDescription").addClass("kanbanContent");
+            }
+
+        });
 
         jQuery('.progressWrapper .dropdown-menu li input').change(function(e){
 
