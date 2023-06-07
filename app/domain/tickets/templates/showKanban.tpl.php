@@ -330,7 +330,7 @@ if ($numberofColumns > 0) {
                                                     <div class="kanbanContent" style="margin-bottom: 20px">
                                                         <?php echo $this->escapeMinimal($row['description']); ?>
                                                     </div>
-                                                    
+
                                                 </div>
                                                 <?php if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
                                                     $date = new DateTime($row['dateToFinish']);
