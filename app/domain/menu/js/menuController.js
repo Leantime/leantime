@@ -58,7 +58,8 @@ leantime.menuController = (function () {
 
         var newWidth = 68;
         if(window.innerWidth < 576) {
-
+            jQuery(".mainwrapper").removeClass("menuopen");
+            jQuery(".mainwrapper").addClass("menuclosed");
         }
 
 

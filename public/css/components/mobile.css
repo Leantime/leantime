@@ -13,6 +13,15 @@ min-width: 1200px
 
 @media (max-width:575px) {
 
+    .progressWrapper .step {
+        display:none;
+    }
+
+    .progressWrapper .step.current {
+        display:inherit;
+
+    }
+
     .maincontentinner {
         overflow:auto;
     }
@@ -722,6 +731,15 @@ min-width: 1200px
 }
 
 @media (min-width: 576px) and (max-width:1200px) {
+
+    .progressWrapper .step {
+        display:none;
+    }
+
+    .progressWrapper .step.current {
+        display:inherit;
+
+    }
 
     .leftmenu .projectselector {
         width:297px;
