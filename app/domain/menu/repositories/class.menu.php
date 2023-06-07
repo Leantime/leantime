@@ -208,6 +208,7 @@ namespace leantime\domain\repositories {
 
                         // Parse submenu
                         foreach ($element['submenu'] as $subkey => $subelement) {
+                            ksort($menuStructure[$key]['submenu']);
                             $menuStructure[$key]['submenu'][$subkey]['title'] = $language->__($menuStructure[$key]['submenu'][$subkey]['title']);
 
                             switch ($subelement['type']) {

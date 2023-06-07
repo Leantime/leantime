@@ -15,8 +15,8 @@ namespace leantime\domain\models {
         public $sortIndex;
 
         public $date;
-        public string $timelineDate;
-        public string $timelineDateToFinish;
+        public $timelineDate;
+        public $timelineDateToFinish;
         public $dateToFinish;
         public $timeToFinish;
         public $status;

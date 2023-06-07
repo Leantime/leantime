@@ -3273,7 +3273,8 @@ div.color-picker ul li {
 }
 
 .sortableTicketList .ticketBox li {
-    list-style: inherit;
+    list-style: none;
+
     display: list-item;
 }
 
