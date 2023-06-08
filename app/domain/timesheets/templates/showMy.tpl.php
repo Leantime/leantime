@@ -104,8 +104,9 @@ jQuery(document).ready(function(){
             jQuery(".ticket-select option").show();
             jQuery("#ticketSelect .chosen-results li").show();
             var selectedValue = jQuery(this).find("option:selected").val();
+            jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
             jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
-
+            jQuery(".ticket-select").chosen("destroy").chosen();
 
     });
 
@@ -114,6 +115,7 @@ jQuery(document).ready(function(){
         var selectedValue = jQuery(this).find("option:selected").attr("data-value");
         jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
         jQuery(".project-select").trigger("liszt:updated");
+        jQuery(".ticket-select").chosen("destroy").chosen();
     });
 
     jQuery("#nextWeek").click(function() {
