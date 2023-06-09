@@ -99,7 +99,6 @@ namespace leantime\domain\controllers {
                         'lastname' => ($_POST['lastname']) ?? $row['lastname'],
                         'user' => ($_POST['user']) ?? $row['username'],
                         'phone' => ($_POST['phone']) ?? $row['phone'],
-                        'password' => $row['password'],
                         'notifications' => $row['notifications'],
                         'twoFAEnabled' => $row['twoFAEnabled']
                     );
