@@ -64,7 +64,11 @@ $project = $this->get('project');
                             </div>
                         </div>
                         <div class="span4">
+
+                            <?php $this->dispatchTplEvent("beforeClientPicker", $project) ?>
+
                             <div class="row-fluid marginBottom">
+
                                 <div class="span12 ">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span><?php echo $this->__('label.client_product'); ?></h4>

@@ -713,7 +713,7 @@
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li{
     display:block;
-    padding:10px 0px 10px 15px;
+    padding:10px 0px 10px 10px;
     list-style-type: none;
 }
 
@@ -721,10 +721,50 @@
 
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector #allProjects .scrollingTab {
+    border-right:1px solid var(--main-border-color);
+    padding:0px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector #allProjects .scrollingTab:last-child {
+    border-right:none;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li,
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li {
+    display:none;
+    overflow:hidden;
+    text-wrap: none;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li.visible,
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.visible {
+    display:block;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li.groupHidden,
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.groupHidden {
+    display:none !important;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li.alwaysVisible,
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.alwaysVisible {
+    display:block !important;
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem {
     display:none;
     padding-left:30px;
     height:50px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.program {
+    padding-left:10px;
+}
+
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.client__ {
+    display:block;
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.visible {
@@ -735,8 +775,28 @@
     padding-left:15px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem a {
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem a,
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.program a {
     line-height:30px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.program {
+    position:relative;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.program a.treeAction {
+    position:absolute;
+    top:0px;
+    right:0px;
+    line-height:52px;
+    text-align:center;
+    width:30px;
+    border-left:1px solid var(--main-border-color);
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.program a.treeAction:before {
+    content:'';
+    border:0px;
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a .projectName {
@@ -766,7 +826,15 @@
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.projectChild {
-    padding-left:60px;
+
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.clientChild {
+
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.projectClientChild {
+
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li {
@@ -788,7 +856,8 @@
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li:hover,
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.active{
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.active,
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.activeChild{
     background:var(--main-menu-link-active-bg);
 }
 
@@ -801,7 +870,7 @@
     display: block;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li {
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem {
     display:none;
 }
 

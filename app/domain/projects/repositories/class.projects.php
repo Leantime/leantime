@@ -171,7 +171,7 @@ namespace leantime\domain\repositories {
 
             $query .= " GROUP BY
 					project.id
-				ORDER BY clientName, parentName, project.name";
+				ORDER BY parentName, clientName, project.name";
 
             $stmn = $this->db->database->prepare($query);
             if ($userId == '') {
@@ -323,6 +323,8 @@ namespace leantime\domain\repositories {
 				    zp_projects.menuType,
 				    zp_projects.avatar,
 				    zp_projects.cover,
+				    zp_projects.type,
+				    zp_projects.parent,
 					zp_clients.name AS clientName,
 					SUM(case when zp_tickets.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
                     SUM(case when zp_tickets.type = 'milestone' then 1 else 0 end) as numberMilestones,
@@ -500,7 +502,7 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_projects` (
-				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`, `menuType`
+				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`, `menuType`, `type`, `parent`
 			) VALUES (
 				:name,
 				:details,
@@ -508,7 +510,9 @@ namespace leantime\domain\repositories {
 				:hourBudget,
 				:dollarBudget,
 			    :psettings,
-                :menuType
+                :menuType,
+			    :type,
+			    :parent
 			)";
 
             $stmn = $this->db->database->prepare($query);
@@ -520,7 +524,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
-
+            $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
+            $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
             $stuff = $stmn->execute();
 
             $projectId = $this->db->database->lastInsertId();

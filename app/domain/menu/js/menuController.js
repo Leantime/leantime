@@ -136,6 +136,19 @@ leantime.menuController = (function () {
 
     };
 
+    var toggleHierarchy = function (selectedParent, target) {
+        jQuery("."+target+"List.selectorList li").not(".nav-header, .fixedBottom").removeClass("visible");
+        jQuery("."+target+"List.selectorList li").not(".nav-header, .fixedBottom").addClass("groupHidden");
+        jQuery("."+target+"List.selectorList li.parent-"+selectedParent).removeClass("groupHidden");
+        jQuery("."+target+"List.selectorList li.parent-"+selectedParent).addClass("visible");
+
+
+        jQuery("."+target+"Target li").removeClass("active");
+        jQuery("."+target+"Target li").removeClass("activeChild");
+        jQuery("#"+target+"Group-"+selectedParent).addClass("activeChild");
+
+    };
+
     var toggleClientList = function (id, element, set="") {
 
         //MEthod is executed on click and does the oposite of the current state.
@@ -193,7 +206,8 @@ leantime.menuController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         toggleClientList:toggleClientList,
-        toggleSubmenu:toggleSubmenu
+        toggleSubmenu:toggleSubmenu,
+        toggleHierarchy:toggleHierarchy
     };
 
 })();

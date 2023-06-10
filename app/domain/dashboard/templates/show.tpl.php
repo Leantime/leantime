@@ -141,7 +141,7 @@
                                             echo"checked='checked'";
                                         }
 
-                                        echo"/><label for='progress_".$key."'>".$this->__($task['title'])."</label>";
+                                        echo"/><label for='progress_".$key."'>".$this->__($task['title']??'')."</label>";
                                         echo"</li>";
                                     }
                                     echo "</ul>";

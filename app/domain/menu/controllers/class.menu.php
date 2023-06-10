@@ -40,6 +40,11 @@ namespace leantime\domain\controllers {
                     'open'
                 );
 
+                $allAssignedprojectsHierarchy = $this->projectService->getProjectHierarchyAssignedToUser(
+                    $_SESSION['userdata']['id'],
+                    'open'
+                );
+
                 $allAvailableProjects = $this->projectService->getProjectsUserHasAccessTo(
                     $_SESSION['userdata']['id'],
                     'open',
@@ -60,12 +65,21 @@ namespace leantime\domain\controllers {
                 }
             }
 
+            $projectType = "project";
             if (isset($_SESSION['currentProject'])) {
                 $project = $this->projectService->getProject($_SESSION['currentProject']);
 
                 $menuType = ($project !== false && isset($project['menuType']))
                     ? $project['menuType']
                     : repositories\menu::DEFAULT_MENU;
+
+                $projectType = ($project !== false && isset($project['type']))
+                    ? $project['type']
+                    : "project";
+
+                if($projectType != '' && $projectType != 'project') {
+                    $menuType = $projectType;
+                }
 
                 if($project !== false && isset($project["clientId"])) {
                     $this->tpl->assign('currentClient', $project["clientId"]);
@@ -78,10 +92,17 @@ namespace leantime\domain\controllers {
             }
 
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
+            $this->tpl->assign('currentProjectType', $projectType);
+
             $this->tpl->assign('allAssignedProjects', $allAssignedprojects);
             $this->tpl->assign('allAvailableProjects', $allAvailableProjects);
+            $this->tpl->assign('allAssignedProjectsHierarchy', $allAssignedprojectsHierarchy);
+
             $this->tpl->assign('recentProjects', $recentProjects);
+
             $this->tpl->assign('currentProject', $_SESSION['currentProject'] ?? null);
+
+
             $this->tpl->assign('menuStructure', $this->menuRepo->getMenuStructure($menuType));
 
             $this->tpl->displayPartial('menu.menu');

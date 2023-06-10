@@ -59,6 +59,8 @@ namespace leantime\domain\controllers {
                 'dollarBudget' => '',
                 'state' => '',
                 'menuType' => repositories\menu::DEFAULT_MENU,
+                'type' => 'project',
+                'parent' => '',
                 'psettings' => ''
             );
 
@@ -88,7 +90,9 @@ namespace leantime\domain\controllers {
                     'dollarBudget' => $_POST['dollarBudget'] ?? 0,
                     'state' => $_POST['projectState'],
                     'psettings' => $_POST['globalProjectUserAccess'],
-                    'menuType' => $_POST['menuType'] ?? 'default'
+                    'menuType' => $_POST['menuType'] ?? 'default',
+                    'type' => 'project',
+                    'parent' => $_POST['parent'] ?? ''
                 );
 
                 if ($values['name'] === '') {
