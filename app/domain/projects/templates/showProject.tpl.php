@@ -74,7 +74,11 @@
                                             <div class="commentImage">
                                                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>"/>
                                             </div>
-                                            <label for="user-<?php echo $userId ?>" ><?php printf($this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?> <?php if ($assignedUser['status'] == 'i') {
+                                            <label for="user-<?php echo $userId ?>" ><?php printf($this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?>
+
+                                                <?php
+                                                echo "<small>(".$this->escape($assignedUser['jobTitle']).")</small><br />";
+                                                if ($assignedUser['status'] == 'i') {
                                                 echo "<small>(" . $this->__('label.invited') . ")</small>";
                                                              } ?></label>
                                             <?php

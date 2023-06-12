@@ -61,7 +61,9 @@ namespace leantime\domain\controllers {
                 'menuType' => repositories\menu::DEFAULT_MENU,
                 'type' => 'project',
                 'parent' => '',
-                'psettings' => ''
+                'psettings' => '',
+                'start' => '',
+                'end' => ''
             );
 
             if (isset($_POST['save']) === true) {
@@ -81,6 +83,7 @@ namespace leantime\domain\controllers {
 
                 $mailer = new core\mailer();
 
+
                 $values = array(
                     'name' => $_POST['name'],
                     'details' => $_POST['details'],
@@ -92,7 +95,9 @@ namespace leantime\domain\controllers {
                     'psettings' => $_POST['globalProjectUserAccess'],
                     'menuType' => $_POST['menuType'] ?? 'default',
                     'type' => 'project',
-                    'parent' => $_POST['parent'] ?? ''
+                    'parent' => $_POST['parent'] ?? '',
+                    'start' => $this->language->getISODateString($_POST['start']),
+                    'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : ''
                 );
 
                 if ($values['name'] === '') {

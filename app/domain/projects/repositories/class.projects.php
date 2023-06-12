@@ -76,7 +76,8 @@ namespace leantime\domain\repositories {
 					client.id AS clientId
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId";
+				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				";
 
             if ($showClosedProjects === false) {
                 $query .= " WHERE project.state IS NULL OR project.state <> -1 ";
@@ -169,9 +170,16 @@ namespace leantime\domain\repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            $query .= " GROUP BY
+            if(isset($_SESSION['enablePrograms']) || isset($_SESSION['enableStrategies'])) {
+                $query .= " GROUP BY
 					project.id
-				ORDER BY parentName, clientName, project.name";
+				    ORDER BY parentName, clientName, project.name";
+            }else{
+                $query .= " GROUP BY
+					project.id
+				ORDER BY clientName, parentName, project.name";
+            }
+
 
             $stmn = $this->db->database->prepare($query);
             if ($userId == '') {
@@ -326,6 +334,8 @@ namespace leantime\domain\repositories {
 				    zp_projects.type,
 				    zp_projects.parent,
 					zp_clients.name AS clientName,
+					 zp_projects.start,
+					  zp_projects.end,
 					SUM(case when zp_tickets.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
                     SUM(case when zp_tickets.type = 'milestone' then 1 else 0 end) as numberMilestones,
                     COUNT(relation.projectId) AS numUsers,
@@ -502,7 +512,18 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_projects` (
-				`name`, `details`, `clientId`, `hourBudget`, `dollarBudget`, `psettings`, `menuType`, `type`, `parent`
+				            `name`,
+                           `details`,
+                           `clientId`,
+                           `hourBudget`,
+                           `dollarBudget`,
+                           `psettings`,
+                           `menuType`,
+                           `type`,
+                           `parent`,
+                           `start`,
+                           `end`
+
 			) VALUES (
 				:name,
 				:details,
@@ -512,7 +533,9 @@ namespace leantime\domain\repositories {
 			    :psettings,
                 :menuType,
 			    :type,
-			    :parent
+			    :parent,
+			          :start,
+			          :end
 			)";
 
             $stmn = $this->db->database->prepare($query);
@@ -526,6 +549,8 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
+            $stmn->bindValue('start', $values['start'] ?? null, PDO::PARAM_STR);
+            $stmn->bindValue('end', $values['end'] ?? null, PDO::PARAM_STR);
             $stuff = $stmn->execute();
 
             $projectId = $this->db->database->lastInsertId();
@@ -564,7 +589,10 @@ namespace leantime\domain\repositories {
 				hourBudget = :hourBudget,
 				dollarBudget = :dollarBudget,
 				psettings = :psettings,
-				menuType = :menuType
+				menuType = :menuType,
+				parent = :parent,
+				start = :start,
+				end = :end
 				WHERE id = :id
 
 				LIMIT 1";
@@ -580,6 +608,9 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
+            $stmn->bindValue('parent', $values['parent'], PDO::PARAM_STR);
+            $stmn->bindValue('start', $values['start'], PDO::PARAM_STR);
+            $stmn->bindValue('end', $values['end'], PDO::PARAM_STR);
 
             $stmn->execute();
 
@@ -762,6 +793,9 @@ namespace leantime\domain\repositories {
 				zp_user.username,
 				zp_user.firstname,
 				zp_user.lastname,
+				zp_user.jobTitle,
+				zp_user.jobLevel,
+				zp_user.department,
 				zp_user.profileId,
 				zp_user.role,
 				zp_user.status

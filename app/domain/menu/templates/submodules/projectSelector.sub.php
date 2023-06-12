@@ -37,8 +37,8 @@ if(str_contains($redirectUrl, "showProject")) {
                     $projectHierarchy = $this->get('allAssignedProjectsHierarchy');
 
                     $numCol = 1;
-                    if(count($projectHierarchy['strategy']) > 0) $numCol++;
-                    if(count($projectHierarchy['program']) > 0) $numCol++;
+                    if(isset($_SESSION['enablePrograms'])) $numCol++;
+                    if(isset($_SESSION['enableStrategies'])) $numCol++;
                     $colW = 12/$numCol;
 
                     $currentType = $this->get("currentProjectType");
@@ -91,10 +91,10 @@ if(str_contains($redirectUrl, "showProject")) {
                         <?php
                     }
 
-                    if(count($projectHierarchy['program']) > 0) { ?>
+                    if(isset($_SESSION['enablePrograms']) && $_SESSION['enablePrograms'] == true) { ?>
                         <div class="col-md-<?=$colW?> scrollingTab">
                             <ul class="selectorList programList projectTarget">
-                                <li class="nav-header">Programs</li>
+                                <li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">Programs</li>
                                 <?php
                                     foreach ($projectHierarchy['program'] as $projectRow) {
 
@@ -144,7 +144,7 @@ if(str_contains($redirectUrl, "showProject")) {
                                     if($selectedProgram == 'noparent'){
                                         echo " activeChild ";
                                     }
-                                    echo"'><a href='' data-tippy-content='No assigned to program'><span class='projectName'> ".$this->truncate('No assigned to program', 15, '...')."</span></a>
+                                    echo"'><a href='javascript:void(0)' data-tippy-content='Not assigned to a program'><span class='projectName'> ".$this->truncate('Not assigned to a program', 15, '...')."</span></a>
 <a href='javascript:void(0);' onclick='leantime.menuController.toggleHierarchy(\"noparent\", \"project\")' class='treeAction'><i class='fa fa-chevron-right'></i></a></li>";
 
 
@@ -157,10 +157,10 @@ if(str_contains($redirectUrl, "showProject")) {
                         <?php
                     }
 
-                    if(count($projectHierarchy['project']) > 0) { ?>
+                    ?>
                         <div class="col-md-<?=$colW?> scrollingTab">
                             <ul class="selectorList clientList projectList">
-                                <li class="nav-header">Projects</li>
+                                <li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">Projects</li>
                                 <?php
 
 
@@ -170,14 +170,16 @@ if(str_contains($redirectUrl, "showProject")) {
                                 if ($projectHierarchy['project'] !== false && count($projectHierarchy['project']) >= 1) {
 
                                 foreach ($projectHierarchy['project'] as $projectRow) {
+
                                     if($projectRow['parentId'] == null) $projectRow['parentId'] = "noparent";
 
 
                                 if ($lastClient != $projectRow['clientName']) {
-                                $lastClient = $projectRow['clientName'];
-                                echo "<li class='parent-".$projectRow['parentId']." clientIdHead-".$projectRow['parentId']."_" . $projectRow['clientId'] . "";
+                                    $lastClient = $projectRow['clientName'];
 
-                                    if(count($projectHierarchy['program']) == 0 || $selectedStrategy == $projectRow['parentId'] || $selectedProgram == $projectRow['parentId']){
+                                    echo "<li class='parent-".$projectRow['parentId']." clientIdHead-".$projectRow['parentId']."_" . $projectRow['clientId'] . "";
+
+                                    if(!isset($_SESSION['enablePrograms']) || $_SESSION['enablePrograms'] === false || count($projectHierarchy['program']) == 0 || $selectedStrategy == $projectRow['parentId'] || $selectedProgram == $projectRow['parentId']){
                                         echo " visible ";
                                     }else {
                                         echo " groupHidden ";
@@ -193,7 +195,7 @@ if(str_contains($redirectUrl, "showProject")) {
 
 
 
-                                if(count($projectHierarchy['program']) == 0 || $selectedStrategy == $projectRow['parentId'] || $selectedProgram == $projectRow['parentId']){
+                                if(!isset($_SESSION['enablePrograms']) || $_SESSION['enablePrograms'] === false || count($projectHierarchy['program']) == 0 || $selectedStrategy == $projectRow['parentId'] || $selectedProgram == $projectRow['parentId']){
                                     echo " visible ";
                                 }else {
                                     echo " groupHidden ";
@@ -222,7 +224,7 @@ if(str_contains($redirectUrl, "showProject")) {
                             </ul>
                         </div>
                         <?php
-                    }
+
                 ?>
             </div>
 

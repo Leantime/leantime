@@ -819,7 +819,7 @@ namespace leantime\domain\services {
                     "tasks" => array(
                         "description"=> array("title"=>"label.projectDescription", "status"=>""),
                         "defineTeam"=> array("title"=>"label.defineTeam", "status"=>""),
-                        "createBlueprint"=> array("title"=>"label.createStrategy", "status"=>""),
+                        "createBlueprint"=> array("title"=>"label.createBlueprint", "status"=>""),
                     ),
                     "status" => '',
                 ),

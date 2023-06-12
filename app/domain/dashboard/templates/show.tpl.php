@@ -338,7 +338,8 @@
                                                 $this->escape($assignedUser['firstname']),
                                                 $this->escape($assignedUser['lastname'])
                                             );
-                                            echo "<br/>" . $this->__("label.roles." . $roles::getRoles()[$assignedUser['role']]);
+                                            echo "<br/><small>".$this->escape($assignedUser['jobTitle'])."</small>";
+
                                         } else {
                                             echo $this->escape($assignedUser['username']);
                                             if ($assignedUser['status'] == "i") {

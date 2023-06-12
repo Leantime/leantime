@@ -40,8 +40,7 @@ namespace leantime\domain\repositories {
                     'submenu' => [
 
                         30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'icon' => 'fa fa-fw fa-lightbulb', 'tooltip' => 'menu.ideas_tooltip', 'href' => '', 'hrefFunction' => 'getIdeaMenu', 'active' => ['showBoards', 'advancedBoards']],
-                        50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.strategies', 'icon' => 'fa fa-fw fa-chess', 'tooltip' => 'menu.strategies_tooltip', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
-
+                        50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'icon' => 'fa fa-fw fa-compass-drafting', 'tooltip' => 'menu.blueprints_tooltip', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
 
 
                         70 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'icon' => 'fa fa-fw fa-hand-spock', 'tooltip' => 'menu.retroscanvas_tooltip', 'href' => '/retroscanvas/showCanvas'],

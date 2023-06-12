@@ -874,6 +874,10 @@
     display:none;
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem.visible {
+    display:block;
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.border {
     border-top:1px solid var(--neutral);
 }

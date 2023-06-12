@@ -13,6 +13,11 @@ min-width: 1200px
 
 @media (max-width:575px) {
 
+    .leftpanel .leftmenu .nav-tabs .projectselector .projectSelectorTabs .scrollingTab {
+        height:auto;
+        overflow:scroll;
+    }
+
     .progressWrapper .step {
         display:none;
     }

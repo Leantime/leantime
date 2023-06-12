@@ -199,6 +199,9 @@ namespace leantime\domain\controllers {
                         'psettings' => $_POST['globalProjectUserAccess'],
                         'menuType' => $_POST['menuType'],
                         'type' => $_POST['type'] ?? $project['type'],
+                        'parent' => $_POST['parent'] ?? '',
+                        'start' => $this->language->getISODateString($_POST['start']),
+                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : ''
                     );
 
                     if ($values['name'] !== '') {
