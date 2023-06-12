@@ -873,7 +873,7 @@ namespace leantime\domain\services {
                 $totalGoals = $totalGoals + $goalsCanvas['boxItems'];
             }
             if($totalGoals > 0){
-                $progressSteps["define"]["tasks"]["setGoals"]["status"] = "done";
+                $progressSteps["define"]["goals"]["setGoals"]["status"] = "done";
             }
 
             if($project['numberMilestones'] >= 1){
