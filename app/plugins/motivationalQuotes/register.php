@@ -20,4 +20,4 @@ function showQuote($payload)
 }
 
 //Register event listener
-    \leantime\core\events::add_event_listener("core.template.tpl.dashboard.home.afterWelcomeMessage", 'showQuote');
+\leantime\core\events::add_event_listener("core.template.tpl.dashboard.home.afterWelcomeMessage", 'showQuote');
