@@ -549,8 +549,20 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
-            $stmn->bindValue('start', $values['start'] ?? null, PDO::PARAM_STR);
-            $stmn->bindValue('end', $values['end'] ?? null, PDO::PARAM_STR);
+
+            $startDate = null;
+            if(isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
+                $startDate = $values['start'];
+            }
+            $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
+
+
+            $endDate = null;
+            if(isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
+                $endDate = $values['end'];
+            }
+
+            $stmn->bindValue('end', $endDate, PDO::PARAM_STR);
             $stuff = $stmn->execute();
 
             $projectId = $this->db->database->lastInsertId();
@@ -608,9 +620,20 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
-            $stmn->bindValue('parent', $values['parent'], PDO::PARAM_STR);
-            $stmn->bindValue('start', $values['start'], PDO::PARAM_STR);
-            $stmn->bindValue('end', $values['end'], PDO::PARAM_STR);
+            $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
+
+            $startDate = null;
+            if(isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
+                $startDate = $values['start'];
+            }
+            $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
+
+
+            $endDate = null;
+            if(isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
+                $endDate = $values['end'];
+            }
+            $stmn->bindValue('end', $endDate, PDO::PARAM_STR);
 
             $stmn->execute();
 

@@ -161,9 +161,12 @@
                     <div class="mce-content-body kanbanContent closed" style="max-height:200px;" id="projectDescription">
                     <?=$this->escapeMinimal($project['details']) ?>
                     </div>
+
+                    <?php if(strlen($project['details']) > 100){?>
                     <div class="center">
                         <a href="javascript:void(0);" id="descriptionReadMoreToggle"><?=$this->__("label.read_more") ?></a>
                     </div>
+                    <?php } ?>
 
 
                     <br />
