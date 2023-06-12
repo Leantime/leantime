@@ -12,13 +12,13 @@ namespace leantime\domain\controllers {
 
     class newTicket extends controller
     {
-        private $projectService;
-        private $ticketService;
-        private $sprintService;
-        private $fileService;
-        private $commentService;
-        private $timesheetService;
-        private $userService;
+        private services\projects $projectService;
+        private services\tickets $ticketService;
+        private services\sprints $sprintService;
+        private services\files $fileService;
+        private services\comments $commentService;
+        private services\timesheets $timesheetService;
+        private services\users $userService;
 
         public function init()
         {

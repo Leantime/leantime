@@ -435,7 +435,7 @@ namespace leantime\domain\repositories {
         public function editOwn($values, $id)
         {
 
-            if ($values['password'] != '') {
+            if (isset($values['password']) && $values['password'] != '') {
                 $chgPW = " password = :password, ";
             } else {
                 $chgPW = "";

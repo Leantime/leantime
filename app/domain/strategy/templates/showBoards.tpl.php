@@ -8,7 +8,7 @@ $canvasProgress = $this->get('canvasProgress');
 <div class="pageheader">
     <div class="pageicon"><span class="fa-solid fa-chess"></span></div>
     <div class="pagetitle">
-        <h1><?=$this->__('headlines.strategies') ?></h1>
+        <h1><?=$this->__('headlines.blueprints') ?></h1>
     </div>
 </div>
 

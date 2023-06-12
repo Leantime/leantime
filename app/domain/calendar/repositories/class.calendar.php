@@ -210,6 +210,7 @@ namespace leantime\domain\repositories {
             return $newValues;
         }
 
+
         public function getCalendarBySecretHash($userHash, $calHash)
         {
 

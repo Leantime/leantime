@@ -135,6 +135,10 @@
                         $currentClient = '';
                         $i = 0;
                         foreach ($this->get('allProjects') as $row) {
+
+                            if($row['clientName'] == null) {
+                                $row['clientName'] = "Not assigned to client";
+                            }
                             if ($currentClient != $row['clientName']) {
                                 if ($i > 0) {
                                     echo"</div>";

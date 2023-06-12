@@ -67,6 +67,7 @@
                             <ul class="dropdown-menu">
                                 <li><a href="<?=BASE_URL ?>/tickets/roadmap" ><?=$this->__("links.gantt_view") ?></a></li>
                                 <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" class="active"><?=$this->__("links.table") ?></a></li>
+                                <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar"><?=$this->__("links.calendar_view") ?></a></li>
                             </ul>
                         </div>
 

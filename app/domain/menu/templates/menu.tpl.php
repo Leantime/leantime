@@ -17,6 +17,18 @@ if (is_array($currentLink)) {
 }
     $menuStructure = $this->get('menuStructure');
 
+
+$currentProjectType = $this->get('currentProjectType');
+
+
+$settingsLink = array(
+    "label"=>$this->__("menu.project_settings"),
+    "module"=>"projects",
+    "action"=>"showProject",
+    "settingsIcon"=>$this->__("menu.project_settings_icon"),
+    "settingsTooltip"=>$this->__("menu.project_settings_tooltip") );
+$settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("type"=>$currentProjectType));
+
 ?>
 
 
@@ -40,7 +52,7 @@ if (is_array($currentLink)) {
         </div>
     </li>
     <li class="dropdown scrollableMenu">
-        <?php $currentProjectType = $this->get('currentProjectType'); ?>
+
         <ul style='display:block;'>
             <?php foreach ($menuStructure as $key => $menuItem) { ?>
                 <?php if ($menuItem['type'] == 'header') { ?>
@@ -75,12 +87,12 @@ if (is_array($currentLink)) {
                 <?php } ?>
             <?php } ?>
             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-            <li <?php if ($module == 'projects' && $action == 'showProject') {
+            <li <?php if ($module == $settingsLink["module"] && $action == $settingsLink["action"]) {
                 echo"class='fixedMenuPoint active '";
                 } else {
                     echo"class='fixedMenuPoint'";
                 }?>>
-                <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>"><?=$this->__("menu.project_settings") ?></a>
+                <a href="<?=BASE_URL ?>/<?=$settingsLink["module"]?>/<?=$settingsLink["action"]?>/<?=$_SESSION['currentProject']?>"><?=$settingsLink["label"]?></a>
             </li>
             <?php } ?>
         </ul>
@@ -135,13 +147,15 @@ if (is_array($currentLink)) {
                             </ul>
                         <?php } ?>
                     <?php } ?>
+
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                        <li <?php if ($module == 'projects' && $action == 'showProject') {
+
+                        <li <?php if ($module == $settingsLink["module"] && $action == $settingsLink["action"]) {
                             echo"class='fixedMenuPoint active '";
                         } else {
                             echo"class='fixedMenuPoint'";
                         }?>>
-                            <a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject']?>" data-tippy-content="<?=$this->__("menu.project_settings_tooltip") ?>" data-tippy-placement="right"><span class="<?=$this->__("menu.project_settings_icon") ?>"></span></a>
+                            <a href="<?=BASE_URL ?>/<?=$settingsLink["module"] ?>/<?=$settingsLink["action"] ?>/<?=$_SESSION['currentProject']?>" data-tippy-content="<?=$settingsLink["settingsTooltip"] ?>" data-tippy-placement="right"><span class="<?=$settingsLink["settingsIcon"] ?>"></span></a>
                         </li>
                     <?php } ?>
                 </ul>
@@ -158,25 +172,33 @@ if (is_array($currentLink)) {
 <script>
     jQuery('.projectSelectorTabs').tabs();
 
-    let clientId = <?=$this->get('currentClient') ?>;
-    leantime.menuController.toggleClientList(clientId, ".clientIdHead-"+clientId, "open");
+    //let clientId = <?=$this->get('currentClient') ?>;
+    //leantime.menuController.toggleClientList(clientId, ".clientIdHead-"+clientId, "open");
 
     <?php
-    $lastClient = "";
+
 
     if ($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) >= 1) {
+        $checked = array();
         foreach ($this->get('allAssignedProjects') as $projectRow) {
-            if ($lastClient != $projectRow['clientName']) {
-                $lastClient = $projectRow['clientName'];
-                if(isset($_SESSION['submenuToggle']["clientDropdown-".$projectRow['clientId']])
-                && $_SESSION['submenuToggle']["clientDropdown-".$projectRow['clientId']] == "open"){
+            if($projectRow['parentId'] == null){
+                $projectRow['parentId'] = "noparent";
+            }
+            $currentId = "clientDropdown-".$projectRow['parentId']."_".$projectRow['clientId'];
+
+            if(in_array($currentId, $checked) === false){
+                $checked[] = $currentId;
+
+                if(isset($_SESSION['submenuToggle']["clientDropdown-".$projectRow['parentId']."_".$projectRow['clientId']])
+                && $_SESSION['submenuToggle']["clientDropdown-".$projectRow['parentId']."_".$projectRow['clientId']] == "open"){
 
                 ?>
-                    leantime.menuController.toggleClientList(<?=$projectRow['clientId']?>, ".clientIdHead-<?=$projectRow['clientId']?>", "open");
+                    leantime.menuController.toggleClientList("<?=$projectRow['parentId']?>_<?=$projectRow['clientId']?>", ".clientIdHead-<?=$projectRow['parentId']?>_<?=$projectRow['clientId']?>", "open");
 
                 <?php
                 }
             }
+
         }
     }
 

@@ -281,6 +281,41 @@ namespace leantime\domain\services {
             }
         }
 
+
+        public function getProjectHierarchyAssignedToUser($userId, $projectStatus = "open", $clientId = "")
+        {
+            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
+
+
+            //Build 3 level project selector
+            $projectHierarchy = array("strategy"=> array(), "program" => array(), "project" => array());
+
+
+            $parentTree = array();
+
+            //Get Strategies
+            foreach($projects as $project) {
+                if($project["type"] == "strategy") {
+                    $projectHierarchy["strategy"][$project['id']] = $project;
+
+                }
+
+                if($project["type"] == "program") {
+                    $projectHierarchy["program"][$project['id']] = $project;
+                }
+
+                if($project["type"] == "project" || $project["type"] == null) {
+                    $projectHierarchy["project"][$project['id']] = $project;
+                }
+            }
+
+            if ($projectHierarchy) {
+                return $projectHierarchy;
+            } else {
+                return false;
+            }
+        }
+
         public function getProjectRole($userId, $projectId)
         {
 

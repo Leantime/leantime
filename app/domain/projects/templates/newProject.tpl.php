@@ -64,7 +64,30 @@ $project = $this->get('project');
                             </div>
                         </div>
                         <div class="span4">
+
+                            <?php $this->dispatchTplEvent("beforeClientPicker", $project) ?>
+
                             <div class="row-fluid marginBottom">
+                                <h4 class="widgettitle title-light"><span
+                                        class="fa fa-calendar"></span><?php echo $this->__('label.project_dates'); ?></h4>
+
+                                <label class="span4 control-label"><?php echo $this->__('label.project_start'); ?></label>
+                                <div class="span6">
+                                    <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
+                                           value="<?php echo $project['start']; ?>" placeholder="<?=$this->__('language.dateformat') ?>"/>
+
+                                </div>
+                                <label class="span4 control-label"><?php echo $this->__('label.project_end'); ?></label>
+                                <div class="span6">
+                                    <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
+                                           value="<?php echo $project['end']; ?>" placeholder="<?=$this->__('language.dateformat') ?>"/>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row-fluid marginBottom">
+
                                 <div class="span12 ">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span><?php echo $this->__('label.client_product'); ?></h4>
@@ -125,6 +148,25 @@ $project = $this->get('project');
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
+        jQuery(".dates").datepicker(
+            {
+                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dayNames: leantime.i18n.__("language.dayNames").split(","),
+                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                monthNames: leantime.i18n.__("language.monthNames").split(","),
+                currentText: leantime.i18n.__("language.currentText"),
+                closeText: leantime.i18n.__("language.closeText"),
+                buttonText: leantime.i18n.__("language.buttonText"),
+                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                nextText: leantime.i18n.__("language.nextText"),
+                prevText: leantime.i18n.__("language.prevText"),
+                weekHeader: leantime.i18n.__("language.weekHeader"),
+                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+            }
+        );
+
+
             leantime.projectsController.initProjectTabs();
             leantime.projectsController.initProjectsEditor();
 

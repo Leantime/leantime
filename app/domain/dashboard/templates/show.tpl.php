@@ -70,7 +70,6 @@
 
                                     foreach($progressSteps as $step){
 
-
                                         if($step['status'] == "done") {
                                             $stepsDone++;
                                         }
@@ -107,6 +106,7 @@
                                          </a>";
 
                                     }else if($positionLeft == $percentDone ){
+
                                         echo "<div class='step current' style='left:".$positionLeft."%'>";
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
@@ -114,7 +114,9 @@
                                                 ".$this->__($step['title'])." <i class='fa fa-caret-down' aria-hidden='true'></i>
                                             </span>
                                           </a>";
+
                                     }else{
+
                                         echo "<div class='step' style='left:".$positionLeft."%'>";
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
@@ -139,7 +141,7 @@
                                             echo"checked='checked'";
                                         }
 
-                                        echo"/><label for='progress_".$key."'>".$this->__($task['title'])."</label>";
+                                        echo"/><label for='progress_".$key."'>".$this->__($task['title']??'')."</label>";
                                         echo"</li>";
                                     }
                                     echo "</ul>";
@@ -155,8 +157,13 @@
                         </div>
                     </form>
                     <br /><br />
-                    <strong>Background</strong><br />
+                    <strong><?=$this->__("label.background"); ?></strong><br />
+                    <div class="mce-content-body kanbanContent closed" style="max-height:200px;" id="projectDescription">
                     <?=$this->escapeMinimal($project['details']) ?>
+                    </div>
+                    <div class="center">
+                        <a href="javascript:void(0);" id="descriptionReadMoreToggle"><?=$this->__("label.read_more") ?></a>
+                    </div>
 
 
                     <br />
@@ -331,7 +338,8 @@
                                                 $this->escape($assignedUser['firstname']),
                                                 $this->escape($assignedUser['lastname'])
                                             );
-                                            echo "<br/>" . $this->__("label.roles." . $roles::getRoles()[$assignedUser['role']]);
+                                            echo "<br/><small>".$this->escape($assignedUser['jobTitle'])."</small>";
+
                                         } else {
                                             echo $this->escape($assignedUser['username']);
                                             if ($assignedUser['status'] == "i") {
@@ -666,6 +674,19 @@
 
     jQuery(document).ready(function() {
 
+        jQuery("#descriptionReadMoreToggle").click(function(){
+            if(jQuery("#projectDescription").hasClass("closed")){
+                jQuery("#projectDescription").css("max-height", "100%");
+                jQuery("#projectDescription").removeClass("closed");
+                jQuery("#projectDescription").removeClass("kanbanContent");
+            }else{
+                jQuery("#projectDescription").css("max-height", "200px");
+                jQuery("#projectDescription").addClass("closed");
+                jQuery("#projectDescription").addClass("kanbanContent");
+            }
+
+        });
+
         jQuery('.progressWrapper .dropdown-menu li input').change(function(e){
 
             if(jQuery(this).parent().hasClass("done")) {
@@ -682,6 +703,48 @@
                     values   : jQuery("form#progressForm").serialize()
                 }
             });
+
+            var stepCount = 1;
+            var totalSteps = jQuery(".progressWrapper .step").length;
+            var stepsComplete = 1;
+            var foundCurrent = false;
+            jQuery(".progressWrapper .step").each(function(){
+
+                var tasksComplete = true;
+                jQuery(this).find("ul li").each(function() {
+                    var inputChecked = jQuery(this).find("input").attr("checked");
+                    if (typeof inputChecked === typeof undefined || inputChecked === false) {
+                        tasksComplete = false;
+                    }
+                });
+
+                if(tasksComplete) {
+                    jQuery(this).addClass("complete");
+                    stepsComplete++;
+                    jQuery(this).removeClass("current");
+                    if(jQuery(this).find(".title .fa-check").length == 0) {
+                        jQuery(this).find(".title").prepend('<i class="fa fa-check"></i>');
+                    }
+                }else{
+
+                    //Only do that for the first one that is incomplete
+                    if(foundCurrent === false) {
+                        jQuery(this).removeClass("complete");
+                        jQuery(this).addClass("current");
+                        foundCurrent = true;
+                    }
+
+                    if(jQuery(this).find(".title .fa-check").length == 1) {
+                        jQuery(this).find(".title .fa-check").remove();
+                    }
+                }
+
+                stepCount++;
+            });
+
+            var halfSteps =  1/totalSteps/2 *100;
+            var percentComplete = stepsComplete / totalSteps * 100 - halfSteps;
+            jQuery(".projectSteps .progress .progress-bar").css("width", percentComplete+"%");
 
         });
 

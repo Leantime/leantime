@@ -79,8 +79,26 @@ $menuTypes = $this->get('menuTypes');
                 </div>
 
 
+                <?php $this->dispatchTplEvent("afterProjectAvatar", $project) ?>
 
+                <div class="row-fluid marginBottom">
+                    <h4 class="widgettitle title-light"><span
+                            class="fa fa-calendar"></span><?php echo $this->__('label.project_dates'); ?></h4>
 
+                    <label class="span4 control-label"><?php echo $this->__('label.project_start'); ?></label>
+                    <div class="span6">
+                        <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
+                               value="<?php echo $this->getFormattedDateString($project['start']); ?>" placeholder="<?=$this->__('language.dateformat') ?>"/>
+
+                    </div>
+                    <label class="span4 control-label"><?php echo $this->__('label.project_end'); ?></label>
+                    <div class="span6">
+                        <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
+                               value="<?php echo $this->getFormattedDateString($project['end']); ?>" placeholder="<?=$this->__('language.dateformat') ?>"/>
+
+                    </div>
+
+                </div>
 
 
 
@@ -111,23 +129,10 @@ $menuTypes = $this->get('menuTypes');
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-wrench"></span><?php echo $this->__('label.settings'); ?></h4>
 
-            <?php if ($config->enableMenuType) {?>
-                <div class="form-group">
+            <input type="hidden" name="menuType" id="menuType"
+                           value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
 
-                    <label class="span4 control-label" for="menuType"><?php echo $this->__('label.menu_type'); ?></label>
-                    <div class="span6">
-                        <select name="menuType" id="menuType">
-                            <?php foreach ($menuTypes as $key => $menu) { ?>
-                                <option value="<?=$key ?>" <?=$project['menuType'] == $key ? "selected='selected'" : ''?>><?php echo $this->__("label.menu_type.$key"); ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                </div>
-            <?php } else { ?>
-                <input type="hidden" name="menuType" id="menuType"
-                       value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
-            <?php } ?>
-            <div class="form-group">
+                    <div class="form-group">
 
                 <label class="span4 control-label" for="projectState"><?php echo $this->__('label.project_state'); ?></label>
                 <div class="span6">

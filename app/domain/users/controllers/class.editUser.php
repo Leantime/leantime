@@ -142,7 +142,7 @@ namespace leantime\domain\controllers {
                 }
 
                 //Assign vars
-                $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
+                $this->tpl->assign('allProjects', $this->projectsRepo->getAll(true));
                 $this->tpl->assign('roles', roles::getRoles());
                 $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
