@@ -179,7 +179,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                             </h1>
                             <div class="articleMeta">
                                 <div class="metaContent">
-                                <?=sprintf($this->__('labels.createdBy_on'), $currentArticle->firstname, $currentArticle->lastname, $this->getFormattedDateString($currentArticle->created), $this->getFormattedDateString($currentArticle->modified)); ?>
+                                <?=sprintf($this->__('labels.createdBy_on'), $this->escape($currentArticle->firstname), $this->escape($currentArticle->lastname), $this->getFormattedDateString($currentArticle->created), $this->getFormattedDateString($currentArticle->modified)); ?>
                                 <br />
                                 </div>
                                 <div class="tagsinput readonly">
