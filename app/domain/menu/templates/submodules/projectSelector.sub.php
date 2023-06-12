@@ -171,11 +171,15 @@ if(str_contains($redirectUrl, "showProject")) {
 
                                 foreach ($projectHierarchy['project'] as $projectRow) {
 
+                                    if(!isset($_SESSION['enablePrograms']) || $_SESSION['enablePrograms'] === false){
+                                        $projectRow['parentId'] = 'noparent';
+                                    }
                                     if($projectRow['parentId'] == null) $projectRow['parentId'] = "noparent";
 
 
                                 if ($lastClient != $projectRow['clientName']) {
                                     $lastClient = $projectRow['clientName'];
+
 
                                     echo "<li class='parent-".$projectRow['parentId']." clientIdHead-".$projectRow['parentId']."_" . $projectRow['clientId'] . "";
 
@@ -192,8 +196,6 @@ if(str_contains($redirectUrl, "showProject")) {
                                 if ($this->get('currentProject') == $projectRow["id"]) {
                                 echo " active ";
                                 }
-
-
 
                                 if(!isset($_SESSION['enablePrograms']) || $_SESSION['enablePrograms'] === false || count($projectHierarchy['program']) == 0 || $selectedStrategy == $projectRow['parentId'] || $selectedProgram == $projectRow['parentId']){
                                     echo " visible ";

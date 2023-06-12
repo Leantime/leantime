@@ -83,7 +83,8 @@ namespace leantime\domain\repositories {
             20114,
             20115,
             20116,
-            20117
+            20117,
+            20118
         );
 
         /**
@@ -434,8 +435,8 @@ namespace leantime\domain\repositories {
                   `active` int(11) DEFAULT NULL,
 				  `menuType` MEDIUMTEXT DEFAULT NULL,
                   `psettings` MEDIUMTEXT NULL,
-                  `parent` VARCHAR(45) NULL,
-                   `type` INT(11) NULL,
+                  `parent` INT(11) NULL,
+                   `type` VARCHAR(45) NULL,
                    `start` DATETIME NULL,
                    `end` DATETIME NULL,
                     `created` DATETIME NULL,
@@ -1407,6 +1408,41 @@ namespace leantime\domain\repositories {
                 ADD COLUMN `jobTitle` VARCHAR(200) NULL ,
                 ADD COLUMN `jobLevel` VARCHAR(50) NULL ,
                 ADD COLUMN `department` VARCHAR(200) NULL ;"
+
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+
+        public function update_sql_20118(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+
+                "UPDATE `zp_projects` SET parent = null;",
+
+                "UPDATE `zp_projects` SET start = null, end = null;",
+
+                "ALTER TABLE `zp_projects`
+                CHANGE COLUMN `parent` `parent` INT(11) NULL DEFAULT NULL,
+                CHANGE COLUMN `type` `type` VARCHAR(45) NULL DEFAULT NULL ;",
 
             ];
 

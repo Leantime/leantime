@@ -79,10 +79,13 @@ function getFileLocally(){
                 header('Content-type: application/pdf');
                 header("Content-Disposition: inline; filename=\"".$realName.".".$ext."\"");
 
-            }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png'){
+            }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+                header('Content-type: ' . $mimes[$ext]);
+                header('Content-disposition: inline; filename="' . $realName . "." . $ext . '";');
+            }elseif($ext == 'svg') {
+                header('Content-type: image/svg+xml');
+                header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
 
-                header('Content-type: '. $mimes[$ext]);
-                header('Content-disposition: inline; filename="'.$realName.".".$ext.'";');
 
             }else{
 
@@ -155,6 +158,9 @@ function getFileFromS3(){
         if($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
             header('Content-Type: ' . $result['ContentType']);
             header("Content-Disposition: inline; filename=\"".$fileName."\"");
+        }elseif($ext == 'svg') {
+            header('Content-type: image/svg+xml');
+            header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
         }
 
 

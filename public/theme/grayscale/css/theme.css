@@ -7,18 +7,18 @@ body{
 
 :root {
 
-    --accent1: #000;
-    --accent1-hover: #555;
-    --accent1-color:#fff;
+    --accent1: #000 !important;
+    --accent1-hover: #555 !important;
+    --accent1-color:#fff !important;
 
-    --accent2: #000;
-    --accent2-hover: #555;
-    --accent2-color:#fff;
+    --accent2: #000 !important;
+    --accent2-hover: #555 !important;
+    --accent2-color:#fff !important;
 
     --primary-background: #f5f6f7;
     --secondary-background: #fff;
 
-    --primary-font-color: #555;
+    --primary-font-color: #555 !important;
     --secondary-font-color: #555;
 
     --neutral: #dddde3;
