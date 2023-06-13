@@ -296,8 +296,8 @@
 
         <table id="allTicketsTable" class="table table-bordered display" style="width:100%">
             <colgroup>
-                <col class="con1" style="max-width:200px;">
-                <col class="con0">
+                <col class="con1">
+                <col class="con0" style="max-width:200px;">
                 <col class="con1">
                 <col class="con0">
                 <col class="con1">
@@ -309,11 +309,13 @@
                 <col class="con1">
                 <col class="con0">
                 <col class="con1">
+                <col class="con0">
             </colgroup>
             <?php $this->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
             <thead>
                 <?php $this->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
                 <tr>
+                    <th class="id-col"><?= $this->__("label.id"); ?></th>
                     <th style="max-width: 350px;"><?= $this->__("label.title"); ?></th>
                     <th class="status-col"><?= $this->__("label.todo_status"); ?></th>
                     <th class="milestone-col"><?= $this->__("label.milestone"); ?></th>
@@ -336,6 +338,10 @@
                 <?php foreach ($allTickets as $rowNum => $row) {?>
                     <tr style="height:1px;">
                         <?php $this->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
+                        <td data-order="<?=$this->e($row['id']); ?>">
+                            #<?=$this->e($row['id']); ?>
+                        </td>
+
                         <td data-order="<?=$this->e($row['headline']); ?>">
                             <?php if($row['dependingTicketId'] > 0){ ?>
                                 <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a></small> //<br />
