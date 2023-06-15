@@ -23,7 +23,7 @@
     "jquery-migrate": "^1.4.1",
     "jquery-ui-dist": "1.13.2",
     "jquery-ui-touch-punch": "^0.2.3",
-    "js-cookie": "^3.0.1",
+    "js-cookie": "^3.0.5",
     "jstree": "^3.3.12",
     "leader-line": "^1.0.7",
     "masonry-layout": "^4.2.2",
