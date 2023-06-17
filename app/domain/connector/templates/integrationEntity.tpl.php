@@ -3,6 +3,7 @@
     $provider = $this->get("provider");
     $leantimeEntities = $this->get("leantimeEntities");
     $integrationId = $this->get("integrationId");
+
     $urlAppend = '';
     if(isset($integrationId) && is_numeric($integrationId)) {
         $urlAppend = "&integrationId=".$integrationId;
