@@ -135,7 +135,7 @@ namespace leantime\domain\services {
             //Only users that actually want to be notified and are active
             foreach ($users as $user) {
                 if ($user["notifications"] != 0 && strtolower($user["status"]) == 'a') {
-                    $to[] = $user["username"];
+                    $to[] = $user["id"];
                 }
             }
 
