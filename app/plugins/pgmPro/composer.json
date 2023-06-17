@@ -1,0 +1,22 @@
+{
+    "name": "leantime/pgmPro",
+    "description": "Adds program management support to Leantime",
+    "version": "0.1",
+    "screenshot": "/images/screenshot.png",
+    "authors": [
+        {
+            "name": "Leantime",
+            "email": "support@leantime.io"
+        }
+    ],
+    "homepage": "https://leantime.io",
+    "type": "plugin",
+    "keywords": [
+        "program management",
+        ""
+    ],
+    "license": "Leantime Enterprise",
+    "require": {
+        "leantime/leantime": "2.3"
+    }
+}
