@@ -414,6 +414,12 @@ namespace leantime\core {
         public function getFormattedDateString($date): string
         {
             if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+
+                //If datetime object
+                if($date instanceof \DateTime){
+                    return $date->format($this->__("language.dateformat"));
+                }
+
                 //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
                 if (strlen($date) == 10) {
                     $timestamp = date_create_from_format("!Y-m-d", $date);

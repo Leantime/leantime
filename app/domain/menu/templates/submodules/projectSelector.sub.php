@@ -43,6 +43,9 @@ if(str_contains($redirectUrl, "showProject")) {
 
                     $currentType = $this->get("currentProjectType");
                     $currentProject = $this->get("currentProject");
+                    $selectedStrategy = '';
+                    $selectedProgram = '';
+
 
                     if($currentType == 'strategy'){
                         $selectedProject = '';
