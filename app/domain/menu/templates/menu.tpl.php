@@ -44,7 +44,18 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
         <div class="form-group">
             <form action="" method="post">
                 <a href="javascript:void(0)" class="dropdown-toggle bigProjectSelector" data-toggle="dropdown">
-                    <span class='projectAvatar'><img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$_SESSION['currentProject']?>' /></span><?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
+                    <span class='projectAvatar <?=$currentProjectType?>'>
+                        <?php
+                            if($currentProjectType == 'strategy') {
+                                echo "<span class='fa fa-chess'></span>";
+                            }else if($currentProjectType == 'program') {
+                                echo "<span class='fa fa-layer-group'></span>";
+                            }else{
+                            ?>
+                                <img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$_SESSION['currentProject']?>' />
+                            <?php } ?>
+                    </span>
+                    <?php $this->e($_SESSION['currentProjectName']); ?>&nbsp;<i class="fa fa-caret-right"></i>
                 </a>
 
                 <?php $this->displaySubmodule('menu-projectSelector') ?>
@@ -172,36 +183,52 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
 <script>
     jQuery('.projectSelectorTabs').tabs();
 
-    //let clientId = <?=$this->get('currentClient') ?>;
-    //leantime.menuController.toggleClientList(clientId, ".clientIdHead-"+clientId, "open");
+    let clientId = <?=$this->get('currentClient') ?>;
 
     <?php
+        //Restore selected menu items
 
-
-    if ($this->get('allAssignedProjects') !== false && count($this->get('allAssignedProjects')) >= 1) {
-        $checked = array();
-        foreach ($this->get('allAssignedProjects') as $projectRow) {
-            if($projectRow['parentId'] == null){
-                $projectRow['parentId'] = "noparent";
-            }
-            $currentId = "clientDropdown-".$projectRow['parentId']."_".$projectRow['clientId'];
-
-            if(in_array($currentId, $checked) === false){
-                $checked[] = $currentId;
-
-                if(isset($_SESSION['submenuToggle']["clientDropdown-".$projectRow['parentId']."_".$projectRow['clientId']])
-                && $_SESSION['submenuToggle']["clientDropdown-".$projectRow['parentId']."_".$projectRow['clientId']] == "open"){
-
-                ?>
-                    leantime.menuController.toggleClientList("<?=$projectRow['parentId']?>_<?=$projectRow['clientId']?>", ".clientIdHead-<?=$projectRow['parentId']?>_<?=$projectRow['clientId']?>", "open");
-
-                <?php
-                }
-            }
-
+        $projectHierarchy = $this->get('allAssignedProjectsHierarchy');
+        if($projectHierarchy['program']["enabled"] === true) {
+            $childSelector = 'program';
+        }else{
+            $childSelector = 'project';
         }
-    }
 
+        if($projectHierarchy['program']['enabled'] || $projectHierarchy['strategy']['enabled']) {
+           if(isset($_SESSION['submenuToggle']['strategy'])) {
+               echo "leantime.menuController.toggleHierarchy('".$_SESSION['submenuToggle']['strategy']."', '".$childSelector."', 'strategy');";
+           }
+
+           if(isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled']) {
+                echo "leantime.menuController.toggleHierarchy('".$_SESSION['submenuToggle']['program']."', 'project', 'program');";
+           }
+        }
+
+        foreach ($projectHierarchy['project']["items"] as $key => $typeRow) {
+            foreach ($typeRow as $projectRow) {
+
+                if($projectHierarchy['program']['enabled'] === true && $projectHierarchy['strategy']['enabled'] === true) {
+                    if(isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['program']."-".$projectRow['clientId']])) {
+                        echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "'.$_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['program']."-".$projectRow['clientId']].'");';
+                    }
+                }
+
+                if($projectHierarchy['program']['enabled'] === false && $projectHierarchy['strategy']['enabled'] === true) {
+                    if(isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['strategy']."-".$projectRow['clientId']])) {
+                        echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "'.$_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['strategy']."-".$projectRow['clientId']].'");';
+                    }
+                }
+
+                if($projectHierarchy['program']['enabled'] === false && $projectHierarchy['strategy']['enabled'] === false) {
+                    if(isset($_SESSION['submenuToggle']["clientDropdown--".$projectRow['clientId']])) {
+
+                        echo 'leantime.menuController.toggleClientList('.$projectRow['clientId'].', ".clientIdHead-'.$projectRow['clientId'].' a", "'.$_SESSION['submenuToggle']["clientDropdown--".$projectRow['clientId']].'");';
+                    }
+                }
+
+            }
+        }
     ?>
 
 </script>

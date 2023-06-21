@@ -161,11 +161,15 @@
     background:var(--project-selector-bg);
 }
 
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector .fa {
+.leftmenu .nav-tabs.nav-stacked .bigProjectSelector i.fa {
     font-size: var(--base-font-size);
     position: absolute;
     top: 25px;
     right: 10px;
+}
+
+.leftmenu .nav-tabs.nav-stacked .bigProjectSelector .projectAvatar span.fa {
+ margin-right:0px;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector:hover,
@@ -188,7 +192,7 @@
     z-index: 10000000;
     top: 0px;
     border-radius: var(--box-radius);
-    min-width:480px;
+    min-width:560px;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector .projectAvatar {
@@ -296,21 +300,28 @@
     font-size:14px;
     line-height:30px;
     text-align:center;
-    background:#ccc;
+    background:var(--primary-font-color);
     color:var(--main-action-color);
     display:inline-block;
     border-radius:var(--box-radius-small);
+}
+
+.leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar.program,
+.leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar.strategy {
+    background:var(--element-gradient);
 }
 
 .leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar img {
     width:30px;
     height:30px;
     border-radius:var(--box-radius-small);
+    vertical-align: middle;
 }
 
 .leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar .fa {
    font-weight:900;
     color:#fff;
+    margin-right:0px;
 }
 
 .leftmenu .nav-tabs.nav-stacked#minimizedMenu  .bigProjectSelector > .projectAvatar {
@@ -332,6 +343,7 @@
 .leftpanel .leftmenu .nav-tabs .projectselector li.active a {
     background-image:none;
     color:var(--main-menu-link-active-color);
+    font-weight:bold;
 }
 
 .project-selector .dropdown-menu .openToggle,
@@ -651,7 +663,7 @@
     color: var(--project-selector-hover-color);
 }
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu .bigProjectSelector .fa {
+.leftmenu .nav-tabs.nav-stacked#minimizedMenu .bigProjectSelector i.fa {
     font-size: var(--base-font-size);
     padding-left: 0;
     float: none;
@@ -715,6 +727,7 @@
     display:block;
     padding:10px 0px 10px 10px;
     list-style-type: none;
+
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li {
@@ -730,13 +743,6 @@
     border-right:none;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li,
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li {
-    display:none;
-    overflow:hidden;
-    text-wrap: none;
-}
-
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li.visible,
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.visible {
     display:block;
@@ -745,6 +751,7 @@
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li.groupHidden,
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.groupHidden {
     display:none !important;
+
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.programList li.alwaysVisible,
@@ -780,21 +787,33 @@
     line-height:30px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.program {
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li {
     position:relative;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.program a.treeAction {
-    position:absolute;
-    top:0px;
-    right:0px;
-    line-height:52px;
-    text-align:center;
-    width:30px;
-    border-left:1px solid var(--main-border-color);
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.hideGroup {
+    display:none;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.program a.treeAction:before {
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.groupShow {
+    display:inherit;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li a.treeAction {
+    position:absolute;
+    top: 6px;
+    right: 0px;
+    line-height: 40px;
+    text-align: center;
+    width: 30px;
+    border-left: 1px dotted var(--main-border-color);
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li a.treeAction:hover {
+    color:var(--primary-color);
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li a.treeAction:before {
     content:'';
     border:0px;
 }

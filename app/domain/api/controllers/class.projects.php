@@ -46,8 +46,10 @@ namespace leantime\domain\controllers {
                     $file->displayImageFile($return);
 
                 } else if(is_object($return)){
+
                     header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
+
                 }
             }
         }

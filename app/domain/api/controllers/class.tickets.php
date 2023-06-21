@@ -24,6 +24,7 @@ namespace leantime\domain\controllers {
 
             $this->projects = new repositories\projects();
             $this->ticketsApiService = new services\tickets();
+            $this->apiService = new services\api();
         }
 
 
@@ -46,6 +47,8 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
+            ob_start();
+
             if (services\auth::userIsAtLeast(roles::$editor)) {
 
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
@@ -56,28 +59,30 @@ namespace leantime\domain\controllers {
 
                     $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $handler);
 
-                    if ($results === true) {
-                        echo "{status:ok}";
-                    } else {
-                        echo "{status:failure}";
+                    if ($results === false) {
+                        $this->apiService->setError(-32000, "Could not update status", "");
                     }
+
                 }
 
                 if (isset($params['action']) && $params['action'] == "ganttSort") {
 
                     $results = $this->ticketsApiService->updateTicketSorting($params["payload"]);
 
-                    if ($results === true) {
-                        echo "{status:ok}";
-                    } else {
-                        echo "{status:failure}";
+                    if ($results === false) {
+                        $this->apiService->setError(-32000, "Could not update status", "");
                     }
 
                 }
 
             } else {
-                echo "{status:failure}";
+                $this->apiService->setError(-32000, "Not authorized", "");
             }
+
+            $htmlOutput = ob_get_clean();
+
+            $result = array("html"=>$htmlOutput);
+            $this->apiService->jsonResponse(1, $result);
         }
 
         /**
@@ -88,22 +93,28 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
+            ob_start();
+
             if (services\auth::userIsAtLeast(roles::$editor)) {
                 $results = false;
                 if (isset($params['id'])) {
                     $results = $this->ticketsApiService->patchTicket($params['id'], $params);
                 } else {
-                    echo "{status:failure, message: 'ID not set'}";
+                    $this->apiService->setError(-32000, "ID not set", "");
                 }
 
-                if ($results === true) {
-                    echo "{status:ok}";
-                } else {
-                    echo "{status:failure}";
+                if ($results === false) {
+                    $this->apiService->setError(-32000, "Could not update status", "");
                 }
+
             } else {
-                echo "{status:failure}";
+                $this->apiService->setError(-32000, "Not authorized", "");
             }
+
+            $htmlOutput = ob_get_clean();
+
+            $result = array("html"=>$htmlOutput);
+            $this->apiService->jsonResponse(1, $result);
         }
 
         /**
