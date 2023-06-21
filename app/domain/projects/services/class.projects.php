@@ -284,28 +284,55 @@ namespace leantime\domain\services {
 
         public function getProjectHierarchyAssignedToUser($userId, $projectStatus = "open", $clientId = "")
         {
-            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
-
 
             //Build 3 level project selector
-            $projectHierarchy = array("strategy"=> array(), "program" => array(), "project" => array());
+            $projectHierarchy = array(
+                "strategy"=> array("enabled"=>true, "parents"=> array("noStrategyParent"), "items" => array()), //Only one type allowed
+                "program" => array("enabled"=>false, "parents"=> array("noProgramParent"), "items" => array()), //Multiple types possible (projects/programs)
+                "project" => array("enabled"=>true, "items" => array()) //Multiple types possible (projects/other)
+            );
 
+            $projectHierarchy = self::dispatch_filter('beforeLoadingProjects', $projectHierarchy);
 
-            $parentTree = array();
+            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId, $projectHierarchy);
 
-            //Get Strategies
+            $projectHierarchy = self::dispatch_filter('beforePopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));
+
+            //Fill projectColumns
             foreach($projects as $project) {
-                if($project["type"] == "strategy") {
-                    $projectHierarchy["strategy"][$project['id']] = $project;
 
+                //Add all items that have strategy as parent.
+                if($project['type'] == '' || $project['type'] == null || $project['type'] == 0){
+                    $project['type'] = 'project';
                 }
 
-                if($project["type"] == "program") {
-                    $projectHierarchy["program"][$project['id']] = $project;
+                //Get project items with parent id but user does not have access to parent
+                if(!in_array($project['parent'], $projectHierarchy["strategy"]["parents"]) && !in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project["type"] != "program" && $project["type"] != "strategy"){
+                    if($projectHierarchy['strategy']["enabled"] === true) {
+                        $project['parent'] = "noStrategyParent";
+                    }
+                    if($projectHierarchy['program']["enabled"] === true) {
+                        $project['parent'] = "noProgramParent";
+                    }
                 }
 
-                if($project["type"] == "project" || $project["type"] == null) {
-                    $projectHierarchy["project"][$project['id']] = $project;
+                //IF the pgm module is not active, add all items
+                if($projectHierarchy['program']["enabled"] === false) {
+                    if ($project['type'] != "program" && $project['type'] != "strategy") {
+                        $projectHierarchy["project"]["items"]['project'][$project['id']] = $project;
+                    }
+                } else {
+
+                    //Get items with program parents
+                    if(in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project['type'] != "program" && $project['type'] != "strategy"){
+                        $projectHierarchy["project"]["items"][$project['type']][$project['id']] = $project;
+                    }
+
+                    //Get items without parents and project type(s)
+                    if ($project["type"] !== "program" && $project["type"] !== "strategy" && ($project['parent'] == 0 || $project['parent'] == '' || $project['parent'] == null)) {
+                        $project["parent"] = "noparent";
+                        $projectHierarchy["project"]["items"][$project['type']][$project['id']] = $project;
+                    }
                 }
             }
 
@@ -802,7 +829,9 @@ namespace leantime\domain\services {
 
         public function getProjectAvatar($id)
         {
-            return $this->projectRepository->getProjectAvatar($id);
+            $avatar = $this->projectRepository->getProjectAvatar($id);
+            $avatar = eventhelpers::dispatch_filter("afterGettingAvatar", $avatar, array("projectId"=>$id));
+            return $avatar;
         }
 
         public function setProjectAvatar($file, $project) {
@@ -810,8 +839,6 @@ namespace leantime\domain\services {
         }
 
         public function getProjectSetupChecklist($projectId) {
-
-
 
             $progressSteps = array(
                 "define" => array(

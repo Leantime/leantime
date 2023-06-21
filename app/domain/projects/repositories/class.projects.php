@@ -127,7 +127,7 @@ namespace leantime\domain\repositories {
 
         // Get all open user projects /param: open, closed, all
 
-        public function getUserProjects($userId, $status = "all", $clientId = "")
+        public function getUserProjects($userId, $status = "all", $clientId = "", $hierarchy = array())
         {
 
             $query = "SELECT
@@ -170,7 +170,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            if(isset($_SESSION['enablePrograms']) || isset($_SESSION['enableStrategies'])) {
+            if((isset($hierarchy['program']) && $hierarchy['program']['enabled'] == true) || (isset($hierarchy['strategy']) && $hierarchy['strategy']['enabled'] == true)) {
                 $query .= " GROUP BY
 					project.id
 				    ORDER BY parentName, clientName, project.name";

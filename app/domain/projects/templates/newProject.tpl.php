@@ -125,9 +125,7 @@ $project = $this->get('project');
                                 </div>
                             </div>
 
-
                         </div>
-
                     </div>
                     <div class="row-fluid padding-top">
                         <?php if ($project['id'] != '') : ?>
@@ -139,8 +137,6 @@ $project = $this->get('project');
 
                     </div>
                 </form>
-
-
             </div>
         </div>
     </div>
@@ -148,6 +144,7 @@ $project = $this->get('project');
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
+        jQuery("#projectdetails select").chosen();
         jQuery(".dates").datepicker(
             {
                 dateFormat:  leantime.i18n.__("language.jsdateformat"),

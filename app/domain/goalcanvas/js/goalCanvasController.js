@@ -223,6 +223,52 @@ leantime.goalCanvasController = (function () {
 
     };
 
+    var initProgressChart = function (chartId, complete, incomplete ) {
+        var config = {
+            type: 'doughnut',
+
+            data: {
+                datasets: [{
+                    data: [
+                        complete,
+                        incomplete
+
+                    ],
+                    backgroundColor: [
+                        leantime.dashboardController.chartColors.green,
+                        leantime.dashboardController.chartColors.grey
+
+                    ],
+                    label: leantime.i18n.__("label.project_done")
+                }],
+                labels: [
+                    complete + '%',
+                ]
+            },
+            options: {
+                maintainAspectRatio : true,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'none',
+                    },
+                    title: {
+                        display: false,
+                        text: 'Complete'
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        };
+
+        var ctx = document.getElementById(chartId).getContext('2d');
+        _progressChart = new Chart(ctx, config);
+    };
+
+
     // Make public what you want to have public, everything else is private
     return {
         setCloseModal:setCloseModal,
@@ -231,7 +277,8 @@ leantime.goalCanvasController = (function () {
         initUserDropdown:initUserDropdown,
         initStatusDropdown:initStatusDropdown,
         initRelatesDropdown:initRelatesDropdown,
-        setRowHeights:setRowHeights
+        setRowHeights:setRowHeights,
+        initProgressChart:initProgressChart
     };
 
 })();

@@ -16,6 +16,7 @@ namespace leantime\domain\services;
 
         private repositories\api $apiRepository;
         private repositories\users $userRepo;
+        private ?array $error = null;
 
         /**
          * __construct
@@ -134,6 +135,34 @@ namespace leantime\domain\services;
                 $pieces []= $keyspace[random_int(0, $max)];
             }
             return implode('', $pieces);
+        }
+
+        public function setError($code, $message, $data) {
+            $this->error = array(
+                "code" => $code,
+                "message" => $message,
+                "data" => $data
+            );
+
+        }
+
+        public function jsonResponse(int $id, ?array $result) {
+
+            $jsonRPCArray = array(
+                "jsonrpc" => "2.0"
+            );
+
+            header('Content-Type: application/json; charset=utf-8');
+
+            if($this->error != null){
+                $jsonRPCArray["error"] = $this->error;
+            }else if($result !== null){
+                $jsonRPCArray["result"] = $result;
+            }
+
+            echo json_encode($jsonRPCArray);
+
+
         }
 
 

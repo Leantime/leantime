@@ -62,6 +62,8 @@
     --header-bg-color:var(--accent1);
     --header-gradient:linear-gradient(90deg, var(--accent1) 20%,var(--accent2) 100%);
 
+    --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
+
     --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
     --base-font-size: 14px;
     --font-size-xs: 10px;
