@@ -872,7 +872,7 @@ namespace leantime\domain\services {
                         foreach ($tickets as $key => $ticketString) {
                             $id = substr($ticketString, 9);
 
-                            if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100)) === false) {
+                            if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
                                 return false;
                             }
                         }

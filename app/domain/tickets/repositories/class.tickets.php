@@ -1371,7 +1371,7 @@ namespace leantime\domain\repositories {
             return $result;
         }
 
-        public function updateTicketStatus($ticketId, $status, $ticketSorting = -1)
+        public function updateTicketStatus($ticketId, $status, $ticketSorting = -1, $handler = null)
         {
 
             $this->addTicketChange($_SESSION['userdata']['id'], $ticketId, array('status' => $status));
@@ -1404,7 +1404,7 @@ namespace leantime\domain\repositories {
 
             }
 
-            core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$ticketId, "status"=>$status, "action"=>"ticketStatusUpdate"));
+            core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$ticketId, "status"=>$status, "action"=>"ticketStatusUpdate", "handler"=>$handler));
             return $stmn->execute();
 
 

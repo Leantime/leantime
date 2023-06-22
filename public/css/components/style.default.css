@@ -4008,3 +4008,22 @@ h3.todaysDate {
 .bigNumberBox .content {
     font-size:36px
 }
+
+.verticalTab {
+    padding: 0;
+    margin-bottom: 5px;
+    text-align: center;
+    overflow: hidden;
+    background: var(--kanban-col-title-bg);
+    border-radius: var(--box-radius);
+}
+
+.verticalTab .content {
+    transform: translateX(-50%) translateY(-50%) rotate(-.25turn);
+    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    font-size:var(--font-size-l);
+}
