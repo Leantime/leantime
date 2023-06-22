@@ -155,13 +155,13 @@ namespace leantime\domain\controllers {
             //Main Details
             if (isset($params['name']) && $params['name'] != "" && isset($params['language']) && $params['language'] != "") {
 
-                $this->settingsRepo->saveSetting("companysettings.sitename", htmlentities(addslashes($params['name'])));
+                $this->settingsRepo->saveSetting("companysettings.sitename", htmlspecialchars(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
 
 
                 $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
 
-                $_SESSION["companysettings.sitename"] = htmlentities(addslashes($params['name']));
+                $_SESSION["companysettings.sitename"] = htmlspecialchars(addslashes($params['name']));
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
                 if (isset($_POST['telemetryActive'])) {
