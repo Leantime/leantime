@@ -66,9 +66,9 @@ $goalStats = $this->get("goalStats");
 
     <?php echo $this->displayNotification(); ?>
 
-    <div class="maincontentinner">
-        <h1 class="articleHeadline">Summary</h1>
-        <div class="row">
+
+
+    <div class="row" style="margin-bottom:20px; ">
             <div class="col-md-4">
                 <div class="bigNumberBox">
                     <h2>Progress: <?php echo round($goalStats['avgPercentComplete']); ?>%</h2>
@@ -106,12 +106,14 @@ $goalStats = $this->get("goalStats");
 
             </div>
         </div>
-    </div>
+
+
 
 
     <div class="maincontentinner">
         <div class="row">
             <div class="col-md-6">
+
                 <a href="javascript:void(0)" class="addCanvasLink btn btn-primary"><?=$this->__("links.icon.create_new_board") ?></a>
                 <br /><br />
             </div>
