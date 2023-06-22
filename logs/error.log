@@ -1,0 +1,48 @@
+[22-Jun-2023 00:24:05 America/Los_Angeles] PDOException: SQLSTATE[HY000] [1045] Access denied for user ''@'localhost' (using password: NO) in C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php:74
+Stack trace:
+#0 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(74): PDO->__construct('mysql:host=loca...', '', Object(SensitiveParameterValue), Array)
+#1 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(99): leantime\core\db->__construct()
+#2 C:\Users\Informatica2\Desktop\Time\time\app\domain\setting\repositories\class.setting.php(25): leantime\core\db::getInstance()
+#3 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(162): leantime\core\language->__construct()
+#5 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(142): leantime\core\language::getInstance()
+#6 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(154): leantime\domain\services\auth->__construct('87c3c46ef608f46...')
+#7 C:\Users\Informatica2\Desktop\Time\time\app\core\class.application.php(46): leantime\domain\services\auth::getInstance('87c3c46ef608f46...')
+#8 C:\Users\Informatica2\Desktop\Time\time\public\index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[22-Jun-2023 01:32:28 America/Los_Angeles] PDOException: SQLSTATE[HY000] [1045] Access denied for user ''@'localhost' (using password: NO) in C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php:74
+Stack trace:
+#0 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(74): PDO->__construct('mysql:host=loca...', '', Object(SensitiveParameterValue), Array)
+#1 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(99): leantime\core\db->__construct()
+#2 C:\Users\Informatica2\Desktop\Time\time\app\domain\setting\repositories\class.setting.php(25): leantime\core\db::getInstance()
+#3 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(162): leantime\core\language->__construct()
+#5 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(142): leantime\core\language::getInstance()
+#6 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(154): leantime\domain\services\auth->__construct('87c3c46ef608f46...')
+#7 C:\Users\Informatica2\Desktop\Time\time\app\core\class.application.php(46): leantime\domain\services\auth::getInstance('87c3c46ef608f46...')
+#8 C:\Users\Informatica2\Desktop\Time\time\public\index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[22-Jun-2023 01:32:31 America/Los_Angeles] PDOException: SQLSTATE[HY000] [1045] Access denied for user ''@'localhost' (using password: NO) in C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php:74
+Stack trace:
+#0 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(74): PDO->__construct('mysql:host=loca...', '', Object(SensitiveParameterValue), Array)
+#1 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(99): leantime\core\db->__construct()
+#2 C:\Users\Informatica2\Desktop\Time\time\app\domain\setting\repositories\class.setting.php(25): leantime\core\db::getInstance()
+#3 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(162): leantime\core\language->__construct()
+#5 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(142): leantime\core\language::getInstance()
+#6 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(154): leantime\domain\services\auth->__construct('87c3c46ef608f46...')
+#7 C:\Users\Informatica2\Desktop\Time\time\app\core\class.application.php(46): leantime\domain\services\auth::getInstance('87c3c46ef608f46...')
+#8 C:\Users\Informatica2\Desktop\Time\time\public\index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}
+[22-Jun-2023 01:32:31 America/Los_Angeles] PDOException: SQLSTATE[HY000] [1045] Access denied for user ''@'localhost' (using password: NO) in C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php:74
+Stack trace:
+#0 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(74): PDO->__construct('mysql:host=loca...', '', Object(SensitiveParameterValue), Array)
+#1 C:\Users\Informatica2\Desktop\Time\time\app\core\class.db.php(99): leantime\core\db->__construct()
+#2 C:\Users\Informatica2\Desktop\Time\time\app\domain\setting\repositories\class.setting.php(25): leantime\core\db::getInstance()
+#3 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(76): leantime\domain\repositories\setting->__construct()
+#4 C:\Users\Informatica2\Desktop\Time\time\app\core\class.language.php(162): leantime\core\language->__construct()
+#5 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(142): leantime\core\language::getInstance()
+#6 C:\Users\Informatica2\Desktop\Time\time\app\domain\auth\services\class.auth.php(154): leantime\domain\services\auth->__construct('87c3c46ef608f46...')
+#7 C:\Users\Informatica2\Desktop\Time\time\app\core\class.application.php(46): leantime\domain\services\auth::getInstance('87c3c46ef608f46...')
+#8 C:\Users\Informatica2\Desktop\Time\time\public\index.php(24): leantime\core\application->__construct(Object(leantime\core\IncomingRequest))
+#9 {main}

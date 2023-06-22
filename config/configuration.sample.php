@@ -17,7 +17,7 @@ class config
     /* General */
 
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
-    public $language = 'en-US';                           //Default language
+    public $language = 'es-ES';                           //Default language
     public $logoPath = '/images/logo.svg';                //Default logo path, can be changed later
     public $printLogoURL = '/images/logo.jpg';            //Default logo URL use for printing (must be jpg or png format)
     public $appUrl = '';                                  //Base URL, trailing slash not needed

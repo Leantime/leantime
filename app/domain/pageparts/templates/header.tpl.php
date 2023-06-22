@@ -23,6 +23,7 @@
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
 
 <link rel="stylesheet" href="<?=BASE_URL?>/css/main.<?php echo $settings->appVersion; ?>.css"/>
+<link rel="stylesheet" href="<?=BASE_URL?>/css/samart.css"/>
 <?php $this->dispatchTplEvent('afterLinkTags'); ?>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>

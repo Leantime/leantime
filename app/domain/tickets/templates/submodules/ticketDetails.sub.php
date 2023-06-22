@@ -88,7 +88,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group albert_mod">
                     <label class="span4 control-label"><?php echo $this->__('label.todo_status'); ?></label>
                     <div class="span6">
                         <select id="status-select" class="span11" name="status"
@@ -105,7 +105,7 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group albert_mod">
                     <label class="span4 control-label"><?php echo $this->__('label.todo_type'); ?></label>
                     <div class="span6">
                         <select id='type' name='type' class="span11">
@@ -120,7 +120,7 @@
                         </select><br/>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group albert_mod">
                     <label class="span4 control-label"><?php echo $this->__('label.priority'); ?></label>
                     <div class="span6">
                         <select id='priority' name='priority' class="span11">
@@ -135,7 +135,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group albert_mod">
                     <label class="span4 control-label"><?php echo $this->__('label.effort'); ?></label>
                     <div class="span6">
                         <select id='storypoints' name='storypoints' class="span11">
@@ -152,7 +152,7 @@
                 </div>
             </div>
         </div>
-        <div class="row-fluid marginBottom">
+        <div class="row-fluid marginBottom albert_mod">
             <div class="span12">
 
                 <h4 class="widgettitle title-light"><span
@@ -202,7 +202,7 @@
 
             </div>
         </div>
-        <div class="row-fluid marginBottom">
+        <div class="row-fluid marginBottom albert_mod">
             <div class="span12">
 
                 <h4 class="widgettitle title-light"><span
@@ -219,8 +219,10 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.editor'); ?></label>
                     <div class="span6">
+                    <input type="text" disabled="disabled" style="width:175px;"
+                               value="<?php $this->e($ticket->userFirstname); ?> <?php $this->e($ticket->userLastname); ?>"/>
 
-                        <select data-placeholder="<?php echo $this->__('label.filter_by_user'); ?>" style="width:175px;"
+                       <!-- <select data-placeholder="<?php echo $this->__('label.filter_by_user'); ?>" style="width:175px;"
                                 name="editorId" id="editorId" class="user-select span11">
                             <option value=""><?php echo $this->__('label.not_assigned_to_user'); ?></option>
                             <?php foreach ($this->get('users') as $userRow) { ?>
@@ -229,14 +231,14 @@
                                 if ($ticket->editorId == $userRow["id"]) {
                                     echo " selected='selected' ";
                                 }
-
                                 echo ">" . $this->escape($userRow["firstname"] . " " . $userRow["lastname"]) . "</option>"; ?>
 
                             <?php } ?>
-                        </select><br />
+                        </select><br /> 
+                        
                         <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
                             <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo $_SESSION['userdata']['id']; ?>).trigger('chosen:updated');"><?php echo $this->__('label.assign_to_me'); ?></a></small>
-                        <?php } ?>
+                        <?php } ?> -->
                     </div>
                 </div>
 
@@ -293,7 +295,7 @@
 
             </div>
         </div>
-        <div class="row-fluid marginBottom">
+        <div class="row-fluid marginBottom albert_mod">
             <div class="span12">
                 <h4 class="widgettitle title-light"><span
                             class="fa-regular fa-clock"></span><?php echo $this->__('subtitle.time_tracking'); ?></h4>
