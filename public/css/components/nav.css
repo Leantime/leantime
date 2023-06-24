@@ -875,7 +875,6 @@
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li:hover,
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.active,
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.activeChild{
     background:var(--main-menu-link-active-bg);
 }

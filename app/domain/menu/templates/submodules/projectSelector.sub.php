@@ -65,7 +65,7 @@ if(str_contains($redirectUrl, "showProject")) {
                                 if ($lastClient != $projectRow['clientName']) {
                                     $lastClient = $projectRow['clientName'];
 
-                                    echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientController";
+                                    echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientGroupParent-" . $projectRow['parent'] . " clientController";
 
                                     if($projectHierarchy['program']["enabled"] === true || $projectHierarchy['strategy']["enabled"] === true) {
                                         echo " hideGroup ";
@@ -79,7 +79,7 @@ if(str_contains($redirectUrl, "showProject")) {
 
                                 echo"<li class='projectGroup-".$projectRow['parent']." hideGroup clientId-".$projectRow['parent']."-". $projectRow['clientId'] ."";
                                 if($_SESSION["currentProject"] == $projectRow["id"]) {
-                                    echo " active ";
+                                    echo " active activeChild";
                                 }
                                 echo"' data-client='".$projectRow['clientId']."'>";
                                 echo"<a";
