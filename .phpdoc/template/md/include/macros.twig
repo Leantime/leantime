@@ -22,7 +22,7 @@
 {% endfor %}
 {% set break = true %}
 {% else %}
-{% set relPath0 = './' ~ relPath[0] %}
+{% set relPath0 = 'technical/' ~ relPath[0] %}
 {% set relPathRest = relPath | slice(1) %}
 {% set relPath = relPath0|split('/')|merge(relPathRest) %}
 {% endif %}
