@@ -159,8 +159,8 @@ leantime.menuController = (function () {
 
         jQuery("."+target+"List.selectorList li.groupShow").each(function() {
            var clientId = jQuery(this).attr("data-client");
-            jQuery(".clientController.clientIdHead-"+clientId).removeClass("hideGroup");
-            jQuery(".clientController.clientIdHead-"+clientId).addClass("groupShow");
+            jQuery(".clientController.clientIdHead-"+clientId+".clientGroupPArent-"+selectedParent).removeClass("hideGroup");
+            jQuery(".clientController.clientIdHead-"+clientId+".clientGroupPArent-"+selectedParent).addClass("groupShow");
         });
 
     };

@@ -65,13 +65,11 @@ if(str_contains($redirectUrl, "showProject")) {
                                 if ($lastClient != $projectRow['clientName']) {
                                     $lastClient = $projectRow['clientName'];
 
-                                    echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientController";
+                                    echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientGroupParent-" . $projectRow['parent'] . " clientController";
 
                                     if($projectHierarchy['program']["enabled"] === true || $projectHierarchy['strategy']["enabled"] === true) {
                                         echo " hideGroup ";
                                     }
-
-
 
                                     echo "'><a href='#' onclick='leantime.menuController.toggleClientList(\"".$projectRow['clientId'] . "\", this)' class='open'><i class=\"fas fa-angle-down\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
 
@@ -79,18 +77,16 @@ if(str_contains($redirectUrl, "showProject")) {
 
                                 echo"<li class='projectGroup-".$projectRow['parent']." hideGroup clientId-".$projectRow['parent']."-". $projectRow['clientId'] ."";
                                 if($_SESSION["currentProject"] == $projectRow["id"]) {
-                                    echo " active ";
+                                    echo " active activeChild";
                                 }
                                 echo"' data-client='".$projectRow['clientId']."'>";
                                 echo"<a";
-
-                                $redirectUpdate = \leantime\core\eventhelpers::dispatch_filter('defaultProjectRedirect', $redirectUrl, array("type" => $projectRow['type']));
 
                                 if(strlen($projectRow["name"]) >=15){
                                     echo " data-tippy-content='".$this->escape($projectRow["name"])."' ";
                                 }
 
-                                echo " href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUpdate . "'>
+                                echo " href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'>
                                                 <span class='projectAvatar'>
                                                     <img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
                                                 </span>

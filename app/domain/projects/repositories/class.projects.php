@@ -1044,15 +1044,31 @@ namespace leantime\domain\repositories {
 
                 return $return;
             } elseif ($value !== false && ($value['avatar'] === '' || $value['avatar'] == null)) {
-                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
-                $image = $avatar
-                    ->name($value['name'])
-                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
-                    ->fontName("Verdana")
-                    ->background('#555555')->color("#fff")
-                    ->generateSvg();
 
-                return $image;
+                $imagename = md5($value['name']);
+
+                if(file_exists(APP_ROOT."/cache/avatars/".$imagename.".png")){
+
+                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+
+                }else{
+
+                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $image = $avatar
+                        ->name($value['name'])
+                        ->font(ROOT . '/fonts/roboto/Roboto-Regular.woff2')
+                        ->fontSize(0.5)
+                        ->size(96)
+                        ->background('#555555')->color("#fff")
+                        ->generate();
+
+                    $image->save(APP_ROOT."/cache/avatars/".$imagename.".png", 100, "png");
+
+                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+
+                }
+
+
             } else {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar

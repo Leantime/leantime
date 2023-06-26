@@ -287,7 +287,7 @@ namespace leantime\domain\services {
 
             //Build 3 level project selector
             $projectHierarchy = array(
-                "strategy"=> array("enabled"=>true, "parents"=> array("noStrategyParent"), "items" => array()), //Only one type allowed
+                "strategy"=> array("enabled"=>false, "parents"=> array("noStrategyParent"), "items" => array()), //Only one type allowed
                 "program" => array("enabled"=>false, "parents"=> array("noProgramParent"), "items" => array()), //Multiple types possible (projects/programs)
                 "project" => array("enabled"=>true, "items" => array()) //Multiple types possible (projects/other)
             );

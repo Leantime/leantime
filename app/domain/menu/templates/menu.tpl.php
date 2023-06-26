@@ -183,7 +183,7 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
 <script>
     jQuery('.projectSelectorTabs').tabs();
 
-    let clientId = <?=$this->get('currentClient') ?>;
+    let clientId = <?php if($this->get('currentClient') != '') echo $this->get('currentClient'); else echo "-1"; ?>;
 
     <?php
         //Restore selected menu items
@@ -209,13 +209,13 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
             foreach ($typeRow as $projectRow) {
 
                 if($projectHierarchy['program']['enabled'] === true && $projectHierarchy['strategy']['enabled'] === true) {
-                    if(isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['program']."-".$projectRow['clientId']])) {
+                    if(isset($_SESSION['submenuToggle']['program']) && isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['program']."-".$projectRow['clientId']])) {
                         echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "'.$_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['program']."-".$projectRow['clientId']].'");';
                     }
                 }
 
                 if($projectHierarchy['program']['enabled'] === false && $projectHierarchy['strategy']['enabled'] === true) {
-                    if(isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['strategy']."-".$projectRow['clientId']])) {
+                    if(isset($_SESSION['submenuToggle']['strategy']) && isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['strategy']."-".$projectRow['clientId']])) {
                         echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "'.$_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['strategy']."-".$projectRow['clientId']].'");';
                     }
                 }

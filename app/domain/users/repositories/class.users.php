@@ -631,22 +631,36 @@ namespace leantime\domain\repositories {
                 $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
                 $type = $file['extension'];
 
-                return $return;
+                return array("filename"=>$return, "type"=>"uploaded");
 
             } elseif (isset($value['profileId']) && $value['profileId'] == '') {
 
-                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
-                $image = $avatar
-                    ->name($value['firstname'] . " " . $value['lastname'])
-                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
-                    ->fontName("Verdana")
-                    ->background('#81B1A8')->color("#fff")
-                    ->generateSvg();
+                $imagename = md5($value['firstname'] . " " . $value['lastname']);
 
-                return $image;
+                if(file_exists(APP_ROOT."/cache/avatars/".$imagename.".png")){
+
+                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+
+                }else{
+
+                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $image = $avatar
+                        ->name($value['firstname'] . " " . $value['lastname'])
+                        ->font(ROOT . '/fonts/roboto/Roboto-Regular.woff2')
+                        ->fontSize(0.5)
+                        ->size(96)
+                        ->background('#81B1A8')->color("#fff")
+                        ->generate();
+
+                    $image->save(APP_ROOT."/cache/avatars/".$imagename.".png", 100, "png");
+
+                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+
+                }
+
 
             } else{
-
+                //USer doesn't exist for whatever reason. Return ghost. Boo
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name("👻")
