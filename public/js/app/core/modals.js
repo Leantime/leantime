@@ -14,8 +14,8 @@ function openModal() {
                 jQuery(".showDialogOnLoad").show();
 
                 if(tinymce.editors.length>0) {
-                    jQuery('textarea.complexEditor').tinymce().save();
-                    jQuery('textarea.complexEditor').tinymce().remove();
+                    jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().save();
+                    jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().remove();
                 }
             },
             beforeShowCont: function () {
@@ -24,6 +24,7 @@ function openModal() {
             afterShowCont: function () {
 
                 jQuery(".formModal, .modal").nyroModal(modalOptions);
+                tippy('[data-tippy-content]');
             },
             beforeClose: function () {
                 history.pushState("", document.title, window.location.pathname + window.location.search);

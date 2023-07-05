@@ -42,8 +42,8 @@ class session
 
         $config = \leantime\core\environment::getInstance();
 
-        ini_set('session.gc_maxlifetime', ($config->sessionExpiration * 2));
-        ini_set('session.cookie_lifetime', ($config->sessionExpiration));
+        $maxLifeTime = ini_set('session.gc_maxlifetime', ($config->sessionExpiration * 2));
+        $cookieLifetime = ini_set('session.cookie_lifetime', ($config->sessionExpiration * 2));
 
         $this->sessionpassword = $config->sessionpassword;
 

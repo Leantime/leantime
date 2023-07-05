@@ -31,7 +31,7 @@ namespace leantime\domain\repositories {
 
                         20 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.timeline', 'icon' => 'fa fa-fw fa-sliders', 'tooltip' => 'menu.timeline_tooltip', 'href' => '/tickets/roadmap', 'active' => ['roadmap']],
 
-                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/showCanvas', 'active' => ['showCanvas']],
+                        40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/dashboard', 'active' => ['showCanvas']],
 
                     ]],
 

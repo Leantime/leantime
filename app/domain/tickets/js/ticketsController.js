@@ -813,10 +813,12 @@ leantime.ticketsController = (function () {
                         }
                         }
                 ).done(
-                    function () {
+                    function (response) {
                         jQuery("#statusDropdownMenuLink" + ticketId + " span.text").text(dataLabel);
                         jQuery("#statusDropdownMenuLink" + ticketId).removeClass().addClass(className + " dropdown-toggle f-left status ");
                         jQuery.growl({message: leantime.i18n.__("short_notifications.status_updated"), style: "success"});
+
+                        leantime.handleAsyncResponse(response);
 
                     }
                 );
@@ -1217,6 +1219,9 @@ leantime.ticketsController = (function () {
                     url: leantime.appUrl + '/api/tickets',
                     data: statusPostData
 
+                }).done(function(response){
+                    console.log(response);
+                    leantime.handleAsyncResponse(response);
                 });
 
             }

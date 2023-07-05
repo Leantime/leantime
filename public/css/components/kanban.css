@@ -172,6 +172,10 @@
     background:var(--main-menu-link-hover-bg);
 }
 
+.sortableTicketList li.no-hover:hover {
+    background:var(--kanban-card-bg);
+}
+
 
 .sortableTicketList .ticketBox {
     background: var(--kanban-card-bg);
@@ -201,6 +205,10 @@
 
 .sortableTicketList li:hover .ticketBox.fixed {
     background:var(--main-menu-link-hover-bg);
+}
+
+.sortableTicketList li.no-hover:hover .ticketBox.fixed {
+    background: var(--kanban-card-bg);
 }
 
 .sortableTicketList .ticketBox p.description {

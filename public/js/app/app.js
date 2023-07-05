@@ -69,6 +69,19 @@ jQuery(document).ready(function(){
 });
 
 
+leantime.handleAsyncResponse = function(response)  {
+
+    if(response !== undefined) {
+        console.log(response);
+        if(response.result !== undefined && response.result.html !== undefined){
+
+            var content = jQuery(response.result.html);
+            jQuery("body").append(content);
+        }
+    }
+};
+
+
 
 
 

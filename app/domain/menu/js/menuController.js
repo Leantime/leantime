@@ -136,16 +136,32 @@ leantime.menuController = (function () {
 
     };
 
-    var toggleHierarchy = function (selectedParent, target) {
-        jQuery("."+target+"List.selectorList li").not(".nav-header, .fixedBottom").removeClass("visible");
-        jQuery("."+target+"List.selectorList li").not(".nav-header, .fixedBottom").addClass("groupHidden");
-        jQuery("."+target+"List.selectorList li.parent-"+selectedParent).removeClass("groupHidden");
-        jQuery("."+target+"List.selectorList li.parent-"+selectedParent).addClass("visible");
+    var toggleHierarchy = function (selectedParent, target, origin) {
 
+        jQuery(".projectList.selectorList li").not(".nav-header, .fixedBottom").removeClass("groupShow");
+        jQuery(".projectList.selectorList li").not(".nav-header, .fixedBottom").addClass("hideGroup");
 
-        jQuery("."+target+"Target li").removeClass("active");
-        jQuery("."+target+"Target li").removeClass("activeChild");
-        jQuery("#"+target+"Group-"+selectedParent).addClass("activeChild");
+        jQuery("."+target+"List.selectorList li").not(".nav-header, .fixedBottom").removeClass("groupShow");
+        jQuery("."+target+"List.selectorList li").not(".nav-header, .fixedBottom").addClass("hideGroup");
+
+        jQuery("."+target+"List.selectorList li."+target+"Group-"+selectedParent).removeClass("hideGroup");
+        jQuery("."+target+"List.selectorList li."+target+"Group-"+selectedParent).addClass("groupShow");
+
+        updateActiveParent(origin, selectedParent);
+
+        jQuery("."+target+"List.selectorList li").removeClass("activeChild");
+        jQuery("."+origin+"List.selectorList li").removeClass("activeChild");
+
+        jQuery(".parent-"+selectedParent).addClass("activeChild");
+
+        jQuery(".clientController").removeClass("groupShow");
+        jQuery(".clientController").addClass("hideGroup");
+
+        jQuery("."+target+"List.selectorList li.groupShow").each(function() {
+           var clientId = jQuery(this).attr("data-client");
+            jQuery(".clientController.clientIdHead-"+clientId+".clientGroupPArent-"+selectedParent).removeClass("hideGroup");
+            jQuery(".clientController.clientIdHead-"+clientId+".clientGroupPArent-"+selectedParent).addClass("groupShow");
+        });
 
     };
 
@@ -154,6 +170,9 @@ leantime.menuController = (function () {
         //MEthod is executed on click and does the oposite of the current state.
         //(eg when closed->open; when open->close)
         //To force a state we need to ensure it is the oposite of the state requested
+
+
+
         if(set === "closed") {
             jQuery(element).removeClass("closed");
             jQuery(element).removeClass("open");
@@ -164,27 +183,39 @@ leantime.menuController = (function () {
             jQuery(element).addClass("closed");
         }
 
+        var activeProgramParent = jQuery(".programList .activeChild").attr("data-program-id");
+        var activeStrategyParent = jQuery(".strategyList .activeChild").attr("data-strategy-id");
+        var activeParent = '';
+
+        if(activeStrategyParent !== undefined && activeStrategyParent !== ''){
+            activeParent = activeStrategyParent;
+        }
+
+        if(activeProgramParent !== undefined && activeProgramParent !== ''){
+            activeParent = activeProgramParent;
+        }
+
         if(jQuery(element).hasClass("open")){
 
-            jQuery(".client_" + id).hide("fast");
+            jQuery(".clientId-"+activeParent+"-" + id).hide("fast");
             jQuery(element).removeClass("open");
             jQuery(element).addClass("closed");
 
             jQuery(element).find("i").removeClass("fa-angle-down");
             jQuery(element).find("i").addClass("fa-angle-right");
 
-            updateClientDropdownSetting(id, "closed");
+            updateClientDropdownSetting(activeParent+"-"+id, "closed");
 
         }else{
 
-            jQuery(".client_" + id).show("fast");
+            jQuery(".clientId-"+activeParent+"-" + id).show("fast");
             jQuery(element).removeClass("closed");
             jQuery(element).addClass("open");
 
             jQuery(element).find("i").removeClass("fa-angle-right");
             jQuery(element).find("i").addClass("fa-angle-down");
 
-            updateClientDropdownSetting(id, "open");
+            updateClientDropdownSetting(activeParent+"-"+id, "open");
 
         }
 
@@ -197,6 +228,19 @@ leantime.menuController = (function () {
             url  : leantime.appUrl + '/api/submenu',
             data : {
                 submenu : "clientDropdown-"+clientId,
+                state   : state
+            }
+        });
+
+    };
+
+    let updateActiveParent = function(parent, state) {
+
+        jQuery.ajax({
+            type : 'PATCH',
+            url  : leantime.appUrl + '/api/submenu',
+            data : {
+                submenu : parent,
                 state   : state
             }
         });

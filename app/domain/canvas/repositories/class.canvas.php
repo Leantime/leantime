@@ -352,6 +352,7 @@ namespace leantime\domain\repositories {
         public function editCanvasItem($values)
         {
             $sql = "UPDATE zp_canvas_items SET
+                           title = :title,
                     description = :description,
                     assumptions =        :assumptions,
                     data =            :data,
@@ -359,19 +360,54 @@ namespace leantime\domain\repositories {
                     modified =            NOW(),
                     status =            :status,
                     relates =            :relates,
-                    milestoneId =            :milestoneId
+                    milestoneId =            :milestoneId,
+                    kpi =            :kpi,
+                    data1 =            :data1,
+                    startDate =            :startDate,
+                    endDate =            :endDate,
+                    setting =            :setting,
+                    metricType =            :metricType,
+                    startValue =            :startValue,
+                    currentValue =            :currentValue,
+                    endValue =            :endValue,
+                    impact=            :impact,
+                    effort=            :effort,
+                    probability=            :probability,
+                    action=            :action,
+                    assignedTo=            :assignedTo,
+                    parent = :parent,
+                    tags = :tags
+
                     WHERE id = :id LIMIT 1    ";
+
 
             $stmn = $this->db->database->prepare($sql);
 
             $stmn->bindValue(':id', $values['itemId'], PDO::PARAM_STR);
+            $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':assumptions', $values['assumptions'], PDO::PARAM_STR);
-            $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
-            $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
+            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
-            $stmn->bindValue(':milestoneId', $values['milestoneId'], PDO::PARAM_STR);
+            $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
 
             $stmn->execute();
             $stmn->closeCursor();
@@ -425,6 +461,24 @@ namespace leantime\domain\repositories {
                         zp_canvas_items.parent,
                         zp_canvas_items.title,
                         zp_canvas_items.tags,
+                        zp_canvas_items.kpi,
+                        zp_canvas_items.data1,
+                        zp_canvas_items.data2,
+                        zp_canvas_items.data3,
+                        zp_canvas_items.data4,
+                        zp_canvas_items.data5,
+                        zp_canvas_items.startDate,
+                        zp_canvas_items.endDate,
+                        zp_canvas_items.setting,
+                        zp_canvas_items.metricType,
+                        zp_canvas_items.startValue,
+                        zp_canvas_items.currentValue,
+                        zp_canvas_items.endValue,
+                        zp_canvas_items.impact,
+                        zp_canvas_items.effort,
+                        zp_canvas_items.probability,
+                        zp_canvas_items.action,
+                        zp_canvas_items.assignedTo,
                         t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname,
                         t1.profileId AS authorProfileId,
@@ -470,10 +524,134 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
+        public function getCanvasItemsByKPI($id)
+        {
+
+            $sql = "SELECT
+                        zp_canvas_items.id,
+
+                        zp_canvas_items.title,
+                        zp_canvas_items.kpi,
+                        zp_canvas_items.startDate,
+                        zp_canvas_items.endDate,
+                        zp_canvas_items.setting,
+                        zp_canvas_items.metricType,
+                        zp_canvas_items.startValue,
+                        zp_canvas_items.currentValue,
+                        zp_canvas_items.endValue,
+						zp_canvas_items.canvasId,
+                        zp_canvas.title as boardTitle,
+                        zp_canvas.projectId as projectId,
+                        zp_projects.name as projectName,
+
+                        childrenLvl1.id as childId,
+                        childrenLvl1.title as childTitle,
+                        childrenLvl1.kpi as childKpi,
+                        childrenLvl1.startDate as childStartDate,
+                        childrenLvl1.endDate as childEndDate,
+                        childrenLvl1.setting as childSetting,
+                        childrenLvl1.metricType as childMetricType,
+                        childrenLvl1.startValue as childStartValue,
+                        childrenLvl1.currentValue as childCurrentValue,
+                        childrenLvl1.endValue as childEndValue,
+                        childrenLvl1.canvasId as childCanvasId,
+                        childrenLvl1Board.title as childBoardTitle,
+                        childrenLvl1Project.name as childProjectName
+
+                FROM
+                zp_canvas_items
+                LEFT JOIN zp_canvas ON zp_canvas_items.canvasId = zp_canvas.id
+                LEFT JOIN zp_projects ON zp_canvas.projectId = zp_projects.id
+                LEFT JOIN zp_canvas_items as childrenLvl1 ON childrenLvl1.kpi = zp_canvas_items.id
+				LEFT JOIN zp_canvas as childrenLvl1Board ON childrenLvl1.canvasId = childrenLvl1Board.id
+                LEFT JOIN zp_projects as childrenLvl1Project ON childrenLvl1Board.projectId = childrenLvl1Project.id
+                WHERE zp_canvas_items.box = 'goal'
+
+
+                AND zp_canvas_items.kpi = :id";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        public function getAllAvailableParents($projectId)
+        {
+            $sql = "SELECT
+                        zp_canvas_items.id,
+                        zp_canvas_items.description,
+                        zp_canvas_items.title,
+                        zp_canvas_items.assumptions,
+                        zp_canvas_items.data,
+                        zp_canvas_items.conclusion,
+                        zp_canvas_items.box,
+                        zp_canvas_items.author,
+                        zp_canvas_items.created,
+                        zp_canvas_items.modified,
+                        zp_canvas_items.canvasId,
+                        zp_canvas_items.sortindex,
+                        zp_canvas_items.status,
+                        zp_canvas_items.relates,
+                        zp_canvas_items.milestoneId,
+                        zp_canvas_items.kpi,
+                        zp_canvas_items.data1,
+                        zp_canvas_items.data2,
+                        zp_canvas_items.data3,
+                        zp_canvas_items.data4,
+                        zp_canvas_items.data5,
+                        zp_canvas_items.startDate,
+                        zp_canvas_items.endDate,
+                        zp_canvas_items.setting,
+                        zp_canvas_items.metricType,
+                        zp_canvas_items.startValue,
+                        zp_canvas_items.currentValue,
+                        zp_canvas_items.endValue,
+                        zp_canvas_items.impact,
+                        zp_canvas_items.effort,
+                        zp_canvas_items.probability,
+                        zp_canvas_items.action,
+                        zp_canvas_items.assignedTo,
+                        zp_canvas_items.parent,
+                        zp_canvas_items.tags,
+                        board.title AS boardTitle,
+                        parentKPI.description AS parentKPIDescription,
+                        parentGoal.description AS parentGoalDescription,
+                        t1.firstname AS authorFirstname,
+                        t1.lastname AS authorLastname,
+                        milestone.headline as milestoneHeadline,
+                        milestone.editTo as milestoneEditTo
+
+                FROM
+                `leantime-2324`.zp_canvas_items
+                LEFT JOIN zp_canvas AS board ON board.id = zp_canvas_items.canvasId
+                LEFT JOIN zp_canvas_items AS parentKPI ON zp_canvas_items.kpi = parentKPI.id
+                LEFT JOIN zp_canvas_items AS parentGoal ON zp_canvas_items.parent = parentGoal.id
+				LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
+                LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
+                WHERE board.projectId = :id
+                GROUP BY id
+                ORDER BY board.id
+                ";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+            return $values;
+        }
+
         public function getSingleCanvasItem($id)
         {
             $sql = "SELECT
                         zp_canvas_items.id,
+                        zp_canvas_items.title,
                         zp_canvas_items.description,
                         zp_canvas_items.assumptions,
                         zp_canvas_items.data,
@@ -487,6 +665,29 @@ namespace leantime\domain\repositories {
                         zp_canvas_items.status,
                         zp_canvas_items.relates,
                         zp_canvas_items.milestoneId,
+                        zp_canvas_items.kpi,
+                        zp_canvas_items.data1,
+                        zp_canvas_items.data2,
+                        zp_canvas_items.data3,
+                        zp_canvas_items.data4,
+                        zp_canvas_items.data5,
+                        zp_canvas_items.startDate,
+                        zp_canvas_items.endDate,
+                        zp_canvas_items.setting,
+                        zp_canvas_items.metricType,
+                        zp_canvas_items.startValue,
+                        zp_canvas_items.currentValue,
+                        zp_canvas_items.endValue,
+                        zp_canvas_items.impact,
+                        zp_canvas_items.effort,
+                        zp_canvas_items.probability,
+                        zp_canvas_items.action,
+                        zp_canvas_items.assignedTo,
+                        zp_canvas_items.parent,
+                        zp_canvas_items.tags,
+                        board.title as boardTitle,
+                        parentKPI.description AS parentKPIDescription,
+                        parentGoal.title AS parentGoalDescription,
                         t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname,
                         milestone.headline as milestoneHeadline,
@@ -510,6 +711,9 @@ namespace leantime\domain\repositories {
                         END AS percentDone
                 FROM
                 zp_canvas_items
+                LEFT JOIN zp_canvas_items AS parentKPI ON zp_canvas_items.kpi = parentKPI.id
+                LEFT JOIN zp_canvas AS board ON board.id = zp_canvas_items.canvasId
+                LEFT JOIN zp_canvas_items AS parentGoal ON zp_canvas_items.parent = parentGoal.id
                 LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
                 LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
@@ -534,6 +738,7 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO zp_canvas_items (
                         description,
+                             title,
                         assumptions,
                         data,
                         conclusion,
@@ -544,9 +749,26 @@ namespace leantime\domain\repositories {
                         canvasId,
                         status,
                         relates,
-                        milestoneId
+                        milestoneId,
+                        kpi,
+                        data1,
+                        startDate,
+                        endDate,
+                        setting,
+                        metricType,
+                        impact,
+                        effort,
+                        probability,
+                        action,
+                        assignedTo,
+                        startValue,
+                        currentValue,
+                        endValue,
+                             parent,
+                             tags
                 ) VALUES (
                         :description,
+                          :title,
                         :assumptions,
                         :data,
                         :conclusion,
@@ -557,12 +779,29 @@ namespace leantime\domain\repositories {
                         :canvasId,
                         :status,
                         :relates,
-                        :milestoneId
+                        :milestoneId,
+                        :kpi,
+                        :data1,
+                        :startDate,
+                        :endDate,
+                        :setting,
+                        :metricType,
+                        :impact,
+                        :effort,
+                        :probability,
+                        :action,
+                        :assignedTo,
+                        :startValue,
+                        :currentValue,
+                        :endValue,
+                          :parent,
+                          :tags
                 )";
 
             $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+            $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':assumptions', $values['assumptions'], PDO::PARAM_STR);
             $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
             $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
@@ -572,6 +811,22 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
+            $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':startDate', $values['startDate'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':endDate', $values['endDate'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':setting', $values['setting'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':metricType', $values['metricType'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':impact', $values['impact'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':effort', $values['effort'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':probability', $values['probability'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':action', $values['action'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':assignedTo', $values['assignedTo'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':startValue', $values['startValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':currentValue', $values['currentValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':endValue', $values['endValue'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':parent', $values['parent'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':tags', $values['tags'] ?? '', PDO::PARAM_STR);
 
             $stmn->execute();
             $id = $this->db->database->lastInsertId();
@@ -699,8 +954,34 @@ namespace leantime\domain\repositories {
 
             // Copy elements from existing canvas to new canvas
             $sql = "INSERT INTO " .
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
-              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '' " .
+              "zp_canvas_items (title,description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId,kpi,
+                        data1,
+                        startDate,
+                        endDate,
+                        setting,
+                        metricType,
+                        impact,
+                        effort,
+                        probability,
+                        action,
+                        assignedTo,
+                        startValue,
+                        currentValue,
+                        endValue,title) " .
+              "SELECT title,description, assumptions, data, conclusion, box, author, NOW(), NOW(), $newCanvasId, status, relates, '',kpi,
+                        data1,
+                        startDate,
+                        endDate,
+                        setting,
+                        metricType,
+                        impact,
+                        effort,
+                        probability,
+                        action,
+                        assignedTo,
+                        startValue,
+                        currentValue,
+                        endValue,title " .
               "FROM zp_canvas_items WHERE canvasId = $canvasId";
             $stmn = $this->db->database->prepare($sql);
 
@@ -723,8 +1004,34 @@ namespace leantime\domain\repositories {
 
             // Copy elements from merge canvas into current canvas
             $sql = "INSERT INTO " .
-              "zp_canvas_items (description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId) " .
-              "SELECT description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '' " .
+              "zp_canvas_items (title,description,assumptions,data,conclusion,box,author,created,modified,canvasId,status,relates,milestoneId,kpi,
+                        data1,
+                        startDate,
+                        endDate,
+                        setting,
+                        metricType,
+                        impact,
+                        effort,
+                        probability,
+                        action,
+                        assignedTo,
+                        startValue,
+                        currentValue,
+                        endValue, title) " .
+              "SELECT title,description, assumptions, data, conclusion, box, author, NOW(), NOW(), $canvasId, status, relates, '',kpi,
+                        data1,
+                        startDate,
+                        endDate,
+                        setting,
+                        metricType,
+                        impact,
+                        effort,
+                        probability,
+                        action,
+                        assignedTo,
+                        startValue,
+                        currentValue,
+                        endValue, title " .
               "FROM zp_canvas_items WHERE canvasId = $mergeId";
             $stmn = $this->db->database->prepare($sql);
 

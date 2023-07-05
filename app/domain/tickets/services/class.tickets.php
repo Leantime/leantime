@@ -553,7 +553,7 @@ namespace leantime\domain\services {
                 'headline' => $values['headline'],
                 'type' => $values['type'],
                 'description' => $values['description'],
-                'projectId' => $_SESSION['currentProject'],
+                'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date('Y-m-d  H:i:s'),
@@ -872,7 +872,7 @@ namespace leantime\domain\services {
                         foreach ($tickets as $key => $ticketString) {
                             $id = substr($ticketString, 9);
 
-                            if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100)) === false) {
+                            if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
                                 return false;
                             }
                         }

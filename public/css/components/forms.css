@@ -921,3 +921,36 @@ input.secretInput:active {
 .viewDescription:hover {
     border:1px solid var(--main-border-color);
 }
+
+.radioTab {
+    border:1px solid var(--main-border-color);
+    border-radius:var(--box-radius);
+    padding:10px;
+    margin-bottom:5px;
+    display:block;
+}
+
+.radioTab:hover {
+    background:var(--kanban-card-hover);
+}
+
+.radioTab strong {
+    color:var(--primary-color);
+    display:block;
+}
+
+.radioTab span {
+    font-size:var(--font-size-s);
+    color:var(--primary-font-color);
+    line-height:1;
+}
+
+.radioTab.active {
+    background:var(--main-action-bg);
+    color:var(--main-action-color);
+}
+
+.radioTab.active strong,
+.radioTab.active span {
+    color:var(--main-action-color);
+}

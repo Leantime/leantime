@@ -3,3 +3,6 @@
 # Except the following
 !.gitignore
 !debughooks
+/llamadorian/
+/pgmPro/
+/strategyPro/

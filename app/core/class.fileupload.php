@@ -333,7 +333,7 @@ class fileupload
         return false;
     }
 
-    public function displayImageFile($imageName) {
+    public function displayImageFile($imageName, $fullPath) {
 
         $mimes = array
         (
@@ -343,9 +343,11 @@ class fileupload
             'png' => 'image/png'
         );
 
-        $path = realpath(APP_ROOT."/".$this->config->userFilePath."/");
 
-        $fullPath = $path."/".$imageName;
+        if($fullPath == '') {
+            $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
+            $fullPath = $path . "/" . $imageName;
+        }
 
         if (file_exists(realpath($fullPath))) {
             if ($fd = fopen(realpath($fullPath), 'rb')) {
