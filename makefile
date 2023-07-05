@@ -7,7 +7,7 @@ install-deps:
 	composer install --no-dev --optimize-autoloader
 
 build-js: install-deps
-	./node_modules/.bin/grunt Build-All
+	$(CURDIR)/node_modules/.bin/grunt Build-All
 
 build: install-deps build-js
 	mkdir -p $(TARGET_DIR)

@@ -49,7 +49,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
-        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
+        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?? '' ?>" />
         <input type="hidden" name="changeItem" value="1" />
 
         <div class="row">
@@ -57,7 +57,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <label><?=$this->__("label.what_is_your_goal") ?></label>
-        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
+        <input type="text" name="title" value="<?php $this->e($canvasItem['title']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
 
         <?php if (!empty($statusLabels)) { ?>
             <label><?=$this->__("label.status") ?></label>
@@ -149,7 +149,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                     <optgroup label="<?=$parent["project"]?> // <?=$parent["board"]?>">
                         <?php } ?>
-                        <option value="<?=$parent["id"] ?>" <?php if($canvasItem['kpi'] == $parent["id"]) echo "selected='selected'";?>><?=$parent["description"]; ?></option>
+                        <option value="<?=$parent["id"] ?>" <?php if($canvasItem['kpi'] == $parent["id"]) echo "selected='selected'";?>><?=$parent["title"]; ?></option>
                         <?php } ?>
 
                         <?php } ?>
