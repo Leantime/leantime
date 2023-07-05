@@ -627,7 +627,7 @@ namespace leantime\domain\repositories {
                         milestone.editTo as milestoneEditTo
 
                 FROM
-                `leantime-2324`.zp_canvas_items
+                zp_canvas_items
                 LEFT JOIN zp_canvas AS board ON board.id = zp_canvas_items.canvasId
                 LEFT JOIN zp_canvas_items AS parentKPI ON zp_canvas_items.kpi = parentKPI.id
                 LEFT JOIN zp_canvas_items AS parentGoal ON zp_canvas_items.parent = parentGoal.id
@@ -640,6 +640,53 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+            return $values;
+        }
+
+        public function getAllAvailableKPIs($parentProject)
+        {
+            $sql = "SELECT
+                        zp_canvas_items.id,
+                        zp_canvas_items.description,
+                        project.name as projectName,
+                        board.title AS boardTitle,
+
+
+                        parentProject.name as parentProjectName,
+                        parentBoards.title as parentBoardTitle,
+                        parentKPI.id as parentKPIId,
+                        parentKPI.description AS parentKPIDescription
+
+                FROM
+                zp_canvas_items
+                LEFT JOIN zp_canvas AS board ON board.id = zp_canvas_items.canvasId
+                LEFT JOIN zp_projects AS project ON board.projectId = project.id
+
+                LEFT JOIN zp_projects AS parentProject ON project.parent = parentProject.id
+                LEFT JOIN zp_canvas AS parentBoards ON parentBoards.projectId = parentProject.id
+                LEFT JOIN zp_canvas_items AS parentKPI ON parentKPI.canvasId = parentBoards.id
+
+                WHERE board.projectId = :id AND
+                      (project.type = 'strategy' OR project.type = 'program' OR
+                           parentProject.type = 'strategy' OR parentProject.type = 'program' )
+
+                ORDER BY board.id
+                ";
+
+            // programs
+
+
+            // project
+                //boards
+                   //goals
+
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':id', $parentProject, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -802,9 +849,9 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
-            $stmn->bindValue(':assumptions', $values['assumptions'], PDO::PARAM_STR);
-            $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
-            $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
+            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);

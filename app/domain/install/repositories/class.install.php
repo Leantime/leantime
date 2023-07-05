@@ -84,7 +84,8 @@ namespace leantime\domain\repositories {
             20115,
             20116,
             20117,
-            20118
+            20118,
+            20120
         );
 
         /**
@@ -1484,8 +1485,7 @@ namespace leantime\domain\repositories {
 
         public function update_sql_20120(): bool|array {
 
-
-              $errors = array();
+           $errors = array();
 
             $sql = [
 
