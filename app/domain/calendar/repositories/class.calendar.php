@@ -388,8 +388,14 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':allDay', $values['allDay'], PDO::PARAM_STR);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+            if($stmn->execute()){
+                $id = $this->db->database->lastInsertId();
+                $stmn->closeCursor();
+                return $id;
+            }else{
+                $stmn->closeCursor();
+                return false;
+            }
         }
 
         public function getEvent($id)
