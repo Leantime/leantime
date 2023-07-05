@@ -26,7 +26,7 @@ namespace leantime\domain\controllers {
         {
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
             $this->canvasRepo = new $canvasRepoName();
-            $this->projectService = new \leantime\domain\services\projects ();
+            $this->projectService = new \leantime\domain\services\projects();
         }
 
         /**

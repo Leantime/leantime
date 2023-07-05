@@ -105,10 +105,10 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
             if (isset($params['changeItem'])) {
-                if (isset($params['itemId']) && !empty($params['itemId'])) {
-                    if (isset($params['description']) && !empty($params['description'])) {
-                        $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
 
+                if (isset($params['itemId']) && !empty($params['itemId'])) {
+                    if (isset($params['title']) && !empty($params['title'])) {
                         $canvasItem = array(
                             'box' => $params['box'],
                             'author' => $_SESSION['userdata']['id'],
@@ -120,7 +120,7 @@ namespace leantime\domain\controllers {
                             'currentValue' => $params['currentValue'],
                             'endValue' => $params['endValue'],
                             'itemId' => $params['itemId'],
-                            'canvasId' => $params['canvasId'],
+                            'canvasId' => $currentCanvasId,
                             'parent' => $params['parent'] ?? null,
                             "id" => $params['itemId'],
                             'kpi' => $params['kpi'] ?? '',
@@ -179,11 +179,11 @@ namespace leantime\domain\controllers {
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
-
-                        $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
+
+                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                 } else {
                     if (isset($_POST['title']) && !empty($_POST['title'])) {
 
@@ -197,7 +197,7 @@ namespace leantime\domain\controllers {
                             'startValue' => $params['startValue'],
                             'currentValue' => $params['currentValue'],
                             'endValue' => $params['endValue'],
-                            'canvasId' => $params['canvasId'],
+                            'canvasId' => $currentCanvasId,
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
                             'startDate' => $this->language->getISODateString($params['startDate']),
@@ -236,11 +236,11 @@ namespace leantime\domain\controllers {
                         $this->projectService->notifyProjectUsers($notification);
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
-
-                        $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $id);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
+
+                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $id);
                 }
             }
 

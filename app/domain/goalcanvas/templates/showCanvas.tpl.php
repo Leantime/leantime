@@ -8,6 +8,7 @@ defined('RESTRICTED') or die('Restricted access');
 
 $canvasName = 'goal';
 $elementName = 'goal';
+
 ?>
 
 <?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
@@ -58,7 +59,7 @@ $elementName = 'goal';
 
                                         <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
                                                class="<?=$canvasName ?>CanvasModal"
-                                               data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
+                                               data="item_<?=$row['id'] ?>"><?php $this->e($row['title'] ?? $row["description"] ?? '');?></a></h4>
                                         <br />
                                         <?=$this->escape($row["assumptions"]) ?>
                                         <br />
