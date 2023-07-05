@@ -3,6 +3,7 @@
         <h1><?php echo $this->language->__("headlines.update_database"); ?></h1>
     </div>
 </div>
+<?php echo $this->displayInlineNotification(); ?>
 <div class="regcontent"  id="login">
     <p><?php echo $this->language->__("text.new_db_version"); ?></p><br />
 
