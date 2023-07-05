@@ -1,9 +1,10 @@
 
 <div align="center">
-<a href="https://leantime.io"><img src="https://cloud.leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
+<a href="https://leantime.io"><img src="https://leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
 
 
 ### Leantime&trade; ###
+
 Leantime is a strategic open source project management system for innovative companies and teams looking to go from start to finish. Built for the non-project manager, we combine the plans and the work while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Notion, and Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
@@ -15,11 +16,11 @@ Leantime is a strategic open source project management system for innovative com
 
   ![alt text](public/images/Screenshots/ProjectDashboard.png "Dashboard")
 
-
 </div>
 <br /><br />
 
 ## Features: ##
+
 * Task management using kanban boards, table and calendar views + sprint management
 * Subtask management & dependencies
 * Idea boards & idea kanban boards
@@ -61,6 +62,10 @@ Leantime is a strategic open source project management system for innovative com
 
 ### Installation (Production) ###
 
+There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the offically supported Docker image.
+
+#### Local Production Installation ####
+
 * Download latest release package
 * Create an empty MySQL database
 * Upload entire directory to your server 
@@ -70,7 +75,30 @@ Leantime is a strategic open source project management system for innovative com
 * Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
 
+#### Production Installation via Docker ####
+
+We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
+To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
+
+```
+docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
+-e LEAN_DB_HOST=mysql_leantime \
+-e LEAN_DB_USER=admin \
+-e LEAN_DB_PASSWORD=321.qwerty \
+-e LEAN_DB_DATABASE=leantime \
+-e LEAN_EMAIL_RETURN=changeme@local.local \
+--name leantime leantime/leantime:latest
+```
+
+You can set any of the config variables in `config/configuration.php` when running the docker command.
+
+Once started you can go to `<yourdomain.com>/install` and run the installation script.
+
 ### Installation (Development) ###
+
+There are two ways to install a development setup of LeanTime. The first (but most techical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
+
+#### Local Development Installation ####
 
 * Install composer and npm
 * Clone repository to your local server
@@ -93,30 +121,16 @@ to load Javascript dependencies and finally run the grunt task to create the com
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
 
-### Installation via Docker ###
+#### Development Installation via Docker ####
 
-We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
-To run the image enter your MySQL credentials and execute. You can pass in all the configuration variables from .env
+For development, we use a dockerized development environment. You will need to have ``docker``, ``docker compose``, ``make``, ``composer``, ``git`` and ``npm`` installed.
 
-```
-docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
--e LEAN_DB_HOST=mysql_leantime \
--e LEAN_DB_USER=admin \
--e LEAN_DB_PASSWORD=321.qwerty \
--e LEAN_DB_DATABASE=leantime \
--e LEAN_EMAIL_RETURN=changeme@local.local \
---name leantime leantime/leantime:latest
-```
+* Notes for Windows Environments:
+    - Run all commands within the git bash terminal in order to utilize unix specific commands
+    - If installing php from a zip file, make sure to configure php.ini
+    It does not exist initially, so copy C:\php\php.ini-development to C:\php\php.ini. You will also need to edit php.ini in a text editor and enable all needed extentions for the build process. You can find these by running the make commands and looking for any extensions that error out as missing. You can enable them by seaching php.ini for the extension that will look like: `;extension=gd` and removing the semicolon. 
 
-You can set any of the config variables in `config/configuration.php` when running the docker command.
-
-Once started you can go to `<yourdomain.com>/install` and run the installation script.
-
-
-### Running Locally
-
-For development, we use a dockerized development environment. You will need to have
-``docker``, ``docker compose``, ``make``, ``composer`` and ``npm`` installed. to run the application for development, in the root of this repository, run a primer with
+In order to build the development docker image, in the root of this repository, run a primer with
 
 ```make clean build```
 
@@ -126,7 +140,7 @@ afterwards, run
 
 this will start the development server on port 8080.
 
-The dev environment  provides a mysql server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
+The dev environment provides a mysql server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
 
 * [http://localhost:8080](http://localhost:8080) : leantime
 * [http://localhost:8081](http://localhost:8081) : maildev - to check emails sent
@@ -141,12 +155,14 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 
 * Make sure to take a backup of your database and files
 * Replace all files in your directory with the updated version
-* If there were any database changes, the system will redirect your to `<yourdomain.com>/update`
+* If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
 
 ## LICENSE Exceptions ##
+
 This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which merely make function calls to the Leantime Software, and for that purpose include it by reference shall not be considered modifications of the software.
 
 ### Support ###
+
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Forum [https://community.leantime.io](https://community.leantime.io)
 * Discussions on [Discord](https://discord.gg/4zMzJtAq9z)
