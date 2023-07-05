@@ -785,7 +785,7 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO zp_canvas_items (
                         description,
-                             title,
+                            title,
                         assumptions,
                         data,
                         conclusion,
@@ -811,11 +811,11 @@ namespace leantime\domain\repositories {
                         startValue,
                         currentValue,
                         endValue,
-                             parent,
-                             tags
+                            parent,
+                            tags
                 ) VALUES (
                         :description,
-                          :title,
+                        :title,
                         :assumptions,
                         :data,
                         :conclusion,
@@ -841,8 +841,8 @@ namespace leantime\domain\repositories {
                         :startValue,
                         :currentValue,
                         :endValue,
-                          :parent,
-                          :tags
+                        :parent,
+                        :tags
                 )";
 
             $stmn = $this->db->database->prepare($query);
