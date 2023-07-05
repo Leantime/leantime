@@ -96,7 +96,7 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 
 ### Installation (Development) ###
 
-There are two ways to install a develoment setup of LeanTime. The first (but most techical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
+There are two ways to install a development setup of LeanTime. The first (but most techical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
 
 #### Local Development Installation ####
 
