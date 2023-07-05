@@ -7,6 +7,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core\controller;
+    use leantime\domain\repositories\queue as QueueRepo;
 
     class dashboard extends controller
     {
@@ -25,7 +26,7 @@ namespace leantime\domain\controllers {
         {
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
             $this->canvasRepo = new $canvasRepoName();
-            $this->projectService = new \leantime\domain\services\projects ();
+            $this->projectService = new \leantime\domain\services\projects();
         }
 
         /**
@@ -273,7 +274,7 @@ namespace leantime\domain\controllers {
                             $mailer->setHtml($message);
 
                             // New queuing messaging system
-                            $queue = new repositories\queue();
+                            $queue = new QueueRepo();
                             $queue->queueMessageToUsers(
                                 $users,
                                 $message,

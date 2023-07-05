@@ -104,30 +104,29 @@ namespace leantime\domain\controllers {
 
         public function post($params)
         {
-
             if (isset($params['changeItem'])) {
-                if (isset($params['itemId']) && !empty($params['itemId'])) {
-                    if (isset($params['description']) && !empty($params['description'])) {
-                        $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
 
+                if (isset($params['itemId']) && !empty($params['itemId'])) {
+                    if (isset($params['title']) && !empty($params['title'])) {
                         $canvasItem = array(
                             'box' => $params['box'],
                             'author' => $_SESSION['userdata']['id'],
                             'title' => $params['title'],
-                            'description' => $params['description'],
+                            'description' => $params['description'] ?? '',
                             'status' => $params['status'],
                             'relates' => '',
                             'startValue' => $params['startValue'],
                             'currentValue' => $params['currentValue'],
                             'endValue' => $params['endValue'],
                             'itemId' => $params['itemId'],
-                            'canvasId' => $params['canvasId'],
-                            'parent' => $params['parent'],
+                            'canvasId' => $currentCanvasId,
+                            'parent' => $params['parent'] ?? null,
                             "id" => $params['itemId'],
                             'kpi' => $params['kpi'] ?? '',
                             'startDate' => $this->language->getISODateString($params['startDate']),
                             'endDate' => $this->language->getISODateString($params['endDate']),
-                            'setting' => $params['setting'],
+                            'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? ''
                         );
@@ -148,7 +147,6 @@ namespace leantime\domain\controllers {
                             $canvasItem['milestoneId'] = $params['existingMilestone'];
                         }
 
-
                         $this->canvasRepo->editCanvasItem($canvasItem);
 
                         $comments = $this->commentsRepo->getComments('goalcanvasitem', $params['itemId']);
@@ -161,7 +159,7 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success');
 
                         $subject = $this->language->__('email_notifications.canvas_board_edited');
-                        $actual_link = BASE_URL . '/strategyPro/editCanvasItem/' . (int)$params['itemId'];
+                        $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$params['itemId'];
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_update_message'),
                             $_SESSION['userdata']['name'],
@@ -181,11 +179,11 @@ namespace leantime\domain\controllers {
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
-
-                        $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
+
+                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                 } else {
                     if (isset($_POST['title']) && !empty($_POST['title'])) {
 
@@ -193,18 +191,18 @@ namespace leantime\domain\controllers {
                             'box' => $params['box'],
                             'author' => $_SESSION['userdata']['id'],
                             'title' => $params['title'],
-                            'description' => $params['description'],
+                            'description' => $params['description'] ?? '',
                             'status' => $params['status'],
                             'relates' => '',
                             'startValue' => $params['startValue'],
                             'currentValue' => $params['currentValue'],
                             'endValue' => $params['endValue'],
-                            'canvasId' => $params['canvasId'],
-                            'parent' => $params['parent'],
+                            'canvasId' => $currentCanvasId,
+                            'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
                             'startDate' => $this->language->getISODateString($params['startDate']),
                             'endDate' => $this->language->getISODateString($params['endDate']),
-                            'setting' => $params['setting'],
+                            'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? ''
                         );
@@ -215,7 +213,7 @@ namespace leantime\domain\controllers {
                         $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully created', 'success');
 
                         $subject = $this->language->__('email_notifications.canvas_board_item_created');
-                        $actual_link = BASE_URL . '/strategyPro/editCanvasItem/' . (int)$params['itemId'];
+                        $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$params['itemId'];
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_created_message'),
                             $_SESSION['userdata']['name'],
@@ -238,11 +236,11 @@ namespace leantime\domain\controllers {
                         $this->projectService->notifyProjectUsers($notification);
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
-
-                        $this->tpl->redirect(BASE_URL . '/strategyPro/editCanvasItem/' . $id);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
+
+                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $id);
                 }
             }
 
@@ -261,7 +259,7 @@ namespace leantime\domain\controllers {
                     $values['id'] = $commentId;
 
                     $subject = $this->language->__('email_notifications.canvas_board_comment_created');
-                    $actual_link = BASE_URL . '/strategyPro/editCanvasItem/' . (int)$_GET['id'];
+                    $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$_GET['id'];
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item__comment_created_message'),
                         $_SESSION['userdata']['name']
@@ -281,7 +279,7 @@ namespace leantime\domain\controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    $this->tpl->redirect(BASE_URL . '/strategyPro/editCanvasItem/' . $_GET['id']);
+                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
                 }
             }
 
