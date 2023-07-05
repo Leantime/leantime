@@ -31,8 +31,6 @@ $project = $this->get('project');
             </ul>
 
             <div id="projectdetails">
-
-
                 <form action="" method="post" class="stdform">
 
                     <div class="row-fluid">
@@ -62,7 +60,17 @@ $project = $this->get('project');
 
                                 </div>
                             </div>
+                            <div class="row-fluid padding-top">
+                                <?php if ($project['id'] != '') : ?>
+                                    <div class="pull-right padding-top">
+                                        <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__('buttons.delete'); ?></a>
+                                    </div>
+                                <?php endif; ?>
+                                <input type="submit" name="save" id="save" class="button" value="<?php echo $this->__('buttons.save'); ?>" class="button" />
+
+                            </div>
                         </div>
+
                         <div class="span4">
 
                             <?php $this->dispatchTplEvent("beforeClientPicker", $project) ?>
@@ -126,16 +134,9 @@ $project = $this->get('project');
                             </div>
 
                         </div>
-                    </div>
-                    <div class="row-fluid padding-top">
-                        <?php if ($project['id'] != '') : ?>
-                            <div class="pull-right padding-top">
-                                <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__('buttons.delete'); ?></a>
-                            </div>
-                        <?php endif; ?>
-                        <input type="submit" name="save" id="save" class="button" value="<?php echo $this->__('buttons.save'); ?>" class="button" />
 
                     </div>
+
                 </form>
             </div>
         </div>

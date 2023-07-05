@@ -4016,6 +4016,7 @@ h3.todaysDate {
     overflow: hidden;
     background: var(--kanban-col-title-bg);
     border-radius: var(--box-radius);
+    min-height:100px;
 }
 
 .verticalTab .content {
