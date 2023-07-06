@@ -3,6 +3,11 @@
     $provider = $this->get("provider");
     $leantimeFields = $this->get("leantimeFields");
     $numberOfFields = $this->get("maxFields");
+    $flags = $this->get("flags");
+    $urlAppend = '';
+    if(isset($integrationId) && is_numeric($integrationId)) {
+        $urlAppend = "&integrationId=".$integrationId;
+    }
 ?>
 
 <div class="pageheader">
@@ -24,36 +29,42 @@
         <h3>Map and Convert Fields Entity Here</h3>
         <?=$provider->name ?><br />
 
-        <p>Please mape the fields from the CSV file to the leantime fields</p>
+        <p>Please map the fields from the CSV file to the leantime fields</p>
 
-        <table style="width:300px;">
-            <thead>
-            <tr>
-                <td>Source Field</td>
-                <td>Leantime Field</td>
-            </tr>
-            </thead>
-            <tbody>
-                <?php foreach($providerFields as $key => $entity){?>
-                    <tr>
-                        <td><?=$entity ?> </td>
-                        <td>
-                            <select name="field_<?=md5($entity)?>">
-                                <?php foreach($leantimeFields as $key => $fields){?>
-                                    <option value="<?=$key ?>"
-                                        <?php
-                                        if($entity == $fields['name']) echo" selected='selected' ";
-                                        ?>
-                                    ><?=$fields['name'] ?></option>
-                                <?php } ?>
-                            </select>
-                        </td>
-                    </tr>
+        <?php foreach($flags as $flag){?>
+            <p style="color: red;"><?= $flag ?></p>
+        <?php } ?>
 
-                <?php } ?>
-            </tbody>
 
-        </table>
+        <form method="post" action="<?=BASE_URL?>/connector/integration/?provider=<?=$provider->id?>&step=import<?=$urlAppend ?>">
+            <table style="width:300px;">
+                <thead>
+                <tr>
+                    <td>Source Field</td>
+                    <td>Leantime Field</td>
+                </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($providerFields as $key => $entity){?>
+                        <tr>
+                            <td><?=$entity ?> </td>
+                            <td>
+                                <select name="field_<?=md5($entity)?>">
+                                    <?php foreach($leantimeFields as $key2 => $fields) {?>
+                                        <option value="<?=$entity ?>|<?=$key2 ?>"
+                                            <?php
+                                            if($entity == $fields['name']) echo" selected='selected' ";
+                                            ?>
+                                        ><?=$fields['name'] ?></option>
+                                    <?php } ?>
+                                </select>
+                            </td>
+                        </tr>
+
+                    <?php } ?>
+                </tbody>
+
+            </table>
 
             <input type="submit" value="Next" class="btn"/>
         </form>

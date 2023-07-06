@@ -56,6 +56,7 @@ namespace leantime\plugins\controllers {
             $records = $csv->getRecords(); //returns all the CSV records as an Iterator object
 
             $rows = array();
+
             foreach ($records as $offset => $record) {
                 $rows[] = $record;
             }
@@ -64,7 +65,8 @@ namespace leantime\plugins\controllers {
             $integration->fields = implode(",", $header);
 
             //Temporarily store results in meta
-            $integration->meta = serialize($rows);
+
+            $_SESSION['csv_records'] = iterator_to_array($records);
 
             $integrationService = new services\connector\integrations();
             $id = $integrationService->create($integration);

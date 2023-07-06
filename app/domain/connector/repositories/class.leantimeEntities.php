@@ -24,7 +24,6 @@ namespace leantime\domain\repositories\connector {
                         "headline" =>       ["name" => "headline", "accepts" => fieldTypes::$shortString, "default" => ''],
                         "description" =>    ["name" => "description", "accepts" => fieldTypes::$text, "default" => ''],
                         "type" =>           ["name" => "type", "accepts" => fieldTypes::$shortString, "restrict" => array("bug", "task", "story"), "default" => ''],
-                        "userId" =>         ["name" => "Author", "accepts" => fieldTypes::$email, "default" => ""],
                         "editorId" =>       ["name" => "Editor", "accepts" => fieldTypes::$email, "default" => ""],
                         "priority" =>       ["name" => "Priority", "accepts" => fieldTypes::$shortString, "restrict" => array("high"), "default" => ''],
                         "date" =>           ["name" => "Created On", "accepts" => fieldTypes::$dateTime, "default" => ""],
@@ -41,7 +40,19 @@ namespace leantime\domain\repositories\connector {
                         "projectName" =>    ["name" => "Project", "accepts" => fieldTypes::$shortString, "default" => ""],
                     )
                 ),
-                "projects" => array("name" => "Projects"),
+                "projects" => array(
+                    "name" => "Projects",
+                    "fields" => array(
+                        "name" => ["name" => "Project Name"],
+                        'details' => ["name" => "Details"],
+                        'clientId' => ["name" => "Client"],
+                        'hourBudget' => ["name" => "Hour Budget"],
+                        'assignedUsers' => ["name" => "Assigned Users"],
+                        'dollarBudget' => ["name" => "Dollar Budget"],
+                        'state' => ["name" => "State"],
+                        'psettings' => ["name" => "Permission Settings"],
+                        )
+                ),
                 "users" => array("name" => "Users"),
                 "ideas" => array("name" => "Ideas"),
                 "goals" => array("name" => "Goals"),

@@ -838,6 +838,10 @@ namespace leantime\domain\services {
             return $this->projectRepository->setPicture($file, $project);
         }
 
+        public function getAllProjects(){
+            return $this->projectRepository->getAll();
+        }
+
         public function getProjectSetupChecklist($projectId) {
 
             $progressSteps = array(

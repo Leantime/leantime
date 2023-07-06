@@ -66,6 +66,28 @@ class csvImport extends provider implements providerIntegration {
 
     public function getValues(entity $entity){
 
+        $integrationMeta = $_SESSION['csvImporter']['meta'] ?? '';
+
+        if (!empty($integrationMeta)) {
+            $rows = unserialize($integrationMeta);
+
+            // Removing the first row if it contains headers
+            // can be returned or dealt with later on for field matching
+            if (count($rows) > 0) {
+                $headers = array_shift($rows);
+            }
+            return $rows;
+        }
+
+
+
+        return [10, 20];
+
+    }
+    public function geValues(){
+
+        return $_SESSION['csv_records'] ?? [];
+
     }
 
 
