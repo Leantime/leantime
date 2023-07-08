@@ -114,6 +114,8 @@ $canvasProgress = $this->get('canvasProgress');
             </div>
         </div>
     </div>
+
+    <?php if($login::userIsAtLeast($roles::$editor)){?>
     <div class="row">
         <div class="col-md-12">
             <div class="maincontentinner">
@@ -153,6 +155,7 @@ $canvasProgress = $this->get('canvasProgress');
             </div>
         </div>
     </div>
+    <?php } ?>
 
 </div>
 

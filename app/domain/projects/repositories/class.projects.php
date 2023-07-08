@@ -813,6 +813,50 @@ namespace leantime\domain\repositories {
             return false;
         }
 
+        public function isUserMemberOfProject($userId, $projectId)
+        {
+
+            $userRepo = new users();
+            $user = $userRepo->getUser($userId);
+
+            if ($user === false) {
+                return false;
+            }
+
+            //admins owners and managers can access everything
+
+
+            $project = $this->getProject($projectId);
+
+            if ($project === false) {
+                return false;
+            }
+
+
+            //Select users are allowed to see project
+            $query = "SELECT
+				zp_relationuserproject.userId,
+				zp_relationuserproject.projectId,
+				zp_projects.name
+			FROM zp_relationuserproject JOIN zp_projects
+				ON zp_relationuserproject.projectId = zp_projects.id
+			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if ($values && count($values) > 1) {
+                return true;
+            }
+
+            return false;
+        }
+
         public function getProjectUserRelation($id)
         {
 
