@@ -294,6 +294,7 @@ namespace leantime\domain\services {
 
             $projectHierarchy = self::dispatch_filter('beforeLoadingProjects', $projectHierarchy);
 
+
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId, $projectHierarchy);
 
             $projectHierarchy = self::dispatch_filter('beforePopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));

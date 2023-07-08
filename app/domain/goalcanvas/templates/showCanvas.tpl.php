@@ -59,9 +59,9 @@ $elementName = 'goal';
 
                                         <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
                                                class="<?=$canvasName ?>CanvasModal"
-                                               data="item_<?=$row['id'] ?>"><?php $this->e($row['title'] ?? $row["description"] ?? '');?></a></h4>
+                                               data="item_<?=$row['id'] ?>"><?php $this->e($row['title']);?></a></h4>
                                         <br />
-                                        <?=$this->escape($row["assumptions"]) ?>
+                                        <?=$this->escape($row["description"]) ?>
                                         <br />
 
                                         <?php

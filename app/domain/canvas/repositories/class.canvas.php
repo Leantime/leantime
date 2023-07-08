@@ -232,6 +232,7 @@ namespace leantime\domain\repositories {
                         zp_canvas.title,
                         zp_canvas.author,
                         zp_canvas.created,
+                        zp_canvas.description,
                         t1.firstname AS authorFirstname,
                         t1.lastname AS authorLastname,
                         count(zp_canvas_items.id) AS boxItems
@@ -304,12 +305,14 @@ namespace leantime\domain\repositories {
 
             $query = "INSERT INTO zp_canvas (
                         title,
+                       description,
                         author,
                         created,
                         type,
                         projectId
                 ) VALUES (
                         :title,
+                          :description,
                         :author,
                         NOW(),
                         '" . static::CANVAS_NAME . "canvas',
@@ -320,6 +323,7 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
 
 
@@ -334,12 +338,14 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE zp_canvas SET
-                        title = :title
+                        title = :title,
+                        description = :description
                 WHERE id = :id";
 
             $stmn = $this->db->{'database'}->prepare($query);
 
             $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':id', $values['id'], PDO::PARAM_INT);
 
             $result = $stmn->execute();

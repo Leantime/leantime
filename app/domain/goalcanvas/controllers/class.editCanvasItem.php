@@ -91,7 +91,6 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('comments', $comments);
 
-            $this->tpl->assign('availableKPIs', $this->goalService->getParentKPIs($_SESSION['currentProject']));
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION['currentProject']));
 
             $this->tpl->assign('canvasItem', $canvasItem);

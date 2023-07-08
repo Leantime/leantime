@@ -40,7 +40,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div style="width:1000px">
 
-  <h1 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h1>
+  <h1><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h1>
 
     <?php echo $this->displayNotification(); ?>
 
@@ -59,21 +59,27 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <label><?=$this->__("label.what_is_your_goal") ?></label>
         <input type="text" name="title" value="<?php $this->e($canvasItem['title']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
 
-        <?php if (!empty($statusLabels)) { ?>
-            <label><?=$this->__("label.status") ?></label>
-            <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br /><br />
-        <?php } else { ?>
-            <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
-        <?php } ?>
 
-        <?php if (!empty($relatesLabels)) { ?>
+
+
+
+
+             <?php if (!empty($relatesLabels)) { ?>
             <label><?=$this->__("label.relates") ?></label>
             <select name="relates"  style="width: 50%" id="relatesCanvas">
             </select><br />
         <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
         <?php } ?>
+                <br />
+                <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i> <?=$this->__("Metrics") ?></h4>
+
+
+                <?php $this->dispatchTplEvent('beforeMeasureGoalContainer', $canvasItem); ?>
+                <div id="measureGoalContainer">
+                    <label>How will you measure this objective. What metric will you be using.</label>
+                    <input type="text" name="description" value="<?=$canvasItem['description'] ?>" style="width:100%"/><br />
+                </div>
 
                 <div class="row">
                     <div class="col-md-3">
@@ -121,6 +127,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
             <div class="col-md-4">
 
+
                 <?php if (!empty($statusLabels)) { ?>
                     <label><?=$this->__("label.status") ?></label>
                     <select name="status" style="width: 50%" id="statusCanvas">
@@ -130,32 +137,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <?php } ?>
 
 
-                <label>Reports into KPI</label>
-                <select id="kpi" name="kpi">
-                    <option value="">No KPI to report into</option>
-                    <?php
-                    $lastBoard = '';
-                    $i = 0;
-                    foreach($this->get("availableKPIs") as $parent) {
 
-                    if($canvasItem['id'] !==  $parent['id']) {
-                    if($parent["board"] != $lastBoard){
-                    $lastBoard = $parent["board"];
-                    if($i>0){
-                        echo "</optgroup>";
-                    }
-                    $i++;
-                    ?>
-
-                    <optgroup label="<?=$parent["project"]?> // <?=$parent["board"]?>">
-                        <?php } ?>
-                        <option value="<?=$parent["id"] ?>" <?php if($canvasItem['kpi'] == $parent["id"]) echo "selected='selected'";?>><?=$parent["title"]; ?></option>
-                        <?php } ?>
-
-                        <?php } ?>
-                    </optgroup>
-                </select>
-                <br /><br />
 
 
 

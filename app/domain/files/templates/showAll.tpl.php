@@ -2,8 +2,13 @@
 /** @var leantime\services\auth $login */
 /** @var leantime\core\language $language */
 ?>
+
+
+
+
+
 <div id="fileManager">
-    <div >
+    <div>
 
         <?php echo $this->displayNotification() ?>
 

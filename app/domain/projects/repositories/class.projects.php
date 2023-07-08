@@ -140,17 +140,18 @@ namespace leantime\domain\repositories {
 				    project.menuType,
 				    project.type,
 				    project.parent,
-					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
+					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
 					parent.id AS parentId,
 					parent.name as parentName,
 					comments.status as status
-				FROM zp_relationuserproject AS relation
-				LEFT JOIN zp_projects as project ON project.id = relation.projectId
+				FROM zp_projects as project
+				LEFT JOIN zp_relationuserproject AS relation ON project.id = relation.projectId
 				LEFT JOIN zp_projects as parent ON parent.id = project.parent
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				LEFT JOIN zp_user as `user` ON relation.userId = user.id
 				LEFT JOIN zp_comment as comments ON comments.id = (
                       SELECT
 						id
@@ -158,7 +159,16 @@ namespace leantime\domain\repositories {
                       WHERE module = 'project' AND moduleId = project.id
                       ORDER BY date DESC LIMIT 1
                     )
-				WHERE relation.userId = :id AND (project.active > '-1' OR project.active IS NULL)";
+                LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
+				WHERE
+
+				(       relation.userId = :id
+				        OR project.psettings = 'all'
+				        OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
+				    )
+
+				    AND (project.active > '-1' OR project.active IS NULL)
+				    ";
 
             if ($status == "open") {
                 $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
@@ -179,7 +189,6 @@ namespace leantime\domain\repositories {
 					project.id
 				ORDER BY clientName, parentName, project.name";
             }
-
 
             $stmn = $this->db->database->prepare($query);
             if ($userId == '') {
@@ -212,7 +221,7 @@ namespace leantime\domain\repositories {
 					project.dollarBudget,
 				    project.menuType,
 				    project.type,
-					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
+					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
 					IF(favorite.id IS NULL, false, true) as isFavorite
@@ -224,9 +233,8 @@ namespace leantime\domain\repositories {
 				WHERE
 				    (   relation.userId = :id
 				        OR project.psettings = 'all'
-				        OR (project.psettings = 'client' AND project.clientId = :clientId)
+				        OR (project.psettings = 'clients' AND project.clientId = :clientId)
 				    )
-
 				  AND (project.active > '-1' OR project.active IS NULL)";
 
             if ($status == "open") {
