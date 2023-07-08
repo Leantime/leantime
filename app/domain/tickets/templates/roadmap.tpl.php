@@ -130,7 +130,15 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     <?php if (count($milestones) > 0) {?>
         var tasks = [
 
-            <?php foreach ($milestones as $mlst) {
+            <?php
+            $lastMilestoneSortIndex = array();
+            //Set sort index first
+            foreach ($milestones as $mlst) {
+                if($mlst->type == "milestone") {
+                    $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex;
+                }
+            }
+            foreach ($milestones as $mlst) {
 
                 $headline = $this->__('label.' . strtolower($mlst->type)) .": ".$mlst->headline;
                 if($mlst->type == "milestone"){
@@ -143,8 +151,17 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                 }
 
                 $sortIndex = 0;
+
                 if($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)){
-                    $sortIndex = $mlst->sortIndex;
+                    if($mlst->type == "milestone") {
+                        $sortIndex = $lastMilestoneSortIndex[$mlst->id].".0";
+                    }else{
+                        if($mlst->milestoneid != 0) {
+                            $sortIndex = $lastMilestoneSortIndex[$mlst->milestoneid] . "." . $mlst->sortIndex;
+                        }else{
+                            $sortIndex = "0".".".$mlst->sortIndex;
+                        }
+                    }
                 }
 
                 $dependencyList = array();
