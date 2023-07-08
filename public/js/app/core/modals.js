@@ -19,6 +19,8 @@ function openModal() {
                 }
             },
             beforeShowCont: function () {
+
+
                 jQuery(".showDialogOnLoad").show();
             },
             afterShowCont: function () {
@@ -53,3 +55,4 @@ jQuery(document).ready(function() {
 window.addEventListener("hashchange", function () {
     openModal();
 });
+

@@ -323,7 +323,7 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':title', $values['title'], PDO::PARAM_STR);
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_STR);
-            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
 
 

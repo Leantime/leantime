@@ -103,6 +103,47 @@ namespace leantime\domain\controllers {
 
         public function post($params)
         {
+
+            if (isset($params['comment'])) {
+                $values = array(
+                    'text' => $params['text'],
+                    'date' => date('Y-m-d H:i:s'),
+                    'userId' => ($_SESSION['userdata']['id']),
+                    'moduleId' => $_GET['id'],
+                    'commentParent' => ($params['father'])
+                );
+
+                if($params['text'] != '') {
+                    $commentId = $this->commentsRepo->addComment($values, 'goalcanvasitem');
+                    $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
+                    $values['id'] = $commentId;
+
+                    $subject = $this->language->__('email_notifications.canvas_board_comment_created');
+                    $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$_GET['id'];
+                    $message = sprintf(
+                        $this->language->__('email_notifications.canvas_item__comment_created_message'),
+                        $_SESSION['userdata']['name']
+                    );
+
+                    $notification = new models\notifications\notification();
+                    $notification->url = array(
+                        "url" => $actual_link,
+                        "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                    );
+                    $notification->entity = $values;
+                    $notification->module = 'goalcanvas';
+                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->subject = $subject;
+                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->message = $message;
+
+                    $this->projectService->notifyProjectUsers($notification);
+
+                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
+                }
+            }
+
+
             if (isset($params['changeItem'])) {
                 $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
 
@@ -243,44 +284,6 @@ namespace leantime\domain\controllers {
                 }
             }
 
-            if (isset($params['comment'])) {
-                $values = array(
-                    'text' => $params['text'],
-                    'date' => date('Y-m-d H:i:s'),
-                    'userId' => ($_SESSION['userdata']['id']),
-                    'moduleId' => $_GET['id'],
-                    'commentParent' => ($params['father'])
-                );
-
-                if($params['text'] != '') {
-                    $commentId = $this->commentsRepo->addComment($values, 'goalcanvasitem');
-                    $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
-                    $values['id'] = $commentId;
-
-                    $subject = $this->language->__('email_notifications.canvas_board_comment_created');
-                    $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$_GET['id'];
-                    $message = sprintf(
-                        $this->language->__('email_notifications.canvas_item__comment_created_message'),
-                        $_SESSION['userdata']['name']
-                    );
-
-                    $notification = new models\notifications\notification();
-                    $notification->url = array(
-                        "url" => $actual_link,
-                        "text" => $this->language->__('email_notifications.canvas_item_update_cta')
-                    );
-                    $notification->entity = $values;
-                    $notification->module = 'goalcanvas';
-                    $notification->projectId = $_SESSION['currentProject'];
-                    $notification->subject = $subject;
-                    $notification->authorId = $_SESSION['userdata']['id'];
-                    $notification->message = $message;
-
-                    $this->projectService->notifyProjectUsers($notification);
-
-                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
-                }
-            }
 
 
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());

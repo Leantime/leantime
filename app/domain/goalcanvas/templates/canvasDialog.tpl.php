@@ -110,7 +110,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <br />
                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                     <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-                    <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();"/>
+                    <button type="submit"  class="btn btn-primary" id="saveAndClose" value="closeModal" onclick="leantime.goalCanvasController.setCloseModal();"><?=$this->__("buttons.save_and_close") ?></button>
                 <?php } ?>
 
 

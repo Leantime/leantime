@@ -147,14 +147,9 @@ module.exports = function (grunt) {
         }
         , jshint: {
             options: {
-                curly: false,
-                eqeqeq: false,
-                eqnull: true,
-                browser: true,
-                laxcomma: true,
-                globals: {
-                    jQuery: true
-                },
+                jshintrc: true,
+
+
                 ignores: [
                 ]
             },
