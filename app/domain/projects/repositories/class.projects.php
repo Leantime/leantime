@@ -1084,17 +1084,31 @@ namespace leantime\domain\repositories {
             }
 
             if ($value !== false && $value['avatar'] != '') {
+
                 $files = new files();
                 $file = $files->getFile($value['avatar']);
 
                 if ($file) {
-                    $return = $file['encName'] . "." . $file['extension'];
+
+                    $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
+                    $type = $file['extension'];
+
+                    return array("filename"=>$filePath, "type"=>"uploaded");
+
+                }else {
+                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $image = $avatar
+                        ->name("🦄")
+                        ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                        ->fontName("Verdana")
+                        ->background('#555555')->color("#fff")
+                        ->generateSvg();
+
+                    return $image;
                 }
 
-                $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
-                $type = $file['extension'];
 
-                return $return;
+
             } elseif ($value !== false && ($value['avatar'] === '' || $value['avatar'] == null)) {
 
                 $imagename = md5($value['name']);

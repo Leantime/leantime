@@ -20,8 +20,12 @@ namespace leantime\domain\controllers {
         {
 
             $notificationService = new services\notifications();
-            $notifications = $notificationService->getAllNotifications($_SESSION['userdata']['id']);
-            $newnotificationCount = $notificationService->getAllNotifications($_SESSION['userdata']['id'], true);
+            $notifications = array();
+            $newnotificationCount = 0;
+            if(isset($_SESSION['userdata'])){
+                $notifications = $notificationService->getAllNotifications($_SESSION['userdata']['id']);
+                $newnotificationCount = $notificationService->getAllNotifications($_SESSION['userdata']['id'], true);
+            }
             $nCount = '';
 
             if (is_array($newnotificationCount)) {
@@ -31,7 +35,12 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('newNotificationCount', $nCount);
             $this->tpl->assign('notifications', $notifications);
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
-            $this->tpl->assign("onTheClock", $this->timesheets->isClocked($_SESSION["userdata"]["id"]));
+
+            if(isset($_SESSION['userdata'])) {
+                $this->tpl->assign("onTheClock", $this->timesheets->isClocked($_SESSION["userdata"]["id"]));
+            }else{
+                $this->tpl->assign("onTheClock", false);
+            }
             $this->tpl->displayPartial("menu.headMenu");
         }
     }

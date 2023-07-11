@@ -57,7 +57,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <label><?=$this->__("label.what_is_your_goal") ?></label>
-        <input type="text" name="title" value="<?php $this->e($canvasItem['title']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
+        <input type="text" name="title" value="<?php $this->e($canvasItem['title']) ?>"  style="width:100%" /><br />
 
 
 
@@ -84,18 +84,18 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <div class="row">
                     <div class="col-md-3">
                         <label>Starting Value</label>
-                        <input type="number" step="0.01" name="startValue" value="<?=$canvasItem['startValue'] ?>" style="width:100%"/>
+                        <input type="number" step="0.01" name="startValue" value="<?=$canvasItem['startValue'] ?>" style="width:105px"/>
                     </div>
                     <div class="col-md-3">
                         <label>Current Value</label>
                         <input type="number" step="0.01" name="currentValue" id="currentValueField" value="<?=$canvasItem['currentValue'] ?>"
                             <?php if($canvasItem['setting'] == 'linkAndReport') { echo "readonly='readonly'";}?>
                             <?php if($canvasItem['setting'] == 'linkAndReport') { echo "data-tippy-content='Current value calculated from child goals'";}?>
-                               style="width:100%"/>
+                               style="width:105px"/>
                     </div>
                     <div class="col-md-3">
                         <label>Goal Value</label>
-                        <input type="number" step="0.01" name="endValue" value="<?=$canvasItem['endValue'] ?>" style="width:100%"/>
+                        <input type="number" step="0.01" name="endValue" value="<?=$canvasItem['endValue'] ?>" style="width:105px"/>
                     </div>
                     <div class="col-md-3">
                         <label>Type</label>
@@ -146,10 +146,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-calendar"></i> Dates</h4>
 
                 <label>Start Date</label>
-                <input type="text" value="<?=$this->getFormattedDateString($canvasItem['startDate']); ?>" name="startDate" class="dates"/>
+                <input type="text" autocomplete="off" value="<?=$this->getFormattedDateString($canvasItem['startDate']); ?>" name="startDate" class="dates"/>
 
                 <label>End Date</label>
-                <input type="text" value="<?=$this->getFormattedDateString($canvasItem['endDate']); ?>" name="endDate" class="dates"/>
+                <input type="text" autocomplete="off" value="<?=$this->getFormattedDateString($canvasItem['endDate']); ?>" name="endDate" class="dates"/>
 
 
                 <?php if ($id !== '') { ?>
@@ -267,6 +267,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
+
+        leantime.ticketsController.initDates();
 
         <?php if (!empty($statusLabels)) { ?>
             new SlimSelect({

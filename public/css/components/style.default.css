@@ -338,7 +338,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
     margin: 0;
     padding: 0;
     vertical-align: baseline;
-    line-height: 21px;
+    line-height: 1.5;
     outline: none;
 }
 
