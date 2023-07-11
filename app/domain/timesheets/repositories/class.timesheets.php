@@ -804,6 +804,10 @@ namespace leantime\domain\repositories {
         public function isClocked($id)
         {
 
+            if(!isset($_SESSION['userdata'])){
+                return false;
+            }
+
             $query = "SELECT
                      zp_punch_clock.id,
                      zp_punch_clock.userId,

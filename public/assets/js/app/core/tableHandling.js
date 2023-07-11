@@ -28,11 +28,11 @@ function naturalSort (a, b) {
 		oFxNcL = !(xN[cLoc] || '').match(ore) && parseFloat(xN[cLoc]) || xN[cLoc] || 0;
 		oFyNcL = !(yN[cLoc] || '').match(ore) && parseFloat(yN[cLoc]) || yN[cLoc] || 0;
 		// handle numeric vs string comparison - number < string - (Kyle Adams)
-		if (isNaN(oFxNcL) !== isNaN(oFyNcL)) return (isNaN(oFxNcL)) ? 1 : -1; 
+		if (isNaN(oFxNcL) !== isNaN(oFyNcL)) return (isNaN(oFxNcL)) ? 1 : -1;
 		// rely on string comparison if different types - i.e. '02' < 2 != '02' < '2'
 		else if (typeof oFxNcL !== typeof oFyNcL) {
-			oFxNcL += ''; 
-			oFyNcL += ''; 
+			oFxNcL += '';
+			oFyNcL += '';
 		}
 		if (oFxNcL < oFyNcL) return -1;
 		if (oFxNcL > oFyNcL) return 1;
@@ -44,20 +44,20 @@ function naturalSort (a, b) {
 The JavaScript Source!! http://javascript.internet.com
 Created by: Robert Nyman | http://robertnyman.com/ */
 function removeHTMLTags(string){
- 	
+
  		var strInputCode = string;
- 		/* 
-  			This line is optional, it replaces escaped brackets with real ones, 
+ 		/*
+  			This line is optional, it replaces escaped brackets with real ones,
   			i.e. < is replaced with < and > is replaced with >
- 		*/	
+ 		*/
  	 	strInputCode = strInputCode.replace(/&(lt|gt);/g, function (strMatch, p1){
  		 	return (p1 == "lt")? "<" : ">";
  		});
- 		
+
  		var strTagStrippedText = strInputCode.replace(/<\/?[^>]+(>|$)/g, "");
 
  		return strTagStrippedText;
- 			
+
 
 }
 
@@ -65,7 +65,7 @@ jQuery(function($) {
 	/*
 	 * Function: fnGetColumnData
 	 * Purpose:  Return an array of table values from a particular column.
-	 * Returns:  array string: 1d data array 
+	 * Returns:  array string: 1d data array
 	 * Inputs:   object:oSettings - dataTable settings object. This is always the last argument past to the function
 	 *           int:iColumn - the id of the column to extract the data from
 	 *           bool:bUnique - optional - if set to false duplicated values are not filtered out
@@ -76,32 +76,32 @@ jQuery(function($) {
 	$.fn.dataTableExt.oApi.fnGetColumnData = function ( oSettings, iColumn, bUnique, bFiltered, bIgnoreEmpty ) {
 		// check that we have a column id
 		if ( typeof iColumn == "undefined" ) return [];
-		
+
 		// by default we only wany unique data
 		if ( typeof bUnique == "undefined" ) bUnique = true;
-		
+
 		// by default we do want to only look at filtered data
 		if ( typeof bFiltered == "undefined" ) bFiltered = true;
-		
+
 		// by default we do not wany to include empty values
 		if ( typeof bIgnoreEmpty == "undefined" ) bIgnoreEmpty = true;
-		
+
 		// list of rows which we're going to loop through
 		var aiRows;
-		
+
 		// use only filtered rows
-		if (bFiltered == true) aiRows = oSettings.aiDisplay; 
+		if (bFiltered == true) aiRows = oSettings.aiDisplay;
 		// use all rows
 		else aiRows = oSettings.aiDisplayMaster; // all row numbers
 
-		// set up data array	
+		// set up data array
 		var asResultData = [];
-		
+
 		for (var i=0,c=aiRows.length; i<c; i++) {
 			iRow = aiRows[i];
 			var aData = this.fnGetData(iRow);
 			var sValue = removeHTMLTags(aData[iColumn]);
-			
+
 			// ignore empty values?
 			if (bIgnoreEmpty == true && sValue.length == 0) {
 
@@ -111,24 +111,10 @@ jQuery(function($) {
                 // else push the value onto the result data array
             }else asResultData.push(sValue);
 		}
-		
+
 		return asResultData;
 	};
 }(jQuery));
-
-
-	function fnCreateSelect( aData )
-	{
-		
-		aData.sort(naturalSort);
-		
-		var r='<select style="width:100%"><option value=""></option>', i, iLen=aData.length;
-		for ( i=0 ; i<iLen ; i++ )
-		{
-			r += '<option value="'+aData[i]+'">'+aData[i]+'</option>';
-		}
-		return r+'</select>';
-	}
 
 	jQuery.fn.dataTableExt.oSort['natural-asc']  = function(a,b) {
 		return naturalSort(a,b);

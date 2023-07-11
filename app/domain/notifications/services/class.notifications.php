@@ -58,7 +58,9 @@ namespace leantime\domain\services {
         {
 
             $dom = new DOMDocument();
-            $dom->loadHTML($content);
+
+            //Content may not be well formatted. Suppress warnings.
+            @$dom->loadHTML($content);
             $links = $dom->getElementsByTagName("a");
 
             $author = $this->userRepository->getUser($authorId);

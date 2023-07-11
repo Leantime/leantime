@@ -10,7 +10,6 @@ if(str_contains($redirectUrl, "showProject")) {
 
 <div class="dropdown-menu projectselector">
     <div class="head">
-
         <?php /* For future use - - - - -
         <div class="searchBar">
             <input type="text" value="" placeholder="Search for project"/>
@@ -18,7 +17,6 @@ if(str_contains($redirectUrl, "showProject")) {
         */ ?>
         <span class="sub"><?=$this->__("menu.current_project") ?></span><br />
         <span class="title"><?php $this->e($_SESSION['currentProjectName']); ?></span>
-
 
     </div>
 
@@ -43,7 +41,6 @@ if(str_contains($redirectUrl, "showProject")) {
 
                     $currentType = $this->get("currentProjectType");
                     $currentProject = $this->get("currentProject");
-
 
 
                 \leantime\core\eventhelpers::dispatch_event('beforeProjectSelectorList', array("projectHierarchy" => $projectHierarchy, "colW"=>$colW, "context"=>$this));

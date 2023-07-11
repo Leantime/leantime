@@ -193,7 +193,12 @@ namespace leantime\domain\controllers\canvas {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $params['itemId']);
+                        $closeModal = '';
+                        if(isset($_POST['submitAction']) && $_POST['submitAction'] == "closeModal"){
+                            $closeModal = "?closeModal=true";
+                        }
+
+                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $params['itemId'].$closeModal);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
@@ -243,7 +248,12 @@ namespace leantime\domain\controllers\canvas {
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
 
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $id);
+                        $closeModal = '';
+                        if(isset($_POST['submitAction']) && $_POST['submitAction'] == "closeModal"){
+                            $closeModal = "?closeModal=true";
+                        }
+
+                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $id.$closeModal);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }

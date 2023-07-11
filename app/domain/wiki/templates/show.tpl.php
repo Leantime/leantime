@@ -147,7 +147,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                                    */?>
                                     </div>
-                                    <?php if ($wikis != false && count($wikis) > 0) {?>
+                                    <?php if ($wikis != false && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
                                         <div class="creationLinks">
                                             <a class="articleModal inlineEdit" href="<?=BASE_URL ?>/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$this->__("link.create_article") ?></a>
                                         </div>

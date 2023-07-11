@@ -4,6 +4,7 @@ const path = require('path');
 const version = pjson.version;
 
 let mix = require('laravel-mix');
+require('laravel-mix-eslint');
 
 mix
     .setPublicPath('public')
@@ -104,6 +105,14 @@ mix
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`)
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
+    .eslint({
+        fix: true,
+        extensions: ['js'],
+        exclude: [
+            'node_modules',
+            'public/assets/js/libs',
+        ],
+    })
     .webpackConfig({
         resolve: {
             alias: {
@@ -113,4 +122,4 @@ mix
                 'fonts': path.resolve(__dirname, 'public/assets/fonts'),
             }
         },
-    })
+    });

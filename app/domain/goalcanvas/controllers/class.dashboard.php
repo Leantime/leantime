@@ -7,6 +7,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core\controller;
+    use leantime\domain\repositories\queue;
     use leantime\domain\repositories\queue as QueueRepo;
 
     class dashboard extends controller
@@ -18,6 +19,7 @@ namespace leantime\domain\controllers {
 
         private $canvasRepo;
         private \leantime\domain\services\projects $projectService;
+        private \leantime\domain\services\goalcanvas $goalService;
 
         /**
          * init - initialize private variables
@@ -27,6 +29,7 @@ namespace leantime\domain\controllers {
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
             $this->canvasRepo = new $canvasRepoName();
             $this->projectService = new \leantime\domain\services\projects();
+            $this->goalService = new \leantime\domain\services\goalcanvas();
         }
 
         /**
@@ -161,7 +164,7 @@ namespace leantime\domain\controllers {
                         $mailer->setHtml($message);
 
                         // New queuing messaging system
-                        $queue = new repositories\queue();
+                        $queue = new queue();
                         $queue->queueMessageToUsers(
                             $users,
                             $message,
@@ -302,7 +305,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
             $this->tpl->assign('disclaimer', $this->canvasRepo->getDisclaimer());
             $this->tpl->assign('allCanvas', $allCanvas);
-            $this->tpl->assign('canvasItems', $this->canvasRepo->getCanvasItemsById($currentCanvasId));
+            $this->tpl->assign('canvasItems', $this->goalService->getCanvasItemsById($currentCanvasId));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION['currentProject']));
 
             if (!isset($_GET['raw'])) {

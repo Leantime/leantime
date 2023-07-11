@@ -294,6 +294,7 @@ namespace leantime\domain\services {
 
             $projectHierarchy = self::dispatch_filter('beforeLoadingProjects', $projectHierarchy);
 
+
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId, $projectHierarchy);
 
             $projectHierarchy = self::dispatch_filter('beforePopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));
@@ -484,7 +485,7 @@ namespace leantime\domain\services {
 
                     unset($_SESSION["projectsettings"]);
 
-                    self::dispatch_event("projects.setCurrentProject");
+                    self::dispatch_event("projects.setCurrentProject", $project);
 
                     return true;
                 } else {
@@ -537,11 +538,35 @@ namespace leantime\domain\services {
             return array();
         }
 
-        public function isUserAssignedToProject($userId, $projectId)
+        /*
+         * Checks if a user has access to a project. Either via direct assignment. Via client assignment or in case projects are available to all
+         *
+         * @param int $userId
+         * @param int $projectId
+         * @return bool
+         *
+         */
+        public function isUserAssignedToProject(int $userId, int $projectId)
         {
 
             return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
         }
+
+        /**
+         * Checks if a user is directly assigned to a project.
+         * Client assignments or projects available to entire organization are not considered true.
+         *
+         * @param $userId
+         * @param $projectId
+         * @return bool
+         */
+        public function isUserMemberOfProject(int $userId, int $projectId)
+        {
+
+            return $this->projectRepository->isUserMemberOfProject($userId, $projectId);
+        }
+
+
 
         public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers)
         {

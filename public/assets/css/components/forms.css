@@ -12,6 +12,7 @@ input, button, select, textarea {
 }
 form label{
     padding-top:5px;
+    font-weight:bold;
 }
 
 form .switchery {
@@ -31,8 +32,8 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     -moz-transition: border linear .2s, box-shadow linear .2s;
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
-    border-radius: var(--element-radius);
-    padding: 3px 6px;
+    border-radius: var(--input-radius);
+    padding: 7px;
     color:var(--primary-font-color);
 }
 
@@ -154,7 +155,7 @@ a.btn-default,
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 3px 12px;
+    padding: 4px 12px;
     line-height:21px;
     background: var(--secondary-action-bg);
     text-shadow: none;
@@ -224,7 +225,7 @@ input[type='submit'],
     outline:0;
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 3px 12px;
+    padding: 4px 12px;
     line-height:21px;
     box-shadow:none;
     text-shadow: none;
@@ -275,8 +276,8 @@ body input[type='submit'].btn-primary .caret,
     -moz-transition: border linear .2s, box-shadow linear .2s;
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
-    border-radius: var(--element-radius);
-    padding: 3px 6px;
+    border-radius: var(--input-radius);
+    padding: 7px;
     color:var(--primary-font-color);
 }
 
@@ -292,7 +293,7 @@ body input[type='submit'].btn-primary .caret,
     background-color: var(--secondary-background);
     line-height: 21px;
     border: 1px solid var(--main-border-color);
-    border-radius: var(--element-radius);
+    border-radius: var(--input-radius);
 }
 
 .chosen-container-active .chosen-single {
@@ -354,14 +355,13 @@ body input[type='submit'].btn-primary .caret,
 }
 
 .chosen-container-single .chosen-single div b {
-
-    background: url("~images/chosen-sprite.png") no-repeat 0px 4px;
+    background: url("~images/chosen-sprite.png") no-repeat 0px 7px;
 }
 
 .chosen-container-multi .chosen-choices li.search-choice {
     position: relative;
     margin: 3px 5px 3px 0;
-    padding: 3px 20px 3px 5px;
+    padding: 6px 20px 6px 5px;
     border: 0px solid #aaa;
     max-width: 100%;
     border-radius: 3px;
@@ -581,7 +581,7 @@ select,
 
 .chosen-container-multi .chosen-choices .search-field input {
     height: auto;
-    padding: 3px 6px;
+    padding: 4px 12px;
 }
 
 .chosen-container-single .chosen-search input {
@@ -664,7 +664,7 @@ input[type=color] {
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: 3px;
-    padding: 3px 6px;
+    padding: 4px 12px;
     color:var(--primary-font-color);
 }
 
@@ -813,7 +813,7 @@ input.secretInput:active {
     border:1px solid var(--main-action-bg);
     font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
-    padding:3px 12px;
+    padding:4px 12px;
     line-height: 21px;
     border-radius: var(--element-radius);
     vertical-align: top;
@@ -953,4 +953,26 @@ input.secretInput:active {
 .radioTab.active strong,
 .radioTab.active span {
     color:var(--main-action-color);
+}
+
+
+
+.ss-main .ss-single-selected {
+    display: flex;
+    cursor: pointer;
+    width: 100%;
+    height: 37px;
+    padding: 6px;
+    border: 1px solid var(--main-border-color);
+    background-color: var(--secondary-background);
+    line-height:21px;
+    border: 1px solid var(--main-border-color);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    border-radius: 4px;
+
+    outline: 0;
+    box-sizing: border-box;
+    transition: background-color .2s;
 }
