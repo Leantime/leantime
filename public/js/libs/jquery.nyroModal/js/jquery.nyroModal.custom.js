@@ -1432,13 +1432,19 @@ jQuery(function($, undefined) {
             init: function(nm) {
                 nm.loadFilter = 'form';
                 nm.opener.unbind('submit.nyroModal').bind('submit.nyroModal', function(e) {
+
+
                     e.preventDefault();
+                    nm.opener.append("<input type='hidden' name='submitAction' value='"+e.originalEvent.submitter.value+"' />")
 
                     nm.opener.trigger('nyroModal');
                 });
             },
             load: function(nm) {
                 var data = nm.opener.serializeArray();
+
+                let obj = data.find(o => o.name === 'submitAction');
+                let action = obj.value;
 
                 if (nm.store.form.sel)
                     data.push({name: nm.selIndicator, value: nm.store.form.sel.substring(1)});
@@ -1447,12 +1453,19 @@ jQuery(function($, undefined) {
                     nm.callbacks.beforePostSubmit();
                 }
 
+                console.log(action);
                 $.ajax({
                     url: nm.store.form.url,
                     data: data,
                     type: nm.opener.attr('method') ? nm.opener.attr('method') : 'get',
                     success: function(data) {
-                        nm._setCont(data, nm.store.form.sel);
+
+                        if(action == "closeModal") {
+                            nm.close();
+                        }else{
+                            nm._setCont(data, nm.store.form.sel);
+                        }
+
                     },
                     error: function() {
                         nm._error();

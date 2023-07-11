@@ -23,7 +23,10 @@ namespace leantime\domain\controllers {
 
         public function run()
         {
-            $user = $this->userService->getUser($_SESSION['userdata']['id']);
+            $user = false;
+            if(isset($_SESSION['userdata'])) {
+                $user = $this->userService->getUser($_SESSION['userdata']['id']);
+            }
 
             if ($user === false) {
                 $this->authService->logout();

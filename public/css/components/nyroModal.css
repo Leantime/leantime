@@ -118,8 +118,8 @@
 }
 
 .nyroModalCont select {
-	max-width:90%;
-	height: 28px;
+	max-width:100%;
+    height: 41px;
 }
 
 .nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {

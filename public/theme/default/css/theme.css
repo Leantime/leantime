@@ -65,13 +65,15 @@
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
     --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
-    --base-font-size: 14px;
+
     --font-size-xs: 10px;
-    --font-size-s:12px;
+    --font-size-s: 12px;
+    --base-font-size: 14px;
+    --font-size-m: var(--base-font-size);
     --font-size-l: 16px;
     --font-size-xl: 18px;
-    --font-size-xxl: 22px;
-    --font-size-xxxl: 26px;
+    --font-size-xxl: 20px;
+    --font-size-xxxl: 24px;
 
     --main-border-color:var(--neutral);
     --min-shadow: 0px 1px 3px rgba(0 0 0 / 10%), 0px 0px 1px rgba(0 0 0 / 5%);
@@ -81,6 +83,7 @@
     --box-radius: 5px;
     --box-radius-small:3px;
     --element-radius: 5px;
+    --input-radius: 8px;
 
     --kanban-col-bg: transparent;
     --kanban-col-title-bg: var(--col-title-bg);

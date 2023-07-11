@@ -40,7 +40,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div style="width:1000px">
 
-  <h1 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h1>
+  <h1><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h1>
 
     <?php echo $this->displayNotification(); ?>
 
@@ -57,39 +57,45 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <label><?=$this->__("label.what_is_your_goal") ?></label>
-        <input type="text" name="title" value="<?php $this->e($canvasItem['title']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
+        <input type="text" name="title" value="<?php $this->e($canvasItem['title']) ?>"  style="width:100%" /><br />
 
-        <?php if (!empty($statusLabels)) { ?>
-            <label><?=$this->__("label.status") ?></label>
-            <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br /><br />
-        <?php } else { ?>
-            <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
-        <?php } ?>
 
-        <?php if (!empty($relatesLabels)) { ?>
+
+
+
+
+             <?php if (!empty($relatesLabels)) { ?>
             <label><?=$this->__("label.relates") ?></label>
             <select name="relates"  style="width: 50%" id="relatesCanvas">
             </select><br />
         <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
         <?php } ?>
+                <br />
+                <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i> <?=$this->__("Metrics") ?></h4>
+
+
+                <?php $this->dispatchTplEvent('beforeMeasureGoalContainer', $canvasItem); ?>
+                <div id="measureGoalContainer">
+                    <label>How will you measure this objective. What metric will you be using.</label>
+                    <input type="text" name="description" value="<?=$canvasItem['description'] ?>" style="width:100%"/><br />
+                </div>
 
                 <div class="row">
                     <div class="col-md-3">
                         <label>Starting Value</label>
-                        <input type="number" step="0.01" name="startValue" value="<?=$canvasItem['startValue'] ?>" style="width:100%"/>
+                        <input type="number" step="0.01" name="startValue" value="<?=$canvasItem['startValue'] ?>" style="width:105px"/>
                     </div>
                     <div class="col-md-3">
                         <label>Current Value</label>
                         <input type="number" step="0.01" name="currentValue" id="currentValueField" value="<?=$canvasItem['currentValue'] ?>"
                             <?php if($canvasItem['setting'] == 'linkAndReport') { echo "readonly='readonly'";}?>
                             <?php if($canvasItem['setting'] == 'linkAndReport') { echo "data-tippy-content='Current value calculated from child goals'";}?>
-                               style="width:100%"/>
+                               style="width:105px"/>
                     </div>
                     <div class="col-md-3">
                         <label>Goal Value</label>
-                        <input type="number" step="0.01" name="endValue" value="<?=$canvasItem['endValue'] ?>" style="width:100%"/>
+                        <input type="number" step="0.01" name="endValue" value="<?=$canvasItem['endValue'] ?>" style="width:105px"/>
                     </div>
                     <div class="col-md-3">
                         <label>Type</label>
@@ -104,7 +110,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <br />
                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                     <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-                    <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.goalCanvasController.setCloseModal();"/>
+                    <button type="submit"  class="btn btn-primary" id="saveAndClose" value="closeModal" onclick="leantime.goalCanvasController.setCloseModal();"><?=$this->__("buttons.save_and_close") ?></button>
                 <?php } ?>
 
 
@@ -121,6 +127,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
             <div class="col-md-4">
 
+
                 <?php if (!empty($statusLabels)) { ?>
                     <label><?=$this->__("label.status") ?></label>
                     <select name="status" style="width: 50%" id="statusCanvas">
@@ -130,32 +137,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <?php } ?>
 
 
-                <label>Reports into KPI</label>
-                <select id="kpi" name="kpi">
-                    <option value="">No KPI to report into</option>
-                    <?php
-                    $lastBoard = '';
-                    $i = 0;
-                    foreach($this->get("availableKPIs") as $parent) {
 
-                    if($canvasItem['id'] !==  $parent['id']) {
-                    if($parent["board"] != $lastBoard){
-                    $lastBoard = $parent["board"];
-                    if($i>0){
-                        echo "</optgroup>";
-                    }
-                    $i++;
-                    ?>
-
-                    <optgroup label="<?=$parent["project"]?> // <?=$parent["board"]?>">
-                        <?php } ?>
-                        <option value="<?=$parent["id"] ?>" <?php if($canvasItem['kpi'] == $parent["id"]) echo "selected='selected'";?>><?=$parent["title"]; ?></option>
-                        <?php } ?>
-
-                        <?php } ?>
-                    </optgroup>
-                </select>
-                <br /><br />
 
 
 
@@ -164,10 +146,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-calendar"></i> Dates</h4>
 
                 <label>Start Date</label>
-                <input type="text" value="<?=$this->getFormattedDateString($canvasItem['startDate']); ?>" name="startDate" class="dates"/>
+                <input type="text" autocomplete="off" value="<?=$this->getFormattedDateString($canvasItem['startDate']); ?>" name="startDate" class="dates"/>
 
                 <label>End Date</label>
-                <input type="text" value="<?=$this->getFormattedDateString($canvasItem['endDate']); ?>" name="endDate" class="dates"/>
+                <input type="text" autocomplete="off" value="<?=$this->getFormattedDateString($canvasItem['endDate']); ?>" name="endDate" class="dates"/>
 
 
                 <?php if ($id !== '') { ?>
@@ -285,6 +267,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
+
+        leantime.ticketsController.initDates();
 
         <?php if (!empty($statusLabels)) { ?>
             new SlimSelect({

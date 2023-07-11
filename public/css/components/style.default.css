@@ -338,7 +338,7 @@ table, caption, tbody, tfoot, thead, tr, th, td {
     margin: 0;
     padding: 0;
     vertical-align: baseline;
-    line-height: 21px;
+    line-height: 1.5;
     outline: none;
 }
 
@@ -2948,11 +2948,52 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 .modal {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
-    border-radius: 0;
+    border-radius: 20px;
+    padding: 34px 40px 20px 35px;
+}
+
+.modal-header {
+    padding:0px;
+    border:none;
+}
+
+.modal-body {
+    padding:0px;
 }
 
 .modal-footer .btn {
     margin: 0;
+
+}
+
+.modal-footer .btn.btn-default {
+    background-color:var(--main-action-bg);
+    color:var(--main-action-color);
+}
+
+.modal-header .close {
+    margin-top: 0px;
+    font-size: 30px;
+}
+
+.modal-footer {
+    border-radius: 0px 0px 20px 20px;
+    border:none;
+    background:var(--secondary-background);
+    text-align:left;
+    padding:0px;
+    padding-top:10px;
+}
+
+.modal.fade {
+    top:-50%;
+}
+
+.modal-title {
+    font-size: var(--font-size-xxl);
+    color: var(--primary-font-color);
+    margin-bottom: 20px;
+    font-weight:normal;
 }
 
 .popover, .popover-title {

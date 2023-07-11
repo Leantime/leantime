@@ -85,7 +85,8 @@ namespace leantime\domain\repositories {
             20116,
             20117,
             20118,
-            20120
+            20120,
+            20121
         );
 
         /**
@@ -161,13 +162,12 @@ namespace leantime\domain\repositories {
             }
         }
 
-        public function createDB($dbName) {
+        public function createDB($dbName)
+        {
 
             try {
-
-
                 $stmn = $this->database->prepare("CREATE SCHEMA :schemaName ;");
-                $stmn->bindValue(':dbName',$dbName, PDO::PARAM_STR);
+                $stmn->bindValue(':dbName', $dbName, PDO::PARAM_STR);
 
                 $stmn->execute();
 
@@ -325,6 +325,7 @@ namespace leantime\domain\repositories {
                   `created` datetime DEFAULT NULL,
                   `projectId` INT NULL,
                   `type` VARCHAR(45) NULL,
+                  `description` TEXT DEFAULT,
                   PRIMARY KEY (`id`),
                   KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1325,7 +1326,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1365,7 +1365,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1405,7 +1404,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1441,7 +1439,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1476,16 +1473,16 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
             }
         }
 
-        public function update_sql_20120(): bool|array {
+        public function update_sql_20120(): bool|array
+        {
 
-           $errors = array();
+            $errors = array();
 
             $sql = [
 
@@ -1512,10 +1509,7 @@ namespace leantime\domain\repositories {
                     currentValue = CAST(IF(`data` = '', 0, `data`) AS DECIMAL(10,2)),
                     endValue = CAST(IF(`conclusion` = '', 0, `conclusion`) AS DECIMAL(10,2)),
                     title = description,
-                    description = assumptions,
-                    assumptions = '',
-                    conclusion = '',
-                    `data` = ''
+                    description = assumptions
                     WHERE box = 'goal';",
                 "ALTER TABLE `zp_canvas_items`
                 ADD INDEX `CanvasLookUp` (`canvasId` ASC, `box` ASC);",
@@ -1532,16 +1526,38 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
             }
-
-
         }
 
 
+        public function update_sql_20121(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_canvas`
+                    ADD COLUMN `description` TEXT NULL DEFAULT NULL AFTER `type`;",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
     }
 
 }
