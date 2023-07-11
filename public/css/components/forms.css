@@ -355,8 +355,11 @@ body input[type='submit'].btn-primary .caret,
 }
 
 .chosen-container-single .chosen-single div b {
-
-    background: url(chosen-sprite.png) no-repeat 0px 7px;
+    background-image:none !important;
+}
+.chosen-container-single .chosen-single div b:after {
+    content: "⌄";
+    line-height: 25px;
 }
 
 .chosen-container-multi .chosen-choices li.search-choice {

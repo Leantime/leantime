@@ -4069,3 +4069,75 @@ h3.todaysDate {
     margin: 0;
     font-size:var(--font-size-l);
 }
+
+.minCalendar #calendar {
+    height: 360px;
+    top: -40px;
+    position: relative;
+    z-index:5;
+}
+
+.minCalendar .fc .fc-multimonth,
+.minCalendar .fc-theme-standard td, .fc-theme-standard th{
+    border:none;
+}
+
+.minCalendar .fc .fc-daygrid-day-top {
+    flex-direction: column;
+    text-align:center;
+}
+
+.minCalendar .fc .fc-daygrid-day-bottom {
+    text-align:center;
+    margin-top:-10px !important;
+}
+
+.minCalendar .fc .fc-daygrid-more-link {
+    font-size:0px;
+    float:none;
+}
+
+.minCalendar .fc .fc-daygrid-more-link:after {
+    content: "•";
+    font-size:30px;
+}
+
+.minCalendar .fc .fc-multimonth-title {
+    padding:0px 0px 10px 0px;
+    text-align:left;
+    font-size: var(--font-size-xl);
+    font-weight:normal;
+}
+
+.minCalendar .fc .fc-multimonth-singlecol .fc-multimonth-header {
+    background:none;
+}
+
+.minCalendar .fc-theme-standard th.fc-col-header-cell:first-child {
+    border-radius:10px 0px 0px 10px;
+}
+
+.minCalendar .fc-theme-standard th.fc-col-header-cell:last-child {
+    border-radius:0px 10px 10px 0px;
+}
+
+.minCalendar .fc-theme-standard .fc-popover {
+    border-radius:var(--box-radius);
+}
+
+.minCalendar .fc-popover-body  .fc-h-event .fc-event-title-container {
+    padding-left:5px;
+}
+
+.minCalendar .fc-popover-body  .fc-event {
+    margin-bottom:2px;
+    margin-left:0px !important;
+}
+
+.minCalendar .fc-popover-body .fc-daygrid-event {
+    border-radius:0px !important;
+}
+
+.minCalendar .fc .fc-daygrid-day.fc-day-today {
+    border-radius:var(--element-radius);
+}

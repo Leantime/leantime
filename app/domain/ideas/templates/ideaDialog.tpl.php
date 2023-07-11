@@ -45,8 +45,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                   placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
 
         <input type="submit" value="<?php echo $this->__("buttons.save")?>" id="primaryCanvasSubmitButton"/>
-        <input type="submit" value="<?php echo $this->__("buttons.save_and_close")?>" id="saveAndClose"
-               onclick="leantime.ideasController.setCloseModal();"/>
+        <button class="btn btn-primary" type="submit" value="closeModal" id="saveAndClose"><?php echo $this->__("buttons.save_and_close")?></button>
 
         <?php if ($id !== '') { ?>
             <br/>
