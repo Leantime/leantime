@@ -19,21 +19,21 @@
 <meta name="identifier-URL" content="<?=BASE_URL?>">
 <?php $this->dispatchTplEvent('afterMetaTags'); ?>
 
-<link rel="shortcut icon" href="<?=BASE_URL?>/images/favicon.png"/>
-<link rel="apple-touch-icon" href="<?=BASE_URL?>/images/apple-touch-icon.png">
+<link rel="shortcut icon" href="<?=BASE_URL?>/dist/images/favicon.png"/>
+<link rel="apple-touch-icon" href="<?=BASE_URL?>/dist/images/apple-touch-icon.png">
 
-<link rel="stylesheet" href="<?=BASE_URL?>/css/main.<?php echo $settings->appVersion; ?>.css"/>
+<link rel="stylesheet" href="<?=BASE_URL?>/dist/css/main.<?php echo $settings->appVersion; ?>.min.css"/>
 <?php $this->dispatchTplEvent('afterLinkTags'); ?>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
 
 <!-- libs -->
-<script src="<?=BASE_URL?>/js/compiled-base-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
-<script src="<?=BASE_URL?>/js/compiled-extended-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-base-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-extended-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
 <?php $this->dispatchTplEvent('afterScriptLibTags'); ?>
 
 <!-- app -->
-<script src="<?=BASE_URL?>/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>
 <?php $this->dispatchTplEvent('afterMainScriptTag'); ?>
 
 <!-- theme -->

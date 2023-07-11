@@ -337,7 +337,7 @@
                 <div id="ticketContent">
                     <div class="center">
                         <div class='svgContainer'>
-                            <?=file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg"); ?>
+                            <?=file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg"); ?>
                         </div>
 
                         <h3><?=$this->__("headlines.pick_a_task")?></h3>

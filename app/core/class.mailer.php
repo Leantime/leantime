@@ -120,7 +120,7 @@ namespace leantime\core {
                 $this->mailAgent->isMail();
             }
 
-            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
+            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/dist/images/logo.png";
             $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
             $this->language = language::getInstance();

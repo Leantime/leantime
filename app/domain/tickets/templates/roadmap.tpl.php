@@ -89,7 +89,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
         if (count($milestones) == 0) {
             echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
             echo"<div style='width:30%' class='svgContainer'>";
-            echo file_get_contents(ROOT . "/images/svg/undraw_adjustments_p22m.svg");
+            echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
             <h4>" . $this->__("headlines.no_milestones") . "<br/>

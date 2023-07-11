@@ -28,7 +28,7 @@ if ($login->logged_in()!==true) {
 
     ob_end_clean();
     clearstatcache();
-    readfile(__DIR__.'/images/leantime-no-access.jpg');
+    readfile(__DIR__.'/dist/images/leantime-no-access.jpg');
 
     exit();
 

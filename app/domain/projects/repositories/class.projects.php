@@ -1056,7 +1056,7 @@ namespace leantime\domain\repositories {
                     $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                     $image = $avatar
                         ->name($value['name'])
-                        ->font(ROOT . '/fonts/roboto/Roboto-Regular.woff2')
+                        ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
                         ->fontSize(0.5)
                         ->size(96)
                         ->background('#555555')->color("#fff")
@@ -1073,7 +1073,7 @@ namespace leantime\domain\repositories {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name("🦄")
-                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                    ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')
                     ->fontName("Verdana")
                     ->background('#555555')->color("#fff")
                     ->generateSvg();

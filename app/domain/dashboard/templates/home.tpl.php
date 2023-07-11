@@ -111,7 +111,7 @@
                         if ($this->get('tickets') !== null && count($this->get('tickets')) == 0) {
                             echo"<div class='center'>";
                             echo"<div  style='width:30%' class='svgContainer'>";
-                            echo file_get_contents(ROOT . "/images/svg/undraw_a_moment_to_relax_bbpa.svg");
+                            echo file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg");
                             echo"</div>";
                             echo"<br /><h4>" . $this->__("headlines.no_todos_this_week") . "</h4>
                                         " . $this->__("text.take_the_day_off") . "
