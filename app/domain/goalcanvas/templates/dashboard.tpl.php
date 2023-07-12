@@ -70,7 +70,7 @@ $goalStats = $this->get("goalStats");
 
     <div class="row" style="margin-bottom:20px; ">
             <div class="col-md-4">
-                <div class="bigNumberBox">
+                <div class="bigNumberBox" style="padding: 29px 15px;">
                     <h2>Progress: <?php echo round($goalStats['avgPercentComplete']); ?>%</h2>
 
                     <div class="progress" style="margin-top:5px;">
