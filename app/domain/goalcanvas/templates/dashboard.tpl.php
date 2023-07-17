@@ -678,7 +678,7 @@ $goalStats = $this->get("goalStats");
             echo "<br /><br /><div class='center'>";
 
                 echo "<div class='svgContainer'>";
-                    echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
+                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                     echo "</div>";
 
                 echo"<h3>" . $this->__("headlines.goal.analysis") . "</h3>";

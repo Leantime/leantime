@@ -46,7 +46,7 @@ namespace leantime\domain\services {
 
         public function resetLogo() {
 
-            $url = '/images/logo.svg';
+            $url = '/dist/images/logo.svg';
 
             $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
 

@@ -27,7 +27,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
         </div>
         <div class="col-md-6">
             <div class='svgContainer' style="width:300px">
-                <?= file_get_contents(ROOT . "/images/svg/undraw_game_day_ucx9.svg"); ?>
+                <?= file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg"); ?>
             </div>
         </div>
 
@@ -59,7 +59,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
         </div>
         <div class="col-md-6">
             <div class='svgContainer' style="width:300px">
-                <?= file_get_contents(ROOT . "/images/svg/undraw_dark_mode_2xam.svg"); ?>
+                <?= file_get_contents(ROOT . "/dist/images/svg/undraw_dark_mode_2xam.svg"); ?>
             </div>
         </div>
     </div>
@@ -84,7 +84,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
             </div>
             <div class="col-md-6">
                 <div class='svgContainer' style="width:300px; margin-top:60px;">
-                    <?= file_get_contents(ROOT . "/images/svg/undraw_children_re_c37f.svg"); ?>
+                    <?= file_get_contents(ROOT . "/dist/images/svg/undraw_children_re_c37f.svg"); ?>
                 </div>
             </div>
         </div>

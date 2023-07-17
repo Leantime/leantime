@@ -288,7 +288,7 @@ body .tox .tox-toolbar-overlord{
 	position: absolute;
 	top: 8px;
 	right: 5px;
-	background: url(../../images/calarrow.png) no-repeat 3px 1px;
+	background: url(~images/calarrow.png) no-repeat 3px 1px;
 }
 
 .ui-datepicker-prev {
@@ -296,7 +296,7 @@ body .tox .tox-toolbar-overlord{
 	position: absolute;
 	top: 8px;
 	left: 5px;
-	background: url(../../images/calarrow.png) no-repeat 3px -39px;
+	background: url(~images/calarrow.png) no-repeat 3px -39px;
 }
 
 .ui-datepicker-header {

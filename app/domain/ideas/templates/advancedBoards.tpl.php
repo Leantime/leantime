@@ -234,7 +234,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
             <br/><br/>
             <div class='center'>
                 <div style='width:50%' class='svgContainer'>
-                    <?php echo file_get_contents(ROOT . "/images/svg/undraw_new_ideas_jdea.svg"); ?>
+                    <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_new_ideas_jdea.svg"); ?>
                 </div>
 
                 <br/><h4><?php echo $this->__("headlines.have_an_idea") ?></h4><br/>

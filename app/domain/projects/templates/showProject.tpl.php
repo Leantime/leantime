@@ -259,7 +259,7 @@
                                                     <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
                                                         <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                                         <?php else: ?>
-                                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
+                                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
                                                         <?php endif; ?>
                                                     <span class="filename"><?php $this->e($file['realName']) ?></span>
 
@@ -293,7 +293,7 @@
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Mattermost</h4>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="<?=BASE_URL ?>/images/mattermost-logoHorizontal.png" width="200" />
+                        <img src="<?=BASE_URL ?>/dist/images/mattermost-logoHorizontal.png" width="200" />
                     </div>
                     <div class="col-md-5">
                         <?=$this->__('text.mattermost_instructions'); ?>
@@ -330,7 +330,7 @@
                 <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span>Zulip</h4>
                 <div class="row">
                     <div class="col-md-3">
-                        <img src="<?=BASE_URL ?>/images/zulip-org-logo.png" width="200"/>
+                        <img src="<?=BASE_URL ?>/dist/images/zulip-org-logo.png" width="200"/>
                     </div>
 
                     <div class="col-md-5">
@@ -363,7 +363,7 @@
                 <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
                 <div class='row'>
                     <div class='col-md-3'>
-                        <img src='<?= BASE_URL ?>/images/discord-logo.png' width='200'/>
+                        <img src='<?= BASE_URL ?>/dist/images/discord-logo.png' width='200'/>
                     </div>
 
                     <div class='col-md-5'>

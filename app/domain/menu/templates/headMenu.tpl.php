@@ -166,7 +166,7 @@ if (is_array($currentLink)) {
     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
         <li class="appsDropdown">
             <a href='javascript:void(0);' class="dropdown-toggle profileHandler" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.company") ?>">
-                <img src="<?=BASE_URL ?>/images/svg/apps-grid-icon.svg" style="width:13px; vertical-align: middle;">
+                <img src="<?=BASE_URL ?>/dist/images/svg/apps-grid-icon.svg" style="width:13px; vertical-align: middle;">
 
             </a>
             <ul class="dropdown-menu" >
