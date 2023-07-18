@@ -646,6 +646,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("editProject", array("values"=>$values));
         }
 
         /**
