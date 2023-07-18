@@ -44,7 +44,7 @@ namespace leantime\domain\controllers {
 
                     $file = new core\fileupload();
                     if($return["type"] == "uploaded"){
-                        $file->displayImageFile("avatar", $return["filename"]);
+                        $file->displayImageFile($return["filename"]);
                     }else if($return["type"] == "generated"){
                         $file->displayImageFile("avatar", $return["filename"]);
                     }

@@ -164,7 +164,8 @@ function getFileFromS3(){
         }
 
 
-        echo($result['Body']);
+        $body = $result->get('Body');
+        echo $body->getContents();
 
 
 

@@ -1092,7 +1092,7 @@ namespace leantime\domain\repositories {
 
                 if ($file) {
 
-                    $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
+                    $filePath = $file['encName'] . "." . $file['extension'];
                     $type = $file['extension'];
 
                     return array("filename"=>$filePath, "type"=>"uploaded");
