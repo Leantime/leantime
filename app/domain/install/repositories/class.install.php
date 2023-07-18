@@ -111,6 +111,8 @@ namespace leantime\domain\repositories {
         public function __construct()
         {
 
+
+
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
@@ -325,7 +327,7 @@ namespace leantime\domain\repositories {
                   `created` datetime DEFAULT NULL,
                   `projectId` INT NULL,
                   `type` VARCHAR(45) NULL,
-                  `description` TEXT DEFAULT,
+                  `description` TEXT,
                   PRIMARY KEY (`id`),
                   KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

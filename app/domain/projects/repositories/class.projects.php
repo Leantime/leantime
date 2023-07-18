@@ -646,6 +646,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("editProject", array("values"=>$values));
         }
 
         /**
@@ -1006,6 +1008,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("userAddedToProject", array("userId"=> $userId, "projectId"=> $projectId, "projectRole" => $projectRole));
         }
 
         public function patch($id, $params)
@@ -1090,7 +1094,7 @@ namespace leantime\domain\repositories {
 
                 if ($file) {
 
-                    $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
+                    $filePath = $file['encName'] . "." . $file['extension'];
                     $type = $file['extension'];
 
                     return array("filename"=>$filePath, "type"=>"uploaded");
