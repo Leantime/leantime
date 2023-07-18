@@ -1006,6 +1006,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("userAddedToProject", array("userId"=> $userId, "projectId"=> $projectId, "projectRole" => $projectRole));
         }
 
         public function patch($id, $params)
