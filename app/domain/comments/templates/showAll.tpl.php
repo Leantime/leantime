@@ -111,7 +111,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
         <?php if (count($this->get('comments')) == 0) { ?>
             <div class="text-center">
                 <div style='width:33%' class='svgContainer'>
-                    <?php echo file_get_contents(ROOT . "/images/svg/undraw_real_time_collaboration_c62i.svg"); ?>
+                    <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_real_time_collaboration_c62i.svg"); ?>
                     <?php $this->e($language->__('text.no_comments')) ?>
                 </div>
             </div>

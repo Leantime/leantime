@@ -105,7 +105,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                         <?php
                         echo"<div class='center'>";
                         echo"<div  style='width:30%' class='svgContainer'>";
-                        echo file_get_contents(ROOT . "/images/svg/undraw_book_reading_re_fu2c.svg");
+                        echo file_get_contents(ROOT . "/dist/images/svg/undraw_book_reading_re_fu2c.svg");
                         echo"</div>";
                         echo"<br /><h3>" . $this->__("headlines.no_articles_yet") . "</h3><br />";
 
@@ -252,7 +252,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                     <?php
                                     echo"<div class='center'>";
                                         echo"<div  style='width:30%' class='svgContainer'>";
-                                            echo file_get_contents(ROOT . "/images/svg/undraw_book_reading_re_fu2c.svg");
+                                            echo file_get_contents(ROOT . "/dist/images/svg/undraw_book_reading_re_fu2c.svg");
                                             echo"</div>";
                                         echo"<br /><h3>" . $this->__("headlines.no_articles_yet") . "</h3>";
 

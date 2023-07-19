@@ -2,7 +2,7 @@
 $ticket = $this->get('ticket');
 ?>
 <div class="mediamgr_category">
-    
+
     <form action='<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#files' method='POST' enctype="multipart/form-data" class="ticketModal">
         <div class="par f-left" style="margin-right: 15px;">
         <input type="hidden" name="upload" value="1" />
@@ -75,7 +75,7 @@ $ticket = $this->get('ticket');
 <?php if (count($this->get('files')) == 0) { ?>
     <div class="text-center">
         <div style='width:33%' class='svgContainer'>
-            <?php echo file_get_contents(ROOT . "/images/svg/undraw_image__folder_re_hgp7.svg"); ?>
+            <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_image__folder_re_hgp7.svg"); ?>
             <?php echo $this->__('text.no_files') ?>
         </div>
     </div>

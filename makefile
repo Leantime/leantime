@@ -2,19 +2,19 @@ VERSION := $(shell grep "appVersion" ./config/appSettings.php |awk -F' = ' '{pri
 TARGET_DIR:= ./target/leantime
 DOCS_DIR:= ./builddocs
 DOCS_REPO:= git@github.com:Leantime/docs.git
-install-deps:
-	npm install
-	composer install --no-dev --optimize-autoloader
-
 install-deps-dev:
 	npm install --only=dev
 	composer install --optimize-autoloader
 
+install-deps:
+	npm install
+	composer install --no-dev --optimize-autoloader
+
 build: install-deps
-	$(CURDIR)/node_modules/.bin/grunt Build-All
+	npx mix
 
 build-dev: install-deps-dev
-	$(CURDIR)/node_modules/.bin/grunt Build-All
+	npx mix
 
 package: install-deps build-js
 	mkdir -p $(TARGET_DIR)
@@ -59,7 +59,7 @@ package: install-deps build-js
 	find  $(TARGET_DIR)/app/domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
 	#removing uncompiled js files
-	find $(TARGET_DIR)/public/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
+	find $(TARGET_DIR)/public/assets/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
 gendocs: # Requires github CLI (brew install gh)
 	# Delete the temporary docs directory if exists

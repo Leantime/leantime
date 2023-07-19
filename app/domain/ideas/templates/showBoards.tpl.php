@@ -227,7 +227,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
             <?php if (count($this->get('canvasItems')) == 0) { ?>
                 <div class='center'>
                     <div style='width:30%' class='svgContainer'>
-                        <?php echo file_get_contents(ROOT . "/images/svg/undraw_new_ideas_jdea.svg"); ?>
+                        <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_new_ideas_jdea.svg"); ?>
                     </div>
 
                     <h3><?php echo $this->__("headlines.have_an_idea") ?></h3><br />
@@ -241,7 +241,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
             <br/><br/>
             <div class='center'>
                 <div style='width:30%' class='svgContainer'>
-                    <?php echo file_get_contents(ROOT . "/images/svg/undraw_new_ideas_jdea.svg"); ?>
+                    <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_new_ideas_jdea.svg"); ?>
                 </div>
 
                 <h3><?php echo $this->__("headlines.have_an_idea") ?></h3><br />

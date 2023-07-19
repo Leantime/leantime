@@ -25,6 +25,6 @@ $appSettings = $this->get('appSettings');
 
 <?php $this->dispatchTplEvent('beforeBodyClose'); ?>
 
-<script src="<?=BASE_URL?>/js/compiled-footer.<?php echo $appSettings->appVersion; ?>.min.js"> </script>
+<script src="<?=BASE_URL?>/dist/js/compiled-footer.<?php echo $appSettings->appVersion; ?>.min.js"> </script>
 </body>
 </html>

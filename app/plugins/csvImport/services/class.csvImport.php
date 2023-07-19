@@ -17,7 +17,7 @@ class csvImport extends provider implements providerIntegration {
 
         $this->id= "csv_importer";
         $this->name = "CSV Import";
-        $this->image = "/images/doc.png";
+        $this->image = "/dist/images/doc.png";
 
         $this->methods[] = "import";
 

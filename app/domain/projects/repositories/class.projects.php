@@ -646,6 +646,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("editProject", array("values"=>$values));
         }
 
         /**
@@ -1006,6 +1008,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("userAddedToProject", array("userId"=> $userId, "projectId"=> $projectId, "projectRole" => $projectRole));
         }
 
         public function patch($id, $params)
@@ -1090,7 +1094,7 @@ namespace leantime\domain\repositories {
 
                 if ($file) {
 
-                    $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
+                    $filePath = $file['encName'] . "." . $file['extension'];
                     $type = $file['extension'];
 
                     return array("filename"=>$filePath, "type"=>"uploaded");
@@ -1122,7 +1126,7 @@ namespace leantime\domain\repositories {
                     $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                     $image = $avatar
                         ->name($value['name'])
-                        ->font(ROOT . '/fonts/roboto/Roboto-Regular.woff2')
+                        ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
                         ->fontSize(0.5)
                         ->size(96)
                         ->background('#555555')->color("#fff")
@@ -1139,7 +1143,7 @@ namespace leantime\domain\repositories {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name("🦄")
-                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                    ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')
                     ->fontName("Verdana")
                     ->background('#555555')->color("#fff")
                     ->generateSvg();
