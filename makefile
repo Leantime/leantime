@@ -6,10 +6,17 @@ install-deps:
 	npm install
 	composer install --no-dev --optimize-autoloader
 
-build-js: install-deps
+install-deps-dev:
+	npm install --only=dev
+	composer install --optimize-autoloader
+
+build: install-deps
 	$(CURDIR)/node_modules/.bin/grunt Build-All
 
-build: install-deps build-js
+build-dev: install-deps-dev
+	$(CURDIR)/node_modules/.bin/grunt Build-All
+
+package: install-deps build-js
 	mkdir -p $(TARGET_DIR)
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
@@ -85,8 +92,11 @@ package:
 clean:
 	rm -rf $(TARGET_DIR)
 
-run-dev:
+run-dev: build-dev
 	cd .dev && docker-compose up --build --remove-orphans
 
-.PHONY: install-deps build-js build package clean run-dev
+Acceptance-test: build-dev
+	php vendor/bin/codecept run Acceptance --steps
+
+.PHONY: install-deps build package clean run-dev
 
