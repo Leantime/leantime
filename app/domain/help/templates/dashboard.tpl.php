@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-12">
             <div style='width:300px' class='svgContainer'>
-                <?php    echo file_get_contents(ROOT . "/images/svg/undraw_party_re_nmwj.svg"); ?>
+                <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_party_re_nmwj.svg"); ?>
             </div>
             <br />
             <h1><?php echo $this->__('headlines.welcome_to_leantime') ?></h1>

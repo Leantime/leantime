@@ -61,7 +61,7 @@ $canvasProgress = $this->get('canvasProgress');
                     echo "<div class='col-md-12'><br /><br /><div class='center'>";
 
                     echo "<div style='width:30%' class='svgContainer'>";
-                    echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
+                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                     echo "</div>";
 
                     echo"<h3>" . $this->__("headline.no_blueprints_yet") . "</h3>";
@@ -102,7 +102,7 @@ $canvasProgress = $this->get('canvasProgress');
                     echo "<br /><br /><div class='center'>";
 
                     echo "<div style='width:30%' class='svgContainer'>";
-                    echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
+                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                     echo "</div>";
 
                     echo"<h4>" . $this->__("headlines.so_empty") . "</h4>";
@@ -114,6 +114,8 @@ $canvasProgress = $this->get('canvasProgress');
             </div>
         </div>
     </div>
+
+    <?php if($login::userIsAtLeast($roles::$editor)){?>
     <div class="row">
         <div class="col-md-12">
             <div class="maincontentinner">
@@ -153,6 +155,7 @@ $canvasProgress = $this->get('canvasProgress');
             </div>
         </div>
     </div>
+    <?php } ?>
 
 </div>
 

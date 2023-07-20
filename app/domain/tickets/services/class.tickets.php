@@ -259,14 +259,20 @@ namespace leantime\domain\services {
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
-        public function getAllPossibleParents(models\tickets $ticket, $projectId = 'currentProject') {
+        public function getAllPossibleParents(models\tickets $ticket, $projectId = 'currentProject'): array
+        {
 
-            if($projectId == 'currentProject') {
+            if ($projectId == 'currentProject') {
                 $projectId = $_SESSION['currentProject'];
             }
 
-            return $this->ticketRepository->getAllPossibleParents($ticket, $projectId);
+            $results = $this->ticketRepository->getAllPossibleParents($ticket, $projectId);
 
+            if (is_array($results)) {
+                return $results;
+            } else {
+                return array();
+            }
         }
 
         public function getTicket($id)
@@ -276,7 +282,6 @@ namespace leantime\domain\services {
 
             //Check if user is allowed to see ticket
             if ($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
-
                 //Fix date conversion
                 $ticket->date = $this->language->getFormattedDateString($ticket->date);
 
@@ -299,12 +304,12 @@ namespace leantime\domain\services {
         public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, $includeDoneTickets = false)
         {
 
-            if($includeDoneTickets === true){
+            if ($includeDoneTickets === true) {
                 $searchStatus = "all";
-            }else{
+            } else {
                 $searchStatus = "not_done";
             }
-            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "currentUser"=> $userId, "users" => $userId, "status" => $searchStatus, "sprint" => ""));
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "currentUser" => $userId, "users" => $userId, "status" => $searchStatus, "sprint" => ""));
             $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
@@ -553,7 +558,7 @@ namespace leantime\domain\services {
                 'headline' => $values['headline'],
                 'type' => $values['type'],
                 'description' => $values['description'],
-                'projectId' => $_SESSION['currentProject'],
+                'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => date('Y-m-d  H:i:s'),
@@ -744,26 +749,21 @@ namespace leantime\domain\services {
 
             $ticket = $this->getTicket($id);
 
-            if($ticket) {
-
+            if ($ticket) {
                 //If milestone, move child todos
-                if($ticket->type == "milestone"){
-                    $milestoneTickets = $this->getAll(array("milestone"=>$ticket->id));
+                if ($ticket->type == "milestone") {
+                    $milestoneTickets = $this->getAll(array("milestone" => $ticket->id));
                     //Update child todos
-                    foreach($milestoneTickets as $childTicket) {
+                    foreach ($milestoneTickets as $childTicket) {
                         $this->patchTicket($childTicket["id"], ["projectId" => $projectId, "sprint" => ""]);
-
                     }
                 }
 
                 //Update ticket
                 return $this->patchTicket($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => "", 'milestoneid' => '']);
-
-
             }
 
             return false;
-
         }
 
         public function quickUpdateMilestone($params)
@@ -845,15 +845,14 @@ namespace leantime\domain\services {
             return true;
         }
 
-        public function updateTicketSorting($params) {
+        public function updateTicketSorting($params)
+        {
 
             //ticketId: sortIndex
             foreach ($params as $id => $sortKey) {
-
-                if ($this->ticketRepository->patchTicket($id, ["sortIndex"=>$sortKey*100]) === false) {
+                if ($this->ticketRepository->patchTicket($id, ["sortIndex" => $sortKey * 100]) === false) {
                     return false;
                 }
-
             }
         }
 
@@ -872,7 +871,7 @@ namespace leantime\domain\services {
                         foreach ($tickets as $key => $ticketString) {
                             $id = substr($ticketString, 9);
 
-                            if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100)) === false) {
+                            if ($this->ticketRepository->updateTicketStatus($id, $status, ($key * 100), $handler) === false) {
                                 return false;
                             }
                         }
@@ -951,7 +950,6 @@ namespace leantime\domain\services {
             $url = BASE_URL . "/tickets/showKanban";
 
             if (isset($_SESSION['lastTicketView']) && $_SESSION['lastTicketView'] != "") {
-
                 if ($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
                     return $_SESSION['lastFilterdTicketKanbanView'];
                 }

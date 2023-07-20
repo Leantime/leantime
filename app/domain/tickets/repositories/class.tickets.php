@@ -1285,6 +1285,10 @@ namespace leantime\domain\repositories {
 
             foreach ($params as $key => $value) {
                 $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
+                //send status update event
+                if($key == 'status'){
+                    core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$id, "status"=>$value, "action"=>"ticketStatusUpdate"));
+                }
             }
 
             $sql .= "id=:id WHERE id=:id LIMIT 1";
@@ -1298,6 +1302,7 @@ namespace leantime\domain\repositories {
 
             $return = $stmn->execute();
             $stmn->closeCursor();
+
 
             return $return;
         }
@@ -1366,7 +1371,7 @@ namespace leantime\domain\repositories {
             return $result;
         }
 
-        public function updateTicketStatus($ticketId, $status, $ticketSorting = -1)
+        public function updateTicketStatus($ticketId, $status, $ticketSorting = -1, $handler = null)
         {
 
             $this->addTicketChange($_SESSION['userdata']['id'], $ticketId, array('status' => $status));
@@ -1384,7 +1389,7 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-                return $stmn->execute();
+
             } else {
                 $query = "UPDATE zp_tickets
 					SET
@@ -1396,8 +1401,13 @@ namespace leantime\domain\repositories {
                 $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-                return $stmn->execute();
+
             }
+
+            core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$ticketId, "status"=>$status, "action"=>"ticketStatusUpdate", "handler"=>$handler));
+            return $stmn->execute();
+
+
 
             $stmn->closeCursor();
         }

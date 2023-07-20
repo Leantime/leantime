@@ -75,6 +75,8 @@
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/oauth-subscriber" />
       <path value="$PROJECT_DIR$/vendor/league/csv" />
       <path value="$PROJECT_DIR$/vendor/kamermans/guzzle-oauth2-subscriber" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.0">

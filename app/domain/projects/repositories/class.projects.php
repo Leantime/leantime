@@ -127,7 +127,7 @@ namespace leantime\domain\repositories {
 
         // Get all open user projects /param: open, closed, all
 
-        public function getUserProjects($userId, $status = "all", $clientId = "")
+        public function getUserProjects($userId, $status = "all", $clientId = "", $hierarchy = array())
         {
 
             $query = "SELECT
@@ -140,17 +140,18 @@ namespace leantime\domain\repositories {
 				    project.menuType,
 				    project.type,
 				    project.parent,
-					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
+					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
 					parent.id AS parentId,
 					parent.name as parentName,
 					comments.status as status
-				FROM zp_relationuserproject AS relation
-				LEFT JOIN zp_projects as project ON project.id = relation.projectId
+				FROM zp_projects as project
+				LEFT JOIN zp_relationuserproject AS relation ON project.id = relation.projectId
 				LEFT JOIN zp_projects as parent ON parent.id = project.parent
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+				LEFT JOIN zp_user as `user` ON relation.userId = user.id
 				LEFT JOIN zp_comment as comments ON comments.id = (
                       SELECT
 						id
@@ -158,7 +159,16 @@ namespace leantime\domain\repositories {
                       WHERE module = 'project' AND moduleId = project.id
                       ORDER BY date DESC LIMIT 1
                     )
-				WHERE relation.userId = :id AND (project.active > '-1' OR project.active IS NULL)";
+                LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
+				WHERE
+
+				(       relation.userId = :id
+				        OR project.psettings = 'all'
+				        OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
+				    )
+
+				    AND (project.active > '-1' OR project.active IS NULL)
+				    ";
 
             if ($status == "open") {
                 $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
@@ -170,7 +180,7 @@ namespace leantime\domain\repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            if(isset($_SESSION['enablePrograms']) || isset($_SESSION['enableStrategies'])) {
+            if((isset($hierarchy['program']) && $hierarchy['program']['enabled'] == true) || (isset($hierarchy['strategy']) && $hierarchy['strategy']['enabled'] == true)) {
                 $query .= " GROUP BY
 					project.id
 				    ORDER BY parentName, clientName, project.name";
@@ -179,7 +189,6 @@ namespace leantime\domain\repositories {
 					project.id
 				ORDER BY clientName, parentName, project.name";
             }
-
 
             $stmn = $this->db->database->prepare($query);
             if ($userId == '') {
@@ -212,7 +221,7 @@ namespace leantime\domain\repositories {
 					project.dollarBudget,
 				    project.menuType,
 				    project.type,
-					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
+					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
 					IF(favorite.id IS NULL, false, true) as isFavorite
@@ -224,9 +233,8 @@ namespace leantime\domain\repositories {
 				WHERE
 				    (   relation.userId = :id
 				        OR project.psettings = 'all'
-				        OR (project.psettings = 'client' AND project.clientId = :clientId)
+				        OR (project.psettings = 'clients' AND project.clientId = :clientId)
 				    )
-
 				  AND (project.active > '-1' OR project.active IS NULL)";
 
             if ($status == "open") {
@@ -638,6 +646,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("editProject", array("values"=>$values));
         }
 
         /**
@@ -780,6 +790,50 @@ namespace leantime\domain\repositories {
                     return true;
                 }
             }
+
+            //Select users are allowed to see project
+            $query = "SELECT
+				zp_relationuserproject.userId,
+				zp_relationuserproject.projectId,
+				zp_projects.name
+			FROM zp_relationuserproject JOIN zp_projects
+				ON zp_relationuserproject.projectId = zp_projects.id
+			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if ($values && count($values) > 1) {
+                return true;
+            }
+
+            return false;
+        }
+
+        public function isUserMemberOfProject($userId, $projectId)
+        {
+
+            $userRepo = new users();
+            $user = $userRepo->getUser($userId);
+
+            if ($user === false) {
+                return false;
+            }
+
+            //admins owners and managers can access everything
+
+
+            $project = $this->getProject($projectId);
+
+            if ($project === false) {
+                return false;
+            }
+
 
             //Select users are allowed to see project
             $query = "SELECT
@@ -954,6 +1008,8 @@ namespace leantime\domain\repositories {
             $stmn->execute();
 
             $stmn->closeCursor();
+
+            core\eventhelpers::dispatch_event("userAddedToProject", array("userId"=> $userId, "projectId"=> $projectId, "projectRole" => $projectRole));
         }
 
         public function patch($id, $params)
@@ -1032,32 +1088,62 @@ namespace leantime\domain\repositories {
             }
 
             if ($value !== false && $value['avatar'] != '') {
+
                 $files = new files();
                 $file = $files->getFile($value['avatar']);
 
                 if ($file) {
-                    $return = $file['encName'] . "." . $file['extension'];
+
+                    $filePath = $file['encName'] . "." . $file['extension'];
+                    $type = $file['extension'];
+
+                    return array("filename"=>$filePath, "type"=>"uploaded");
+
+                }else {
+                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $image = $avatar
+                        ->name("🦄")
+                        ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                        ->fontName("Verdana")
+                        ->background('#555555')->color("#fff")
+                        ->generateSvg();
+
+                    return $image;
                 }
 
-                $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
-                $type = $file['extension'];
 
-                return $return;
+
             } elseif ($value !== false && ($value['avatar'] === '' || $value['avatar'] == null)) {
-                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
-                $image = $avatar
-                    ->name($value['name'])
-                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
-                    ->fontName("Verdana")
-                    ->background('#555555')->color("#fff")
-                    ->generateSvg();
 
-                return $image;
+                $imagename = md5($value['name']);
+
+                if(file_exists(APP_ROOT."/cache/avatars/".$imagename.".png")){
+
+                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+
+                }else{
+
+                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $image = $avatar
+                        ->name($value['name'])
+                        ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
+                        ->fontSize(0.5)
+                        ->size(96)
+                        ->background('#555555')->color("#fff")
+                        ->generate();
+
+                    $image->save(APP_ROOT."/cache/avatars/".$imagename.".png", 100, "png");
+
+                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+
+                }
+
+
             } else {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
                     ->name("🦄")
-                    ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
+                    ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')
                     ->fontName("Verdana")
                     ->background('#555555')->color("#fff")
                     ->generateSvg();

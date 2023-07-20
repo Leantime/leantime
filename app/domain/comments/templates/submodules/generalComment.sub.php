@@ -11,7 +11,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 }
 ?>
 
-<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm">
+<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm" class="formModal">
 
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
 

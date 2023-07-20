@@ -89,7 +89,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
         if (count($milestones) == 0) {
             echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
             echo"<div style='width:30%' class='svgContainer'>";
-            echo file_get_contents(ROOT . "/images/svg/undraw_adjustments_p22m.svg");
+            echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
             <h4>" . $this->__("headlines.no_milestones") . "<br/>
@@ -130,7 +130,15 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     <?php if (count($milestones) > 0) {?>
         var tasks = [
 
-            <?php foreach ($milestones as $mlst) {
+            <?php
+            $lastMilestoneSortIndex = array();
+            //Set sort index first
+            foreach ($milestones as $mlst) {
+                if($mlst->type == "milestone") {
+                    $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex;
+                }
+            }
+            foreach ($milestones as $mlst) {
 
                 $headline = $this->__('label.' . strtolower($mlst->type)) .": ".$mlst->headline;
                 if($mlst->type == "milestone"){
@@ -143,8 +151,17 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                 }
 
                 $sortIndex = 0;
+
                 if($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)){
-                    $sortIndex = $mlst->sortIndex;
+                    if($mlst->type == "milestone") {
+                        $sortIndex = $lastMilestoneSortIndex[$mlst->id].".0";
+                    }else{
+                        if($mlst->milestoneid != 0) {
+                            $sortIndex = $lastMilestoneSortIndex[$mlst->milestoneid] . "." . $mlst->sortIndex;
+                        }else{
+                            $sortIndex = "0".".".$mlst->sortIndex;
+                        }
+                    }
                 }
 
                 $dependencyList = array();

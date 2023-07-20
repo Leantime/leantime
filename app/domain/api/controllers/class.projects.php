@@ -40,14 +40,20 @@ namespace leantime\domain\controllers {
 
                 $return = $this->projectService->getProjectAvatar($params["projectAvatar"]);
 
-                if (is_string($return)) {
+                if (is_array($return)) {
 
                     $file = new core\fileupload();
-                    $file->displayImageFile($return);
+                    if($return["type"] == "uploaded"){
+                        $file->displayImageFile($return["filename"]);
+                    }else if($return["type"] == "generated"){
+                        $file->displayImageFile("avatar", $return["filename"]);
+                    }
 
                 } else if(is_object($return)){
+
                     header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
+
                 }
             }
         }

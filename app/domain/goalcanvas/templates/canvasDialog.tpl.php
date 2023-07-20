@@ -38,10 +38,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     }
 </script>
 
-<div class="showDialogOnLoad" style="display:none;">
+<div style="width:1000px">
 
-  <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
-  <hr style="margin-top: 5px; margin-bottom: 15px;">
+  <h1><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h1>
+
     <?php echo $this->displayNotification(); ?>
 
     <form class="<?=$canvasName ?>CanvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
@@ -49,79 +49,110 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
+        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?? '' ?>" />
+        <input type="hidden" name="changeItem" value="1" />
+
+        <div class="row">
+            <div class="col-md-8">
+
 
         <label><?=$this->__("label.what_is_your_goal") ?></label>
-        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" placeholder="<?=$this->__('input.placeholders.describe_element') ?>" style="width:100%" /><br />
+        <input type="text" name="title" value="<?php $this->e($canvasItem['title']) ?>"  style="width:100%" /><br />
 
-        <?php if (!empty($statusLabels)) { ?>
-            <label><?=$this->__("label.status") ?></label>
-            <select name="status" style="width: 50%" id="statusCanvas">
-            </select><br /><br />
-        <?php } else { ?>
-            <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
-        <?php } ?>
 
-        <?php if (!empty($relatesLabels)) { ?>
+
+
+
+
+             <?php if (!empty($relatesLabels)) { ?>
             <label><?=$this->__("label.relates") ?></label>
             <select name="relates"  style="width: 50%" id="relatesCanvas">
             </select><br />
         <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
         <?php } ?>
-
-        <?php if ($dataLabels[1]['active']) { ?>
-          <label><?=$this->__($dataLabels[1]['title']) ?></label>
-            <?php if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>" style="width:100%"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[1]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[1]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[1]['field'] ?>" value="" />
-        <?php } ?>
-
-        <?php if ($dataLabels[2]['active']) { ?>
-          <label><?=$this->__($dataLabels[2]['title']) ?></label>
-            <?php if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>" style="width:100%"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[2]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[2]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[2]['field'] ?>" value="" />
-        <?php } ?>
-
-        <?php if ($dataLabels[3]['active']) { ?>
-          <label><?=$this->__($dataLabels[3]['title']) ?></label>
-            <?php if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int') { ?>
-                <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[3]['field']] ?>"/><br />
-            <?php } elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string') { ?>
-                <input type="text" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[3]['field']] ?>"/><br />
-            <?php } else { ?>
-                <textarea style="width:100%" rows="3" cols="10" name="<?=$dataLabels[3]['field'] ?>" class="modalTextArea tinymceSimple"><?=$canvasItem[$dataLabels[3]['field']] ?></textarea><br />
-            <?php } ?>
-        <?php } else { ?>
-            <input type="hidden" name="<?=$dataLabels[3]['field'] ?>" value="" />
-        <?php } ?>
+                <br />
+                <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i> <?=$this->__("Metrics") ?></h4>
 
 
-        <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?>" />
-        <input type="hidden" name="changeItem" value="1" />
+                <?php $this->dispatchTplEvent('beforeMeasureGoalContainer', $canvasItem); ?>
+                <div id="measureGoalContainer">
+                    <label>How will you measure this objective. What metric will you be using.</label>
+                    <input type="text" name="description" value="<?=$canvasItem['description'] ?>" style="width:100%"/><br />
+                </div>
 
-        <?php if ($id != '') {?>
-            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
-        <?php } ?>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Starting Value</label>
+                        <input type="number" step="0.01" name="startValue" value="<?=$canvasItem['startValue'] ?>" style="width:105px"/>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Current Value</label>
+                        <input type="number" step="0.01" name="currentValue" id="currentValueField" value="<?=$canvasItem['currentValue'] ?>"
+                            <?php if($canvasItem['setting'] == 'linkAndReport') { echo "readonly='readonly'";}?>
+                            <?php if($canvasItem['setting'] == 'linkAndReport') { echo "data-tippy-content='Current value calculated from child goals'";}?>
+                               style="width:105px"/>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Goal Value</label>
+                        <input type="number" step="0.01" name="endValue" value="<?=$canvasItem['endValue'] ?>" style="width:105px"/>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Type</label>
+                        <select name="metricType">
+                            <option value="number" <?php if($canvasItem['metricType'] == 'number') echo"selected"; ?>>Number</option>
+                            <option value="percent" <?php if($canvasItem['metricType'] == 'percent') echo"selected"; ?>>% Percent</option>
+                            <option value="currency" <?php if($canvasItem['metricType'] == 'currency') echo"selected"; ?>><?=$this->__('language.currency') ?></option>
+                        </select>
+                    </div>
+                </div>
 
-        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-            <input type="submit" value="<?=$this->__("buttons.save_and_close") ?>" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"/>
-        <?php } ?>
+                <br />
+                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                    <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
+                    <button type="submit"  class="btn btn-primary" id="saveAndClose" value="closeModal" onclick="leantime.goalCanvasController.setCloseModal();"><?=$this->__("buttons.save_and_close") ?></button>
+                <?php } ?>
 
-        <?php if ($id !== '') { ?>
+
+
+                <?php if ($id !== '') { ?>
+                    <br /><br /><br />
+                    <input type="hidden" name="comment" value="1" />
+                    <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
+                    <?php
+                    $this->assign("formUrl", "/strategyPro/editCanvasItem/" . $id . "");
+                    $this->displaySubmodule('comments-generalComment');?>
+                <?php } ?>
+            </div>
+
+            <div class="col-md-4">
+
+
+                <?php if (!empty($statusLabels)) { ?>
+                    <label><?=$this->__("label.status") ?></label>
+                    <select name="status" style="width: 50%" id="statusCanvas">
+                    </select><br /><br />
+                <?php } else { ?>
+                    <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
+                <?php } ?>
+
+
+
+
+
+
+
+
+                <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-calendar"></i> Dates</h4>
+
+                <label>Start Date</label>
+                <input type="text" autocomplete="off" value="<?=$this->getFormattedDateString($canvasItem['startDate']); ?>" name="startDate" class="dates"/>
+
+                <label>End Date</label>
+                <input type="text" autocomplete="off" value="<?=$this->getFormattedDateString($canvasItem['endDate']); ?>" name="endDate" class="dates"/>
+
+
+                <?php if ($id !== '') { ?>
             <br /><br />
             <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$this->__("headlines.attached_milestone") ?></h4>
 
@@ -222,20 +253,22 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <?php } ?>
 
+            </div>
+        </div>
+
+        <?php if ($id != '') {?>
+            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
+        <?php } ?>
+
     </form>
 
-    <?php if ($id !== '') { ?>
-        <br />
-        <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
-        <?php
-        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/" . $id . "");
-        $this->displaySubmodule('comments-generalComment');?>
-    <?php } ?>
+
 </div>
 
 <script type="text/javascript">
     jQuery(document).ready(function(){
+
+        leantime.ticketsController.initDates();
 
         <?php if (!empty($statusLabels)) { ?>
             new SlimSelect({

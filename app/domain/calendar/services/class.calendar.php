@@ -9,8 +9,11 @@ namespace leantime\domain\services {
     class calendar
     {
         private repositories\calendar $calendarRepo;
+        private core\language $language;
+
         public function __construct() {
             $this->calendarRepo = new repositories\calendar();
+            $this->language = core\language::getInstance();
         }
 
 
@@ -54,6 +57,48 @@ namespace leantime\domain\services {
             }
 
             return false;
+        }
+
+
+        /**
+         * Adds a new event to the users calendar
+         *
+         * @access public
+         * @params array $values array of event values
+         *
+         * @return int|false returns the id on success, false on failure
+         */
+        public function addEvent(array $values): int|false {
+
+            if (isset($values['allDay']) === true) {
+                $allDay = 'true';
+            } else {
+                $allDay = 'false';
+            }
+            $values['allDay'] = $allDay;
+
+            $dateFrom = null;
+            if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
+                $dateFrom = $this->language->getISODateTimeString($values['dateFrom'], $values['timeFrom']);
+            }
+            $values['dateFrom'] = $dateFrom;
+
+            $dateTo = null;
+            if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
+                $dateTo =  $this->language->getISODateTimeString($values['dateTo'], $values['timeTo']);
+            }
+            $values['dateTo'] = $dateTo;
+
+            if ($values['description'] !== '') {
+
+                $result = $this->calendarRepo->addEvent($values);
+
+                return $result;
+
+            } else {
+
+                return false;
+            }
         }
 
     }

@@ -28,7 +28,7 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            'goal' =>     [ 'icon' => 'fa-trophy', 'title' => 'box.goal' ],
+            'goal' =>     [ 'icon' => 'fa-bullseye', 'title' => 'box.goal' ],
         ];
 
         /**

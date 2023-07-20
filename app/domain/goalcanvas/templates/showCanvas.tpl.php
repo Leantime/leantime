@@ -8,6 +8,7 @@ defined('RESTRICTED') or die('Restricted access');
 
 $canvasName = 'goal';
 $elementName = 'goal';
+
 ?>
 
 <?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
@@ -56,38 +57,51 @@ $elementName = 'goal';
                                             <?php } ?>
                                         </div>
 
-                                        <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
+                                        <h4><strong>Goal:</strong> <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
                                                class="<?=$canvasName ?>CanvasModal"
-                                               data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
+                                               data="item_<?=$row['id'] ?>"><?php $this->e($row['title']);?></a></h4>
                                         <br />
-                                        <?=$this->escape($row["assumptions"]) ?>
-                                        <br />
+                                        <strong>Metric:</strong> <?=$this->escape($row["description"]) ?>
+                                        <br /><br />
+
+
+
 
                                         <?php
-                                        if ($row["conclusion"] != 0 && is_numeric($row["data"]) && is_numeric($row["conclusion"])) {
-                                            $percentDone = round($row["data"] / $row["conclusion"] * 100, 2);
-                                        } else {
-                                            $percentDone = 0;
+
+                                        $percentDone = $row["goalProgress"];
+                                        $metricTypeFront = '';
+                                        $metricTypeBack = '';
+                                        if($row["metricType"] == "percent") {
+                                            $metricTypeBack = '%';
+                                        }else if($row["metricType"] == "currency") {
+                                            $metricTypeFront = $this->__("language.currency");
                                         }
 
                                         ?>
 
+                                        <div class="row">
+                                            <div class="col-md-4"></div>
+                                            <div class="col-md4 center">
 
-                                        <div class="row" style="padding-bottom:0px;">
-
-                                            <div class="col-md-4">
-                                                <small><?=$this->__('label.current') ?>: <?=$row["data"] ?></small>
-                                            </div>
-                                            <div class="col-md-4">
                                                 <small><?=sprintf($this->__("text.percent_complete"), $percentDone); ?></small>
                                             </div>
-                                            <div class="col-md-4" style="text-align:right">
-                                                <small><?=$this->__('label.goal') ?>: <?=$row["conclusion"] ?></small>
-                                            </div>
+                                            <div class="col-md-4"></div>
                                         </div>
-                                        <div class="progress">
+                                        <div class="progress" style="margin-bottom:0px;">
                                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percentDone; ?>%">
                                                 <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $percentDone)?></span>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="padding-bottom:0px;">
+                                            <div class="col-md-4">
+                                                <small>Start:<br /><?=$metricTypeFront.$row["startValue"].$metricTypeBack ?></small>
+                                            </div>
+                                            <div class="col-md-4 center">
+                                                <small><?=$this->__('label.current') ?>:<br /><?=$metricTypeFront.$row["currentValue"].$metricTypeBack ?></small>
+                                            </div>
+                                            <div class="col-md-4" style="text-align:right">
+                                                <small><?=$this->__('label.goal') ?>:<br /><?=$metricTypeFront.$row["endValue"].$metricTypeBack ?></small>
                                             </div>
                                         </div>
 
@@ -231,7 +245,7 @@ $elementName = 'goal';
             echo "<br /><br /><div class='center'>";
 
                 echo "<div class='svgContainer'>";
-                    echo file_get_contents(ROOT . "/images/svg/undraw_design_data_khdb.svg");
+                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                     echo "</div>";
 
                 echo"<h3>" . $this->__("headlines.goal.analysis") . "</h3>";

@@ -110,7 +110,7 @@ class environment
         /* General */
         $this->sitename = $this->environmentHelper("LEAN_SITENAME", $defaultConfiguration->sitename ?? 'Leantime');
         $this->language = $this->environmentHelper("LEAN_LANGUAGE", $defaultConfiguration->language ?? 'en-US');
-        $this->logoPath = $this->environmentHelper("LEAN_LOGO_PATH", $defaultConfiguration->logoPath ?? '/images/logo.svg');
+        $this->logoPath = $this->environmentHelper("LEAN_LOGO_PATH", $defaultConfiguration->logoPath ?? '/dist/images/logo.svg');
         $this->printLogoURL = $this->environmentHelper("LEAN_PRINT_LOGO_URL", $defaultConfiguration->printLogoURL ?? '');
         $this->appUrl = $this->environmentHelper("LEAN_APP_URL", $defaultConfiguration->appUrl ?? '');
         $this->defaultTheme = $this->environmentHelper("LEAN_DEFAULT_THEME", $defaultConfiguration->defaultTheme ?? 'default');

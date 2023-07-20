@@ -380,7 +380,12 @@ namespace leantime\domain\controllers\canvas {
             $fontData = $defaultFontConfig['fontdata'];
 
             $mpdf = new \Mpdf\Mpdf([
-                'fontDir' => array_merge($fontDirs, [ROOT . '/fonts/roboto', ROOT . '/css/libs/fontawesome-free/webfonts']),
+                'fontDir' => array_merge(
+                    $fontDirs,
+                    [
+                        ROOT . '/dist/fonts',
+                    ]
+                ),
                 'fontdata' => $fontData +
                 [
                     'roboto' => [
@@ -482,7 +487,7 @@ namespace leantime\domain\controllers\canvas {
         protected function htmlHeader(string $projectTitle, string $moduleTitle): string
         {
 
-            $logo = ROOT . "/images/logo.png";
+            $logo = ROOT . "/dist/images/logo.png";
 
             $html = '' .
                     '<div style="padding: ' . self::PDF_MARGIN . 'px; height: ' . self::PDF_HEADER_HEIGHT . 'px;">' .

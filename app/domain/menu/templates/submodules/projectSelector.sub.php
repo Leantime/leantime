@@ -10,7 +10,6 @@ if(str_contains($redirectUrl, "showProject")) {
 
 <div class="dropdown-menu projectselector">
     <div class="head">
-
         <?php /* For future use - - - - -
         <div class="searchBar">
             <input type="text" value="" placeholder="Search for project"/>
@@ -18,7 +17,6 @@ if(str_contains($redirectUrl, "showProject")) {
         */ ?>
         <span class="sub"><?=$this->__("menu.current_project") ?></span><br />
         <span class="title"><?php $this->e($_SESSION['currentProjectName']); ?></span>
-
 
     </div>
 
@@ -31,234 +29,85 @@ if(str_contains($redirectUrl, "showProject")) {
 
         <div id="allProjects" class="">
 
-
             <div class="row" style="margin:0px;">
                 <?php
                     $projectHierarchy = $this->get('allAssignedProjectsHierarchy');
 
                     $numCol = 1;
-                    if(isset($_SESSION['enablePrograms'])) $numCol++;
-                    if(isset($_SESSION['enableStrategies'])) $numCol++;
+                    if($projectHierarchy['strategy']["enabled"] === true) $numCol++;
+                    if($projectHierarchy['program']["enabled"] === true) $numCol++;
+
                     $colW = 12/$numCol;
 
                     $currentType = $this->get("currentProjectType");
                     $currentProject = $this->get("currentProject");
 
-                    if($currentType == 'strategy'){
-                        $selectedProject = '';
-                        $selectedProgram = '';
-                        $selectedStrategy = $currentProject;
-                    }
 
-                    if($currentType == 'program'){
-                        $selectedProject = '';
-                        $selectedProgram = $currentProject;
-                        $selectedStrategy = $projectHierarchy['program'][$currentProject]['parent'] ?? '';
-                    }
+                \leantime\core\eventhelpers::dispatch_event('beforeProjectSelectorList', array("projectHierarchy" => $projectHierarchy, "colW"=>$colW, "context"=>$this));
 
-                    if($currentType == 'project'){
+                if($projectHierarchy['project']["enabled"] === true) { ?>
 
-                        $selectedProject = $currentProject;
+                <div class="col-md-<?=$colW?> scrollingTab">
+                    <ul class="selectorList projectList">
 
-                        if( $projectHierarchy['project'][$currentProject]['parent'] != null) {
-                            $selectedProgram = $projectHierarchy['project'][$currentProject]['parent'];
-                        }else{
-                            $selectedProgram = 'noparent';
-                        }
-
-                        if(isset($projectHierarchy['program'][$selectedProgram])){
-                            $selectedStrategy = $projectHierarchy['program'][$selectedProgram]['parent'];
-                        }else if($projectHierarchy['project'][$currentProject]['parent'] != null){
-                            $selectedStrategy = $projectHierarchy['project'][$currentProject]['parent'];
-                        }else{
-                            $selectedStrategy = 'noparent';
-                        }
-
-                    }
-
-
-
-                    if(count($projectHierarchy['strategy']) > 0) { ?>
-                        <div class="col-md-<?=$colW?> scrollingTab">
-                            <ul class="selectorList strategyList">
-                                <?php
-                                    foreach ($projectHierarchy['strategy'] as $projectRow) {
-
-                                    }
-                                ?>
-                            </ul>
-                        </div>
                         <?php
-                    }
+                        $lastClient = '';
 
-                    if(isset($_SESSION['enablePrograms']) && $_SESSION['enablePrograms'] == true) { ?>
-                        <div class="col-md-<?=$colW?> scrollingTab">
-                            <ul class="selectorList programList projectTarget">
-                                <li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">Programs</li>
-                                <?php
-                                    foreach ($projectHierarchy['program'] as $projectRow) {
+                        foreach ($projectHierarchy['project']["items"] as $key => $typeRow) {
 
-                                        if($projectRow['parentId'] == null) $projectRow['parentId'] = "noparent";
+                            echo '<li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">'.$this->__("selectorLabel.".$key).'</li>';
 
-                                        echo "<li id='projectGroup-".$projectRow['id']."' class='parent-".$projectRow['parentId']." ". $projectRow['type'] ." ";
-
-                                        //If there are no parents, show all
-                                        if(count($projectHierarchy['strategy']) == 0 || $selectedStrategy == $projectRow['parentId']){
-                                            echo " visible ";
-                                        }else {
-                                            echo " groupHidden ";
-                                        }
-
-                                        if($selectedProgram == $projectRow['id']){
-                                            echo " activeChild ";
-                                        }
-
-
-                                        if ($this->get('currentProject') == $projectRow["id"]) {
-                                            echo " active ";
-                                        }
-                                        $redirectUpdate = \leantime\core\eventhelpers::dispatch_filter('defaultProjectRedirect', $redirectUrl, array("type" => $projectRow['type']));
-
-                                        echo"'><a";
-
-                                        if(strlen($projectRow["name"]) >=15){
-                                            echo " data-tippy-content='".$this->escape($projectRow["name"])."' ";
-                                        }
-
-                                        echo" href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUpdate . "'><span class='projectAvatar'><img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
-                   </span><span class='projectName'> " . $this->truncate($this->escape($projectRow["name"]), 15, '...') . "</span></a>
-                                        <a href='javascript:void(0);' onclick='leantime.menuController.toggleHierarchy(".$projectRow['id'].", \"project\")' class='treeAction'><i class='fa fa-chevron-right'></i></a>
-                                        </li>";
-
-                                    }
-
-                                    echo "<li id='projectGroup-noparent' class='parent-noparent program ";
-
-                                    //If there are no parents, show all
-                                    if(count($projectHierarchy['strategy']) == 0 || $selectedStrategy == 'noparent'){
-                                        echo " visible ";
-                                    }else {
-                                        echo " groupHidden ";
-                                    }
-
-                                    if($selectedProgram == 'noparent'){
-                                        echo " activeChild ";
-                                    }
-                                    echo"'><a href='javascript:void(0)' data-tippy-content='Not assigned to a program'><span class='projectName'> ".$this->truncate('Not assigned to a program', 15, '...')."</span></a>
-<a href='javascript:void(0);' onclick='leantime.menuController.toggleHierarchy(\"noparent\", \"project\")' class='treeAction'><i class='fa fa-chevron-right'></i></a></li>";
-
-
-                                    \leantime\core\eventhelpers::dispatch_event('programBottomMenu');
-
-                                    ?>
-
-                            </ul>
-                        </div>
-                        <?php
-                    }
-
-                    ?>
-                        <div class="col-md-<?=$colW?> scrollingTab">
-                            <ul class="selectorList clientList projectList">
-                                <li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">Projects</li>
-                                <?php
-
-
-
-                                $lastClient = "";
-
-                                if ($projectHierarchy['project'] !== false && count($projectHierarchy['project']) >= 1) {
-
-                                foreach ($projectHierarchy['project'] as $projectRow) {
-
-                                    if(!isset($_SESSION['enablePrograms']) || $_SESSION['enablePrograms'] === false){
-                                        $projectRow['parentId'] = 'noparent';
-                                    }
-                                    if($projectRow['parentId'] == null) $projectRow['parentId'] = "noparent";
-
+                            foreach ($typeRow as $projectRow) {
 
                                 if ($lastClient != $projectRow['clientName']) {
                                     $lastClient = $projectRow['clientName'];
 
+                                    echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientGroupParent-" . $projectRow['parent'] . " clientController";
 
-                                    echo "<li class='parent-".$projectRow['parentId']." clientIdHead-".$projectRow['parentId']."_" . $projectRow['clientId'] . "";
-
-                                    if(!isset($_SESSION['enablePrograms']) || $_SESSION['enablePrograms'] === false || count($projectHierarchy['program']) == 0 || $selectedStrategy == $projectRow['parentId'] || $selectedProgram == $projectRow['parentId']){
-                                        echo " visible ";
-                                    }else {
-                                        echo " groupHidden ";
+                                    if($projectHierarchy['program']["enabled"] === true || $projectHierarchy['strategy']["enabled"] === true) {
+                                        echo " hideGroup ";
                                     }
 
-                                    echo"' onclick='leantime.menuController.toggleClientList(\"".$projectRow['parentId']."_" . $projectRow['clientId'] . "\", this)'><i class=\"fas fa-angle-right\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
-                                }
-
-                                echo "<li class='parent-".$projectRow['parentId']." projectLineItem client_".$projectRow['parentId']."_" . $projectRow['clientId'] . " ". $projectRow['type'] ." ";
-                                if ($this->get('currentProject') == $projectRow["id"]) {
-                                echo " active ";
-                                }
-
-                                if(!isset($_SESSION['enablePrograms']) || $_SESSION['enablePrograms'] === false || count($projectHierarchy['program']) == 0 || $selectedStrategy == $projectRow['parentId'] || $selectedProgram == $projectRow['parentId']){
-                                    echo " visible ";
-                                }else {
-                                    echo " groupHidden ";
-                                }
-
-                                $redirectUpdate = \leantime\core\eventhelpers::dispatch_filter('defaultProjectRedirect', $redirectUrl, array("type" => $projectRow['type']));
-                                echo"'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUpdate . "'><span class='projectAvatar'><img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
-                   </span><span class='projectName'> " . $this->escape($projectRow["name"]) . "</span></a></li>";
-
-
+                                    echo "'><a href='#' onclick='leantime.menuController.toggleClientList(\"".$projectRow['clientId'] . "\", this)' class='open'><i class=\"fas fa-angle-down\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
 
                                 }
-                                } else {
-                                echo "<li class='nav-header'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
+
+                                echo"<li class='projectGroup-".$projectRow['parent']." hideGroup clientId-".$projectRow['parent']."-". $projectRow['clientId'] ."";
+                                if($_SESSION["currentProject"] == $projectRow["id"]) {
+                                    echo " active activeChild";
                                 }
-                                ?>
+                                echo"' data-client='".$projectRow['clientId']."'>";
+                                echo"<a";
 
-                                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                    <li class='nav-header border alwaysVisible'></li>
-                                    <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/newProject/"><?=$this->__("menu.create_project") ?></a></li>
-                                    <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/showAll"><?=$this->__("menu.view_all_projects") ?></a></li>
-                                <?php } ?>
-                                <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
-                                    <li class="alwaysVisible"><a href="<?=BASE_URL ?>/clients/showAll"><?=$this->__("menu.view_all_clients") ?></a></li>
-                                <?php } ?>
-                            </ul>
-                        </div>
-                        <?php
+                                if(strlen($projectRow["name"]) >=15){
+                                    echo " data-tippy-content='".$this->escape($projectRow["name"])."' ";
+                                }
 
-                ?>
+                                echo " href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'>
+                                                <span class='projectAvatar'>
+                                                    <img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
+                                                </span>
+                                                <span class='projectName'> " . $this->truncate($this->escape($projectRow["name"]), 15, '...') . "</span>
+                                            </a>";
+
+                                echo"</li>";
+                            }
+                        }
+                        ?>
+                        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                            <li class='nav-header border alwaysVisible'></li>
+                            <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/newProject/"><?=$this->__("menu.create_project") ?></a></li>
+                            <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/showAll"><?=$this->__("menu.view_all_projects") ?></a></li>
+                        <?php } ?>
+                        <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                            <li class="alwaysVisible"><a href="<?=BASE_URL ?>/clients/showAll"><?=$this->__("menu.view_all_clients") ?></a></li>
+                        <?php } ?>
+                    </ul>
+                </div>
+
+                <?php } ?>
+
             </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <ul class="selectorList clientList">
-            <?php ?>
-
-
-
-            </ul>
-
-
-
-
-
-
-
-
-
-
 
         </div>
 

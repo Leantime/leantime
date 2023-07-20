@@ -84,7 +84,9 @@ namespace leantime\domain\repositories {
             20115,
             20116,
             20117,
-            20118
+            20118,
+            20120,
+            20121
         );
 
         /**
@@ -108,6 +110,8 @@ namespace leantime\domain\repositories {
          */
         public function __construct()
         {
+
+
 
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
@@ -160,13 +164,12 @@ namespace leantime\domain\repositories {
             }
         }
 
-        public function createDB($dbName) {
+        public function createDB($dbName)
+        {
 
             try {
-
-
                 $stmn = $this->database->prepare("CREATE SCHEMA :schemaName ;");
-                $stmn->bindValue(':dbName',$dbName, PDO::PARAM_STR);
+                $stmn->bindValue(':dbName', $dbName, PDO::PARAM_STR);
 
                 $stmn->execute();
 
@@ -324,6 +327,7 @@ namespace leantime\domain\repositories {
                   `created` datetime DEFAULT NULL,
                   `projectId` INT NULL,
                   `type` VARCHAR(45) NULL,
+                  `description` TEXT,
                   PRIMARY KEY (`id`),
                   KEY `ProjectIdType` (`projectId` ASC, `type` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -349,7 +353,26 @@ namespace leantime\domain\repositories {
                   `parent` int NULL,
                   `featured` int NULL,
                   `tags` text NULL,
-                  PRIMARY KEY (`id`)
+                  `kpi` INT NULL DEFAULT NULL,
+                  `data1` TEXT NULL DEFAULT NULL,
+                  `data2` TEXT NULL DEFAULT NULL,
+                  `data3` TEXT NULL DEFAULT NULL,
+                  `data4` TEXT NULL DEFAULT NULL,
+                  `data5` TEXT NULL DEFAULT NULL,
+                  `startDate` DATETIME NULL DEFAULT NULL,
+                  `endDate` DATETIME NULL DEFAULT NULL,
+                  `setting` TEXT NULL DEFAULT NULL,
+                  `metricType` VARCHAR(45) DEFAULT NULL,
+                  `startValue` double(10,2) NULL DEFAULT NULL,
+                  `currentValue` double(10,2) NULL DEFAULT NULL,
+                  `endValue` double(10,2) NULL DEFAULT NULL,
+                  `impact` INT NULL DEFAULT NULL,
+                  `effort` INT NULL DEFAULT NULL,
+                  `probability` INT NULL DEFAULT NULL,
+                  `action` TEXT NULL DEFAULT NULL,
+                  `assignedTo` INT NULL DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `CanvasLookUp` (`canvasId` ASC, `box` ASC)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 CREATE TABLE `zp_approvals`
@@ -1305,7 +1328,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1345,7 +1367,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1385,7 +1406,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1421,7 +1441,6 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
-
                 return $errors;
             } else {
                 return true;
@@ -1456,7 +1475,59 @@ namespace leantime\domain\repositories {
             }
 
             if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
 
+        public function update_sql_20120(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+
+                "ALTER TABLE `zp_canvas_items`
+                ADD COLUMN `kpi` INT NULL DEFAULT NULL AFTER `tags`,
+                ADD COLUMN `data1` TEXT NULL DEFAULT NULL AFTER `kpi`,
+                ADD COLUMN `data2` TEXT NULL DEFAULT NULL AFTER `data1`,
+                ADD COLUMN `data3` TEXT NULL DEFAULT NULL AFTER `data2`,
+                ADD COLUMN `data4` TEXT NULL DEFAULT NULL AFTER `data3`,
+                ADD COLUMN `data5` TEXT NULL DEFAULT NULL AFTER `data4`,
+                ADD COLUMN `startDate` DATETIME NULL DEFAULT NULL AFTER `data5`,
+                ADD COLUMN `endDate` DATETIME NULL DEFAULT NULL AFTER `startDate`,
+                ADD COLUMN `setting` TEXT NULL DEFAULT NULL AFTER `endDate`,
+                ADD COLUMN `metricType` VARCHAR(45) NULL DEFAULT NULL AFTER `setting`,
+                ADD COLUMN `startValue` double(10,2) NULL DEFAULT NULL AFTER `metricType`,
+                ADD COLUMN `currentValue` double(10,2) NULL DEFAULT NULL AFTER `startValue`,
+                ADD COLUMN `endValue` double(10,2) NULL DEFAULT NULL AFTER `currentValue`,
+                ADD COLUMN `impact` INT NULL DEFAULT NULL AFTER `endValue`,
+                ADD COLUMN `effort` INT NULL DEFAULT NULL AFTER `impact`,
+                ADD COLUMN `probability` INT NULL DEFAULT NULL AFTER `effort`,
+                ADD COLUMN `action` TEXT NULL DEFAULT NULL AFTER `probability`,
+                ADD COLUMN `assignedTo` INT NULL DEFAULT NULL AFTER `action`;",
+                "UPDATE zp_canvas_items SET
+                    currentValue = CAST(IF(`data` = '', 0, `data`) AS DECIMAL(10,2)),
+                    endValue = CAST(IF(`conclusion` = '', 0, `conclusion`) AS DECIMAL(10,2)),
+                    title = description,
+                    description = assumptions
+                    WHERE box = 'goal';",
+                "ALTER TABLE `zp_canvas_items`
+                ADD INDEX `CanvasLookUp` (`canvasId` ASC, `box` ASC);",
+
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
                 return $errors;
             } else {
                 return true;
@@ -1464,6 +1535,31 @@ namespace leantime\domain\repositories {
         }
 
 
+        public function update_sql_20121(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_canvas`
+                    ADD COLUMN `description` TEXT NULL DEFAULT NULL AFTER `type`;",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
     }
 
 }

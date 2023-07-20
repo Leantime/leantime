@@ -333,7 +333,7 @@ class fileupload
         return false;
     }
 
-    public function displayImageFile($imageName) {
+    public function displayImageFile($imageName, $fullPath = '') {
 
         $mimes = array
         (
@@ -343,26 +343,72 @@ class fileupload
             'png' => 'image/png'
         );
 
-        $path = realpath(APP_ROOT."/".$this->config->userFilePath."/");
+        if ($this->config->useS3 == true && $fullPath == '') {
 
-        $fullPath = $path."/".$imageName;
+            $s3Client = new S3Client([
+                'version'     => 'latest',
+                'region'      => $this->config->s3Region,
+                'endpoint' => $this->config->s3EndPoint,
+                'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
+                'credentials' => [
+                    'key'    => $this->config->s3Key,
+                    'secret' => $this->config->s3Secret
+                ]
+            ]);
 
-        if (file_exists(realpath($fullPath))) {
-            if ($fd = fopen(realpath($fullPath), 'rb')) {
-                $path_parts = pathinfo($fullPath);
-                $ext = $path_parts["extension"];
+            try {
+                // implode all non-empty elements to allow s3FolderName to be empty.
+                // otherwise you will get an error as the key starts with a slash
+                $fileName = implode('/', array_filter(array($this->config->s3FolderName, $imageName)));
+                $result = $s3Client->getObject([
+                    'Bucket' => $this->config->s3Bucket,
+                    'Key' => $fileName,
+                    'Body'   => 'this is the body!'
+                ]);
 
-                if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
-                    header('Content-type: ' . $mimes[$ext]);
-                    header('Content-disposition: inline; filename="' . $imageName . '";');
+                header('Content-Type: ' . $result['ContentType']);
+                header('Pragma: public');
+                header('Cache-Control: max-age=86400');
+                header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+                header('Content-disposition: inline; filename="'.$imageName.'";');
 
-                    $chunkSize = 1024 * 1024;
+                $body = $result->get('Body');
 
-                    while (!feof($fd)) {
-                        $buffer = fread($fd, $chunkSize);
-                        echo $buffer;
+                echo $body->getContents();
+
+
+
+            } catch (Aws\S3\Exception\S3Exception $e) {
+
+                echo $e->getMessage()."\n";
+
+            }
+
+        }else{
+
+
+            if($fullPath == '') {
+                $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
+                $fullPath = $path . "/" . $imageName;
+            }
+
+            if (file_exists(realpath($fullPath))) {
+                if ($fd = fopen(realpath($fullPath), 'rb')) {
+                    $path_parts = pathinfo($fullPath);
+                    $ext = $path_parts["extension"];
+
+                    if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+                        header('Content-type: ' . $mimes[$ext]);
+                        header('Content-disposition: inline; filename="' . $imageName . '";');
+
+                        $chunkSize = 1024 * 1024;
+
+                        while (!feof($fd)) {
+                            $buffer = fread($fd, $chunkSize);
+                            echo $buffer;
+                        }
+                        fclose($fd);
                     }
-                    fclose($fd);
                 }
             }
         }

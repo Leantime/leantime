@@ -56,6 +56,8 @@ namespace leantime\core {
         private string $companyColor;
         private string $html;
 
+        private bool $hideWrapper = false;
+
         /**
          * __construct - get configurations
          *
@@ -118,7 +120,7 @@ namespace leantime\core {
                 $this->mailAgent->isMail();
             }
 
-            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
+            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/dist/images/logo.png";
             $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
             $this->language = language::getInstance();
@@ -161,9 +163,10 @@ namespace leantime\core {
          * @param  $html
          * @return void
          */
-        public function setHtml($html)
+        public function setHtml($html, $hideWrapper = false)
         {
 
+            $this->hideWrapper = $hideWrapper;
             $this->html = $html;
         }
 
@@ -251,38 +254,46 @@ namespace leantime\core {
                 $inlineLogoContent = "cid:companylogo";
             }
 
-            $bodyTemplate = '
-		<table width="100%" style="background:#eeeeee; padding:15px; ">
-		<tr>
-			<td align="center" valign="top">
-				<table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
-					<tr>
-						<td style="padding:3px 10px;">
-							<table>
-								<tr>
-								<td width="150"><img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;"></td>
-								<td></td>
-							</tr>
-							</table>
-						</td>
-					</tr>
-					<tr>
-						<td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
-							' . $this->language->__('email_notifications.hi') . '
-							<br /><br />
-							' . nl2br($this->html) . '
-							<br /><br />
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td align="center">
-			' . sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/') . '
-			</td>
-		</tr>
-		</table>';
+            if($this->hideWrapper === true) {
+
+                $bodyTemplate = nl2br($this->html);
+
+            }else{
+
+                $bodyTemplate = '
+                    <table width="100%" style="background:#eeeeee; padding:15px; ">
+                    <tr>
+                        <td align="center" valign="top">
+                            <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
+                                <tr>
+                                    <td style="padding:3px 10px;">
+                                        <table>
+                                            <tr>
+                                            <td width="150"><img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;"></td>
+                                            <td></td>
+                                        </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
+                                        ' . $this->language->__('email_notifications.hi') . '
+                                        <br /><br />
+                                        ' . nl2br($this->html) . '
+                                        <br /><br />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                        ' . sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/') . '
+                        </td>
+                    </tr>
+                    </table>';
+
+            }
 
             $bodyTemplate = $this->dispatchMailerFilter(
                 'bodyTemplate',

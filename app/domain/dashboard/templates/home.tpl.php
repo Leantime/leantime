@@ -28,21 +28,32 @@
 
         <?php echo $this->displayNotification(); ?>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="maincontentinner">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h3 class="todaysDate" style="padding-bottom:5px;"></h3>
-                            <h1 class="articleHeadline"><?=$this->__('text.hi') ?> <?php $this->e($currentUser['firstname']) ?></h1>
-                            <?php $this->dispatchTplEvent('afterWelcomeMessage'); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class="row">
             <div class="col-md-8">
+                <div class="maincontentinner">
+
+                    <?php
+                        echo"<div class='pull-right' style='max-width:200px; padding:20px'>";
+                        echo"<div  style='width:100%' class='svgContainer'>";
+                        echo file_get_contents(ROOT . "/images/svg/".$this->get("randomImage"));
+                        echo"</div></div>";
+
+                    ?>
+
+                    <h1 class="articleHeadline" style="padding-bottom:5px; padding-top:10px;">Welcome <strong><?php $this->e($currentUser['firstname']) ?></strong></h1>
+                    <?php
+                    $totalTickets = 0;
+                    foreach ($this->get('tickets') as $ticketGroup) {
+                        $totalTickets = $totalTickets + count($ticketGroup["tickets"]);
+                    } ?>
+
+                    <p>You have <strong><?=$totalTickets?> To-Dos</strong> across <strong><?=count($allProjects) ?> projects</strong> assigned to you.</p>
+                    <?php $this->dispatchTplEvent('afterWelcomeMessage'); ?>
+                    <div class="clear"></div>
+                </div>
+
+                <?php $this->dispatchTplEvent('afterWelcomeMessageBox'); ?>
 
                 <div class="maincontentinner">
                     <div class="row" id="yourToDoContainer">
@@ -111,7 +122,7 @@
                         if ($this->get('tickets') !== null && count($this->get('tickets')) == 0) {
                             echo"<div class='center'>";
                             echo"<div  style='width:30%' class='svgContainer'>";
-                            echo file_get_contents(ROOT . "/images/svg/undraw_a_moment_to_relax_bbpa.svg");
+                            echo file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg");
                             echo"</div>";
                             echo"<br /><h4>" . $this->__("headlines.no_todos_this_week") . "</h4>
                                         " . $this->__("text.take_the_day_off") . "
@@ -307,6 +318,22 @@
             </div>
 
             <div class="col-md-4">
+                <div class="maincontentinner minCalendar">
+
+                    <button class="fc-next-button btn btn-default right" type="button" style="position:relative; z-index:9;">
+                        <span class="fc-icon fc-icon-chevron-right"></span>
+                    </button>
+                    <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px; position:relative; z-index:9;">
+                        <span class="fc-icon fc-icon-chevron-left"></span>
+                    </button>
+
+                    <button class="fc-today-button btn btn-default right" style="margin-right:5px; position:relative; z-index:9;">today</button>
+
+                    <div class="clear"></div>
+
+                    <div id="calendar"></div>
+                </div>
+
                 <div class="maincontentinner">
                     <a href="<?=BASE_URL . "/projects/showMy" ?>" class="pull-right"><?=$this->__('links.my_portfolio') ?></a>
                     <h5 class="subtitle"><?=$this->__("headline.your_projects") ?></h5>
@@ -466,7 +493,167 @@
                 }
         } ?>
 
+
+
+
+   });
+
+    var events = [<?php foreach ($this->get('calendar') as $calendar) : ?>
+        {
+
+            title: <?php echo json_encode($calendar['title']); ?>,
+
+            start: new Date(<?php echo
+                $calendar['dateFrom']['y'] . ',' .
+                ($calendar['dateFrom']['m'] - 1) . ',' .
+                $calendar['dateFrom']['d'] . ',' .
+                $calendar['dateFrom']['h'] . ',' .
+                $calendar['dateFrom']['i'] ?>),
+            <?php if (isset($calendar['dateTo'])) : ?>
+            end: new Date(<?php echo
+                $calendar['dateTo']['y'] . ',' .
+                ($calendar['dateTo']['m'] - 1) . ',' .
+                $calendar['dateTo']['d'] . ',' .
+                $calendar['dateTo']['h'] . ',' .
+                $calendar['dateTo']['i'] ?>),
+            <?php endif; ?>
+            <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) : ?>
+            allDay: true,
+            <?php else : ?>
+            allDay: false,
+            <?php endif; ?>
+            enitityId: <?php echo $calendar['id'] ?>,
+            <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
+            url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
+            color: 'var(--accent2)',
+            enitityType: "event",
+            <?php else : ?>
+            url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
+            color: 'var(--accent1)',
+            enitityType: "ticket",
+            <?php endif; ?>
+        },
+        <?php endforeach; ?>];
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+
+        const calendarEl = document.getElementById('calendar');
+
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+                height:'360px',
+                initialView: 'multiMonthOneMonth',
+                views: {
+                    multiMonthOneMonth: {
+                        type: 'multiMonth',
+                        duration: { months: 1 },
+                        multiMonthTitleFormat: { month: 'long', year: 'numeric' },
+                    }
+                },
+                events: events,
+                editable: true,
+                headerToolbar: false,
+
+                nowIndicator: true,
+                bootstrapFontAwesome: {
+                    close: 'fa-times',
+                    prev: 'fa-chevron-left',
+                    next: 'fa-chevron-right',
+                    prevYear: 'fa-angle-double-left',
+                    nextYear: 'fa-angle-double-right'
+                },
+                eventDrop: function (event) {
+
+                    if(event.event.extendedProps.enitityType == "ticket") {
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/tickets',
+                            data : {
+                                id: event.event.extendedProps.enitityId,
+                                editFrom: event.event.startStr,
+                                editTo: event.event.endStr
+                            }
+                        });
+
+                    }else if(event.event.extendedProps.enitityType == "event") {
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/calendar',
+                            data : {
+                                id: event.event.extendedProps.enitityId,
+                                dateFrom: event.event.startStr,
+                                dateTo: event.event.endStr
+                            }
+                        })
+                    }
+                },
+                eventResize: function (event) {
+
+                    if(event.event.extendedProps.enitityType == "ticket") {
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/tickets',
+                            data : {
+                                id: event.event.extendedProps.enitityId,
+                                editFrom: event.event.startStr,
+                                editTo: event.event.endStr
+                            }
+                        })
+                    }else if(event.event.extendedProps.enitityType == "event") {
+
+                        jQuery.ajax({
+                            type : 'PATCH',
+                            url  : leantime.appUrl + '/api/calendar',
+                            data : {
+                                id: event.event.extendedProps.enitityId,
+                                dateFrom: event.event.startStr,
+                                dateTo: event.event.endStr
+                            }
+                        })
+                    }
+
+                },
+                eventMouseEnter: function() {
+                }
+            }
+        );
+        calendar.setOption('locale', leantime.i18n.__("language.code"));
+        calendar.render();
+        calendar.scrollToTime( 100 );
+        jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+
+        jQuery('.fc-prev-button').click(function() {
+            calendar.prev();
+            calendar.getCurrentData()
+            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+        });
+        jQuery('.fc-next-button').click(function() {
+            calendar.next();
+            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+        });
+        jQuery('.fc-today-button').click(function() {
+            calendar.today();
+            jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
+        });
+        jQuery("#my-select").on("change", function(e){
+
+            calendar.changeView(jQuery("#my-select option:selected").val());
+
+            jQuery.ajax({
+                type : 'PATCH',
+                url  : leantime.appUrl + '/api/submenu',
+                data : {
+                    submenu : "myCalendarView",
+                    state   : jQuery("#my-select option:selected").val()
+                }
+            });
+
+        });
     });
+
 
     <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
 
