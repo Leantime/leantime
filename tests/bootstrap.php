@@ -5,6 +5,11 @@ declare(strict_types=1);
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
+// Don't run script unless using the 'run' command
+if (! isset($_SERVER['argv'][1]) || $_SERVER['argv'][1] !== 'run') {
+    return;
+}
+
 if (! file_exists($composer = __DIR__ . '/../vendor/autoload.php')) {
     throw new RuntimeException('Please run "make build-dev" to run tests.');
 }
@@ -15,9 +20,21 @@ define('PROJECT_ROOT', realpath(__DIR__ . '/..') . '/');
 define('APP_ROOT', PROJECT_ROOT . 'app/');
 define('DEV_ROOT', PROJECT_ROOT . '.dev/');
 
-new class
-{
-    public function __construct()
+$bootstrapper = get_class(new class {
+    protected static $instance;
+    protected $seleniumProcess;
+    protected $dockerProcess;
+
+    public static function getInstance()
+    {
+        if (! isset(self::$instance)) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    public function start(): void
     {
         $this->startDevEnvironment();
         $this->createDatabase();
@@ -25,10 +42,30 @@ new class
         $this->createStep('Starting Codeception Testing Framework');
     }
 
+    public function destroy(): void
+    {
+        $this->createStep('Stopping Codeception Testing Framework');
+        $this->stopSelenium();
+        $this->stopDevEnvironment();
+    }
+
+    public function stopSelenium(): void
+    {
+        $this->createStep('Stopping Selenium');
+        $this->seleniumProcess->stop();
+    }
+
+    public function stopDevEnvironment(): void
+    {
+        $this->createStep('Stopping Leantime Dev Environment');
+        $this->dockerProcess->stop();
+        $this->executeCommand('docker compose down', ['cwd' => DEV_ROOT]);
+    }
+
     protected function startDevEnvironment(): void
     {
         $this->createStep('Build & Start Leantime Dev Environment');
-        $this->executeCommand(
+        $this->dockerProcess = $this->executeCommand(
             [
                 'docker',
                 'compose',
@@ -43,9 +80,29 @@ new class
             ],
             [
                 'cwd' => DEV_ROOT,
-                'timeout' => 0,
+                'background' => true
             ]
         );
+        $this->dockerProcess->waitUntil(function ($type, $buffer) {
+            if (! isset($started)) {
+                static $started = [
+                    'dev-maildev-1' => false,
+                    'dev-db-1' => false,
+                    'dev-s3ninja-1' => false,
+                    'dev-phpmyadmin-1' => false,
+                    'dev-leantime-dev-1' => false,
+                ];
+            }
+
+            foreach ($started as $container => $status) {
+                if (! $status && strpos($buffer, "Container \"$container\" started") !== false) {
+                    $started[$container] = true;
+                }
+            }
+
+            $this->commandOutputHandler($type, $buffer);
+            return ! in_array(false, $started, true);
+        });
     }
 
     protected function createDatabase(): void
@@ -93,7 +150,15 @@ new class
                 'install',
             ]
         );
-        $this->executeCommand('npx selenium-standalone start > /dev/null 2>&1 &');
+        $this->seleniumProcess = $this->executeCommand([
+            'npx',
+            'selenium-standalone',
+            'start',
+        ], ['background' => true]);
+        $this->seleniumProcess->waitUntil(function ($type, $buffer) {
+            $this->commandOutputHandler($type, $buffer);
+            return strpos($buffer, 'Selenium started') !== false;
+        });
     }
 
     protected function createStep(string $message): void
@@ -108,7 +173,7 @@ new class
         string|array $command,
         array $args = [],
         bool $required = true,
-    ): void {
+    ): Process|string {
         $process = is_array($command)
             ? new Process($command)
             : Process::fromShellCommandline($command);
@@ -121,16 +186,44 @@ new class
             $process->setTimeout($args['timeout']);
         }
 
-        $process->run(function ($type, $buffer) {
-            if (Process::ERR === $type) {
-                echo "\nSTDERR: $buffer";
-            } else {
-                echo "\nSTDOUT: $buffer";
-            }
-        });
+        if (isset($args['options'])) {
+            $process->setOptions($args['options']);
+        }
 
-        if ($required && ! $process->isSuccessful()) {
+        if (isset($args['background']) && $args['background']) {
+            $process->start();
+        } else {
+            $process->run(fn ($type, $buffer) => $this->commandOutputHandler($type, $buffer));
+        }
+
+        if (
+            $required
+            && (! isset($args['background']) || ! $args['background'])
+            && ! $process->isSuccessful()
+        ) {
             throw new ProcessFailedException($process);
         }
+
+        if (
+            isset($args['getOutput'])
+            && $args['getOutput']
+            && (! isset($args['background']) || ! $args['background'])
+        ) {
+            return $process->getOutput();
+        }
+
+        return $process;
     }
-};
+
+    private function commandOutputHandler($type, $buffer): void
+    {
+        if (Process::ERR === $type) {
+            echo "\nSTDERR: $buffer";
+        } else {
+            echo "\nSTDOUT: $buffer";
+        }
+    }
+});
+
+register_shutdown_function(fn () => $bootstrapper::getInstance()->destroy());
+$bootstrapper::getInstance()->start();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Support\Page\Acceptance;
 
+use Tests\Support\Page\Acceptance\Install;
 use Codeception\Util\Fixtures;
 
 class Login
@@ -13,9 +14,10 @@ class Login
      */
     protected $I;
 
-    public function __construct(\Tests\Support\AcceptanceTester $I)
+    public function __construct(\Tests\Support\AcceptanceTester $I, Install $installPage)
     {
         $this->I = $I;
+        $this->installPage = $installPage;
     }
 
 
@@ -23,6 +25,16 @@ class Login
     {
         if ($this->loadSessionShapshot('sid')) {
             return;
+        }
+
+        if (! Fixtures::exists('installed')) {
+            $this->installPage->install(
+                'test@leantime.io',
+                'test',
+                'John',
+                'Smith',
+                'Smith & Co'
+            );
         }
 
         $this->I->amOnPage('/auth/login');

@@ -5,6 +5,7 @@ namespace Tests\Acceptance;
 
 use Tests\Support\AcceptanceTester;
 use Codeception\Attribute\Depends;
+use Tests\Support\Page\Acceptance\Install;
 
 class InstallCest
 {
@@ -19,17 +20,14 @@ class InstallCest
     }
 
     #[Depends('installPageWorks')]
-    public function createDBSuccessfully(AcceptanceTester $I)
+    public function createDBSuccessfully(AcceptanceTester $I, Install $installPage)
     {
-        $I->amOnPage('/install');
-
-        $I->fillField(['name' => 'email'], 'test@leantime.io');
-        $I->fillField(['name' => 'password'], 'test');
-        $I->fillField(['name' => 'firstname'], 'John');
-        $I->fillField(['name' => 'lastname'], 'Smith');
-        $I->fillField(['name' => 'company'], 'Smith & Co');
-        $I->click('Install');
-
-        $I->see('The installation was successful');
+        $installPage->install(
+            'test@leantime.io',
+            'test',
+            'John',
+            'Smith',
+            'Smith & Co'
+        );
     }
 }
