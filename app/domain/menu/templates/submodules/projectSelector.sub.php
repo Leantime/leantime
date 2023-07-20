@@ -6,6 +6,8 @@ if(str_contains($redirectUrl, "showProject")) {
 
 }
 
+use leantime\core\eventhelpers;
+
 ?>
 
 <div class="dropdown-menu projectselector">
@@ -43,7 +45,7 @@ if(str_contains($redirectUrl, "showProject")) {
                     $currentProject = $this->get("currentProject");
 
 
-                \leantime\core\eventhelpers::dispatch_event('beforeProjectSelectorList', array("projectHierarchy" => $projectHierarchy, "colW"=>$colW, "context"=>$this));
+                static::dispatch_event('beforeProjectSelectorList', array("projectHierarchy" => $projectHierarchy, "colW"=>$colW, "context"=>$this));
 
                 if($projectHierarchy['project']["enabled"] === true) { ?>
 

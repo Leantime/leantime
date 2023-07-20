@@ -174,6 +174,10 @@ namespace leantime\domain\repositories {
 
             $menuStructure = $this->menuStructures[$menuType];
 
+            if(isset($_SESSION['submenuToggle']) === false || is_array($_SESSION['submenuToggle']) === false){
+                $_SESSION['submenuToggle'] = array();
+            }
+
             foreach ($menuStructure as $key => $element) {
                 $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
 

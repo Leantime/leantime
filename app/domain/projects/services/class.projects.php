@@ -855,7 +855,7 @@ namespace leantime\domain\services {
         public function getProjectAvatar($id)
         {
             $avatar = $this->projectRepository->getProjectAvatar($id);
-            $avatar = eventhelpers::dispatch_filter("afterGettingAvatar", $avatar, array("projectId"=>$id));
+            $avatar = static::dispatch_filter("afterGettingAvatar", $avatar, array("projectId"=>$id));
             return $avatar;
         }
 
