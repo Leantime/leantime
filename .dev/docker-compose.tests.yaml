@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  leantime-dev:
+    volumes:
+      - "${PWD}/test.env:/var/www/html/config/.env"
+  db:
+    environment:
+      - MYSQL_ROOT_PASSWORD=leantime
+      - MYSQL_USER=leantime
+      - MYSQL_PASSWORD=leantime
+      - MYSQL_DATABASE=leantime_test

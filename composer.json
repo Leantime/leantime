@@ -47,7 +47,10 @@
         "codeception/codeception": "^5.0",
         "codeception/module-phpbrowser": "*",
         "codeception/module-asserts": "*",
-        "leantime/leantime-documentor": "dev-main"
+        "leantime/leantime-documentor": "dev-main",
+        "symfony/process": "^5.4",
+        "codeception/module-db": "^3.1",
+        "codeception/module-webdriver": "^3.2"
     },
     "extra": {
         "installer-paths": {
