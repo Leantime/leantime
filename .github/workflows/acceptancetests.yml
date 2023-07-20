@@ -20,5 +20,4 @@ jobs:
 
     - name: Run Acceptance Tests
       run: |
-        php vendor/bin/codecept build
-        make Acceptance-test
+        make Acceptance-test-ci

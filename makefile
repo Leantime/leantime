@@ -98,5 +98,9 @@ run-dev: build-dev
 Acceptance-test: build-dev
 	php vendor/bin/codecept run Acceptance --steps
 
+Acceptance-test-ci: build-dev
+	php vendor/bin/codecept build
+	php vendor/bin/codecept run Acceptance --steps
+
 .PHONY: install-deps build package clean run-dev
 
