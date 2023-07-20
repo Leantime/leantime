@@ -36,7 +36,7 @@
                     <?php
                         echo"<div class='pull-right' style='max-width:200px; padding:20px'>";
                         echo"<div  style='width:100%' class='svgContainer'>";
-                        echo file_get_contents(ROOT . "/images/svg/".$this->get("randomImage"));
+                        echo file_get_contents(ROOT . "/dist/images/svg/".$this->get("randomImage"));
                         echo"</div></div>";
 
                     ?>
@@ -543,7 +543,7 @@
         const calendarEl = document.getElementById('calendar');
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
-                height:'360px',
+                height:'auto',
                 initialView: 'multiMonthOneMonth',
                 views: {
                     multiMonthOneMonth: {

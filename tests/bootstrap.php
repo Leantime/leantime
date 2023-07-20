@@ -80,7 +80,8 @@ $bootstrapper = get_class(new class {
             ],
             [
                 'cwd' => DEV_ROOT,
-                'background' => true
+                'background' => true,
+                'timeout' => 0,
             ]
         );
         $this->dockerProcess->waitUntil(function ($type, $buffer) {

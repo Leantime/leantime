@@ -464,7 +464,7 @@ $labelGray->content = '<span class="label label-default">Gray</span>';
 $templates[] = $labelGray;
 
 
-$templates = eventhelpers::dispatch_filter("documentTemplates", $templates);
+$templates = static::dispatch_filter("documentTemplates", $templates);
 
 echo json_encode($templates);
 

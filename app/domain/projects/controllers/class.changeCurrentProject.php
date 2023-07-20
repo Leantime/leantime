@@ -45,7 +45,7 @@ namespace leantime\domain\controllers {
                         }
 
                         $defaultURL = "/dashboard/show";
-                        $redirectFilter = core\eventhelpers::dispatch_filter("defaultProjectUrl", $defaultURL);
+                        $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL);
                         $this->tpl->redirect(BASE_URL . $redirectFilter);
 
                     } else {

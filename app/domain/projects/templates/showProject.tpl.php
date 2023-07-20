@@ -38,6 +38,7 @@
                 <li><a href="#files"><span class="fa fa-file"></span> <?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
                 <li><a href="#comment"><span class="fa fa-comments"></span> <?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
                 <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $this->__('tabs.todosettings'); ?></a></li>
+                <?php $this->dispatchTplEvent('projectTabsList'); ?>
             </ul>
 
             <div id="projectdetails">
@@ -451,6 +452,8 @@
                     <input type="submit" value="<?=$this->__('buttons.save')?>" name="submitSettings" class="btn btn-primary"/>
                 </form>
             </div>
+
+            <?php $this->dispatchTplEvent('projectTabsContent'); ?>
         </div>
     </div>
 </div>

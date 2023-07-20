@@ -8,11 +8,12 @@ actor: AcceptanceTester
 modules:
   enabled:
     - WebDriver:
-        url: 'http://localhost:8090'
+        url: 'https://localhost:8090'
         browser: chrome
-        #capabilities:
-        #  chromeOptions:
-        #    args: ["--headless", "--disable-gpu"]
+        capabilities:
+          acceptInsecureCerts: true
+          chromeOptions:
+            args: ["--headless", "--disable-gpu"]
     - Db:
         dsn: "mysql:host=127.0.0.1;port=3306;dbname=leantime_test"
         user: leantime
