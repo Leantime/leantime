@@ -7,6 +7,8 @@ namespace leantime\domain\repositories {
 
     class tickets
     {
+        use core\eventhelpers;
+
         /**
          * @access public
          * @var    object
@@ -1287,7 +1289,7 @@ namespace leantime\domain\repositories {
                 $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
                 //send status update event
                 if($key == 'status'){
-                    core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$id, "status"=>$value, "action"=>"ticketStatusUpdate"));
+                    static::dispatch_event("ticketStatusUpdate", array("ticketId"=>$id, "status"=>$value, "action"=>"ticketStatusUpdate"));
                 }
             }
 
@@ -1404,7 +1406,7 @@ namespace leantime\domain\repositories {
 
             }
 
-            core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$ticketId, "status"=>$status, "action"=>"ticketStatusUpdate", "handler"=>$handler));
+            static::dispatch_event("ticketStatusUpdate", array("ticketId"=>$ticketId, "status"=>$status, "action"=>"ticketStatusUpdate", "handler"=>$handler));
             return $stmn->execute();
 
 

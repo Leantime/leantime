@@ -52,7 +52,7 @@ namespace leantime\domain\controllers {
 
 
 
-            $projectRedirectFilter = core\eventhelpers::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
+            $projectRedirectFilter = static::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
             if($projectRedirectFilter != "/dashboard/show") {
                 core\frontcontroller::redirect(BASE_URL . $projectRedirectFilter);
             }

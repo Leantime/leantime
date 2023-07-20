@@ -58,7 +58,7 @@ namespace leantime\core {
 
             ini_set("log_errors", 1);
 
-            if($config->logPath != '') {
+            if($config->logPath != '' && $config->logPath != 'null') {
                 ini_set('error_log', $config->logPath);
             }else{
                 ini_set('error_log', APP_ROOT."/logs/error.log");

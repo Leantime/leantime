@@ -10,6 +10,8 @@ namespace leantime\domain\repositories {
 
     class projects
     {
+
+        use core\eventhelpers;
         /**
          * @access public
          * @var    string
@@ -647,7 +649,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            core\eventhelpers::dispatch_event("editProject", array("values"=>$values));
+            static::dispatch_event("editProject", array("values"=>$values));
         }
 
         /**
@@ -1009,7 +1011,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            core\eventhelpers::dispatch_event("userAddedToProject", array("userId"=> $userId, "projectId"=> $projectId, "projectRole" => $projectRole));
+            static::dispatch_event("userAddedToProject", array("userId"=> $userId, "projectId"=> $projectId, "projectRole" => $projectRole));
         }
 
         public function patch($id, $params)

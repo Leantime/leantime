@@ -4071,7 +4071,6 @@ h3.todaysDate {
 }
 
 .minCalendar #calendar {
-    height: 360px;
     top: -40px;
     position: relative;
     z-index:5;
