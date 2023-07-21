@@ -9,10 +9,15 @@ $appSettings = $this->get('appSettings');
         var req = new XMLHttpRequest();
         req.open("GET", "<?=BASE_URL?>/cron/run",true);
         req.send(null);
-
-
     </script>
 <?php } ?>
+
+<script>
+    //5 min time to run cron
+    setInterval(function(){
+        jQuery.get('<?=BASE_URL?>/cron/run');
+    }, 300000);
+</script>
 
 <?php if(isset($_SESSION['userdata'])) { ?>
     <script>

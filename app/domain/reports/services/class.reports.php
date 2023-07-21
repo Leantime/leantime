@@ -374,9 +374,6 @@ namespace leantime\domain\services {
             }
 
             $this->settings->saveSetting("companysettings.telemetry.active", false);
-            $this->settings->deleteSetting("companysettings.telemetry.active");
-            $this->settings->deleteSetting("companysettings.telemetry.lastUpdate");
-            $this->settings->deleteSetting("companysettings.telemetry.anonymousId");
 
             $_SESSION['skipTelemetry'] = true;
 
