@@ -56,7 +56,7 @@ $project = $this->get('project');
                                     <p>
                                         <?php echo $this->__('label.accomplish'); ?>
                                     </p>
-                                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo $project['details'] ?></textarea>
+                                    <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
 
                                 </div>
                             </div>

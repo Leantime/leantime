@@ -8,6 +8,8 @@
  */
 
 //Create function for the event
+
+
 function showQuote($payload)
 {
     // code here
@@ -21,3 +23,4 @@ function showQuote($payload)
 
 //Register event listener
 \leantime\core\events::add_event_listener("core.template.tpl.dashboard.home.afterWelcomeMessage", 'showQuote', 5);
+

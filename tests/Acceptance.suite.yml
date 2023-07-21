@@ -8,7 +8,7 @@ actor: AcceptanceTester
 modules:
   enabled:
     - WebDriver:
-        url: 'https://localhost:8090'
+        url: 'https://localhost:8080'
         browser: chrome
         capabilities:
           acceptInsecureCerts: true

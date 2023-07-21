@@ -42,7 +42,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 
         <textarea rows="3" cols="10" name="data" class="complexEditor"
-                  placeholder=""><?=$canvasItem['data'] ?></textarea><br/>
+                  placeholder=""><?=htmlentities($canvasItem['data']) ?></textarea><br/>
 
         <input type="submit" value="<?php echo $this->__("buttons.save")?>" id="primaryCanvasSubmitButton"/>
         <button class="btn btn-primary" type="submit" value="closeModal" id="saveAndClose"><?php echo $this->__("buttons.save_and_close")?></button>
