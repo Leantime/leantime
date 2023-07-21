@@ -15,96 +15,56 @@ namespace leantime\domain\controllers {
 
     class editEvent extends controller
     {
-        private $calendarRepo;
+        private \leantime\domain\services\calendar $calendarService;
 
         /**
          * init - initialize private variables
          */
         public function init()
         {
-
-            $this->calendarRepo = new repositories\calendar();
+            $this->calendarService = new \leantime\domain\services\calendar();
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
         }
 
         /**
-         * run - display template and edit data
+         * retrieves edit calendar event page data
          *
          * @access public
+         *
          */
-        public function run()
-        {
-            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+        public function get($params) {
+            $values = array(
+                'description' => '',
+                'dateFrom' => '',
+                'dateTo' => '',
+                'allDay' => '',
+                'id' => ''
+            );
 
-            if (isset($_GET['id']) === true) {
-                $id = ($_GET['id']);
+            $values = $this->calendarService->getEvent($params['id']);
 
-                $row = $this->calendarRepo->getEvent($id);
+            $this->tpl->assign('values', $values);
+            $this->tpl->displayPartial('calendar.editEvent');
+        }
 
-                if($row === false){
-                    $this->tpl->displayPartial('errors.error404');
-                    exit();
-                }
+        /**
+         * sets, creates, and updates edit calendar event page data
+         *
+         * @access public
+         *
+         */
+        public function post($params) {
 
-                $values = array(
-                    'description' => $row['description'],
-                    'dateFrom' => $row['dateFrom'],
-                    'dateTo' => $row['dateTo'],
-                    'allDay' => $row['allDay'],
-                    'id' => $row['id']
-                );
+            $result = $this->calendarService->editEvent($params);
 
-
-                if (isset($_POST['save']) === true) {
-
-                    if (isset($_POST['allDay']) === true) {
-                        $allDay = 'true';
-                    } else {
-                        $allDay = 'false';
-                    }
-
-                    $dateFrom = null;
-                    if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
-                        $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom'], $_POST['timeFrom']);
-                    }
-
-                    $dateTo = null;
-                    if (isset($_POST['dateTo']) === true && isset($_POST['timeTo']) === true) {
-                        $dateTo =  $this->language->getISODateTimeString($_POST['dateTo'], $_POST['timeTo']);
-                    }
-
-                    $values = array(
-                        'description' => ($_POST['description']),
-                        'dateFrom' => $dateFrom,
-                        'dateTo' => $dateTo,
-                        'allDay' => $allDay,
-                        'id' => $row['id']
-                    );
-
-                    if ($values['description'] !== '') {
-                        $this->calendarRepo->editEvent($values, $id);
-
-                        $row = $this->calendarRepo->getEvent($id);
-
-                        $values = array(
-                            'description' => $row['description'],
-                            'dateFrom' => $row['dateFrom'],
-                            'dateTo' => $row['dateTo'],
-                            'allDay' => $row['allDay'],
-                            'id' => $row['id']
-                        );
-
-                        $this->tpl->setNotification('notification.event_edited_successfully', 'success');
-                    } else {
-                        $this->tpl->setNotification('notification.please_enter_title', 'error');
-                    }
-                }
-
-                $this->tpl->assign('values', $values);
-                $this->tpl->displayPartial('calendar.editEvent');
+            if (is_numeric($result) === true) {
+                $this->tpl->setNotification('notification.event_edited_successfully', 'success');
+                $this->tpl->redirect(BASE_URL . "/calendar/showMyCalendar/".$result);
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                $this->tpl->setNotification('notification.please_enter_title', 'error');
+                $this->tpl->assign('values', $params);
+                $this->tpl->displayPartial('calendar.editEvent');
             }
         }
     }
-
 }
