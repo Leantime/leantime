@@ -100,24 +100,12 @@ There are two ways to install a development setup of LeanTime. The first (but mo
 
 #### Local Development Installation ####
 
-* Install composer and npm
 * Clone repository to your local server
 * Create MySQL database
-* Run composer to load php dependencies
-```
-composer install
-```
-then
-```
-npm install
-```
-to load Javascript dependencies and finally run the grunt task to create the compiled js files
-```
-./node_modules/grunt/bin/grunt Build-All
-```
+* Run wbepack builder via `make build-dev`
 * Point your local domain to the `public/` directory
-* Rename `config/configuration.sample.php` to `config/configuration.php`
-* Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
+* Rename `config/.env.sample` to `config/.env`
+* Fill in your database credentials (username, password, host, dbname) in `config/.env`
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
 
@@ -153,9 +141,18 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 
 ### Update ###
 
+#### Manual
 * Make sure to take a backup of your database and files
 * Replace all files in your directory with the updated version
 * If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
+
+#### Script
+* Execute ./updateLeantime.sh in the root of your leantime application
+
+#### Docker
+* Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
+* Delete/Stop existing container
+* Pull the latest docker image and rebuild using your compose file
 
 ## LICENSE Exceptions ##
 
