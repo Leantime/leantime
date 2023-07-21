@@ -221,9 +221,15 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
                 }
 
                 if($projectHierarchy['program']['enabled'] === false && $projectHierarchy['strategy']['enabled'] === false) {
-                    if(isset($_SESSION['submenuToggle']["clientDropdown--".$projectRow['clientId']])) {
+                    if(isset($_SESSION['submenuToggle']["clientDropdown--".$projectRow['clientId']]) || $projectRow['clientId'] == $this->get('currentClient')) {
+                        $state = "closed";
+                        if($projectRow['clientId'] == $this->get('currentClient')){
+                            $state = "open";
+                        }else{
+                            $state = $_SESSION['submenuToggle']["clientDropdown--".$projectRow['clientId']];
+                        }
 
-                        echo 'leantime.menuController.toggleClientList('.$projectRow['clientId'].', ".clientIdHead-'.$projectRow['clientId'].' a", "'.$_SESSION['submenuToggle']["clientDropdown--".$projectRow['clientId']].'");';
+                        echo 'leantime.menuController.toggleClientList('.$projectRow['clientId'].', ".clientIdHead-'.$projectRow['clientId'].' a", "'.$state.'");';
                     }
                 }
 
