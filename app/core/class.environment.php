@@ -76,6 +76,9 @@ class environment
     public string $ldapLtGroupAssignments;
     public string $ldapDefaultRoleKey;
 
+    public string $ldapDomain;
+
+    public string $ldapUri;
     public bool $oidcEnable;
     public string $oidcProviderUrl;
     public string $oidcClientId;
@@ -174,7 +177,11 @@ class environment
             $this->ldapKeys = $this->environmentHelper("LEAN_LDAP_KEYS", $defaultConfiguration->ldapKeys ?? '');
             $this->ldapLtGroupAssignments = $this->environmentHelper("LEAN_LDAP_GROUP_ASSIGNMENT", $defaultConfiguration->ldapLtGroupAssignments ?? '') ;
             $this->ldapDefaultRoleKey = $this->environmentHelper("LEAN_LDAP_DEFAULT_ROLE_KEY", $defaultConfiguration->ldapDefaultRoleKey ?? '');
+            $this->ldapDomain = $this->environmentHelper("LEAN_LDAP_LDAP_DOMAIN", $defaultConfiguration->ldapDomain ?? '');
+            $this->ldapUri = $this->environmentHelper("LEAN_LDAP_URI", $defaultConfiguration->ldapUri ?? '');
+
         }
+
 
         /* OIDC */
         $this->oidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);

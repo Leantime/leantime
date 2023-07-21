@@ -63,6 +63,9 @@ class config
     public $ldapType = 'OL';                              //Select the correct directory type. Currently Supported: OL - OpenLdap, AD - Active Directory
     public $ldapHost = '';                                //FQDN
     public $ldapPort = 389;                               //Default Port
+
+    public $ldapDomain = '';                               //Default Port
+    public $ldapUri = '';                               //Default Port
     public $ldapDn = '';                                  //Location of users, example: CN=users,DC=example,DC=com
     //Default ldap keys in your directory.
     //Works for OL
