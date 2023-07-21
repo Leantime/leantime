@@ -116,6 +116,10 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/codeception/module-phpbrowser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/codeception/stub" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/mpdf/psr-log-aware-trait" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/php-webdriver/webdriver" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/codeception/module-webdriver" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/codeception/module-db" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/process" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
