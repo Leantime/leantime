@@ -35,7 +35,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
             $this->tpl->display("install.new", "entry");
         }
 

@@ -2,14 +2,21 @@ VERSION := $(shell grep "appVersion" ./config/appSettings.php |awk -F' = ' '{pri
 TARGET_DIR:= ./target/leantime
 DOCS_DIR:= ./builddocs
 DOCS_REPO:= git@github.com:Leantime/docs.git
+install-deps-dev:
+	npm install --only=dev
+	composer install --optimize-autoloader
+
 install-deps:
 	npm install
 	composer install --no-dev --optimize-autoloader
 
-build-js: install-deps
+build: install-deps
 	npx mix
 
-build: install-deps build-js
+build-dev: install-deps-dev
+	npx mix
+
+package: install-deps build-js
 	mkdir -p $(TARGET_DIR)
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
@@ -85,8 +92,15 @@ package:
 clean:
 	rm -rf $(TARGET_DIR)
 
-run-dev:
+run-dev: build-dev
 	cd .dev && docker-compose up --build --remove-orphans
 
-.PHONY: install-deps build-js build package clean run-dev
+Acceptance-test: build-dev
+	php vendor/bin/codecept run Acceptance --steps
+
+Acceptance-test-ci: build-dev
+	php vendor/bin/codecept build
+	php vendor/bin/codecept run Acceptance --steps
+
+.PHONY: install-deps build package clean run-dev
 
