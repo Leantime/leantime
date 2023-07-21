@@ -13,7 +13,12 @@ modules:
         capabilities:
           acceptInsecureCerts: true
           chromeOptions:
-            args: ["--allow-insecure-localhost", "--headless", "--disable-gpu", "--ignore-certificate-errors"]
+            args: [
+              "--allow-insecure-localhost",
+              "--headless",
+              "--disable-gpu",
+              "--ignore-certificate-errors",
+            ]
     - Db:
         dsn: "mysql:host=127.0.0.1;port=3306;dbname=leantime_test"
         user: leantime

@@ -87,19 +87,24 @@ $bootstrapper = get_class(new class {
     protected function startDevEnvironment(): void
     {
         $this->createStep('Build & Start Leantime Dev Environment');
+        $hasLocalOverride = file_exists(DEV_ROOT . 'docker-compose.local.yaml');
         $this->dockerProcess = $this->executeCommand(
-            [
-                'docker',
-                'compose',
-                '-f',
-                'docker-compose.yaml',
-                '-f',
-                'docker-compose.tests.yaml',
-                'up',
-                '-d',
-                '--build',
-                '--remove-orphans',
-            ],
+            array_filter(
+                [
+                    'docker',
+                    'compose',
+                    '-f',
+                    'docker-compose.yaml',
+                    '-f',
+                    'docker-compose.tests.yaml',
+                    $hasLocalOverride ? '-f' : null,
+                    $hasLocalOverride ? 'docker-compose.local.yaml' : null,
+                    'up',
+                    '-d',
+                    '--build',
+                    '--remove-orphans',
+                ]
+            ),
             [
                 'cwd' => DEV_ROOT,
                 'background' => true,
