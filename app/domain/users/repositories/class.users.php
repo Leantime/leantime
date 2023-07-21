@@ -515,7 +515,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
             $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
             $stmn->bindValue(':phone', $values['phone'], PDO::PARAM_STR);
-            $stmn->bindValue(':user', $values['user'], PDO::PARAM_STR);
+            $stmn->bindValue(':user', $values['username'], PDO::PARAM_STR);
             $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
 
             $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
