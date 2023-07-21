@@ -10,6 +10,8 @@ class ldap
     private $ldapConnection;
     private $host;
     private $port;
+    private $ldapDomain;
+    private $ldapUri;
     private $ldapDn; //DN where users are located (including baseDn)
     private $ldapKeys = array(
         "username" => "uid",
@@ -63,6 +65,9 @@ class ldap
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
             $this->directoryType = $this->config->ldapType;
 
+            $this->ldapDomain = $this->config->ldapDomain;
+            $this->ldapUri = $this->config->ldapUri;
+
             if (!is_object($this->ldapLtGroupAssignments)) {
                 error_log("LDAP: Group Assignment array failed to parse. Please check for valid json");
                 return false;
@@ -85,7 +90,12 @@ class ldap
         }
 
         if (function_exists("ldap_connect")) {
-            $this->ldapConnection = ldap_connect($this->host, $this->port);
+
+            if ($this->ldapUri != '' && str_starts_with($this->ldapUri, "ldap")) {
+                $this->ldapConnection = ldap_connect($this->uri);
+            }else {
+                $this->ldapConnection = ldap_connect($this->host, $this->port);
+            }
 
             ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
             ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0); // We need this for doing an LDAP search.
@@ -105,28 +115,37 @@ class ldap
     {
 
         if ($username != '' && $password != '') {
-            if ($this->directoryType == 'AD') {
-                $usernameDN = $username;
-            } else {
-                $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
-            }
+
             $passwordBind = $password;
 
-            $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+            //AD allows usenrame login
+            if ($this->directoryType == 'AD') {
+                $usernameDN = $username;
 
-            if ($bind) {
-                return true;
+                $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                if($bind) return true;
+
+                $bind = ldap_bind($this->ldapConnection, $usernameDN."@".$this->ldapDomain, $passwordBind);
+                if($bind) return true;
+
+            //OL requires distinguished name login
             } else {
-                if ($this->config->debug == 1) {
-                    error_log(ldap_error($this->ldapConnection));
-                    ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-                    if ($err) {
-                        error_log($err);
-                    }
-                }
+                $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
 
-                return false;
+                $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                if($bind) return true;
             }
+
+            if ($this->config->debug == 1) {
+                error_log(ldap_error($this->ldapConnection));
+                ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+                if ($err) {
+                    error_log($err);
+                }
+            }
+
+            return false;
+
         } else {
             return false;
         }

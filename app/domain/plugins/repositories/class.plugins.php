@@ -45,6 +45,8 @@ namespace leantime\domain\repositories {
                 $query .= " WHERE enabled = true";
             }
 
+            $query .= " GROUP BY name ";
+
             $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
