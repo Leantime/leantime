@@ -6,11 +6,20 @@
 
 actor: AcceptanceTester
 modules:
-    enabled:
-        - PhpBrowser:
-            url: http://leantime.localhost/leantime
+  enabled:
+    - WebDriver:
+        url: 'https://localhost:8090'
+        browser: chrome
+        capabilities:
+          acceptInsecureCerts: true
+          chromeOptions:
+            args: ["--allow-insecure-localhost", "--headless", "--disable-gpu", "--ignore-certificate-errors"]
+    - Db:
+        dsn: "mysql:host=127.0.0.1;port=3306;dbname=leantime_test"
+        user: leantime
+        password: leantime
 # add Codeception\Step\Retry trait to AcceptanceTester to enable retries
 step_decorators:
-    - Codeception\Step\ConditionalAssertion
-    - Codeception\Step\TryTo
-    - Codeception\Step\Retry
+  - Codeception\Step\ConditionalAssertion
+  - Codeception\Step\TryTo
+  - Codeception\Step\Retry
