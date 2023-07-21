@@ -689,3 +689,5 @@ Stack trace:
 [21-Jul-2023 09:44:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 192.168.128.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
 [21-Jul-2023 09:44:24 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 192.168.128.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
 [21-Jul-2023 09:44:24 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 192.168.128.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
+[21-Jul-2023 11:40:38 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[21-Jul-2023 11:45:41 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(

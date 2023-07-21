@@ -144,6 +144,7 @@ $bootstrapper = get_class(new class {
                 '-T',
                 'db',
                 'mysql',
+                '-h127.0.0.1',
                 '-uroot',
                 '-pleantime',
                 '-e',
