@@ -115,14 +115,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/nikic/php-parser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/codeception/module-phpbrowser" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/codeception/stub" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/illuminate/contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation-contracts" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/translation" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/psr/simple-cache" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/tightenco/collect" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/directorytree/ldaprecord" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/php-http/message-factory" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/nesbot/carbon" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/mpdf/psr-log-aware-trait" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
