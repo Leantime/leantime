@@ -100,6 +100,7 @@ Acceptance-test: build-dev
 
 Acceptance-test-ci: build-dev
 	php vendor/bin/codecept build
+	rm -rf dev/mysql
 	php vendor/bin/codecept run Acceptance --steps
 
 .PHONY: install-deps build package clean run-dev
