@@ -54,6 +54,7 @@ namespace leantime\domain\repositories {
             $this->db = core\db::getInstance();
         }
 
+        
         /**
          * getAll - get all projects open and closed
          *
@@ -612,6 +613,7 @@ namespace leantime\domain\repositories {
 				dollarBudget = :dollarBudget,
 				psettings = :psettings,
 				menuType = :menuType,
+				type = :type,
 				parent = :parent,
 				start = :start,
 				end = :end
@@ -629,6 +631,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
+            $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
 

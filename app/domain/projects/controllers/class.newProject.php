@@ -94,7 +94,7 @@ namespace leantime\domain\controllers {
                     'state' => $_POST['projectState'],
                     'psettings' => $_POST['globalProjectUserAccess'],
                     'menuType' => $_POST['menuType'] ?? 'default',
-                    'type' => 'project',
+                    'type' => $_POST['type']  ?? 'project',
                     'parent' => $_POST['parent'] ?? '',
                     'start' => $this->language->getISODateString($_POST['start']),
                     'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : ''
@@ -150,6 +150,8 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('project', $values);
             $this->tpl->assign('availableUsers', $this->userRepo->getAll());
             $this->tpl->assign('clients', $this->clientsRepo->getAll());
+            $this->tpl->assign('projectTypes', $this->projectService->getProjectTypes());
+
             $this->tpl->assign('info', $msgKey);
 
             $this->tpl->display('projects.newProject');

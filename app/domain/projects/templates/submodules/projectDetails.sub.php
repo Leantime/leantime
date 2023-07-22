@@ -38,6 +38,21 @@ $menuTypes = $this->get('menuTypes');
         <div class="span4">
 
             <div class="row-fluid marginBottom">
+
+                <?php if($this->get('projectTypes') && count($this->get('projectTypes')) > 1) {?>
+                    <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
+                    <p>The type of the project. This will determine which features are available.</p>
+                    <select name="type">
+                        <?php foreach($this->get('projectTypes') as $key => $type){ ?>
+                            <option value="<?=$this->escape($key)?>"
+                            <?php if($project['type'] == $key) echo " selected='selected' "; ?>
+                            ><?=$this->__($this->escape($type))?></option>
+                        <?php } ?>
+                    </select>
+                    <br /><br />
+                <?php } ?>
+
+
                 <h4 class="widgettitle title-light"><span
                         class="fa fa-picture-o"></span><?php echo $this->__('label.project_avatar'); ?></h4>
                 <div class="span12 center">

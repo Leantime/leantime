@@ -185,7 +185,7 @@ leantime.menuController = (function () {
 
         var activeProgramParent = jQuery(".programList .activeChild").attr("data-program-id");
         var activeStrategyParent = jQuery(".strategyList .activeChild").attr("data-strategy-id");
-        var activeParent = '';
+        var activeParent = 'noparent';
 
         if(activeStrategyParent !== undefined && activeStrategyParent !== ''){
             activeParent = activeStrategyParent;
