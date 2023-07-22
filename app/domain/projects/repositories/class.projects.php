@@ -1131,12 +1131,15 @@ namespace leantime\domain\repositories {
                         ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
                         ->fontSize(0.5)
                         ->size(96)
-                        ->background('#555555')->color("#fff")
-                        ->generate();
+                        ->background('#555555')->color("#fff");
 
-                    $image->save(APP_ROOT."/cache/avatars/".$imagename.".png", 100, "png");
+                    if(is_writable(APP_ROOT."/cache/avatars/")) {
+                        $image->generate()->save(APP_ROOT . "/cache/avatars/" . $imagename . ".png", 100, "png");
+                        return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+                    }else{
 
-                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+                        return $image->generateSVG();;
+                    }
 
                 }
 

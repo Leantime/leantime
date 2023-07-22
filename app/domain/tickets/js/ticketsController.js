@@ -1220,7 +1220,6 @@ leantime.ticketsController = (function () {
                     data: statusPostData
 
                 }).done(function(response){
-                    console.log(response);
                     leantime.handleAsyncResponse(response);
                 });
 

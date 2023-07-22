@@ -106,6 +106,7 @@ mix
         "./public/assets/js/libs/uppy/uppy.js",
     ], `public/dist/js/compiled-extended-libs.${version}.min.js`)
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`)
+    .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`)
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
     .eslint({
