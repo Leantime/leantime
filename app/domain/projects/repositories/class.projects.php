@@ -54,7 +54,7 @@ namespace leantime\domain\repositories {
             $this->db = core\db::getInstance();
         }
 
-        
+
         /**
          * getAll - get all projects open and closed
          *
