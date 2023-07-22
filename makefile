@@ -16,7 +16,7 @@ build: install-deps
 build-dev: install-deps-dev
 	npx mix
 
-package: install-deps build-js
+package: build
 	mkdir -p $(TARGET_DIR)
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
@@ -61,6 +61,10 @@ package: install-deps build-js
 	#removing uncompiled js files
 	find $(TARGET_DIR)/public/assets/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
+	#create zip files
+	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
+	cd target && tar -zcvf "Leantime-v$(VERSION)$$1.tar.gz" leantime
+
 gendocs: # Requires github CLI (brew install gh)
 	# Delete the temporary docs directory if exists
 	rm -rf $(DOCS_DIR)
@@ -85,9 +89,6 @@ gendocs: # Requires github CLI (brew install gh)
 	# Delete the temporary docs directory
 	rm -rf $(DOCS_DIR)
 
-package:
-	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
-	cd target && tar -zcvf "Leantime-v$(VERSION)$$1.tar.gz" leantime
 
 clean:
 	rm -rf $(TARGET_DIR)
