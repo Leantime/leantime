@@ -87,9 +87,7 @@ leantime.generalController = (function () {
                 width: "100%",
                 skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
-                    + leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css,'
-                    + leantime.appUrl + '/assets/css/components/wysiwyg-overrides.css,'
-                    + leantime.appUrl + '/assets/css/libs/roboto.css',
+                    + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
@@ -195,8 +193,6 @@ leantime.generalController = (function () {
 
                         var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
 
-                        console.log(placeholder);
-
                         if (placeholder.length > 0) {
 
                             while(placeholder[0]) {
@@ -205,7 +201,6 @@ leantime.generalController = (function () {
                             }
                             editor.save();
 
-                            console.log(editor.getDoc());
                         }
                     });
                 }
@@ -227,13 +222,8 @@ leantime.generalController = (function () {
                 // General options
                 width: "100%",
                 skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl + '/assets/css/components/style.default.css,'
-                    + leantime.appUrl + '/assets/css/components/dropdowns.css,'
-                    + leantime.appUrl + '/assets/css/libs/bootstrap-grid.min.css,'
-                    + leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
-                    + leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css,'
-                    + leantime.appUrl + '/assets/css/components/wysiwyg-overrides.css,'
-                    + leantime.appUrl + '/assets/css/libs/roboto.css',
+                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
+                    + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands",
                 toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate",
@@ -386,9 +376,7 @@ leantime.generalController = (function () {
                 width: "100%",
                 skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
-                    + leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css,'
-                    + leantime.appUrl + '/assets/css/components/wysiwyg-overrides.css,'
-                    + leantime.appUrl + '/assets/css/libs/roboto.css',
+                    + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",

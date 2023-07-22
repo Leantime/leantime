@@ -25,6 +25,8 @@ package: build
 	cp ./config/configuration.sample.php $(TARGET_DIR)/config
 	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
+	mkdir -p $(TARGET_DIR)/cache
+	mkdir -p $(TARGET_DIR)/cache/avatars
 	touch $(TARGET_DIR)/logs/.gitkeep
 	cp -R ./public $(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)/userfiles

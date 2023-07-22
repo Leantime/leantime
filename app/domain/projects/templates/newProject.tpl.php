@@ -73,6 +73,19 @@ $project = $this->get('project');
 
                         <div class="span4">
 
+                            <?php if($this->get('projectTypes') && count($this->get('projectTypes')) > 1) {?>
+                                <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
+                                <p>The type of the project. This will determine which features are available.</p>
+                                <select name="type">
+                                    <?php foreach($this->get('projectTypes') as $key => $type){ ?>
+                                        <option value="<?=$this->escape($key)?>"
+                                            <?php if($project['type'] == $key) echo " selected='selected' "; ?>
+                                        ><?=$this->__($this->escape($type))?></option>
+                                    <?php } ?>
+                                </select>
+                                <br /><br />
+                            <?php } ?>
+
                             <?php $this->dispatchTplEvent("beforeClientPicker", $project) ?>
 
                             <div class="row-fluid marginBottom">
