@@ -13,7 +13,7 @@
     "croppie": "^2.6.5",
     "datatables.net": "^1.12.1",
     "datatables.net-buttons": "^1.7.1",
-    "datatables.net-rowgroup": "^1.2.0",
+    "datatables.net-rowgroup": "^1.4.0",
     "datatables.net-rowreorder": "^1.2.8",
     "fullcalendar": "^6.1.8",
     "imagesloaded": "^4.1.4",
