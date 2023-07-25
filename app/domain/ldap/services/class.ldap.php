@@ -180,8 +180,9 @@ class ldap
         }
 
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
-
-        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phonenumber);
+	
+	$attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone, $this->ldapKeys->jobTitle, $this->ldapKeys->jobLevel, $this->ldapKeys->department);
+//        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phonenumber);
 
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
         $entries = ldap_get_entries($this->ldapConnection, $result);
@@ -207,12 +208,14 @@ class ldap
                 }
             }
         }
-
         //Find Firstname & Lastname
         $firstname = isset($entries[0][$this->ldapKeys->firstname]) ? $entries[0][$this->ldapKeys->firstname][0] : '';
         $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
-        $phonenumber = isset($entries[0][$this->ldapKeys->phonenumber]) ? $entries[0][$this->ldapKeys->phonenumber][0] : '';
+        $phonenumber = isset($entries[0][$this->ldapKeys->phone]) ? $entries[0][$this->ldapKeys->phone][0] : '';
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
+        $jobTitle = isset($entries[0][$this->ldapKeys->jobTitle]) ? $entries[0][$this->ldapKeys->jobTitle][0] : '';
+        $jobLevel = isset($entries[0][$this->ldapKeys->jobLevel]) ? $entries[0][$this->ldapKeys->jobLevel][0] : '';
+        $department = isset($entries[0][$this->ldapKeys->department]) ? $entries[0][$this->ldapKeys->department][0] : '';
 
         if ($this->config->debug) {
             error_log("LEANTIME: Testing the logging\n");
@@ -223,6 +226,9 @@ class ldap
             error_log("LEANTIME: phone $phonenumber", 0);
             error_log("LEANTIME: role $role", 0);
             error_log("LEANTIME: username $uname ", 0);
+            error_log("LEANTIME: jobTitle $jobTitle ", 0);
+            error_log("LEANTIME: jobLevel $jobLevel ", 0);
+            error_log("LEANTIME: department $department ", 0);
             error_log("LEANTIME: >>>Attributes End>>>>>>\n", 0);
         }
 
@@ -231,7 +237,10 @@ class ldap
             "firstname" => $firstname,
             "lastname" => $lastname,
             "role" => $role,
-            "phonenumber" => $phonenumber
+            "phone" => $phonenumber,
+            "jobTitle" => $jobTitle,
+            "jobLevel" => $jobLevel,
+            "department" => $department
         );
     }
 
@@ -290,16 +299,20 @@ class ldap
                 $userRepo->patchUser($checkUser['id'], array("firstname" => $user["firstname"], "lastname" => $user["lastname"], "role" => $user["role"]));
             } else {
                 //Insert
-                $userArray = array(
+		$userArray = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
-                    'phone' => '',
+                    'phone' => $user['phone'],
                     'user' => $user['user'],
                     'role' => $user['role'],
                     'password' => '',
                     'clientId' => '',
+                    'jobTitle' => $user['jobTitle'],
+                    'jobLevel' => $user['jobLevel'],
+                    'department' => $user['department'],
                     'source' => 'ldap'
                 );
+
 
                 $userRepo->addUser($userArray);
             }

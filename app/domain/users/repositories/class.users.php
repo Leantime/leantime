@@ -31,6 +31,23 @@ namespace leantime\domain\repositories {
          */
         public $role;
 
+       /**
+         * @access public
+         * @var    string
+         */
+        public $jobTitle;
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $jobLevel;
+
+        /**
+         * @access public
+         * @var    string
+         */
+        public $department;
         /**
          * @access public
          * @var    int

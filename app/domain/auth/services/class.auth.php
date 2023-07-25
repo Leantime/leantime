@@ -226,9 +226,12 @@ namespace leantime\domain\services {
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
                             'lastname' => $ldapUser['lastname'],
-                            'phone' => $ldapUser['phonenumber'],
+                            'phone' => $ldapUser['phone'],
                             'user' => $ldapUser['user'],
                             'role' => $ldapUser['role'],
+                            'department' => $ldapUser['department'],
+                            'jobTitle'  => $ldapUser['jobTitle'],
+                            'jobLevel'  => $ldapUser['jobLevel'],
                             'password' => '',
                             'clientId' => '',
                             'source' => 'ldap',
@@ -248,8 +251,11 @@ namespace leantime\domain\services {
                     } else {
                         $user['firstname'] = $ldapUser['firstname'];
                         $user['lastname'] = $ldapUser['lastname'];
-                        $user['phone'] = $ldapUser['phonenumber'];
+                        $user['phone'] = $ldapUser['phone'];
                         $user['user'] = $user['username'];
+                        $user['department'] = $ldapUser['department'];
+                        $user['jobTitle'] = $ldapUser['jobTitle'];
+                        $user['jobLevel']  = $ldapUser['jobLevel'];
 
                         $this->userRepo->editUser($user, $user['id']);
                     }
