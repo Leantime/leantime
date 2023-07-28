@@ -11,19 +11,19 @@ namespace leantime\domain\controllers {
     {
         private services\projects $projectService;
         private services\tickets $ticketService;
+        private services\setting $settingSvc;
         private repositories\menu $menuRepo;
 
-        private services\setting $settingSvc;
-
-
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->menuRepo = new repositories\menu();
-            $this->settingSvc = new services\setting();
-
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\setting $settingSvc,
+            repositories\menu $menuRepo
+        ) {
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->settingSvc = $settingSvc;
+            $this->menuRepo = $menuRepo;
         }
 
         public function run()

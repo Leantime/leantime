@@ -18,7 +18,7 @@ namespace leantime\plugins\controllers {
 
     class upload extends controller
     {
-
+        private csvImport $providerService;
 
         /**
          * constructor - initialize private variables
@@ -26,26 +26,20 @@ namespace leantime\plugins\controllers {
          * @access public
          *
          */
-        public function init()
+        public function init(csvImport $providerService)
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->providerService = new csvImport();
-
+            $this->providerService = $providerService;
         }
-
 
         public function get()
         {
-
-
-           $this->tpl->displayPartial("csvImport.upload");
+            $this->tpl->displayPartial("csvImport.upload");
         }
 
         public function post($params)
         {
-
-
             $csv = Reader::createFromPath($_FILES['file']['tmp_name'], 'r');
 
             $csv->setHeaderOffset(0);
@@ -60,18 +54,16 @@ namespace leantime\plugins\controllers {
                 $rows[] = $record;
             }
 
-            $integration = new models\connector\integration();
+            $integration = app()->make(models\connector\integration::class);
             $integration->fields = implode(",", $header);
 
             //Temporarily store results in meta
             $integration->meta = serialize($rows);
 
-            $integrationService = new services\connector\integrations();
+            $integrationService = app()->make(services\connector\integrations::class);
             $id = $integrationService->create($integration);
 
-            $this->tpl->displayJson(json_encode(array("id"=>$id)));
-
+            $this->tpl->displayJson(json_encode(array("id" => $id)));
         }
-
     }
 }

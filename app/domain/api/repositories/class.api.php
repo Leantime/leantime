@@ -10,10 +10,9 @@ namespace leantime\domain\repositories {
     {
         private core\db $db;
 
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
         public function getAPIKeyUser($apiKeyUser) {

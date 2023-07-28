@@ -37,10 +37,9 @@ class session
      * @access private
      * @return
      */
-    private function __construct()
+    public function __construct(\leantime\core\environment $config)
     {
-
-        $config = \leantime\core\environment::getInstance();
+        $this->config = $config;
 
         $maxLifeTime = ini_set('session.gc_maxlifetime', ($config->sessionExpiration * 2));
         $cookieLifetime = ini_set('session.cookie_lifetime', ($config->sessionExpiration * 2));
@@ -74,22 +73,6 @@ class session
     }
 
     /**
-     * getInstance - Get instance of session
-     *
-     * @access private
-     * @return object
-     */
-    public static function getInstance()
-    {
-
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    /**
      * getSID - get the sessionId
      *
      * @access public
@@ -97,8 +80,7 @@ class session
      */
     public static function getSID()
     {
-
-        return self::getInstance()::$sid;
+        return app()->make(self::class)::$sid;
     }
 
     /**
@@ -118,7 +100,7 @@ class session
     public static function destroySession()
     {
 
-        $config = \leantime\core\environment::getInstance();
+        $config = $this->config;
 
         if (isset($_COOKIE['sid'])) {
             unset($_COOKIE['sid']);
@@ -126,11 +108,4 @@ class session
 
         setcookie('sid', "", ['expires' => time() - 42000, 'path' => '/']);
     }
-
-
-
-
-
-
-
 }

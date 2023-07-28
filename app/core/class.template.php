@@ -89,12 +89,24 @@ namespace leantime\core {
          *
          * @access public
          */
-        public function __construct()
-        {
-            $this->theme = new theme();
-            $this->language = language::getInstance();
-            $this->frontcontroller = frontcontroller::getInstance();
-            $this->incomingRequest = new IncomingRequest();
+        public function __construct(
+            theme $theme,
+            language $language,
+            frontcontroller $frontcontroller,
+            IncomingRequest $incomingRequest,
+            environment $config,
+            appSettings $settings,
+            services\auth $login,
+            roles $roles
+        ) {
+            $this->theme = $theme;
+            $this->language = $language;
+            $this->frontcontroller = $frontcontroller;
+            $this->incomingRequest = $incomingRequest;
+            $this->config = $config;
+            $this->settings = $settings;
+            $this->login = $login;
+            $this->roles = $roles;
         }
 
         /**
@@ -147,7 +159,7 @@ namespace leantime\core {
             ]);
 
             if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
-                $pluginService = new services\plugins();
+                $pluginService = app()->make(services\plugins::class);
             }
 
             if (empty($plugin_path) || !file_exists($plugin_path)) {
@@ -198,12 +210,10 @@ namespace leantime\core {
         {
 
             //These variables are available in the template
-            $config = \leantime\core\environment::getInstance();
-            $settings = new appSettings();
-            $login = services\auth::getInstance();
-            $roles = new roles();
-
-
+            $config = $this->config;
+            $settings = $this->settings;
+            $login = $this->login;
+            $roles = $this->roles;
             $language = $this->language;
 
             $template = self::dispatch_filter('template', $template);
@@ -342,12 +352,11 @@ namespace leantime\core {
          */
         public function displaySubmodule($alias)
         {
-
-            $frontController = frontcontroller::getInstance(ROOT);
-            $config = \leantime\core\environment::getInstance();
-            $settings = new appSettings();
-            $login = services\auth::getInstance();
-            $roles = new roles();
+            $frontController = $this->frontcontroller;
+            $config = $this->config;
+            $settings = $this->settings;
+            $login = $this->login;
+            $roles = $this->roles;
 
             $submodule = array("module" => '', "submodule" => '');
 

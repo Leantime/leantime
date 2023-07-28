@@ -22,12 +22,14 @@ class messengers
      *
      * @access public
      */
-    public function __construct()
-    {
-
-        $this->httpClient = new Client();
-        $this->language = core\language::getInstance();
-        $this->settingsRepo = new repositories\setting();
+    public function __construct(
+        Client $httpClient,
+        repositories\setting $settingsRepo,
+        core\language $language
+    ) {
+        $this->httpClient = $httpClient;
+        $this->settingsRepo = $settingsRepo;
+        $this->language = $language;
     }
 
     public function sendNotificationToMessengers(models\notifications\notification $notification, $projectName, array|string $messengers = "all"): void

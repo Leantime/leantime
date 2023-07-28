@@ -18,10 +18,9 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\reactions $reactionsService)
         {
-
-            $this->reactionsService = new services\reactions();
+            $this->reactionsService = $reactionsService;
         }
 
 

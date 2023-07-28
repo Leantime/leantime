@@ -12,11 +12,11 @@ namespace leantime\domain\controllers {
     {
         private $ticketService;
 
-        public function init()
+        public function init(services\tickets $ticketService)
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->ticketService = new services\tickets();
+            $this->ticketService = $ticketService;
         }
 
         public function get()

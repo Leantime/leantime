@@ -14,9 +14,9 @@ namespace leantime\domain\services {
         private $pluginDirectory =  ROOT . "/../app/plugins/";
 
 
-        public function __construct()
+        public function __construct(repositories\plugins $pluginRepository)
         {
-            $this->pluginRepository = new repositories\plugins();
+            $this->pluginRepository = $pluginRepository;
         }
 
         public function getAllPlugins()
@@ -71,7 +71,7 @@ namespace leantime\domain\services {
                         $json = file_get_contents($pluginJsonFile);
 
                         $pluginFile = json_decode($json, true);
-                        $plugin = new \leantime\domain\models\plugins();
+                        $plugin = app()->make(\leantime\domain\models\plugins::class);
                         $plugin->name = $pluginFile['name'];
                         $plugin->enabled = 0;
                         $plugin->description = $pluginFile['description'];
@@ -99,7 +99,7 @@ namespace leantime\domain\services {
                 $json = file_get_contents($pluginJsonFile);
 
                 $pluginFile = json_decode($json, true);
-                $plugin = new \leantime\domain\models\plugins();
+                $plugin = app()->make(\leantime\domain\models\plugins::class);
                 $plugin->name = $pluginFile['name'];
                 $plugin->enabled = 0;
                 $plugin->description = $pluginFile['description'];
@@ -111,7 +111,7 @@ namespace leantime\domain\services {
 
                 //Any installation calls should happen right here.
                 $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
-                $newPluginSvc = new $pluginClassName;
+                $newPluginSvc = app()->make($pluginClassName);
 
                 if(method_exists($newPluginSvc, "install")) {
                     try {
@@ -147,7 +147,7 @@ namespace leantime\domain\services {
 
             //Any installation calls should happen right here.
             $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
-            $newPluginSvc = new $pluginClassName;
+            $newPluginSvc = app()->make($pluginClassName);
 
             if(method_exists($newPluginSvc, "uninstall")) {
                 try {

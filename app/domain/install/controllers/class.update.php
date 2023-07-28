@@ -10,24 +10,24 @@ namespace leantime\domain\controllers {
 
     class update extends controller
     {
-        private $installRepo;
-        private $settingsRepo;
-        private $appSettings;
-
+        private repositories\install $installRepo;
+        private repositories\setting $settingsRepo;
+        private core\appSettings $appSettings;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->installRepo = new repositories\install();
-            $this->settingsRepo = new repositories\setting();
-            $this->appSettings = new core\appSettings();
+        public function init(
+            repositories\install $installRepo,
+            repositories\setting $settingsRepo,
+            core\appSettings $appSettings
+        ) {
+            $this->installRepo = $installRepo;
+            $this->settingsRepo = $settingsRepo;
+            $this->appSettings = $appSettings;
         }
-
 
         /**
          * get - handle get requests

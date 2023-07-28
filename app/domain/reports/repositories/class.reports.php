@@ -9,18 +9,16 @@ namespace leantime\domain\repositories {
 
     class reports
     {
-
         private core\db $db;
-        
+
         /**
          * __construct - get database connection
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
         /**
@@ -32,7 +30,7 @@ namespace leantime\domain\repositories {
         public function runTicketReport($projectId, $sprintId)
         {
 
-            $ticketRepo = new tickets();
+            $ticketRepo = app()->make(tickets::class);
             $statusGroups = $ticketRepo->getStatusListGroupedByType($projectId);
 
             //Ticket Reports
@@ -137,7 +135,7 @@ namespace leantime\domain\repositories {
 
 
             //Number of users
-            $projectService = new repositories\projects();
+            $projectService = app()->make(repositories\projects::class);
             $users = $projectService->getUsersAssignedToProject($projectId);
 
             if (is_array($users)) {

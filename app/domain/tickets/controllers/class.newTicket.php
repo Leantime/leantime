@@ -20,17 +20,24 @@ namespace leantime\domain\controllers {
         private services\timesheets $timesheetService;
         private services\users $userService;
 
-        public function init()
-        {
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\sprints $sprintService,
+            services\files $fileService,
+            services\comments $commentService,
+            services\timesheets $timesheetService,
+            services\users $userService
+        ) {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->sprintService = new services\sprints();
-            $this->fileService = new services\files();
-            $this->commentService = new services\comments();
-            $this->timesheetService = new services\timesheets();
-            $this->userService = new services\users();
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->sprintService = $sprintService;
+            $this->fileService = $fileService;
+            $this->commentService = $commentService;
+            $this->timesheetService = $timesheetService;
+            $this->userService = $userService;
 
             if (!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = BASE_URL . "/tickets/showKanban/";
@@ -40,15 +47,14 @@ namespace leantime\domain\controllers {
 
         public function get()
         {
-
-            $ticket = new models\tickets(
-                array(
+            $ticket = app()->make(models\tickets::class, [
+                [
                     "userLastname" => $_SESSION['userdata']["name"],
                     "status" => 3,
                     "projectId" => $_SESSION['currentProject'],
                     "sprint" => $_SESSION['currentSprint'] ?? ''
-                )
-            );
+                ]
+            ]);
 
             $ticket->date =  $this->language->getFormattedDateString(date("Y-m-d H:i:s"));
 
@@ -91,7 +97,7 @@ namespace leantime\domain\controllers {
                 } else {
                     $this->tpl->setNotification($this->language->__($result["msg"]), "error");
 
-                    $ticket = new models\tickets($params);
+                    $ticket = app()->make(models\tickets::class, [$params]);
                     $ticket->userLastname = $_SESSION['userdata']["name"];
 
                     $this->tpl->assign('ticket', $ticket);

@@ -1,0 +1,143 @@
+[28-Jul-2023 11:51:40 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 11:54:28 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 11:55:46 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 11:55:49 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 11:56:00 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 11:56:57 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 11:57:00 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 11:59:19 America/Los_Angeles] Illuminate\Contracts\Container\BindingResolutionException: Unresolvable dependency resolving [Parameter #0 [ <required> $method ]] in class leantime\core\controller in /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php:1104
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1011): Illuminate\Container\Container->unresolvablePrimitive(Object(ReflectionParameter))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(946): Illuminate\Container\Container->resolvePrimitive(Object(ReflectionParameter))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(908): Illuminate\Container\Container->resolveDependencies(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): Illuminate\Container\Container->make('leantime\\domain...', Array)
+#6 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#7 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(285): leantime\core\frontcontroller::dispatch()
+#8 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#9 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#10 {main}
+[28-Jul-2023 12:03:00 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: Cannot assign leantime\domain\repositories\reports to property leantime\domain\services\reports::$reportRepository of type leantime\domain\repositories\setting in /Users/josephroberts/localdev/leantime/app/domain/reports/services/class.reports.php:35
+Stack trace:
+#0 [internal function]: leantime\domain\services\reports->__construct(Object(leantime\core\template), Object(leantime\core\appSettings), Object(leantime\core\environment), Object(leantime\domain\repositories\projects), Object(leantime\domain\repositories\sprints), Object(leantime\domain\repositories\reports), Object(leantime\domain\repositories\setting), Object(leantime\domain\repositories\tickets))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(917): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#4 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(327): Illuminate\Container\Container->make('leantime\\domain...')
+#5 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#6 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#7 {main}
+  thrown in /Users/josephroberts/localdev/leantime/app/domain/reports/services/class.reports.php on line 35
+[28-Jul-2023 12:04:33 America/Los_Angeles] PHP Fatal error:  Uncaught TypeError: Cannot assign leantime\core\environment to property leantime\domain\services\tickets::$language of type leantime\core\language in /Users/josephroberts/localdev/leantime/app/domain/tickets/services/class.tickets.php:34
+Stack trace:
+#0 [internal function]: leantime\domain\services\tickets->__construct(Object(leantime\core\template), Object(leantime\core\language), Object(leantime\core\environment), Object(leantime\domain\repositories\projects), Object(leantime\domain\repositories\tickets), Object(leantime\domain\repositories\timesheets), Object(leantime\domain\repositories\setting), Object(leantime\domain\services\projects))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(917): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(758): Illuminate\Container\Container->build('leantime\\domain...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(694): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(182): Illuminate\Container\Container->make('leantime\\domain...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(124): Illuminate\Container\BoundMethod::addDependencyForCallParameter(Object(leantime\core\application), Object(ReflectionParameter), Array, Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(36): Illuminate\Container\BoundMethod::getMethodDependencies(Object(leantime\core\application), Array, Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Util.php(40): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod(Object(leantime\core\application), Array, Object(Closure))
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(653): Illuminate\Container\BoundMethod::call(Object(leantime\core\application), Array, Array, NULL)
+#11 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(58): Illuminate\Container\Container->call(Array)
+#12 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(33): leantime\core\controller->executeActions('get', Array)
+#13 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(149): leantime\core\controller->__construct('get', Array)
+#14 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(71): leantime\core\frontcontroller::executeAction('dashboard.home', Array, 200)
+#15 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(333): leantime\core\frontcontroller::dispatch()
+#16 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(136): leantime\core\Bootloader->handleRequest()
+#17 /Users/josephroberts/localdev/leantime/public/index.php(10): leantime\core\Bootloader->boot()
+#18 {main}
+  thrown in /Users/josephroberts/localdev/leantime/app/domain/tickets/services/class.tickets.php on line 34
+[28-Jul-2023 12:04:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[28-Jul-2023 12:04:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[28-Jul-2023 12:04:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[28-Jul-2023 12:04:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[28-Jul-2023 12:04:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[28-Jul-2023 12:05:19 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(

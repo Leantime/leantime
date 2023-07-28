@@ -65,7 +65,7 @@ class addUserCommand extends Command
             return Command::INVALID;
         }
         if ($clientId === null) {
-            $clientsRepository = new clients();
+            $clientsRepository = app()->make(clients::class);
             $clients = $clientsRepository->getAll();
             if (sizeof($clients) < 1) {
                 $io->error("No clients found, cannot add user");
@@ -83,7 +83,7 @@ class addUserCommand extends Command
             "phone" => $phone
         );
         try {
-            $usersRepo = new users();
+            $usersRepo = app()->make(users::class);
             if ($usersRepo->usernameExist($email)) {
                 $io->error("User Already Exists");
                 return Command::INVALID;

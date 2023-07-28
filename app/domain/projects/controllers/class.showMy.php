@@ -9,20 +9,24 @@ namespace leantime\domain\controllers {
 
     class showMy extends controller
     {
-
         private services\projects $projectService;
         private services\tickets $ticketService;
         private services\reports $reportService;
         private services\comments $commentService;
+        private repositories\clients $clientRepo;
 
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->reportService = new services\reports();
-            $this->commentService = new services\comments();
-            $this->clientRepo = new repositories\clients();
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\reports $reportService,
+            services\comments $commentService,
+            repositories\clients $clientRepo
+        ) {
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->reportService = $reportService;
+            $this->commentService = $commentService;
+            $this->clientRepo = $clientRepo;
         }
 
         /**

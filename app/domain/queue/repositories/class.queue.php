@@ -7,15 +7,13 @@ namespace leantime\domain\repositories {
 
     class queue
     {
-
         private core\db $db;
         private users $users;
-        
-        public function __construct()
-        {
 
-            $this->db = core\db::getInstance();
-            $this->users = new users();
+        public function __construct(core\db $db, users $users)
+        {
+            $this->db = $db;
+            $this->users = $users;
         }
 
         public function queueMessageToUsers($recipients, $message, $subject = "", $projectId = 0)

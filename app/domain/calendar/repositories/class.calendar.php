@@ -9,28 +9,26 @@ namespace leantime\domain\repositories {
     {
         /**
          * @access public
-         * @var    object
+         * @var    core\db
          */
-        private $db = '';
+        private ?core\db $db;
 
-        private $language;
+        private core\language $language;
 
         /**
          * __construct - get database connection
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(core\db $db, core\language $language)
         {
-
-            $this->db = core\db::getInstance();
-            $this->language = core\language::getInstance();
+            $this->db = $db;
+            $this->language = $language;
             $this->entity = "calendar";
         }
 
         public function getAllDates($dateFrom, $dateTo)
         {
-
             $query = "SELECT * FROM zp_calendar WHERE
 					userId = :userId ORDER BY zp_calendar.dateFrom";
 
@@ -65,7 +63,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
             */
 
-            $ticketService = new \leantime\domain\services\tickets();
+            $ticketService = app()->make(\leantime\domain\services\tickets::class);
             $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
 
             if (!empty($ticketArray)) {
@@ -213,9 +211,8 @@ namespace leantime\domain\repositories {
 
         public function getCalendarBySecretHash($userHash, $calHash)
         {
-
             //get user
-            $userRepo = new \leantime\domain\repositories\users();
+            $userRepo = app()->make(\leantime\domain\repositories\users::class);
             $user = $userRepo->getUserBySha($userHash);
 
 
@@ -224,7 +221,7 @@ namespace leantime\domain\repositories {
             }
 
             //Check if setting exists
-            $settingService = new \leantime\domain\repositories\setting();
+            $settingService = app()->make(\leantime\domain\repositories\setting::class);
             $hash = $settingService->getSetting("usersettings." . $user['id'] . ".icalSecret");
 
             if ($hash !== false && $calHash == $hash) {

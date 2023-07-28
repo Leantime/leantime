@@ -10,22 +10,27 @@ namespace leantime\domain\services {
 
     class sprints
     {
-        private $projectRepository;
-        private $sprintRepository;
-        private $ticketRepository;
-        private $reportRepository;
-        private core\language $language;
         private core\template $tpl;
+        private core\language $language;
+        private repositories\projects $projectRepository;
+        private repositories\sprints $sprintRepository;
+        private repositories\tickets $ticketRepository;
+        private repositories\reports $reportRepository;
 
-        public function __construct()
-        {
-
-            $this->tpl = new core\template();
-            $this->projectRepository = new repositories\projects();
-            $this->sprintRepository = new repositories\sprints();
-            $this->reportRepository = new repositories\reports();
-            $this->ticketRepository = new repositories\tickets();
-            $this->language = core\language::getInstance();
+        public function __construct(
+            core\template $tpl,
+            core\language $language,
+            repositories\projects $projectRepository,
+            repositories\sprints $sprintRepository,
+            repositories\tickets $ticketRepository,
+            repositories\reports $reportRepository
+        ) {
+            $this->tpl = $tpl;
+            $this->language = $language;
+            $this->projectRepository = $projectRepository;
+            $this->sprintRepository = $sprintRepository;
+            $this->reportRepository = $reportRepository;
+            $this->ticketRepository = $ticketRepository;
         }
 
         public function getSprint($id)

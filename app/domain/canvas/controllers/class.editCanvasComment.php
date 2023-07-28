@@ -23,7 +23,12 @@ namespace leantime\domain\controllers\canvas {
          */
         protected const CANVAS_NAME = '??';
 
-        private $sprintService;
+        private repositories\tickets $ticketRepo;
+        private repositories\comments $commentsRepo;
+        private services\sprints $sprintService;
+        private services\tickets $ticketService;
+        private services\projects $projectService;
+        private object $canvasRepo;
 
         /**
          * init - initialize private variables
@@ -31,16 +36,21 @@ namespace leantime\domain\controllers\canvas {
          * @access public
          *
          */
-        public function init()
-        {
+        public function init(
+            repositories\tickets $ticketRepo,
+            repositories\comments $commentsRepo,
+            services\sprints $sprintService,
+            services\tickets $ticketService,
+            services\projects $projectService
+        ) {
+            $this->ticketRepo = $ticketRepo;
+            $this->commentsRepo = $commentsRepo;
+            $this->sprintService = $sprintService;
+            $this->ticketService = $ticketService;
+            $this->projectService = $projectService;
 
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
-            $this->canvasRepo = new $canvasRepoName();
-            $this->sprintService = new services\sprints();
-            $this->ticketRepo = new repositories\tickets();
-            $this->ticketService = new services\tickets();
-            $this->commentsRepo = new repositories\comments();
-            $this->projectService = new services\projects();
+            $this->canvasRepo = app()->make($canvasRepoName);
         }
 
         /**
@@ -137,7 +147,7 @@ namespace leantime\domain\controllers\canvas {
                         $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success');
 
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . (int)$params['itemId'],
                             "text" => $this->language->__('email_notifications.canvas_item_update_cta')
@@ -184,7 +194,7 @@ namespace leantime\domain\controllers\canvas {
                         $this->tpl->setNotification($canvasTypes[$params['box']] . ' successfully created', 'success');
 
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . (int)$params['itemId'],
                             "text" => $this->language->__('email_notifications.canvas_item_update_cta')
@@ -226,7 +236,7 @@ namespace leantime\domain\controllers\canvas {
 
 
 
-                $notification = new models\notifications\notification();
+                $notification = app()->make(models\notifications\notification::class);
                 $notification->url = array(
                     "url" => BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . (int)$_GET['id'],
                     "text" => $this->language->__('email_notifications.canvas_item_update_cta')

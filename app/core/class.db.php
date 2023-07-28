@@ -42,32 +42,20 @@ class db
      */
     private $port = '3306';
 
-
     public PDO $database;
-    /**
-     * @access private
-     * @var    pdo object
-     */
-    private static $instance = null;
 
     /**
      * __construct - connect to database and select db
      *
      * @return object
      */
-    private function __construct()
+    public function __construct(\leantime\core\environment $config)
     {
-
-            //Get configuration-object for connection-details
-            $config = \leantime\core\environment::getInstance();
-
-
-            $this->user = $config->dbUser;
-            $this->password = $config->dbPassword;
-            $this->databaseName = $config->dbDatabase;
-            $this->host = $config->dbHost ?? "localhost";
-            $this->port = $config->dbPort ?? "3306";
-
+        $this->user = $config->dbUser;
+        $this->password = $config->dbPassword;
+        $this->databaseName = $config->dbDatabase;
+        $this->host = $config->dbHost ?? "localhost";
+        $this->port = $config->dbPort ?? "3306";
 
         try {
             $driver_options = array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"' );
@@ -90,15 +78,6 @@ class db
 
             exit();
         }
-    }
-
-    public static function getInstance()
-    {
-
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-        return self::$instance;
     }
 
     /**

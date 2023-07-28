@@ -19,12 +19,10 @@ namespace leantime\domain\services {
             "nolink"
         ];
 
-
-        public function __construct()
+        public function __construct(repositories\goalcanvas $goalRepository)
         {
-            $this->goalRepository = new repositories\goalcanvas();
+            $this->goalRepository = $goalRepository;
         }
-
 
         public function getCanvasItemsById(int $id): array{
 

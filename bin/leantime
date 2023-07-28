@@ -15,11 +15,12 @@ use leantime\command\runCronCommand;
 use leantime\core\environment;
 use Symfony\Component\Console\Application;
 
-$config = environment::getInstance();
-$settings = new leantime\core\appSettings();
+$app = bootstrap_minimal_app();
+$config = $app->make(environment::class);
+$settings = $app->make(leantime\core\appSettings::class);
 $settings->loadSettings($config);
 
-define('BASE_URL', $config->appUrl);
+! defined('BASE_URL') && define('BASE_URL', $config->appUrl);
 
 $application = new Application();
 $application->add(new addUserCommand());

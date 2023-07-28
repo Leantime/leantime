@@ -16,17 +16,17 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-        private $clientRepo;
+        private repositories\clients $clientRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\clients $clientRepo)
         {
 
-            $this->clientRepo = new repositories\clients();
+            $this->clientRepo = $clientRepo;
         }
 
         /**

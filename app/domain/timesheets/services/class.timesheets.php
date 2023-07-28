@@ -10,15 +10,13 @@ namespace leantime\domain\services {
 
     class timesheets
     {
-        private $timesheetsRepo;
+        private repositories\timesheets $timesheetsRepo;
         private core\language $language;
 
-
-        public function __construct()
+        public function __construct(repositories\timesheets $timesheetsRepo, core\language $language)
         {
-
-            $this->timesheetsRepo = new repositories\timesheets();
-            $this->language = core\language::getInstance();
+            $this->timesheetsRepo = $timesheetsRepo;
+            $this->language = $language;
         }
 
         /*

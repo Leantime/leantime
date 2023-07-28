@@ -13,10 +13,9 @@ namespace leantime\domain\services {
          */
         private \leantime\domain\repositories\reactions $reactionsRepo;
 
-
-        public function __construct()
+        public function __construct(\leantime\domain\repositories\reactions $reactionsRepo)
         {
-            $this->reactionsRepo =  new \leantime\domain\repositories\reactions();
+            $this->reactionsRepo = $reactionsRepo;
         }
 
         /**

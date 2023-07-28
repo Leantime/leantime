@@ -10,8 +10,8 @@ namespace leantime\domain\controllers {
 
     class roadmap extends controller
     {
-        private $projectsRepo;
-        private $sprintService;
+        private repositories\projects $projectsRepo;
+        private services\sprints $sprintService;
         private services\tickets $ticketService;
 
         /**
@@ -20,12 +20,14 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
-            $this->projectsRepo = new repositories\projects();
-            $this->sprintService = new services\sprints();
-            $this->ticketService = new services\tickets();
+        public function init(
+            repositories\projects $projectsRepo,
+            services\sprints $sprintService,
+            services\tickets $ticketService
+        ) {
+            $this->projectsRepo = $projectsRepo;
+            $this->sprintService = $sprintService;
+            $this->ticketService = $ticketService;
         }
 
         /**

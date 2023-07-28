@@ -9,7 +9,7 @@ class addNotification
     public function handle($payload)
     {
 
-        $notificationService = new notifications();
+        $notificationService = app()->make(notifications::class);
 
         $notifications = array();
 

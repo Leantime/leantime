@@ -6,15 +6,13 @@ namespace leantime\plugins\services {
 
     class motivationalQuotes
     {
-        public function __construct()
+        public function __construct(repositories\motivationalQuotes $quotesRepo)
         {
-            $this->quotesRepo = new repositories\motivationalQuotes();
+            $this->quotesRepo = $quotesRepo;
         }
-
 
         public function getRandomQuote()
         {
-
             $availableQuotes = $this->quotesRepo->getAllQuotes();
 
             $numberOfQuotes = count($availableQuotes) - 1;
@@ -23,5 +21,4 @@ namespace leantime\plugins\services {
             return $availableQuotes[$randomNumber];
         }
     }
-
 }

@@ -20,16 +20,13 @@ class plugins
     /**
      * constructor
      */
-    public function __construct()
+    public function __construct(\leantime\core\environment $config)
     {
-        $config = \leantime\core\environment::getInstance();
-
         if (isset($config->plugins)) {
             $plugins = json_decode($config->plugins);
         } else {
             $plugins = [];
         }
-
 
         $this->enabledPlugins = $this->standardize_plugin_keys(
             (array) $plugins

@@ -18,10 +18,10 @@ namespace leantime\domain\controllers\canvas {
          */
         protected const CANVAS_NAME = '??';
 
-        private $canvasRepo;
         private services\tickets $ticketService;
-        private repositories\comments $commentsRepo;
         private services\projects $projectService;
+        private repositories\comments $commentsRepo;
+        private object $canvasRepo;
 
         /**
          * init - initialize private variables
@@ -29,14 +29,17 @@ namespace leantime\domain\controllers\canvas {
          * @access public
          *
          */
-        public function init()
-        {
+        public function init(
+            serivces\tickets $ticketService,
+            services\projects $projectService,
+            repositories\comments $commentsRepo
+        ) {
+            $this->ticketService = $ticketService;
+            $this->commentsRepo = $commentsRepo;
+            $this->projectService = $projectService;
 
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
-            $this->canvasRepo = new $canvasRepoName();
-            $this->ticketService = new services\tickets();
-            $this->commentsRepo = new repositories\comments();
-            $this->projectService = new services\projects();
+            $this->canvasRepo = app()->make($canvasRepoName);
         }
 
         /**
@@ -179,7 +182,7 @@ namespace leantime\domain\controllers\canvas {
                             $canvasItem['description']
                         );
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
                             "text" => $this->language->__('email_notifications.canvas_item_update_cta')
@@ -231,7 +234,7 @@ namespace leantime\domain\controllers\canvas {
                             $canvasItem['description']
                         );
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
                             "text" => $this->language->__('email_notifications.canvas_item_update_cta')
@@ -280,7 +283,7 @@ namespace leantime\domain\controllers\canvas {
                     $_SESSION['userdata']['name']
                 );
 
-                $notification = new models\notifications\notification();
+                $notification = app()->make(models\notifications\notification::class);
                 $notification->url = array(
                     "url" => $actual_link,
                     "text" => $this->language->__('email_notifications.canvas_item_update_cta')
