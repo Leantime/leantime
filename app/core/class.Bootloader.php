@@ -171,6 +171,14 @@ class Bootloader
         $this->app->instance(services\oidc::class, $this->app->make(services\oidc::class));
         $this->app->instance(services\modulemanager::class, $this->app->make(services\modulemanager::class));
 
+        /**
+         * Filter on container right after initial bindings.
+         *
+         * @param leantime\core\Bootloader $bootloader The bootloader object.
+         * @return \Illuminate\Contracts\Container\Container $container The container object.
+         */
+        $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
+
         return $this->app;
     }
 
