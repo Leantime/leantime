@@ -54,6 +54,7 @@ namespace leantime\domain\repositories {
             $this->db = core\db::getInstance();
         }
 
+
         /**
          * getAll - get all projects open and closed
          *
@@ -612,6 +613,7 @@ namespace leantime\domain\repositories {
 				dollarBudget = :dollarBudget,
 				psettings = :psettings,
 				menuType = :menuType,
+				type = :type,
 				parent = :parent,
 				start = :start,
 				end = :end
@@ -629,6 +631,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
+            $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
 
@@ -1131,12 +1134,15 @@ namespace leantime\domain\repositories {
                         ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
                         ->fontSize(0.5)
                         ->size(96)
-                        ->background('#555555')->color("#fff")
-                        ->generate();
+                        ->background('#555555')->color("#fff");
 
-                    $image->save(APP_ROOT."/cache/avatars/".$imagename.".png", 100, "png");
+                    if(is_writable(APP_ROOT."/cache/avatars/")) {
+                        $image->generate()->save(APP_ROOT . "/cache/avatars/" . $imagename . ".png", 100, "png");
+                        return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+                    }else{
 
-                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
+                        return $image->generateSVG();;
+                    }
 
                 }
 

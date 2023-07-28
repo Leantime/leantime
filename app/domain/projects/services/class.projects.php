@@ -41,6 +41,24 @@ namespace leantime\domain\services {
             $this->notificationService = new notifications();
         }
 
+        public function getProjectTypes() {
+
+            $types = array("project"=>"label.project");
+
+            $filtered = static::dispatch_filter("filterProjectType", $types);
+
+            //Strategy & Program are protected types
+            if(isset($filtered["strategy"])){
+                unset($filtered["strategy"]);
+            }
+
+            if(isset($filtered["program"])){
+                unset($filtered["program"]);
+            }
+
+            return $filtered;
+        }
+
         public function getProject($id)
         {
             return $this->projectRepository->getProject($id);
@@ -320,6 +338,10 @@ namespace leantime\domain\services {
                 //IF the pgm module is not active, add all items
                 if($projectHierarchy['program']["enabled"] === false) {
                     if ($project['type'] != "program" && $project['type'] != "strategy") {
+
+                        if($project['parent'] == 0 || $project['parent'] == '' || $project['parent'] == null){
+                            $project['parent'] = "noparent";
+                        }
                         $projectHierarchy["project"]["items"]['project'][$project['id']] = $project;
                     }
                 } else {

@@ -10,6 +10,9 @@ leantime.theme = theme;
 var appURL = jQuery('meta[name=identifier-URL]').attr("content");
 leantime.appUrl = appURL;
 
+var leantimeVersion = jQuery('meta[name=leantime-version]').attr("content");
+leantime.version = leantimeVersion;
+
 //Backwards compatibility for some jQuery libs
 jQuery(function() {
     jQuery.fn.size = function() {
@@ -72,7 +75,6 @@ jQuery(document).ready(function(){
 leantime.handleAsyncResponse = function(response)  {
 
     if(response !== undefined) {
-        console.log(response);
         if(response.result !== undefined && response.result.html !== undefined){
 
             var content = jQuery(response.result.html);

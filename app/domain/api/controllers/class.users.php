@@ -54,7 +54,6 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($params["profileImage"])) {
-                //var_dump("asdf");
 
                 $return = $this->usersService->getProfilePicture($params["profileImage"]);
 

@@ -17,6 +17,7 @@
 <meta name="theme-color" content="<?php $this->e($_SESSION["companysettings.primarycolor"]) ?>">
 <meta name="color-scheme" content="<?php $this->e($theme ?? 'default') ?>">
 <meta name="identifier-URL" content="<?=BASE_URL?>">
+<meta name="leantime-version" content="<?=$settings->appVersion ?>">
 <?php $this->dispatchTplEvent('afterMetaTags'); ?>
 
 <link rel="shortcut icon" href="<?=BASE_URL?>/dist/images/favicon.png"/>

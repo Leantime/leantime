@@ -65,6 +65,8 @@ namespace leantime\domain\controllers {
         {
 
             if (isset($_GET['id']) === true) {
+                $projectTypes = $this->projectService->getProjectTypes();
+
                 $id = (int)($_GET['id']);
 
                 //Mattermost integration
@@ -330,6 +332,7 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('project', $_GET['id']));
 
                 $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+                $this->tpl->assign('projectTypes', $projectTypes);
 
                 $this->tpl->assign('state', $this->projectRepo->state);
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);
