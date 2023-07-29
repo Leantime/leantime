@@ -31,13 +31,15 @@ class session
      */
     private $sessionpassword = '';
 
+    private environment $config;
+
     /**
      * __construct - get and test Session or make session
      *
      * @access private
      * @return
      */
-    public function __construct(\leantime\core\environment $config)
+    public function __construct(environment $config)
     {
         $this->config = $config;
 
@@ -91,15 +93,17 @@ class session
      */
     private function makeSID()
     {
+        $session_string = ! defined('LEAN_CLI') || LEAN_CLI === false
+            ? $_SERVER['REMOTE_ADDR']
+            : 'cli';
 
-        $tmp = hash('sha1', (string) mt_rand(32, 32) . $_SERVER['REMOTE_ADDR'] . time());
+        $tmp = hash('sha1', (string) mt_rand(32, 32) . $session_string . time());
 
         self::$sid = $tmp . '-' . hash('sha1', $tmp . $this->sessionpassword);
     }
 
     public static function destroySession()
     {
-
         $config = $this->config;
 
         if (isset($_COOKIE['sid'])) {

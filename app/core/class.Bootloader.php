@@ -60,7 +60,7 @@ class Bootloader
      *
      * @return \leantime\core\Bootloader
      */
-    public static function getInstance(?ContainerContract $app = null): self
+    public static function getInstance(?PsrContainerContract $app = null): self
     {
         return static::$instance ??= new static($app);
     }
@@ -70,7 +70,7 @@ class Bootloader
      *
      * @param \Illuminate\Contracts\Container\Container $app
      */
-    public function __construct(?ContainerContract $app = null)
+    public function __construct(?PsrContainerContract $app = null)
     {
         $this->app = $app;
 
