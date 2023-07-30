@@ -14,7 +14,7 @@ Leantime is a strategic open source project management system for innovative com
 [![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
 <br />
 
-  ![alt text](public/images/Screenshots/ProjectDashboard.png "Dashboard")
+  ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Dashboard")
 
 </div>
 <br /><br />
@@ -50,9 +50,9 @@ Leantime is a strategic open source project management system for innovative com
 
 | ![alt text](public/images/Screenshots/UserDashboard.png "My Dashboard")   | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
 |---------------------------------------------------------------------|:--------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-| ![alt text](public/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
-| ![alt text](public/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
-| ![alt text](public/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/images/Screenshots/Confetti.png "Confetti")                                                                     |
+| ![alt text](public/assets/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/assets/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/assets/images/Screenshots/Ideas.png "Idea Board")     |
+| ![alt text](public/assets/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/assets/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/assets/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/assets/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/assets/images/Screenshots/Confetti.png "Confetti")                                                                     |
 
 ### System Requirements ###
 
