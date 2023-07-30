@@ -20,16 +20,14 @@ namespace leantime\domain\controllers {
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(\leantime\domain\services\calendar $calendarService)
         {
-
-            $this->calendarService = new \leantime\domain\services\calendar();
+            $this->calendarService = $calendarService;
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
-
         }
 
-        public function get() {
-
+        public function get()
+        {
             $values = array(
                 'description' => '',
                 'dateFrom' => '',
@@ -42,21 +40,16 @@ namespace leantime\domain\controllers {
         }
 
         public function post($params) {
-
-
             $result = $this->calendarService->addEvent($params);
 
-            if(is_numeric($result)=== true){
+            if (is_numeric($result) === true) {
                 $this->tpl->setNotification('notification.event_created_successfully', 'success');
-                $this->tpl->redirect(BASE_URL."/calendar/editEvent/".$result);
-
-            }else{
+                $this->tpl->redirect(BASE_URL . "/calendar/editEvent/" . $result);
+            } else {
                 $this->tpl->setNotification('notification.please_enter_title', 'error');
                 $this->tpl->assign('values', $params);
                 $this->tpl->displayPartial('calendar.addEvent');
-
-           }
+            }
         }
-
     }
 }

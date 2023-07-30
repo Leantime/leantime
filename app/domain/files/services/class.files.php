@@ -13,20 +13,21 @@ namespace leantime\domain\services {
         private $projectService;
         private core\language $language;
 
+        public function __construct(
+            repositories\files $fileRepository,
+            services\projects $projectService,
+            core\language $language
+        ) {
 
-        public function __construct()
-        {
-
-            $this->fileRepository = new repositories\files();
-            $this->projectService = new services\projects();
-            $this->language = core\language::getInstance();
+            $this->fileRepository = $fileRepository;
+            $this->projectService = $projectService;
+            $this->language = $language;
         }
 
         public function getFilesByModule($module = '', $entityId = null, $userId = null)
         {
             return $this->fileRepository->getFilesByModule($module, $entityId, $userId);
         }
-
 
         public function uploadFile($file, $module, $entityId, $entity)
         {
@@ -46,7 +47,7 @@ namespace leantime\domain\services {
                             break;
                     }
 
-                    $notification = new notification();
+                    $notification = app()->make(notification::class);
                     $notification->url = array(
                         "url" => CURRENT_URL,
                         "text" => $linkLabel
@@ -72,7 +73,6 @@ namespace leantime\domain\services {
 
         public function deleteFile($fileId)
         {
-
             return $this->fileRepository->deleteFile($fileId);
         }
     }

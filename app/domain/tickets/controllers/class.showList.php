@@ -11,15 +11,19 @@ namespace leantime\domain\controllers {
         private services\projects $projectService;
         private services\tickets $ticketService;
         private services\sprints $sprintService;
-        private $timesheetService;
+        private services\timesheets $timesheetService;
 
-        public function init()
-        {
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\sprints $sprintService,
+            services\timesheets $timesheetService
+        ) {
 
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->sprintService = new services\sprints();
-            $this->timesheetService = new services\timesheets();
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->sprintService = $sprintService;
+            $this->timesheetService = $timesheetService;
 
             $_SESSION['lastPage'] = CURRENT_URL;
             $_SESSION['lastTicketView'] = "list";

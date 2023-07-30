@@ -10,6 +10,7 @@ namespace leantime\domain\controllers {
 
     class projects extends controller
     {
+        private core\fileupload $fileUpload;
         private services\projects $projectService;
         private repositories\files $filesRepository;
 
@@ -19,11 +20,14 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->filesRepository = new repositories\files();
+        public function init(
+            core\fileupload $fileUpload,
+            services\projects $projectService,
+            repositories\files $filesRepository
+        ) {
+            $this->fileUpload = $fileUpload;
+            $this->projectService = $projectService;
+            $this->filesRepository = $filesRepository;
         }
 
 
@@ -42,7 +46,7 @@ namespace leantime\domain\controllers {
 
                 if (is_array($return)) {
 
-                    $file = new core\fileupload();
+                    $file = $this->fileUpload;
                     if($return["type"] == "uploaded"){
                         $file->displayImageFile($return["filename"]);
                     }else if($return["type"] == "generated"){

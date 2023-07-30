@@ -11,19 +11,18 @@ namespace leantime\domain\controllers {
 
     class showBoards extends controller
     {
-        private $ideaRepo;
-        private $projectService;
+        private repositories\ideas $ideaRepo;
+        private services\projects $projectService;
 
         /**
          * init - initialize private variables
          *
          * @access private
          */
-        public function init()
+        public function init(repositories\ideas $ideaRepo, services\projects $projectService)
         {
-
-            $this->ideaRepo = new repositories\ideas();
-            $this->projectService = new services\projects();
+            $this->ideaRepo = $ideaRepo;
+            $this->projectService = $projectService;
 
             $_SESSION['lastPage'] = CURRENT_URL;
             $_SESSION['lastIdeaView'] = "board";
@@ -82,7 +81,7 @@ namespace leantime\domain\controllers {
 
                     $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success');
 
-                    $mailer = new core\mailer();
+                    $mailer = app()->make(core\mailer::class);
                     $mailer->setContext('idea_board_created');
                     $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
@@ -93,7 +92,7 @@ namespace leantime\domain\controllers {
                     //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     // NEW Queuing messaging system
-                    $queue = new repositories\queue();
+                    $queue = app()->make(repositories\queue::class);
                     $queue->queueMessageToUsers($users, $message, $this->language->__('email_notifications.idea_board_created_subject'), $_SESSION["currentProject"]);
 
 

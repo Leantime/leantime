@@ -15,7 +15,7 @@ namespace leantime\domain\controllers {
 
     class editSprint extends controller
     {
-        private $sprintService;
+        private services\sprints $sprintService;
 
         /**
          * constructor - initialize private variables
@@ -23,11 +23,11 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
+        public function init(services\sprints $sprintService)
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->sprintService = new services\sprints();
+            $this->sprintService = $sprintService;
         }
 
         /**
@@ -41,7 +41,7 @@ namespace leantime\domain\controllers {
             if (isset($params['id'])) {
                 $sprint = $this->sprintService->getSprint($params['id']);
             } else {
-                $sprint = new models\sprints();
+                $sprint = app()->make(models\sprints::class);
                 $startDate = new DateTime();
                 $endDate = new DateTime();
                 $endDate = $endDate->add(new DateInterval("P13D"));

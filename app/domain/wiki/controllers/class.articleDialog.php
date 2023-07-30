@@ -12,21 +12,19 @@ namespace leantime\domain\controllers {
 
     class articleDialog extends controller
     {
-
         private services\wiki $wikiService;
         private services\tickets $ticketService;
 
-        public function init()
+        public function init(services\wiki $wikiService, services\tickets $ticketService)
         {
-
-            $this->wikiService = new services\wiki();
-            $this->ticketService = new services\tickets();
+            $this->wikiService = $wikiService;
+            $this->ticketService = $ticketService;
         }
 
         public function get($params)
         {
 
-            $article = new wiki\article();
+            $article = app()->make(wiki\article::class);
             $article->data = "far fa-file-alt";
 
             if (isset($params['id'])) {
@@ -62,7 +60,7 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            $article = new wiki\article();
+            $article = app()->make(wiki\article::class);
 
             if (isset($_GET["id"])) {
                 $id = $_GET["id"];

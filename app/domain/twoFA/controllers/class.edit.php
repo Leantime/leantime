@@ -11,12 +11,11 @@ namespace leantime\domain\controllers {
 
     class edit extends controller
     {
-        private $userRepo;
+        private repositories\users $userRepo;
 
-        public function init()
+        public function init(repositories\users $userRepo)
         {
-
-            $this->userRepo = new repositories\users();
+            $this->userRepo = $userRepo;
         }
 
         public function run()

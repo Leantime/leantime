@@ -14,8 +14,8 @@ namespace leantime\domain\controllers {
 
     class editCompanySettings extends controller
     {
-        private $config;
-        private $settingsRepo;
+        private core\environment $config;
+        private repositories\setting $settingsRepo;
         private services\api $APIService;
         private services\setting $settingsSvc;
 
@@ -25,16 +25,18 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
-
+        public function init(
+            core\environment $config,
+            repositories\setting $settingsRepo,
+            services\api $APIService,
+            services\setting $settingsSvc
+        ) {
             auth::authOrRedirect([roles::$owner, roles::$admin]);
 
-            $this->config = \leantime\core\environment::getInstance();
-            $this->settingsRepo = new repositories\setting();
-            $this->APIService = new services\api();
-            $this->settingsSvc = new services\setting();
+            $this->config = $config;
+            $this->settingsRepo = $settingsRepo;
+            $this->APIService = $APIService;
+            $this->settingsSvc = $settingsSvc;
         }
 
         /**
@@ -45,82 +47,79 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
-
-            if (auth::userIsAtLeast(roles::$owner)) {
-
-
-                if(isset($_GET['resetLogo'])) {
-                    $this->settingsSvc->resetLogo();
-                    $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings#look");
-                }
-
-                $companySettings = array(
-                    "logo" => $_SESSION["companysettings.logoPath"],
-                    "primarycolor" => $_SESSION["companysettings.primarycolor"],
-                    "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
-                    "name" => $_SESSION["companysettings.sitename"],
-                    "language" => $_SESSION["companysettings.language"],
-                    "telemetryActive" => false,
-                    "messageFrequency" => ''
-                );
-
-                $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
-                if ($logoPath !== false) {
-                    if (strpos($logoPath, 'http') === 0) {
-                        $companySettings["logo"] = $logoPath;
-                    } else {
-                        $companySettings["logo"] = BASE_URL . $logoPath;
-                    }
-                }
-
-                $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
-                if ($mainColor !== false) {
-                    $companySettings["primarycolor"] = "#" . $mainColor;
-                    $companySettings["secondarycolor"] = "#" . $mainColor;
-                }
-
-                $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
-                if ($primaryColor !== false) {
-                    $companySettings["primarycolor"] = $primaryColor;
-                }
-
-                $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor");
-                if ($secondaryColor !== false) {
-                    $companySettings["secondarycolor"] = $secondaryColor;
-                }
-
-                $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
-                if ($sitename !== false) {
-                    $companySettings["name"] = $sitename;
-                }
-
-                $language = $this->settingsRepo->getSetting("companysettings.language");
-                if ($language !== false) {
-                    $companySettings["language"] = $language;
-                }
-
-                $telemetryActive = $this->settingsRepo->getSetting("companysettings.telemetry.active");
-                if ($telemetryActive !== false) {
-                    $companySettings["telemetryActive"] = $telemetryActive;
-                }
-
-                $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
-                if ($messageFrequency !== false) {
-                    $companySettings["messageFrequency"] = $messageFrequency;
-                }
-
-                $apiKeys = $this->APIService->getAPIKeys();
-
-
-                $this->tpl->assign("apiKeys", $apiKeys);
-                $this->tpl->assign("languageList", $this->language->getLanguageList());
-                $this->tpl->assign("companySettings", $companySettings);
-
-                $this->tpl->display('setting.editCompanySettings');
-            } else {
+            if (! auth::userIsAtLeast(roles::$owner)) {
                 $this->tpl->display('error.error403');
+                return;
             }
+
+            if (isset($_GET['resetLogo'])) {
+                $this->settingsSvc->resetLogo();
+                $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings#look");
+            }
+
+            $companySettings = array(
+                "logo" => $_SESSION["companysettings.logoPath"],
+                "primarycolor" => $_SESSION["companysettings.primarycolor"],
+                "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
+                "name" => $_SESSION["companysettings.sitename"],
+                "language" => $_SESSION["companysettings.language"],
+                "telemetryActive" => false,
+                "messageFrequency" => ''
+            );
+
+            $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
+            if ($logoPath !== false) {
+                if (strpos($logoPath, 'http') === 0) {
+                    $companySettings["logo"] = $logoPath;
+                } else {
+                    $companySettings["logo"] = BASE_URL . $logoPath;
+                }
+            }
+
+            $mainColor = $this->settingsRepo->getSetting("companysettings.mainColor");
+            if ($mainColor !== false) {
+                $companySettings["primarycolor"] = "#" . $mainColor;
+                $companySettings["secondarycolor"] = "#" . $mainColor;
+            }
+
+            $primaryColor = $this->settingsRepo->getSetting("companysettings.primarycolor");
+            if ($primaryColor !== false) {
+                $companySettings["primarycolor"] = $primaryColor;
+            }
+
+            $secondaryColor = $this->settingsRepo->getSetting("companysettings.secondarycolor");
+            if ($secondaryColor !== false) {
+                $companySettings["secondarycolor"] = $secondaryColor;
+            }
+
+            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
+            if ($sitename !== false) {
+                $companySettings["name"] = $sitename;
+            }
+
+            $language = $this->settingsRepo->getSetting("companysettings.language");
+            if ($language !== false) {
+                $companySettings["language"] = $language;
+            }
+
+            $telemetryActive = $this->settingsRepo->getSetting("companysettings.telemetry.active");
+            if ($telemetryActive !== false) {
+                $companySettings["telemetryActive"] = $telemetryActive;
+            }
+
+            $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+            if ($messageFrequency !== false) {
+                $companySettings["messageFrequency"] = $messageFrequency;
+            }
+
+            $apiKeys = $this->APIService->getAPIKeys();
+
+
+            $this->tpl->assign("apiKeys", $apiKeys);
+            $this->tpl->assign("languageList", $this->language->getLanguageList());
+            $this->tpl->assign("companySettings", $companySettings);
+
+            $this->tpl->display('setting.editCompanySettings');
         }
 
         /**
@@ -171,8 +170,7 @@ namespace leantime\domain\controllers {
                 } else {
 
                     //Set remote telemetry to false:
-                    $reports = new services\reports();
-                    $reports->optOutTelemetry();
+                    app()->make(services\reports::class)->optOutTelemetry();
 
                 }
 

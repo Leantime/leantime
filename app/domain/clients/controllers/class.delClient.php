@@ -15,7 +15,7 @@ namespace leantime\domain\controllers {
 
     class delClient extends controller
     {
-        private $clientRepo;
+        private repositories\clients $clientRepo;
 
         /**
          * init - initialize private variables
@@ -24,8 +24,7 @@ namespace leantime\domain\controllers {
          */
         public function init()
         {
-
-            $this->clientRepo = new repositories\clients();
+            $this->clientRepo = app()->make(repositories\clients::class);
         }
 
         /**

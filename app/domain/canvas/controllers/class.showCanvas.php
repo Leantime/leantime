@@ -18,17 +18,17 @@ namespace leantime\domain\controllers\canvas {
          */
         protected const CANVAS_NAME = '??';
 
-        private $canvasRepo;
-        private $projectService;
+        private services\projects $projectService;
+        private object $canvasRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(services\projects $projectService)
         {
+            $this->projectService = $projectService;
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
-            $this->canvasRepo = new $canvasRepoName();
-            $this->projectService = new services\projects();
+            $this->canvasRepo = app()->make($canvasRepoName);
         }
 
         /**
@@ -101,8 +101,8 @@ namespace leantime\domain\controllers\canvas {
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
                         $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
-                        $mailer = new core\mailer();
-                        $this->projectService = new services\projects();
+                        $mailer = app()->make(core\mailer::class);
+                        $this->projectService = app()->make(services\projects::class);
                         $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
                         $mailer->setSubject($this->language->__('notification.board_created'));
@@ -116,7 +116,7 @@ namespace leantime\domain\controllers\canvas {
                         $mailer->setHtml($message);
 
                         // New queuing messaging system
-                        $queue = new repositories\queue();
+                        $queue = app()->make(repositories\queue::class);
                         $queue->queueMessageToUsers(
                             $users,
                             $message,
@@ -200,7 +200,7 @@ namespace leantime\domain\controllers\canvas {
 
                     $status = move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile);
                     if ($status) {
-                        $services = new services\canvas();
+                        $services = app()->make(services\canvas::class);
                         $importCanvasId = $services->import(
                             $uploadfile,
                             static::CANVAS_NAME . 'canvas',
@@ -214,8 +214,8 @@ namespace leantime\domain\controllers\canvas {
                             $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
                             $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
 
-                            $mailer = new core\mailer();
-                            $this->projectService = new services\projects();
+                            $mailer = app()->make(core\mailer::class);
+                            $this->projectService = app()->make(services\projects::class);
                             $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
                             $canvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
                             $mailer->setSubject($this->language->__('notification.board_imported'));
@@ -229,7 +229,7 @@ namespace leantime\domain\controllers\canvas {
                             $mailer->setHtml($message);
 
                             // New queuing messaging system
-                            $queue = new repositories\queue();
+                            $queue = app()->make(repositories\queue::class);
                             $queue->queueMessageToUsers(
                                 $users,
                                 $message,

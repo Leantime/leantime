@@ -126,17 +126,17 @@ namespace leantime\domain\repositories {
          */
         public $pwResetLimit = 5;
 
-        private $config;
-        private services\users $userService;
+        private core\environment $config;
         private repositories\users $userRepo;
 
-        public function __construct()
-        {
-
-            $this->db = core\db::getInstance();
-            $this->config = \leantime\core\environment::getInstance();
-            $this->userService = new services\users();
-            $this->userRepo = new repositories\users();
+        public function __construct(
+            core\db $db,
+            core\environment $config,
+            repositories\users $userRepo
+        ) {
+            $this->db = $db;
+            $this->config = $config;
+            $this->userRepo = $userRepo;
         }
 
         /**

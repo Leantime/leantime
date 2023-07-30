@@ -11,19 +11,18 @@ namespace leantime\domain\controllers {
 
         private services\wiki $wikiService;
 
-        public function init()
+        public function init(services\wiki $wikiService)
         {
-            $this->wikiService = new services\wiki();
+            $this->wikiService = $wikiService;
         }
 
         public function get($params)
         {
+            $wiki = app()->make(wiki::class);
 
-            $wiki = new wiki();
             if (isset($_GET["id"])) {
                 $wiki = $this->wikiService->getWiki($_GET["id"]);
             }
-
 
             $this->tpl->assign("wiki", $wiki);
             $this->tpl->displayPartial("wiki.wikiDialog");
@@ -31,8 +30,7 @@ namespace leantime\domain\controllers {
 
         public function post($params)
         {
-
-            $wiki = new wiki();
+            $wiki = app()->make(wiki::class);
 
             if (isset($_GET["id"])) {
                 $id = (int) $_GET["id"];

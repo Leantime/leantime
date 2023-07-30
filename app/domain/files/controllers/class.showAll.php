@@ -9,10 +9,15 @@ use leantime\domain\services;
 
 class showAll extends controller
 {
-    public function init()
-    {
-        $this->filesRepo = new repositories\files();
-        $this->filesService = new services\files();
+    private repositories\files $filesRepo;
+    private services\files $filesService;
+
+    public function init(
+        repositories\files $filesRepo,
+        services\files $filesService
+    ) {
+        $this->filesRepo = $filesRepo;
+        $this->filesService = $filesService;
     }
 
     public function run()

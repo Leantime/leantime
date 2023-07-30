@@ -19,13 +19,13 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-
-            $this->usersService = new services\users();
-            $this->filesRepository = new repositories\files();
+        public function init(
+            services\users $usersService,
+            repositories\files $filesRepository
+        ) {
+            $this->usersService = $usersService;
+            $this->filesRepository = $filesRepository;
         }
-
 
         /**
          * get - handle get requests
@@ -59,7 +59,7 @@ namespace leantime\domain\controllers {
 
                 if (is_array($return)) {
 
-                    $file = new core\fileupload();
+                    $file = app()->make(core\fileupload::class);
                     if($return["type"] == "uploaded"){
                         $file->displayImageFile($return["filename"]);
                     }else if($return["type"] == "generated"){

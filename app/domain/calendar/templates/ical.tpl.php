@@ -2,7 +2,7 @@
 
 $calendars = $this->get('calendar');
 $eol = "\r\n";
-$env=\leantime\core\environment::getInstance();
+$env = app()->make(\leantime\core\environment::class);
 $timezone = $env->defaultTimezone;
 
 $timezoneObject = new DateTimeZone($timezone);

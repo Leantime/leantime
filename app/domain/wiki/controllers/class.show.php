@@ -15,11 +15,10 @@ namespace leantime\domain\controllers {
         private services\wiki $wikiService;
         private services\comments $commentService;
 
-        public function init()
+        public function init(services\wiki $wikiService, services\comments $commentService)
         {
-
-            $this->wikiService = new services\wiki();
-            $this->commentService = new services\comments();
+            $this->wikiService = $wikiService;
+            $this->commentService = $commentService;
         }
 
         public function get($params)
@@ -31,7 +30,7 @@ namespace leantime\domain\controllers {
 
             $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
             if ($wikis == false || count($wikis) == 0) {
-                $wiki = new wiki();
+                $wiki = app()->make(wiki::class);
                 $wiki->title = $this->language->__("label.default");
                 $wiki->projectId = $_SESSION['currentProject'];
                 $wiki->author = $_SESSION['userdata']['id'];

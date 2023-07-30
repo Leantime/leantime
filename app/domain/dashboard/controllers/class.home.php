@@ -16,18 +16,24 @@ namespace leantime\domain\controllers {
         private services\timesheets $timesheetsService;
         private services\reports $reportsService;
         private repositories\setting $settingRepo;
-
         private repositories\calendar $calendarRepo;
 
-        public function init()
-        {
-            $this->projectsService = new services\projects();
-            $this->ticketsService = new services\tickets();
-            $this->usersService = new services\users();
-            $this->timesheetsService = new services\timesheets();
-            $this->reportsService = new services\reports();
-            $this->settingRepo = new repositories\setting();
-            $this->calendarRepo = new repositories\calendar();
+        public function init(
+            services\projects $projectsService,
+            services\tickets $ticketsService,
+            services\users $usersService,
+            services\timesheets $timesheetsService,
+            services\reports $reportsService,
+            repositories\setting $settingRepo,
+            repositories\calendar $calendarRepo
+        ) {
+            $this->projectsService = $projectsService;
+            $this->ticketsService = $ticketsService;
+            $this->usersService = $usersService;
+            $this->timesheetsService = $timesheetsService;
+            $this->reportsService = $reportsService;
+            $this->settingRepo = $settingRepo;
+            $this->calendarRepo = $calendarRepo;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
         }
@@ -37,7 +43,6 @@ namespace leantime\domain\controllers {
          */
         public function get()
         {
-
             $images = array(
                 "undraw_smiley_face_re_9uid.svg",
                 "undraw_meditation_re_gll0.svg",

@@ -12,9 +12,9 @@ namespace leantime\domain\services {
     {
         private $wikiRepository;
 
-        public function __construct()
+        public function __construct(repositories\wiki $wikiRepository)
         {
-            $this->wikiRepository = new repositories\wiki();
+            $this->wikiRepository = $wikiRepository;
         }
 
         public function getArticle($id, $projectId = null)

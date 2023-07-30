@@ -6,16 +6,17 @@ namespace leantime\domain\services\connector {
 
     class integrations implements service
     {
-       public function __construct()
-       {
-           $this->integrationRepo = new \leantime\domain\repositories\connector\integrations();
-       }
+        private \leantime\domain\repositories\connector\integrations $integrationRepo;
 
-       public function get(int $id): object|array|false
-       {
-          return $this->integrationRepo->get($id);
-       }
+        public function __construct(\leantime\domain\repositories\connector\integrations $integrationRepo)
+        {
+            $this->integrationRepo = $integrationRepo;
+        }
 
+        public function get(int $id): object|array|false
+        {
+            return $this->integrationRepo->get($id);
+        }
 
         public function update(object|array $object): bool
         {

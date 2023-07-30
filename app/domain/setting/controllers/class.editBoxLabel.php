@@ -15,11 +15,11 @@ namespace leantime\domain\controllers {
 
     class editBoxLabel extends controller
     {
-        private $ticketsRepo;
-        private $settingsRepo;
-        private $canvasRepo;
-        private $retroRepo;
-        private $ideaRepo;
+        private repositories\tickets $ticketsRepo;
+        private repositories\setting $settingsRepo;
+        private repositories\leancanvas $canvasRepo;
+        private repositories\retroscanvas $retroRepo;
+        private repositories\ideas $ideaRepo;
 
         /**
          * init - initialize private variables
@@ -27,16 +27,20 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
+        public function init(
+            repositories\tickets $ticketsRepo,
+            repositories\setting $settingsRepo,
+            repositories\leancanvas $canvasRepo,
+            repositories\retroscanvas $retroRepo,
+            repositories\ideas $ideaRepo
+        ) {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
-            $this->ticketsRepo = new repositories\tickets();
-            $this->settingsRepo = new repositories\setting();
-            $this->canvasRepo = new repositories\leancanvas();
-            $this->retroRepo = new repositories\retroscanvas();
-            $this->ideaRepo = new repositories\ideas();
+            $this->ticketsRepo = $ticketsRepo;
+            $this->settingsRepo = $settingsRepo;
+            $this->canvasRepo = $canvasRepo;
+            $this->retroRepo = $retroRepo;
+            $this->ideaRepo = $ideaRepo;
         }
 
         /**

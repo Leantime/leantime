@@ -64,11 +64,8 @@ namespace leantime\core {
          * @access public
          * @return void
          */
-        public function __construct()
+        public function __construct(\leantime\core\environment $config, language $language)
         {
-
-            $config = \leantime\core\environment::getInstance();
-
             if ($config->email != '') {
                 $this->emailDomain = $config->email;
             } else {
@@ -123,7 +120,7 @@ namespace leantime\core {
             $this->logo = $_SESSION["companysettings.logoPath"] ?? "/dist/images/logo.png";
             $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
-            $this->language = language::getInstance();
+            $this->language = $language;
         }
 
         /**

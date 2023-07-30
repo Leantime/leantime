@@ -26,8 +26,8 @@ abstract class controller
 
         self::dispatch_event('begin');
 
-        $this->tpl = new template();
-        $this->language = language::getInstance();
+        $this->tpl = app()->make(template::class);
+        $this->language = app()->make(language::class);
 
         // initialize
         $this->executeActions($method, $params);
@@ -54,7 +54,9 @@ abstract class controller
         ];
 
         self::dispatch_event('before_init', $available_params);
-        $this->init();
+        if (method_exists($this, 'init')) {
+            app()->call([$this, 'init']);
+        }
 
         self::dispatch_event('before_action', $available_params);
         if (method_exists($this, $method)) {
@@ -62,27 +64,5 @@ abstract class controller
         } else {
             $this->run();
         }
-    }
-
-    /**
-     * Extended Controller version of __construct()
-     *
-     * @access protected
-     *
-     * @return void
-     */
-    protected function init()
-    {
-    }
-
-    /**
-     * Default function for all request types unless otherwise specified
-     *
-     * @access protected
-     *
-     * @return void
-     */
-    protected function run()
-    {
     }
 }

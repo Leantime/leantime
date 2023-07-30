@@ -15,13 +15,16 @@ namespace leantime\domain\controllers {
         private appSettings $appSettings;
         private theme $themeCore;
 
-        public function init()
-        {
-
-            $this->settingsRepo = new \leantime\domain\repositories\setting();
-            $this->config = environment::getInstance();
-            $this->appSettings = new appSettings();
-            $this->themeCore = new theme();
+        public function init(
+            \leantime\domain\repositories\setting $settingsRepo,
+            environment $config,
+            appSettings $appSettings,
+            theme $themeCore
+        ) {
+            $this->settingsRepo = $settingsRepo;
+            $this->config = $config;
+            $this->appSettings = $appSettings;
+            $this->themeCore = $themeCore;
         }
 
         public function run()

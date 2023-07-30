@@ -7,12 +7,11 @@ namespace leantime\domain\controllers {
 
     class showBoards extends controller
     {
-
         private services\canvas $canvasService;
 
-        public function init()
+        public function init(services\canvas $canvasService)
         {
-            $this->canvasService = new services\canvas();
+            $this->canvasService = $canvasService;
         }
 
         public function run()
