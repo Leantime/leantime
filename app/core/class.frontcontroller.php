@@ -21,12 +21,6 @@ namespace leantime\core {
 
         /**
          * @access private
-         * @var    frontcontroller|null - one instance of this object
-         */
-        private static frontcontroller|null $instance = null;
-
-        /**
-         * @access private
          * @var    string - last action that was fired
          */
         private static string $lastAction = '';
@@ -46,31 +40,10 @@ namespace leantime\core {
          *
          * @param $rootPath
          */
-        private function __construct(string $rootPath, IncomingRequest $incomingRequest)
+        public function __construct(IncomingRequest $incomingRequest)
         {
-            $this->rootPath = $rootPath;
+            $this->rootPath = ROOT;
             $this->incomingRequest = $incomingRequest;
-        }
-
-        /**
-         * getInstance - just one instance of the object is allowed (it makes no sense to have more)
-         *
-         * @access public static
-         * @param  $rootPath
-         * @return object (instance)
-         */
-        public static function getInstance(string $rootPath = null, IncomingRequest $incomingRequest = null): static
-        {
-
-            if (is_object(self::$instance) === false) {
-                if (is_null($rootPath)) {
-                    throw new Exception('No root path');
-                }
-
-                self::$instance = new frontcontroller($rootPath, $incomingRequest);
-            }
-
-            return self::$instance;
         }
 
         /**
@@ -120,7 +93,7 @@ namespace leantime\core {
 
             // initialize plugin service to check
             if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
-                $pluginService = new \leantime\domain\services\plugins();
+                $pluginService = app()->make(\leantime\domain\services\plugins::class);
             }
 
             // Check If Route Exists And Fetch Right Route Based On Priority
@@ -176,7 +149,7 @@ namespace leantime\core {
                     new $classname($method, $params);
                 // TODO: Remove else after all controllers utilze base class
                 } else {
-                    $action = new $classname();
+                    $action = app()->make($classname);
 
                     if (method_exists($action, $method)) {
                         $action->$method($params);

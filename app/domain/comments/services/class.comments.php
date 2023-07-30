@@ -9,17 +9,18 @@ namespace leantime\domain\services {
 
     class comments
     {
-        private $commentRepository;
-        private $projectService;
+        private repositories\comments $commentRepository;
+        private services\projects $projectService;
         private core\language $language;
 
-
-        public function __construct()
-        {
-
-            $this->commentRepository = new repositories\comments();
-            $this->projectService = new services\projects();
-            $this->language = core\language::getInstance();
+        public function __construct(
+            repositories\comments $commentRepository,
+            services\projects $projectService,
+            core\language $language
+        ) {
+            $this->commentRepository = $commentRepository;
+            $this->projectService = $projectService;
+            $this->language = $language;
         }
 
         public function getComments($module, $entityId, $commentOrder = 0)
@@ -67,7 +68,7 @@ namespace leantime\domain\services {
                     }
 
 
-                    $notification = new notification();
+                    $notification = app()->make(notification::class);
                     $notification->url = array(
                         "url" => $currentUrl."&projectId=".$_SESSION['currentProject'],
                         "text" => $linkLabel

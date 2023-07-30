@@ -16,9 +16,8 @@ namespace leantime\domain\controllers {
     class integration extends controller
     {
         private services\connector\providers $providerService;
-        private repositories\connector\leantimeEntities $leantimeEntities;
-
         private services\connector\integrations $integrationService;
+        private repositories\connector\leantimeEntities $leantimeEntities;
 
         /**
          * constructor - initialize private variables
@@ -26,13 +25,16 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
+        public function init(
+            services\connector\providers $providerService,
+            services\connector\integrations $integrationService,
+            repositories\connector\leantimeEntities $leantimeEntities
+        ) {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->providerService = new services\connector\providers();
-            $this->leantimeEntities = new repositories\connector\leantimeEntities();
-            $this->integrationService = new services\connector\integrations();
+            $this->providerService = $providerService;
+            $this->leantimeEntities = $leantimeEntities;
+            $this->integrationService = $integrationService;
         }
 
         /**
@@ -52,7 +54,7 @@ namespace leantime\domain\controllers {
                 $provider = $this->providerService->getProvider($params["provider"]);
                 $this->tpl->assign("provider", $provider);
 
-                $currentIntegration = new models\connector\integration();
+                $currentIntegration = app()->make(models\connector\integration::class);
 
                 if (isset($params["integrationId"])) {
                     $currentIntegration = $this->integrationService->get($params["integrationId"]);

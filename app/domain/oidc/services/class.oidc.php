@@ -13,70 +13,58 @@ use leantime\domain\models\auth\roles;
 use leantime\domain\services;
 use leantime\domain\repositories;
 
-class oidc {
-
-    private static ?self $instance = null;
-
+class oidc
+{
     private environment $config;
+    private language $language;
     private services\auth $authService;
     public repositories\users $userRepo;
 
-    private string $providerUrl;
-    private string $clientId;
-    private string $clientSecret;
-
     private bool $configLoaded = false;
-    private string $authUrl;
-    private string $tokenUrl;
-    private string $jwksUrl;
-    private string $userInfoUrl;
 
-    private string $certificateString;
-    private string $certificateFile;
+    private string $providerUrl = '';
+    private string $clientId = '';
+    private string $clientSecret = '';
+    private string $authUrl = '';
+    private string $tokenUrl = '';
+    private string $jwksUrl = '';
+    private string $userInfoUrl = '';
+    private string $certificateString = '';
+    private string $certificateFile = '';
+    private string $scopes = '';
+    private string $fieldEmail = '';
+    private string $fieldFirstName = '';
+    private string $fieldLastName = '';
 
-    private string $scopes;
-
-    private string $fieldEmail;
-    private string $fieldFirstName;
-    private string $fieldLastName;
-
-    private language $language;
-
-    public static function getInstance($sessionid = ""): static
-        {
-
-            if (self::$instance === null) {
-                self::$instance = new self($sessionid);
-            }
-
-            return self::$instance;
-        }
-
-    public function __construct() {
-        $this->config = environment::getInstance();
-        $this->language = language::getInstance();
-        $this->providerUrl = $this->trimTrailingSlash($this->config->oidcProviderUrl);
-        $this->clientId = $this->config->oidcClientId;
-        $this->clientSecret = $this->config->oidcClientSecret;
-        $this->authUrl = $this->config->oidcAuthUrl;
-        $this->tokenUrl = $this->config->oidcTokenUrl;
-        $this->jwksUrl = $this->config->oidcJwksUrl;
-        $this->userInfoUrl = $this->config->oidcUserInfoUrl;
-        $this->certificateString = $this->config->oidcCertificateString;
-        $this->certificateFile = $this->config->oidcCertificateFile;
-        $this->scopes = $this->config->oidcScopes;
-        $this->fieldEmail = $this->config->oidcFieldEmail;
-        $this->fieldFirstName = $this->config->oidcFieldFirstName;
-        $this->fieldLastName = $this->config->oidcFieldLastName;
-
-
-        $this->authService = services\auth::getInstance();
-        $this->userRepo = new repositories\users();
+    public function __construct(
+        environment $config,
+        language $language,
+        services\auth $authService,
+        repositories\users $userRepo
+    ) {
+        $this->config = $config;
+        $this->authService = $authService;
+        $this->userRepo = $userRepo;
+        $this->language = $language;
+        $providerUrl = $this->config->getConfig('oidcProviderUrl');
+        $this->providerUrl = !empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
+        $this->clientId = $this->config->getConfig('oidcClientId');
+        $this->clientSecret = $this->config->getConfig('oidcClientSecret');
+        $this->authUrl = $this->config->getConfig('oidcAuthUrl');
+        $this->tokenUrl = $this->config->getConfig('oidcTokenUrl');
+        $this->jwksUrl = $this->config->getConfig('oidcJwksUrl');
+        $this->userInfoUrl = $this->config->getConfig('oidcUserInfoUrl');
+        $this->certificateString = $this->config->getConfig('oidcCertificateString');
+        $this->certificateFile = $this->config->getConfig('oidcCertificateFile');
+        $this->scopes = $this->config->getConfig('oidcScopes');
+        $this->fieldEmail = $this->config->getConfig('oidcFieldEmail');
+        $this->fieldFirstName = $this->config->getConfig('oidcFieldFirstName');
+        $this->fieldLastName = $this->config->getConfig('oidcFieldLastName');
     }
 
     private function trimTrailingSlash(string $str): string {
         $almost = strlen($str)-1;
-        if($str[$almost] == '/') {
+        if ($str[$almost] == '/') {
             return substr($str, 0, $almost);
         }
         return $str;
@@ -98,7 +86,7 @@ class oidc {
     }
 
     public function callback(string $code, string $state) {
-        if(!$this->verifyState($state)) {
+        if (!$this->verifyState($state)) {
             $this->displayError('oidc.error.invalidState');
         }
 
@@ -106,7 +94,7 @@ class oidc {
 
         $userInfo = null;
         //echo '<pre>' . print_r($tokens, true) . '</pre>';
-        if(isset($tokens['id_token'])) {
+        if (isset($tokens['id_token'])) {
             $userInfo = $this->decodeJWT($tokens['id_token']);
         } else if (isset($tokens['access_token'])) {
             //falback to OAuth userinfo endpoint
@@ -115,7 +103,7 @@ class oidc {
             $this->displayError("oidc.error.unsupportedToken");
         }
 
-        if($userInfo != null) {
+        if ($userInfo != null) {
             $this->login($userInfo);
         } else {
             $this->displayError('oidc.error.invalidToken');
@@ -132,13 +120,13 @@ class oidc {
         // return;
         $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
 
-        if(!$userName) {
+        if (!$userName) {
             $this->displayError('oidc.error.emailUnavailable');
         }
 
         $user = $this->userRepo->getUserByEmail($userName);
 
-        if($user === false) {
+        if ($user === false) {
             //create user if it doesn't exist yet
             $userArray = [
                 'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
@@ -190,11 +178,11 @@ class oidc {
             ]
         ]);
         $headerArray = [];
-        foreach($response->getHeaders() as $header => $values) {
+        foreach ($response->getHeaders() as $header => $values) {
             $headerArray[strtolower($header)] = $values;
         }
         $contentType = array_pop($headerArray['content-type']);
-        switch($contentType) {
+        switch ($contentType) {
             case 'application/x-www-form-urlencoded; charset=utf-8':
             case 'application/x-www-form-urlencoded':
                 $result = [];
@@ -203,14 +191,13 @@ class oidc {
             default:
                 return json_decode($response->getBody()->getContents(), true);
         }
-
     }
 
     private function readMultilayerKey(array $topic, string $key): string {
         $keyList = explode('.', $key);
         $layer = $topic;
-        foreach($keyList as $layerKey) {
-            if(!isset($layer[$layerKey])) {
+        foreach ($keyList as $layerKey) {
+            if (!isset($layer[$layerKey])) {
                 return '';
             }
             $layer = $layer[$layerKey];
@@ -224,7 +211,7 @@ class oidc {
         $tokenData = json_decode($this->decodeBase64Url($content), true);
 
 
-        if($this->trimTrailingSlash($tokenData['iss']) != $this->providerUrl) {
+        if ($this->trimTrailingSlash($tokenData['iss']) != $this->providerUrl) {
             $this->displayError('oidc.error.providerMismatch', $tokenData['iss'], $this->providerUrl);
         }
 
@@ -233,7 +220,7 @@ class oidc {
 
         $key = $this->getPublicKey($headerData['kid']);
 
-        if($key === false) {
+        if ($key === false) {
             return null;
         }
 

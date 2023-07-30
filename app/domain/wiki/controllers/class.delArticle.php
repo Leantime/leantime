@@ -17,10 +17,9 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\wiki $wikiRepo)
         {
-
-            $this->wikiRepo = new repositories\wiki();
+            $this->wikiRepo = $wikiRepo;
         }
 
         /**

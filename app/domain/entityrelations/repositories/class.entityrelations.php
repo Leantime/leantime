@@ -19,10 +19,9 @@ namespace leantime\domain\repositories {
          * @access public
          * @return
          */
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
         public function getSetting($type)

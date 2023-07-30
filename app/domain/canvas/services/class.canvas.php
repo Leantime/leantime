@@ -21,7 +21,7 @@ namespace leantime\domain\services {
         {
 
             $dom = new \DOMDocument('1.0', 'UTF-8');
-            $users = new repositories\users();
+            $users = app()->make(repositories\users::class);
 
             // Read file
             $canvasData = file_get_contents($filename);
@@ -152,7 +152,7 @@ namespace leantime\domain\services {
             }
 
             $canvasRepoName = "\\leantime\\domain\\repositories\\$canvasName";
-            $canvasRepo = new $canvasRepoName();
+            $canvasRepo = app()->make($canvasRepoName);
 
             // Check if canvas already exists?
             $canvasAry['title'] .= ' [imported]';
@@ -185,7 +185,7 @@ namespace leantime\domain\services {
         public function getBoardProgress($projectId = '', $boards = array()): array
         {
 
-            $canvasRepo = new repositories\canvas();
+            $canvasRepo = app()->make(repositories\canvas::class);
             $values = $canvasRepo->getCanvasProgressCount($projectId, $boards);
 
             $results = array();
@@ -199,7 +199,7 @@ namespace leantime\domain\services {
                     $classname = 'leantime\\domain\\repositories\\' . $row['canvasType'];
 
 
-                    $canvasTypeRepo = new $classname();
+                    $canvasTypeRepo = app()->make($classname);
                     $results[$row['canvasType']][$row['canvasId']] = array();
 
                     foreach ($canvasTypeRepo->getCanvasTypes() as $type => $box) {
@@ -217,7 +217,7 @@ namespace leantime\domain\services {
             //Once the count is done calculate progress per canvastype Id
             foreach ($results as $key => &$canvas) {
                 $classname = 'leantime\\domain\\repositories\\' . $key;
-                $canvasTypeRepo = new $classname();
+                $canvasTypeRepo = app()->make($classname);
 
                 $numOfBoxes = count($canvasTypeRepo->getCanvasTypes());
 
@@ -256,7 +256,7 @@ namespace leantime\domain\services {
          */
         public function getLastUpdatedCanvas($projectId = '', $boards = array())
         {
-            $canvasRepo = new repositories\canvas();
+            $canvasRepo = app()->make(repositories\canvas::class);
             return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
         }
     }

@@ -395,7 +395,7 @@
                         <input type="hidden" name="comment" value="1" />
                         <?php
 
-                        $comments = new leantime\domain\repositories\comments();
+                        $comments = app()->make(leantime\domain\repositories\comments::class);
                         $formUrl = CURRENT_URL;
 
                         //Controller may not redirect. Make sure delComment is only added once

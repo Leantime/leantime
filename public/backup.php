@@ -15,20 +15,21 @@ use Aws\S3;
 require_once APP_ROOT . '/app/core/class.autoload.php';
 require_once APP_ROOT . '/config/appSettings.php';
 
-$config = \leantime\core\environment::getInstance();
-$settings = new leantime\core\appSettings();
+$app = bootstrap_minimal_app();
+$config = $app->make(\leantime\core\environment::class);
+$settings = $app->make(\leantime\core\appSettings::class);
 $settings->loadSettings($config);
 
-function runBackup($backupFile, $config){
-
-    $backupPath = $config->dbBackupPath.$backupFile;
+function runBackup($backupFile, $config)
+{
+    $backupPath = $config->dbBackupPath . $backupFile;
     $output = array();
     exec("mysqldump --user={$config->dbUser} --password={$config->dbPassword} --host={$config->dbHost} {$config->dbDatabase} --port={$config->dbPort} --result-file={$backupPath} 2>&1", $output,$worked);
 
     switch ($worked) {
         case 0:
             return array('type'=>'success','msg'=> 'The Database ' .$config->dbDatabase .' is save in the path '.getcwd().'/' .$backupPath );
-            chmod(APP_ROOT.'/'.$config->userFilePath,0755);
+            chmod(APP_ROOT . '/' . $config->userFilePath,0755);
             break;
         case 1:
 
@@ -38,7 +39,6 @@ function runBackup($backupFile, $config){
             return array('type'=>'error','msg'=>'There was an error: Database MySQL: ' . $config->dbDatabase );
             break;
     }
-
 }
 
 function uploadS3($backupFile, $config){

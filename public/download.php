@@ -10,12 +10,12 @@ define('APP_ROOT', dirname(__FILE__, 2));
 require_once APP_ROOT . '/app/core/class.autoload.php';
 require_once APP_ROOT . '/config/appSettings.php';
 
-$config = \leantime\core\environment::getInstance();
-$settings = new leantime\core\appSettings();
+$app = bootstrap_minimal_app();
+$config = $app->make(\leantime\core\environment::class);
+$settings = $app->make(leantime\core\appSettings::class);
 $settings->loadSettings($config);
 
-$login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
-
+$login = $app->make(\leantime\domain\services\auth::class);
 
 if ($login->logged_in()!==true) {
 
@@ -46,9 +46,9 @@ if ($login->logged_in()!==true) {
 
 }
 
-function getFileLocally(){
-
-	$config = \leantime\core\environment::getInstance();
+function getFileLocally()
+{
+	$config = app()->make(\leantime\core\environment::class);
 
 	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
@@ -122,7 +122,7 @@ function getFileFromS3(){
     $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
     $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-    $config = \leantime\core\environment::getInstance();
+    $config = app()->make(\leantime\core\environment::class);
 
     $mimes = array
     (

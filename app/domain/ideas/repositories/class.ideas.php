@@ -21,9 +21,9 @@ namespace leantime\domain\repositories {
 
         /**
          * @access private
-         * @var    object
+         * @var    core\db
          */
-        private $db = '';
+        private ?core\db $db = null;
 
         public $canvasTypes = array(
             "idea" => "status.ideation",
@@ -44,11 +44,10 @@ namespace leantime\domain\repositories {
          * @access public
          * @return unknown_type
          */
-        public function __construct()
+        public function __construct(core\db $db, core\language $language)
         {
-
-            $this->db = core\db::getInstance();
-            $this->language = core\language::getInstance();
+            $this->db = $db;
+            $this->language = $language;
         }
 
         public function getCanvasLabels()

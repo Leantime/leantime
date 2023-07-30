@@ -50,7 +50,7 @@ class saveSettingCommand extends Command
 
         try {
 
-            $setting = new setting();
+            $setting = app()->make(setting::class);
             $result = $setting->saveSetting($key, $value);
 
             if (!$result) {

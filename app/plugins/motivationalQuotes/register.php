@@ -13,7 +13,7 @@
 function showQuote($payload)
 {
     // code here
-    $motivationalQuotesSvc = new \leantime\plugins\services\motivationalQuotes();
+    $motivationalQuotesSvc = app()->make(\leantime\plugins\services\motivationalQuotes::class);
     $randomQuote = $motivationalQuotesSvc->getRandomQuote();
     echo"<div class='motivationalQuote' style='margin-bottom:20px;'><br />";
     echo "<p>Quote of the day:</p>";

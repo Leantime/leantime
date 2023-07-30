@@ -7,20 +7,21 @@ namespace leantime\domain\services {
 
     class setting
     {
-        private $userRepo;
-        private $tpl;
+        private core\template $tpl;
         public repositories\setting $settingsRepo;
 
-        public function __construct()
-        {
-            $this->tpl = new core\template();
-            $this->settingsRepo = new repositories\setting();
+        public function __construct(
+            core\template $tpl,
+            repositories\setting $settingsRepo
+        ) {
+            $this->tpl = $tpl;
+            $this->settingsRepo = $settingsRepo;
         }
 
         public function setLogo($file)
         {
 
-            $upload = new core\fileupload();
+            $upload = app()->make(core\fileupload::class);
 
             $upload->initFile($file['file']);
 

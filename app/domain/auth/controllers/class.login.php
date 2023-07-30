@@ -19,10 +19,12 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-            $this->authService = services\auth::getInstance();
-            $this->config = environment::getInstance();
+        public function init(
+            services\auth $authService,
+            environment $config
+        ) {
+            $this->authService = $authService;
+            $this->config = $config;
         }
 
         /**

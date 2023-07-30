@@ -14,7 +14,7 @@ class addCSVImportProvider {
 
     public function handle($payload){
 
-        $provider = new \leantime\plugins\services\csvImport();
+        $provider = app()->make(\leantime\plugins\services\csvImport::class);
         $payload[$provider->id] = $provider;
 
         return $payload;

@@ -79,11 +79,13 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
-        {
+        public function __construct(
+            \leantime\core\environment $config,
+            \leantime\core\db $db
+        ) {
 
-            $this->db = core\db::getInstance();
-            $this->config = \leantime\core\environment::getInstance();
+            $this->db = $db;
+            $this->config = $config;
         }
 
         /**
@@ -595,7 +597,7 @@ namespace leantime\domain\repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            $files = new files();
+            $files = app()->make(files::class);
 
             if (isset($values['profileId']) && $values['profileId'] > 0) {
                 $file = $files->getFile($values['profileId']);
@@ -638,7 +640,7 @@ namespace leantime\domain\repositories {
 
             if ($value !== false && $value['profileId'] != '') {
 
-                $files = new files();
+                $files = app()->make(files::class);
                 $file = $files->getFile($value['profileId']);
 
                 if ($file) {

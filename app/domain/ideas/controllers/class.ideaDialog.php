@@ -14,9 +14,8 @@ namespace leantime\domain\controllers {
     class ideaDialog extends controller
     {
         private repositories\ideas $ideaRepo;
-
-        private services\tickets $ticketService;
         private repositories\comments $commentsRepo;
+        private services\tickets $ticketService;
         private services\projects $projectService;
 
         /**
@@ -25,14 +24,16 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
-            $this->ideaRepo = new repositories\ideas();
-
-            $this->ticketService = new services\tickets();
-            $this->commentsRepo = new repositories\comments();
-            $this->projectService = new services\projects();
+        public function init(
+            repositories\ideas $ideaRepo,
+            repositories\comments $commentsRepo,
+            services\tickets $ticketService,
+            services\projects $projectService
+        ) {
+            $this->ideaRepo = $ideaRepo;
+            $this->commentsRepo = $commentsRepo;
+            $this->ticketService = $ticketService;
+            $this->projectService = $projectService;
         }
 
         /**
@@ -125,7 +126,7 @@ namespace leantime\domain\controllers {
                     );
 
 
-                    $notification = new models\notifications\notification();
+                    $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
                         "text" => $this->language->__('email_notifications.new_comment_idea_cta')
@@ -200,7 +201,7 @@ namespace leantime\domain\controllers {
                         );
 
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
                             "text" => $this->language->__('email_notifications.idea_edited_cta')
@@ -243,7 +244,7 @@ namespace leantime\domain\controllers {
                         $message = sprintf($this->language->__('email_notifications.idea_created_message'), $_SESSION["userdata"]["name"], $params['description']);
 
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
                             "text" => $this->language->__('email_notifications.idea_created_subject')

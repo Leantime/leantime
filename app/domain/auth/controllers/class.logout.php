@@ -19,12 +19,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(repositories\files $fileRepo, services\auth $authService)
         {
-
-            $this->fileRepo = new repositories\files();
-
-            $this->authService = services\auth::getInstance();
+            $this->fileRepo = $fileRepo;
+            $this->authService = $authService;
         }
 
 

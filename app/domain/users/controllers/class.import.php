@@ -13,14 +13,13 @@ namespace leantime\domain\controllers {
 
     class import extends controller
     {
-        private $userRepo;
-        private $ldapService;
+        private repositories\users $userRepo;
+        private services\ldap $ldapService;
 
-        public function init()
+        public function init(repositories\users $userRepo, services\ldap $ldapService)
         {
-
-            $this->userRepo =  new repositories\users();
-            $this->ldapService = new services\ldap();
+            $this->userRepo = $userRepo;
+            $this->ldapService = $ldapService;
 
             if (!isset($_SESSION['tmp'])) {
                 $_SESSION['tmp'] = [];
@@ -49,10 +48,8 @@ namespace leantime\domain\controllers {
 
         public function post($params)
         {
-
-            $this->tpl = new core\template();
-            $this->userRepo =  new repositories\users();
-            $this->ldapService = new services\ldap();
+            $this->tpl = app()->make(core\template::class);
+            $this->ldapService = app()->make(services\ldap::class);
 
             //Password Submit to connect to ldap and retrieve users. Sets tmp session var
             if (isset($params['pwSubmit'])) {
@@ -86,5 +83,4 @@ namespace leantime\domain\controllers {
             $this->tpl->displayPartial('users.importLdapDialog');
         }
     }
-
 }

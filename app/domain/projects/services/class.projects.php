@@ -28,17 +28,24 @@ namespace leantime\domain\services {
         private notifications $notificationService;
         private repositories\files $filesRepository;
 
-        public function __construct()
-        {
-
-            $this->tpl = new core\template();
-            $this->projectRepository = new repositories\projects();
-            $this->ticketRepository = new repositories\tickets();
-            $this->settingsRepo = new repositories\setting();
-            $this->filesRepository = new repositories\files();
-            $this->language = core\language::getInstance();
-            $this->messengerService = new messengers();
-            $this->notificationService = new notifications();
+        public function __construct(
+            core\template $tpl,
+            repositories\projects $projectRepository,
+            repositories\tickets $ticketRepository,
+            repositories\setting $settingsRepo,
+            repositories\files $filesRepository,
+            core\language $language,
+            messengers $messengerService,
+            notifications $notificationService
+        ) {
+            $this->tpl = $tpl;
+            $this->projectRepository = $projectRepository;
+            $this->ticketRepository = $ticketRepository;
+            $this->settingsRepo = $settingsRepo;
+            $this->filesRepository = $filesRepository;
+            $this->language = $language;
+            $this->messengerService = $messengerService;
+            $this->notificationService = $notificationService;
         }
 
         public function getProjectTypes() {
@@ -190,7 +197,7 @@ namespace leantime\domain\services {
             }, ARRAY_FILTER_USE_BOTH);
 
             /*
-            $mailer = new core\mailer();
+            $mailer = app()->make(core\mailer::class);
             $mailer->setContext('notify_project_users');
             $mailer->setSubject($notification->subject);
 
@@ -205,7 +212,7 @@ namespace leantime\domain\services {
             }
 
             // NEW Queuing messaging system
-            $queue = new repositories\queue();
+            $queue = app()->make(repositories\queue::class);
             $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
 
             //Send to messengers
@@ -775,7 +782,7 @@ namespace leantime\domain\services {
 
 
             //LeanCanvas
-            $leancanvasRepo = new repositories\leancanvas();
+            $leancanvasRepo = app()->make(repositories\leancanvas::class);
             $canvasBoards = $leancanvasRepo->getAllCanvas($projectId);
             foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
@@ -820,7 +827,7 @@ namespace leantime\domain\services {
 
 
             //Ideas
-            $ideaRepo = new repositories\ideas();
+            $ideaRepo = app()->make(repositories\ideas::class);
             $canvasBoards = $ideaRepo->getAllCanvas($projectId);
             foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
@@ -938,7 +945,7 @@ namespace leantime\domain\services {
                 $progressSteps["define"]["tasks"]["createBlueprint"]["status"] = "done";
             }
 
-            $goals = new repositories\goalcanvas();
+            $goals = app()->make(repositories\goalcanvas::class);
             $allCanvas = $goals->getAllCanvas($projectId);
 
             $totalGoals = 0;
@@ -1060,7 +1067,7 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
 
-                    $notification = new models\notifications\notification();
+                    $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
                         "text" => $this->language->__("email_notifications.todo_update_cta")

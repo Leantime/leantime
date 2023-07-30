@@ -9,13 +9,6 @@ namespace leantime\domain\services {
 
     class modulemanager
     {
-        /**
-         * @access private
-         * @var    static object
-         */
-        private static $instance = null;
-
-
         private static $modules = array(
             "api" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "calendar" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
@@ -41,35 +34,18 @@ namespace leantime\domain\services {
             "modulemanager" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
         );
 
-
         /**
          * __construct - get and test Session or make session
          *
          * @access private
          * @return
          */
-        private function __construct()
+        public function __construct()
         {
-        }
-
-        /**
-         * getInstance - Get instance of session
-         *
-         * @access private
-         * @return object
-         */
-        public static function getInstance()
-        {
-            if (self::$instance === null) {
-                self::$instance = new self();
-            }
-
-            return self::$instance;
         }
 
         public static function isModuleEnabled($module)
         {
-
             if (isset(self::$modules[$module])) {
                 if (self::$modules[$module]['enabled'] === true) {
                     return true;

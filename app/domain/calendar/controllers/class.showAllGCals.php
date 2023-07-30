@@ -15,15 +15,14 @@ namespace leantime\domain\controllers {
 
     class showAllGCals extends controller
     {
-        private $calendarRepo;
+        private repositories\calendar $calendarRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(repositories\calendar $calendarRepo)
         {
-
-            $this->calendarRepo = new repositories\calendar();
+            $this->calendarRepo = $calendarRepo;
         }
 
         /**
@@ -33,7 +32,6 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
-
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
             //Assign vars

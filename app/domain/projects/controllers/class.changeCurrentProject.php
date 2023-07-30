@@ -13,11 +13,10 @@ namespace leantime\domain\controllers {
         private services\projects $projectService;
         private services\setting $settingService;
 
-        public function init()
+        public function init(services\projects $projectService, services\setting $settingService)
         {
-
-            $this->projectService = new services\projects();
-            $this->settingService = new services\setting();
+            $this->projectService = $projectService;
+            $this->settingService = $settingService;
         }
 
         /**
