@@ -1,4 +1,5 @@
 <?php
+
     $states = $this->get('states');
     $projectProgress = $this->get('projectProgress');
     $projectProgress = $this->get('projectProgress');
@@ -9,6 +10,7 @@
     $project = $this->get('project');
     $tickets = $this->get('tickets');
 
+
 ?>
 
 <?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
@@ -16,13 +18,17 @@
     <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
-        <?php if (count($this->get('allUsers')) == 1) {?>
-            <a href="<?=BASE_URL ?>/dashboard/show/#/users/newUser/" class="headerCTA">
+
+        <?php if (count($this->get('allUsers')) == 1) {
+
+            ?>
+            <a href="<?=BASE_URL ?>/dashboard/show/#/users/newUser" class="headerCTA">
                 <i class="fa fa-users"></i>
                 <span style="font-size:14px; line-height:25px;">
                     <?php echo $this->__("links.dont_do_it_alone"); ?>
                 </span>
             </a>
+
         <?php } ?>
         <h5><?php $this->e($_SESSION["currentProjectClient"]); ?></h5>
         <h1><?php echo $this->__("headlines.project_dashboard"); ?></h1>
@@ -343,6 +349,10 @@
                                             );
                                             echo "<br/><small>".$this->escape($assignedUser['jobTitle'])."</small>";
 
+                                            $this->dispatchTplEvent("usercardBottom", ["user"=>$assignedUser, "project"=>$project]);
+
+
+
                                         } else {
                                             echo $this->escape($assignedUser['username']);
                                             if ($assignedUser['status'] == "i") {
@@ -363,7 +373,7 @@
                                     <i class="fa fa-user-plus"></i>
                                 </div>
                                 <span class="userName">
-                                         <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>"><?=$this->__('links.invite_user'); ?></a>
+                                    <a href="<?=BASE_URL?>/dashboard/show#/users/newUser?preSelectProjectId=<?=$project['id'] ?>"><?=$this->__('links.invite_user'); ?></a>
                                     <br />&nbsp;
                                 </span>
 
