@@ -8,6 +8,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
+    use leantime\plugins\services\billing;
 
     class newProject extends controller
     {
@@ -60,7 +61,7 @@ namespace leantime\domain\controllers {
                 'state' => '',
                 'menuType' => repositories\menu::DEFAULT_MENU,
                 'type' => 'project',
-                'parent' => '',
+                'parent' => (int)$_GET['parent'] ?? '',
                 'psettings' => '',
                 'start' => '',
                 'end' => ''
@@ -133,11 +134,7 @@ namespace leantime\domain\controllers {
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    if ($values['menuType'] == 'dts') {
-                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/lbmcanvas/showCanvas/'), 'success');
-                    } else {
-                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success');
-                    }
+                    $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', "project_created");
 
                     $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id);
                 }

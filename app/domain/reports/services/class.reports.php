@@ -7,9 +7,12 @@ namespace leantime\domain\services {
     use leantime\core;
     use leantime\domain\repositories;
     use Ramsey\Uuid\Uuid;
+    use leantime\core\eventhelpers;
 
     class reports
     {
+        use eventhelpers;
+
         private $projectRepository;
         private $sprintRepository;
         private $ticketRepository;
@@ -115,6 +118,8 @@ namespace leantime\domain\services {
                 $this->settings->saveSetting("companysettings.telemetry.anonymousId", $companyId);
             }
 
+            self::dispatch_event("beforeTelemetrySend", $companyId);
+
             $this->ideaRepository = new repositories\ideas();
             $this->userRepository = new repositories\users();
             $this->clientRepository = new repositories\clients();
@@ -152,11 +157,14 @@ namespace leantime\domain\services {
             $telemetry = array(
                 'date' => '',
                 'companyId' => $companyId,
+                'env' => 'prod',
                 'version' => $this->appSettings->appVersion,
                 'language' => $currentLanguage,
                 'numUsers' => $this->userRepository->getNumberOfUsers(),
                 'lastUserLogin' => $this->userRepository->getLastLogin(),
-                'numProjects' => $this->projectRepository->getNumberOfProjects(),
+                'numProjects' => $this->projectRepository->getNumberOfProjects(null, "project"),
+                'numStrategies' => $this->projectRepository->getNumberOfProjects(null, "strategy"),
+                'numPrograms' => $this->projectRepository->getNumberOfProjects(null, "program"),
                 'numClients' => $this->clientRepository->getNumberOfClients(),
                 'numComments' => $this->commentsRepository->countComments(),
                 'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
@@ -243,6 +251,7 @@ namespace leantime\domain\services {
 
             //Only send once a day
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
+            $allowTelemetry = true;
 
             if ($allowTelemetry === true) {
                 $date_utc = new \DateTime("now", new \DateTimeZone("UTC"));

@@ -14,6 +14,7 @@ if(!$_SESSION['menuState']) {
 </head>
 
 <body>
+
 <div class="mainwrapper menu<?=$_SESSION['menuState']; ?> ">
 
     <div class="leftpanel">
@@ -52,6 +53,4 @@ if(!$_SESSION['menuState']) {
     </div><!--rightpanel-->
 
 </div><!--mainwrapper-->
-
 <?php echo $this->frontcontroller->includeAction('pageparts.pageBottom'); ?>
-

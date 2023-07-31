@@ -190,7 +190,7 @@ namespace leantime\domain\repositories {
 
             $sql = "SELECT
 			zp_user.id,
-			zp_user.firstname,
+			IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
 			zp_user.lastname,
 			zp_user.jobTitle,
 			zp_user.jobLevel,
@@ -213,13 +213,13 @@ namespace leantime\domain\repositories {
          * @access public
          * @return array
          */
-        public function getAll()
+        public function getAll($activeOnly = false)
         {
 
             $query = "SELECT
                       zp_user.id,
                       lastname,
-                      firstname,
+                      IF(firstname <> '', firstname, username) AS firstname,
                       role,
                       profileId,
                       status,
@@ -232,8 +232,13 @@ namespace leantime\domain\repositories {
                       department
 					FROM `zp_user`
 					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
-					WHERE !(source <=> 'api')
-					ORDER BY lastname";
+                    WHERE !(source <=> 'api')";
+
+                if($activeOnly == true) {
+                        $query .= " AND status LIKE 'a' ";
+                    }
+
+            $query .=" ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
 

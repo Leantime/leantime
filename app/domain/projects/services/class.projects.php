@@ -327,12 +327,14 @@ namespace leantime\domain\services {
 
                 //Get project items with parent id but user does not have access to parent
                 if(!in_array($project['parent'], $projectHierarchy["strategy"]["parents"]) && !in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project["type"] != "program" && $project["type"] != "strategy"){
+
                     if($projectHierarchy['strategy']["enabled"] === true) {
                         $project['parent'] = "noStrategyParent";
                     }
                     if($projectHierarchy['program']["enabled"] === true) {
                         $project['parent'] = "noProgramParent";
                     }
+
                 }
 
                 //IF the pgm module is not active, add all items
@@ -358,6 +360,8 @@ namespace leantime\domain\services {
                     }
                 }
             }
+
+            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));
 
             if ($projectHierarchy) {
                 return $projectHierarchy;

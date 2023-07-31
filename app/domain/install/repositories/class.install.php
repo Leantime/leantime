@@ -12,6 +12,9 @@ namespace leantime\domain\repositories {
 
     class install
     {
+
+        use core\eventhelpers;
+
         /**
          * @access public
          * @var string
@@ -140,6 +143,16 @@ namespace leantime\domain\repositories {
         }
 
         /**
+         * returns current database object
+         *
+         * @access public
+         */
+        public function getDBObject()
+        {
+            return $this->database;
+        }
+
+        /**
          * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
          *
          * @access public
@@ -189,14 +202,17 @@ namespace leantime\domain\repositories {
          * @access public
          * @return bool | string
          */
-        public function setupDB(array $values)
+        public function setupDB(array $values, $db = '')
         {
-
 
             $sql = $this->sqlPrep();
 
             try {
-                $this->database->query("Use `" . $this->config->dbDatabase . "`;");
+                if($db == null) {
+                    $this->database->query("Use `" . $this->config->dbDatabase . "`;");
+                }else{
+                    $this->database->query("Use `" . $db . "`;");
+                }
 
                 $stmn = $this->database->prepare($sql);
                 $stmn->bindValue(':email', $values["email"], PDO::PARAM_STR);
@@ -1361,7 +1377,7 @@ namespace leantime\domain\repositories {
             $errors = array();
 
             $sql = [
-                    " CREATE TABLE `zp_entity_relationships` (
+                " CREATE TABLE `zp_entity_relationships` (
                         `id` INT NOT NULL AUTO_INCREMENT,
                         `enitityA` INT NULL,
                         `entityAType` VARCHAR(45) NULL,

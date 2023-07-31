@@ -179,10 +179,17 @@ namespace leantime\core {
                     $action = new $classname();
 
                     if (method_exists($action, $method)) {
+
                         $action->$method($params);
                     //Use run for all other request types.
-                    } else {
+                    } else if (method_exists($action, "run")) {
+
                         $action->run();
+
+                    }else {
+
+                        self::redirect(BASE_URL."/errors/error404", 404);
+
                     }
                 }
 
@@ -217,6 +224,7 @@ namespace leantime\core {
                 case 'post':
                     return $_POST;
                 case 'delete':
+                case 'head':
                 case 'get':
                     return $_GET;
                 default:

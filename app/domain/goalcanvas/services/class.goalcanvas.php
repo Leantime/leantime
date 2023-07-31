@@ -134,42 +134,28 @@ namespace leantime\domain\services {
 
         }
 
-        public function getParentKPIs($parentProject) {
+        public function getParentKPIs($projectId) {
 
-            $kpis = $this->goalRepository->getAllAvailableKPIs($parentProject);
+            $kpis = $this->goalRepository->getAllAvailableKPIs($projectId);
 
 
             $goals = array();
-            //Goals come back as rows for levl1 and lvl2 being columns, so
-            //goal A | goalChildA
-            //goal A | goalChildB
-            //goal B
+
+
+
             //Checks if first level is also link+report or just link
             foreach($kpis as $kpi) {
 
-                //Added Child already? Look for child of child
-                if(!isset($goals[$kpi['id']])) {
+                $goals[$kpi['id']] = array(
+                    "id" => $kpi['id'],
+                    "description" => $kpi['description'],
+                    "project" => $kpi['projectName'],
+                    "board" => $kpi['boardTitle'],
+                );
 
-                    $goals[$kpi['id']] = array(
-                        "id" => $kpi['id'],
-                        "description" => $kpi['description'],
-                        "project" => $kpi['projectName'],
-                        "board" => $kpi['boardTitle'],
 
-                    );
-                }
-
-                if($kpi['parentKPIId'] != ''){
-                    if(isset($goals[$kpi['parentKPIId']]) === false){
-                        $goals[$kpi['parentKPIId']] = array(
-                            "id" => $kpi['parentKPIId'],
-                            "description" => $kpi['parentKPIDescription'],
-                            "project" => $kpi['parentProjectName'],
-                            "board" => $kpi['parentBoardTitle'],
-                        );
-                    }
-                }
             }
+
 
             return $goals;
         }

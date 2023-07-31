@@ -70,7 +70,7 @@ namespace leantime\domain\controllers {
                     if ($values['name'] !== '') {
                         if ($this->clientRepo->isClient($values) !== true) {
                             $id = $this->clientRepo->addClient($values);
-                            $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success');
+                            $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
                             $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id);
                         } else {
                             $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');

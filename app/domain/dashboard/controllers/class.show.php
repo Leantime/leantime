@@ -50,8 +50,6 @@ namespace leantime\domain\controllers {
                 core\frontcontroller::redirect(BASE_URL . "/dashboard/home");
             }
 
-
-
             $projectRedirectFilter = static::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
             if($projectRedirectFilter != "/dashboard/show") {
                 core\frontcontroller::redirect(BASE_URL . $projectRedirectFilter);

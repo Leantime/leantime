@@ -102,19 +102,27 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getNumberOfProjects($clientId = null)
+        public function getNumberOfProjects($clientId = null, $type=null)
         {
 
-            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects`";
+            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0";
 
             if ($clientId != null && is_numeric($clientId)) {
-                $sql .= " WHERE clientId = :clientId";
+                $sql .= " AND clientId = :clientId";
+            }
+
+            if ($type != null) {
+                $sql .= " AND type = :type";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
             if ($clientId != null && is_numeric($clientId)) {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
+            }
+
+            if ($type != null) {
+                $stmn->bindValue(':type', $type, PDO::PARAM_STR);
             }
 
             $stmn->execute();
@@ -386,7 +394,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT
 					DISTINCT zp_user.id,
-					zp_user.firstname,
+					IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
 					zp_user.lastname,
 					zp_user.username,
 					zp_user.notifications,
@@ -873,7 +881,7 @@ namespace leantime\domain\repositories {
 				zp_relationuserproject.projectRole,
 				zp_projects.name,
 				zp_user.username,
-				zp_user.firstname,
+				IF(zp_user.firstname <> '', zp_user.firstname, zp_user.username) AS firstname,
 				zp_user.lastname,
 				zp_user.jobTitle,
 				zp_user.jobLevel,

@@ -54,6 +54,7 @@ namespace leantime\domain\controllers {
 
                 if (is_array($success) === true) {
                     foreach ($success as $errorMessage) {
+                        $this->tpl->setNotification("There was a problem. Please reach out to support@leantime.io for assistance.", "error");
 
                         error_log($errorMessage);
 
@@ -63,7 +64,6 @@ namespace leantime\domain\controllers {
                 }
 
                 if ($success === true) {
-                    $this->tpl->setNotification(sprintf($this->language->__("text.update_was_successful"), BASE_URL), "success");
                     core\frontcontroller::redirect(BASE_URL);
                 }
             }

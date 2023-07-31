@@ -99,10 +99,10 @@ namespace leantime\core {
                 'theme',
                 $id,
                 [
-                        'expires' => time() + 60 * 60 * 24 * 30,
-                        'path' => $this->config->appUrlRoot . '/',
-                        'samesite' => 'Strict'
-                    ]
+                    'expires' => time() + 60 * 60 * 24 * 30,
+                    'path' => $this->config->appUrlRoot . '/',
+                    'samesite' => 'Strict'
+                ]
             );
         }
 

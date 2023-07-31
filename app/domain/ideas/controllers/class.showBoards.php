@@ -80,7 +80,7 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $this->ideaRepo->addCanvas($values);
                     $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success');
+                    $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', 'idea_board_created');
 
                     $mailer = new core\mailer();
                     $mailer->setContext('idea_board_created');

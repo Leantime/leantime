@@ -22,5 +22,4 @@ if(isset($config->appUrl) && $config->appUrl != ""){
 
 //Bootstrap application
 $application = new leantime\core\application($incomingRequest);
-
 $application->start();

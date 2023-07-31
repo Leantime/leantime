@@ -58,6 +58,8 @@ namespace leantime\core {
 
         private bool $hideWrapper = false;
 
+        public bool $nl2br = true;
+
         /**
          * __construct - get configurations
          *
@@ -75,6 +77,7 @@ namespace leantime\core {
                 $host = $_SERVER['HTTP_HOST'] ?? "leantime";
                 $this->emailDomain = "no-reply@" . $host;
             }
+
             //PHPMailer
             $this->mailAgent = new PHPMailer(false);
 
@@ -243,6 +246,10 @@ namespace leantime\core {
 
             $this->mailAgent->Subject = $this->subject;
 
+            if(str_contains($this->logo, 'images/logo.svg')) {
+                $this->logo = "/dist/images/logo.png";
+            }
+
             $logoParts = parse_url($this->logo);
 
             if (isset($logoParts['scheme'])) {
@@ -256,38 +263,37 @@ namespace leantime\core {
 
             if($this->hideWrapper === true) {
 
-                $bodyTemplate = nl2br($this->html);
+                $bodyTemplate = $this->html;
 
             }else{
 
                 $bodyTemplate = '
-                    <table width="100%" style="background:#eeeeee; padding:15px; ">
+                    <table width="100%" style="background:#fefefe; padding:15px; ">
                     <tr>
                         <td align="center" valign="top">
-                            <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
+                            <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc; border-radius:5px;">
                                 <tr>
-                                    <td style="padding:3px 10px;">
-                                        <table>
-                                            <tr>
-                                            <td width="150"><img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;"></td>
-                                            <td></td>
-                                        </tr>
-                                        </table>
+                                    <td style="padding:20px 10px; text-align:center;">
+                                       <img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;">
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
+                                    <td style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:16px; line-height:1.7;\'>
                                         ' . $this->language->__('email_notifications.hi') . '
-                                        <br /><br />
-                                        ' . nl2br($this->html) . '
-                                        <br /><br />
+                                        <br />';
+                                    if($this->nl2br === true){
+                                        $bodyTemplate .= nl2br($this->html);
+                                    }else{
+                                        $bodyTemplate .= $this->html;
+                                    }
+                                        $bodyTemplate .= '<br /><br />
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td align="center">
+                        <td align="center" style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:14px; line-height:1.7;\'>
                         ' . sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/') . '
                         </td>
                     </tr>

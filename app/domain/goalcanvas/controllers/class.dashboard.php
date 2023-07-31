@@ -7,6 +7,7 @@
 namespace leantime\domain\controllers {
 
     use leantime\core\controller;
+    use leantime\domain\repositories\canvas;
     use leantime\domain\repositories\queue;
     use leantime\domain\repositories\queue as QueueRepo;
 
@@ -83,9 +84,12 @@ namespace leantime\domain\controllers {
                         $goalAnalytics["goalsMiss"]++;
                     }
 
-                    if ($item["conclusion"] != 0 && is_numeric($item["data"]) && is_numeric($item["conclusion"])) {
-                        $percentDone = round($item["data"] / $item["conclusion"] * 100, 2);
-                    } else {
+                    $total = $item['endValue'] - $item['startValue'];
+                    $progressValue = $item['currentValue'] - $item['startValue'];
+
+                    if($total > 0) {
+                        $percentDone = round($progressValue / $total * 100, 2);
+                    }else{
                         $percentDone = 0;
                     }
 

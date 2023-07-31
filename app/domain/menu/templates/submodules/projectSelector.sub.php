@@ -61,8 +61,8 @@ use leantime\core\eventhelpers;
 
                             foreach ($typeRow as $projectRow) {
 
-                                if ($lastClient != $projectRow['clientName']) {
-                                    $lastClient = $projectRow['clientName'];
+                                if ($lastClient != $projectRow['clientName'].$projectRow['parent']) {
+                                    $lastClient = $projectRow['clientName'].$projectRow['parent'];
 
                                     echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientGroupParent-" . $projectRow['parent'] . " clientController";
 

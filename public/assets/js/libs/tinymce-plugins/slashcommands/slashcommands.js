@@ -1,4 +1,5 @@
 tinymce.PluginManager.add('slashcommands', function (editor) {
+
     var insertActions = [
         {
             text: 'Text',
@@ -20,8 +21,12 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
             text: 'Heading 2',
             icon: 'h2',
             action: function () {
+
                 editor.execCommand('mceInsertContent', false, '<h2>Heading 2</h2>');
                 editor.selection.select(editor.selection.getNode());
+
+
+
             }
         },
         {

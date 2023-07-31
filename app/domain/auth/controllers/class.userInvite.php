@@ -2,17 +2,18 @@
 
 namespace leantime\domain\controllers {
 
+    use leantime\core\eventhelpers;
+
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
-    use \leantime\core\eventhelpers;
 
     class userInvite extends controller
     {
         private $fileRepo;
-        private $authService;
+        private services\auth $authService;
         private $usersService;
 
         /**
@@ -84,15 +85,23 @@ namespace leantime\domain\controllers {
                             $user["user"] =  $user["username"];
                             $user["password"] = $_POST['password'];
 
-                            if ($this->usersService->editUser($user, $user["id"])) {
+                            $editUser = $this->usersService->editUser($user, $user["id"]);
+
+                            if ($editUser) {
                                 $this->tpl->setNotification(
                                     $this->language->__('notifications.you_are_active'),
-                                    "success"
+                                    "success",
+                                    "user_activated"
                                 );
+                                $loggedIn = $this->authService->login($user["username"], $_POST['password']);
 
-                                self::dispatch_event("userSignupSuccess", ['user' => $user]);
+                                self::dispatch_event("userSignUpSuccess", ['user' => $user]);
 
-                                core\frontcontroller::redirect(BASE_URL . "/auth/login");
+                                if ($loggedIn == true) {
+                                    core\frontcontroller::redirect(BASE_URL . "/dashboard/home");
+                                } else {
+                                    core\frontcontroller::redirect(BASE_URL . "/auth/login");
+                                }
                             } else {
                                 $this->tpl->setNotification(
                                     $this->language->__('notifications.problem_updating_user'),

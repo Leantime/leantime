@@ -70,7 +70,12 @@ class session
         session_id(self::$sid);
         session_start();
 
-        setcookie("sid", self::$sid, ['expires' => time() + $config->sessionExpiration, 'path' => '/']);
+        setcookie("sid", self::$sid, [
+            'expires' => time() + $config->sessionExpiration,
+            'path' => '/',
+            'samesite' => 'lax',
+            'secure' => true
+        ]);
     }
 
     /**
@@ -124,7 +129,12 @@ class session
             unset($_COOKIE['sid']);
         }
 
-        setcookie('sid', "", ['expires' => time() - 42000, 'path' => '/']);
+        setcookie('sid', "", [
+        'expires' => time() - 42000,
+        'path' => '/',
+        'secure' => true,
+        'samesite' => 'Strict'
+        ]);
     }
 
 

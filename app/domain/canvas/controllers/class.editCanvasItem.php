@@ -221,7 +221,7 @@ namespace leantime\domain\controllers\canvas {
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                        $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully created', 'success');
+                        $this->tpl->setNotification($canvasTypes[$params['box']]['title'] . ' successfully created', 'success', ''.$params['box'].'_item_created');
 
                         $subject = $this->language->__('email_notifications.canvas_board_item_created');
                         $actual_link = BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . (int)$params['itemId'];

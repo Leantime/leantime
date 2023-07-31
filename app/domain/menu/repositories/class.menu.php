@@ -84,7 +84,7 @@ namespace leantime\domain\repositories {
 
         public function __construct(){
 
-            if(isset($_SESSION['submenuToggle']) === false){
+            if(isset($_SESSION['submenuToggle']) === false && isset($_SESSION['userdata'])){
                 $setting = new setting();
                 $_SESSION['submenuToggle'] = unserialize($setting->getSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle"));
             }

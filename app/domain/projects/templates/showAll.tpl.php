@@ -1,8 +1,11 @@
 <?php
-    defined('RESTRICTED') or die('Restricted access');
-    $project = $this->get('project');
-    $menuTypes = $this->get('menuTypes');
-    $showClosedProjects = $this->get('showClosedProjects');
+
+use leantime\plugins\services\billing;
+
+defined( 'RESTRICTED' ) or die( 'Restricted access' );
+	$project = $this->get('project');
+	$menuTypes = $this->get('menuTypes');
+    $showClosedProjects= $this->get('showClosedProjects');
 
 ?>
 
@@ -30,7 +33,11 @@
             </form>
         </div>
 
-        <?php echo $this->displayLink('projects.newProject', "<i class='fa fa-plus'></i> " . $this->__('link.new_project'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+
+
+		    <?php echo $this->displayLink('projects.newProject',"<i class='fa fa-plus'></i> ".$this->__('link.new_project'), NULL, array('class' => 'btn btn-primary btn-rounded')) ?>
+
+
         <div class="clearall"></div>
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
             <?php if ($config->enableMenuType) { ?>
@@ -80,7 +87,7 @@
                 <tr class='gradeA'>
 
                     <td style="padding:6px;">
-                        <?php echo $this->displayLink('projects.changeCurrentProject', $this->escape($row['name']), array('id' => $row['id'])) ?>
+                        <?php echo $this->displayLink('projects.showProject', $this->escape($row['name']), array('id' => $row['id'])) ?>
                     <td>
                         <?php echo $this->displayLink('clients.showClient', $this->escape($row['clientName']), array('id' => $row['clientId']), null, true) ?>
                     </td>

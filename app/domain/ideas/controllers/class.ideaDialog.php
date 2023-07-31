@@ -257,7 +257,7 @@ namespace leantime\domain\controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success');
+                        $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success', 'idea_created');
 
                         $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$id);
                     } else {

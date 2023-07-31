@@ -103,7 +103,7 @@ namespace leantime\core {
          * @param $name
          * @param $value
          */
-        public function assign($name, $value): void
+        public function assign(string $name, mixed $value): void
         {
 
             $value = self::dispatch_filter("var.$name", $value);
@@ -112,17 +112,19 @@ namespace leantime\core {
         }
 
         /**
-         * setError - assign errors to the template
+         * setNotification - assign errors to the template
          *
-         * @param  $msg
-         * @param  $type
+         * @param  string $msg
+         * @param  string $type
+         * @param  string $event_id as a string for further identification
          * @return string
          */
-        public function setNotification($msg, $type): void
+        public function setNotification(string $msg, string $type, string $event_id = ''): void
         {
 
             $_SESSION['notification'] = $msg;
             $_SESSION['notifcationType'] = $type;
+            $_SESSION['event_id'] = $event_id;
         }
 
         /**
@@ -194,7 +196,7 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function display($template, $layout = "app")
+        public function display(string $template, string $layout = "app")
         {
 
             //These variables are available in the template
@@ -293,7 +295,7 @@ namespace leantime\core {
          * @param  $template
          * @return void
          */
-        public function displayPartial($template)
+        public function displayPartial(string $template)
         {
 
             $this->display($template, 'blank');
@@ -306,7 +308,7 @@ namespace leantime\core {
          * @param  $name
          * @return array
          */
-        public function get($name)
+        public function get(string $name): mixed
         {
 
             if (!isset($this->vars[$name])) {
@@ -327,9 +329,14 @@ namespace leantime\core {
         {
 
             if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
-                return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification']);
+                if(isset($_SESSION['event_id'])) {
+                    $event_id = $_SESSION['event_id'];
+                }else{
+                    $event_id='';
+                }
+                return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
             } else {
-                return array('type' => "", 'msg' => "");
+                return array('type' => "", 'msg' => "", 'event_id' => "");
             }
         }
 
@@ -401,8 +408,11 @@ namespace leantime\core {
                                   jQuery.growl({message: "' . $message . '", style: "' . $note['type'] . '"});
                                 </script>';
 
+                self::dispatch_event("notification_displayed", $note);
+
                 $_SESSION['notification'] = "";
                 $_SESSION['notificationType'] = "";
+                $_SESSION['event_id'] = "";
             }
 
             return $notification;
@@ -428,15 +438,18 @@ namespace leantime\core {
             );
 
             if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-                $notification = "<div class='inputwrapper login-alert login-" . $note['type'] . "'>
-                                    <div class='alert alert-" . $note['type'] . "'>
-                                        " . $message . "
+                $notification = "<div class='inputwrapper login-alert login-" . $note['type'] . "' style='position: relative;'>
+                                    <div class='alert alert-" . $note['type'] . "' style='padding:15px;' >
+                                        <strong>" . $message . "</strong>
                                     </div>
 								</div>
 								";
 
+                self::dispatch_event("notification_displayed", $note);
+
                 $_SESSION['notification'] = "";
                 $_SESSION['notificationType'] = "";
+                $_SESSION['event_id'] = "";
             }
 
             return $notification;
@@ -598,7 +611,7 @@ namespace leantime\core {
                 }
 
                 // Continue after the tag.
-                $position = $tagPosition + strlen($tag);
+                $position = $tagPosition . strlen($tag);
             }
 
             // Print any remaining text.
@@ -756,7 +769,7 @@ namespace leantime\core {
             if (
                 !is_string($type) || !in_array($type, ['event', 'filter'])
             ) {
-                return;
+                return null;
             }
 
             if ($type == 'filter') {

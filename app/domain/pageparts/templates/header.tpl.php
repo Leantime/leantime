@@ -18,6 +18,7 @@
 <meta name="color-scheme" content="<?php $this->e($theme ?? 'default') ?>">
 <meta name="identifier-URL" content="<?=BASE_URL?>">
 <meta name="leantime-version" content="<?=$settings->appVersion ?>">
+
 <?php $this->dispatchTplEvent('afterMetaTags'); ?>
 
 <link rel="shortcut icon" href="<?=BASE_URL?>/dist/images/favicon.png"/>
@@ -60,7 +61,6 @@
     }
 </style>
 
-
 <?php $this->dispatchTplEvent('afterThemeColors'); ?>
 
 <!-- customize -->
@@ -73,4 +73,6 @@
 <?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if ($styleUrl !== false) { ?>
     <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
 <?php } ?>
+
 <?php $this->dispatchTplEvent('afterCustomizeTags'); ?>
+

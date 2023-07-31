@@ -221,6 +221,9 @@ if (is_array($currentLink)) {
                                 <?=$this->__("menu.company_settings")?>
                             </a>
                         </li>
+
+                        <?php $this->dispatchTplEvent('companyMenuEnd', ["module"=>$module]); ?>
+
                     <?php } ?>
 
                 <?php } ?>
