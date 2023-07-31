@@ -18,6 +18,9 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
+    - uses: browser-actions/setup-chrome@latest
+    - run: chrome --version
+
     - name: Run Acceptance Tests
       run: |
         make Acceptance-test-ci
