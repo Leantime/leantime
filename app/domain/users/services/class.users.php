@@ -190,6 +190,8 @@ namespace leantime\domain\services {
         }
 
 
+
+
         /**
          * usernameExist - Checks if a given username (email) is already in the db
          *

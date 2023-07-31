@@ -1,81 +1,81 @@
 <?php
-    $providerFields = $this->get("providerFields");
-    $provider = $this->get("provider");
-    $leantimeFields = $this->get("leantimeFields");
-    $numberOfFields = $this->get("maxFields");
-    $flags = $this->get("flags");
-    $urlAppend = '';
-    if(isset($integrationId) && is_numeric($integrationId)) {
-        $urlAppend = "&integrationId=".$integrationId;
-    }
+$providerFields = $this->get("providerFields");
+$provider = $this->get("provider");
+$leantimeFields = $this->get("leantimeFields");
+$numberOfFields = $this->get("maxFields");
+$flags = $this->get("flags");
+$urlAppend = '';
+
+if (isset($integrationId) && is_numeric($integrationId)) {
+    $urlAppend = "&integrationId=" . $integrationId;
+}
 ?>
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-plug"></span></div>
-    <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1><?php echo $this->__("headlines.integrations"); ?></h1>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $this->__("headlines.integrations"); ?></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <div class="pageheader mb-4">
+        <div class="pageicon"><span class="fa fa-plug"></span></div>
+        <div class="pagetitle">
+            <h1 class="display-4">Integrations</h1>
         </div>
     </div>
-</div>
+    <div class="container mt-4">
+    <div class="maincontent">
+        <div class="maincontentinner">
 
-<div class="maincontent">
-    <div class="maincontentinner">
+            <?php echo $this->displayNotification(); ?>
 
-        <?php echo $this->displayNotification(); ?>
+            <h3>Map Your Source Fields to Leantime Fields</h3>
+            <p class="mb-2"><strong><?= $provider->name ?></strong></p>
 
-        <h3>Map and Convert Fields Entity Here</h3>
-        <?=$provider->name ?><br />
+            <?php foreach ($flags as $flag) { ?>
+                <p class="text-danger"><?= $flag ?></p>
+            <?php } ?>
 
-        <p>Please map the fields from the CSV file to the leantime fields</p>
-
-        <?php foreach($flags as $flag){?>
-            <p style="color: red;"><?= $flag ?></p>
-        <?php } ?>
-
-
-        <form method="post" action="<?=BASE_URL?>/connector/integration/?provider=<?=$provider->id?>&step=import<?=$urlAppend ?>">
-            <table style="width:300px;">
-                <thead>
-                <tr>
-                    <td>Source Field</td>
-                    <td>Leantime Field</td>
-                </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($providerFields as $key => $entity){?>
+            <form method="post" action="<?= BASE_URL ?>/connector/integration/?provider=<?= $provider->id ?>&step=import<?= $urlAppend ?>">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Source Field</th>
+                        <th>Leantime Field</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($providerFields as $key => $entity) { ?>
                         <tr>
-                            <td><?=$entity ?> </td>
+                            <td><?= $entity ?></td>
                             <td>
-                                <select name="field_<?=md5($entity)?>">
-                                    <?php foreach($leantimeFields as $key2 => $fields) {?>
-                                        <option value="<?=$entity ?>|<?=$key2 ?>"
-                                            <?php
-                                            if($entity == $fields['name']) echo" selected='selected' ";
-                                            ?>
-                                        ><?=$fields['name'] ?></option>
+                                <select class="form-control" name="field_<?= md5($entity) ?>">
+                                    <?php foreach ($leantimeFields as $key2 => $fields) { ?>
+                                        <option value="<?= $entity ?>|<?= $key2 ?>" <?= $entity == $fields['name'] ? "selected='selected'" : "" ?>>
+                                            <?= $fields['name'] ?>
+                                        </option>
                                     <?php } ?>
                                 </select>
                             </td>
                         </tr>
-
                     <?php } ?>
-                </tbody>
-
-            </table>
-
-            <input type="submit" value="Next" class="btn"/>
-        </form>
+                    </tbody>
+                </table>
+                <button type="submit" class="btn btn-primary">Next</button>
+            </form>
+        </div>
     </div>
 </div>
 
-<script type="text/javascript">
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 
-   jQuery(document).ready(function() {
-
-
-    });
-
-</script>
+</html>

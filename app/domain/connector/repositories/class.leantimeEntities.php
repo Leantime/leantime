@@ -43,6 +43,7 @@ namespace leantime\domain\repositories\connector {
                 "projects" => array(
                     "name" => "Projects",
                     "fields" => array(
+                        "id" => ["name" => "id"],
                         "name" => ["name" => "Project Name"],
                         'details' => ["name" => "Details"],
                         'clientId' => ["name" => "ClientId"],
@@ -73,6 +74,7 @@ namespace leantime\domain\repositories\connector {
                  "ideas" => array(
                      "name" => "Ideas",
                      "fields" => array(
+                         "itemId" => ["name" => "id"],
                          "description" => ["name" => "Description"],
                          "data" => ["name" => "Data"],
                          "author" => ["name" => "Author"],
@@ -82,6 +84,7 @@ namespace leantime\domain\repositories\connector {
                      )),
                 "goals" => array("name" => "Goals",
                                 "field" => array(
+                                    "itemId" => ["name" => "id"],
                                     'box' => "goal",
                                     'title' => ["name" => "title"], //required
                                     'description' => ["name" => "Description"],

@@ -2,16 +2,16 @@
 
 namespace leantime\domain\controllers {
 
-use leantime\core;
-use leantime\core\controller;
-use leantime\domain\models\auth\roles;
-use leantime\domain\repositories;
-use leantime\domain\services;
-use leantime\domain\models;
+    use leantime\core;
+    use leantime\core\controller;
+    use leantime\domain\models\auth\roles;
+    use leantime\domain\repositories;
+    use leantime\domain\services;
+    use leantime\domain\models;
 
-use DateTime;
-use DateInterval;
-use leantime\domain\services\auth;
+    use DateTime;
+    use DateInterval;
+    use leantime\domain\services\auth;
     use Ramsey\Uuid\Uuid;
 
     class integration extends controller
@@ -53,15 +53,6 @@ use leantime\domain\services\auth;
             $this->canvasRepository = new repositories\canvas();
         }
 
-        private function getProjectIdbyName($allProjects, $projectName)
-        {
-            foreach ($allProjects as $project) {
-                if ($project['name'] == $projectName) {
-                    return $project['id'];
-                }
-            }
-            return false;
-        }
 
         /**
          * run - handle post
@@ -194,7 +185,13 @@ use leantime\domain\services\auth;
                             if (!isset($ticket['status'])) {
                                 $ticket['status'] = 3;
                             }
-                            $this->ticketService->addTicket($ticket);
+                            if(isset($ticket["id"])){
+                                $this->ticketService->updateTicket($ticket["id"], $ticket);
+                            }
+                            else{
+                                $this->ticketService->addTicket($ticket);
+                            }
+
                         }
                     } else if ($_SESSION['currentImportEntity'] == "projects") {
                         $psettings = array('all', 'clients', 'restricted');
@@ -208,7 +205,13 @@ use leantime\domain\services\auth;
                                 }
                                 $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                             }
-                            $this->projectService->addProject($values);
+                            if(isset($values["id"])){
+                                $this->projectService->editProject($values, $values["id"],);
+                            }
+                            else{
+                                $this->projectService->addProject($values);
+                            }
+
                         }
 
                     } else if ($_SESSION['currentImportEntity'] == "users") {
@@ -216,13 +219,16 @@ use leantime\domain\services\auth;
                         foreach ($this->values as $row) {
                             $values = array();
                             for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
-                                if ($finalMappings[$i + 1] != 'sendInvite') {
+                                if ($finalMappings[$i + 1] != 'sendInvite' || $finalMappings[$i + 1] != 'id'){
                                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                                 }
                             }
                             $values["notifications"] = 1;
                             $values['source'] = "csvImport"; //TODO: will have to change when other integrations are added
-                            if ($row['sendInvite']) {
+                            if($row['id']){
+                                $this->userService->editUser($values, $row['id']);
+                            }
+                            else if ($row['sendInvite']) {
                                 $this->userService->createUserInvite($values);
                             } else {
                                 $values['status'] = 'a';
@@ -241,7 +247,12 @@ use leantime\domain\services\auth;
                             for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                             }
-                            $this->ideaRepository->addCanvasItem($values);
+                            if(isset($values["itemId"])){
+                                $this->goalRepository->editCanvasItem($values);
+                            }
+                            else{
+                                $this->goalRepository->addCanvasItem($values);
+                            }
 
                         }
                     } else if ($_SESSION['currentImportEntity'] == "goals") {
@@ -250,7 +261,12 @@ use leantime\domain\services\auth;
                             for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                                 $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                             }
-                            $this->goalRepository->addCanvasItem($values);
+                            if(isset($values["itemId"])){
+                                $this->goalRepository->editCanvasItem($values);
+                            }
+                            else{
+                                $this->goalRepository->addCanvasItem($values);
+                            }
 
                         }
                     } else if ($_SESSION['currentImportEntity'] == "milestones") {
@@ -269,7 +285,12 @@ use leantime\domain\services\auth;
                                 $ticket['status'] = 3;
                             }
                             $ticket['type'] = 'milestone';
-                            $this->ticketService->addTicket($ticket);
+                            if(isset($ticket["id"])){
+                                $this->ticketService->updateTicket($ticket["id"], $ticket);
+                            }
+                            else{
+                                $this->ticketService->addTicket($ticket);
+                            }
                         }
                     }
 
@@ -335,7 +356,7 @@ use leantime\domain\services\auth;
                         foreach ($this->values as &$row) {
                             if (strpos($row[$matchingSourceField], '@') !== false) {
 
-                                $id = $this->userService->getUserByEmail($row[$matchingSourceField])['id'];
+                                $id = $this->userService->getUserByEmail(trim($row[$matchingSourceField]))['id'];
                                 if ($id) {
                                     $row['editorId'] = $id;
                                 } else {
@@ -367,7 +388,7 @@ use leantime\domain\services\auth;
                         $allProjects = $this->projectService->getAllProjects();
 
                         foreach ($this->values as &$row) {
-                            $projectId = $this->getProjectIdbyName($allProjects, $row[$matchingProjectSourceField]);
+                            $projectId = $this->projectService->getProjectIdByName($allProjects, $row[$matchingProjectSourceField]);
                             if (!$projectId) {
                                 $flags[] = $row[$matchingProjectSourceField] . " " . "is not a valid Project";
                             }
@@ -462,8 +483,9 @@ use leantime\domain\services\auth;
                                 $flags[] = "The sendInvite column must contain only yes or no";
                             }
                             if (str_contains($row[$matchingUsernameSourceField], '@')) {
-                                if ($this->userService->getUserByEmail(trim($row[$matchingUsernameSourceField]))) {
-                                    $flags[] = $row[$matchingUsernameSourceField] . " is already a user.";
+                                $userId = $this->userService->getUserByEmail(trim($row[$matchingUsernameSourceField]))['id'];
+                                if ($userId) {
+                                    $row['id'] = $userId;
                                 }
                             } else {
                                 $flags[] = "The Username column must contain only valid emails";
@@ -535,9 +557,11 @@ use leantime\domain\services\auth;
                             $row['author'] = $id;
                         }
                     }
-                    if($matchingCanvasIdSourceField){
-                        if(!$this->canvasRepository->getSingleCanvas($row[$matchingCanvasIdSourceField])){
-                            $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
+                    if($matchingCanvasIdSourceField) {
+                        foreach ($this->values as &$row) {
+                            if (!$this->canvasRepository->getSingleCanvas($row[$matchingCanvasIdSourceField])) {
+                                $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
+                            }
                         }
                     }
                     if (!$matchingDataSourceField) {
@@ -658,7 +682,7 @@ use leantime\domain\services\auth;
                         $allProjects = $this->projectService->getAllProjects();
 
                         foreach ($this->values as &$row) {
-                            $projectId = $this->getProjectIdbyName($allProjects, $row[$matchingProjectSourceField]);
+                            $projectId = $this->projectService->getProjectIdByName($allProjects, $row[$matchingProjectSourceField]);
                             if (!$projectId) {
                                 $flags[] = $row[$matchingProjectSourceField] . " " . "is not a valid Project";
                             }

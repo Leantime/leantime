@@ -1028,6 +1028,10 @@ namespace leantime\domain\services {
             }
         }
 
+        public function editProject($values, $id){
+            $this->projectRepository->editProject($values, $id);
+        }
+
         public function updateProjectStatusAndSorting($params, $handler = null)
         {
 
