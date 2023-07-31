@@ -9,16 +9,15 @@ namespace leantime\domain\repositories {
     {
 
         private core\db $db;
-        
+
         /**
          * __construct - get database connection
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
         /**
@@ -67,7 +66,7 @@ namespace leantime\domain\repositories {
 					zp_sprints.projectId,
 					zp_sprints.startDate,
 					zp_sprints.endDate
-				FROM zp_sprints 
+				FROM zp_sprints
 				WHERE zp_sprints.projectId = :id
 				ORDER BY zp_sprints.startDate DESC";
 
@@ -98,8 +97,8 @@ namespace leantime\domain\repositories {
 					zp_sprints.projectId,
 					zp_sprints.startDate,
 					zp_sprints.endDate
-				FROM zp_sprints 
-				WHERE zp_sprints.projectId = :id AND zp_sprints.endDate > NOW() 
+				FROM zp_sprints
+				WHERE zp_sprints.projectId = :id AND zp_sprints.endDate > NOW()
 				ORDER BY zp_sprints.startDate DESC";
 
             $stmn = $this->db->database->prepare($query);
@@ -128,7 +127,7 @@ namespace leantime\domain\repositories {
 					zp_sprints.projectId,
 					zp_sprints.startDate,
 					zp_sprints.endDate
-				FROM zp_sprints 
+				FROM zp_sprints
 				WHERE zp_sprints.projectId = :id
 				AND zp_sprints.startDate < NOW() AND zp_sprints.endDate > NOW() ORDER BY zp_sprints.startDate  LIMIT 1";
 
@@ -159,7 +158,7 @@ namespace leantime\domain\repositories {
 					zp_sprints.projectId,
 					zp_sprints.startDate,
 					zp_sprints.endDate
-				FROM zp_sprints 
+				FROM zp_sprints
 				WHERE zp_sprints.projectId = :id
 				AND zp_sprints.startDate > NOW() ORDER BY zp_sprints.startDate ASC LIMIT 1";
 
@@ -196,11 +195,11 @@ namespace leantime\domain\repositories {
         public function editSprint($sprint)
         {
 
-            $query = "UPDATE zp_sprints 
-                      SET 
-                        name = :name, 
-                        projectId = :projectId, 
-                        startDate = :startDate, 
+            $query = "UPDATE zp_sprints
+                      SET
+                        name = :name,
+                        projectId = :projectId,
+                        startDate = :startDate,
                         endDate = :endDate
                         WHERE id = :id";
 
@@ -222,7 +221,7 @@ namespace leantime\domain\repositories {
         {
 
             $query = "UPDATE zp_tickets
-                SET 
+                SET
                     sprint = ''
                 WHERE sprint = :id";
 

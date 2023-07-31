@@ -7,13 +7,11 @@ namespace leantime\domain\repositories {
 
     class read
     {
-
         private core\db $db;
-        
-        public function __construct()
-        {
 
-            $this->db = core\db::getInstance();
+        public function __construct(core\db $db)
+        {
+            $this->db = $db;
         }
 
         public function markAsRead($module, $moduleId, $userId)
@@ -33,7 +31,7 @@ namespace leantime\domain\repositories {
         public function isRead($module, $moduleId, $userId)
         {
 
-            $sql = "SELECT * FROM zp_read 
+            $sql = "SELECT * FROM zp_read
 					WHERE module=:module AND moduleId=:moduleId AND userId=:userId";
 
             $stmn = $this->db->database->prepare($sql);

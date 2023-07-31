@@ -10,10 +10,9 @@ class login extends controller {
 
     private services\oidc $oidc;
 
-    public function init()
-    {
-        $this->oidc = services\oidc::getInstance();
-        frontcontroller::redirect($this->oidc->buildLoginUrl() , 302);
+    public function init(services\oidc $oidc, frontcontroller $frontcontroller) {
+        $this->oidc = $oidc;
+        $frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
     }
 
 }

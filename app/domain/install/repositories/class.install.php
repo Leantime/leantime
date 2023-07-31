@@ -108,16 +108,13 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(\leantime\core\environment $config, core\appSettings $settings)
         {
-
-
-
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
 
-            $this->config = \leantime\core\environment::getInstance();
-            $this->settings = new core\appSettings();
+            $this->config = $config;
+            $this->settings = $settings;
 
             $this->user = $this->config->dbUser;
             $this->password = $this->config->dbPassword;
@@ -245,10 +242,8 @@ namespace leantime\domain\repositories {
                 return $errors;
             }
 
-            $setting = new setting();
-
+            $setting = app()->make(setting::class);
             $dbVersion = $setting->getSetting("db-version");
-
             $currentDBVersion = 0;
             if ($dbVersion != false) {
                 $versionArray = explode(".", $dbVersion);

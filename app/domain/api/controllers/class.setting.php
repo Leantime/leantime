@@ -10,7 +10,7 @@ namespace leantime\domain\controllers {
 
     class setting extends controller
     {
-        private $settingService;
+        private services\setting $settingService;
 
         /**
          * init - initialize private variables
@@ -18,12 +18,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\setting $settingService)
         {
-
-            $this->settingService = new services\setting();
+            $this->settingService = $settingService;
         }
-
 
         /**
          * get - handle get requests

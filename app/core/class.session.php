@@ -31,16 +31,17 @@ class session
      */
     private $sessionpassword = '';
 
+    private environment $config;
+
     /**
      * __construct - get and test Session or make session
      *
      * @access private
      * @return
      */
-    private function __construct()
+    public function __construct(environment $config)
     {
-
-        $config = \leantime\core\environment::getInstance();
+        $this->config = $config;
 
         $maxLifeTime = ini_set('session.gc_maxlifetime', ($config->sessionExpiration * 2));
         $cookieLifetime = ini_set('session.cookie_lifetime', ($config->sessionExpiration * 2));
@@ -74,22 +75,6 @@ class session
     }
 
     /**
-     * getInstance - Get instance of session
-     *
-     * @access private
-     * @return object
-     */
-    public static function getInstance()
-    {
-
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    /**
      * getSID - get the sessionId
      *
      * @access public
@@ -97,8 +82,7 @@ class session
      */
     public static function getSID()
     {
-
-        return self::getInstance()::$sid;
+        return app()->make(self::class)::$sid;
     }
 
     /**
@@ -109,16 +93,18 @@ class session
      */
     private function makeSID()
     {
+        $session_string = ! defined('LEAN_CLI') || LEAN_CLI === false
+            ? $_SERVER['REMOTE_ADDR']
+            : 'cli';
 
-        $tmp = hash('sha1', (string) mt_rand(32, 32) . $_SERVER['REMOTE_ADDR'] . time());
+        $tmp = hash('sha1', (string) mt_rand(32, 32) . $session_string . time());
 
         self::$sid = $tmp . '-' . hash('sha1', $tmp . $this->sessionpassword);
     }
 
     public static function destroySession()
     {
-
-        $config = \leantime\core\environment::getInstance();
+        $config = $this->config;
 
         if (isset($_COOKIE['sid'])) {
             unset($_COOKIE['sid']);
@@ -126,11 +112,4 @@ class session
 
         setcookie('sid', "", ['expires' => time() - 42000, 'path' => '/']);
     }
-
-
-
-
-
-
-
 }

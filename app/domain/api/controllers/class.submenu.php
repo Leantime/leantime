@@ -11,7 +11,7 @@ namespace leantime\domain\controllers {
 
     class submenu extends controller
     {
-        private $menu;
+        private repositories\menu $menu;
 
         /**
          * constructor - initialize private variables
@@ -19,12 +19,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(repositories\menu $menu)
         {
-
-            $this->menu = new repositories\menu();
+            $this->menu = $menu;
         }
-
 
         /**
          * get - handle get requests

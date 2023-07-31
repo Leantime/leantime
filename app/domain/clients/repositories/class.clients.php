@@ -35,10 +35,10 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
-        {
-
-            $this->db = core\db::getInstance();
+        public function __construct(
+            core\db $db
+        ) {
+            $this->db = $db;
         }
 
         /**

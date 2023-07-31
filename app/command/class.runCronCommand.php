@@ -36,7 +36,7 @@ class runCronCommand extends Command
 
         try {
 
-            $cron = new cron();
+            $cron = app()->make(cron::class);
             $result = $cron->runCron();
 
             if (!$result) {

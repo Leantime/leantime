@@ -10,7 +10,6 @@ namespace leantime\domain\services {
 
     class notifications
     {
-
         private core\db $db;
         private repositories\notifications $notificationsRepo;
         private repositories\users $userRepository;
@@ -21,15 +20,17 @@ namespace leantime\domain\services {
          *
          * @access public
          */
-        public function __construct()
-        {
-
-            $this->db = core\db::getInstance();
-            $this->notificationsRepo = new repositories\notifications();
-            $this->userRepository = new repositories\users();
-            $this->language = core\language::getInstance();
+        public function __construct(
+            core\db $db,
+            repositories\notifications $notificationsRepo,
+            repositories\users $userRepository,
+            core\language $language
+        ) {
+            $this->db = $db;
+            $this->notificationsRepo = $notificationsRepo;
+            $this->userRepository = $userRepository;
+            $this->language = $language;
         }
-
 
         public function getAllNotifications($userId, $showNewOnly = 0, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
         {
@@ -99,7 +100,7 @@ namespace leantime\domain\services {
                         $this->addNotifications(array($notification));
 
                         //send email
-                        $mailer = new core\mailer();
+                        $mailer = app()->make(core\mailer::class);
                         $mailer->setContext('notify_project_users');
 
                         $subject = sprintf($this->language->__('text.x_mentioned_you'), $authorName);

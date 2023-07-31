@@ -22,11 +22,10 @@ namespace leantime\domain\controllers {
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(\leantime\core\environment $config, repositories\setting $settingsRepo)
         {
-
-            $this->config = \leantime\core\environment::getInstance();
-            $this->settingsRepo = new repositories\setting();
+            $this->config = $config;
+            $this->settingsRepo = $settingsRepo;
         }
 
         /**

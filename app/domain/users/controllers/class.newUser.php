@@ -10,8 +10,8 @@ namespace leantime\domain\controllers {
 
     class newUser extends controller
     {
-        private $userRepo;
-        private $projectsRepo;
+        private repositories\users $userRepo;
+        private repositories\projects $projectsRepo;
         private services\users $userService;
 
         /**
@@ -19,11 +19,14 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
-        {
-            $this->userRepo = new repositories\users();
-            $this->projectsRepo = new repositories\projects();
-            $this->userService = new services\users();
+        public function init(
+            repositories\users $userRepo,
+            repositories\projects $projectsRepo,
+            services\users $userService
+        ) {
+            $this->userRepo = $userRepo;
+            $this->projectsRepo = $projectsRepo;
+            $this->userService = $userService;
         }
 
         /**
@@ -101,7 +104,7 @@ namespace leantime\domain\controllers {
                 }
 
                 $this->tpl->assign('values', $values);
-                $clients = new repositories\clients();
+                $clients = app()->make(repositories\clients::class);
 
                 if (isset($_GET['preSelectProjectId'])) {
                     $preSelected = explode(",", $_GET['preSelectProjectId']);

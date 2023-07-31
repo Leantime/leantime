@@ -10,15 +10,16 @@ namespace leantime\domain\controllers {
 
     class delUser extends controller
     {
+        private repositories\users $userRepo;
+
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\users $userRepo)
         {
-
-            $this->userRepo = new repositories\users();
+            $this->userRepo = $userRepo;
         }
 
         /**

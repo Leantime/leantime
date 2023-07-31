@@ -129,7 +129,7 @@ $goalStats = $this->get("goalStats");
                     </div>
                     <div class="row" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
                         <?php
-                            $canvasSvc = new \leantime\domain\services\goalcanvas();
+                            $canvasSvc = app()->make(\leantime\domain\services\goalcanvas::class);
                             $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow["id"]);
                             ?>
                             <div id="sortableCanvasKanban-<?=$canvasRow["id"]?>" class="sortableTicketList disabled col-md-12" style="padding-top:15px;">
@@ -150,7 +150,7 @@ $goalStats = $this->get("goalStats");
                                                     $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                                     $filterRelates == $row['relates'])
                                                 ) {
-                                                    $comments = new \leantime\domain\repositories\comments();
+                                                    $comments = app()->make(\leantime\domain\repositories\comments::class);
                                                     $nbcomments = $comments->countComments(moduleId: $row['id']);
                                                     ?>
                                                 <div class="col-md-4">
@@ -473,7 +473,7 @@ $goalStats = $this->get("goalStats");
                                 $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                 $filterRelates == $row['relates'])
                             ) {
-                                $comments = new \leantime\domain\repositories\comments();
+                                $comments = app()->make(\leantime\domain\repositories\comments::class);
                                 $nbcomments = $comments->countComments(moduleId: $row['id']);
                                 ?>
                             <div class="col-md-4">

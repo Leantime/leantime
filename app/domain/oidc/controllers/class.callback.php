@@ -10,9 +10,9 @@ class callback extends controller {
 
     private services\oidc $oidc;
 
-    public function init()
+    public function init(services\oidc $oidc)
     {
-        $this->oidc = services\oidc::getInstance();
+        $this->oidc = $oidc;
     }
 
     public function get($params)

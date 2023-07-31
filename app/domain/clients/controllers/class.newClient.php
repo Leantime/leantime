@@ -15,19 +15,19 @@ namespace leantime\domain\controllers {
 
     class newClient extends controller
     {
-        private $clientRepo;
-        private $user;
+        private repositories\clients $clientRepo;
+        private repositories\users $user;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\clients $clientRepo, repositories\users $user)
         {
 
-            $this->clientRepo = new repositories\clients();
-            $this->user = new repositories\users();
+            $this->clientRepo = $clientRepo;
+            $this->user = $user;
         }
 
         /**

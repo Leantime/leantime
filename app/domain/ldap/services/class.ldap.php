@@ -44,10 +44,10 @@ class ldap
     public function __construct($differentConfig = false)
     {
 
-        $this->settingsRepo = new repositories\setting();
+        $this->settingsRepo = app()->make(repositories\setting::class);
 
         if (!$differentConfig) {
-            $this->config = \leantime\core\environment::getInstance();
+            $this->config = app()->make(\leantime\core\environment::class);
             //Map config vars
             $this->useLdap = $this->config->useLdap;
 
@@ -180,7 +180,7 @@ class ldap
         }
 
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
-	
+
 	$attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone, $this->ldapKeys->jobTitle, $this->ldapKeys->jobLevel, $this->ldapKeys->department);
 //        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phonenumber);
 
@@ -289,7 +289,7 @@ class ldap
     public function upsertUsers($ldapUsers)
     {
 
-        $userRepo = new repositories\users();
+        $userRepo = app()->make(repositories\users::class);
 
         foreach ($ldapUsers as $user) {
             //Update

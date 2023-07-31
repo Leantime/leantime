@@ -82,13 +82,31 @@ namespace leantime\domain\repositories {
                         83 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/show', 'role' => 'editor']]]]
         ];
 
-        public function __construct(){
+        private core\language $language;
+        private core\environment $config;
+        private setting $settingsRepo;
+        private services\tickets $ticketsService;
+        private services\auth $authService;
 
-            if(isset($_SESSION['submenuToggle']) === false){
-                $setting = new setting();
-                $_SESSION['submenuToggle'] = unserialize($setting->getSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle"));
+        public function __construct(
+            setting $settingsRepo,
+            core\language $language,
+            core\environment $config,
+            services\tickets $ticketsService,
+            services\auth $authService,
+        ) {
+            $this->language = $language;
+            $this->config = $config;
+            $this->settingsRepo = $settingsRepo;
+            $this->ticketsService = $ticketsService;
+            $this->authService = $authService;
+
+            if (isset($_SESSION['submenuToggle']) === false){
+                $setting = $this->settingsRepo;
+                $_SESSION['submenuToggle'] = unserialize(
+                    $setting->getSetting("usersetting." . $_SESSION['userdata']['id'] . ".submenuToggle")
+                );
             }
-
         }
 
         /**
@@ -99,9 +117,8 @@ namespace leantime\domain\repositories {
          */
         public function getMenuTypes(): array
         {
-
-            $language = core\language::getInstance();
-            $config = \leantime\core\environment::getInstance();
+            $language = $this->language;
+            $config = $this->config;
 
             if (!isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
                 return [self::DEFAULT_MENU => $language->__('label.menu_type.' . self::DEFAULT_MENU)];
@@ -127,7 +144,7 @@ namespace leantime\domain\repositories {
         {
 
             $_SESSION['submenuToggle'][$submenu] = $state;
-            $setting = new setting();
+            $setting = $this->settingsRepo;
             $setting->saveSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle", serialize($_SESSION['submenuToggle']));
         }
 
@@ -140,7 +157,7 @@ namespace leantime\domain\repositories {
         public function getSubmenuState(string $submenu)
         {
 
-            $setting = new setting();
+            $setting = $this->settingsRepo;
             $subStructure = $setting->getSetting("usersetting.".$_SESSION['userdata']['id'].".submenuToggle");
 
             $_SESSION['submenuToggle'] = unserialize($subStructure);
@@ -163,7 +180,7 @@ namespace leantime\domain\repositories {
         public function getMenuStructure(string $menuType = ''): array
         {
 
-            $language = core\language::getInstance();
+            $language = $this->language;
 
             $this->menuStructures = self::dispatch_filter('menuStructures', $this->menuStructures, array("menuType" => $menuType));
 
@@ -250,7 +267,7 @@ namespace leantime\domain\repositories {
 
             // Update security
             if (isset($element['role'])) {
-                $accessGranted = services\auth::userIsAtLeast($element['role'], true);
+                $accessGranted = $this->authService::userIsAtLeast($element['role'], true);
 
                 if (!$accessGranted) {
                     $structure['type'] = 'disabled';
@@ -269,7 +286,7 @@ namespace leantime\domain\repositories {
         public function getTicketMenu()
         {
 
-            $ticketService = new services\tickets();
+            $ticketService = $this->ticketsService;
 
             //Removing base URL from here since it is being added in the menu for loop in the template
             $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
@@ -279,9 +296,9 @@ namespace leantime\domain\repositories {
         public function getIdeaMenu()
         {
             $url = "/ideas/showBoards";
-            if(isset($_SESSION['lastIdeaView'])){
+            if (isset($_SESSION['lastIdeaView'])) {
 
-                if($_SESSION['lastIdeaView'] == 'kanban'){
+                if ($_SESSION['lastIdeaView'] == 'kanban') {
                     $url = "/ideas/advancedBoards";
                 }
 

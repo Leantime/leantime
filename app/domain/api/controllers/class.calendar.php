@@ -19,13 +19,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\calendar $calendarSvc)
         {
-
-            $this->calendarSvc = new services\calendar();
-
+            $this->calendarSvc = $calendarSvc;
         }
-
 
         /**
          * get - handle get requests

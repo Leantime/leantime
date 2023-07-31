@@ -32,25 +32,36 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
-        {
+        public function init(
+            services\projects $projectService,
+            services\comments $commentService,
+            services\files $fileService,
+            services\tickets $ticketService,
+            repositories\setting $settingsRepo,
+            repositories\projects $projectRepo,
+            repositories\users $userRepo,
+            repositories\clients $clientsRepo,
+            repositories\files $fileRepo,
+            repositories\comments $commentsRepo,
+            repositories\menu $menuRepo
+        ) {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
             //services
-            $this->projectService = new services\projects();
-            $this->commentService = new services\comments();
-            $this->fileService = new services\files();
-            $this->ticketService = new services\tickets();
+            $this->projectService = $projectService;
+            $this->commentService = $commentService;
+            $this->fileService = $fileService;
+            $this->ticketService = $ticketService;
 
             // repositories
-            $this->settingsRepo = new repositories\setting();
-            $this->projectRepo = new repositories\projects();
-            $this->userRepo = new repositories\users();
-            $this->clientsRepo = new repositories\clients();
-            $this->fileRepo = new repositories\files();
-            $this->commentsRepo = new repositories\comments();
-            $this->menuRepo = new repositories\menu();
+            $this->settingsRepo = $settingsRepo;
+            $this->projectRepo = $projectRepo;
+            $this->userRepo = $userRepo;
+            $this->clientsRepo = $clientsRepo;
+            $this->fileRepo = $fileRepo;
+            $this->commentsRepo = $commentsRepo;
+            $this->menuRepo = $menuRepo;
 
             if (!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
@@ -228,7 +239,7 @@ namespace leantime\domain\controllers {
 
                             $actual_link = CURRENT_URL;
 
-                            $notification = new notification();
+                            $notification = app()->make(notification::class);
                             $notification->url = array(
                                 "url" => $actual_link,
                                 "text" => $linkLabel

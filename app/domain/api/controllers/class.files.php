@@ -10,7 +10,8 @@ namespace leantime\domain\controllers {
 
     class files extends controller
     {
-        private $usersService;
+        private services\users $usersService;
+        private repositories\files $fileRepo;
 
         /**
          * init - initialize private variables
@@ -18,12 +19,11 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(repositories\files $fileRepo, services\users $usersService)
         {
-
-            $this->fileRepo = new repositories\files();
+            $this->usersService = $usersService;
+            $this->fileRepo = $fileRepo;
         }
-
 
         /**
          * get - handle get requests

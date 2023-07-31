@@ -8,18 +8,17 @@ namespace leantime\domain\controllers {
 
     class headMenu extends controller
     {
-        private $timesheets;
+        private services\timesheets $timesheets;
 
-        public function init()
+        public function init(services\timesheets $timesheets)
         {
-
-            $this->timesheets = new services\timesheets();
+            $this->timesheets = $timesheets;
         }
 
         public function run()
         {
 
-            $notificationService = new services\notifications();
+            $notificationService = app()->make(services\notifications::class);
             $notifications = array();
             $newnotificationCount = 0;
             if(isset($_SESSION['userdata'])){

@@ -11,9 +11,10 @@ namespace leantime\domain\services {
         private repositories\calendar $calendarRepo;
         private core\language $language;
 
-        public function __construct() {
-            $this->calendarRepo = new repositories\calendar();
-            $this->language = core\language::getInstance();
+        public function __construct(repositories\calendar $calendarRepo, core\language $language)
+        {
+            $this->calendarRepo = $calendarRepo;
+            $this->language = $language;
         }
 
 
@@ -30,7 +31,7 @@ namespace leantime\domain\services {
 
             //Admins can always change anything.
             //Otherwise user has to own the event
-            if($this->userIsAllowedToUpdate($id)) {
+            if ($this->userIsAllowedToUpdate($id)) {
                 return $this->calendarRepo->patch($id, $params);
             }
 

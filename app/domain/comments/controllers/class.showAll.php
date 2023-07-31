@@ -11,8 +11,8 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-        private $projectService;
-        private $commentService;
+        private services\projects $projectService;
+        private services\comments $commentService;
         private $module;
         private $id;
         private $entity;
@@ -23,13 +23,12 @@ namespace leantime\domain\controllers {
          * @access public
          * @throws Exception
          */
-        public function init(): void
-        {
-
-            $this->projectService = new services\projects();
-            $this->commentService = new services\comments();
-
-
+        public function init(
+            services\projects $projectService,
+            services\comments $commentService
+        ): void {
+            $this->projectService = $projectService;
+            $this->commentService = $commentService;
         }
 
         public function get($params): void

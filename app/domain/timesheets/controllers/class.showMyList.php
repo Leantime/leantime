@@ -11,12 +11,13 @@ namespace leantime\domain\controllers {
 
     class showMyList extends controller
     {
-        public function init()
-        {
+        private services\timesheets $timesheetService;
 
+        public function init(services\timesheets $timesheetService)
+        {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor], true);
 
-            $this->timesheetService = new services\timesheets();
+            $this->timesheetService = $timesheetService;
 
             $_SESSION['lastPage'] = BASE_URL . "/timesheets/showMyList";
         }

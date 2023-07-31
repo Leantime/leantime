@@ -13,12 +13,18 @@ namespace leantime\domain\services {
         private repositories\projects $projectRepository;
         private repositories\clients $clientRepo;
 
-        public function __construct()
-        {
-            $this->userRepo = new repositories\users();
-            $this->language = core\language::getInstance();
-            $this->projectRepository = new repositories\projects();
-            $this->clientRepo = new repositories\clients();
+        public function __construct(
+            repositories\users $userRepo,
+            core\language $language,
+            repositories\projects $projectRepository,
+            repositories\clients $clientRepo,
+            auth $authService
+        ) {
+            $this->userRepo = $userRepo;
+            $this->language = $language;
+            $this->projectRepository = $projectRepository;
+            $this->clientRepo = $clientRepo;
+            $this->authService = $authService;
         }
 
         //GET
@@ -135,7 +141,7 @@ namespace leantime\domain\services {
                 return false;
             }
 
-            $mailer = new core\mailer();
+            $mailer = app()->make(core\mailer::class);
             $mailer->setContext('new_user');
 
             $mailer->setSubject($this->language->__("email_notifications.new_user_subject"));
@@ -240,8 +246,7 @@ namespace leantime\domain\services {
 
             $user = $this->getUser($id);
 
-            auth::getInstance()->setUserSession($user);
-
+            $authService->setUserSession($user);
         }
     }
 }

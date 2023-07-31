@@ -10,21 +10,23 @@ namespace leantime\domain\controllers {
 
     class editUser extends controller
     {
-        private $projectsRepo;
+        private repositories\projects $projectsRepo;
         private repositories\users $userRepo;
-        private $clientsRepo;
+        private repositories\clients $clientsRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projectsRepo = new repositories\projects();
-            $this->userRepo = new repositories\users();
-            $this->clientsRepo = new repositories\clients();
+        public function init(
+            repositories\projects $projectsRepo,
+            repositories\users $userRepo,
+            repositories\clients $clientsRepo
+        ) {
+            $this->projectsRepo = $projectsRepo;
+            $this->userRepo = $userRepo;
+            $this->clientsRepo = $clientsRepo;
         }
 
         /**

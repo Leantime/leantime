@@ -22,10 +22,10 @@ namespace leantime\domain\services;
          * __construct
          *
          */
-        public function __construct()
+        public function __construct(repositories\api $apiRepository, repositories\users $userRepo)
         {
-            $this->apiRepository = new repositories\api();
-            $this->userRepo = new repositories\users();
+            $this->apiRepository = $apiRepository;
+            $this->userRepo = $userRepo;
         }
 
         public function getAPIKeyUser($apiKey): bool|array

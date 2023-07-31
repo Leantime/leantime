@@ -46,7 +46,7 @@ abstract class repository
             {
                 $this->args = $args;
                 $this->caller_class = $caller_class;
-                $this->db = db::getInstance();
+                $this->db = app()->make(db::class);
             }
 
             /**
@@ -243,7 +243,7 @@ abstract class repository
 
         $sql = "SELECT ";
 
-        $entityModel = new $this->model();
+        $entityModel = app()->make($this->model);
         $dbFields = $this->getDbFields($this->model);
 
         $sql .= implode(",", $dbFields);

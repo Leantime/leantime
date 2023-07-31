@@ -9,9 +9,10 @@ namespace leantime\domain\services {
     {
         private repositories\entityrelations $entityRelationshipsRepo;
 
-        public function __construct()
-        {
-            $this->entityRelationshipsRepo = new repositories\entityrelations();
+        public function __construct(
+            repositories\entityrelations $entityRelationshipsRepo
+        ) {
+            $this->entityRelationshipsRepo = $entityRelationshipsRepo;
         }
 
         public function saveRelationship($entityA, $entityAType, $relationship, $entityB, $entityBType, $meta = ""){
