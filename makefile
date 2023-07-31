@@ -2,6 +2,9 @@ VERSION := $(shell grep "appVersion" ./config/appSettings.php |awk -F' = ' '{pri
 TARGET_DIR:= ./target/leantime
 DOCS_DIR:= ./builddocs
 DOCS_REPO:= git@github.com:Leantime/docs.git
+RUNNING_DOCKER_CONTAINERS:= $(shell docker ps -a -q)
+RUNNING_DOCKER_VOLUMES:= $(shell docker volume ls -q)
+
 install-deps-dev:
 	npm install --only=dev
 	composer install --optimize-autoloader
@@ -103,6 +106,16 @@ Acceptance-test: build-dev
 
 Acceptance-test-ci: build-dev
 	php vendor/bin/codecept build
+ifeq ($(strip $(RUNNING_DOCKER_CONTAINERS)),)
+	@echo "No running docker containers found"
+else
+	docker rm -f $(RUNNING_DOCKER_CONTAINERS)
+endif
+ifeq ($(strip $(RUNNING_DOCKER_VOLUMES)),)
+	@echo "No running docker volumes found"
+else
+	docker volume rm $(RUNNING_DOCKER_VOLUMES)
+endif
 	php vendor/bin/codecept run Acceptance --steps
 
 .PHONY: install-deps build package clean run-dev

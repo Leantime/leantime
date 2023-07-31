@@ -52,32 +52,59 @@ $bootstrapper = get_class(new class {
     public function stopSelenium(): void
     {
         $this->createStep('Stopping Selenium');
-        $this->seleniumProcess->stop();
+
+        try {
+            $this->seleniumProcess->stop();
+        // we want the script to continue even if failure
+        } catch (Throwable $e) {
+            return;
+        }
     }
 
     public function stopDevEnvironment(): void
     {
         $this->createStep('Stopping Leantime Dev Environment');
-        $this->dockerProcess->stop();
-        $this->executeCommand('docker compose down', ['cwd' => DEV_ROOT]);
+
+        foreach (
+            [
+                fn () => $this->dockerProcess->stop(),
+                fn () => $this->executeCommand('docker compose down', ['cwd' => DEV_ROOT]),
+            ] as $count => $shutdown
+        ) {
+            try {
+                $shutdown();
+            // we want the script to continue even if failure
+            } catch (Throwable $e) {
+                if ($count === 1) {
+                    return;
+                }
+
+                continue;
+            }
+        }
     }
 
     protected function startDevEnvironment(): void
     {
         $this->createStep('Build & Start Leantime Dev Environment');
+        $hasLocalOverride = file_exists(DEV_ROOT . 'docker-compose.local.yaml');
         $this->dockerProcess = $this->executeCommand(
-            [
-                'docker',
-                'compose',
-                '-f',
-                'docker-compose.yaml',
-                '-f',
-                'docker-compose.tests.yaml',
-                'up',
-                '-d',
-                '--build',
-                '--remove-orphans',
-            ],
+            array_filter(
+                [
+                    'docker',
+                    'compose',
+                    '-f',
+                    'docker-compose.yaml',
+                    '-f',
+                    'docker-compose.tests.yaml',
+                    $hasLocalOverride ? '-f' : null,
+                    $hasLocalOverride ? 'docker-compose.local.yaml' : null,
+                    'up',
+                    '-d',
+                    '--build',
+                    '--remove-orphans',
+                ]
+            ),
             [
                 'cwd' => DEV_ROOT,
                 'background' => true,
@@ -117,6 +144,7 @@ $bootstrapper = get_class(new class {
                 '-T',
                 'db',
                 'mysql',
+                '-h127.0.0.1',
                 '-uroot',
                 '-pleantime',
                 '-e',
@@ -208,8 +236,11 @@ $bootstrapper = get_class(new class {
         if (
             isset($args['getOutput'])
             && $args['getOutput']
-            && (! isset($args['background']) || ! $args['background'])
         ) {
+            if (isset($args['background']) && $args['background']) {
+                throw new RuntimeException('Cannot get output from background process');
+            }
+
             return $process->getOutput();
         }
 
@@ -218,11 +249,9 @@ $bootstrapper = get_class(new class {
 
     private function commandOutputHandler($type, $buffer): void
     {
-        if (Process::ERR === $type) {
-            echo "\nSTDERR: $buffer";
-        } else {
-            echo "\nSTDOUT: $buffer";
-        }
+        echo Process::ERR === $type
+            ? "\nSTDERR: $buffer"
+            : "\nSTDOUT: $buffer";
     }
 });
 
