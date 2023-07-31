@@ -28,10 +28,10 @@ services:
     ports:
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=leantime
-      - MYSQL_USER=leantime
-      - MYSQL_PASSWORD=leantime
-      - MYSQL_DATABASE=leantime
+      MYSQL_ROOT_PASSWORD: leantime
+      MYSQL_USER: leantime
+      MYSQL_PASSWORD: leantime
+      MYSQL_DATABASE: leantime
     networks:
       - leantime
     volumes:
