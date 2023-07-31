@@ -118,4 +118,6 @@ class config
           }
         }';
     public $ldapDefaultRoleKey = 20;           //Default Leantime Role on creation. (set to editor)
+
+    public ?string $plugins = '';                             //Comma separated list of plugins to load
 }

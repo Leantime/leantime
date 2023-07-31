@@ -35,7 +35,7 @@ namespace leantime\plugins\repositories {
 
             //Results could be fetched from the db here.
             $quotes = array_map(
-                fn ($quote, $author) => app()->make(models\motivationalQuotes\quote::class, [$quote, $author]),
+                fn ($quote, $author) => app()->make(models\motivationalQuotes\quote::class, ['quote'=>$quote, 'author'=>$author]),
                 array_keys($quotes),
                 array_values($quotes)
             );

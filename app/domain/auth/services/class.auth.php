@@ -380,7 +380,7 @@ namespace leantime\domain\services {
                     unset($_SESSION[$key]);
                 }
 
-                self::dispatch_event("afterSessionDestroy", ['authService' => self::getInstance()]);
+                self::dispatch_event("afterSessionDestroy", ['authService' => app()->make(self::class)]);
 
             }
         }

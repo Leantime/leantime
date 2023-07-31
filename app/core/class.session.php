@@ -109,8 +109,6 @@ class session
 
     public static function destroySession()
     {
-        $config = $this->config;
-
         if (isset($_COOKIE['sid'])) {
             unset($_COOKIE['sid']);
         }

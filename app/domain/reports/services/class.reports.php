@@ -94,12 +94,8 @@ namespace leantime\domain\services {
             repositories\clients $clientRepository,
             repositories\comments $commentsRepository,
             repositories\timesheets $timesheetRepo,
-            repositories\cpcanvas $cpCanvasRepo,
-            repositories\dbmcanvas $dbmCanvasRepo,
             repositories\eacanvas $eaCanvasRepo,
-            repositories\emcanvas $emCanvasRepo,
             repositories\insightscanvas $insightsCanvasRepo,
-            repositories\lbmcanvas $lbmCanvasRepo,
             repositories\leancanvas $leanCanvasRepo,
             repositories\obmcanvas $obmCanvasRepo,
             repositories\retroscanvas $retrosCanvasRepo,
@@ -108,8 +104,6 @@ namespace leantime\domain\services {
             repositories\minempathycanvas $minEmpathyCanvasRepo,
             repositories\riskscanvas $risksCanvasRepo,
             repositories\sbcanvas $sbCanvasRepo,
-            repositories\smcanvas $smCanvasRepo,
-            repositories\sqcanvas $sqCanvasRepo,
             repositories\swotcanvas $swotCanvasRepo,
             repositories\wiki $wikiRepo
         ) {
@@ -138,13 +132,13 @@ namespace leantime\domain\services {
                 'env' => 'prod',
                 'version' => $this->appSettings->appVersion,
                 'language' => $currentLanguage,
-                'numUsers' => $this->userRepository->getNumberOfUsers(),
-                'lastUserLogin' => $this->userRepository->getLastLogin(),
+                'numUsers' => $userRepository->getNumberOfUsers(),
+                'lastUserLogin' => $userRepository->getLastLogin(),
                 'numProjects' => $this->projectRepository->getNumberOfProjects(null, "project"),
                 'numStrategies' => $this->projectRepository->getNumberOfProjects(null, "strategy"),
                 'numPrograms' => $this->projectRepository->getNumberOfProjects(null, "program"),
-                'numClients' => $this->clientRepository->getNumberOfClients(),
-                'numComments' => $this->commentsRepository->countComments(),
+                'numClients' => $clientRepository->getNumberOfClients(),
+                'numComments' => $commentsRepository->countComments(),
                 'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
 
@@ -188,32 +182,6 @@ namespace leantime\domain\services {
 
                 'numWikiBoards' => $wikiRepo->getNumberOfBoards(),
                 'numWikiItems' => $wikiRepo->getNumberOfCanvasItems(),
-
-
-                /*
-
-                'numCPBoards' => $cpCanvasRepo->getNumberOfBoards(),
-                'numCPItems' => $cpCanvasRepo->getNumberOfCanvasItems(),
-
-                'numDBMBoards' => $dbmCanvasRepo->getNumberOfBoards(),
-                'numDBMItems' => $dbmCanvasRepo->getNumberOfCanvasItems(),
-
-                'numEMBoards' => $emCanvasRepo->getNumberOfBoards(),
-                'numEMItems' => $emCanvasRepo->getNumberOfCanvasItems(),
-
-                'numLBMBoards' => $lbmCanvasRepo->getNumberOfBoards(),
-                'numLBMItems' => $lbmCanvasRepo->getNumberOfCanvasItems(),
-
-                'numSMBoards' => $smCanvasRepo->getNumberOfBoards(),
-                'numSMItems' => $smCanvasRepo->getNumberOfCanvasItems(),
-
-                'numSQBoards' => $sqCanvasRepo->getNumberOfBoards(),
-                'numSQItems' => $sqCanvasRepo->getNumberOfCanvasItems(),
-
-
-                */
-
-
 
             );
 

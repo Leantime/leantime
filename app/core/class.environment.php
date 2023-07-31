@@ -85,6 +85,8 @@ class environment
     public bool $useRedis;
     public string $redisURL;
 
+    public ?string $plugins;
+
     public function __construct(\leantime\core\config $defaultConfiguration)
     {
         $this->dotenv = \Dotenv\Dotenv::createImmutable(ROOT . "/../config");
@@ -192,6 +194,8 @@ class environment
         if($this->useRedis) {
             $this->redisURL = $this->getString('LEAN_REDIS_URL', '');
         }
+
+        $this->plugins = $this->getString('LEAN_PLUGINS', '');
     }
 
     private function getBool(string $envVar, bool $default): bool
@@ -199,7 +203,7 @@ class environment
         return $this->environmentHelper($envVar, $default, 'boolean');
     }
 
-    private function getString(string $envVar, string $default): string
+    private function getString(string $envVar, string $default = ''): string
     {
         return $this->environmentHelper($envVar, $default, 'string');
     }
