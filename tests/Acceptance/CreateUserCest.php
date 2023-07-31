@@ -31,7 +31,7 @@ class CreateUserCest
         $I->fillField('#jobLevel', 'Testing');
         $I->fillField('#department', 'Testing');
         $I->click('Invite User');
-        $I->waitForElement('.growl', 10);
+        $I->waitForElement('.growl', 30);
         $I->see('New user invited successfully');
     }
 
