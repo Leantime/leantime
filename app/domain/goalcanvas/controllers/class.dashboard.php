@@ -18,19 +18,21 @@ namespace leantime\domain\controllers {
          */
         protected const CANVAS_NAME = 'goal';
 
-        private $canvasRepo;
         private \leantime\domain\services\projects $projectService;
         private \leantime\domain\services\goalcanvas $goalService;
+        private object $canvasRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init()
-        {
+        public function init(
+            \leantime\domain\services\projects $projectService,
+            \leantime\domain\services\goalcanvas $goalService
+        ) {
+            $this->projectService = $projectService;
+            $this->goalService = $goalService;
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
-            $this->canvasRepo = new $canvasRepoName();
-            $this->projectService = new \leantime\domain\services\projects();
-            $this->goalService = new \leantime\domain\services\goalcanvas();
+            $this->canvasRepo = app()->make($canvasRepoName);
         }
 
         /**
@@ -40,7 +42,6 @@ namespace leantime\domain\controllers {
          */
         public function run()
         {
-
             $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
             //Create default canvas.
@@ -153,8 +154,8 @@ namespace leantime\domain\controllers {
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
                         $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
-                        $mailer = new \leantime\core\mailer();
-                        $this->projectService = new \leantime\domain\services\projects();
+                        $mailer = app()->make(\leantime\core\mailer::class);
+                        $this->projectService = app()->make(\leantime\domain\services\projects::class);
                         $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
                         $mailer->setSubject($this->language->__('notification.board_created'));
@@ -168,7 +169,7 @@ namespace leantime\domain\controllers {
                         $mailer->setHtml($message);
 
                         // New queuing messaging system
-                        $queue = new queue();
+                        $queue = app()->make(queue::class);
                         $queue->queueMessageToUsers(
                             $users,
                             $message,
@@ -252,7 +253,7 @@ namespace leantime\domain\controllers {
 
                     $status = move_uploaded_file($_FILES['canvasfile']['tmp_name'], $uploadfile);
                     if ($status) {
-                        $services = new services\canvas();
+                        $services = app()->make(services\canvas::class);
                         $importCanvasId = $services->import(
                             $uploadfile,
                             static::CANVAS_NAME . 'canvas',
@@ -266,8 +267,8 @@ namespace leantime\domain\controllers {
                             $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
                             $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
 
-                            $mailer = new core\mailer();
-                            $this->projectService = new services\projects();
+                            $mailer = app()->make(core\mailer::class);
+                            $this->projectService = app()->make(services\projects::class);
                             $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
                             $canvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
                             $mailer->setSubject($this->language->__('notification.board_imported'));
@@ -281,7 +282,7 @@ namespace leantime\domain\controllers {
                             $mailer->setHtml($message);
 
                             // New queuing messaging system
-                            $queue = new QueueRepo();
+                            $queue = app()->make(QueueRepo::class);
                             $queue->queueMessageToUsers(
                                 $users,
                                 $message,

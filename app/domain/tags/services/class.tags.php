@@ -10,15 +10,18 @@ namespace leantime\domain\services {
 
     class tags
     {
-        private $projectRepository;
-        private $ticketRepository;
-        private $canvasRepository;
+        private repositories\projects $projectRepository;
+        private repositories\canvas $ticketRepository;
+        private repositories\tickets $canvasRepository;
 
-        public function __construct()
-        {
-            $this->projectRepository = new repositories\projects();
-            $this->canvasRepository = new repositories\canvas();
-            $this->ticketRepository = new repositories\tickets();
+        public function __construct(
+            repositories\projects $projectRepository,
+            repositories\canvas $canvasRepository,
+            repositories\tickets $ticketRepository
+        ) {
+            $this->projectRepository = $projectRepository;
+            $this->canvasRepository = $canvasRepository;
+            $this->ticketRepository = $ticketRepository;
         }
 
         public function getTags(int $projectId, string $term): array

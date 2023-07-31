@@ -10,17 +10,16 @@ namespace leantime\domain\controllers {
 
     class delSprint extends controller
     {
-        private $sprintRepo;
+        private repositories\sprints $sprintRepo;
 
         /**
          * init - initialize private variables
          *
          * @access private
          */
-        public function init()
+        public function init(repositories\sprints $sprintRepo)
         {
-
-            $this->sprintRepo = new repositories\sprints();
+            $this->sprintRepo = $sprintRepo;
         }
 
         /**

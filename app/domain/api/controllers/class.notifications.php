@@ -18,10 +18,9 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\notifications $notificationsService)
         {
-
-            $this->notificationsService = new services\notifications();
+            $this->notificationsService = $notificationsService;
         }
 
 
@@ -57,8 +56,7 @@ namespace leantime\domain\controllers {
         public function patch($params)
         {
             if (isset($params['action']) && $params['action'] == "read") {
-                $notificationService = new services\notifications();
-                $notificationService->markNotificationRead($params['id'], $_SESSION['userdata']['id']);
+                $this->notificationService->markNotificationRead($params['id'], $_SESSION['userdata']['id']);
             }
         }
 

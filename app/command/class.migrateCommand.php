@@ -48,7 +48,7 @@ class migrateCommand extends Command
         define('BASE_URL', "");
         define('CURRENT_URL', "");
 
-        $install = new install();
+        $install = app()->make(install::class);
         $io = new SymfonyStyle($input, $output);
         $silent = $input->getOption("silent") === "true";
         try {
@@ -94,7 +94,7 @@ class migrateCommand extends Command
                     return Command::FAILURE;
                 }
                 if ($silent) {
-                    $usersRepo = new users();
+                    $usersRepo = app()->make(users::class);
                     $userId = array_values($usersRepo->getUserByEmail($adminEmail))[0];
                     $usersRepo->deleteUser($userId);
                 }

@@ -13,11 +13,10 @@ namespace leantime\domain\controllers {
     {
         private services\plugins $pluginService;
 
-
-        public function init()
+        public function init(services\plugins $pluginService)
         {
             auth::authOrRedirect([roles::$owner, roles::$admin]);
-            $this->pluginService = new services\plugins();
+            $this->pluginService = $pluginService;
         }
 
         /**

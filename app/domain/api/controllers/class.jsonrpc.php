@@ -184,7 +184,7 @@ class jsonrpc extends controller
 
         // can be null
         try {
-            $method_response = (new $serviceName())->$methodName(...$preparedParams);
+            $method_response = app()->make($serviceName)->$methodName(...$preparedParams);
         } catch (Error $e) {
             $this->returnServerError($e);
         }

@@ -24,15 +24,20 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projectRepo = new repositories\projects();
-            $this->menuRepo = new repositories\menu();
-            $this->userRepo = new repositories\users();
-            $this->clientsRepo = new repositories\clients();
-            $this->queueRepo = new repositories\queue();
-            $this->projectService = new services\projects();
+        public function init(
+            repositories\projects $projectRepo,
+            repositories\menu $menuRepo,
+            repositories\users $userRepo,
+            repositories\clients $clientsRepo,
+            repositories\queue $queueRepo,
+            services\projects $projectService
+        ) {
+            $this->projectRepo = $projectRepo;
+            $this->menuRepo = $menuRepo;
+            $this->userRepo = $userRepo;
+            $this->clientsRepo = $clientsRepo;
+            $this->queueRepo = $queueRepo;
+            $this->projectService = $projectService;
         }
 
         /**
@@ -82,8 +87,7 @@ namespace leantime\domain\controllers {
                 }
 
 
-                $mailer = new core\mailer();
-
+                $mailer = app()->make(core\mailer::class);
 
                 $values = array(
                     'name' => $_POST['name'],

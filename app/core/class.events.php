@@ -121,7 +121,7 @@ class events
 
         $enabledPlugins = [];
         if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
-            $pluginService = new \leantime\domain\services\plugins();
+            $pluginService = app()->make(\leantime\domain\services\plugins::class);
             $enabledPlugins = $pluginService->getEnabledPlugins();
         }
 

@@ -8,18 +8,21 @@ namespace leantime\domain\controllers {
 
     class showAllMilestones extends controller
     {
-        private $projectService;
-        private $ticketService;
-        private $sprintService;
-        private $timesheetService;
+        private services\projects $projectService;
+        private services\tickets $ticketService;
+        private services\sprints $sprintService;
+        private services\timesheets $timesheetService;
 
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->sprintService = new services\sprints();
-            $this->timesheetService = new services\timesheets();
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\sprints $sprintService,
+            services\timesheets $timesheetService
+        ) {
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->sprintService = $sprintService;
+            $this->timesheetService = $timesheetService;
 
             $_SESSION['lastPage'] = CURRENT_URL;
         }

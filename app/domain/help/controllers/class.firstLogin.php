@@ -40,12 +40,12 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-            $settingsRepo = new \leantime\domain\repositories\setting();
+            $settingsRepo = app()->make(\leantime\domain\repositories\setting::class);
 
             if (isset($_POST['step']) && $_POST['step'] == 1) {
 
                 if (isset($_POST['projectname'])) {
-                    $projectService = new projects();
+                    $projectService = app()->make(projects::class);
                     $projectService->patch($_SESSION['currentProject'], array("name" => $_POST['projectname']));
                     $projectService->changeCurrentSessionProject($_SESSION['currentProject']);
                 }
@@ -59,8 +59,7 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['theme'])) {
                     $postTheme = htmlentities($_POST['theme']);
 
-
-                    $themeCore = new theme();
+                    $themeCore = app()->make(theme::class);
 
                     //Only save if it is actually available.
                     //Should not be an issue unless some shenanigans is happening
@@ -78,9 +77,8 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 3) {
-                $userService = new \leantime\domain\services\users();
-                $projectsRepo = new \leantime\domain\repositories\projects();
-
+                $userService = app()->make(\leantime\domain\services\users::class);
+                $projectsRepo = app()->make(\leantime\domain\repositories\projects::class);
 
                 for ($i = 1; $i <= 3; $i++) {
                     if (isset($_POST['email' . $i]) && $_POST['email' . $i] != '') {

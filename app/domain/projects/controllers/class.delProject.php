@@ -19,11 +19,10 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\projects $projectRepo, services\projects $projectService)
         {
-
-            $this->projectRepo = new repositories\projects();
-            $this->projectService = new services\projects();
+            $this->projectRepo = $projectRepo;
+            $this->projectService = $projectService;
         }
 
         /**

@@ -3,7 +3,7 @@
 
     $appSettings = $this->get('appSettings');
     $debugRenderer = $this->get('debugRenderer');
-    $themeCore = new \leantime\core\theme();
+    $themeCore = app()->make(\leantime\core\theme::class);
     $theme = $this->get('theme');
 ?>
 

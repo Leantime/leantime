@@ -59,13 +59,12 @@ namespace leantime\domain\controllers\canvas {
          * init
          */
 
-        public function init()
+        public function init(\leantime\core\environment $config)
         {
-
-            $this->config = \leantime\core\environment::getInstance();
+            $this->config = $config;
 
             $canvasRepoName = "\\leantime\\domain\\repositories\\" . static::CANVAS_NAME . static::CANVAS_TYPE;
-            $this->canvasRepo = new $canvasRepoName();
+            $this->canvasRepo = app()->make($canvasRepoName);
 
             $this->paperSize = $this->language->__('language.pagesize');
             $this->paperSize = ($this->paperSize === 'language.pagesize' ? self::PDF_A4 : $this->paperSize);
@@ -140,7 +139,7 @@ namespace leantime\domain\controllers\canvas {
             !empty($canvasAry) || throw new \Exception("Cannot find canvas with id '$id'");
             $projectId = $canvasAry[0]['projectId'];
             $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
-            $projectsRepo = new repositories\projects();
+            $projectsRepo = app()->make(repositories\projects::class);
             $projectAry = $projectsRepo->getProject($projectId);
             !empty($projectAry) || throw new \Exception("Cannot retrieve project id '$projectId'");
 

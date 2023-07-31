@@ -4,18 +4,6 @@ namespace leantime\core;
 
 class environment
 {
-    private static $instance = null;
-
-    public static function getInstance(): static
-    {
-
-        if (self::$instance === null) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
     public \Dotenv\Dotenv $dotenv;
 
     public ?object $yaml;
@@ -80,28 +68,25 @@ class environment
 
     public string $ldapUri;
     public bool $oidcEnable;
-    public string $oidcProviderUrl;
-    public string $oidcClientId;
-    public string $oidcClientSecret;
-    public string $oidcAuthUrl;
-    public string $oidcTokenUrl;
-    public string $oidcJwksUrl;
-    public string $oidcUserInfoUrl;
-    public string $oidcCertificateString;
-    public string $oidcCertificateFile;
-    public string $oidcScopes;
-    public string $oidcFieldEmail;
-    public string $oidcFieldFirstName;
-    public string $oidcFieldLastName;
+    public string $oidcProviderUrl = '';
+    public string $oidcClientId = '';
+    public string $oidcClientSecret = '';
+    public string $oidcAuthUrl = '';
+    public string $oidcTokenUrl = '';
+    public string $oidcJwksUrl = '';
+    public string $oidcUserInfoUrl = '';
+    public string $oidcCertificateString = '';
+    public string $oidcCertificateFile = '';
+    public string $oidcScopes = '';
+    public string $oidcFieldEmail = '';
+    public string $oidcFieldFirstName = '';
+    public string $oidcFieldLastName = '';
 
     public bool $useRedis;
     public string $redisURL;
 
-    private function __construct()
+    public function __construct(\leantime\core\config $defaultConfiguration)
     {
-
-        $defaultConfiguration = new \leantime\core\config();
-
         $this->dotenv = \Dotenv\Dotenv::createImmutable(ROOT . "/../config");
         $this->dotenv->safeLoad();
 
@@ -272,5 +257,10 @@ class environment
         } else {
             return null;
         }
+    }
+
+    public function getConfig(string $key): mixed
+    {
+        return property_exists($this, $key) ? $this->$key : null;
     }
 }

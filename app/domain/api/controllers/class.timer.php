@@ -8,7 +8,7 @@ namespace leantime\domain\controllers {
 
     class timer extends controller
     {
-        private $timesheetService;
+        private services\timesheets $timesheetService;
 
         /**
          * init - initialize private variables
@@ -16,12 +16,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\timesheets $timesheetService)
         {
-
-            $this->timesheetService = new services\timesheets();
+            $this->timesheetService = $timesheetService;
         }
-
 
         /**
          *

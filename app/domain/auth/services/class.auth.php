@@ -116,14 +116,12 @@ namespace leantime\domain\services {
          */
         public $hasher;
 
-        private static $instance = null;
-
         /*
          * How often can a user reset a password before it has to be changed
          */
         public $pwResetLimit = 5;
 
-        private $config;
+        private core\environment $config;
         public core\language $language;
         public repositories\setting $settingsRepo;
         public repositories\auth $authRepo;
@@ -135,26 +133,22 @@ namespace leantime\domain\services {
          * @param  $sessionid
          * @throws Exception
          */
-        protected function __construct($sessionid)
-        {
-            $this->config = \leantime\core\environment::getInstance();
+        public function __construct(
+            core\environment $config,
+            core\session $session,
+            core\language $language,
+            repositories\setting $settingsRepo,
+            repositories\auth $authRepo,
+            repositories\users $userRepo
+        ) {
+            $this->config = $config;
+            $this->session = $session->getSID();
+            $this->language = $language;
+            $this->settingsRepo = $settingsRepo;
+            $this->authRepo = $authRepo;
+            $this->userRepo = $userRepo;
+
             $this->cookieTime = $this->config->sessionExpiration;
-            $this->language = core\language::getInstance();
-            $this->settingsRepo = new repositories\setting();
-            $this->authRepo = new repositories\auth();
-            $this->userRepo = new repositories\users();
-
-            $this->session = $sessionid;
-        }
-
-        public static function getInstance($sessionid = "")
-        {
-
-            if (self::$instance === null) {
-                self::$instance = new self($sessionid);
-            }
-
-            return self::$instance;
         }
 
         /**
@@ -207,7 +201,7 @@ namespace leantime\domain\services {
             ////C: update users from the identity provider
             //Try Ldap
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
-                $ldap = new ldap();
+                $ldap = app()->make(ldap::class);
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
                     //Update username to include domain
@@ -226,9 +220,12 @@ namespace leantime\domain\services {
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
                             'lastname' => $ldapUser['lastname'],
-                            'phone' => $ldapUser['phonenumber'],
+                            'phone' => $ldapUser['phone'],
                             'user' => $ldapUser['user'],
                             'role' => $ldapUser['role'],
+                            'department' => $ldapUser['department'],
+                            'jobTitle'  => $ldapUser['jobTitle'],
+                            'jobLevel'  => $ldapUser['jobLevel'],
                             'password' => '',
                             'clientId' => '',
                             'source' => 'ldap',
@@ -248,8 +245,11 @@ namespace leantime\domain\services {
                     } else {
                         $user['firstname'] = $ldapUser['firstname'];
                         $user['lastname'] = $ldapUser['lastname'];
-                        $user['phone'] = $ldapUser['phonenumber'];
+                        $user['phone'] = $ldapUser['phone'];
                         $user['user'] = $user['username'];
+                        $user['department'] = $ldapUser['department'];
+                        $user['jobTitle'] = $ldapUser['jobTitle'];
+                        $user['jobLevel']  = $ldapUser['jobLevel'];
 
                         $this->userRepo->editUser($user, $user['id']);
                     }
@@ -278,12 +278,12 @@ namespace leantime\domain\services {
             if ($user !== false && is_array($user)) {
                 $this->setUserSession($user);
 
-                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return true;
 
             } else {
 
-                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return false;
             }
 
@@ -431,7 +431,7 @@ namespace leantime\domain\services {
 
                     if ($result) {
                         //Don't queue, send right away
-                        $mailer = new core\mailer();
+                        $mailer = app()->make(core\mailer::class);
                         $mailer->setContext('password_reset');
                         $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
                         $actual_link = "" . BASE_URL . "/auth/resetPw/" . $resetLink;

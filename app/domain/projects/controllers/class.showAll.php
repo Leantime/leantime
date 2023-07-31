@@ -11,19 +11,20 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-        private $projectRepo;
-        private $menuRepo;
+        private repositories\projects $projectRepo;
+        private repositories\menu $menuRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projectRepo = new repositories\projects();
-            $this->menuRepo = new repositories\menu();
+        public function init(
+            repositories\projects $projectRepo,
+            repositories\menu $menuRepo
+        ) {
+            $this->projectRepo = $projectRepo;
+            $this->menuRepo = $menuRepo;
         }
 
         /**

@@ -10,7 +10,8 @@ namespace leantime\domain\controllers {
 
     class ideation extends controller
     {
-        private $projects;
+        private repositories\projects $projects;
+        private repositories\ideation $ideationAPIRepo;
 
         /**
          * constructor - initialize private variables
@@ -18,11 +19,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(repositories\projects $projects, repositories\ideation $ideationAPIRepo)
         {
-
-            $this->projects = new repositories\projects();
-            $this->ideationAPIRepo = new repositories\ideation();
+            $this->projects = $projects;
+            $this->ideationAPIRepo = $ideationAPIRepo;
         }
 
 

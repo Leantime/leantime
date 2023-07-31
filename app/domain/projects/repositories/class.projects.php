@@ -10,8 +10,8 @@ namespace leantime\domain\repositories {
 
     class projects
     {
-
         use core\eventhelpers;
+
         /**
          * @access public
          * @var    string
@@ -48,10 +48,12 @@ namespace leantime\domain\repositories {
          */
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
 
-        public function __construct()
-        {
-            $config = \leantime\core\environment::getInstance();
-            $this->db = core\db::getInstance();
+        public function __construct(
+            \leantime\core\environment $config,
+            \leantime\core\db $db
+        ) {
+            $this->config = $config;
+            $this->db = $db;
         }
 
 
@@ -774,7 +776,7 @@ namespace leantime\domain\repositories {
         public function isUserAssignedToProject($userId, $projectId)
         {
 
-            $userRepo = new users();
+            $userRepo = app()->make(users::class);
             $user = $userRepo->getUser($userId);
 
             if ($user === false) {
@@ -831,7 +833,7 @@ namespace leantime\domain\repositories {
         public function isUserMemberOfProject($userId, $projectId)
         {
 
-            $userRepo = new users();
+            $userRepo = app()->make(users::class);
             $user = $userRepo->getUser($userId);
 
             if ($user === false) {
@@ -1060,7 +1062,7 @@ namespace leantime\domain\repositories {
 
             $project = $this->getProject($id);
 
-            $files = new files();
+            $files = app()->make(files::class);
 
             if (isset($values['profileId']) && $values['profileId'] > 0) {
                 $file = $files->getFile($values['profileId']);
@@ -1102,7 +1104,7 @@ namespace leantime\domain\repositories {
 
             if ($value !== false && $value['avatar'] != '') {
 
-                $files = new files();
+                $files = app()->make(files::class);
                 $file = $files->getFile($value['avatar']);
 
                 if ($file) {

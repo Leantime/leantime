@@ -15,20 +15,24 @@ namespace leantime\core {
 
         public $dbVersion = "2.1.21";
 
+        protected environment $config;
+
         /**
          * __construct
          *
          */
-        public function __construct()
+        public function __construct(environment $config)
         {
+            $this->config = $config;
         }
 
         /**
          * loadSettings - load all appSettings and set ini
          *
          */
-        public function loadSettings(environment $config)
+        public function loadSettings(environment $config = null)
         {
+            $config = $config ?? $this->config;
 
             if ($config->defaultTimezone != '') {
                 date_default_timezone_set($config->defaultTimezone);
@@ -44,7 +48,7 @@ namespace leantime\core {
                 ini_set('display_errors', 0);
             }
 
-            if($config->useRedis !== false) {
+            if ($config->useRedis !== false) {
                 ini_set('session.save_handler', 'redis');
                 ini_set('session.save_path', $config->redisURL);
             }
@@ -58,12 +62,11 @@ namespace leantime\core {
 
             ini_set("log_errors", 1);
 
-            if($config->logPath != '' && $config->logPath != 'null') {
+            if ($config->logPath != '' && $config->logPath != 'null') {
                 ini_set('error_log', $config->logPath);
-            }else{
-                ini_set('error_log', APP_ROOT."/logs/error.log");
+            } else {
+                ini_set('error_log', APP_ROOT . "/logs/error.log");
             }
-
         }
 
         public function getRequestURI($baseURL = "")

@@ -21,15 +21,19 @@ namespace leantime\core {
 
         private environment $config;
         private appSettings $settings;
+        private language $language;
         private array|false $iniData;
 
         /**
          * __construct - Constructor
          */
-        public function __construct()
-        {
-            $this->config = environment::getInstance();
-            $this->settings = new appSettings();
+        public function __construct(
+            environment $config,
+            appSettings $settings,
+            array $iniData = []
+        ) {
+            $this->config = $config;
+            $this->settings = $settings;
             $this->iniData = [];
         }
 
@@ -90,8 +94,7 @@ namespace leantime\core {
                 throw new Exception("Selected theme '$id' does not exist");
             }
 
-            if (isset($_SESSION["userdata"]["id"])) {
-                $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"] = $id;
+            if (isset($_SESSION["userdata"]["id"])) {                $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"] = $id;
             }
 
             $_SESSION['usersettings.theme'] = $id;
@@ -114,31 +117,37 @@ namespace leantime\core {
          */
         public function getAll(): array
         {
+            $language = app()->make(language::class);
+            $theme = $this->getActive();
 
-            $language = language::getInstance();
-            $themeRoot = ROOT . '/theme/';
-            $themeAll = [];
-            $themeAll[static::DEFAULT] = 'theme.' . static::DEFAULT . '.name';
-
-            $themeDirs = opendir($themeRoot);
-            while (($theme = readdir($themeDirs)) !== false) {
-                if (
-                    $theme !== 'sample' && is_dir(ROOT . '/theme/' . $theme) &&
-                        file_exists(ROOT . '/theme/' . $theme . '/' . static::DEFAULT_INI . '.ini')
-                ) {
-                    $iniData = parse_ini_file(ROOT . '/theme/' . $theme . '/' . static::DEFAULT_INI . '.ini', true, INI_SCANNER_TYPED);
-                    if (isset($iniData['name'][$language->getCurrentLanguage()])) {
-                        $themeAll[$theme] = $iniData['name'][$language->getCurrentLanguage()];
-                    } elseif (isset($iniData['name']['en-US'])) {
-                        $themeAll[$theme] = $iniData['name']['en-US'];
-                    } else {
-                        $themeAll[$theme] = $language->__("theme.$theme.name");
-                    }
+            $themes = [];
+            foreach (opendir(ROOT . '/theme') as $themeDir) {
+                if ($themeDir == $theme) {
+                    $themes[$themeDir] = $language->__("theme.name");
+                    continue;
                 }
+
+                $language_file = ROOT
+                    . '/theme/'
+                    . $theme
+                    . '/language/'
+                    . $language->getCurrentLanguage();
+
+                if (! file_exists($language_file)) {
+                    $themes[$themeDir] = $themeDir;
+                    continue;
+                }
+
+                $iniData = parse_ini_file(
+                    $language_file,
+                    true,
+                    INT_SCANNER_TYPE
+                );
+
+                $themes[$themeDir] = $iniData['theme']['name'];
             }
 
-            closedir($themeDirs);
-            return $themeAll;
+            return $themes;
         }
 
         /**
@@ -295,9 +304,8 @@ namespace leantime\core {
          */
         public function getName(): string
         {
-
             // Make sure we get the current language
-            $language = language::getInstance();
+            $language = app()->make(language::class);
 
             if (empty($this->iniData)) {
                 try {

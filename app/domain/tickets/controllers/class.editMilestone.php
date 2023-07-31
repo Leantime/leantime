@@ -12,11 +12,11 @@ namespace leantime\domain\controllers {
 
     class editMilestone extends controller
     {
-        private $ticketService;
-        private $ticketRepo;
-        private $projectRepo;
-        private $commentsService;
-        private $projectService;
+        private services\tickets $ticketService;
+        private services\comments $commentsService;
+        private services\projects $projectService;
+        private repositories\tickets $ticketRepo;
+        private repositories\projects $projectRepo;
 
         /**
          * init - initialize private variables
@@ -24,14 +24,18 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
-            $this->ticketService = new services\tickets();
-            $this->ticketRepo = new repositories\tickets();
-            $this->projectRepo = new repositories\projects();
-            $this->commentsService = new services\comments();
-            $this->projectService = new services\projects();
+        public function init(
+            services\tickets $ticketService,
+            services\comments $commentsService,
+            services\projects $projectService,
+            repositories\tickets $ticketRepo,
+            repositories\projects $projectRepo
+        ) {
+            $this->ticketService = $ticketService;
+            $this->commentsService = $commentsService;
+            $this->projectService = $projectService;
+            $this->ticketRepo = $ticketRepo;
+            $this->projectRepo = $projectRepo;
         }
 
         /**
@@ -67,7 +71,7 @@ namespace leantime\domain\controllers {
 
                 $comments = $this->commentsService->getComments('ticket', $params['id']);
             } else {
-                $milestone = new models\tickets();
+                $milestone = app()->make(models\tickets::class);
                 $milestone->status = 3;
 
                 $today = new DateTime();
@@ -124,7 +128,7 @@ namespace leantime\domain\controllers {
                         $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), $_SESSION["userdata"]["name"]);
 
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
                             "text" => $this->language->__("email_notifications.new_comment_milestone_cta")
@@ -152,7 +156,7 @@ namespace leantime\domain\controllers {
                         $actual_link = BASE_URL . "/tickets/editMilestone/" . (int)$_GET['id'];
                         $message = sprintf($this->language->__("email_notifications.milestone_update_message"), $_SESSION["userdata"]["name"]);
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
                             "text" => $this->language->__("email_notifications.milestone_update_cta")
@@ -186,7 +190,7 @@ namespace leantime\domain\controllers {
                     $actual_link = BASE_URL . "/tickets/editMilestone/" . $result;
                     $message = sprintf($this->language->__("email_notifications.milestone_created_message"), $_SESSION["userdata"]["name"]);
 
-                    $notification = new models\notifications\notification();
+                    $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
                         "text" => $this->language->__("email_notifications.milestone_created_cta")

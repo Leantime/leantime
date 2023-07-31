@@ -15,15 +15,14 @@ namespace leantime\domain\controllers {
 
     class importGCal extends controller
     {
-        private $calendarRepo;
+        private repositories\calendar $calendarRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(repositories\calendar $calendarRepo)
         {
-
-            $this->calendarRepo = new repositories\calendar();
+            $this->calendarRepo = $calendarRepo;
         }
 
         /**

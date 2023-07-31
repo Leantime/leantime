@@ -11,7 +11,6 @@ namespace leantime\domain\controllers {
     class sessions extends controller
     {
         private services\users $usersService;
-
         private repositories\menu $menu;
 
         /**
@@ -20,13 +19,11 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\users $usersService, repositories\menu $menu)
         {
-
-            $this->usersService = new services\users();
-            $this->menu = new repositories\menu();
+            $this->usersService = $usersService;
+            $this->menu = $menu;
         }
-
 
         /**
          *

@@ -17,10 +17,9 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\install $installRepo)
         {
-
-            $this->installRepo = new repositories\install();
+            $this->installRepo = $installRepo;
 
             if ($this->installRepo->checkIfInstalled()) {
                 core\frontcontroller::redirect(BASE_URL);

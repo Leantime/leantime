@@ -15,7 +15,7 @@ namespace leantime\domain\controllers {
 
     class show extends controller
     {
-
+        private services\connector\providers $providerService;
 
         /**
          * constructor - initialize private variables
@@ -23,12 +23,10 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
+        public function init(services\connector\providers $projectService)
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
-            $this->providerService = new services\connector\providers();
-
-
+            $this->providerService = $projectService;
         }
 
         /**
@@ -39,8 +37,6 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
-
-
             $providers = $this->providerService->getProviders();
 
             $this->tpl->assign("providers", $providers);
