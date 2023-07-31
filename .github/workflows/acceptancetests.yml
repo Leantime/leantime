@@ -17,13 +17,9 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '17'
-        cache: maven
 
     - uses: browser-actions/setup-chrome@latest
     - run: chrome --version
-
-    - name: Build with Maven
-      run: mvn -B clean test
 
     - name: Run Acceptance Tests
       run: |
