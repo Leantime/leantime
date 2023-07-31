@@ -535,3 +535,6 @@
 [29-Jul-2023 14:33:43 America/Los_Angeles] PHP Warning:  Undefined array key "jobTitle" in /Users/josephroberts/localdev/leantime/app/domain/users/repositories/class.users.php on line 543
 [29-Jul-2023 14:33:43 America/Los_Angeles] PHP Warning:  Undefined array key "jobLevel" in /Users/josephroberts/localdev/leantime/app/domain/users/repositories/class.users.php on line 544
 [29-Jul-2023 14:33:43 America/Los_Angeles] PHP Warning:  Undefined array key "department" in /Users/josephroberts/localdev/leantime/app/domain/users/repositories/class.users.php on line 545
+[31-Jul-2023 14:32:20 America/Los_Angeles] PHP Warning:  Undefined array key "" in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 95
+[31-Jul-2023 14:32:20 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 95
+[31-Jul-2023 14:32:20 America/Los_Angeles] PHP Warning:  Undefined property: leantime\domain\models\tickets::$editTo in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 287
