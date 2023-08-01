@@ -41,7 +41,7 @@ class TicketsCest
         $I->amOnPage('/tickets/showKanban#/tickets/showTicket/10');
         $I->waitForElementClickable('.nyroModalCont .mce-content-body', 60);
         $I->click('.mce-content-body');
-        $I->waitForElement('.ticketDescription_ifr', 60);
+        $I->waitForElement('#ticketDescription_ifr', 60);
         $I->click('#ticketDescription_ifr');
         $I->type('Test Description Edited');
         $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 30);
