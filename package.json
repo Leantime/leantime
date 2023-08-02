@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "2.3.27",
+  "version": "2.4",
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
@@ -63,6 +63,6 @@
     "Lean"
   ],
   "author": "Marcel Folaron",
-  "license": "GPL-2.0",
+  "license": "AGPL-3.0",
   "homepage": "https://github.com/Leantime/leantime/blob/master/README.md"
 }
