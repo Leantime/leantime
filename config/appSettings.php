@@ -10,7 +10,7 @@ namespace leantime\core;
  */
 class appSettings
 {
-    public $appVersion = "2.3.27";
+    public $appVersion = "2.4";
 
     public $dbVersion = "2.1.21";
 
@@ -70,7 +70,6 @@ class appSettings
 
     public function getRequestURI($baseURL = "")
     {
-
         //$_SERVER['REQUEST_URI'] will include the subfolder if one is set. Let's make sure to take it out
         if ($baseURL != "") {
             $trimmedBaseURL = rtrim($baseURL, "/");

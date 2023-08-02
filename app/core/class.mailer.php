@@ -12,7 +12,7 @@ use leantime\core\eventhelpers;
  *
  * @author  Marcel Folaron <marcel.folaron@gmail.com>
  * @version 1.0
- * @license GNU/GPL, see license.txt
+ * @license GNU/AGPL-3.0, see license.txt
  * @package leantime
  * @subpackage core
  */
