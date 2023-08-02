@@ -64,10 +64,9 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
             if (isset($_POST['username']) === true && isset($_POST['password']) === true) {
-
-                if(isset($_POST['redirectUrl'])) {
+                if (isset($_POST['redirectUrl'])) {
                     $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
-                }else{
+                } else {
                     $redirectUrl = "";
                 }
 

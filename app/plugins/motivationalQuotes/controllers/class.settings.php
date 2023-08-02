@@ -1,28 +1,44 @@
 <?php
 
-namespace leantime\plugins\controllers {
+namespace leantime\plugins\controllers;
 
-    use leantime\core;
-    use leantime\core\controller;
+use leantime\core;
+use leantime\core\controller;
 
-
-    class settings extends controller
+/**
+ * Settings Controller for Motivational Quotes Plugin
+ *
+ * @package    leantime
+ * @subpackage plugins
+ */
+class settings extends controller
+{
+    /**
+     * init
+     *
+     * @return void
+     */
+    public function init(): void
     {
-        public function init()
-        {
-        }
+    }
 
-        /**
-         * @return void
-         */
-        public function get()
-        {
+    /**
+     * get
+     *
+     * @return void
+     */
+    public function get(): void
+    {
+        $this->tpl->display("motivationalQuotes.settings");
+    }
 
-            $this->tpl->display("motivationalQuotes.settings");
-        }
-
-        public function post($params)
-        {
-        }
+    /**
+     * post
+     *
+     * @param array $params
+     * @return void
+     */
+    public function post(array $params): void
+    {
     }
 }

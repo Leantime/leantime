@@ -60,7 +60,7 @@ namespace leantime\domain\services {
                     'thedate' => $message['thedate'],
                     'subject' => $message['subject'],
                     'message' => $message['message'],
-                    'projectId' => $message['projectId']
+                    'projectId' => $message['projectId'],
                 );
                 // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
                 // and here we need to group the messages in an array to know which messages are grouped to group-delete them

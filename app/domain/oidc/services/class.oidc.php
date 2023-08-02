@@ -62,30 +62,34 @@ class oidc
         $this->fieldLastName = $this->config->getConfig('oidcFieldLastName');
     }
 
-    private function trimTrailingSlash(string $str): string {
-        $almost = strlen($str)-1;
+    private function trimTrailingSlash(string $str): string
+    {
+        $almost = strlen($str) - 1;
         if ($str[$almost] == '/') {
             return substr($str, 0, $almost);
         }
         return $str;
     }
 
-    public function buildLoginUrl(): string {
+    public function buildLoginUrl(): string
+    {
         return $this->getAuthUrl() . '?' . http_build_query([
             'client_id' => $this->clientId,
             'redirect_uri' => $this->buildRedirectUrl(),
             'response_type' => 'code',
             'scope' => $this->scopes,
-            'state' => $this->generateState()
+            'state' => $this->generateState(),
         ]);
     }
 
-    private function getAuthUrl(): string {
+    private function getAuthUrl(): string
+    {
         $this->loadEndpoints();
         return $this->authUrl;
     }
 
-    public function callback(string $code, string $state) {
+    public function callback(string $code, string $state)
+    {
         if (!$this->verifyState($state)) {
             $this->displayError('oidc.error.invalidState');
         }
@@ -96,7 +100,7 @@ class oidc
         //echo '<pre>' . print_r($tokens, true) . '</pre>';
         if (isset($tokens['id_token'])) {
             $userInfo = $this->decodeJWT($tokens['id_token']);
-        } else if (isset($tokens['access_token'])) {
+        } elseif (isset($tokens['access_token'])) {
             //falback to OAuth userinfo endpoint
             $userInfo = $this->pollUserInfo($tokens['access_token']);
         } else {
@@ -111,11 +115,13 @@ class oidc
         }
     }
 
-    private function pollUserInfo(string $token): array {
+    private function pollUserInfo(string $token): array
+    {
         return $this->getMultiUrl($this->userInfoUrl, $token);
     }
 
-    private function login(array $userInfo): void {
+    private function login(array $userInfo): void
+    {
         // echo '<pre>' . print_r($idToken, true) . '</pre>';
         // return;
         $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
@@ -137,7 +143,7 @@ class oidc
                 'password' => '',
                 'clientId' => '',
                 'source' => 'oidc',
-                'status' => 'a'
+                'status' => 'a',
             ];
             $userId = $this->userRepo->addUser($userArray);
 
@@ -162,11 +168,13 @@ class oidc
         frontcontroller::redirect(BASE_URL . "/dashboard/home");
     }
 
-    private function getUserRole(array $userInfo, array $user = []): string {
+    private function getUserRole(array $userInfo, array $user = []): string
+    {
         return $user['role'] ?? 'reader';
     }
 
-    private function requestTokens(string $code): array {
+    private function requestTokens(string $code): array
+    {
         $httpClient = new Client();
         $response = $httpClient->post($this->getTokenUrl(), [
             'form_params' => [
@@ -174,8 +182,8 @@ class oidc
                 'code' => $code,
                 'redirect_uri' => $this->buildRedirectUrl(),
                 'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret
-            ]
+                'client_secret' => $this->clientSecret,
+            ],
         ]);
         $headerArray = [];
         foreach ($response->getHeaders() as $header => $values) {
@@ -193,7 +201,8 @@ class oidc
         }
     }
 
-    private function readMultilayerKey(array $topic, string $key): string {
+    private function readMultilayerKey(array $topic, string $key): string
+    {
         $keyList = explode('.', $key);
         $layer = $topic;
         foreach ($keyList as $layerKey) {
@@ -205,7 +214,8 @@ class oidc
         return $layer;
     }
 
-    private function decodeJWT(string $jwt): array|null {
+    private function decodeJWT(string $jwt): array|null
+    {
         list($header, $content, $signature) = explode('.', $jwt);
 
         $tokenData = json_decode($this->decodeBase64Url($content), true);
@@ -226,20 +236,21 @@ class oidc
 
         $data = $header . '.' . $content;
 
-        if(openssl_verify($data, $this->decodeBase64Url($signature), $key, $this->getAlgorythm($header)) === 1) {
+        if (openssl_verify($data, $this->decodeBase64Url($signature), $key, $this->getAlgorythm($header)) === 1) {
             return $tokenData;
         }
         return null;
     }
 
-    private function getAlgorythm(string $header): int {
+    private function getAlgorythm(string $header): int
+    {
         $algorythmName = json_decode($this->decodeBase64Url($header), true)['alg'];
 
         $map = [
-            'RS256' => OPENSSL_ALGO_SHA256
+            'RS256' => OPENSSL_ALGO_SHA256,
         ];
 
-        if(!isset($map[$algorythmName])) {
+        if (!isset($map[$algorythmName])) {
             $this->displayError("oidc.error.unsupportedAlgorythm", $algorythmName);
         }
 
@@ -247,11 +258,12 @@ class oidc
         return $map[$algorythmName];
     }
 
-    private function getPublicKey(string $kid): \OpenSSLAsymmetricKey {
-        if($this->certificateString) {
+    private function getPublicKey(string $kid): \OpenSSLAsymmetricKey
+    {
+        if ($this->certificateString) {
             return openssl_pkey_get_public($this->certificateString);
         }
-        if($this->certificateFile) {
+        if ($this->certificateFile) {
             return openssl_pkey_get_public(file_get_contents($this->certificateFile));
         }
 
@@ -260,30 +272,28 @@ class oidc
         $httpClient = new Client();
         $response = $httpClient->get($this->getJwksUrl());
         $keys = json_decode($response->getBody()->getContents(), true);
-        if(isset($keys['keys'])) {
+        if (isset($keys['keys'])) {
             $keys = $keys['keys'];
         }
 
-        foreach($keys as $possibleKid => $key) {
+        foreach ($keys as $possibleKid => $key) {
             $keySource = '';
 
-            if(is_string($possibleKid)) {
+            if (is_string($possibleKid)) {
                 //old format like https://www.googleapis.com/oauth2/v1/certs
-                if($possibleKid == $kid) {
+                if ($possibleKid == $kid) {
                     $keySource = $key;
                 }
-            }
-            else if(!isset($kid[0]) || $kid == $key['kid']) {
+            } elseif (!isset($kid[0]) || $kid == $key['kid']) {
                 $keySource = '';
-                if(isset($key['x5c'])) {
-                    $keySource = '-----BEGIN CERTIFICATE-----' . PHP_EOL . chunk_split( $key['x5c'][0], 64, PHP_EOL) . '-----END CERTIFICATE-----';
-                }
-                else if(isset($key['n'])) {
+                if (isset($key['x5c'])) {
+                    $keySource = '-----BEGIN CERTIFICATE-----' . PHP_EOL . chunk_split($key['x5c'][0], 64, PHP_EOL) . '-----END CERTIFICATE-----';
+                } elseif (isset($key['n'])) {
                     $this->displayError('oidc.error.unsupportedKeyFormat');
                 }
             }
 
-            if($keySource) {
+            if ($keySource) {
                 return openssl_pkey_get_public($keySource);
             }
         }
@@ -291,24 +301,27 @@ class oidc
         return false;
     }
 
-    private function getJwksUrl(): string {
+    private function getJwksUrl(): string
+    {
         $this->loadEndpoints();
         return $this->jwksUrl;
     }
 
-    private function getTokenUrl(): string {
+    private function getTokenUrl(): string
+    {
         $this->loadEndpoints();
         return $this->tokenUrl;
     }
 
-    private function loadEndpoints(): void {
+    private function loadEndpoints(): void
+    {
 
 
-        if($this->configLoaded) {
+        if ($this->configLoaded) {
             return;
         }
 
-        if($this->authUrl && $this->tokenUrl && $this->jwksUrl) {
+        if ($this->authUrl && $this->tokenUrl && $this->jwksUrl) {
             $this->configLoaded = true;
             return;
         }
@@ -319,69 +332,76 @@ class oidc
 
         //load all not yet defined endpoints from well-known configuration
 
-        if(!$this->authUrl) {
+        if (!$this->authUrl) {
             $this->authUrl = $endpoints['authorization_endpoint'];
         }
 
-        if(!$this->tokenUrl) {
+        if (!$this->tokenUrl) {
             $this->tokenUrl = $endpoints['token_endpoint'];
         }
 
-        if(!$this->jwksUrl) {
+        if (!$this->jwksUrl) {
             $this->jwksUrl = $endpoints['jwks_uri'];
         }
 
-        if(!$this->userInfoUrl) {
+        if (!$this->userInfoUrl) {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
     }
 
-    private function getMultiUrl(string $urls, string $token = ''): array {
+    private function getMultiUrl(string $urls, string $token = ''): array
+    {
         $urlList = explode(',', $urls);
         $httpClient = new Client();
         $combinedArray = [];
 
         $options = [];
-        if($token) {
+        if ($token) {
             $options = [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $token
-                ]
+                    'Authorization' => 'Bearer ' . $token,
+                ],
             ];
         }
 
         foreach ($urlList as $url) {
             $response = $httpClient->get($url, $options);
             $urlData = json_decode($response->getBody()->getContents(), true);
-            if(is_array($urlData)) {
+            if (is_array($urlData)) {
                 $combinedArray = array_merge_recursive($combinedArray, $urlData);
             }
         }
         return $combinedArray;
     }
 
-    private function buildRedirectUrl(): string {
+    private function buildRedirectUrl(): string
+    {
         return $this->trimTrailingSlash(BASE_URL) . '/oidc/callback';
     }
 
-    private function generateState(): string {
+    private function generateState(): string
+    {
         return bin2hex(random_bytes(16));
     }
 
-    private function verifyState(string $state): bool {
+    private function verifyState(string $state): bool
+    {
         //TODO
         return true;
     }
 
-    private function encodeBase64Url(string $value): string {
-        return strtr(base64_encode($value),'+/', '-_');
+    private function encodeBase64Url(string $value): string
+    {
+        return strtr(base64_encode($value), '+/', '-_');
     }
 
-    private function decodeBase64Url(string $value): string {
+    private function decodeBase64Url(string $value): string
+    {
         return base64_decode(strtr($value, '-_', '+/'));
     }
 
-    private function displayError(string $translationKey, string ...$values): void {
+    private function displayError(string $translationKey, string ...$values): void
+    {
         die(sprintf($this->language->__($translationKey), ...$values));
     }
 }

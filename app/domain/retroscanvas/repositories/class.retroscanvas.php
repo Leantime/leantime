@@ -28,9 +28,9 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            'well'       => [ 'icon' => 'fa-circle-check', 'title' => 'box.retros.continue' ],
-            'notwell'    => [ 'icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing' ],
-            'startdoing' => [ 'icon' => 'fa-circle-plus',  'title' => 'box.retros.start_doing' ]
+            'well'       => ['icon' => 'fa-circle-check', 'title' => 'box.retros.continue'],
+            'notwell'    => ['icon' => 'fa-circle-xmark', 'title' => 'box.retros.stop_doing'],
+            'startdoing' => ['icon' => 'fa-circle-plus',  'title' => 'box.retros.start_doing'],
         ];
 
         /**
@@ -40,9 +40,9 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $dataLabels = [
-            1 => [ 'title' => 'label.description', 'field' => 'conclusion',  'active' => true ],
-            2 => [ 'title' => 'label.data',        'field' => 'data',        'active' => false ],
-            3 => [ 'title' => 'label.assumptions', 'field' => 'assumptions', 'active' => false ]
+            1 => ['title' => 'label.description', 'field' => 'conclusion',  'active' => true],
+            2 => ['title' => 'label.data',        'field' => 'data',        'active' => false],
+            3 => ['title' => 'label.assumptions', 'field' => 'assumptions', 'active' => false],
         ];
 
         /**
@@ -51,7 +51,7 @@ namespace leantime\domain\repositories {
          * @acces protected
          * @var   array
          */
-        protected array $statusLabels = [ ];
+        protected array $statusLabels = [];
 
 
         protected array $relatesLabels = [];

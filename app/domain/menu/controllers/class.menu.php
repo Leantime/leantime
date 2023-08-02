@@ -34,7 +34,6 @@ namespace leantime\domain\controllers {
             $recentProjects = array();
 
             if (isset($_SESSION['userdata'])) {
-
                 $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(
                     $_SESSION['userdata']['id'],
                     'open'
@@ -54,7 +53,7 @@ namespace leantime\domain\controllers {
                 $recent = $this->settingSvc->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
                 $recentArr = unserialize($recent);
 
-                if(is_array($recentArr) && is_array($allAvailableProjects)) {
+                if (is_array($recentArr) && is_array($allAvailableProjects)) {
                     $availableProjectColumn = array_column($allAvailableProjects, 'id');
                     foreach ($recentArr as $recentItem) {
                         $found_key = array_search($recentItem, $availableProjectColumn);
@@ -77,13 +76,13 @@ namespace leantime\domain\controllers {
                     ? $project['type']
                     : "project";
 
-                if($projectType != '' && $projectType != 'project') {
+                if ($projectType != '' && $projectType != 'project') {
                     $menuType = $projectType;
                 }
 
-                if($project !== false && isset($project["clientId"])) {
+                if ($project !== false && isset($project["clientId"])) {
                     $this->tpl->assign('currentClient', $project["clientId"]);
-                }else{
+                } else {
                     $this->tpl->assign('currentClient', '');
                 }
             } else {

@@ -20,7 +20,7 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var int
+         * @var integer
          */
         public $id;
 
@@ -86,7 +86,7 @@ namespace leantime\domain\repositories {
             20117,
             20118,
             20120,
-            20121
+            20121,
         );
 
         /**
@@ -140,7 +140,7 @@ namespace leantime\domain\repositories {
          * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
          *
          * @access public
-         * @return bool
+         * @return boolean
          */
         public function checkIfInstalled()
         {
@@ -182,9 +182,9 @@ namespace leantime\domain\repositories {
         /**
          * setupDB installs database
          *
-         * @param array     $values Form values for admin user and company information
+         * @param array $values Form values for admin user and company information
          * @access public
-         * @return bool | string
+         * @return boolean | string
          */
         public function setupDB(array $values)
         {
@@ -222,7 +222,7 @@ namespace leantime\domain\repositories {
          * updateDB main entry point to update the db based on version number. Executes all missing db update scripts
          *
          * @access public
-         * @return bool|array
+         * @return boolean|array
          */
         public function updateDB()
         {
@@ -465,7 +465,7 @@ namespace leantime\domain\repositories {
                   PRIMARY KEY (`id`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is your first project to get you started</p>',0,'0',0,NULL, '". repositories\menu::DEFAULT_MENU . "',NULL);
+                insert  into `zp_projects`(`id`,`name`,`clientId`,`details`,`state`,`hourBudget`,`dollarBudget`,`active`, `menuType`, `psettings`) values (3,'Leantime Onboarding',1,'<p>This is your first project to get you started</p>',0,'0',0,NULL, '" . repositories\menu::DEFAULT_MENU . "',NULL);
 
                 CREATE TABLE `zp_punch_clock` (
                   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -794,7 +794,7 @@ namespace leantime\domain\repositories {
          * - converts 255 index to be smaller
          *
          * @access public
-         * @return bool|array
+         * @return boolean|array
          */
         private function update_sql_20004()
         {
@@ -835,7 +835,7 @@ namespace leantime\domain\repositories {
                 "ALTER TABLE `zp_relationuserproject` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_calendar` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
                 "ALTER TABLE `zp_read` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-                "ALTER TABLE `zp_wiki` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+                "ALTER TABLE `zp_wiki` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
             );
 
             foreach ($sql as $statement) {
@@ -940,7 +940,7 @@ namespace leantime\domain\repositories {
 
             $sql = array(
                 "ALTER TABLE `zp_user` add COLUMN `twoFAEnabled` tinyint(1) DEFAULT '0'",
-                "ALTER TABLE `zp_user` add COLUMN `twoFASecret` varchar(200) DEFAULT NULL"
+                "ALTER TABLE `zp_user` add COLUMN `twoFASecret` varchar(200) DEFAULT NULL",
             );
 
             foreach ($sql as $statement) {
@@ -965,7 +965,7 @@ namespace leantime\domain\repositories {
 
             $sql = array(
                 "ALTER TABLE `zp_tickets` CHANGE COLUMN `planHours` `planHours` FLOAT NULL DEFAULT NULL",
-                "ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL"
+                "ALTER TABLE `zp_tickets` CHANGE COLUMN `hourRemaining` `hourRemaining` FLOAT NULL DEFAULT NULL",
             );
 
             foreach ($sql as $statement) {
@@ -1041,7 +1041,7 @@ namespace leantime\domain\repositories {
             $errors = array();
 
             $sql = array(
-                "ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL"
+                "ALTER TABLE `zp_user` ADD COLUMN `source` varchar(200) DEFAULT NULL",
             );
 
             foreach ($sql as $statement) {
@@ -1065,7 +1065,7 @@ namespace leantime\domain\repositories {
             $errors = array();
 
             $sql = array(
-                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')"
+                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.telemetry.active', 'true')",
             );
 
             foreach ($sql as $statement) {
@@ -1091,7 +1091,7 @@ namespace leantime\domain\repositories {
             $sql = array(
                 "alter table zp_relationuserproject add `projectRole` varchar(20) null",
                 "create index zp_relationuserproject_projectId_index on zp_relationuserproject (projectId)",
-                "create index zp_relationuserproject_userId_index on zp_relationuserproject (userId)"
+                "create index zp_relationuserproject_userId_index on zp_relationuserproject (userId)",
             );
 
             foreach ($sql as $statement) {
@@ -1115,7 +1115,8 @@ namespace leantime\domain\repositories {
 
             $errors = array();
 
-            $sql = array("CREATE TABLE IF NOT EXISTS `zp_queue` (
+            $sql = array(
+            "CREATE TABLE IF NOT EXISTS `zp_queue` (
                                `msghash` varchar(50) NOT NULL,
                                 `channel` varchar(255),
                                `userId` int(11) NOT NULL,
@@ -1126,7 +1127,7 @@ namespace leantime\domain\repositories {
                                PRIMARY KEY (`msghash`),
                                KEY `projectId` (`projectId`),
                                KEY `userId` (`userId`)
-			   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+			   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
             );
 
             foreach ($sql as $statement) {
@@ -1150,7 +1151,8 @@ namespace leantime\domain\repositories {
 
             $errors = array();
 
-            $sql = array("alter table zp_canvas_items add tags text null",
+            $sql = array(
+            "alter table zp_canvas_items add tags text null",
                 "alter table zp_canvas_items add title varchar(255) null",
                 "alter table zp_canvas_items add parent int null",
                 "alter table zp_canvas_items add featured int null",
@@ -1167,7 +1169,7 @@ namespace leantime\domain\repositories {
                     constraint zp_approvals_pk
                         primary key (id)
                 )",
-                "alter table zp_comment add status varchar(50) null"
+                "alter table zp_comment add status varchar(50) null",
             );
 
             foreach ($sql as $statement) {
@@ -1208,7 +1210,7 @@ namespace leantime\domain\repositories {
                 "SET zp_canvas_items.status = 'valid' WHERE zp_canvas_items.status = 'sucess' AND zp_canvas.type = 'leancanvas'",
                 "UPDATE zp_canvas_items INNER JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.id " .
                 "SET zp_canvas_items.status = 'invalid' WHERE zp_canvas_items.status = 'info' AND zp_canvas.type = 'leancanvas'",
-                "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'"
+                "UPDATE zp_canvas SET zp_canvas.type = 'retroscanvas' WHERE zp_canvas.type = 'retrospective'",
             ];
 
             foreach ($sql as $statement) {
@@ -1269,7 +1271,7 @@ namespace leantime\domain\repositories {
                   INDEX `userId` (`userId` ASC),
                   INDEX `userId,datetime` (`userId` ASC, `datetime` DESC),
                   INDEX `userId,read` (`userId` ASC, `read` DESC)
-                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
+                  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;",
             ];
 
             foreach ($sql as $statement) {
@@ -1301,7 +1303,7 @@ namespace leantime\domain\repositories {
             $errors = array();
 
             $sql = [
-                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.completedOnboarding', 'true') ON DUPLICATE KEY UPDATE `value` = 'true'"
+                "INSERT INTO zp_settings (`key`, `value`) VALUES ('companysettings.completedOnboarding', 'true') ON DUPLICATE KEY UPDATE `value` = 'true'",
             ];
 
             foreach ($sql as $statement) {
@@ -1331,7 +1333,7 @@ namespace leantime\domain\repositories {
                 ADD COLUMN `start` DATETIME NULL,
                 ADD COLUMN `end` DATETIME NULL,
                 ADD COLUMN `created` DATETIME NULL,
-                ADD COLUMN `modified` DATETIME NULL"
+                ADD COLUMN `modified` DATETIME NULL",
             ];
 
             foreach ($sql as $statement) {
@@ -1408,7 +1410,7 @@ namespace leantime\domain\repositories {
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
                 "ALTER TABLE `zp_projects`
                 ADD COLUMN `avatar` MEDIUMTEXT NULL AFTER `modified`,
-                ADD COLUMN `cover` MEDIUMTEXT NULL AFTER `avatar`;"
+                ADD COLUMN `cover` MEDIUMTEXT NULL AFTER `avatar`;",
 
             ];
 
@@ -1443,7 +1445,7 @@ namespace leantime\domain\repositories {
                 "ALTER TABLE `zp_user`
                 ADD COLUMN `jobTitle` VARCHAR(200) NULL ,
                 ADD COLUMN `jobLevel` VARCHAR(50) NULL ,
-                ADD COLUMN `department` VARCHAR(200) NULL ;"
+                ADD COLUMN `department` VARCHAR(200) NULL ;",
 
             ];
 

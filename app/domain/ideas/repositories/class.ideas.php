@@ -31,7 +31,7 @@ namespace leantime\domain\repositories {
             "prototype" => "status.delivering",
             "validation" => "status.inreview",
             "implemented" => "status.accepted",
-            "deferred" => "status.deferred"
+            "deferred" => "status.deferred",
         );
 
         public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
@@ -77,7 +77,7 @@ namespace leantime\domain\repositories {
                 foreach ($this->canvasTypes as $key => $label) {
                     $labels[$key] = array(
                         "name" => $this->language->__($label),
-                        "class" => $this->statusClasses[$key]
+                        "class" => $this->statusClasses[$key],
                     );
                 }
 
@@ -85,7 +85,7 @@ namespace leantime\domain\repositories {
                     foreach (unserialize($values['value']) as $key => $label) {
                         $labels[$key] = array(
                             "name" => $label,
-                            "class" => $this->statusClasses[$key]
+                            "class" => $this->statusClasses[$key],
                         );
                     }
                 }
@@ -561,6 +561,5 @@ namespace leantime\domain\repositories {
 
             return true;
         }
-
     }
 }

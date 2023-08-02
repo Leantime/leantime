@@ -68,7 +68,7 @@ class messengers
 
             $data = array(
                 'text'        => '',
-                'attachments' => $message
+                'attachments' => $message,
             );
 
             $data_string = json_encode($data);
@@ -76,7 +76,7 @@ class messengers
             try {
                 $this->httpClient->post($slackWebhookURL, [
                     'body' => $data_string,
-                    'headers' => [ 'Content-Type' => 'application/json' ]
+                    'headers' => ['Content-Type' => 'application/json'],
                 ]);
 
                 return true;
@@ -107,14 +107,14 @@ class messengers
                 'username' => "Leantime",
                 "icon_url" => '',
                 'text' => '',
-                'attachments' => $message
+                'attachments' => $message,
             );
 
             $data_string = json_encode($data);
 
             try {
                 $this->httpClient->post($mattermostWebhookURL, [
-                    'body' => $data_string
+                    'body' => $data_string,
                 ]);
 
                 return true;
@@ -154,7 +154,7 @@ class messengers
                 "type" => "stream",
                 "to" => $zulipWebhook['zulipStream'],
                 "topic" => $zulipWebhook['zulipTopic'],
-                'content' => $prepareChatMessage
+                'content' => $prepareChatMessage,
             );
 
             $curlUrl = $botURL . '?' . http_build_query($data);
@@ -164,11 +164,11 @@ class messengers
             try {
                 $this->httpClient->post($curlUrl, [
                     'body' => $data_string,
-                    'headers' => [ 'Content-Type' => 'application/json' ],
+                    'headers' => ['Content-Type' => 'application/json'],
                     'auth' => [
                         $botEmail,
-                        $botKey
-                    ]
+                        $botKey,
+                    ],
                 ]);
 
                 return true;
@@ -234,18 +234,18 @@ class messengers
                             ],
                             'author' => [
                                 'name' =>  $this->projectName,
-                                'url' => $url_link
+                                'url' => $url_link,
                             ],
                             'fields' => $fields,
-                        ]
-                    ]
+                        ],
+                    ],
 
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
                 try {
                     $response = $this->httpClient->post($discordWebhookURL, [
                         'body' => $data_string,
-                        'headers' => [ 'Content-Type' => 'application/json' ]
+                        'headers' => ['Content-Type' => 'application/json'],
                     ]);
                 } catch (\GuzzleHttp\Exception\GuzzleException $e) {
                     error_log($e);
@@ -266,7 +266,8 @@ class messengers
             $prepareChatMessage .= " <" . $notification->url['url'] . "|" . $notification->url['text'] . ">";
         }
 
-        $message = array([
+        $message = array(
+        [
             'fallback' => $notification->subject,
             'pretext'  => $notification->subject,
             'color'    => '#1b75bb',
@@ -274,10 +275,11 @@ class messengers
                 [
                     'title' => $this->language->__("headlines.project_with_name") . " " . $this->projectName,
                     'value' => $prepareChatMessage,
-                    'short' => false
-                ]
-            )
-        ]);
+                    'short' => false,
+                ],
+            ),
+        ],
+        );
 
         return $message;
     }

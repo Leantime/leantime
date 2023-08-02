@@ -50,7 +50,7 @@ namespace leantime\domain\services {
                     $notification = app()->make(notification::class);
                     $notification->url = array(
                         "url" => CURRENT_URL,
-                        "text" => $linkLabel
+                        "text" => $linkLabel,
                     );
 
                     $notification->entity = $file;

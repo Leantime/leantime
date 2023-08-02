@@ -63,15 +63,12 @@ namespace leantime\domain\controllers {
 
                 //Initiate connection
                 if (isset($params["step"])  && $params["step"] == "connect") {
-
                     //This should handle connection UI
                     $provider->connect();
-
                 }
 
                 //Choose Entities to sync
                 if (isset($params["step"])  && $params["step"] == "entity") {
-
                     $this->tpl->assign("providerEntities", $provider->getEntities());
                     $this->tpl->assign("leantimeEntities", $this->leantimeEntities->availableLeantimeEntities);
 
@@ -82,16 +79,15 @@ namespace leantime\domain\controllers {
                 //Choose fields to map
                 //Choose Entities to sync
                 if (isset($params["step"])  && $params["step"] == "fields") {
-
                     $entity = $_POST['leantimeEntities'];
                     $currentIntegration->entity = $entity;
 
                     $this->integrationService->patch($currentIntegration->id, array("entity" => $entity));
 
                     //TODO UI to show field picker/mapper
-                    if(isset($currentIntegration->fields) && $currentIntegration->fields != '') {
+                    if (isset($currentIntegration->fields) && $currentIntegration->fields != '') {
                         $this->tpl->assign("providerFields", explode(",", $currentIntegration->fields));
-                    }else{
+                    } else {
                         $this->tpl->assign("providerFields", $provider->getFields());
                     }
                     $this->tpl->assign("leantimeFields", $this->leantimeEntities->availableLeantimeEntities[$entity]['fields']);
@@ -118,11 +114,8 @@ namespace leantime\domain\controllers {
                 if (!isset($params["step"])) {
                     $this->tpl->display('connector.newIntegration');
                 }
-
             }
         }
-
-
     }
 
 }

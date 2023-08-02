@@ -16,7 +16,7 @@ namespace leantime\domain\controllers {
          * htmlList - Layout element list / Lightweight Business Model
          *
          * @access protected
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @return string HTML code
          */
         protected function htmlList(array $recordsAry): string
@@ -24,7 +24,7 @@ namespace leantime\domain\controllers {
 
             // Adjust status of record (only stakeholders have a status)
             foreach ($recordsAry as $key => $data) {
-                if (!in_array($data['box'], [ 'sb_st_design', 'sb_st_decision', 'sb_st_experts', 'sb_st_support' ])) {
+                if (!in_array($data['box'], ['sb_st_design', 'sb_st_decision', 'sb_st_experts', 'sb_st_support'])) {
                     $recordsAry[$key]['status'] = '';
                 }
             }
@@ -46,14 +46,14 @@ namespace leantime\domain\controllers {
          * reportGenerate - Generate report for module  / Porter's Startegy Questions
          *
          * @access public
-         * @param  int    $id     Canvas identifier
-         * @param  string $filter Filter value
+         * @param  integer $id     Canvas identifier
+         * @param  string  $filter Filter value
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string
         {
 
-            $options = [ 'canvasShow' => false ];
+            $options = ['canvasShow' => false];
             return parent::reportGenerate($id, $filter, $options);
         }
     }

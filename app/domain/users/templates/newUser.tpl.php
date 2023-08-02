@@ -102,8 +102,8 @@ $projects = $this->get('relations');
                 <?php } ?>
                 <?php foreach ($this->get('clients') as $client) : ?>
                     <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
-                    ?>selected="selected"<?php
-                    endif; ?>><?php $this->e($client['name']) ?></option>
+                        ?>selected="selected"<?php
+                                   endif; ?>><?php $this->e($client['name']) ?></option>
                 <?php endforeach; ?>
             </select><br/>
             <br/>

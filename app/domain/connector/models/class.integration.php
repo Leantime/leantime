@@ -4,7 +4,6 @@ namespace leantime\domain\models\connector {
 
     class integration
     {
-
         #[DbColumn(type: "int")]
         public int $id;
 

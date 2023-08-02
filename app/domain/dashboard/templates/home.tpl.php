@@ -36,7 +36,7 @@
                     <?php
                         echo"<div class='pull-right' style='max-width:200px; padding:20px'>";
                         echo"<div  style='width:100%' class='svgContainer'>";
-                        echo file_get_contents(ROOT . "/dist/images/svg/".$this->get("randomImage"));
+                        echo file_get_contents(ROOT . "/dist/images/svg/" . $this->get("randomImage"));
                         echo"</div></div>";
 
                     ?>
@@ -217,7 +217,7 @@
 
                                                         <?php } ?>
                                                         <small><?=$this->e($row['projectName']) ?></small><br />
-                                                        <?php if($row['dependingTicketId'] > 0){ ?>
+                                                        <?php if ($row['dependingTicketId'] > 0) { ?>
                                                             <a href="<?=BASE_URL?>/dashboard/home/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a> //
                                                         <?php } ?>
                                                         <strong><a href="<?=BASE_URL ?>/dashboard/home/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
@@ -369,10 +369,10 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-4" style="text-align:right">
-                                                    <?php if($project['status'] !== null && $project['status'] != ''){?>
-                                                        <span class="label label-<?php $this->e($project['status'])?>"><?=$this->__("label.project_status_".$project['status']) ?></span><br />
+                                                    <?php if ($project['status'] !== null && $project['status'] != '') {?>
+                                                        <span class="label label-<?php $this->e($project['status'])?>"><?=$this->__("label.project_status_" . $project['status']) ?></span><br />
 
-                                                    <?php }else{ ?>
+                                                    <?php } else { ?>
                                                         <span class="label label-grey"><?=$this->__("label.no_status")?></span><br />
                                                     <?php } ?>
 
@@ -479,7 +479,6 @@
 
        <?php
         if ($this->get('completedOnboarding') == "1" && (isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0)) {  ?>
-
             leantime.helperController.showHelperModal("dashboard", 500, 700);
 
              <?php
@@ -533,7 +532,7 @@
             enitityType: "ticket",
             <?php endif; ?>
         },
-        <?php endforeach; ?>];
+                  <?php endforeach; ?>];
 
 
 

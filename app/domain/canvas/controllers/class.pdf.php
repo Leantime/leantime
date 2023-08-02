@@ -299,7 +299,7 @@ namespace leantime\domain\controllers\canvas {
          * htmlCanvas -  Layout canvas (must be implemented)
          *
          * @access public
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @return string HTML code
          */
         protected function htmlCanvas(array $recordsAry): string
@@ -312,7 +312,7 @@ namespace leantime\domain\controllers\canvas {
          * htmlList - Layout element list (must be implemented)
          *
          * @access public
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @return string HTML code
          */
         protected function htmlList(array $recordsAry): string
@@ -325,7 +325,7 @@ namespace leantime\domain\controllers\canvas {
          * htmlListCompact - Layout element list in a compact form
          *
          * @access public
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @return string HTML code
          */
         protected function htmlListCompact(array $recordsAry): string
@@ -343,7 +343,7 @@ namespace leantime\domain\controllers\canvas {
          * htmlListDetailed - Layout element list in a detailed form
          *
          * @access public
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @return string HTML code
          */
         protected function htmlListDetailed(array $recordsAry): string
@@ -390,12 +390,12 @@ namespace leantime\domain\controllers\canvas {
                     'roboto' => [
                         'R' => 'Roboto-Regular.ttf',
                         'I' => 'Roboto-Italic.ttf',
-                        'B' => 'Roboto-Bold.ttf'
+                        'B' => 'Roboto-Bold.ttf',
                     ],
                     'robotocondensed' => [
                         'R' => 'RobotoCondensed-Regular.ttf',
                         'I' => 'RobotoCondensed-Italic.ttf',
-                        'B' => 'RobotoCondensed-Bold.ttf'
+                        'B' => 'RobotoCondensed-Bold.ttf',
                     ],
                     'fontawesome' => [
                         'R' => 'fa-solid-900.ttf',
@@ -403,7 +403,7 @@ namespace leantime\domain\controllers\canvas {
                 ],
                 'default_font' => 'roboto',
                 'orientation' => $this->params['canvasOrientation'],
-                'format' => $this->params['canvasSize']
+                'format' => $this->params['canvasSize'],
             ]);
 
             $mpdf->autoPageBreak = false;
@@ -480,7 +480,7 @@ namespace leantime\domain\controllers\canvas {
          *
          * @access protected
          * @param  string $projectTitle Project title
-         * @param  string $moduleTitle Module title
+         * @param  string $moduleTitle  Module title
          * @return string HTML code
          */
         protected function htmlHeader(string $projectTitle, string $moduleTitle): string
@@ -563,8 +563,8 @@ namespace leantime\domain\controllers\canvas {
          * htmlIcon - Type set specific icon from fontawsome font
          *
          * @access protected
-         * @param  string $icon     FontAwesome name of icon
-         * @param  int    $fontSize Optional: Font size, or 0 if not font size adjustment
+         * @param  string  $icon     FontAwesome name of icon
+         * @param  integer $fontSize Optional: Font size, or 0 if not font size adjustment
          * @return string HTML code
          */
         protected function htmlIcon(string $icon, int $fontSize = 0): string
@@ -695,7 +695,7 @@ namespace leantime\domain\controllers\canvas {
          * htmlCanvasElements - Typeset data of element box in canvas
          *
          * @access protected
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */
@@ -742,7 +742,7 @@ namespace leantime\domain\controllers\canvas {
          * htmlListElementsDetailed - Typeset data of element box in canvas
          *
          * @access protected
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */
@@ -813,7 +813,7 @@ namespace leantime\domain\controllers\canvas {
          * htmlListElementsCompact - Typeset data of element box in canvas in short form
          *
          * @access protected
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @para,  string $box        Identifier of elements/box to display
          * @return string HTML code
          */

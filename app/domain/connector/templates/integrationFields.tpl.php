@@ -34,15 +34,17 @@
             </tr>
             </thead>
             <tbody>
-                <?php foreach($providerFields as $key => $entity){?>
+                <?php foreach ($providerFields as $key => $entity) {?>
                     <tr>
                         <td><?=$entity ?> </td>
                         <td>
                             <select name="field_<?=md5($entity)?>">
-                                <?php foreach($leantimeFields as $key => $fields){?>
+                                <?php foreach ($leantimeFields as $key => $fields) {?>
                                     <option value="<?=$key ?>"
                                         <?php
-                                        if($entity == $fields['name']) echo" selected='selected' ";
+                                        if ($entity == $fields['name']) {
+                                            echo" selected='selected' ";
+                                        }
                                         ?>
                                     ><?=$fields['name'] ?></option>
                                 <?php } ?>

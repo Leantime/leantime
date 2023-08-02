@@ -7,7 +7,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\models;
-    use \leantime\core\eventhelpers;
+    use leantime\core\eventhelpers;
 
     class userInvite extends controller
     {

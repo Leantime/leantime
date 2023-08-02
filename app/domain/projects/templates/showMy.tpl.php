@@ -17,11 +17,11 @@
                 <span class="dropdown dropdownWrapper">
                 <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
                     <?php
-                        if($currentClientName != ''){
-                            $this->e($currentClientName);
-                        }else{
-                            echo $this->__("headline.all_clients");
-                        }
+                    if ($currentClientName != '') {
+                        $this->e($currentClientName);
+                    } else {
+                        echo $this->__("headline.all_clients");
+                    }
                     ?>
                     <i class="fa fa-caret-down"></i>
                 </a>
@@ -29,7 +29,7 @@
                 <ul class="dropdown-menu">
                     <li><a href="<?=BASE_URL . "/projects/showMy" ?>"><?=$this->__("headline.all_clients"); ?></a></li>
                     <?php foreach ($clients as $key => $value) {
-                        echo "<li><a href='" . BASE_URL . "/projects/showMy?client=".$key."'>".$this->escape($value)."</a></li>";
+                        echo "<li><a href='" . BASE_URL . "/projects/showMy?client=" . $key . "'>" . $this->escape($value) . "</a></li>";
                     }
                     ?>
                 </ul>
@@ -105,10 +105,10 @@
                                     </h4>
                                     </div>
                                     <div class="col-md-4" style="text-align:right">
-                                        <?php if($project['status'] !== null && $project['status'] != ''){?>
-                                            <span class="label label-<?php $this->e($project['status'])?>"><?=$this->__("label.project_status_".$project['status']) ?></span><br />
+                                        <?php if ($project['status'] !== null && $project['status'] != '') {?>
+                                            <span class="label label-<?php $this->e($project['status'])?>"><?=$this->__("label.project_status_" . $project['status']) ?></span><br />
 
-                                        <?php }else{ ?>
+                                        <?php } else { ?>
                                             <span class="label label-grey"><?=$this->__("label.no_status")?></span><br />
                                         <?php } ?>
                                     </div>

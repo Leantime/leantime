@@ -7,6 +7,12 @@ use Psr\Container\ContainerInterface as PsrContainerContract;
 use leantime\domain\services;
 use leantime\domain\repositories;
 
+/**
+ * Bootloader
+ *
+ * @package leantime
+ * @subpackage core
+ */
 class Bootloader
 {
     use eventhelpers;
@@ -42,15 +48,16 @@ class Bootloader
         "calendar.ical",
         "oidc.login",
         "oidc.callback",
-        "cron.run"
+        "cron.run",
     );
 
     /**
      * Set the Bootloader instance
      *
      * @param \leantime\core\Bootloader $instance
+     * @return void
      */
-    public static function setInstance(?self $instance)
+    public static function setInstance(?self $instance): void
     {
         static::$instance = $instance;
     }
@@ -58,6 +65,7 @@ class Bootloader
     /**
      * Get the Bootloader instance
      *
+     * @param ?\Psr\Container\ContainerInterface $app
      * @return \leantime\core\Bootloader
      */
     public static function getInstance(?PsrContainerContract $app = null): self
@@ -68,7 +76,8 @@ class Bootloader
     /**
      * Constructor
      *
-     * @param \Illuminate\Contracts\Container\Container $app
+     * @param ?\Psr\Container\ContainerInterface $app
+     * @return self
      */
     public function __construct(?PsrContainerContract $app = null)
     {
@@ -193,7 +202,7 @@ class Bootloader
             'X-Frame-Options' => 'SAMEORIGIN',
             'X-XSS-Protection' => '1; mode=block',
             'X-Content-Type-Options' => 'nosniff',
-            'Access-Control-Allow-Origin' => BASE_URL
+            'Access-Control-Allow-Origin' => BASE_URL,
         ]);
 
         foreach ($headers as $key => $value) {
@@ -204,7 +213,7 @@ class Bootloader
     /**
      * Check if Leantime is installed
      *
-     * @return bool
+     * @return boolean
      */
     private function checkIfInstalled(): bool
     {
@@ -242,6 +251,11 @@ class Bootloader
         $_SESSION['isInstalled'] = true;
     }
 
+    /**
+     * Set uninstalled
+     *
+     * @return void
+     */
     private function setUninstalled(): void
     {
         $_SESSION['isInstalled'] = false;
@@ -251,6 +265,11 @@ class Bootloader
         }
     }
 
+    /**
+     * Redirect to install
+     *
+     * @return void
+     */
     private function redirectToInstall(): void
     {
         $frontController = $this->app->make(frontcontroller::class);
@@ -260,6 +279,11 @@ class Bootloader
         }
     }
 
+    /**
+     * Check if Leantime is updated
+     *
+     * @return boolean
+     */
     private function checkIfUpdated(): bool
     {
         $dbVersion = $this->app->make(repositories\setting::class)->getSetting('db-version');
@@ -348,7 +372,7 @@ class Bootloader
      * @param string $origin
      * @return void
      */
-    public function redirectWithOrigin($route, $origin): void
+    public function redirectWithOrigin(string $route, string $origin): void
     {
         $redirectURL = '';
         if (strlen($origin) > 1) {

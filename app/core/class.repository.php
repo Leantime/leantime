@@ -6,40 +6,59 @@ use PDO;
 use PDOStatement;
 use ReflectionProperty;
 
+/**
+ * repository
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 abstract class repository
 {
     use eventhelpers;
 
+    /**
+     * @var string
+     */
     protected string $entity;
+
+    /**
+     * @var string
+     */
     protected string $model;
 
-    protected function dbcall(array $args)
+    /**
+     * dbcall - creates a new dbcall object
+     *
+     * @param array $args - usually the value of func_get_args(), gives events/filters values to work with
+     * @return object
+     */
+    protected function dbcall(array $args): object
     {
         return new class ($args, $this) {
+            /**
+             * @var PDOStatement
+             */
             private PDOStatement $stmn;
 
             /**
              * @var array
-             * @access private
              */
             private array $args;
 
             /**
              * @var repository
-             * @access private
              */
             private repository $caller_class;
 
             /**
              * @var db
-             * @access private
              */
             private db $db;
 
             /**
              * constructor
              *
-             * @param array $args - usually the value of func_get_args(), gives events/filters values to work with
+             * @param array  $args         - usually the value of func_get_args(), gives events/filters values to work with
              * @param object $caller_class - the class object that was called
              */
             public function __construct(array $args, repository $caller_class)
@@ -53,7 +72,7 @@ abstract class repository
              * prepares sql for entry; wrapper for PDO\prepare()
              *
              * @param string $sql
-             * @param array $args - additional arguments to pass along to prepare function
+             * @param array  $args - additional arguments to pass along to prepare function
              */
             public function prepare($sql, $args = []): void
             {
@@ -70,9 +89,9 @@ abstract class repository
             /**
              * binds values for search/replace of sql; wrapper for PDO\bindValue()
              *
-             * @param string $needle - placeholder to replace
+             * @param string $needle  - placeholder to replace
              * @param string $replace - value to replace with
-             * @param mixed $type - type of value being replaced
+             * @param mixed  $type    - type of value being replaced
              */
             public function bindValue($needle, $replace, $type = PDO::PARAM_STR): void
             {
@@ -86,13 +105,22 @@ abstract class repository
                 $this->stmn->bindValue($needle, $replace, $type);
             }
 
-
-            public function lastInsertId()
+            /**
+             * executes the sql call - uses \PDO
+             * @return mixed
+             */
+            public function lastInsertId(): mixed
             {
-
                 return $this->db->database->lastInsertId();
             }
 
+            /**
+             * executes the sql call - uses \PDO
+             *
+             * @param string $fetchtype - the type of fetch to do (optional)
+             *
+             * @return mixed
+             */
             public function setFetchMode($mode, $class)
             {
                 return $this->stmn->setFetchMode($mode, $class);
@@ -155,9 +183,15 @@ abstract class repository
         };
     }
 
+    /**
+     * patch - updates a record in the database
+     *
+     * @param int   $id     - the id of the record to update
+     * @param array $params - the parameters to update
+     * @return bool
+     */
     public function patch(int $id, array $params): bool
     {
-
         if ($this->entity == '') {
             error_log("Patch not implemented for this entity");
             return false;
@@ -226,14 +260,23 @@ abstract class repository
 
         $call->execute();
 
-
         return $call->lastInsertId();
     }
 
+    /**
+     * delete - deletes a record from the database
+     *
+     * @param int $id - the id of the record to delete
+     */
     public function delete($id)
     {
     }
 
+    /**
+     * get - gets a record from the database
+     *
+     * @param int $id - the id of the record to get
+     */
     public function get($id)
     {
         if ($this->entity == '' || $this->model == '') {
@@ -261,17 +304,30 @@ abstract class repository
          $call->setFetchMode(PDO::FETCH_CLASS, $this->model);
 
          return $call->fetch();
-
     }
 
+    /**
+     * getAll - gets all records from the database
+     *
+     * @param int $id - the id of the record to get
+     * @todo - implement
+     */
     public function getAll($id)
     {
     }
 
+    /**
+     * getFieldAttribute - gets the field attribute for a given property
+     *
+     * @param string $class - the class to get the attribute from
+     * @param string $property - the property to get the attribute from
+     * @param bool $includeId - whether or not to include the id attribute
+     * @return array|false
+     */
     protected function getFieldAttribute($class, $property, $includeId = false): array|false
     {
         //Don't create or update id attributes
-        if($includeId === false && $property == "id") {
+        if ($includeId === false && $property == "id") {
             return false;
         }
 
@@ -288,21 +344,25 @@ abstract class repository
         return false;
     }
 
-    protected function getDbFields($class): array
+    /**
+     * getDbFields - gets the database fields for a given class
+     *
+     * @param object|string $class - the class to get the fields from
+     * @return array
+     */
+    protected function getDbFields(object|string $class): array
     {
-
         $property = new \ReflectionClass($class);
 
         $properties = $property->getProperties();
 
         $propertyArray = array();
-        foreach($properties as $property) {
-            if($this->getFieldAttribute($class, $property->getName(), true)){
+        foreach ($properties as $property) {
+            if ($this->getFieldAttribute($class, $property->getName(), true)) {
                 $propertyArray[] = $property->getName();
             }
         }
 
         return $propertyArray;
-
     }
 }

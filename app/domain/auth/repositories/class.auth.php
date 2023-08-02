@@ -11,13 +11,13 @@ namespace leantime\domain\repositories {
     {
         /**
          * @access private
-         * @var    int user id from DB
+         * @var    integer user id from DB
          */
         private $userId = null;
 
         /**
          * @access private
-         * @var    int user id from DB
+         * @var    integer user id from DB
          */
         private $clientId = null;
 
@@ -59,7 +59,7 @@ namespace leantime\domain\repositories {
 
         /**
          * @access private
-         * @var    bool $twoFAEnabled
+         * @var    boolean $twoFAEnabled
          */
         private $twoFAEnabled;
 
@@ -91,7 +91,7 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    int time for cookie
+         * @var    integer time for cookie
          */
         public $cookieTime;
 
@@ -143,7 +143,7 @@ namespace leantime\domain\repositories {
          * logout - destroy sessions and cookies
          *
          * @access private
-         * @return bool
+         * @return boolean
          */
         public function invalidateSession($sessionId)
         {
@@ -184,7 +184,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  $username
          * @param  $password
-         * @return bool
+         * @return boolean
          */
         public function getUserByLogin($username, $password): array|false
         {
@@ -198,7 +198,8 @@ namespace leantime\domain\repositories {
             return false;
         }
 
-        public function getUserByEmail($username): array|false {
+        public function getUserByEmail($username): array|false
+        {
             return $this->userRepo->getUserByEmail($username);
         }
 
@@ -242,7 +243,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param
-         * @return bool
+         * @return boolean
          */
         public function validateResetLink($hash)
         {
@@ -268,7 +269,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param
-         * @return array|bool
+         * @return array|boolean
          */
         public function getUserByInviteLink($hash)
         {

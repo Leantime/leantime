@@ -239,9 +239,9 @@ namespace leantime\domain\services {
 
                         $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
                                     'form_params' => [
-                                        'telemetry' => $data_string
+                                        'telemetry' => $data_string,
                                     ],
-                                    'timeout' => 5
+                                    'timeout' => 5,
                                 ])->then(function ($response) use ($today) {
 
                                     $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
@@ -322,7 +322,7 @@ namespace leantime\domain\services {
                 'numEABoards' => 0,
                 'numEAItems' => 0,
 
-                'numINSIGHTSBoards' => 0
+                'numINSIGHTSBoards' => 0,
             );
 
             $telemetry['date'] = $today;
@@ -335,15 +335,14 @@ namespace leantime\domain\services {
 
                 $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
                     'form_params' => [
-                        'telemetry' => $data_string
+                        'telemetry' => $data_string,
                     ],
-                    'timeout' => 5
+                    'timeout' => 5,
                 ])->then(function ($response) use ($today) {
 
                     $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
                     $_SESSION['skipTelemetry'] = true;
                 });
-
             } catch (\Exception $e) {
                 error_log($e);
 
@@ -362,7 +361,6 @@ namespace leantime\domain\services {
             }
 
             return;
-
         }
     }
 

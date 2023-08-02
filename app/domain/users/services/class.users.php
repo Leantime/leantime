@@ -58,7 +58,8 @@ namespace leantime\domain\services {
             return $this->userRepo->getUserByEmail($email);
         }
 
-        public function getAllBySource($source){
+        public function getAllBySource($source)
+        {
             return $this->userRepo->getAllBySource($source);
         }
 
@@ -92,7 +93,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param  string $password The string to be checked
-         * @return bool returns true if password meets requirements
+         * @return boolean returns true if password meets requirements
          */
         public function checkPasswordStrength(string $password): bool
         {
@@ -122,7 +123,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param  array $values basic user values
-         * @return bool|int returns new user id on success, false on failure
+         * @return boolean|integer returns new user id on success, false on failure
          */
         public function createUserInvite(array $values): bool|int
         {
@@ -170,7 +171,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param  array $values basic user values
-         * @return bool|int returns new user id on success, false on failure
+         * @return boolean|integer returns new user id on success, false on failure
          */
         public function addUser(array $values): bool|int
         {
@@ -184,9 +185,9 @@ namespace leantime\domain\services {
          * TODO: Should accept userModel
          *
          * @access public
-         * @param string $username username
-         * @param int $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
-         * @return bool returns true or false
+         * @param string  $username  username
+         * @param integer $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
+         * @return boolean returns true or false
          */
         public function usernameExist($username, $notUserId = '')
         {
@@ -199,8 +200,8 @@ namespace leantime\domain\services {
          * TODO: Should return usermodel
          *
          * @access public
-         * @param int $currentUser user who is trying to access the project
-         * @param int $projectId project id
+         * @param integer $currentUser user who is trying to access the project
+         * @param integer $projectId   project id
          * @return array returns array of users
          */
         public function getUsersWithProjectAccess(int $currentUser, int $projectId): array

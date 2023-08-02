@@ -81,7 +81,7 @@ namespace leantime\domain\controllers\canvas {
          * export - Generate XML file
          *
          * @access protected
-         * @param  int    $id Canvas identifier
+         * @param  integer $id Canvas identifier
          * @return string XML data
          */
         protected function export(int $id): string
@@ -106,10 +106,10 @@ namespace leantime\domain\controllers\canvas {
          * xmlExport - Generate XML for specific data
          *
          * @access protected
-         * @param  string $canvasKey    Encoded canvas name
-         * @param  string $canvcasTitle Canvas title
-         * @param  array  $recordsAry   Array of canvas entry records
-         * @param  int    $indent       Indent level to use;
+         * @param  string  $canvasKey    Encoded canvas name
+         * @param  string  $canvcasTitle Canvas title
+         * @param  array   $recordsAry   Array of canvas entry records
+         * @param  integer $indent       Indent level to use;
          * @return string XML data
          */
         protected function xmlExport(string $canvasKey, string $canvasTitle, array $recordsAry, int $indent = 0): string

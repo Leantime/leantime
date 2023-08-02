@@ -25,7 +25,7 @@ namespace leantime\domain\repositories {
          * @access private
          * @var    array
          */
-        private $defaultWidgets = array( 1, 3, 9 );
+        private $defaultWidgets = array(1, 3, 9);
 
         /**
          * __construct - neu db connection

@@ -33,7 +33,7 @@ namespace leantime\domain\controllers {
                 if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                     $this->userRepo->patchUser($userId, [
                         "twoFAEnabled" => 0,
-                        "twoFASecret" => null
+                        "twoFASecret" => null,
                     ]);
 
                     $user['twoFASecret'] = null;
@@ -56,7 +56,7 @@ namespace leantime\domain\controllers {
                 if (isset($_POST['secret'])) {
                     $secret = $_POST['secret'];
                     $this->userRepo->patchUser($userId, [
-                        "twoFASecret" => $secret
+                        "twoFASecret" => $secret,
                     ]);
 
                     $user['twoFASecret'] = $secret;
@@ -68,7 +68,7 @@ namespace leantime\domain\controllers {
                     if ($verified) {
                         $this->userRepo->patchUser($userId, [
                             "twoFAEnabled" => 1,
-                            "twoFASecret" => $secret
+                            "twoFASecret" => $secret,
                         ]);
                         $user['twoFAEnabled'] = 1;
                         $this->tpl->setNotification($this->language->__("notification.twoFA_enabled_success"), 'success');

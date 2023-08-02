@@ -32,14 +32,15 @@ namespace leantime\domain\controllers {
                 'description' => '',
                 'dateFrom' => '',
                 'dateTo' => '',
-                'allDay' => ''
+                'allDay' => '',
             );
 
             $this->tpl->assign('values', $values);
             $this->tpl->displayPartial('calendar.addEvent');
         }
 
-        public function post($params) {
+        public function post($params)
+        {
             $result = $this->calendarService->addEvent($params);
 
             if (is_numeric($result) === true) {

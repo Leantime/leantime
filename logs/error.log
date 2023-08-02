@@ -1,0 +1,47 @@
+[02-Aug-2023 12:06:49 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 172.21.0.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
+[02-Aug-2023 12:07:25 America/Los_Angeles] PHP Warning:  Undefined array key "" in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 94
+[02-Aug-2023 12:07:25 America/Los_Angeles] PHP Warning:  Trying to access array offset on value of type null in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 94
+[02-Aug-2023 12:07:25 America/Los_Angeles] PHP Warning:  Undefined property: leantime\domain\models\tickets::$editTo in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 286
+[02-Aug-2023 12:10:36 America/Los_Angeles] cron start
+[02-Aug-2023 12:10:36 America/Los_Angeles] cron end
+[02-Aug-2023 12:15:36 America/Los_Angeles] cron start
+[02-Aug-2023 12:15:36 America/Los_Angeles] cron end
+[02-Aug-2023 12:20:36 America/Los_Angeles] cron start
+[02-Aug-2023 12:20:36 America/Los_Angeles] cron end
+[02-Aug-2023 12:25:36 America/Los_Angeles] cron start
+[02-Aug-2023 12:25:36 America/Los_Angeles] cron end
+[02-Aug-2023 12:30:42 America/Los_Angeles] cron start
+[02-Aug-2023 12:30:42 America/Los_Angeles] cron end
+[02-Aug-2023 12:32:06 America/Los_Angeles] PHP Fatal error:  Declaration of leantime\domain\controllers\editCanvasItem::init(leantime\domain\repositories\goalcanvas $canvasRepo, leantime\domain\repositories\comments $commentsRepo, leantime\domain\services\tickets $ticketService, leantime\domain\services\projects $projectService, leantime\domain\services\goalcanvas $goalService) must be compatible with leantime\domain\controllers\canvas\editCanvasItem::init(leantime\domain\controllers\canvas\serivces\tickets $ticketService, leantime\domain\services\projects $projectService, leantime\domain\repositories\comments $commentsRepo) in /Users/josephroberts/localdev/leantime/app/domain/goalcanvas/controllers/class.editCanvasItem.php on line 24
+[02-Aug-2023 12:36:39 America/Los_Angeles] cron start
+[02-Aug-2023 12:36:39 America/Los_Angeles] cron end
+[02-Aug-2023 12:36:41 America/Los_Angeles] PHP Fatal error:  Declaration of leantime\domain\controllers\editCanvasItem::init(leantime\domain\repositories\goalcanvas $canvasRepo, leantime\domain\repositories\comments $commentsRepo, leantime\domain\services\tickets $ticketService, leantime\domain\services\projects $projectService, leantime\domain\services\goalcanvas $goalService) must be compatible with leantime\domain\controllers\canvas\editCanvasItem::init(leantime\domain\controllers\canvas\serivces\tickets $ticketService, leantime\domain\services\projects $projectService, leantime\domain\repositories\comments $commentsRepo) in /Users/josephroberts/localdev/leantime/app/domain/goalcanvas/controllers/class.editCanvasItem.php on line 24
+[02-Aug-2023 12:38:05 America/Los_Angeles] PHP Fatal error:  Declaration of leantime\domain\controllers\editCanvasItem::init(leantime\domain\repositories\goalcanvas $canvasRepo, leantime\domain\repositories\comments $commentsRepo, leantime\domain\services\tickets $ticketService, leantime\domain\services\projects $projectService, leantime\domain\services\goalcanvas $goalService) must be compatible with leantime\domain\controllers\canvas\editCanvasItem::init(leantime\domain\controllers\canvas\serivces\tickets $ticketService, leantime\domain\services\projects $projectService, leantime\domain\repositories\comments $commentsRepo) in /Users/josephroberts/localdev/leantime/app/domain/goalcanvas/controllers/class.editCanvasItem.php on line 24
+[02-Aug-2023 12:43:37 America/Los_Angeles] cron start
+[02-Aug-2023 12:43:37 America/Los_Angeles] cron end
+[02-Aug-2023 12:48:38 America/Los_Angeles] cron start
+[02-Aug-2023 12:48:38 America/Los_Angeles] cron end
+[02-Aug-2023 12:51:54 America/Los_Angeles] PHP Fatal error:  Uncaught Error: Typed property leantime\domain\controllers\canvas\editCanvasItem::$ticketService must not be accessed before initialization in /Users/josephroberts/localdev/leantime/app/domain/canvas/controllers/class.editCanvasItem.php:127
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(76): leantime\domain\controllers\canvas\editCanvasItem->get(Array)
+#1 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(46): leantime\core\controller->executeActions('get', Array)
+#2 /Users/josephroberts/localdev/leantime/app/domain/canvas/controllers/class.editCanvasItem.php(59): leantime\core\controller->__construct('get', Array)
+#3 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(155): leantime\domain\controllers\canvas\editCanvasItem->__construct('get', Array)
+#4 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('retroscanvas.ed...', Array, 200)
+#5 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(365): leantime\core\frontcontroller::dispatch()
+#6 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(145): leantime\core\Bootloader->handleRequest()
+#7 /Users/josephroberts/localdev/leantime/public/index.php(11): leantime\core\Bootloader->boot()
+#8 {main}
+  thrown in /Users/josephroberts/localdev/leantime/app/domain/canvas/controllers/class.editCanvasItem.php on line 127
+[02-Aug-2023 12:53:47 America/Los_Angeles] cron start
+[02-Aug-2023 12:53:47 America/Los_Angeles] cron end
+[02-Aug-2023 12:55:12 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 172.24.0.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
+[02-Aug-2023 12:55:47 America/Los_Angeles] PHP Warning:  Undefined property: leantime\domain\models\tickets::$editTo in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 289
+[02-Aug-2023 12:59:07 America/Los_Angeles] cron start
+[02-Aug-2023 12:59:07 America/Los_Angeles] cron end
+[02-Aug-2023 13:04:07 America/Los_Angeles] cron start
+[02-Aug-2023 13:04:07 America/Los_Angeles] cron end
+[02-Aug-2023 13:09:07 America/Los_Angeles] cron start
+[02-Aug-2023 13:09:07 America/Los_Angeles] cron end
+[02-Aug-2023 13:10:28 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 172.25.0.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
+[02-Aug-2023 13:11:08 America/Los_Angeles] PHP Warning:  Undefined property: leantime\domain\models\tickets::$editTo in /var/www/html/app/domain/tickets/templates/submodules/ticketDetails.sub.php on line 289

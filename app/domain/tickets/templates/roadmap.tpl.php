@@ -134,48 +134,47 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             $lastMilestoneSortIndex = array();
             //Set sort index first
             foreach ($milestones as $mlst) {
-                if($mlst->type == "milestone") {
+                if ($mlst->type == "milestone") {
                     $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex;
                 }
             }
             foreach ($milestones as $mlst) {
-
-                $headline = $this->__('label.' . strtolower($mlst->type)) .": ".$mlst->headline;
-                if($mlst->type == "milestone"){
+                $headline = $this->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
+                if ($mlst->type == "milestone") {
                     $headline .= " (" . $mlst->percentDone . "% Done)";
                 }
 
                 $color = "#8D99A6";
-                if($mlst->type == "milestone"){
+                if ($mlst->type == "milestone") {
                     $color = $mlst->tags;
                 }
 
                 $sortIndex = 0;
 
-                if($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)){
-                    if($mlst->type == "milestone") {
-                        $sortIndex = $lastMilestoneSortIndex[$mlst->id].".0";
-                    }else{
-                        if($mlst->milestoneid != 0) {
+                if ($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)) {
+                    if ($mlst->type == "milestone") {
+                        $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
+                    } else {
+                        if ($mlst->milestoneid != 0) {
                             $sortIndex = $lastMilestoneSortIndex[$mlst->milestoneid] . "." . $mlst->sortIndex;
-                        }else{
-                            $sortIndex = "0".".".$mlst->sortIndex;
+                        } else {
+                            $sortIndex = "0" . "." . $mlst->sortIndex;
                         }
                     }
                 }
 
                 $dependencyList = array();
-                if($mlst->milestoneid != 0){
+                if ($mlst->milestoneid != 0) {
                     $dependencyList[] = $mlst->milestoneid;
                 }
 
-                if($mlst->dependingTicketId != 0) {
+                if ($mlst->dependingTicketId != 0) {
                     $dependencyList[] = $mlst->dependingTicketId;
                 }
 
                 echo"{
                     id :'" . $mlst->id . "',
-                    name :" . json_encode($headline) .",
+                    name :" . json_encode($headline) . ",
                     start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',
                     end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time()))) . "',
                     progress :'" . $mlst->percentDone . "',
@@ -184,7 +183,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     type: '" . strtolower($mlst->type) . "',
                     bg_color: '" . $color . "',
                     thumbnail: '" . BASE_URL . "/api/users?profileImage=" . $mlst->editorId . "',
-                    sortIndex: ".$sortIndex."
+                    sortIndex: " . $sortIndex . "
 
                 },";
             }

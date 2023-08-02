@@ -22,16 +22,16 @@ namespace leantime\domain\services {
          * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
          * @access public
          *
-         * @param string $module
-         * @param int $moduleId
-         * @param int $userId
-         * @param string $reaction
+         * @param string  $module
+         * @param integer $moduleId
+         * @param integer $userId
+         * @param string  $reaction
          *
-         * @return bool
+         * @return boolean
          */
         public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {
-            if($module == '' || $moduleId == '' || $userId == '' || $reaction == ''){
+            if ($module == '' || $moduleId == '' || $userId == '' || $reaction == '') {
                 return false;
             }
 
@@ -40,8 +40,8 @@ namespace leantime\domain\services {
 
             $currentReactionType = $this->getReactionType($reaction);
 
-            foreach($userReactions as $previousReaction) {
-                if($this->getReactionType($previousReaction['reaction']) == $currentReactionType) {
+            foreach ($userReactions as $previousReaction) {
+                if ($this->getReactionType($previousReaction['reaction']) == $currentReactionType) {
                     return false;
                 }
             }
@@ -57,28 +57,28 @@ namespace leantime\domain\services {
          *
          * @return string|false
          */
-        public function getReactionType($reaction): string|false {
+        public function getReactionType($reaction): string|false
+        {
 
             $types = \leantime\domain\models\reactions::getReactions();
 
-            foreach($types as $reactionType => $reactionValues) {
-                if(isset($reactionValues[$reaction])) {
+            foreach ($types as $reactionType => $reactionValues) {
+                if (isset($reactionValues[$reaction])) {
                     return $reactionType;
                 }
             }
 
             return false;
-
         }
 
         /**
          * getGroupedEntityReactions - gets all reactions for a given entity grouped and counted by reactions
          * @access public
          *
-         * @param string $module
-         * @param int $moduleId
+         * @param string  $module
+         * @param integer $moduleId
          *
-         * @return array|bool returns the array on success or false on failure
+         * @return array|boolean returns the array on success or false on failure
          */
         public function getGroupedEntityReactions($module, $moduleId): array|false
         {
@@ -89,10 +89,10 @@ namespace leantime\domain\services {
          * getMyReactions - gets user reactions. Can be very broad or very targeted
          * @access public
          *
-         * @param int $userId
-         * @param string $module
-         * @param ?int $moduleId
-         * @param string $reaction
+         * @param integer $userId
+         * @param string  $module
+         * @param integer $moduleId
+         * @param string  $reaction
          *
          * @return array|false
          */
@@ -106,12 +106,12 @@ namespace leantime\domain\services {
          * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
          * @access public
          *
-         * @param string $module
-         * @param int $moduleId
-         * @param int $userId
-         * @param string $reaction
+         * @param string  $module
+         * @param integer $moduleId
+         * @param integer $userId
+         * @param string  $reaction
          *
-         * @return bool
+         * @return boolean
          */
         public function removeReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {

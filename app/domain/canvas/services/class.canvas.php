@@ -11,11 +11,11 @@ namespace leantime\domain\services {
          * import - Import canvas from XML file
          *
          * @access public
-         * @param  string   $filename    File to import
-         * @param  string   $canvcasName Canvas name
-         * @param  int      $projectId   Project identifier
-         * @param  int      $auhtorId    Author identifier
-         * @return bool|int False if import failed and the id of the newly created canvas otherwise
+         * @param  string  $filename    File to import
+         * @param  string  $canvcasName Canvas name
+         * @param  integer $projectId   Project identifier
+         * @param  integer $auhtorId    Author identifier
+         * @return boolean|integer False if import failed and the id of the newly created canvas otherwise
          */
         public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
         {
@@ -38,7 +38,7 @@ namespace leantime\domain\services {
             }
 
             // Decode XMP data
-            $canvasAry = [ 'projectId' => $projectId, 'author' => $authorId ];
+            $canvasAry = ['projectId' => $projectId, 'author' => $authorId];
             $recordsAry = [];
 
             // - Canvas
@@ -134,7 +134,8 @@ namespace leantime\domain\services {
                     $conclusion = empty($conclusionNodeList->item(0)->nodeValue) ? '' :
                         $dom->saveHTML($conclusionNodeList->item(0)->firstChild);
 
-                    $recordsAry[] = [ 'description' => $description,
+                    $recordsAry[] = [
+                    'description' => $description,
                                       'assumptions' => $assumptions,
                                       'data' => $data,
                                       'conclusion' => $conclusion,
@@ -142,7 +143,8 @@ namespace leantime\domain\services {
                                       'author' => $author,
                                       'status' => $status,
                                       'relates' => $relates,
-                                      'milestoneId' => '' ];
+                                      'milestoneId' => '',
+                    ];
                 }
             }
 
@@ -178,8 +180,8 @@ namespace leantime\domain\services {
          * getBoardProgress - gets the progress of canvas types. counts items in each box-type and calculates percent done if each box type has at least 1 item.
          *
          * @access public
-         * @param  string   $projectId    projectId (optional)
-         * @param  array    $boards Array of project board types
+         * @param  string $projectId projectId (optional)
+         * @param  array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          */
         public function getBoardProgress($projectId = '', $boards = array()): array
@@ -250,8 +252,8 @@ namespace leantime\domain\services {
          * getLastUpdatedCanvas - gets the list of canvas boards ordered by last updated item
          *
          * @access public
-         * @param  string   $projectId    projectId (optional)
-         * @param  array    $boards Array of project board types
+         * @param  string $projectId projectId (optional)
+         * @param  array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          */
         public function getLastUpdatedCanvas($projectId = '', $boards = array())

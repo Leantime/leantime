@@ -404,7 +404,5 @@ namespace leantime\domain\repositories {
 
             return 0;
         }
-
-
     }
 }

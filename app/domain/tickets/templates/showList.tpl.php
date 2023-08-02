@@ -75,7 +75,7 @@
 
                     <div class="right">
 
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (".$this->get('numOfFilters').")" : "" ?></a>
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (" . $this->get('numOfFilters') . ")" : "" ?></a>
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.group_by") ?>"><span class="fa fa-object-group"></span></button>
                             <ul class="dropdown-menu">
@@ -103,21 +103,28 @@
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class="fa fa-list"></i></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
-                                    echo $_SESSION['lastFilterdTicketKanbanView'];
-                                             } else {
-                                                 echo BASE_URL . "/tickets/showKanban";
-                                             } ?>" ><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") {
-                                    echo $_SESSION['lastFilterdTicketTableView'];
-                                             } else {
-                                                 echo BASE_URL . "/tickets/showAll";
-                                             } ?>"><?=$this->__("links.table") ?></a></li>
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") {
-                                        echo $_SESSION['lastFilterdTicketListView'];
-                                    } else {
-                                        echo BASE_URL . "/tickets/showList";
-                                    } ?>" class="active"><?=$this->__("links.list_view") ?></a></li>
+                                <li><a
+                                    <?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") { ?>
+                                        href="<?=$_SESSION['lastFilterdTicketKanbanView'] ?>"
+                                    <?php } else { ?>
+                                        href="<?=BASE_URL ?>/tickets/showKanban"
+                                    <?php } ?>
+                                ><?=$this->__("links.kanban") ?></a></li>
+                                <li><a
+                                    <?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") { ?>
+                                        href="<?=$_SESSION['lastFilterdTicketTableView'] ?>"
+                                    <?php } else { ?>
+                                        href="<?=BASE_URL ?>/tickets/showAll"
+                                    <?php } ?>
+                                ><?=$this->__("links.table") ?></a></li>
+                                <li><a
+                                    <?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") { ?>
+                                        href="<?=$_SESSION['lastFilterdTicketListView'] ?>"
+                                    <?php } else { ?>
+                                        href="<?=BASE_URL ?>/tickets/showList"
+                                    <?php } ?>
+                                    class="active"
+                                ><?=$this->__("links.list_view") ?></a></li>
                             </ul>
                         </div>
 

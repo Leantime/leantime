@@ -15,13 +15,13 @@ namespace leantime\domain\services {
 
         /**
          * @access private
-         * @var    int user id from DB
+         * @var    integer user id from DB
          */
         private $userId = null;
 
         /**
          * @access private
-         * @var    int user id from DB
+         * @var    integer user id from DB
          */
         private $clientId = null;
 
@@ -63,7 +63,7 @@ namespace leantime\domain\services {
 
         /**
          * @access private
-         * @var    bool $twoFAEnabled
+         * @var    boolean $twoFAEnabled
          */
         private $twoFAEnabled;
 
@@ -88,7 +88,7 @@ namespace leantime\domain\services {
 
         /**
          * @access public
-         * @var    int time for cookie
+         * @var    integer time for cookie
          */
         public $cookieTime;
 
@@ -152,8 +152,8 @@ namespace leantime\domain\services {
         }
 
         /**
-         * @param bool $forceGlobalRoleCheck
-         * @return string|bool returns role as string or false on failure
+         * @param boolean $forceGlobalRoleCheck
+         * @return string|boolean returns role as string or false on failure
          */
         public static function getRoleToCheck(bool $forceGlobalRoleCheck): string|bool
         {
@@ -187,7 +187,7 @@ namespace leantime\domain\services {
          * login - Validate POST-data with DB
          *
          * @access private
-         * @return bool
+         * @return boolean
          */
         public function login($username, $password)
         {
@@ -229,7 +229,7 @@ namespace leantime\domain\services {
                             'password' => '',
                             'clientId' => '',
                             'source' => 'ldap',
-                            'status' => 'a'
+                            'status' => 'a',
                         );
 
                         $userId = $this->userRepo->addUser($userArray);
@@ -280,13 +280,10 @@ namespace leantime\domain\services {
 
                 self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return true;
-
             } else {
-
                 self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return false;
             }
-
         }
 
         public function setUserSession($user, $isLdap = false)
@@ -317,13 +314,14 @@ namespace leantime\domain\services {
                         'twoFAEnabled' => $this->twoFAEnabled,
                         'twoFAVerified' => false,
                         'twoFASecret' => $this->twoFASecret,
-                        'isLdap' => $isLdap
+                        'isLdap' => $isLdap,
             ]);
 
             $this->updateUserSessionDB($this->userId, $this->session);
         }
 
-        public function updateUserSessionDB($userId, $sessionID) {
+        public function updateUserSessionDB($userId, $sessionID)
+        {
             return $this->authRepo->updateUserSession($userId, $sessionID, time());
         }
 
@@ -331,7 +329,7 @@ namespace leantime\domain\services {
          * logged_in - Check if logged in and Update sessions
          *
          * @access public
-         * @return bool
+         * @return boolean
          */
         public function logged_in()
         {
@@ -346,7 +344,8 @@ namespace leantime\domain\services {
             }
         }
 
-        public function getSessionId() {
+        public function getSessionId()
+        {
             return $this->session;
         }
 
@@ -372,7 +371,7 @@ namespace leantime\domain\services {
                             'projectsettings',
                             'currentSubscriptions',
                             'lastTicketView',
-                            'lastFilterdTicketTableView'
+                            'lastFilterdTicketTableView',
                 ]);
 
                 foreach ($sessionsToDestroy as $key) {
@@ -386,7 +385,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param string $hash invite link hash
-         * @return bool
+         * @return boolean
          */
         public function validateResetLink(string $hash)
         {
@@ -399,7 +398,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param string $hash invite link hash
-         * @return array|bool
+         * @return array|boolean
          */
         public function getUserByInviteLink($hash)
         {
@@ -411,7 +410,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param string $username new user to be invited (email)
-         * @return bool returns true on success, false on failure
+         * @return boolean returns true on success, false on failure
          */
         public function generateLinkAndSendEmail(string $username): bool
         {

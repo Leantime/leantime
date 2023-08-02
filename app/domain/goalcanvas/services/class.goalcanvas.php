@@ -11,12 +11,11 @@ namespace leantime\domain\services {
 
     class goalcanvas
     {
-
         private repositories\goalcanvas $goalRepository;
         public $reportingSettings = [
             "linkonly",
             "linkAndReport",
-            "nolink"
+            "nolink",
         ];
 
         public function __construct(repositories\goalcanvas $goalRepository)
@@ -24,45 +23,40 @@ namespace leantime\domain\services {
             $this->goalRepository = $goalRepository;
         }
 
-        public function getCanvasItemsById(int $id): array{
+        public function getCanvasItemsById(int $id): array
+        {
 
             $goals = $this->goalRepository->getCanvasItemsById($id);
 
-            if($goals) {
+            if ($goals) {
                 foreach ($goals as &$goal) {
-
                     $progressValue = 0;
                     $goal['goalProgress'] = 0;
                     $total = $goal['endValue'] - $goal['startValue'];
                     //Skip if total value is 0.
-                    if($total<=0){
+                    if ($total <= 0) {
                         continue;
                     }
 
-                    if($goal['setting'] == "linkAndReport") {
-
+                    if ($goal['setting'] == "linkAndReport") {
                         //GetAll Child elements
                         $currentValueSum = $this->getChildGoalsForReporting($goal['id']);
 
                         $goal['currentValue'] = $currentValueSum;
                         $progressValue = $currentValueSum - $goal['startValue'];
-
-                    }else{
-
+                    } else {
                         $progressValue = $goal['currentValue'] - $goal['startValue'];
-
                     }
 
-                    $goal['goalProgress'] = round($progressValue/$total, 2) * 100;
-
+                    $goal['goalProgress'] = round($progressValue / $total, 2) * 100;
                 }
             }
 
             return $goals;
-
         }
 
-        public function getChildGoalsForReporting($parentId) {
+        public function getChildGoalsForReporting($parentId)
+        {
 
             //Goals come back as rows for levl1 and lvl2 being columns, so
             //goal A | goalChildA
@@ -71,19 +65,19 @@ namespace leantime\domain\services {
             //Checks if first level is also link+report or just link
             $goals = $this->goalRepository->getCanvasItemsByKPI($parentId);
             $currentValueSum = 0;
-            foreach($goals as $child) {
-                if($child['setting'] == "linkAndReport") {
-                    $currentValueSum = $currentValueSum+$child['childCurrentValue'];
-                }else{
-                    $currentValueSum = $currentValueSum+$child["currentValue"];
+            foreach ($goals as $child) {
+                if ($child['setting'] == "linkAndReport") {
+                    $currentValueSum = $currentValueSum + $child['childCurrentValue'];
+                } else {
+                    $currentValueSum = $currentValueSum + $child["currentValue"];
                 }
             }
 
             return $currentValueSum;
-
         }
 
-        public function getChildrenbyKPI($parentId) {
+        public function getChildrenbyKPI($parentId)
+        {
 
             $goals = array();
             //Goals come back as rows for levl1 and lvl2 being columns, so
@@ -93,11 +87,9 @@ namespace leantime\domain\services {
             //Checks if first level is also link+report or just link
             $children = $this->goalRepository->getCanvasItemsByKPI($parentId);
 
-            foreach($children as $child) {
-
+            foreach ($children as $child) {
                 //Added Child already? Look for child of child
-                if(!isset($goals[$child['id']])) {
-
+                if (!isset($goals[$child['id']])) {
                     $goals[$child['id']] = array(
                         "id" => $child['id'],
                         "title" => $child['title'],
@@ -111,8 +103,8 @@ namespace leantime\domain\services {
                     );
                 }
 
-                if($child['childId'] != ''){
-                    if(isset($goals[$child['childId']]) === false){
+                if ($child['childId'] != '') {
+                    if (isset($goals[$child['childId']]) === false) {
                         $goals[$child['childId']] = array(
                             "id" => $child['childId'],
                             "title" => $child['childTitle'],
@@ -129,10 +121,10 @@ namespace leantime\domain\services {
             }
 
             return $goals;
-
         }
 
-        public function getParentKPIs($parentProject) {
+        public function getParentKPIs($parentProject)
+        {
 
             $kpis = $this->goalRepository->getAllAvailableKPIs($parentProject);
 
@@ -143,11 +135,9 @@ namespace leantime\domain\services {
             //goal A | goalChildB
             //goal B
             //Checks if first level is also link+report or just link
-            foreach($kpis as $kpi) {
-
+            foreach ($kpis as $kpi) {
                 //Added Child already? Look for child of child
-                if(!isset($goals[$kpi['id']])) {
-
+                if (!isset($goals[$kpi['id']])) {
                     $goals[$kpi['id']] = array(
                         "id" => $kpi['id'],
                         "description" => $kpi['description'],
@@ -157,8 +147,8 @@ namespace leantime\domain\services {
                     );
                 }
 
-                if($kpi['parentKPIId'] != ''){
-                    if(isset($goals[$kpi['parentKPIId']]) === false){
+                if ($kpi['parentKPIId'] != '') {
+                    if (isset($goals[$kpi['parentKPIId']]) === false) {
                         $goals[$kpi['parentKPIId']] = array(
                             "id" => $kpi['parentKPIId'],
                             "description" => $kpi['parentKPIDescription'],
@@ -171,7 +161,6 @@ namespace leantime\domain\services {
 
             return $goals;
         }
-
     }
 
 }

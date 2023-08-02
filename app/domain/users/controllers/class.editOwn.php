@@ -106,7 +106,7 @@ namespace leantime\domain\controllers {
                         'user' => ($_POST['user']) ?? $row['username'],
                         'phone' => ($_POST['phone']) ?? $row['phone'],
                         'notifications' => $row['notifications'],
-                        'twoFAEnabled' => $row['twoFAEnabled']
+                        'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
                     $changedEmail = 0;
@@ -147,7 +147,7 @@ namespace leantime\domain\controllers {
                         'phone' => $row['phone'],
                         'password' => $row['password'],
                         'notifications' => $row['notifications'],
-                        'twoFAEnabled' => $row['twoFAEnabled']
+                        'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
                     if (password_verify($_POST['currentPassword'], $values['password'])) {
@@ -216,7 +216,7 @@ namespace leantime\domain\controllers {
                         'phone' => $row['phone'],
                         'password' => $row['password'],
                         'notifications' => $row['notifications'],
-                        'twoFAEnabled' => $row['twoFAEnabled']
+                        'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
                     if (isset($_POST['notifications']) == true) {

@@ -6,12 +6,17 @@ use PDO;
 use PDOException;
 use leantime\core\plugins;
 
+/**
+ * Events class - Handles all events and filters
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 class events
 {
     /**
      * Registry of all events added to a hook
      *
-     * @access private
      * @var array
      */
     private static $eventRegistry = [];
@@ -19,7 +24,6 @@ class events
     /**
      * Registry of all filters added to a hook
      *
-     * @access private
      * @var array
      */
     private static $filterRegistry = [];
@@ -27,12 +31,11 @@ class events
     /**
      * Registry of all hooks available
      *
-     * @access private
      * @var array
      */
     private static $available_hooks = [
         'filters' => [],
-        'events' => []
+        'events' => [],
     ];
 
     /**
@@ -41,13 +44,16 @@ class events
      * @access public
      *
      * @param string $eventName
-     * @param mixed $payload
+     * @param mixed  $payload
      * @param string $context
      *
      * @return void
      */
-    public static function dispatch_event($eventName, $payload = [], $context = '')
-    {
+    public static function dispatch_event(
+        string $eventName,
+        mixed $payload = [],
+        string $context = ''
+    ): void {
         $eventName = "$context.$eventName";
 
         if (!in_array($eventName, self::$available_hooks['events'])) {
@@ -55,7 +61,7 @@ class events
         }
 
         if (!key_exists($eventName, self::$eventRegistry)) {
-            return null;
+            return;
         }
 
         $payload = self::defineParams($payload);
@@ -72,15 +78,18 @@ class events
      * @access public
      *
      * @param string $filtername
-     * @param mixed $payload
-     * @param mixed $available_params
-     * @param mixed $context
+     * @param mixed  $payload
+     * @param mixed  $available_params
+     * @param mixed  $context
      *
      * @return mixed
      */
-    public static function dispatch_filter($filtername, $payload = '', $available_params = [], $context = '')
-    {
-
+    public static function dispatch_filter(
+        string $filtername,
+        mixed $payload = '',
+        mixed $available_params = [],
+        mixed $context = ''
+    ): mixed {
         $filtername = "$context.$filtername";
 
         if (!in_array($filtername, self::$available_hooks['filters'])) {
@@ -107,9 +116,8 @@ class events
      *
      * @return void
      */
-    public static function discover_listeners()
+    public static function discover_listeners(): void
     {
-
         $modules = glob(ROOT . "/../app/domain" . '/*', GLOB_ONLYDIR);
         foreach ($modules as $module) {
             if (file_exists($module . "/events/register.php")) {
@@ -137,14 +145,17 @@ class events
      *
      * @access public
      *
-     * @param string $eventName
+     * @param string                 $eventName
      * @param string|callable|object $handler
-     * @param int $priority
+     * @param integer                $priority
      *
      * @return void
      */
-    public static function add_event_listener($eventName, $handler, $priority = 10)
-    {
+    public static function add_event_listener(
+        string $eventName,
+        string|callable|object $handler,
+        int $priority = 10
+    ): void {
         if (! key_exists($eventName, self::$eventRegistry)) {
             self::$eventRegistry[$eventName] = [];
         }
@@ -156,14 +167,17 @@ class events
      *
      * @access public
      *
-     * @param string $filtername
+     * @param string                 $filtername
      * @param string|callable|object $handler
-     * @param int $priority
+     * @param integer                $priority
      *
      * @return void
      */
-    public static function add_filter_listener($filtername, $handler, $priority = 10)
-    {
+    public static function add_filter_listener(
+        string $filtername,
+        string|callable|object $handler,
+        int $priority = 10
+    ): void {
         if (! key_exists($filtername, self::$filterRegistry)) {
             self::$filterRegistry[$filtername] = [];
         }
@@ -177,11 +191,11 @@ class events
      *
      * @return array
      */
-    public static function get_registries()
+    public static function get_registries(): array
     {
         return [
             'events' => array_keys(self::$eventRegistry),
-            'filters' => array_keys(self::$filterRegistry)
+            'filters' => array_keys(self::$filterRegistry),
         ];
     }
 
@@ -192,7 +206,7 @@ class events
      *
      * @return array
      */
-    public static function get_available_hooks()
+    public static function get_available_hooks(): array
     {
         return self::$available_hooks;
     }
@@ -207,21 +221,20 @@ class events
      *
      * @return void
      */
-    private static function sortByPriority($type, $hookName)
+    private static function sortByPriority(string $type, string $hookName): void
     {
         if ($type !== 'filters' && $type !== 'events') {
-            return false;
+            return;
         }
 
         $sorter = function ($a, $b) {
-            if($a['priority'] > $b['priority']){
+            if ($a['priority'] > $b['priority']) {
                 return 1;
-            }else if($a['priority'] == $b['priority']){
+            } elseif ($a['priority'] == $b['priority']) {
                 return 0;
-            }else{
+            } else {
                 return -1;
             }
-
         };
 
         if ($type == 'filters') {
@@ -240,14 +253,14 @@ class events
      *
      * @return array|object
      */
-    private static function defineParams($paramAttr)
+    private static function defineParams(mixed $paramAttr): array|object
     {
         // make this static so we only have to call once
         static $default_params;
 
         if (!isset($default_params)) {
             $default_params = [
-                'current_route' => frontcontroller::getCurrentRoute()
+                'current_route' => frontcontroller::getCurrentRoute(),
             ];
         }
 
@@ -274,16 +287,19 @@ class events
      *
      * @access private
      *
-     * @param array $registry
-     * @param string $hookName
-     * @param mixed $payload
+     * @param array        $registry
+     * @param string       $hookName
+     * @param mixed        $payload
      * @param array|object $available_params
      *
-     * @return array|object
+     * @return array|object|null
      */
-    private static function executeHandlers($registry, $hookName, $payload, $available_params = [])
-    {
-
+    private static function executeHandlers(
+        array $registry,
+        string $hookName,
+        mixed $payload,
+        array|object $available_params = []
+    ): array|object|null {
         $isEvent = $registry == self::$eventRegistry ? true : false;
         $filteredPayload = null;
 
@@ -325,7 +341,7 @@ class events
                 // class instance with method name
                 is_array($handler) && is_object($handler[0]) && method_exists($handler[0], $handler[1]),
                 // class name with method name
-                is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1])
+                is_array($handler) && class_exists($handler[0]) && method_exists($handler[0], $handler[1]),
                 ])
             ) {
                 if ($isEvent) {
@@ -337,7 +353,7 @@ class events
                     $handler,
                     [
                         $index == 0 ? $payload : $filteredPayload,
-                        $available_params
+                        $available_params,
                     ]
                 );
                 continue;
