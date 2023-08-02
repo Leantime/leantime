@@ -6,6 +6,9 @@
         "platform-check": false,
         "platform": {
             "php": "8.0"
+        },
+        "allow-plugins": {
+            "metasyntactical/composer-plugin-license-check": true
         }
     },
     "authors": [
@@ -45,7 +48,10 @@
         "illuminate/contracts": "^8.83",
         "illuminate/view": "^8.83",
         "illuminate/events": "^8.83",
-        "illuminate/filesystem": "^8.83"
+        "illuminate/filesystem": "^8.83",
+        "metasyntactical/composer-plugin-license-check": "^2.1",
+        "setasign/fpdf": "^1.8",
+        "spipu/html2pdf": "^5.2"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",
