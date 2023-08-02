@@ -19,116 +19,18 @@ if(isset($integrationId) && is_numeric($integrationId)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->__("headlines.integrations"); ?></title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f2f2f2;
-        }
-
-        .pageheader {
-            background-color: #3b5998;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-            border-radius: 5px 5px 0 0;
-        }
-
-        .pageicon {
-            font-size: 24px;
-        }
-
-        .pagetitle {
-            padding-top: 10px;
-        }
-
-        .pagetitle h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-
-        .maincontent {
-            margin-top: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        .notification {
-            color: #ff0000;
-            margin-bottom: 10px;
-        }
-
-        h4 {
-            margin-bottom: 10px;
-        }
-
-        p {
-            margin-bottom: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: left;
-            word-wrap: break-word;
-            max-width: 250px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        tbody tr:hover {
-            background-color: #ddd;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #3b5998;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: #ff5e00;
-        }
-
-        .btn:hover {
-            background-color: #2d4373;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
-<body>
-<div class="pageheader mb-4">
+<div class="pageheader">
     <div class="pageicon"><span class="fa fa-plug"></span></div>
     <div class="pagetitle">
-
+        <h1>Integrations</h1>
     </div>
 </div>
-<div class="container mt-4">
-    <div class="maincontent">
+<body>
+<div class="maincontent">
+    <div class="maincontentinner">
         <?php echo $this->displayNotification(); ?>
 
         <h4><?=$provider->name ?></h4>

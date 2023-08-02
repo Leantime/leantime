@@ -1016,6 +1016,15 @@ namespace leantime\domain\services {
 
         }
 
+        public function getProjectIdbyName($allProjects, $projectName){
+            foreach ($allProjects as $project) {
+                if ($project['name'] == $projectName) {
+                    return $project['id'];
+                }
+            }
+            return false;
+        }
+
         public function updateProjectSorting($params) {
 
             //ticketId: sortIndex

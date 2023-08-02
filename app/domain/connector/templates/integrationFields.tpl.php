@@ -18,18 +18,17 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $this->__("headlines.integrations"); ?></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-    <div class="pageheader mb-4">
+    <div class="pageheader">
         <div class="pageicon"><span class="fa fa-plug"></span></div>
         <div class="pagetitle">
-            <h1 class="display-4">Integrations</h1>
+            <h1>Integrations</h1>
         </div>
     </div>
-    <div class="container mt-4">
     <div class="maincontent">
         <div class="maincontentinner">
 
@@ -39,7 +38,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
             <p class="mb-2"><strong><?= $provider->name ?></strong></p>
 
             <?php foreach ($flags as $flag) { ?>
-                <p class="text-danger"><?= $flag ?></p>
+                <p style = "color: red"><?= $flag ?></p>
             <?php } ?>
 
             <form method="post" action="<?= BASE_URL ?>/connector/integration/?provider=<?= $provider->id ?>&step=import<?= $urlAppend ?>">
@@ -71,11 +70,6 @@ if (isset($integrationId) && is_numeric($integrationId)) {
             </form>
         </div>
     </div>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
