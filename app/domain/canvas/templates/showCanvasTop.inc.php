@@ -53,7 +53,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                 <li><a href="javascript:void(0)" class="importCanvasLink "><?=$this->__("links.icon.import") ?></a></li>
             <?php } ?>
             <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.export") ?></a></li>
-            <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/pdf/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.print") ?></a></li>
+            <li><a href="javascript:window.print();"><?=$this->__("links.icon.print") ?></a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                 <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
             <?php } ?>

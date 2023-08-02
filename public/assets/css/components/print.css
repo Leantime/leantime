@@ -40,6 +40,10 @@
         padding:0px;
     }
 
+    .maincontentinner {
+        padding-top:0px;
+    }
+
     .sortableTicketList .row-fluid {
         overflow:hidden !important;
     }
@@ -54,5 +58,16 @@
 
     .btn {
         display:none !important;
+    }
+
+    .popup-wrapper {
+        display:none !important;
+    }
+
+    .footer {
+        position: fixed;
+        right: 10px;
+        padding: 0px !important;
+        bottom: 10px;
     }
 }
