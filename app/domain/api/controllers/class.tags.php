@@ -43,8 +43,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
-
         }
 
         /**
@@ -55,7 +53,6 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-
         }
 
         /**

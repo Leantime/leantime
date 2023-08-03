@@ -49,11 +49,11 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $statusLabels = [
-            'status_draft' =>   [ 'icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true ],
-            'status_review' =>  [ 'icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true ],
-            'status_valid' =>   [ 'icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true ],
-            'status_hold' =>    [ 'icon' => 'fa-circle-h',           'color' => 'red',    'title' => 'status.hold',   'dropdown' => 'danger',  'active' => true ],
-            'status_invalid' => [ 'icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.invalid','dropdown' => 'danger',  'active' => true ]
+            'status_draft' =>   ['icon' => 'fa-circle-question',    'color' => 'blue',   'title' => 'status.draft',  'dropdown' => 'info',    'active' => true],
+            'status_review' =>  ['icon' => 'fa-circle-exclamation', 'color' => 'orange', 'title' => 'status.review', 'dropdown' => 'warning', 'active' => true],
+            'status_valid' =>   ['icon' => 'fa-circle-check',       'color' => 'green',  'title' => 'status.valid',  'dropdown' => 'success', 'active' => true],
+            'status_hold' =>    ['icon' => 'fa-circle-h',           'color' => 'red',    'title' => 'status.hold',   'dropdown' => 'danger',  'active' => true],
+            'status_invalid' => ['icon' => 'fa-circle-xmark',       'color' => 'red',    'title' => 'status.invalid','dropdown' => 'danger',  'active' => true],
         ];
 
         /**
@@ -63,14 +63,14 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $relatesLabels = [
-            'relates_none'        => [ 'icon' => 'fa-border-none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true ],
-            'relates_customers'   => [ 'icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true ],
-            'relates_offerings'   => [ 'icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true ],
-            'relates_capabilities' => [ 'icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true ],
-            'relates_financials'  => [ 'icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true ],
-            'relates_markets'     => [ 'icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true ],
-            'relates_environment' => [ 'icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true ],
-            'relates_firm'        => [ 'icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true ]
+            'relates_none'        => ['icon' => 'fa-border-none', 'color' => 'grey',      'title' => 'relates.none',         'dropdown' => 'default', 'active' => true],
+            'relates_customers'   => ['icon' => 'fa-users',       'color' => 'green',     'title' => 'relates.customers',    'dropdown' => 'success', 'active' => true],
+            'relates_offerings'   => ['icon' => 'fa-barcode',     'color' => 'red',       'title' => 'relates.offerings',    'dropdown' => 'danger',  'active' => true],
+            'relates_capabilities' => ['icon' => 'fa-pen-ruler',   'color' => 'blue',      'title' => 'relates.capabilities', 'dropdown' => 'info',    'active' => true],
+            'relates_financials'  => ['icon' => 'fa-money-bill',  'color' => 'yellow',    'title' => 'relates.financials',   'dropdown' => 'warning', 'active' => true],
+            'relates_markets'     => ['icon' => 'fa-shop',        'color' => 'brown',     'title' => 'relates.markets',      'dropdown' => 'default', 'active' => true],
+            'relates_environment' => ['icon' => 'fa-tree',        'color' => 'darkgreen', 'title' => 'relates.environment',  'dropdown' => 'default', 'active' => true],
+            'relates_firm'        => ['icon' => 'fa-building',    'color' => 'darkblue',  'title' => 'relates.firm',         'dropdown' => 'info',    'active' => true],
         ];
 
         /**
@@ -80,9 +80,9 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $dataLabels = [
-            1 => [ 'title' => 'label.assumptions', 'field' => 'assumptions', 'active' => true],
-            2 => [ 'title' => 'label.data',        'field' => 'data',        'active' => true],
-            3 => [ 'title' => 'label.conclusion',  'field' => 'conclusion',  'active' => true]
+            1 => ['title' => 'label.assumptions', 'field' => 'assumptions', 'active' => true],
+            2 => ['title' => 'label.data',        'field' => 'data',        'active' => true],
+            3 => ['title' => 'label.conclusion',  'field' => 'conclusion',  'active' => true],
         ];
 
         /**
@@ -965,9 +965,9 @@ namespace leantime\domain\repositories {
          * existCanvas - return if a canvas exists with a given title in the specified project
          *
          * @access public
-         * @param  int    $projectId Project identifier
-         * @param  string $canvasTitle Canvas title
-         * @return bool   True if canvas exists
+         * @param  integer $projectId   Project identifier
+         * @param  string  $canvasTitle Canvas title
+         * @return boolean   True if canvas exists
          */
         public function existCanvas(int $projectId, string $canvasTitle): bool
         {
@@ -991,11 +991,11 @@ namespace leantime\domain\repositories {
          * copyCanvas - create a copy of an existing canvas
          *
          * @access public
-         * @param  int    $projectId   Project identifier
-         * @param  int    $canvasId    Original canvas identifier
-         * @param  int    $authorId    Author identifier
-         * @param  string $canvasTitle New canvas title
-         * @return int    Identifier of new canvas
+         * @param  integer $projectId   Project identifier
+         * @param  integer $canvasId    Original canvas identifier
+         * @param  integer $authorId    Author identifier
+         * @param  string  $canvasTitle New canvas title
+         * @return integer    Identifier of new canvas
          */
         public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle): int
         {
@@ -1047,9 +1047,9 @@ namespace leantime\domain\repositories {
          * mergeCanvas - merge canvas into existing canvas
          *
          * @access public
-         * @param  int  $canvasId   Original canvas identifier
-         * @param  int  $mergeId    Canvas to perge into existing one
-         * @return bool Status of merge
+         * @param  integer $canvasId Original canvas identifier
+         * @param  integer $mergeId  Canvas to perge into existing one
+         * @return boolean Status of merge
          */
         public function mergeCanvas(int $canvasId, string $mergeId): bool
         {
@@ -1097,9 +1097,9 @@ namespace leantime\domain\repositories {
          * getCanvasProgressCount - gets canvases by type and counts number of items per box
          *
          * @access public
-         * @param  int  $projectId   Project od
-         * @param  array  $boards    List of board types to pull
-         * @return bool Status of merge
+         * @param  integer $projectId Project od
+         * @param  array   $boards    List of board types to pull
+         * @return boolean Status of merge
          */
         public function getCanvasProgressCount(int $projectId, array $boards)
         {
@@ -1155,8 +1155,8 @@ namespace leantime\domain\repositories {
          * getLastUpdateCanvas - gets the list of canvas that have been updated recently
          *
          * @access public
-         * @param  int      $projectId   Project od
-         * @param  array    $boards    List of board types to pull
+         * @param  integer $projectId Project od
+         * @param  array   $boards    List of board types to pull
          * @return array    array of canvas boards sorted by last update date
          */
         public function getLastUpdatedCanvas(int $projectId, array $boards)
@@ -1212,7 +1212,7 @@ namespace leantime\domain\repositories {
          * getTags - gets the list of tags across all canvas items in a given project
          *
          * @access public
-         * @param  int      $projectId   Project od
+         * @param  integer $projectId Project od
          * @return array    array of canvas boards sorted by last update date
          */
         public function getTags(int $projectId)

@@ -6,11 +6,24 @@ use leantime\core\template;
 use leantime\core\events;
 use leantime\core\language;
 
+/**
+ * Controller Class - Base class for all controllers
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 abstract class controller
 {
     use eventhelpers;
 
+    /**
+     * @var template
+     */
     protected template $tpl;
+
+    /**
+     * @var language
+     */
     protected language $language;
 
     /**
@@ -18,12 +31,12 @@ abstract class controller
      *
      * @access public
      *
-     * @param $method the method to be initialized
-     * @param $params parameters or body of the request
+     * @param string       $method the method to be initialized
+     * @param array|object $params parameters or body of the request
+     * @return self
      */
     public function __construct($method, $params)
     {
-
         self::dispatch_event('begin');
 
         $this->tpl = app()->make(template::class);
@@ -40,7 +53,7 @@ abstract class controller
      *
      * @access private
      *
-     * @param string $method
+     * @param string       $method
      * @param array|object $params
      *
      * @return void
@@ -50,7 +63,7 @@ abstract class controller
         $available_params = [
             'controller' => $this,
             'method' => $method,
-            'params' => $params
+            'params' => $params,
         ];
 
         self::dispatch_event('before_init', $available_params);

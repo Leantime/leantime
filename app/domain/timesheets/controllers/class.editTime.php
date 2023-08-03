@@ -61,7 +61,7 @@ namespace leantime\domain\controllers {
                         'invoicedEmplDate' => $timesheet['invoicedEmplDate'],
                         'invoicedCompDate' => $timesheet['invoicedCompDate'],
                         'paid' => $timesheet['paid'],
-                        'paidDate' => $timesheet['paidDate']
+                        'paidDate' => $timesheet['paidDate'],
                     );
 
                     if (auth::userIsAtLeast(roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
@@ -160,7 +160,7 @@ namespace leantime\domain\controllers {
                                                 'invoicedEmplDate' => $timesheetUpdated['invoicedEmplDate'],
                                                 'invoicedCompDate' => $timesheetUpdated['invoicedCompDate'],
                                                 'paid' => $timesheetUpdated['paid'],
-                                                'paidDate' => $timesheetUpdated['paidDate']
+                                                'paidDate' => $timesheetUpdated['paidDate'],
                                             );
                                         } else {
                                             $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');

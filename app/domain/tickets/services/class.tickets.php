@@ -95,7 +95,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @params array $params label information
-         * @return bool
+         * @return boolean
          */
         public function saveStatusLabels($params): bool
         {
@@ -110,7 +110,7 @@ namespace leantime\domain\services {
                         "class" => $params['labelClass-' . $labelKey] ?? 'label-default',
                         "statusType" => $params['labelType-' . $labelKey] ?? 'NEW',
                         "kanbanCol" => $params['labelKanbanCol-' . $labelKey] ?? false,
-                        "sortKey" => $params['labelSort-' . $labelKey] ?? 99
+                        "sortKey" => $params['labelSort-' . $labelKey] ?? 99,
                     );
                 }
 
@@ -239,7 +239,7 @@ namespace leantime\domain\services {
                 [
                         'expires' => time() + 3600,
                         'path' => $this->config->appUrlRoot . "/tickets/",
-                        'samesite' => 'Strict'
+                        'samesite' => 'Strict',
                     ]
             );
 
@@ -322,8 +322,7 @@ namespace leantime\domain\services {
 
             $statusLabels = $this->getAllStatusLabelsByUserId($userId);
 
-            $tickets = array(
-            );
+            $tickets = array();
 
             foreach ($allTickets as $row) {
                 //There is a non zero chance that a user has tasks assigned to them while not being part of the project
@@ -340,7 +339,7 @@ namespace leantime\domain\services {
                         } else {
                             $tickets['later'] = array(
                                 "labelName" => "subtitles.todos_later",
-                                "tickets" => array($row)
+                                "tickets" => array($row),
                             );
                         }
                     } else {
@@ -355,7 +354,7 @@ namespace leantime\domain\services {
                             } else {
                                 $tickets['thisWeek'] = array(
                                     "labelName" => "subtitles.todos_this_week",
-                                    "tickets" => array($row)
+                                    "tickets" => array($row),
                                 );
                             }
                         } else {
@@ -364,7 +363,7 @@ namespace leantime\domain\services {
                             } else {
                                 $tickets['later'] = array(
                                     "labelName" => "subtitles.todos_later",
-                                    "tickets" => array($row)
+                                    "tickets" => array($row),
                                 );
                             }
                         }
@@ -402,7 +401,7 @@ namespace leantime\domain\services {
                     } else {
                         $tickets[$row['projectId']] = array(
                             "labelName" => $row['clientName'] . "//" . $row['projectName'],
-                            "tickets" => array($row)
+                            "tickets" => array($row),
                         );
                     }
                 }
@@ -486,7 +485,7 @@ namespace leantime\domain\services {
                 'editFrom' => '',
                 'editTo' => '',
                 'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : "",
-                'dependingTicketId' => ''
+                'dependingTicketId' => '',
             );
 
             if ($values['headline'] == "") {
@@ -505,7 +504,7 @@ namespace leantime\domain\services {
                 $notification = app()->make(models\notifications\notification::class);
                 $notification->url = array(
                     "url" => $actual_link,
-                    "text" => $this->language->__("email_notifications.new_todo_cta")
+                    "text" => $this->language->__("email_notifications.new_todo_cta"),
                 );
                 $notification->entity = $values;
                 $notification->module = "tickets";
@@ -546,7 +545,7 @@ namespace leantime\domain\services {
                 'acceptanceCriteria' => '',
                 'tags' => $params['tags'],
                 'editFrom' => $this->language->getISODateString($params['editFrom']),
-                'editTo' => $this->language->getISODateString($params['editTo'])
+                'editTo' => $this->language->getISODateString($params['editTo']),
             );
 
             if ($values['headline'] == "") {
@@ -631,7 +630,7 @@ namespace leantime\domain\services {
                     $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
-                        "text" => $this->language->__("email_notifications.new_todo_cta")
+                        "text" => $this->language->__("email_notifications.new_todo_cta"),
                     );
                     $notification->entity = $values;
                     $notification->module = "tickets";
@@ -719,7 +718,7 @@ namespace leantime\domain\services {
                     $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
-                        "text" => $this->language->__("email_notifications.todo_update_cta")
+                        "text" => $this->language->__("email_notifications.todo_update_cta"),
                     );
                     $notification->entity = $values;
                     $notification->module = "tickets";
@@ -748,9 +747,9 @@ namespace leantime\domain\services {
         /**
          * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
          *
-         * @param int $id
-         * @param int $projectId
-         * @return bool
+         * @param integer $id
+         * @param integer $projectId
+         * @return boolean
          */
         public function moveTicket(int $id, int $projectId): bool
         {
@@ -797,7 +796,7 @@ namespace leantime\domain\services {
                 'milestoneid' => $params['dependentMilestone'],
                 'tags' => $params['tags'],
                 'editFrom' => $this->language->getISODateString($params['editFrom']),
-                'editTo' => $this->language->getISODateString($params['editTo'])
+                'editTo' => $this->language->getISODateString($params['editTo']),
             );
 
             if ($values['headline'] == "") {
@@ -834,7 +833,7 @@ namespace leantime\domain\services {
                 'editFrom' => "",
                 'editTo' => "",
                 'dependingTicketId' => $parentTicket->id,
-                'milestoneid' => $parentTicket->milestoneid
+                'milestoneid' => $parentTicket->milestoneid,
             );
 
             if ($subtaskId == "new" || $subtaskId == "") {
@@ -901,7 +900,7 @@ namespace leantime\domain\services {
                     $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
-                        "text" => $this->language->__("email_notifications.todo_update_cta")
+                        "text" => $this->language->__("email_notifications.todo_update_cta"),
                     );
                     $notification->entity = $ticket;
                     $notification->module = "tickets";
@@ -982,38 +981,38 @@ namespace leantime\domain\services {
                 [
                     'id' => 'groupByNothingLink',
                     'status' => '',
-                    'label' => 'no_group'
+                    'label' => 'no_group',
                 ],
                 [
                     'id' => 'groupByStatusLink',
                     'status' => 'status',
-                    'label' => 'todo_status'
+                    'label' => 'todo_status',
                 ],
                 [
                     'id' => 'groupByPriorityLink',
                     'status' => 'priority',
-                    'label' => 'priority'
+                    'label' => 'priority',
                 ],
                 [
                     'id' => 'groupByMilestoneLink',
                     'status' => 'milestone',
-                    'label' => 'milestone'
+                    'label' => 'milestone',
                 ],
                 [
                     'id' => 'groupByUserLink',
                     'status' => 'user',
-                    'label' => 'user'
+                    'label' => 'user',
                 ],
                 [
                     'id' => 'groupBySprintLink',
                     'status' => 'sprint',
-                    'label' => 'sprint'
+                    'label' => 'sprint',
                 ],
                 [
                     'id' => 'groupByTagsLink',
                     'status' => 'tags',
-                    'label' => 'tags'
-                ]
+                    'label' => 'tags',
+                ],
             ];
         }
 
@@ -1029,18 +1028,18 @@ namespace leantime\domain\services {
                 [
                     'url' => "$baseUrl/tickets/newTicket",
                     'text' => 'links.add_todo',
-                    'class' => 'ticketModal'
+                    'class' => 'ticketModal',
                 ],
                 [
                     'url' => "$baseUrl/tickets/editMilestone",
                     'text' => 'links.add_milestone',
-                    'class' => 'milestoneModal'
+                    'class' => 'milestoneModal',
                 ],
                 [
                     'url' => "$baseUrl/sprints/editSprint",
                     'text' => 'links.add_sprint',
-                    'class' => 'sprintModal'
-                ]
+                    'class' => 'sprintModal',
+                ],
             ];
         }
     }

@@ -72,9 +72,9 @@ $elementName = 'goal';
                                         $percentDone = $row["goalProgress"];
                                         $metricTypeFront = '';
                                         $metricTypeBack = '';
-                                        if($row["metricType"] == "percent") {
+                                        if ($row["metricType"] == "percent") {
                                             $metricTypeBack = '%';
-                                        }else if($row["metricType"] == "currency") {
+                                        } elseif ($row["metricType"] == "currency") {
                                             $metricTypeFront = $this->__("language.currency");
                                         }
 
@@ -95,13 +95,13 @@ $elementName = 'goal';
                                         </div>
                                         <div class="row" style="padding-bottom:0px;">
                                             <div class="col-md-4">
-                                                <small>Start:<br /><?=$metricTypeFront.$row["startValue"].$metricTypeBack ?></small>
+                                                <small>Start:<br /><?=$metricTypeFront . $row["startValue"] . $metricTypeBack ?></small>
                                             </div>
                                             <div class="col-md-4 center">
-                                                <small><?=$this->__('label.current') ?>:<br /><?=$metricTypeFront.$row["currentValue"].$metricTypeBack ?></small>
+                                                <small><?=$this->__('label.current') ?>:<br /><?=$metricTypeFront . $row["currentValue"] . $metricTypeBack ?></small>
                                             </div>
                                             <div class="col-md-4" style="text-align:right">
-                                                <small><?=$this->__('label.goal') ?>:<br /><?=$metricTypeFront.$row["endValue"].$metricTypeBack ?></small>
+                                                <small><?=$this->__('label.goal') ?>:<br /><?=$metricTypeFront . $row["endValue"] . $metricTypeBack ?></small>
                                             </div>
                                         </div>
 
@@ -253,7 +253,7 @@ $elementName = 'goal';
 
 
                 echo"</div>";
-         } ?>
+        } ?>
 
 
         <div class="clearfix"></div>

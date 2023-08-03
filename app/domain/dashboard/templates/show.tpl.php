@@ -68,19 +68,17 @@
                                     $totalSteps = 0;
                                     $stepsDone = 1;
 
-                                    foreach($progressSteps as $step){
-
-                                        if($step['status'] == "done") {
+                                    foreach ($progressSteps as $step) {
+                                        if ($step['status'] == "done") {
                                             $stepsDone++;
                                         }
                                         $totalSteps++;
-
                                     }
 
                                     //Reduce half step to allow for spacing
-                                    $halfStep = (1/$totalSteps)/2 *100;
+                                    $halfStep = (1 / $totalSteps) / 2 * 100;
 
-                                    $percentDone = ($stepsDone / $totalSteps * 100)-$halfStep;
+                                    $percentDone = ($stepsDone / $totalSteps * 100) - $halfStep;
                                     ?>
 
                                     <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: <?=$percentDone ?>%">
@@ -91,57 +89,51 @@
                                 <?php
 
                                 $currentStep = 1;
-                                foreach($progressSteps as $step){
+                                foreach ($progressSteps as $step) {
+                                    $positionLeft = ($currentStep / $totalSteps * 100) - $halfStep;
 
-                                    $positionLeft = ($currentStep / $totalSteps * 100) -$halfStep;
 
-
-                                    if($step['status'] == "done") {
-                                        echo "<div class='step complete' style='left:".$positionLeft."%'>";
+                                    if ($step['status'] == "done") {
+                                        echo "<div class='step complete' style='left:" . $positionLeft . "%'>";
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
                                             <span class='title'>
-                                               <i class='fa fa-check'></i> ".$this->__($step['title'])." <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                               <i class='fa fa-check'></i> " . $this->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
                                             </span>
                                          </a>";
-
-                                    }else if($positionLeft == $percentDone ){
-
-                                        echo "<div class='step current' style='left:".$positionLeft."%'>";
+                                    } elseif ($positionLeft == $percentDone) {
+                                        echo "<div class='step current' style='left:" . $positionLeft . "%'>";
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
                                             <span class='title'>
-                                                ".$this->__($step['title'])." <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                                " . $this->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
                                             </span>
                                           </a>";
-
-                                    }else{
-
-                                        echo "<div class='step' style='left:".$positionLeft."%'>";
+                                    } else {
+                                        echo "<div class='step' style='left:" . $positionLeft . "%'>";
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
                                             <span class='title'>
-                                                ".$this->__($step['title'])." <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                                " . $this->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
                                             </span>
                                           </a>";
                                     }
 
                                     echo "<ul class='dropdown-menu'>";
-                                    foreach($step['tasks'] as $key => $task){
-
-                                        if($task['status'] == "done"){
+                                    foreach ($step['tasks'] as $key => $task) {
+                                        if ($task['status'] == "done") {
                                             echo"<li class='done'>";
-                                        }else{
+                                        } else {
                                             echo"<li>";
                                         }
 
-                                        echo "<input type='checkbox' name='".$key."' id='progress_".$key."' ";
+                                        echo "<input type='checkbox' name='" . $key . "' id='progress_" . $key . "' ";
 
-                                        if($task['status'] == "done"){
+                                        if ($task['status'] == "done") {
                                             echo"checked='checked'";
                                         }
 
-                                        echo"/><label for='progress_".$key."'>".$this->__($task['title']??'')."</label>";
+                                        echo"/><label for='progress_" . $key . "'>" . $this->__($task['title'] ?? '') . "</label>";
                                         echo"</li>";
                                     }
                                     echo "</ul>";
@@ -162,7 +154,7 @@
                     <?=$this->escapeMinimal($project['details']) ?>
                     </div>
 
-                    <?php if(strlen($project['details']) > 100){?>
+                    <?php if (strlen($project['details']) > 100) {?>
                     <div class="center">
                         <a href="javascript:void(0);" id="descriptionReadMoreToggle"><?=$this->__("label.read_more") ?></a>
                     </div>
@@ -197,7 +189,7 @@
                                 <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                     <div class="row">
                                         <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
-                                            <?php if($row['dependingTicketId'] > 0){ ?>
+                                            <?php if ($row['dependingTicketId'] > 0) { ?>
                                                 <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a> //
                                             <?php } ?>
                                             <strong><a href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
@@ -341,8 +333,7 @@
                                                 $this->escape($assignedUser['firstname']),
                                                 $this->escape($assignedUser['lastname'])
                                             );
-                                            echo "<br/><small>".$this->escape($assignedUser['jobTitle'])."</small>";
-
+                                            echo "<br/><small>" . $this->escape($assignedUser['jobTitle']) . "</small>";
                                         } else {
                                             echo $this->escape($assignedUser['username']);
                                             if ($assignedUser['status'] == "i") {

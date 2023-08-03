@@ -44,7 +44,7 @@ namespace leantime\domain\controllers {
                 'email'         => "",
                 'password'      => "",
                 'firstname'     => "",
-                'lastname'      => ""
+                'lastname'      => "",
             );
 
             if (isset($_POST['install'])) {
@@ -53,7 +53,7 @@ namespace leantime\domain\controllers {
                     'password' => $params['password'],
                     'firstname' => ($params['firstname']),
                     'lastname' => ($params['lastname']),
-                    'company' => ($params['company'])
+                    'company' => ($params['company']),
                 );
 
                 if (isset($params['email']) == false || $params['email'] == '') {

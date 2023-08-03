@@ -51,7 +51,7 @@ namespace leantime\domain\controllers {
                     'country' => '',
                     'phone' => '',
                     'internet' => '',
-                    'email' => ''
+                    'email' => '',
                 );
 
                 if (isset($_POST['save']) === true) {
@@ -64,7 +64,7 @@ namespace leantime\domain\controllers {
                         'country' => ($_POST['country']),
                         'phone' => ($_POST['phone']),
                         'internet' => ($_POST['internet']),
-                        'email' => ($_POST['email'])
+                        'email' => ($_POST['email']),
                     );
 
                     if ($values['name'] !== '') {

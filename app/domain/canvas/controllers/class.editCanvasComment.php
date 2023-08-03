@@ -92,7 +92,7 @@ namespace leantime\domain\controllers\canvas {
                     'data' => '',
                     'conclusion' => '',
                     'milestoneHeadline' => '',
-                    'milestoneId' => ''
+                    'milestoneId' => '',
                 );
 
                 $comments = [];
@@ -132,7 +132,7 @@ namespace leantime\domain\controllers\canvas {
                             'id' => $params['itemId'],
                             'canvasId' => $currentCanvasId,
                             'milestoneId' => $params['milestoneId'],
-                            'dependentMilstone' => ''
+                            'dependentMilstone' => '',
                         );
 
                         $this->canvasRepo->editCanvasComment($canvasItem);
@@ -150,7 +150,7 @@ namespace leantime\domain\controllers\canvas {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . (int)$params['itemId'],
-                            "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                            "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = static::CANVAS_NAME . 'canvas';
@@ -182,7 +182,7 @@ namespace leantime\domain\controllers\canvas {
                             'assumptions' => $params['assumptions'],
                             'data' => $params['data'],
                             'conclusion' => $params['conclusion'],
-                            'canvasId' => $currentCanvasId
+                            'canvasId' => $currentCanvasId,
                         );
 
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
@@ -197,7 +197,7 @@ namespace leantime\domain\controllers\canvas {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . (int)$params['itemId'],
-                            "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                            "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = static::CANVAS_NAME . 'canvas';
@@ -227,7 +227,7 @@ namespace leantime\domain\controllers\canvas {
                     'date' => date('Y-m-d H:i:s'),
                     'userId' => ($_SESSION['userdata']['id']),
                     'moduleId' => $_GET['id'],
-                    'commentParent' => ($params['father'])
+                    'commentParent' => ($params['father']),
                 );
 
                 $message = $this->commentsRepo->addComment($values, static::CANVAS_NAME . 'canvasitem');
@@ -239,7 +239,7 @@ namespace leantime\domain\controllers\canvas {
                 $notification = app()->make(models\notifications\notification::class);
                 $notification->url = array(
                     "url" => BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . (int)$_GET['id'],
-                    "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                    "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
                 );
                 $notification->entity = $values;
                 $notification->module = static::CANVAS_NAME . 'canvas';

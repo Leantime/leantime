@@ -86,7 +86,6 @@
                                     <div class="col-md-8">
                                         <?=$installedPlugins->description ?><br />
                                         <?php if (is_array($installedPlugins->authors) && count($installedPlugins->authors) > 0) { ?>
-
                                             <?=$this->__("text.by")?> <a href="mailto:<?=$installedPlugins->authors[0]->email ?>"><?=$installedPlugins->authors[0]->name ?></a>
                                         <?php } ?>
                                         | <a href="<?=$installedPlugins->homepage ?>" target="_blank"> <?=$this->__("text.visit_site")?> </a><br />
@@ -103,7 +102,7 @@
                                     </div>
                                     <div class="col-md-4" style="padding-top:10px; text-align:right;">
                                         <?php
-                                        if (file_exists(APP_ROOT.'/app/plugins/'.$installedPlugins->foldername.'/controllers/class.settings.php')) {?>
+                                        if (file_exists(APP_ROOT . '/app/plugins/' . $installedPlugins->foldername . '/controllers/class.settings.php')) {?>
                                         <a href="<?=BASE_URL ?>/<?=$installedPlugins->foldername?>/settings"><i class="fa fa-cog"></i> Settings</a>
                                         <?php } ?>
                                     </div>

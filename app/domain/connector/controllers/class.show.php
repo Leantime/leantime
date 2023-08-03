@@ -54,8 +54,6 @@ namespace leantime\domain\controllers {
         {
             //Redirect.
         }
-
-
     }
 
 }

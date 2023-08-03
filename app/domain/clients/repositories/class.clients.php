@@ -20,7 +20,7 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    int
+         * @var    integer
          */
         public $id;
 
@@ -285,7 +285,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return bool
+         * @return boolean
          */
         public function hasTickets($id)
         {

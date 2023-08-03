@@ -39,14 +39,14 @@ namespace leantime\domain\controllers {
             $values = array(
                 'url' => '',
                 'name' => '',
-                'colorClass' => ''
+                'colorClass' => '',
             );
 
             if (isset($_POST['save']) === true) {
                 $values = array(
                     'url' => ($_POST['url']),
                     'name' => ($_POST['name']),
-                    'colorClass' => ($_POST['color'])
+                    'colorClass' => ($_POST['color']),
                 );
 
                 $this->calendarRepo->addGUrl($values);

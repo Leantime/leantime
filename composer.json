@@ -8,6 +8,7 @@
             "php": "8.0"
         },
         "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
             "metasyntactical/composer-plugin-license-check": true
         }
     },
@@ -59,7 +60,8 @@
         "symfony/process": "^5.4",
         "codeception/module-db": "^3.1",
         "codeception/module-webdriver": "^3.2",
-        "spatie/laravel-ignition": "^1.6"
+        "spatie/laravel-ignition": "^1.6",
+        "phpcsstandards/phpcsextra": "^1.1"
     },
     "autoload": {
         "files": [

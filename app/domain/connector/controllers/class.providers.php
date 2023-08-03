@@ -15,8 +15,6 @@ namespace leantime\domain\controllers {
 
     class providers extends controller
     {
-
-
         /**
          * constructor - initialize private variables
          *
@@ -26,9 +24,6 @@ namespace leantime\domain\controllers {
         public function init()
         {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
-
-
-
         }
 
         /**
@@ -54,8 +49,6 @@ namespace leantime\domain\controllers {
         {
             $this->tpl->displayPartial('connectors.providers');
         }
-
-
     }
 
 }

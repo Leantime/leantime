@@ -30,8 +30,7 @@ $moduleId = $_SESSION['currentProject'];
 
         <?php echo $this->displayNotification() ?>
 
-        <?php if($login::userIsAtLeast($roles::$editor)) {?>
-
+        <?php if ($login::userIsAtLeast($roles::$editor)) {?>
         <div class="uploadWrapper">
 
             <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;"><?php echo $this->__("links.cancel"); ?></a>

@@ -54,21 +54,17 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($params["profileImage"])) {
-
                 $return = $this->usersService->getProfilePicture($params["profileImage"]);
 
                 if (is_array($return)) {
-
                     $file = app()->make(core\fileupload::class);
-                    if($return["type"] == "uploaded"){
+                    if ($return["type"] == "uploaded") {
                         $file->displayImageFile($return["filename"]);
-                    }else if($return["type"] == "generated"){
+                    } elseif ($return["type"] == "generated") {
                         $file->displayImageFile("avatar", $return["filename"]);
                     }
-
-                } else if(is_object($return)){
-
-                  header('Content-type: image/svg+xml');
+                } elseif (is_object($return)) {
+                    header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
                 }
             }

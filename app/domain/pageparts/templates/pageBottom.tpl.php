@@ -19,7 +19,7 @@ $appSettings = $this->get('appSettings');
     }, 300000);
 </script>
 
-<?php if(isset($_SESSION['userdata'])) { ?>
+<?php if (isset($_SESSION['userdata'])) { ?>
     <script>
         //5 min keep alive timer
         setInterval(function(){

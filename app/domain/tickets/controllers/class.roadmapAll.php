@@ -60,8 +60,7 @@ namespace leantime\domain\controllers {
 
             if (isset($_GET['clientId']) && $_GET['clientId'] !== '') {
                 $clientId = $_GET['clientId'];
-            }
-            else{
+            } else {
                 $clientId = false;
             }
 

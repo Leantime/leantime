@@ -420,7 +420,7 @@ jQuery(document).ready(function(){
                                                     [
                                                         $projectRow['id'],
                                                         $this->escape($projectRow['clientName']),
-                                                        $this->escape($projectRow['name'])
+                                                        $this->escape($projectRow['name']),
                                                     ]
                                                 )
                                             ); ?>
@@ -443,7 +443,7 @@ jQuery(document).ready(function(){
                                                     [
                                                         $ticketRow['id'],
                                                         $ticketRow['projectId'],
-                                                        $this->escape($ticketRow['headline'])
+                                                        $this->escape($ticketRow['headline']),
                                                     ]
                                                 )
                                             ); ?>

@@ -64,7 +64,6 @@ namespace leantime\domain\controllers {
                 $_SESSION['menuState'] = htmlentities($params['menuState']);
                 $this->menu->setSubmenuState("mainMenu", $params['menuState']);
             }
-
         }
 
         /**

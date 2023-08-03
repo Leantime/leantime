@@ -3,9 +3,9 @@
     $ticket = $this->get("ticket");
 ?>
 
-<?php if($ticket->type == "milestone"){?>
+<?php if ($ticket->type == "milestone") {?>
     <h4 class="widgettitle title-light"><?=$this->__("headline.move_milestone"); ?> </h4>
-<?php }else{ ?>
+<?php } else { ?>
     <h4 class="widgettitle title-light"><?=$this->__("headline.move_todo"); ?> </h4>
 <?php } ?>
 
@@ -13,9 +13,9 @@
     <form method="post" action="<?=BASE_URL?>/tickets/moveTicket/<?=$ticket->id ?>" class="formModal">
         <h3>#<?=$ticket->id ?> - <?=$this->escape($ticket->headline); ?></h3> <br />
         <p>
-            <?php if($ticket->type == "milestone"){?>
+            <?php if ($ticket->type == "milestone") {?>
                 <?php echo $this->__('text.moving_milestones'); ?>
-            <?php }else{ ?>
+            <?php } else { ?>
                 <?php echo $this->__('text.moving'); ?>
             <?php } ?>
 
@@ -24,15 +24,17 @@
 
         <select id="projectSelector" name="projectId">
         <?php
-        $i=0;
+        $i = 0;
         $lastClient = '';
         foreach ($this->get('projects') as $projectRow) {
             if ($lastClient != $projectRow['clientName']) {
                 $lastClient = $projectRow['clientName'];
-                if($i > 1){ echo"</optgroup>"; }
+                if ($i > 1) {
+                    echo"</optgroup>";
+                }
                 echo "<optgroup label='" . $this->escape($projectRow['clientName']) . "'> ";
             }
-            echo "<option value='".$projectRow["id"]."'>" . $this->escape($projectRow["name"]) . "</option>";
+            echo "<option value='" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</option>";
             $i++;
         }
         ?>

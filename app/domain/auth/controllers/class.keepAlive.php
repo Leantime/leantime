@@ -38,10 +38,9 @@ namespace leantime\domain\controllers {
 
             $return = $this->authService->updateUserSessionDB($userId, $sessionId);
 
-            if($return){
-
+            if ($return) {
                 $this->tpl->displayJson("{'status':'ok'}");
-            }else{
+            } else {
                 $this->tpl->displayJson("{'status':'logout'}");
             }
         }

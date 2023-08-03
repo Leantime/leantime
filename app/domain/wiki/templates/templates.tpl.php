@@ -1,10 +1,9 @@
 <?php
 
-
 use leantime\core\eventhelpers;
 
 $today = date($this->__('language.dateformat'));
-$author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
+$author = $_SESSION['userdata']['name'] . ' (' . $_SESSION['userdata']['mail'] . ')';
 
     //Templates for tinymce templates
     //All Templates require title, description, content
@@ -17,18 +16,18 @@ $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
     $prdTpl->description = $this->__("templates.prd.description");
     $prdTpl->category = $this->__("templates.documents");
     $prdTpl->content = '
-<h1><strong>'.$this->__("templates.prd.title_for_prd").'<br /></strong></h1>
-<p>'.$this->__("templates.author").' '.$author.'<br />
-'.$this->__("templates.dates").' '.$today.'<br />
-'.$this->__("templates.status").' <span class="label label-default">'.$this->__("templates.status.draft").'</span><br />
+<h1><strong>' . $this->__("templates.prd.title_for_prd") . '<br /></strong></h1>
+<p>' . $this->__("templates.author") . ' ' . $author . '<br />
+' . $this->__("templates.dates") . ' ' . $today . '<br />
+' . $this->__("templates.status") . ' <span class="label label-default">' . $this->__("templates.status.draft") . '</span><br />
 
 <table style="border-collapse: collapse; width: 100%;" border="1">
 <thead>
 <tr>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.responsible").'</td>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.approve").'</td>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.consulted").'</td>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.informed").'</td>
+<td style="width: 23.3025%;">' . $this->__("templates.prd.responsible") . '</td>
+<td style="width: 23.3025%;">' . $this->__("templates.prd.approve") . '</td>
+<td style="width: 23.3025%;">' . $this->__("templates.prd.consulted") . '</td>
+<td style="width: 23.3025%;">' . $this->__("templates.prd.informed") . '</td>
 </tr>
 </thead>
 <tbody>
@@ -40,12 +39,12 @@ $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
 </tr>
 </tbody>
 </table>
-<h1>'.$this->__("templates.summary").'</h1>
-<h2>'.$this->__("templates.overview").'</h2>
-<p>'.$this->__("templates.prd.overview_description").'</p>
+<h1>' . $this->__("templates.summary") . '</h1>
+<h2>' . $this->__("templates.overview") . '</h2>
+<p>' . $this->__("templates.prd.overview_description") . '</p>
 
-<h2>'.$this->__("templates.problem").'</h2>
-<p>'.$this->__("templates.prd.problem_description").'</p>
+<h2>' . $this->__("templates.problem") . '</h2>
+<p>' . $this->__("templates.prd.problem_description") . '</p>
 
 <h2 >Goals (What are we working towards?</h2>
 <p>1. Goal</p>
@@ -161,8 +160,8 @@ $projectOutline->category = $this->__("templates.documents");
 $projectOutline->description = "";
 $projectOutline->content = '
 <h1><strong>Project Outline<br /></strong></h1>
-<p>Author: '.$author.'<br />
-Date: '.$today.'<br />
+<p>Author: ' . $author . '<br />
+Date: ' . $today . '<br />
 Status: <span class="label label-default">Draft</span><br />
 <table style="border-collapse: collapse; width: 100.146%; background-color: #ffffff; height: 182px;" border="1">
 <tbody>
@@ -373,7 +372,7 @@ $layout48->content = '
 <div class="col-md-4"><p>Sidebar Left</p></div>
 <div class="col-md-8"><p>Content Right</p></div>
 </div>';
-$templates[] =$layout48;
+$templates[] = $layout48;
 
 $layout84 = app()->make(\leantime\domain\models\wiki\template::class);
 $layout84->title = $this->__("templates.side_right");
@@ -384,7 +383,7 @@ $layout84->content = '
 <div class="col-md-8"><p>Content Left</p></div>
 <div class="col-md-4"><p>Sidebar Right</p></div>
 </div>';
-$templates[] =$layout84;
+$templates[] = $layout84;
 
 $layout363 = app()->make(\leantime\domain\models\wiki\template::class);
 $layout363->title = $this->__("templates.side_m_side");
@@ -408,7 +407,7 @@ $layout66->content = '
 <div class="col-md-6"><p>Column 1</div>
 <div class="col-md-6"><p>Column 2</div>
 </div>';
-$templates[] =$layout66;
+$templates[] = $layout66;
 
 $layout444 = app()->make(\leantime\domain\models\wiki\template::class);
 $layout444->title = $this->__("templates.titles.3_col");
@@ -467,6 +466,3 @@ $templates[] = $labelGray;
 $templates = static::dispatch_filter("documentTemplates", $templates);
 
 echo json_encode($templates);
-
-
-

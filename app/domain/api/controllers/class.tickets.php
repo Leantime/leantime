@@ -53,7 +53,6 @@ namespace leantime\domain\controllers {
             ob_start();
 
             if (services\auth::userIsAtLeast(roles::$editor)) {
-
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
                     if (isset($params["handler"]) == true) {
@@ -65,26 +64,22 @@ namespace leantime\domain\controllers {
                     if ($results === false) {
                         $this->apiService->setError(-32000, "Could not update status", "");
                     }
-
                 }
 
                 if (isset($params['action']) && $params['action'] == "ganttSort") {
-
                     $results = $this->ticketsApiService->updateTicketSorting($params["payload"]);
 
                     if ($results === false) {
                         $this->apiService->setError(-32000, "Could not update status", "");
                     }
-
                 }
-
             } else {
                 $this->apiService->setError(-32000, "Not authorized", "");
             }
 
             $htmlOutput = ob_get_clean();
 
-            $result = array("html"=>$htmlOutput);
+            $result = array("html" => $htmlOutput);
             $this->apiService->jsonResponse(1, $result);
         }
 
@@ -109,14 +104,13 @@ namespace leantime\domain\controllers {
                 if ($results === false) {
                     $this->apiService->setError(-32000, "Could not update status", "");
                 }
-
             } else {
                 $this->apiService->setError(-32000, "Not authorized", "");
             }
 
             $htmlOutput = ob_get_clean();
 
-            $result = array("html"=>$htmlOutput);
+            $result = array("html" => $htmlOutput);
             $this->apiService->jsonResponse(1, $result);
         }
 

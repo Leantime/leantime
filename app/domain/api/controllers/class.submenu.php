@@ -53,10 +53,10 @@ namespace leantime\domain\controllers {
         public function patch($params)
         {
 
-            if(isset($params['submenu']) && isset($params['state'])) {
+            if (isset($params['submenu']) && isset($params['state'])) {
                 $this->menu->setSubmenuState($params['submenu'], $params['state']);
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{'status':false}";
             }
         }

@@ -2,7 +2,7 @@
 
 namespace leantime\domain\models\connector {
 
-    final class  fieldTypes
+    final class fieldTypes
     {
         public static $int = "int";
         public static $shortString = "varchar(255)";

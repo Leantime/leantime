@@ -42,17 +42,13 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-            if($params["action"] == "add") {
-               return $this->reactionsService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
-
+            if ($params["action"] == "add") {
+                return $this->reactionsService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
             }
 
-            if($params["action"] == "remove") {
+            if ($params["action"] == "remove") {
                 return $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
-
             }
-
-
         }
 
         /**

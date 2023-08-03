@@ -69,7 +69,7 @@ namespace leantime\domain\controllers {
                         'jobTitle' => ($_POST['jobTitle']),
                         'jobLevel' => ($_POST['jobLevel']),
                         'department' => ($_POST['department']),
-                        'clientId' => ($_POST['client'])
+                        'clientId' => ($_POST['client']),
                     );
                     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
                         foreach ($_POST['projects'] as $project) {

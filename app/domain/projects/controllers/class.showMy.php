@@ -44,7 +44,7 @@ namespace leantime\domain\controllers {
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int)$_GET['client'];
                 $currentClient = $this->clientRepo->getClient($clientId);
-                if(is_array($currentClient) && count($currentClient) >0) {
+                if (is_array($currentClient) && count($currentClient) > 0) {
                     $currentClientName = $currentClient['name'];
                 }
             }
@@ -62,7 +62,6 @@ namespace leantime\domain\controllers {
                     }
 
                     if ($clientId == "" || $project["clientId"] == $clientId) {
-
                         $projectResults[$i] = $project;
                         $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
                         $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);

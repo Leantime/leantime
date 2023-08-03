@@ -64,7 +64,7 @@ namespace leantime\domain\controllers {
                 "name" => $_SESSION["companysettings.sitename"],
                 "language" => $_SESSION["companysettings.language"],
                 "telemetryActive" => false,
-                "messageFrequency" => ''
+                "messageFrequency" => '',
             );
 
             $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
@@ -148,12 +148,10 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));
 
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
-
             }
 
             //Main Details
             if (isset($params['name']) && $params['name'] != "" && isset($params['language']) && $params['language'] != "") {
-
                 $this->settingsRepo->saveSetting("companysettings.sitename", htmlspecialchars(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
 
@@ -164,14 +162,10 @@ namespace leantime\domain\controllers {
                 $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
 
                 if (isset($_POST['telemetryActive'])) {
-
                     $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");
-
                 } else {
-
                     //Set remote telemetry to false:
                     app()->make(services\reports::class)->optOutTelemetry();
-
                 }
 
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");

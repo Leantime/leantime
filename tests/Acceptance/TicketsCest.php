@@ -29,7 +29,7 @@ class TicketsCest
         $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
         $I->seeInDatabase('zp_tickets', [
             'id' => 10,
-            'headline' => 'Test Ticket'
+            'headline' => 'Test Ticket',
         ]);
     }
 

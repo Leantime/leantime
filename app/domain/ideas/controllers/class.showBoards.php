@@ -37,17 +37,14 @@ namespace leantime\domain\controllers {
         {
 
             $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
-            if($allCanvas == false || count($allCanvas) == 0){
-
+            if ($allCanvas == false || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__("label.board"),
                     'author' => $_SESSION['userdata']['id'],
-                    'projectId' => $_SESSION['currentProject']
+                    'projectId' => $_SESSION['currentProject'],
                 ];
                 $currentCanvasId = $this->ideaRepo->addCanvas($values);
                 $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
-
-
             }
 
             if (isset($_SESSION['currentIdeaCanvas'])) {

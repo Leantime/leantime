@@ -33,7 +33,6 @@ namespace leantime\domain\controllers {
 
             //Delete milestone relationship
             if (isset($params['removeMilestone']) === true) {
-
                 $article->milestoneId = "";
                 $results = $this->wikiService->updateArticle($article);
 
@@ -41,8 +40,6 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
                     $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
                 }
-
-
             }
 
             if ($_SESSION['currentWiki'] != '') {

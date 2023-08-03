@@ -17,7 +17,7 @@
 
 <div style="min-width:90%">
 
-    <?php if($ticket->dependingTicketId > 0){ ?>
+    <?php if ($ticket->dependingTicketId > 0) { ?>
         <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$ticket->dependingTicketId ?>"><?=$this->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
     <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $this->e($ticket->headline); ?></h1>
@@ -39,19 +39,35 @@
                 <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                 <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                 <li id="timerContainer-<?php echo $ticket->id;?>" class="timerContainer">
-                    <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $ticket->id; ?>" <?php if ($clockedIn !== false) {
-                        echo"style='display:none;'";
-                    }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
-                    <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $ticket->id; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $ticket->id) {
-                        echo"style='display:none;'";
-                    }?>><span class="fa fa-stop"></span> <?php if (is_array($clockedIn) == true) {
+                    <a
+                        class="punchIn"
+                        href="javascript:void(0);"
+                        data-value="<?php echo $ticket->id; ?>"
+                        <?php if ($clockedIn !== false) {
+                            echo"style='display:none;'";
+                        }?>
+                    ><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
+                    <a
+                        class="punchOut"
+                        href="javascript:void(0);"
+                        data-value="<?php echo $ticket->id; ?>"
+                        <?php if ($clockedIn === false || $clockedIn["id"] != $ticket->id) {
+                            echo"style='display:none;'";
+                        }?>
+                    >
+                        <span class="fa fa-stop"></span>
+                        <?php if (is_array($clockedIn) == true) {
                             echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"]));
                         } else {
                             echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time()));
-                        }?></a>
-                    <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $ticket->id) {
-                        echo"style='display:none;'";
-                    }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
+                        }?>
+                    </a>
+                    <span
+                        class='working'
+                        <?php if ($clockedIn === false || $clockedIn["id"] === $ticket->id) {
+                            echo"style='display:none;'";
+                        }?>
+                    ><?php echo $this->__("text.timer_set_other_todo"); ?></span>
                 </li>
             </ul>
         </div>

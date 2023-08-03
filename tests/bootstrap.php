@@ -21,11 +21,28 @@ define('APP_ROOT', PROJECT_ROOT . 'app/');
 define('DEV_ROOT', PROJECT_ROOT . '.dev/');
 
 $bootstrapper = get_class(new class {
+    /**
+     * @var self
+     */
     protected static $instance;
-    protected $seleniumProcess;
-    protected $dockerProcess;
 
-    public static function getInstance()
+    /**
+     * @var Process
+     */
+    protected Process $seleniumProcess;
+
+    /**
+     * @var Process
+     */
+    protected Process $dockerProcess;
+
+    /**
+     * Get the singleton instance of this class
+     *
+     * @access public
+     * @return self
+     */
+    public static function getInstance(): self
     {
         if (! isset(self::$instance)) {
             self::$instance = new self();
@@ -34,6 +51,12 @@ $bootstrapper = get_class(new class {
         return self::$instance;
     }
 
+    /**
+     * Start the testing environment
+     *
+     * @access public
+     * @return void
+     */
     public function start(): void
     {
         $this->startDevEnvironment();
@@ -42,6 +65,12 @@ $bootstrapper = get_class(new class {
         $this->createStep('Starting Codeception Testing Framework');
     }
 
+    /**
+     * Destroy the testing environment
+     *
+     * @access public
+     * @return void
+     */
     public function destroy(): void
     {
         $this->createStep('Stopping Codeception Testing Framework');
@@ -49,7 +78,13 @@ $bootstrapper = get_class(new class {
         $this->stopDevEnvironment();
     }
 
-    public function stopSelenium(): void
+    /**
+     * Stop Selenium
+     *
+     * @access protected
+     * @return void
+     */
+    protected function stopSelenium(): void
     {
         $this->createStep('Stopping Selenium');
 
@@ -61,7 +96,13 @@ $bootstrapper = get_class(new class {
         }
     }
 
-    public function stopDevEnvironment(): void
+    /**
+     * Stop the dev environment
+     *
+     * @access protected
+     * @return void
+     */
+    protected function stopDevEnvironment(): void
     {
         $this->createStep('Stopping Leantime Dev Environment');
 
@@ -84,6 +125,12 @@ $bootstrapper = get_class(new class {
         }
     }
 
+    /**
+     * Start the dev environment
+     *
+     * @access protected
+     * @return void
+     */
     protected function startDevEnvironment(): void
     {
         $this->createStep('Build & Start Leantime Dev Environment');
@@ -133,6 +180,12 @@ $bootstrapper = get_class(new class {
         });
     }
 
+    /**
+     * Create the test database
+     *
+     * @access protected
+     * @return void
+     */
     protected function createDatabase(): void
     {
         $this->createStep('Creating Test Database');
@@ -148,7 +201,7 @@ $bootstrapper = get_class(new class {
                 '-uroot',
                 '-pleantime',
                 '-e',
-                'DROP DATABASE IF EXISTS leantime_test;'
+                'DROP DATABASE IF EXISTS leantime_test;',
             ],
             ['cwd' => DEV_ROOT]
         );
@@ -169,7 +222,13 @@ $bootstrapper = get_class(new class {
         );
     }
 
-    protected function startSelenium()
+    /**
+     * Start Selenium
+     *
+     * @access protected
+     * @return void
+     */
+    protected function startSelenium(): void
     {
         $this->createStep('Starting Selenium');
         $this->executeCommand(
@@ -190,6 +249,13 @@ $bootstrapper = get_class(new class {
         });
     }
 
+    /**
+     * Create a step in the output
+     *
+     * @access protected
+     * @param  string $message
+     * @return void
+     */
     protected function createStep(string $message): void
     {
         $chars = strlen($message);
@@ -198,6 +264,15 @@ $bootstrapper = get_class(new class {
         echo "\n$line\n$message\n$line\n";
     }
 
+    /**
+     * Execute a command
+     *
+     * @access protected
+     * @param  string|array $command
+     * @param  array $args
+     * @param  bool $required
+     * @return Process|string
+     */
     protected function executeCommand(
         string|array $command,
         array $args = [],
@@ -247,7 +322,15 @@ $bootstrapper = get_class(new class {
         return $process;
     }
 
-    private function commandOutputHandler($type, $buffer): void
+    /**
+     * Handle command output
+     *
+     * @access private
+     * @param  string $type
+     * @param  string $buffer
+     * @return void
+     */
+    private function commandOutputHandler(string $type, string $buffer): void
     {
         echo Process::ERR === $type
             ? "\nSTDERR: $buffer"

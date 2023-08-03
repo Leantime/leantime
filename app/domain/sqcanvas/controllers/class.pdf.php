@@ -16,15 +16,15 @@ namespace leantime\domain\controllers {
          * reportGenerate - Generate report for module
          *
          * @access public
-         * @param  int    $id      Canvas identifier
-         * @param  string $filter  Filter value
-         * @param  string $options Options
+         * @param  integer $id      Canvas identifier
+         * @param  string  $filter  Filter value
+         * @param  string  $options Options
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string
         {
 
-            $options = [ 'canvasShow' => false ];
+            $options = ['canvasShow' => false];
             return parent::reportGenerate($id, $filter, $options);
         }
     }

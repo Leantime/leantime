@@ -114,7 +114,7 @@ namespace leantime\domain\controllers {
                         'date' => date("Y-m-d H:i:s"),
                         'userId' => ($_SESSION['userdata']['id']),
                         'moduleId' => $params['id'],
-                        'father' => ($params['father'])
+                        'father' => ($params['father']),
                     );
 
 
@@ -131,7 +131,7 @@ namespace leantime\domain\controllers {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__("email_notifications.new_comment_milestone_cta")
+                            "text" => $this->language->__("email_notifications.new_comment_milestone_cta"),
                         );
                         $notification->entity = $values;
                         $notification->module = "comments";
@@ -159,7 +159,7 @@ namespace leantime\domain\controllers {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__("email_notifications.milestone_update_cta")
+                            "text" => $this->language->__("email_notifications.milestone_update_cta"),
                         );
                         $notification->entity = $params;
                         $notification->module = "tickets";
@@ -193,7 +193,7 @@ namespace leantime\domain\controllers {
                     $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
-                        "text" => $this->language->__("email_notifications.milestone_created_cta")
+                        "text" => $this->language->__("email_notifications.milestone_created_cta"),
                     );
                     $notification->entity = $params;
                     $notification->module = "tickets";

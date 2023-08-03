@@ -1,7 +1,7 @@
 <?php
 
-
 namespace leantime\command;
+
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -26,7 +26,7 @@ class testEmailCommand extends Command
    *
    * @param  InputInterface  $input
    * @param  OutputInterface $output
-   * @return int 0 if everything went fine, or an exit code.
+   * @return integer 0 if everything went fine, or an exit code.
    */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

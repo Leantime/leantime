@@ -20,7 +20,8 @@ namespace leantime\domain\controllers {
             $this->cronSvc = $cronSvc;
         }
 
-        public function run() {
+        public function run()
+        {
             $this->cronSvc->runCron();
         }
     }

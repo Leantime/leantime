@@ -82,7 +82,7 @@ namespace leantime\domain\controllers {
                             'pwReset' => $row['pwReset'],
                             'jobTitle' => ($_POST['jobTitle'] ?? $row['jobTitle']),
                             'jobLevel' => ($_POST['jobLevel'] ?? $row['jobLevel']),
-                            'department' => ($_POST['department'] ?? $row['department'])
+                            'department' => ($_POST['department'] ?? $row['department']),
                         );
 
                         $changedEmail = 0;

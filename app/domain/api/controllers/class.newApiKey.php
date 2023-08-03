@@ -48,12 +48,11 @@ namespace leantime\domain\controllers {
                 'role' => "",
                 'password' => "",
                 'status' => 'a',
-                'source' => 'api'
+                'source' => 'api',
             );
 
             //only Admins
             if (auth::userIsAtLeast(roles::$admin)) {
-
                 $projectrelation = array();
 
                 if (isset($_POST['save'])) {
@@ -64,7 +63,7 @@ namespace leantime\domain\controllers {
                         'password' => '',
                         'pwReset' => '',
                         'status' => '',
-                        'source' => 'api'
+                        'source' => 'api',
                     );
 
                     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
@@ -87,7 +86,6 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification("notification.api_key_created", 'success');
 
                     $this->tpl->assign('apiKeyValues', $apiKeyValues);
-
                 }
 
                 $this->tpl->assign('values', $values);
