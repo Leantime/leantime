@@ -390,15 +390,15 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
             $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
             $stmn->bindValue(':username', $values['user'], PDO::PARAM_STR);
-            $stmn->bindValue(':phone', $values['phone'], PDO::PARAM_STR);
+            $stmn->bindValue(':phone', $values['phone'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
             $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
-            $stmn->bindValue(':hours', $values['hours'], PDO::PARAM_STR);
-            $stmn->bindValue(':wage', $values['wage'], PDO::PARAM_STR);
+            $stmn->bindValue(':hours', $values['hours'] ?? 0, PDO::PARAM_STR);
+            $stmn->bindValue(':wage', $values['wage'] ?? 0, PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_STR);
-            $stmn->bindValue(':jobTitle', $values['jobTitle'], PDO::PARAM_STR);
-            $stmn->bindValue(':jobLevel', $values['jobLevel'], PDO::PARAM_STR);
-            $stmn->bindValue(':department', $values['department'], PDO::PARAM_STR);
+            $stmn->bindValue(':jobTitle', $values['jobTitle'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':jobLevel', $values['jobLevel'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':department', $values['department'] ?? '', PDO::PARAM_STR);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -538,16 +538,16 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
             $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
-            $stmn->bindValue(':phone', $values['phone'], PDO::PARAM_STR);
+            $stmn->bindValue(':phone', $values['phone'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':user', $values['user'], PDO::PARAM_STR);
             $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
 
             $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
             $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_INT);
 
-            $stmn->bindValue(':jobTitle', $values['jobTitle'], PDO::PARAM_STR);
-            $stmn->bindValue(':jobLevel', $values['jobLevel'], PDO::PARAM_STR);
-            $stmn->bindValue(':department', $values['department'], PDO::PARAM_STR);
+            $stmn->bindValue(':jobTitle', $values['jobTitle'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':jobLevel', $values['jobLevel'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':department', $values['department'] ?? '', PDO::PARAM_STR);
 
             if (isset($values['source'])) {
                 $stmn->bindValue(':source', $values['source'], PDO::PARAM_STR);
