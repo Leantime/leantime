@@ -31,10 +31,10 @@ namespace leantime\domain\repositories {
          */
         public $role;
 
-       /**
-         * @access public
-         * @var    string
-         */
+        /**
+        * @access public
+        * @var    string
+        */
         public $jobTitle;
 
         /**
@@ -208,14 +208,14 @@ namespace leantime\domain\repositories {
         {
 
             $sql = "SELECT
-			zp_user.id,
-			IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
-			zp_user.lastname,
-			zp_user.jobTitle,
-			zp_user.jobLevel,
-			zp_user.department
-		 FROM zp_user
-		    ORDER BY lastname";
+            zp_user.id,
+            IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
+            zp_user.lastname,
+            zp_user.jobTitle,
+            zp_user.jobLevel,
+            zp_user.department
+         FROM zp_user
+            ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -249,8 +249,8 @@ namespace leantime\domain\repositories {
                       jobTitle,
                       jobLevel,
                       department
-					FROM `zp_user`
-					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
+                    FROM `zp_user`
+                    LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
                     WHERE !(source <=> 'api')";
 
                 if($activeOnly == true) {
@@ -284,9 +284,9 @@ namespace leantime\domain\repositories {
                       jobTitle,
                       jobLevel,
                       department
-					FROM `zp_user`
+                    FROM `zp_user`
                     WHERE source <=> :source
-					ORDER BY lastname";
+                    ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':source', $source, PDO::PARAM_STR);
@@ -320,10 +320,10 @@ namespace leantime\domain\repositories {
                         jobTitle,
                         jobLevel,
                         department
-					FROM `zp_user`
-					LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
-					WHERE clientId = :clientId
-					ORDER BY lastname";
+                    FROM `zp_user`
+                    LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
+                    WHERE clientId = :clientId
+                    ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
@@ -371,20 +371,20 @@ namespace leantime\domain\repositories {
             }
 
             $query = "UPDATE `zp_user` SET
-				firstname = :firstname,
-				lastname = :lastname,
-				username = :username,
-				phone = :phone,
-				status = :status,
-				role = :role,
-				hours = :hours,
-				wage = :wage,
-				jobTitle = :jobTitle,
-				jobLevel = :jobLevel,
-				department = :department,
+                firstname = :firstname,
+                lastname = :lastname,
+                username = :username,
+                phone = :phone,
+                status = :status,
+                role = :role,
+                hours = :hours,
+                wage = :wage,
+                jobTitle = :jobTitle,
+                jobLevel = :jobLevel,
+                department = :department,
                 " . $chgPW . "
-				clientId = :clientId
-			 WHERE id = :id LIMIT 1";
+                clientId = :clientId
+             WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
@@ -466,13 +466,13 @@ namespace leantime\domain\repositories {
             }
 
             $query = "UPDATE `zp_user` SET
-				lastname = :lastname,
-				firstname = :firstname,
-				username = :username,
-				" . $chgPW . "
-				phone = :phone,
-				notifications = :notifications
-				WHERE id = :id LIMIT 1";
+                lastname = :lastname,
+                firstname = :firstname,
+                username = :username,
+                " . $chgPW . "
+                phone = :phone,
+                notifications = :notifications
+                WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
@@ -483,7 +483,7 @@ namespace leantime\domain\repositories {
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
-            if ($values['password'] != '') {
+            if (isset($values['password']) && $values['password'] != '') {
                 $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
             }
 
@@ -501,38 +501,38 @@ namespace leantime\domain\repositories {
         {
 
             $query = "INSERT INTO `zp_user` (
-							firstname,
-							lastname,
-							phone,
-							username,
-							role,
-					        notifications,
-							clientId,
-							password,
-							source,
+                            firstname,
+                            lastname,
+                            phone,
+                            username,
+                            role,
+                            notifications,
+                            clientId,
+                            password,
+                            source,
                             pwReset,
                             status,
                             createdOn,
                             jobTitle,
                             jobLevel,
                             department
-						) VALUES (
-							:firstname,
-							:lastname,
-							:phone,
-							:user,
-							:role,
-							1,
-							:clientId,
-							:password,
-							:source,
-							:pwReset,
-						    :status,
-						    NOW(),
+                        ) VALUES (
+                            :firstname,
+                            :lastname,
+                            :phone,
+                            :user,
+                            :role,
+                            1,
+                            :clientId,
+                            :password,
+                            :source,
+                            :pwReset,
+                            :status,
+                            NOW(),
                             :jobTitle,
                             :jobLevel,
                             :department
-						)";
+                        )";
 
             $stmn = $this->db->database->prepare($query);
 
@@ -687,7 +687,6 @@ namespace leantime\domain\repositories {
                 return $image;
             }
 
-            return $return;
         }
 
         public function patchUser($id, $params)
@@ -696,10 +695,10 @@ namespace leantime\domain\repositories {
             $sql = "UPDATE zp_user SET ";
 
             foreach ($params as $key => $value) {
-                $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
+                $sql .= core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
             }
 
-            $sql .= "id=:id WHERE id=:id2 LIMIT 1";
+            $sql .= " id=:id WHERE id=:id2 LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
@@ -745,4 +744,4 @@ namespace leantime\domain\repositories {
         }
     }
 
-}
+    }

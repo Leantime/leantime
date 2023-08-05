@@ -9,6 +9,7 @@ require('laravel-mix-eslint');
 require('dotenv').config({ path: 'config/.env' });
 
 mix
+    .sourceMaps()
     .setPublicPath('public/dist') // this is the URL to place assets referenced in the CSS/JS
     .setResourceRoot(`../`) // this is what to prefix the URL with
     .js('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
@@ -105,8 +106,12 @@ mix
         "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
         "./public/assets/js/libs/uppy/uppy.js",
     ], `public/dist/js/compiled-extended-libs.${version}.min.js`)
-    .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`)
-    .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`)
+    .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
+        sourceMap: true,
+    })
+    .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`, {
+        sourceMap: true,
+    })
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
     .eslint({
@@ -117,7 +122,9 @@ mix
             'public/assets/js/libs',
         ],
     })
+
     .webpackConfig({
+        devtool: 'inline-source-map',
         resolve: {
             alias: {
                 'images': path.resolve(__dirname, 'public/assets/images'),
