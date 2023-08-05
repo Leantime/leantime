@@ -69,7 +69,9 @@ $companySettings = $this->get('companySettings');
                             </div>
                             <br />
 
-                            <div class="row">
+                            <?php $this->dispatchTplEvent('beforeTelemetrySettings'); ?>
+
+                            <div class="row" id="telemetryContainer">
                                 <div class="col-md-2">
                                     <label><?=$this->__("label.send_telemetry")?></label>
                                 </div>
@@ -80,6 +82,7 @@ $companySettings = $this->get('companySettings');
                                     <div class="clearall"></div><br />
                                 </div>
                             </div>
+
                             <h4 class="widgettitle title-light"><span
                                     class="fa fa-cog"></span><?php echo $this->__('subtitles.defaults'); ?>
                             </h4>

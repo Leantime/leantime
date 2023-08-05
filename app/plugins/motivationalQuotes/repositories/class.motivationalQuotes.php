@@ -46,15 +46,15 @@ class motivationalQuotes
             "We are what we repeatedly do. Excellence, then, is not an act, but a habit." => "Aristotle",
         ];
 
-        //Results could be fetched from the db here.
-        $quotes = array_map(
-            fn ($quote, $author) => app()->make(
-                models\motivationalQuotes\quote::class,
-                ['quote' => $quote, 'author' => $author]
-            ),
-            array_keys($quotes),
-            array_values($quotes)
-        );
+            //Results could be fetched from the db here.
+            $quotes = array_map(
+                fn ($quote, $author) => app()->make(
+                    models\motivationalQuotes\quote::class,
+                    ['quote' => $quote, 'author' => $author]
+                ),
+                array_keys($quotes),
+                array_values($quotes)
+            );
 
         return $quotes;
     }

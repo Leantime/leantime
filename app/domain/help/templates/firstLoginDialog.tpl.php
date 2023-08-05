@@ -11,59 +11,59 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
 
 
 <?php if ($step == 1) { ?>
-<form class="onboardingModal step1" method="post" action="<?=BASE_URL ?>/help/firstLogin?step=2">
+    <form class="onboardingModal step1" method="post" action="<?=BASE_URL ?>/help/firstLogin?step=2">
 
-    <input type="hidden" name="step" value="1" />
-    <div class="row">
-        <div class="col-md-6">
-            <h1><?=$this->__('headlines.hi_there'); ?></h1>
-            <p><?=$this->__('text.first_login_intro') ?></p>
-            <br />
-            <label><?=$this->__('label.name_your_first_project') ?></label>
-            <input type="text" id="projectName" name="projectname" value="" placeholder=""/><br />
+        <input type="hidden" name="step" value="1" />
+        <div class="row">
+            <div class="col-md-6">
+                <h1><?=$this->__('headlines.hi_there'); ?></h1>
+                <p><?=$this->__('text.first_login_intro') ?></p>
+                <br />
+                <label><?=$this->__('label.name_your_first_project') ?></label>
+                <input type="text" id="projectName" name="projectname" value="" placeholder=""/><br />
 
-            <input type="submit" value="<?=$this->__('buttons.next') ?>"/>
-            <a href="javascript:void(0);"  onclick="skipOnboarding();"><?=$this->__('links.skip_for_now') ?></a>
-        </div>
-        <div class="col-md-6">
-            <div class='svgContainer' style="width:300px">
-                <?= file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg"); ?>
+                <input type="submit" value="<?=$this->__('buttons.next') ?>"/>
+                <a href="javascript:void(0);"  onclick="skipOnboarding();"><?=$this->__('links.skip_for_now') ?></a>
             </div>
+            <div class="col-md-6">
+                <div class='svgContainer' style="width:300px">
+                    <?= file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg"); ?>
+                </div>
+            </div>
+
         </div>
 
-    </div>
-
-</form>
+    </form>
 <?php } ?>
 
 <?php if ($step == 2) { ?>
-<form class="onboardingModal step2" method="post" action="<?=BASE_URL ?>/help/firstLogin?step=3">
-    <input type="hidden" name="step" value="2" />
-    <div class="row">
-        <div class="col-md-6">
-            <h1><?=$this->__('headlines.your_theme'); ?></h1>
-            <p><?=$this->__('text.theme_choice') ?></p>
-            <br />
-            <br />
-            <select name="theme" id="theme" style="width: 220px">
-                <?php
-                $themeCore = app()->make(\leantime\core\theme::class);
-                $themeAll = $themeCore->getAll();
-                foreach ($themeAll as $key => $name) {
-                    ?>
-                    <option value="<?=$key ?>"><?=$this->__($name) ?></option>
-                <?php } ?>
-            </select>
-            <br /><br />
-            <input type="submit" value="<?=$this->__('buttons.next') ?>"/>
-        </div>
-        <div class="col-md-6">
-            <div class='svgContainer' style="width:300px">
-                <?= file_get_contents(ROOT . "/dist/images/svg/undraw_dark_mode_2xam.svg"); ?>
+    <form class="onboardingModal step2" method="post" action="<?=BASE_URL ?>/help/firstLogin?step=3">
+        <input type="hidden" name="step" value="2" />
+        <div class="row">
+            <div class="col-md-6">
+                <h1><?=$this->__('headlines.your_theme'); ?></h1>
+                <p><?=$this->__('text.theme_choice') ?></p>
+                <br />
+                <br />
+                <select name="theme" id="theme" style="width: 220px">
+                    <?php
+                    $themeCore = app()->make(\leantime\core\theme::class);
+                    $themeAll = $themeCore->getAll();
+                    foreach ($themeAll as $key => $name) {
+                        ?>
+                        <option value="<?=$key ?>"><?=$this->__($name) ?></option>
+                    <?php } ?>
+                </select>
+                <br /><br />
+                <input type="submit" value="<?=$this->__('buttons.next') ?>"/>
+            </div>
+            <div class="col-md-6">
+                <div class='svgContainer' style="width:300px">
+                    <?= file_get_contents(ROOT . "/dist/images/svg/undraw_dark_mode_2xam.svg"); ?>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 
 <?php } ?>
 
@@ -94,25 +94,24 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
 
 
 <script>
-jQuery(document).ready(function(){
-    jQuery("#theme").on("change", function(){
-        var themeName = jQuery("#theme option:selected").val();
-        var url = "<?php echo BASE_URL; ?>/theme/"+themeName+"/css/theme.css";
-        jQuery("#themeStylesheet").attr("href", url);
+    jQuery(document).ready(function(){
+        jQuery("#theme").on("change", function(){
+            var themeName = jQuery("#theme option:selected").val();
+            var url = "<?php echo BASE_URL; ?>/theme/"+themeName+"/css/theme.css";
+            jQuery("#themeStylesheet").attr("href", url);
+        });
+
+
+
     });
 
+    function skipOnboarding() {
 
+        jQuery("form.step1 #projectName").val('<?=$_SESSION["currentProjectName"] ?>');
+        jQuery("form.step1").submit();
+        jQuery.nmTop().close();
 
-});
-
-function skipOnboarding() {
-
-    jQuery("form.step1 #projectName").val('<?=$_SESSION["currentProjectName"] ?>');
-    jQuery("form.step1").submit();
-    jQuery.nmTop().close();
-
-}
+    }
 </script>
-
 
 

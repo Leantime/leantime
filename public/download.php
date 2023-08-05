@@ -137,8 +137,8 @@ function getFileFromS3(){
     $s3Client = new Aws\S3\S3Client([
         'version'     => 'latest',
         'region'      => $config->s3Region,
-        'endpoint' => $config->s3EndPoint,
-        'use_path_style_endpoint' => $config->s3UsePathStyleEndpoint,
+        'endpoint' => $config->s3EndPoint == "" ? null : $config->s3EndPoint,
+        'use_path_style_endpoint' => !($config->s3UsePathStyleEndpoint == "false"),
         'credentials' => [
             'key'    => $config->s3Key,
             'secret' => $config->s3Secret
@@ -155,14 +155,20 @@ function getFileFromS3(){
             'Body'   => 'this is the body!'
         ]);
 
-        if($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+        if($ext == 'pdf'){
+            header('Content-type: application/pdf');
+            header("Content-Disposition: inline; filename=\"".$realName.".".$ext."\"");
+
+        }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png'){
+
             header('Content-Type: ' . $result['ContentType']);
             header("Content-Disposition: inline; filename=\"".$fileName."\"");
         }elseif($ext == 'svg') {
             header('Content-type: image/svg+xml');
             header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
+        }else {
+            header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
         }
-
 
         $body = $result->get('Body');
         echo $body->getContents();

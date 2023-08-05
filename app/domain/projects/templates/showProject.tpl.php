@@ -78,7 +78,11 @@
                                             <label for="user-<?php echo $userId ?>" ><?php printf($this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?>
 
                                                 <?php
-                                                echo "<small>(" . $this->escape($assignedUser['jobTitle']) . ")</small><br />";
+                                                if ($assignedUser['jobTitle'] != '') {
+                                                    echo "<small>(" . $this->escape(
+                                                            $assignedUser['jobTitle']
+                                                        ) . ")</small><br />";
+                                                }
                                                 if ($assignedUser['status'] == 'i') {
                                                     echo "<small>(" . $this->__('label.invited') . ")</small>";
                                                 } ?></label>
@@ -177,11 +181,9 @@
                                 } ?>
                                  <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
                                      <div class="col-md-4">
+
                                          <div class="userBox">
-
-
-                                                 <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
-
+                                             <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
                                              <div class="clearall"></div>
                                          </div>
                                      </div>

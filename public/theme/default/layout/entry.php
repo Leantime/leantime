@@ -3,6 +3,11 @@
 <head>
     <?php echo $this->frontcontroller->includeAction('pageparts.header'); ?>
 
+    <?php
+        $welcomeText =  '<h1 class="mainWelcome">'.$language->__("headlines.welcome_back").'</h1>';
+        $welcomeText = $this->dispatchTplFilter('welcomeText', $welcomeText);
+    ?>
+
 </head>
 
 <body class="loginpage" style="height:100%;">
@@ -17,14 +22,14 @@
 
 
 <style>
- .leantimeLogo { position: fixed; bottom: 10px; right: 10px; }
+ .leantimeLogo { position: fixed; bottom: 10px; right: 90px; }
 </style>
 
 <div class="row " style="height:100%; width: 99%;">
     <div class="col-md-6 hidden-phone regLeft">
         <div class="row">
             <div class="col-md-12" style="position:relative;">
-                <h1 class="mainWelcome"><?php echo $language->__("headlines.welcome_back"); ?></h1>
+                <?php echo $welcomeText; ?>
                 <span class="iq-objects-04 iq-fadebounce">
                     <span class="iq-round"></span>
                 </span>

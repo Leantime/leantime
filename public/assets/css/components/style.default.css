@@ -509,7 +509,25 @@ a .label-default:after, a .label-primary:after {
     margin-left: 2px;
 }
 
-/* Time */
+a .label.feature-label {
+    background: var(--primary-color);
+    margin-top: 4px;
+    display: block;
+    float: right;
+    border-radius: 6px;
+    padding: 1px 5px;
+}
+
+a .label.feature-label:after {
+    border:none;
+    margin:0px;
+}
+
+.nav .label.feature-label {
+    margin-top:-4px;
+}
+
+    /* Time */
 #headClock {
     color: #555;
     font-size: var(--base-font-size);

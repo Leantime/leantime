@@ -160,8 +160,10 @@ class frontcontroller
                 if (method_exists($action, $method)) {
                     $action->$method($params);
                 //Use run for all other request types.
-                } else {
+                } else if (method_exists($action, "run")) {
                     $action->run();
+                }else {
+                    self::redirect(BASE_URL."/errors/error404", 404);
                 }
             }
         } catch (Exception $e) {

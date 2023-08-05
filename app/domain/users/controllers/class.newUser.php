@@ -2,6 +2,7 @@
 
 namespace leantime\domain\controllers {
 
+    use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
@@ -91,7 +92,7 @@ namespace leantime\domain\controllers {
                                     }
                                 }
 
-                                $this->tpl->setNotification("notification.user_invited_successfully", 'success');
+                                $this->tpl->setNotification("notification.user_invited_successfully", 'success', 'user_invited');
                             } else {
                                 $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                             }

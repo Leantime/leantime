@@ -340,6 +340,7 @@ namespace leantime\domain\services {
                     if ($projectHierarchy['program']["enabled"] === true) {
                         $project['parent'] = "noProgramParent";
                     }
+
                 }
 
                 //IF the pgm module is not active, add all items
@@ -363,6 +364,8 @@ namespace leantime\domain\services {
                     }
                 }
             }
+
+            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));
 
             if ($projectHierarchy) {
                 return $projectHierarchy;

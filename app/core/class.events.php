@@ -134,8 +134,10 @@ class events
         }
 
         foreach ($enabledPlugins as $plugin) {
-            if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
-                include $pluginPath . $plugin->foldername . "/register.php";
+            if($plugin != null) {
+                if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
+                    include $pluginPath . $plugin->foldername . "/register.php";
+                }
             }
         }
     }

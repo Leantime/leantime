@@ -146,6 +146,13 @@ min-width: 1200px
         display:block!important;
     }
 
+    .loginpage .header {
+        margin-left: 0 !important;
+        /* margin-bottom: 10px; */
+
+        width: 100%;
+    }
+
     .headmenu > li > a {
         padding: 15px 15px 9px;
     }
@@ -634,7 +641,7 @@ min-width: 1200px
     }
 
     .leftpanel {
-        width: 240px;
+        width: 68px;
     }
 
     .header .logo {

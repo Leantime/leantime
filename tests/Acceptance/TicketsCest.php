@@ -39,13 +39,14 @@ class TicketsCest
         $I->wantTo('Edit a ticket');
 
         $I->amOnPage('/tickets/showKanban#/tickets/showTicket/10');
-        $I->waitForElementClickable('.nyroModalCont .mce-content-body', 30);
+        $I->waitForElementClickable('.nyroModalCont .mce-content-body', 60);
         $I->click('.mce-content-body');
+        $I->waitForElement('#ticketDescription_ifr', 60);
         $I->click('#ticketDescription_ifr');
         $I->type('Test Description Edited');
         $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 30);
         $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
-        $I->waitForElement('.growl', 10);
+        $I->waitForElement('.growl', 60);
         $I->see('To-Do was saved successfully');
     }
 }

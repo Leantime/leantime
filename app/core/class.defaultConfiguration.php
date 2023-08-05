@@ -311,6 +311,11 @@ class config
             "ldapRole":"administrators"
           }
         }';
+               //Default Leantime Role on creation. (set to editor)
+    /**
+     * @var ?string Comma separated list of plugins that will always be loaded
+     */
+    public ?string $plugins = '';
 
     /**
      * @var int Default Leantime Role on creation. (set to editor)

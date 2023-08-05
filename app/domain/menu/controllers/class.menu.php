@@ -28,7 +28,6 @@ namespace leantime\domain\controllers {
 
         public function run()
         {
-
             $allAssignedprojects = array();
             $allAvailableProjects = array();
             $recentProjects = array();
@@ -50,7 +49,9 @@ namespace leantime\domain\controllers {
                     $_SESSION['userdata']['clientId']
                 );
 
-                $recent = $this->settingSvc->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
+                $recent = $this->settingSvc->getSetting(
+                    "usersettings." . $_SESSION['userdata']['id'] . ".recentProjects"
+                );
                 $recentArr = unserialize($recent);
 
                 if (is_array($recentArr) && is_array($allAvailableProjects)) {
@@ -78,6 +79,8 @@ namespace leantime\domain\controllers {
 
                 if ($projectType != '' && $projectType != 'project') {
                     $menuType = $projectType;
+                }else{
+                    $menuType = repositories\menu::DEFAULT_MENU;
                 }
 
                 if ($project !== false && isset($project["clientId"])) {
@@ -85,10 +88,12 @@ namespace leantime\domain\controllers {
                 } else {
                     $this->tpl->assign('currentClient', '');
                 }
+
             } else {
                 $menuType = repositories\menu::DEFAULT_MENU;
                 $this->tpl->assign('currentClient', "");
             }
+
 
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
             $this->tpl->assign('currentProjectType', $projectType);
@@ -105,6 +110,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('menuStructure', $this->menuRepo->getMenuStructure($menuType));
 
             $this->tpl->displayPartial('menu.menu');
-        }
+       }
     }
+
 }

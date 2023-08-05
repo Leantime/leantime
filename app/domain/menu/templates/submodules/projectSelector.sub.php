@@ -61,8 +61,9 @@ use leantime\core\eventhelpers;
                             echo '<li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">' . $this->__("selectorLabel." . $key) . '</li>';
 
                             foreach ($typeRow as $projectRow) {
-                                if ($lastClient != $projectRow['clientName']) {
-                                    $lastClient = $projectRow['clientName'];
+
+                                if ($lastClient != $projectRow['clientName'].$projectRow['parent']) {
+                                    $lastClient = $projectRow['clientName'].$projectRow['parent'];
 
                                     echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientGroupParent-" . $projectRow['parent'] . " clientController";
 

@@ -186,8 +186,8 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
 
     <?php
         //Restore selected menu items
-
-        $projectHierarchy = $this->get('allAssignedProjectsHierarchy');
+    $projectHierarchy = $this->get('allAssignedProjectsHierarchy');
+    $projectHierarchy = $this->dispatchTplFilter('projectHierarchyRestore', $projectHierarchy);
     if ($projectHierarchy['program']["enabled"] === true) {
         $childSelector = 'program';
     } else {
@@ -196,25 +196,42 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
 
     if ($projectHierarchy['program']['enabled'] || $projectHierarchy['strategy']['enabled']) {
         if (isset($_SESSION['submenuToggle']['strategy'])) {
-               echo "leantime.menuController.toggleHierarchy('" . $_SESSION['submenuToggle']['strategy'] . "', '" . $childSelector . "', 'strategy');";
+            echo "leantime.menuController.toggleHierarchy('" . $_SESSION['submenuToggle']['strategy'] . "', '" . $childSelector . "', 'strategy');";
+        } else {
+            if (isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled']) {
+                echo "leantime.menuController.toggleHierarchy('noStrategyParent', 'program', 'strategy');";
+            } else {
+                echo "leantime.menuController.toggleHierarchy('noStrategyParent', 'project', 'strategy');";
+            }
         }
 
         if (isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled']) {
             echo "leantime.menuController.toggleHierarchy('" . $_SESSION['submenuToggle']['program'] . "', 'project', 'program');";
+
+        } else {
+
+            if (isset($_SESSION['submenuToggle']['program']) === false && $projectHierarchy['program']['enabled'] ) {
+                echo "leantime.menuController.toggleHierarchy('noProgramParent', 'project', 'program');";
+            } else if (isset($_SESSION['submenuToggle']['program']) === false && $projectHierarchy['program']['enabled'] === false) {
+                    echo "leantime.menuController.toggleHierarchy('noStrategyParent', 'project', 'strategy');";
+            }
         }
     }
 
     foreach ($projectHierarchy['project']["items"] as $key => $typeRow) {
         foreach ($typeRow as $projectRow) {
+
             if ($projectHierarchy['program']['enabled'] === true && $projectHierarchy['strategy']['enabled'] === true) {
-                if (isset($_SESSION['submenuToggle']['program']) && isset($_SESSION['submenuToggle']["clientDropdown-" . $_SESSION['submenuToggle']['program'] . "-" . $projectRow['clientId']])) {
-                    echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "' . $_SESSION['submenuToggle']["clientDropdown-" . $_SESSION['submenuToggle']['program'] . "-" . $projectRow['clientId']] . '");';
+                if (isset($_SESSION['submenuToggle']['program'])
+                    && isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['program']."-".$projectRow['clientId']])) {
+                    echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "'.$_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['program']."-".$projectRow['clientId']].'");';
                 }
             }
 
             if ($projectHierarchy['program']['enabled'] === false && $projectHierarchy['strategy']['enabled'] === true) {
-                if (isset($_SESSION['submenuToggle']['strategy']) && isset($_SESSION['submenuToggle']["clientDropdown-" . $_SESSION['submenuToggle']['strategy'] . "-" . $projectRow['clientId']])) {
-                    echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "' . $_SESSION['submenuToggle']["clientDropdown-" . $_SESSION['submenuToggle']['strategy'] . "-" . $projectRow['clientId']] . '");';
+                if (isset($_SESSION['submenuToggle']['strategy'])
+                    && isset($_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['strategy']."-".$projectRow['clientId']])) {
+                    echo 'leantime.menuController.toggleClientList(' . $projectRow['clientId'] . ', ".clientIdHead-' . $projectRow['clientId'] . ' a", "'.$_SESSION['submenuToggle']["clientDropdown-".$_SESSION['submenuToggle']['strategy']."-".$projectRow['clientId']].'");';
                 }
             }
 

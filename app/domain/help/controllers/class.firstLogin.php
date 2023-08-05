@@ -8,6 +8,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\models\auth\roles;
     use leantime\domain\services\auth;
     use leantime\domain\services\projects;
+    use leantime\plugins\repositories\billing;
 
     class firstLogin extends controller
     {
@@ -42,6 +43,7 @@ namespace leantime\domain\controllers {
             $settingsRepo = app()->make(\leantime\domain\repositories\setting::class);
 
             if (isset($_POST['step']) && $_POST['step'] == 1) {
+
                 if (isset($_POST['projectname'])) {
                     $projectService = app()->make(projects::class);
                     $projectService->patch($_SESSION['currentProject'], array("name" => $_POST['projectname']));

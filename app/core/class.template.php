@@ -130,25 +130,28 @@ class template
      * @param $value
      * @return void
      */
-    public function assign($name, $value): void
+    public function assign(string $name, mixed $value): void
     {
         $value = self::dispatch_filter("var.$name", $value);
 
         $this->vars[$name] = $value;
     }
 
-    /**
-     * setError - assign errors to the template
-     *
-     * @param  $msg
-     * @param  $type
-     * @return string
-     */
-    public function setNotification($msg, $type): void
-    {
-        $_SESSION['notification'] = $msg;
-        $_SESSION['notifcationType'] = $type;
-    }
+        /**
+         * setNotification - assign errors to the template
+         *
+         * @param  string $msg
+         * @param  string $type
+         * @param  string $event_id as a string for further identification
+         * @return string
+         */
+        public function setNotification(string $msg, string $type, string $event_id = ''): void
+        {
+
+            $_SESSION['notification'] = $msg;
+            $_SESSION['notifcationType'] = $type;
+            $_SESSION['event_id'] = $event_id;
+        }
 
     /**
      * getTemplatePath - Find template in custom and src directories
@@ -217,7 +220,7 @@ class template
      * @param  $template
      * @return void
      */
-    public function display($template, $layout = "app")
+    public function display(string $template, string $layout = "app")
     {
         //These variables are available in the template
         $config = $this->config;
@@ -324,7 +327,7 @@ class template
      * @param  $name
      * @return array
      */
-    public function get($name)
+    public function get(string $name): mixed
     {
         if (!isset($this->vars[$name])) {
             return null;
@@ -342,9 +345,14 @@ class template
     public function getNotification(): array
     {
         if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
-            return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification']);
+            if(isset($_SESSION['event_id'])) {
+                $event_id = $_SESSION['event_id'];
+            }else{
+                $event_id='';
+            }
+            return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
         } else {
-            return array('type' => "", 'msg' => "");
+            return array('type' => "", 'msg' => "", 'event_id' => "");
         }
     }
 
@@ -419,8 +427,11 @@ class template
             $notification = '<script type="text/javascript">jQuery.growl({message: "'
                 . $message . '", style: "' . $note['type'] . '"});</script>';
 
+            self::dispatch_event("notification_displayed", $note);
+
             $_SESSION['notification'] = "";
             $_SESSION['notificationType'] = "";
+            $_SESSION['event_id'] = "";
         }
 
         return $notification;
@@ -452,16 +463,18 @@ class template
         );
 
         if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification = <<<EOT
-                <div class='inputwrapper login-alert login-"{$note['type']}"'>
-                    <div class='alert alert-"{$note['type']}"'>
-                        {$message}
-                    </div>
-                </div>
-            EOT;
+            $notification = "<div class='inputwrapper login-alert login-" . $note['type'] . "' style='position: relative;'>
+                                <div class='alert alert-" . $note['type'] . "' style='padding:15px;' >
+                                    <strong>" . $message . "</strong>
+                                </div>
+                            </div>
+                            ";
+
+            self::dispatch_event("notification_displayed", $note);
 
             $_SESSION['notification'] = "";
             $_SESSION['notificationType'] = "";
+            $_SESSION['event_id'] = "";
         }
 
         return $notification;
