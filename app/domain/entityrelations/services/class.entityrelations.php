@@ -15,11 +15,13 @@ namespace leantime\domain\services {
             $this->entityRelationshipsRepo = $entityRelationshipsRepo;
         }
 
-        public function saveRelationship($entityA, $entityAType, $relationship, $entityB, $entityBType, $meta = ""){
+        public function saveRelationship($entityA, $entityAType, $relationship, $entityB, $entityBType, $meta = "")
+        {
             return $this->settingsRepo->saveSetting($entityA, $entityAType, $relationship, $entityB, $entityBType, $meta = "");
         }
 
-        public function getRelationshipByEntity(string $entitySide, int $entity, string $entityType, string $relationship){
+        public function getRelationshipByEntity(string $entitySide, int $entity, string $entityType, string $relationship)
+        {
             return $this->settingsRepo->getSetting($entitySide, $entity, $entityType, $relationship);
         }
     }

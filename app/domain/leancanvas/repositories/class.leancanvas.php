@@ -36,18 +36,18 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            'problem'          => [ 'icon' => 'fa-lock', 'title' => 'box.lean.problem' ],
-            'alternatives'     => [ 'icon' => 'fa-arrow-down-up-across-line', 'title' => 'box.lean.alternatives' ],
-            'solution'         => [ 'icon' => 'fa-key', 'title' => 'box.lean.solution' ],
-            'keymetrics'       => [ 'icon' => 'fa-chart-column', 'title' => 'box.lean.keymetrics' ],
-            'uniquevalue'      => [ 'icon' => 'fa-gift', 'title' => 'box.lean.uniquevalue' ],
-            'highlevelconcept' => [ 'icon' => 'fa-wand-magic-sparkles', 'title' => 'box.lean.highlevelconcept' ],
-            'unfairadvantage'  => [ 'icon' => 'fa-person-running', 'title' => 'box.lean.unfairadvantage' ],
-            'channels'         => [ 'icon' => 'fa-truck', 'title' => 'box.lean.channels' ],
-            'customersegment'  => [ 'icon' => 'fa-user', 'title' => 'box.lean.customersegment' ],
-            'earlyadopters'    => [ 'icon' => 'fa-chart-pie', 'title' => 'box.lean.earlyadopters' ],
-            'cost'             => [ 'icon' => 'fa-file-invoice-dollar', 'title' => 'box.lean.cost' ],
-            'revenue'          => [ 'icon' => 'fa-sack-dollar', 'title' => 'box.lean.revenue' ]
+            'problem'          => ['icon' => 'fa-lock', 'title' => 'box.lean.problem'],
+            'alternatives'     => ['icon' => 'fa-arrow-down-up-across-line', 'title' => 'box.lean.alternatives'],
+            'solution'         => ['icon' => 'fa-key', 'title' => 'box.lean.solution'],
+            'keymetrics'       => ['icon' => 'fa-chart-column', 'title' => 'box.lean.keymetrics'],
+            'uniquevalue'      => ['icon' => 'fa-gift', 'title' => 'box.lean.uniquevalue'],
+            'highlevelconcept' => ['icon' => 'fa-wand-magic-sparkles', 'title' => 'box.lean.highlevelconcept'],
+            'unfairadvantage'  => ['icon' => 'fa-person-running', 'title' => 'box.lean.unfairadvantage'],
+            'channels'         => ['icon' => 'fa-truck', 'title' => 'box.lean.channels'],
+            'customersegment'  => ['icon' => 'fa-user', 'title' => 'box.lean.customersegment'],
+            'earlyadopters'    => ['icon' => 'fa-chart-pie', 'title' => 'box.lean.earlyadopters'],
+            'cost'             => ['icon' => 'fa-file-invoice-dollar', 'title' => 'box.lean.cost'],
+            'revenue'          => ['icon' => 'fa-sack-dollar', 'title' => 'box.lean.revenue'],
         ];
 
         /**
@@ -56,6 +56,6 @@ namespace leantime\domain\repositories {
          * @acces public
          * @var   array
          */
-        protected array $relatesLabels = [ ];
+        protected array $relatesLabels = [];
     }
 }

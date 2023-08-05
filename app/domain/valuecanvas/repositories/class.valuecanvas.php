@@ -31,9 +31,9 @@ namespace leantime\domain\repositories {
 
 
         protected array $dataLabels = [
-            1 => [ 'title' => 'label.valueCanvas.assumptions', 'field' => 'assumptions', 'active' => true],
-            2 => [ 'title' => 'label.valueCanvas.data',        'field' => 'data',        'active' => true],
-            3 => [ 'title' => 'label.valueCanvas.conclusion',  'field' => 'conclusion',  'active' => true]
+            1 => ['title' => 'label.valueCanvas.assumptions', 'field' => 'assumptions', 'active' => true],
+            2 => ['title' => 'label.valueCanvas.data',        'field' => 'data',        'active' => true],
+            3 => ['title' => 'label.valueCanvas.conclusion',  'field' => 'conclusion',  'active' => true],
         ];
 
         /**
@@ -43,10 +43,10 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            'customersegment'  => [ 'icon' => 'fa-user', 'title' => 'box.lean.customersegment' ],
-            'problem'          => [ 'icon' => 'fa-lock', 'title' => 'box.lean.problem' ],
-            'solution'         => [ 'icon' => 'fa-key', 'title' => 'box.lean.solution' ],
-            'uniquevalue'      => [ 'icon' => 'fa-gift', 'title' => 'box.value.benefit' ],
+            'customersegment'  => ['icon' => 'fa-user', 'title' => 'box.lean.customersegment'],
+            'problem'          => ['icon' => 'fa-lock', 'title' => 'box.lean.problem'],
+            'solution'         => ['icon' => 'fa-key', 'title' => 'box.lean.solution'],
+            'uniquevalue'      => ['icon' => 'fa-gift', 'title' => 'box.value.benefit'],
 
 
         ];
@@ -57,6 +57,6 @@ namespace leantime\domain\repositories {
          * @acces public
          * @var   array
          */
-        protected array $relatesLabels = [ ];
+        protected array $relatesLabels = [];
     }
 }

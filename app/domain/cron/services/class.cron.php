@@ -18,7 +18,8 @@ namespace leantime\domain\services {
             $this->environment = $environment;
         }
 
-        public function runCron() {
+        public function runCron()
+        {
 
             $lastEvent = $this->auditRepo->getLastEvent('cron');
 
@@ -32,8 +33,7 @@ namespace leantime\domain\services {
             $nowDate = time();
             $timeSince = abs($nowDate - $lastCronEvent);
 
-            if ($timeSince < 300)
-            {
+            if ($timeSince < 300) {
                 if ($this->environment->debug == true) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
                 }
@@ -50,7 +50,7 @@ namespace leantime\domain\services {
             $this->queueSvc->processQueue();
 
             if ($this->environment->debug == true) {
-                error_log( "cron end");
+                error_log("cron end");
             }
 
             $this->auditRepo->pruneEvents();

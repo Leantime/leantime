@@ -8,7 +8,6 @@ namespace leantime\domain\controllers {
 
     class wikiModal extends controller
     {
-
         private services\wiki $wikiService;
 
         public function init(services\wiki $wikiService)

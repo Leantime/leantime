@@ -101,25 +101,38 @@ if ($numberofColumns > 0) {
                 </div>
                 <div class="col-md-4">
                     <div class="pull-right">
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (".$this->get('numOfFilters').")" : "" ?></a>
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (" . $this->get('numOfFilters') . ")" : "" ?></a>
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
-                                    echo $_SESSION['lastFilterdTicketKanbanView'];
-                                             } else {
-                                                 echo BASE_URL . "/tickets/showKanban";
-                                             } ?>" class="active"><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") {
-                                    echo $_SESSION['lastFilterdTicketTableView'];
-                                             } else {
-                                                 echo BASE_URL . "/tickets/showAll";
-                                             } ?>" ><?=$this->__("links.table") ?></a></li>
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") {
-                                        echo $_SESSION['lastFilterdTicketListView'];
-                                    } else {
-                                        echo BASE_URL . "/tickets/showList";
-                                    } ?>" ><?=$this->__("links.list_view") ?></a></li>
+                                <li>
+                                    <a
+                                        <?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") { ?>
+                                            href="<?=$_SESSION['lastFilterdTicketKanbanView'] ?>"
+                                        <?php } else { ?>
+                                            href="<?=BASE_URL ?>/tickets/showKanban"
+                                        <?php } ?>
+                                        class="active"><?=$this->__("links.kanban") ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a
+                                        <?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") { ?>
+                                            href="<?=$_SESSION['lastFilterdTicketTableView'] ?>"
+                                        <?php } else { ?>
+                                            href="<?=BASE_URL ?>/tickets/showAll"
+                                        <?php } ?>
+                                    ><?=$this->__("links.table") ?></a>
+                                </li>
+                                <li>
+                                    <a
+                                        <?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") { ?>
+                                            href="<?=$_SESSION['lastFilterdTicketListView'] ?>"
+                                        <?php } else { ?>
+                                            href="<?=BASE_URL ?>/tickets/showList"
+                                        <?php } ?>
+                                    ><?=$this->__("links.list_view") ?></a>
+                                </li>
                             </ul>
                         </div>
 
@@ -158,8 +171,7 @@ if ($numberofColumns > 0) {
                         <div class="form-group">
                             <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  id="milestoneSelect">
                                 <option value=""><?=$this->__("label.all_milestones") ?></option>
-                                <?php if($this->get('milestones')){
-
+                                <?php if ($this->get('milestones')) {
                                     foreach ($this->get('milestones') as $milestoneRow) {   ?>
                                         <?php echo"<option value='" . $milestoneRow->id . "'";
 
@@ -170,7 +182,6 @@ if ($numberofColumns > 0) {
                                         echo">" . $this->escape($milestoneRow->headline) . "</option>"; ?>
 
                                     <?php }
-
                                 }     ?>
                             </select>
                         </div>
@@ -319,7 +330,7 @@ if ($numberofColumns > 0) {
                                                         </ul>
                                                     </div>
                                                 <?php } ?>
-                                                <?php if($row['dependingTicketId'] > 0){ ?>
+                                                <?php if ($row['dependingTicketId'] > 0) { ?>
                                                     <small><a href="<?=CURRENT_URL ?>#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$this->escape($row['parentHeadline']) ?></a></small> //
                                                 <?php } ?>
                                                 <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label." . strtolower($row['type'])); ?></small>
@@ -552,9 +563,9 @@ if ($numberofColumns > 0) {
         <?php } ?>
 
 
-        <?php foreach($this->get('allTickets') as $ticket) {
-            if($ticket['dependingTicketId'] > 0){
-            ?>
+        <?php foreach ($this->get('allTickets') as $ticket) {
+            if ($ticket['dependingTicketId'] > 0) {
+                ?>
             var startElement = jQuery('#subtaskLink_<?=$ticket['dependingTicketId']; ?>')[0];
             var endElement =  document.getElementById('ticket_<?=$ticket['id']; ?>');
 
@@ -602,7 +613,7 @@ if ($numberofColumns > 0) {
 
             }
 
-        <?php }
+            <?php }
         } ?>
 
 

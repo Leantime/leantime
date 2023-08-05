@@ -55,7 +55,7 @@ namespace leantime\domain\controllers {
                     'invoicedEmplDate' => '',
                     'invoicedCompDate' => '',
                     'paid' => '',
-                    'paidDate' => ''
+                    'paidDate' => '',
                 );
 
                 if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
@@ -161,7 +161,7 @@ namespace leantime\domain\controllers {
                             'invoicedEmplDate' => '',
                             'invoicedCompDate' => '',
                             'paid' => '',
-                            'paidDate' => ''
+                            'paidDate' => '',
                         );
 
                         $this->tpl->assign('values', $values);

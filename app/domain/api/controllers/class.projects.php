@@ -41,23 +41,18 @@ namespace leantime\domain\controllers {
         {
 
             if (isset($params["projectAvatar"])) {
-
                 $return = $this->projectService->getProjectAvatar($params["projectAvatar"]);
 
                 if (is_array($return)) {
-
                     $file = $this->fileUpload;
-                    if($return["type"] == "uploaded"){
+                    if ($return["type"] == "uploaded") {
                         $file->displayImageFile($return["filename"]);
-                    }else if($return["type"] == "generated"){
+                    } elseif ($return["type"] == "generated") {
                         $file->displayImageFile("avatar", $return["filename"]);
                     }
-
-                } else if(is_object($return)){
-
+                } elseif (is_object($return)) {
                     header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
-
                 }
             }
         }
@@ -73,7 +68,7 @@ namespace leantime\domain\controllers {
 
             //Updatind User Image
             if (isset($_FILES['file'])) {
-                $_FILES['file']['name'] = "profileImage-". $_SESSION['currentProject'] .".png";
+                $_FILES['file']['name'] = "profileImage-" . $_SESSION['currentProject'] . ".png";
 
                 $this->projectService->setProjectAvatar($_FILES, $_SESSION['currentProject']);
 
@@ -99,7 +94,6 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($params['action']) && $params['action'] == "ganttSort") {
-
                 $results = $this->projectService->updateProjectSorting($params["payload"]);
 
                 if ($results === true) {
@@ -107,9 +101,7 @@ namespace leantime\domain\controllers {
                 } else {
                     echo "{status:failure}";
                 }
-
             }
-
         }
 
         /**
@@ -151,10 +143,6 @@ namespace leantime\domain\controllers {
                     echo "{status:ok}";
                 }
             }
-
-
-
-
         }
 
 

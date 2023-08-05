@@ -69,7 +69,7 @@ namespace leantime\domain\controllers {
                 'parent' => (int)$_GET['parent'] ?? '',
                 'psettings' => '',
                 'start' => '',
-                'end' => ''
+                'end' => '',
             );
 
             if (isset($_POST['save']) === true) {
@@ -102,7 +102,7 @@ namespace leantime\domain\controllers {
                     'type' => $_POST['type']  ?? 'project',
                     'parent' => $_POST['parent'] ?? '',
                     'start' => $this->language->getISODateString($_POST['start']),
-                    'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : ''
+                    'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
                 );
 
                 if ($values['name'] === '') {

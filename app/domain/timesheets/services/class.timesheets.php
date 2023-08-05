@@ -55,7 +55,7 @@ namespace leantime\domain\services {
                 'invoicedEmplDate' => '',
                 'invoicedCompDate' => '',
                 'paid' => '',
-                'paidDate' => ''
+                'paidDate' => '',
             );
 
             if (isset($params['kind']) && $params['kind'] != '') {

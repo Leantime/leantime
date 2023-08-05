@@ -76,7 +76,6 @@ namespace leantime\domain\models {
                 $this->editorFirstname = $values["editorFirstname"] ?? '';
                 $this->editorLastname = $values["editorLastname"] ?? '';
             }
-
         }
     }
 

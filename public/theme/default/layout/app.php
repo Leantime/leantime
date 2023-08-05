@@ -24,7 +24,7 @@ if (!$_SESSION['menuState']) {
 
         <div class="logo">
 
-            <a href="<?=BASE_URL ?>" style="background-image:url('<?php echo str_replace('http:','',htmlentities($_SESSION["companysettings.logoPath"])); ?>')">&nbsp;</a>
+            <a href="<?=BASE_URL ?>" style="background-image:url('<?php echo str_replace('http:', '', htmlentities($_SESSION["companysettings.logoPath"])); ?>')">&nbsp;</a>
         </div>
 
         <div class="leftmenu">

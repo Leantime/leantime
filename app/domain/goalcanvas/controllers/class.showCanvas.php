@@ -45,7 +45,7 @@ namespace leantime\domain\controllers {
                 $values = [
                     'title' => $this->language->__("label.board"),
                     'author' => $_SESSION['userdata']['id'],
-                    'projectId' => $_SESSION['currentProject']
+                    'projectId' => $_SESSION['currentProject'],
                 ];
                 $currentCanvasId = $this->canvasRepo->addCanvas($values);
                 $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
@@ -95,7 +95,7 @@ namespace leantime\domain\controllers {
                         $values = [
                             'title' => $_POST['canvastitle'],
                             'author' => $_SESSION['userdata']['id'],
-                            'projectId' => $_SESSION['currentProject']
+                            'projectId' => $_SESSION['currentProject'],
                         ];
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
                         $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
@@ -263,4 +263,3 @@ namespace leantime\domain\controllers {
     }
 
 }
-

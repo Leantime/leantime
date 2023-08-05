@@ -5,6 +5,12 @@ namespace leantime\core;
 use leantime\core\environment;
 use leantime\core\eventhelpers;
 
+/**
+ * Plugins class
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 class plugins
 {
     use eventhelpers;
@@ -12,13 +18,15 @@ class plugins
     /**
      * Enabled plugins
      *
-     * @access private
      * @var    array
      */
     private $enabledPlugins = [];
 
     /**
      * constructor
+     *
+     * @param \leantime\core\environment $config
+     * @return self
      */
     public function __construct(\leantime\core\environment $config)
     {
@@ -42,7 +50,7 @@ class plugins
      *
      * @return array
      */
-    private function standardize_plugin_keys($plugins)
+    private function standardize_plugin_keys(array $plugins): array
     {
         foreach ($plugins as $plugin_key => $plugin_enabled) {
             if ($plugin_key == strtolower($plugin_key)) {
@@ -63,7 +71,7 @@ class plugins
      *
      * @return array
      */
-    public function getEnabledPlugins()
+    public function getEnabledPlugins(): array
     {
         return $this->enabledPlugins;
     }
@@ -75,9 +83,9 @@ class plugins
      *
      * @param string $plugin_name
      *
-     * @return bool
+     * @return boolean
      */
-    public function isPluginEnabled($plugin_name)
+    public function isPluginEnabled(string $plugin_name): bool
     {
         $plugin_name = strtolower($plugin_name);
 

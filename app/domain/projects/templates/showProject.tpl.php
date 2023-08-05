@@ -78,14 +78,14 @@
                                             <label for="user-<?php echo $userId ?>" ><?php printf($this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?>
 
                                                 <?php
-                                                if($assignedUser['jobTitle'] != '') {
+                                                if ($assignedUser['jobTitle'] != '') {
                                                     echo "<small>(" . $this->escape(
                                                             $assignedUser['jobTitle']
                                                         ) . ")</small><br />";
                                                 }
                                                 if ($assignedUser['status'] == 'i') {
-                                                echo "<small>(" . $this->__('label.invited') . ")</small>";
-                                                             } ?></label>
+                                                    echo "<small>(" . $this->__('label.invited') . ")</small>";
+                                                } ?></label>
                                             <?php
                                             if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
                                                 <input type="text" readonly disabled value="<?php echo $this->__("label.roles." . $roles::getRoles()[$assignedUser['role']]) ?>" />

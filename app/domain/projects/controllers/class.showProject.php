@@ -188,7 +188,7 @@ namespace leantime\domain\controllers {
 
                     $values = array(
                         "assignedUsers" => $assignedUsers,
-                        "projectRoles" => $_POST
+                        "projectRoles" => $_POST,
                     );
 
                     $this->projectRepo->editProjectRelations($values, $id);
@@ -214,7 +214,7 @@ namespace leantime\domain\controllers {
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
                         'start' => $this->language->getISODateString($_POST['start']),
-                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : ''
+                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
                     );
 
                     if ($values['name'] !== '') {
@@ -242,7 +242,7 @@ namespace leantime\domain\controllers {
                             $notification = app()->make(notification::class);
                             $notification->url = array(
                                 "url" => $actual_link,
-                                "text" => $linkLabel
+                                "text" => $linkLabel,
                             );
                             $notification->entity = $project;
                             $notification->module = "projects";

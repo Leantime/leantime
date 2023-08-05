@@ -71,7 +71,6 @@
                             <select  name="dependingTicketId"  class="span11" >
                                 <option value=""><?php echo $this->__('label.not_related'); ?></option>
                                 <?php foreach ($this->get('ticketParents') as $ticketRow) {
-
                                     ?>
                                     <?php echo"<option value='" . $ticketRow->id . "'";
 
@@ -81,7 +80,7 @@
 
                                     echo">" . $this->escape($ticketRow->headline) . "</option>"; ?>
 
-                                <?php
+                                    <?php
                                 } ?>
                             </select>
                         </div>
@@ -91,10 +90,13 @@
                 <div class="form-group">
                     <label class="span4 control-label"><?php echo $this->__('label.todo_status'); ?></label>
                     <div class="span6">
-                        <select id="status-select" class="span11" name="status"
-                                data-placeholder="<?php echo $statusLabels[$ticket->status]["name"]; ?>">
-
-                            <?php  foreach ($statusLabels as $key => $label) {?>
+                        <select
+                            id="status-select"
+                            class="span11"
+                            name="status"
+                            data-placeholder="<?php echo isset($ticket->status) ? $statusLabels[$ticket->status]["name"] ?? '' : ''; ?>"
+                        >
+                            <?php foreach ($statusLabels as $key => $label) {?>
                                 <option value="<?php echo $key; ?>"
                                     <?php if ($ticket->status == $key) {
                                         echo "selected='selected'";

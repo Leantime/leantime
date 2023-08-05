@@ -249,7 +249,7 @@ namespace leantime\domain\repositories {
                         'moduleId'     => $moduleId,
                         'userId'     => $_SESSION['userdata']['id'],
                         'module'    => $module,
-                        'fileId' => ''
+                        'fileId' => '',
                     );
 
                     $fileAddResults = $this->addFile($values, $module);
@@ -260,7 +260,7 @@ namespace leantime\domain\repositories {
                     } else {
                         $return = false;
                     }
-                }else{
+                } else {
                     return $upload->error;
                 }
             }

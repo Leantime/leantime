@@ -19,7 +19,7 @@ class ldap
         "email" => "mail",
         "firstname" => "displayname",
         "lastname" => '',
-        "phonenumber" => 'telephonenumber'
+        "phonenumber" => 'telephonenumber',
     );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
@@ -32,12 +32,12 @@ class ldap
     private environment $config;
 
     /**
-     * @var array|bool|int|mixed|string
+     * @var array|boolean|integer|mixed|string
      */
     public $useLdap;
 
     /**
-     * @var array|bool|int|mixed|string
+     * @var array|boolean|integer|mixed|string
      */
     public $autoCreateUser;
 
@@ -90,10 +90,9 @@ class ldap
         }
 
         if (function_exists("ldap_connect")) {
-
             if ($this->ldapUri != '' && str_starts_with($this->ldapUri, "ldap")) {
                 $this->ldapConnection = ldap_connect($this->uri);
-            }else {
+            } else {
                 $this->ldapConnection = ldap_connect($this->host, $this->port);
             }
 
@@ -115,7 +114,6 @@ class ldap
     {
 
         if ($username != '' && $password != '') {
-
             $passwordBind = $password;
 
             //AD allows usenrame login
@@ -123,17 +121,23 @@ class ldap
                 $usernameDN = $username;
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
-                if($bind) return true;
+                if ($bind) {
+                    return true;
+                }
 
-                $bind = ldap_bind($this->ldapConnection, $usernameDN."@".$this->ldapDomain, $passwordBind);
-                if($bind) return true;
+                $bind = ldap_bind($this->ldapConnection, $usernameDN . "@" . $this->ldapDomain, $passwordBind);
+                if ($bind) {
+                    return true;
+                }
 
             //OL requires distinguished name login
             } else {
                 $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
-                if($bind) return true;
+                if ($bind) {
+                    return true;
+                }
             }
 
             if ($this->config->debug == 1) {
@@ -145,7 +149,6 @@ class ldap
             }
 
             return false;
-
         } else {
             return false;
         }
@@ -181,7 +184,7 @@ class ldap
 
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
 
-	$attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone, $this->ldapKeys->jobTitle, $this->ldapKeys->jobLevel, $this->ldapKeys->department);
+        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone, $this->ldapKeys->jobTitle, $this->ldapKeys->jobLevel, $this->ldapKeys->department);
 //        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phonenumber);
 
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
@@ -240,7 +243,7 @@ class ldap
             "phone" => $phonenumber,
             "jobTitle" => $jobTitle,
             "jobLevel" => $jobLevel,
-            "department" => $department
+            "department" => $department,
         );
     }
 
@@ -299,7 +302,7 @@ class ldap
                 $userRepo->patchUser($checkUser['id'], array("firstname" => $user["firstname"], "lastname" => $user["lastname"], "role" => $user["role"]));
             } else {
                 //Insert
-		$userArray = array(
+                $userArray = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
                     'phone' => $user['phone'],
@@ -310,7 +313,7 @@ class ldap
                     'jobTitle' => $user['jobTitle'],
                     'jobLevel' => $user['jobLevel'],
                     'department' => $user['department'],
-                    'source' => 'ldap'
+                    'source' => 'ldap',
                 );
 
 

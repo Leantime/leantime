@@ -33,11 +33,13 @@ namespace leantime\domain\services {
 
             $canvasTags = $this->canvasRepository->getTags($projectId);
             $tags = $this->explodeAndMergeTags($canvasTags, $tags);
-            $unique =array_unique($tags);
+            $unique = array_unique($tags);
 
-            $tagArray=[];
-            foreach($unique as $tag)  {
-                if (strpos($tag, strip_tags($term)) !== false) { $tagArray[] = $tag; }
+            $tagArray = [];
+            foreach ($unique as $tag) {
+                if (strpos($tag, strip_tags($term)) !== false) {
+                    $tagArray[] = $tag;
+                }
             }
             return $tagArray;
         }
@@ -45,7 +47,7 @@ namespace leantime\domain\services {
         private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
         {
             foreach ($dbTagValues as $tagGroup) {
-                if(isset($tagGroup["tags"]) && $tagGroup["tags"] != null) {
+                if (isset($tagGroup["tags"]) && $tagGroup["tags"] != null) {
                     $tagArray = explode(",", $tagGroup["tags"]);
                     $mergeInto = array_merge($tagArray, $mergeInto);
                 }

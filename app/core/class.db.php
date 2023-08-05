@@ -1,53 +1,56 @@
 <?php
 
-/**
- * Database Class - Very simple abstraction layer for pdo connection
- *
- */
-
 namespace leantime\core;
 
 use PDO;
 use PDOException;
 use leantime\core\eventhelpers;
 
+/**
+ * Database Class - Very simple abstraction layer for pdo connection
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 class db
 {
     use eventhelpers;
 
     /**
-     * @access private
-     * @var    string database host default: localhost
+     * @var string database host default: localhost
      */
     private $host = '';
 
     /**
-     * @access private
-     * @var    string username for db
+     * @var string username for db
      */
     private $user = '';
 
     /**
-     * @access private
-     * @var    string password for db
+     * @var string password for db
      */
     private $password = '';
 
-
+    /**
+     * @var string database name
+     */
     private $databaseName = '';
 
     /**
-     * @access private
-     * @var    string database port default: 3306
+     * @var string database port default: 3306
      */
     private $port = '3306';
 
+    /**
+     * @var PDO database connection
+     */
     public PDO $database;
 
     /**
      * __construct - connect to database and select db
      *
-     * @return object
+     * @param \leantime\core\environment $config
+     * @return self
      */
     public function __construct(\leantime\core\environment $config)
     {
@@ -58,7 +61,7 @@ class db
         $this->port = $config->dbPort ?? "3306";
 
         try {
-            $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"' );
+            $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"');
             $this->database = new PDO(
                 "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
                 $this->user,
@@ -93,8 +96,8 @@ class db
      * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
      *
-     * @param $name string
-     * @param $count int
+     * @param string $name
+     * @param int $count
      * @return string
      */
     public static function arrayToPdoBindingString($name, $count)
@@ -115,7 +118,7 @@ class db
      * Used for patch statements with variable column keys values
      *
      *
-     * @param string $name
+     * @param string $string
      * @return string
      */
     public static function sanitizeToColumnString(string $string)

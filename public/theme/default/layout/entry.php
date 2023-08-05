@@ -31,7 +31,7 @@
             <div class="col-md-12" style="position:relative;">
                 <?php echo $welcomeText; ?>
                 <span class="iq-objects-04 iq-fadebounce">
-				    <span class="iq-round"></span>
+                    <span class="iq-round"></span>
                 </span>
             </div>
         </div>
@@ -48,9 +48,9 @@
         </div>
 
     </div>
-	<div class="leantimeLogo">
-		<img style="height: 25px;" src="<?=BASE_URL ?>/dist/images/logo-powered-by-leantime.png">
-	</div>
+    <div class="leantimeLogo">
+        <img style="height: 25px;" src="<?=BASE_URL ?>/dist/images/logo-powered-by-leantime.png">
+    </div>
 </div>
 
 <?php echo $this->frontcontroller->includeAction('pageparts.pageBottom'); ?>

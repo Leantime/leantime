@@ -337,7 +337,7 @@ leantime.projectsController = (function () {
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
-                                if(project.projectName !== undefined){
+                                if (project.projectName !== undefined) {
                                     popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
                                 }
 
@@ -362,7 +362,7 @@ leantime.projectsController = (function () {
                                                 start:start,
                                                 end:end,
                                                 sortIndex: project._index
-                                            }
+                                        }
                                     }
                                 ).done(
                                     function () {
@@ -383,9 +383,7 @@ leantime.projectsController = (function () {
                                 };
 
                                 for (var i = 0; i < projects.length; i++) {
-
                                     statusPostData.payload[projects[i].id] = projects[i]._index;
-
                                 }
 
                                 // POST to server using $.post or $.ajax
@@ -430,7 +428,7 @@ leantime.projectsController = (function () {
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
-                                if(task.projectName !== undefined){
+                                if (task.projectName !== undefined) {
                                     popUpHTML +=  '<h3><b>' + project.name + '</b></h3>';
                                 }
 
@@ -491,8 +489,8 @@ leantime.projectsController = (function () {
 
             var height = jQuery("html").height() - 250;
 
-            jQuery("#sortableProjectKanban .column .contentInner").each(function(){
-                if(jQuery(this).height() > height){
+            jQuery("#sortableProjectKanban .column .contentInner").each(function () {
+                if (jQuery(this).height() > height) {
                     height = jQuery(this).height();
                 }
             });

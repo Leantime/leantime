@@ -49,7 +49,7 @@ namespace leantime\domain\controllers {
                 $values = [
                     'title' => $this->language->__("label.board"),
                     'author' => $_SESSION['userdata']['id'],
-                    'projectId' => $_SESSION['currentProject']
+                    'projectId' => $_SESSION['currentProject'],
                 ];
                 $currentCanvasId = $this->canvasRepo->addCanvas($values);
                 $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
@@ -64,24 +64,24 @@ namespace leantime\domain\controllers {
                 "goalsOnTrack" => 0,
                 "goalsAtRisk" => 0,
                 "goalsMiss" => 0,
-                "avgPercentComplete" => '0'
+                "avgPercentComplete" => '0',
             );
 
             $totalPercent = 0;
-            foreach($allCanvas as $canvas) {
+            foreach ($allCanvas as $canvas) {
                 $canvasItems = $this->canvasRepo->getCanvasItemsById($canvas["id"]);
-                foreach($canvasItems as $item) {
+                foreach ($canvasItems as $item) {
                     $goalAnalytics["numGoals"]++;
 
-                    if($item["status"] == 'status_ontrack'){
+                    if ($item["status"] == 'status_ontrack') {
                         $goalAnalytics["goalsOnTrack"]++;
                     }
 
-                    if($item["status"] == 'status_atrisk'){
+                    if ($item["status"] == 'status_atrisk') {
                         $goalAnalytics["goalsAtRisk"]++;
                     }
 
-                    if($item["status"] == 'status_miss'){
+                    if ($item["status"] == 'status_miss') {
                         $goalAnalytics["goalsMiss"]++;
                     }
 
@@ -95,12 +95,10 @@ namespace leantime\domain\controllers {
                     }
 
                     $totalPercent = $totalPercent + $percentDone;
-
                 }
-
             }
 
-            if($goalAnalytics["numGoals"] > 0) {
+            if ($goalAnalytics["numGoals"] > 0) {
                 $goalAnalytics["avgPercentComplete"] = $totalPercent / $goalAnalytics["numGoals"];
             }
 
@@ -149,7 +147,7 @@ namespace leantime\domain\controllers {
                         $values = [
                             'title' => $_POST['canvastitle'],
                             'author' => $_SESSION['userdata']['id'],
-                            'projectId' => $_SESSION['currentProject']
+                            'projectId' => $_SESSION['currentProject'],
                         ];
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
                         $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);

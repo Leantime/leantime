@@ -55,9 +55,7 @@ namespace leantime\domain\controllers {
                 if (is_array($success) === true) {
                     foreach ($success as $errorMessage) {
                         $this->tpl->setNotification("There was a problem. Please reach out to support@leantime.io for assistance.", "error");
-
                         error_log($errorMessage);
-
                     }
                     $this->tpl->setNotification("There was a problem updating your database. Please check your error logs to verify your database is up to date.", "error");
                     core\frontcontroller::redirect(BASE_URL . "/install/update");

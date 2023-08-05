@@ -57,7 +57,7 @@ namespace leantime\domain\controllers {
                 "undraw_welcoming_re_x0qo.svg",
             );
 
-            $randomKey = rand(0, count($images)-1);
+            $randomKey = rand(0, count($images) - 1);
 
             $this->tpl->assign('randomImage', $images[$randomKey]);
 

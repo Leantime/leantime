@@ -43,7 +43,6 @@ namespace leantime\domain\controllers {
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
-
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                         $this->userRepo->deleteUser($id);
 

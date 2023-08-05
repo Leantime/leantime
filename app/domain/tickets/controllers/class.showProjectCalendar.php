@@ -81,7 +81,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
         }
-
     }
 
 }

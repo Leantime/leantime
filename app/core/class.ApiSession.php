@@ -13,18 +13,22 @@ use kamermans\OAuth2\GrantType\AuthorizationCode;
 use kamermans\OAuth2\GrantType\PasswordCredentials;
 use kamermans\OAuth2\GrantType\GrantTypeInterface;
 
+/**
+ * ApiSession - Creates a Guzzle Client with a connection
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 class ApiSession
 {
     /**
      * Checks passed credentials to see if they are properly provided
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber#middleware-guzzle-6
-     *
      * @param array $requiredCreds
      * @param array $creds
      * @param array $optionalCreds (optional)
-     *
-     * @return bool
+     * @return boolean
      */
     private static function checkCreds(
         array $requiredCreds,
@@ -50,11 +54,9 @@ class ApiSession
      * Creates a Guzzle Client with an oAuth2 connection
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber#client-credentials-example
-     *
-     * @param string $baseUri
+     * @param string                  $baseUri
      * @param GuzzleHttp\HandlerStack $stack
-     * @param array $requestDefualts (optional)
-     *
+     * @param array                   $requestDefualts (optional)
      * @return GuzzleHttp\Client
      */
     public static function oAuth2(
@@ -68,7 +70,7 @@ class ApiSession
                 [
                     'base_uri' => $baseUri,
                     'handler' => $stack,
-                    'auth' => 'oauth'
+                    'auth' => 'oauth',
                 ]
             )
         );
@@ -78,12 +80,10 @@ class ApiSession
      * Creates a handler for oAuth2 Client
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber
-     *
-     * @param string $baseUri
-     * @param array $creds Just pass an empty array if you supply $customGrantType.
-     * @param bool $usesRefresh (optional)
+     * @param string                                        $baseUri
+     * @param array                                         $creds           Just pass an empty array if you supply $customGrantType.
+     * @param boolean                                       $usesRefresh     (optional)
      * @param kamermans\OAuth2\GrantType\GrantTypeInterface $customGrantType (optional)
-     *
      * @return GuzzleHttp\HandlerStack
      */
     public static function oAuth2Grants(
@@ -97,13 +97,13 @@ class ApiSession
         if ($customGrantType == null) {
             $requiredCreds = [
                 'client_id',
-                'client_secret'
+                'client_secret',
             ];
             $optionalCreds = [
                 'scope',
                 'state',
                 'redirect_uri',
-                'code'
+                'code',
             ];
 
             if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
@@ -140,11 +140,9 @@ class ApiSession
      * Creates a Guzzle Client with an oAuth1 connection
      *
      * @see https://github.com/guzzle/oauth-subscriber#using-the-subscriber
-     *
      * @param string $baseUri
-     * @param array $creds
-     * @param array $requestDefaults (optional)
-     *
+     * @param array  $creds
+     * @param array  $requestDefaults (optional)
      * @return GuzzleHttp\Client
      */
     public static function oAuth1(
@@ -156,12 +154,12 @@ class ApiSession
             'consumer_key',
             'consumer_secret',
             'token',
-            'token_secret'
+            'token_secret',
         ];
         $optionalCreds = [
             'private_key_file',
             'private_key_passphrase',
-            'signature_method'
+            'signature_method',
         ];
 
         if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
@@ -180,7 +178,7 @@ class ApiSession
                 [
                     'base_uri' => $baseUri,
                     'auth' => 'oauth',
-                    'handler' => $stack
+                    'handler' => $stack,
                 ]
             )
         );
@@ -190,11 +188,9 @@ class ApiSession
      * Creates a Guzzle Client with a basic authentication connection
      *
      * @see https://docs.guzzlephp.org/en/latest/request-options.html#auth
-     *
      * @param string $baseUri
-     * @param array $creds
-     * @param array $requestDefaults (optional)
-     *
+     * @param array  $creds
+     * @param array  $requestDefaults (optional)
      * @return GuzzleHttp\Client
      */
     public static function basicAuth(
@@ -204,7 +200,7 @@ class ApiSession
     ): Client {
         $requiredCreds = [
             'username',
-            'password'
+            'password',
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
@@ -218,7 +214,7 @@ class ApiSession
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'auth' => $creds
+                    'auth' => $creds,
                 ]
             )
         );
@@ -228,11 +224,9 @@ class ApiSession
      * Creates a Guzzle Client with a digest connection
      *
      * @see https://docs.guzzlephp.org/en/latest/request-options.html#auth
-     *
      * @param string $baseUri
-     * @param array $creds
-     * @param array $requestDefaults (optional)
-     *
+     * @param array  $creds
+     * @param array  $requestDefaults (optional)
      * @return GuzzleHttp\Client
      */
     public static function digest(
@@ -243,7 +237,7 @@ class ApiSession
         $requiredCreds = [
             'username',
             'password',
-            'digest'
+            'digest',
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
@@ -257,8 +251,8 @@ class ApiSession
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'auth' => $creds
-                ]
+                    'auth' => $creds,
+                ],
             ])
         );
     }
@@ -267,11 +261,9 @@ class ApiSession
      * Creates a Guzzle Client with a ntlm connection
      *
      * @see https://docs.guzzlephp.org/en/latest/request-options.html#auth
-     *
      * @param string $baseUri
-     * @param array $creds
-     * @param array $requestDefaults (optional)
-     *
+     * @param array  $creds
+     * @param array  $requestDefaults (optional)
      * @return GuzzleHttp\Client
      */
     public static function ntlm(
@@ -282,7 +274,7 @@ class ApiSession
         $requiredCreds = [
             'username',
             'password',
-            'ntlm'
+            'ntlm',
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
@@ -296,7 +288,7 @@ class ApiSession
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'auth' => $creds
+                    'auth' => $creds,
                 ]
             )
         );
@@ -306,9 +298,8 @@ class ApiSession
      * Creates a Guzzle Client with a token/apikey connection
      *
      * @param string $baseUri
-     * @param array $creds
-     * @param array $requestDefaults (optional)
-     *
+     * @param array  $creds
+     * @param array  $requestDefaults (optional)
      * @return GuzzleHttp\Client
      */
     public static function bearerToken(
@@ -329,7 +320,7 @@ class ApiSession
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'headers' => ['Authorization' => "Bearer $token"]
+                    'headers' => ['Authorization' => "Bearer $token"],
                 ]
             )
         );

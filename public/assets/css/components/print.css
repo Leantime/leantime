@@ -1,0 +1,73 @@
+@media print {
+
+    @page {
+        size:landscape;
+    }
+
+    * {
+        -webkit-print-color-adjust:exact;
+        overflow:hidden;
+    }
+
+    html, body {
+        width:100%;
+        mso-page-orientation: landscape;
+    }
+    .mainwrapper.menuopen .rightpanel {
+        margin-left:0px;
+        padding-top:0px;
+
+        width: 100%;
+    }
+
+    .dropdown .fa-caret-down {
+        display:none;
+    }
+
+    .dropdown a {
+        text-decoration:none !important;
+    }
+
+    .btn-group {
+        display:none;
+    }
+
+    a[href]:after {
+        content: '' !important;
+    }
+
+    .maincontent {
+        padding:0px;
+    }
+
+    .maincontentinner {
+        padding-top:0px;
+    }
+
+    .sortableTicketList .row-fluid {
+        overflow:hidden !important;
+    }
+
+    .column {
+        min-width:auto !important;
+    }
+
+    .header-title-dropdown {
+        vertical-align:middle;
+    }
+
+    .btn {
+        display:none !important;
+    }
+
+    .popup-wrapper {
+        display:none !important;
+    }
+
+    .footer {
+        position: fixed;
+        right: 10px;
+        padding: 0px !important;
+        bottom: 10px;
+    }
+}

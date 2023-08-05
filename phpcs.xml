@@ -4,8 +4,13 @@
     <rule ref="PSR12">
         <exclude name="Squiz.Classes.ValidClassName" />
         <exclude name="Generic.Files.LineLength" />
-
     </rule>
+    <rule ref="Modernize" />
+    <rule ref="NormalizedArrays" />
+    <rule ref="Universal.Namespaces.DisallowCurlyBraceSyntax" />
+    <rule ref="Squiz.Commenting.FunctionComment" />
+    <rule ref="Squiz.Commenting.ClassComment" />
+    <rule ref="Squiz.Commenting.VariableComment" />
     <!-- Keeping this in here for future use
     <rule ref="Generic.Files.LineLength">
         <properties>

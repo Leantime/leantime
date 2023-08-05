@@ -10,16 +10,16 @@ use leantime\domain\models\connector\provider;
  */
 
 //Create function for the event
-class addCSVImportProvider {
-
-    public function handle($payload){
+class addCSVImportProvider
+{
+    public function handle($payload)
+    {
 
         $provider = app()->make(\leantime\plugins\services\csvImport::class);
         $payload[$provider->id] = $provider;
 
         return $payload;
     }
-
 }
 
 //Register event listener

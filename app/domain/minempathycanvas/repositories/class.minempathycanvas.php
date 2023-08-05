@@ -28,11 +28,11 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            'minempathy_who' => [ 'icon' => '', 'title' => 'box.minempathy.who' ],
-            'minempathy_struggles' => [ 'icon' => '', 'title' => 'box.minempathy.struggles' ],
-            'minempathy_where' => [ 'icon' => '', 'title' => 'box.minempathy.where' ],
-            'minempathy_why' => [ 'icon' => '', 'title' => 'box.minempathy.why' ],
-            'minempathy_how' => [ 'icon' => '', 'title' => 'box.minempathy.how' ],
+            'minempathy_who' => ['icon' => '', 'title' => 'box.minempathy.who'],
+            'minempathy_struggles' => ['icon' => '', 'title' => 'box.minempathy.struggles'],
+            'minempathy_where' => ['icon' => '', 'title' => 'box.minempathy.where'],
+            'minempathy_why' => ['icon' => '', 'title' => 'box.minempathy.why'],
+            'minempathy_how' => ['icon' => '', 'title' => 'box.minempathy.how'],
         ];
 
         /**
@@ -41,9 +41,10 @@ namespace leantime\domain\repositories {
          * @acces protected
          * @var   array
          */
-        protected array $dataLabels = [ 1 => [ 'title' => 'label.description',  'field' => 'conclusion',  'active' => true],
-                                        2 => [ 'title' => 'label.data',               'field' => 'data',        'active' => true],
-                                        3 => [ 'title' => 'label.assumptions',   'field' => 'assumptions', 'active' => true]
+        protected array $dataLabels = [
+        1 => ['title' => 'label.description',  'field' => 'conclusion',  'active' => true],
+                                        2 => ['title' => 'label.data',               'field' => 'data',        'active' => true],
+                                        3 => ['title' => 'label.assumptions',   'field' => 'assumptions', 'active' => true],
                                         ];
 
         /**
@@ -52,6 +53,6 @@ namespace leantime\domain\repositories {
          * @acces public
          * @var   array
          */
-        protected array $relatesLabels = [ ];
+        protected array $relatesLabels = [];
     }
 }

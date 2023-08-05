@@ -52,8 +52,8 @@ namespace leantime\domain\controllers {
                     "userLastname" => $_SESSION['userdata']["name"],
                     "status" => 3,
                     "projectId" => $_SESSION['currentProject'],
-                    "sprint" => $_SESSION['currentSprint'] ?? ''
-                ]
+                    "sprint" => $_SESSION['currentSprint'] ?? '',
+                ],
             ]);
 
             $ticket->date =  $this->language->getFormattedDateString(date("Y-m-d H:i:s"));

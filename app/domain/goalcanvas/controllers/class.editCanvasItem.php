@@ -53,7 +53,7 @@ namespace leantime\domain\controllers {
 
                 $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
 
-                if($canvasItem) {
+                if ($canvasItem) {
                     $comments = $this->commentsRepo->getComments(
                         'goalcanvasitem',
                         $canvasItem['id']
@@ -65,13 +65,11 @@ namespace leantime\domain\controllers {
                             $canvasItem['id']
                         )
                     );
-                }else{
+                } else {
                     $this->tpl->displayPartial('errors.error404');
                     exit();
                 }
             } else {
-
-
                 $canvasItem = array(
                     'id' => '',
                     'box' => "goal",
@@ -89,7 +87,7 @@ namespace leantime\domain\controllers {
                     'setting' => '',
                     'metricType' =>  '',
                     'assignedTo' => '',
-                    'parent' => ''
+                    'parent' => '',
                 );
 
                 $comments = [];
@@ -116,10 +114,10 @@ namespace leantime\domain\controllers {
                     'date' => date('Y-m-d H:i:s'),
                     'userId' => ($_SESSION['userdata']['id']),
                     'moduleId' => $_GET['id'],
-                    'commentParent' => ($params['father'])
+                    'commentParent' => ($params['father']),
                 );
 
-                if($params['text'] != '') {
+                if ($params['text'] != '') {
                     $commentId = $this->commentsRepo->addComment($values, 'goalcanvasitem');
                     $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
                     $values['id'] = $commentId;
@@ -134,7 +132,7 @@ namespace leantime\domain\controllers {
                     $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
-                        "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                        "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
                     );
                     $notification->entity = $values;
                     $notification->module = 'goalcanvas';
@@ -174,7 +172,7 @@ namespace leantime\domain\controllers {
                             'endDate' => $this->language->getISODateString($params['endDate']),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
-                            'assignedTo' => $params['assignedTo'] ?? ''
+                            'assignedTo' => $params['assignedTo'] ?? '',
                         );
 
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
@@ -215,7 +213,7 @@ namespace leantime\domain\controllers {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                            "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = 'goalcanvas';
@@ -232,7 +230,6 @@ namespace leantime\domain\controllers {
                     $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                 } else {
                     if (isset($_POST['title']) && !empty($_POST['title'])) {
-
                         $canvasItem = array(
                             'box' => $params['box'],
                             'author' => $_SESSION['userdata']['id'],
@@ -250,7 +247,7 @@ namespace leantime\domain\controllers {
                             'endDate' => $this->language->getISODateString($params['endDate']),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
-                            'assignedTo' => $params['assignedTo'] ?? ''
+                            'assignedTo' => $params['assignedTo'] ?? '',
                         );
 
                         $id = $this->canvasRepo->addCanvasItem($canvasItem);
@@ -269,7 +266,7 @@ namespace leantime\domain\controllers {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.canvas_item_update_cta')
+                            "text" => $this->language->__('email_notifications.canvas_item_update_cta'),
                         );
 
                         $notification->entity = $canvasItem;
@@ -325,7 +322,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('comments', $comments);
             $this->tpl->displayPartial('goalcanvas.editCanvasItem');
         }
-
     }
 
 }

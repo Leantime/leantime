@@ -71,7 +71,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if ($dataLabels[1]['active']) { ?>
-          <label><?=$this->__($dataLabels[1]['title'].".".$this->escape($canvasItem['box'])) ?></label>
+          <label><?=$this->__($dataLabels[1]['title'] . "." . $this->escape($canvasItem['box'])) ?></label>
             <?php if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>"/><br />
             <?php } elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string') { ?>
@@ -84,7 +84,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if ($dataLabels[2]['active']) { ?>
-          <label><?=$this->__($dataLabels[2]['title'].".".$this->escape($canvasItem['box'])) ?></label>
+          <label><?=$this->__($dataLabels[2]['title'] . "." . $this->escape($canvasItem['box'])) ?></label>
             <?php if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
             <?php } elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string') { ?>
@@ -97,7 +97,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if ($dataLabels[3]['active']) { ?>
-          <label><?=$this->__($dataLabels[3]['title'].".".$this->escape($canvasItem['box'])) ?></label>
+          <label><?=$this->__($dataLabels[3]['title'] . "." . $this->escape($canvasItem['box'])) ?></label>
             <?php if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
             <?php } elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string') { ?>

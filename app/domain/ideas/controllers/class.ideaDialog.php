@@ -82,7 +82,7 @@ namespace leantime\domain\controllers {
                     "data" => "",
                     "conclusion" => "",
                     "milestoneHeadline" => "",
-                    "milestoneId" => ""
+                    "milestoneId" => "",
                 );
 
                 $comments = [];
@@ -105,13 +105,13 @@ namespace leantime\domain\controllers {
         {
 
             if (isset($params['comment']) === true) {
-                if($params['text'] != '') {
+                if ($params['text'] != '') {
                     $values = array(
                         'text' => $params['text'],
                         'date' => date("Y-m-d H:i:s"),
                         'userId' => ($_SESSION['userdata']['id']),
                         'moduleId' => (int)$_GET['id'],
-                        'commentParent' => ($params['father'])
+                        'commentParent' => ($params['father']),
                     );
 
                     $message = $this->commentsRepo->addComment($values, 'idea');
@@ -129,7 +129,7 @@ namespace leantime\domain\controllers {
                     $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
-                        "text" => $this->language->__('email_notifications.new_comment_idea_cta')
+                        "text" => $this->language->__('email_notifications.new_comment_idea_cta'),
                     );
                     $notification->entity = $values;
                     $notification->module = "comments";
@@ -162,7 +162,7 @@ namespace leantime\domain\controllers {
                             "itemId" => $params['itemId'],
                             "canvasId" => $currentCanvasId,
                             "milestoneId" => $params['milestoneId'],
-                            "id" => $params['itemId']
+                            "id" => $params['itemId'],
                         );
 
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
@@ -204,7 +204,7 @@ namespace leantime\domain\controllers {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.idea_edited_cta')
+                            "text" => $this->language->__('email_notifications.idea_edited_cta'),
                         );
 
                         $notification->entity = $canvasItem;
@@ -233,7 +233,7 @@ namespace leantime\domain\controllers {
                             "assumptions" => "",
                             "data" => $params['data'],
                             "conclusion" => "",
-                            "canvasId" => $currentCanvasId
+                            "canvasId" => $currentCanvasId,
                         );
 
                         $id = $this->ideaRepo->addCanvasItem($canvasItem);
@@ -247,7 +247,7 @@ namespace leantime\domain\controllers {
                         $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.idea_created_subject')
+                            "text" => $this->language->__('email_notifications.idea_created_subject'),
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = "ideas";

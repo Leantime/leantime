@@ -9,35 +9,41 @@ namespace leantime\core;
 
 use leantime\core\eventhelpers;
 
+/**
+ * Session Class - login procedure
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 class session
 {
     use eventhelpers;
 
     /**
-     * @access private
-     * @var    static object
+     * @var static object
      */
     private static $instance = null;
 
     /**
-     * @access private
-     * @var    static string
+     * @var static string
      */
     private static $sid = null;
 
     /**
-     * @access private
-     * @var    string
+     * @var string
      */
     private $sessionpassword = '';
 
+    /**
+     * @var environment
+     */
     private environment $config;
 
     /**
      * __construct - get and test Session or make session
      *
-     * @access private
-     * @return
+     * @param environment $config
+     * @return self
      */
     public function __construct(environment $config)
     {
@@ -85,7 +91,7 @@ class session
      * @access public
      * @return string
      */
-    public static function getSID()
+    public static function getSID(): string
     {
         return app()->make(self::class)::$sid;
     }
@@ -94,9 +100,9 @@ class session
      * makeSID - Generate SID with md5(), remote Address, time() and the password
      *
      * @access private
-     * @return string
+     * @return void
      */
-    private function makeSID()
+    private function makeSID(): void
     {
         $session_string = ! defined('LEAN_CLI') || LEAN_CLI === false
             ? $_SERVER['REMOTE_ADDR']
@@ -107,7 +113,13 @@ class session
         self::$sid = $tmp . '-' . hash('sha1', $tmp . $this->sessionpassword);
     }
 
-    public static function destroySession()
+    /**
+     * destroySession - destroy the session
+     *
+     * @access public
+     * @return void
+     */
+    public static function destroySession(): void
     {
         if (isset($_COOKIE['sid'])) {
             unset($_COOKIE['sid']);

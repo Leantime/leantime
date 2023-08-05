@@ -27,7 +27,7 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    int
+         * @var    integer
          */
         public $role;
 
@@ -50,7 +50,7 @@ namespace leantime\domain\repositories {
         public $department;
         /**
          * @access public
-         * @var    int
+         * @var    integer
          */
         public $id;
 
@@ -93,7 +93,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return array|bool
+         * @return array|boolean
          */
         public function getUser($id): array|bool
         {
@@ -417,7 +417,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  $username
          * @param  $userId
-         * @return bool
+         * @return boolean
          */
         public function usernameExist($username, $userId = ''): bool
         {
@@ -631,7 +631,6 @@ namespace leantime\domain\repositories {
 
             $value = false;
             if ($id !== false) {
-
                 $sql = "SELECT profileId, firstname, lastname FROM `zp_user` WHERE id = :id LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
@@ -640,11 +639,9 @@ namespace leantime\domain\repositories {
                 $stmn->execute();
                 $value = $stmn->fetch();
                 $stmn->closeCursor();
-
             }
 
             if ($value !== false && $value['profileId'] != '') {
-
                 $files = app()->make(files::class);
                 $file = $files->getFile($value['profileId']);
 
@@ -655,18 +652,13 @@ namespace leantime\domain\repositories {
                 $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
                 $type = $file['extension'];
 
-                return array("filename"=>$return, "type"=>"uploaded");
-
+                return array("filename" => $return, "type" => "uploaded");
             } elseif (isset($value['profileId']) && $value['profileId'] == '') {
-
                 $imagename = md5($value['firstname'] . " " . $value['lastname']);
 
-                if(file_exists(APP_ROOT."/cache/avatars/".$imagename.".png")){
-
-                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
-
-                }else{
-
+                if (file_exists(APP_ROOT . "/cache/avatars/" . $imagename . ".png")) {
+                    return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
+                } else {
                     $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                     $image = $avatar
                         ->name($value['firstname'] . " " . $value['lastname'])
@@ -675,17 +667,14 @@ namespace leantime\domain\repositories {
                         ->size(96)
                         ->background('#81B1A8')->color("#fff");
 
-                    if(is_writable(APP_ROOT."/cache/avatars/")) {
-                        $image->generate()->save(APP_ROOT."/cache/avatars/".$imagename.".png", 100, "png");
-                        return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
-                    }else{
-
+                    if (is_writable(APP_ROOT . "/cache/avatars/")) {
+                        $image->generate()->save(APP_ROOT . "/cache/avatars/" . $imagename . ".png", 100, "png");
+                        return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
+                    } else {
                         return $image->generateSVG();
                     }
                 }
-
-
-            } else{
+            } else {
                 //USer doesn't exist for whatever reason. Return ghost. Boo
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar
@@ -719,8 +708,9 @@ namespace leantime\domain\repositories {
             foreach ($params as $key => $value) {
                 $cleanKey = core\db::sanitizeToColumnString($key);
                 $val = $value;
-                if ($cleanKey == 'password')
+                if ($cleanKey == 'password') {
                     $val = password_hash($value, PASSWORD_DEFAULT);
+                }
                 $stmn->bindValue(':' . $cleanKey, $val, PDO::PARAM_STR);
             }
 
@@ -736,7 +726,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @param  string $firstnam Firstname
          * @param  string $lastname Lastname
-         * @return int|bool Identifier of user or false, if not found
+         * @return integer|boolean Identifier of user or false, if not found
          */
         public function getUserIdByName(string $firstname, string $lastname): int|bool
         {

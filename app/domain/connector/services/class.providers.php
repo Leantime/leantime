@@ -9,42 +9,35 @@ namespace leantime\domain\services\connector {
 
     class providers
     {
-
         use eventhelpers;
 
         private $providers = [];
 
-       public function __construct()
-       {
-           $this->loadProviders();
+        public function __construct()
+        {
+            $this->loadProviders();
+        }
 
+        public function loadProviders()
+        {
 
-       }
+            //providerId => provider
+            $this->providers = self::dispatch_filter('providerList', []);
+        }
 
-       public function loadProviders () {
-
-           //providerId => provider
-           $this->providers = self::dispatch_filter('providerList', [
-
-           ]);
-       }
-
-       public function getProviders(){
+        public function getProviders()
+        {
             return $this->providers;
-       }
+        }
 
-       public function getProvider($providerId): provider
-       {
-           if (isset($this->providers[$providerId])) {
-               return $this->providers[$providerId];
-           } else {
-               throw new \Exception("Provider does not exist");
-           }
-
-       }
-
-
-
+        public function getProvider($providerId): provider
+        {
+            if (isset($this->providers[$providerId])) {
+                return $this->providers[$providerId];
+            } else {
+                throw new \Exception("Provider does not exist");
+            }
+        }
     }
 
 }

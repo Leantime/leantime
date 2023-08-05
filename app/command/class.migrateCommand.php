@@ -32,8 +32,6 @@ class migrateCommand extends Command
             ->addOption('company-name', null, InputOption::VALUE_OPTIONAL, "Company Name", null)
             ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", null)
             ->addOption('last-name', null, InputOption::VALUE_OPTIONAL, "User's Last Name", null);
-
-
     }
 
     /**
@@ -41,7 +39,7 @@ class migrateCommand extends Command
      *
      * @param  InputInterface  $input
      * @param  OutputInterface $output
-     * @return int 0 if everything went fine, or an exit code.
+     * @return integer 0 if everything went fine, or an exit code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -53,17 +51,15 @@ class migrateCommand extends Command
         $silent = $input->getOption("silent") === "true";
         try {
             if (!$install->checkIfInstalled()) {
-
-                if($silent) {
+                if ($silent) {
                     $setupConfig = array(
                         "email" => "admin@leantime.io",
                         "password" => "",
                         "firstname" => "",
                         "lastname" => "",
-                        "company" => "Leantime"
+                        "company" => "Leantime",
                     );
-
-                }else{
+                } else {
                     $email = $input->getOption('email');
                     $password = $input->getOption('password');
                     $companyName = $input->getOption('company-name');
@@ -81,9 +77,8 @@ class migrateCommand extends Command
                         "password" => $adminPassword,
                         "firstname" => $adminFirstName,
                         "lastname" => $adminLastName,
-                        "company" => $companyName
+                        "company" => $companyName,
                     );
-
                 }
 
                 $io->text("Installing DB For First Time");

@@ -65,9 +65,7 @@ namespace leantime\domain\controllers {
                         $currentArticle = false;
                     }
                 }
-
             } elseif (isset($params['id'])) {
-
                 $currentArticle = $this->wikiService->getArticle($params['id'], $_SESSION['currentProject']);
 
                 if ($currentArticle && $currentArticle->id != null) {
@@ -81,7 +79,6 @@ namespace leantime\domain\controllers {
                 } else {
                     $this->tpl->redirect(BASE_URL . "/wiki/show");
                 }
-
             } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
                 $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
 

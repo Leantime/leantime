@@ -1,13 +1,13 @@
 <?php
-    $providerEntities = $this->get("providerEntities");
-    $provider = $this->get("provider");
-    $leantimeEntities = $this->get("leantimeEntities");
-    $integrationId = $this->get("integrationId");
+$providerEntities = $this->get("providerEntities");
+$provider = $this->get("provider");
+$leantimeEntities = $this->get("leantimeEntities");
+$integrationId = $this->get("integrationId");
 
-    $urlAppend = '';
-    if(isset($integrationId) && is_numeric($integrationId)) {
-        $urlAppend = "&integrationId=".$integrationId;
-    }
+$urlAppend = '';
+if (isset($integrationId) && is_numeric($integrationId)) {
+    $urlAppend = "&integrationId=" . $integrationId;
+}
 ?>
 
 <div class="pageheader">
@@ -34,14 +34,14 @@
         <form method="post" action="<?=BASE_URL?>/connector/integration/?provider=<?=$provider->id?>&step=fields<?=$urlAppend ?>">
             Leantime
             <select name="leantimeEntities">
-                <?php foreach($leantimeEntities as $key => $entity){?>
+                <?php foreach ($leantimeEntities as $key => $entity) {?>
                     <option value="<?=$key ?>"><?=$entity['name'] ?></option>
                 <?php } ?>
             </select>
 
             <?=$provider->name ?>
             <select name="providerEntities">
-                <?php foreach($providerEntities as $key => $entity){?>
+                <?php foreach ($providerEntities as $key => $entity) {?>
                     <option value="<?=$key?>"><?=$entity['name'] ?></option>
                 <?php } ?>
             </select>

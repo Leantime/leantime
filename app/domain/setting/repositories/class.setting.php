@@ -10,7 +10,7 @@ namespace leantime\domain\repositories {
         private core\db $db;
 
         public $applications = array(
-            'general' => 'General'
+            'general' => 'General',
         );
 
         /**
@@ -93,7 +93,7 @@ namespace leantime\domain\repositories {
          * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
          *
          * @access public
-         * @return bool
+         * @return boolean
          */
         public function checkIfInstalled()
         {

@@ -1,9 +1,8 @@
 <?php
 $redirectUrl = $this->incomingRequest->getRequestURI(BASE_URL);
 //Don't redirect if redirect goes to showProject.
-if(str_contains($redirectUrl, "showProject")) {
+if (str_contains($redirectUrl, "showProject")) {
     $redirectUrl = "/dashboard/show";
-
 }
 
 use leantime\core\eventhelpers;
@@ -36,19 +35,22 @@ use leantime\core\eventhelpers;
                     $projectHierarchy = $this->get('allAssignedProjectsHierarchy');
 
                     $numCol = 1;
-                    if($projectHierarchy['strategy']["enabled"] === true) $numCol++;
-                    if($projectHierarchy['program']["enabled"] === true) $numCol++;
+                if ($projectHierarchy['strategy']["enabled"] === true) {
+                    $numCol++;
+                }
+                if ($projectHierarchy['program']["enabled"] === true) {
+                    $numCol++;
+                }
 
-                    $colW = 12/$numCol;
+                    $colW = 12 / $numCol;
 
                     $currentType = $this->get("currentProjectType");
                     $currentProject = $this->get("currentProject");
 
 
-                static::dispatch_event('beforeProjectSelectorList', array("projectHierarchy" => $projectHierarchy, "colW"=>$colW, "context"=>$this));
+                static::dispatch_event('beforeProjectSelectorList', array("projectHierarchy" => $projectHierarchy, "colW" => $colW, "context" => $this));
 
-                if($projectHierarchy['project']["enabled"] === true) { ?>
-
+                if ($projectHierarchy['project']["enabled"] === true) { ?>
                 <div class="col-md-<?=$colW?> scrollingTab">
                     <ul class="selectorList projectList">
 
@@ -56,8 +58,7 @@ use leantime\core\eventhelpers;
                         $lastClient = '';
 
                         foreach ($projectHierarchy['project']["items"] as $key => $typeRow) {
-
-                            echo '<li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">'.$this->__("selectorLabel.".$key).'</li>';
+                            echo '<li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">' . $this->__("selectorLabel." . $key) . '</li>';
 
                             foreach ($typeRow as $projectRow) {
 
@@ -66,28 +67,27 @@ use leantime\core\eventhelpers;
 
                                     echo "<li class='clientIdHead-" . $projectRow['clientId'] . " clientGroupParent-" . $projectRow['parent'] . " clientController";
 
-                                    if($projectHierarchy['program']["enabled"] === true || $projectHierarchy['strategy']["enabled"] === true) {
+                                    if ($projectHierarchy['program']["enabled"] === true || $projectHierarchy['strategy']["enabled"] === true) {
                                         echo " hideGroup ";
                                     }
 
-                                    echo "'><a href='#' onclick='leantime.menuController.toggleClientList(\"".$projectRow['clientId'] . "\", this)' class='open'><i class=\"fas fa-angle-down\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
-
+                                    echo "'><a href='#' onclick='leantime.menuController.toggleClientList(\"" . $projectRow['clientId'] . "\", this)' class='open'><i class=\"fas fa-angle-down\"></i>" . $this->escape($projectRow['clientName']) . " </li>";
                                 }
 
-                                echo"<li class='projectGroup-".$projectRow['parent']." hideGroup clientId-".$projectRow['parent']."-". $projectRow['clientId'] ."";
-                                if($_SESSION["currentProject"] == $projectRow["id"]) {
+                                echo"<li class='projectGroup-" . $projectRow['parent'] . " hideGroup clientId-" . $projectRow['parent'] . "-" . $projectRow['clientId'] . "";
+                                if ($_SESSION["currentProject"] == $projectRow["id"]) {
                                     echo " active activeChild";
                                 }
-                                echo"' data-client='".$projectRow['clientId']."'>";
+                                echo"' data-client='" . $projectRow['clientId'] . "'>";
                                 echo"<a";
 
-                                if(strlen($projectRow["name"]) >=15){
-                                    echo " data-tippy-content='".$this->escape($projectRow["name"])."' ";
+                                if (strlen($projectRow["name"]) >= 15) {
+                                    echo " data-tippy-content='" . $this->escape($projectRow["name"]) . "' ";
                                 }
 
                                 echo " href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'>
                                                 <span class='projectAvatar'>
-                                                    <img src='".BASE_URL."/api/projects?projectAvatar=".$projectRow['id']."' />
+                                                    <img src='" . BASE_URL . "/api/projects?projectAvatar=" . $projectRow['id'] . "' />
                                                 </span>
                                                 <span class='projectName'> " . $this->truncate($this->escape($projectRow["name"]), 15, '...') . "</span>
                                             </a>";
@@ -120,14 +120,12 @@ use leantime\core\eventhelpers;
 
                 if ($this->get('recentProjects') !== false && count($this->get('recentProjects')) >= 1) {
                     foreach ($this->get('recentProjects') as $projectRow) {
-
                         echo "<li class='projectLineItem visible noParent hasSubtitle";
                         if ($this->get('currentProject') == $projectRow["id"]) {
                             echo " active ";
                         }
                         echo "'><a href='" . BASE_URL . "/projects/changeCurrentProject/" . $projectRow["id"] . "?redirect=" . $redirectUrl . "'><span class='projectAvatar'><img src='" . BASE_URL . "/api/projects?projectAvatar=" . $projectRow['id'] . "' />
                         </span><span class='projectName'><small>" . $this->escape($projectRow["clientName"]) . "</small><br />" . $this->escape($projectRow["name"]) . "</span></a></li>";
-
                     }
                 } else {
                     echo "<li class='nav-header'></li><li><span class='info'>" . $this->__("menu.you_dont_have_projects") . "</span></li>";
@@ -145,7 +143,7 @@ use leantime\core\eventhelpers;
 
                 if ($this->get('allAvailableProjects') !== false && count($this->get('allAvailableProjects')) >= 1) {
                     foreach ($this->get('allAvailableProjects') as $projectRow) {
-                        if($projectRow['isFavorite']) {
+                        if ($projectRow['isFavorite']) {
                             echo "<li class='projectLineItem visible noParent hasSubtitle";
                             if ($this->get('currentProject') == $projectRow["id"]) {
                                 echo " active ";

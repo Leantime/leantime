@@ -140,7 +140,7 @@ namespace leantime\domain\controllers {
                     'dateFrom' => $dateFrom,
                     'dateTo' => $dateTo,
                     'invEmplCheck' => $invEmplCheck,
-                    'invCompCheck' => $invCompCheck
+                    'invCompCheck' => $invCompCheck,
                 );
                 $this->timesheetsRepo->export($values);
             }

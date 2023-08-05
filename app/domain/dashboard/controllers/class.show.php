@@ -55,7 +55,7 @@ namespace leantime\domain\controllers {
             }
 
             $projectRedirectFilter = static::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
-            if($projectRedirectFilter != "/dashboard/show") {
+            if ($projectRedirectFilter != "/dashboard/show") {
                 core\frontcontroller::redirect(BASE_URL . $projectRedirectFilter);
             }
 
@@ -66,9 +66,9 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('project', $project);
 
             $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $_SESSION['currentProject'], \leantime\domain\models\reactions::$favorite);
-            if($userReaction && is_array($userReaction) && count($userReaction) >0) {
+            if ($userReaction && is_array($userReaction) && count($userReaction) > 0) {
                 $this->tpl->assign("isFavorite", true);
-            }else{
+            } else {
                 $this->tpl->assign("isFavorite", false);
             }
 

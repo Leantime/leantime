@@ -86,7 +86,6 @@ namespace leantime\domain\controllers {
                 if ($project !== false && isset($project["clientId"])) {
                     $this->tpl->assign('currentClient', $project["clientId"]);
                 } else {
-
                     $this->tpl->assign('currentClient', '');
                 }
 

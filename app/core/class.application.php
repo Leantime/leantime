@@ -4,21 +4,25 @@ namespace leantime\core;
 
 use Illuminate\Container\Container;
 
+/**
+ * Application Class - IoC Container for the application
+ *
+ * @package    leantime
+ * @subpackage core
+ */
 class application extends Container
 {
     /**
      * Application bootstrap status
      *
-     * @var bool
-     * @static
-     * @access private
+     * @var boolean
      */
     private static bool $bootstrapped = false;
 
     /**
      * Check if application has been bootstrapped
      *
-     * @return bool
+     * @return boolean
      */
     public static function hasBeenBootstrapped(): bool
     {

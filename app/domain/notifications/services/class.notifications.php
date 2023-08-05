@@ -48,9 +48,9 @@ namespace leantime\domain\services {
         public function markNotificationRead($id, $userId)
         {
 
-            if($id == "all") {
+            if ($id == "all") {
                 return $this->notificationsRepo->markAllNotificationRead($userId);
-            }else {
+            } else {
                 return $this->notificationsRepo->markAllNotificationRead($id);
             }
         }
@@ -94,7 +94,7 @@ namespace leantime\domain\services {
                             "message" => sprintf($this->language->__('text.x_mentioned_you'), $authorName),
                             "datetime" => date("Y-m-d H:i:s"),
                             "url" => $url,
-                            "authorId" => $authorId
+                            "authorId" => $authorId,
                         );
 
                         $this->addNotifications(array($notification));

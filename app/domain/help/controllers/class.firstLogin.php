@@ -91,7 +91,7 @@ namespace leantime\domain\controllers {
                             'password' => '',
                             'pwReset' => '',
                             'status' => '',
-                            'clientId' => ''
+                            'clientId' => '',
                         );
 
                         if (filter_var($_POST['email' . $i], FILTER_VALIDATE_EMAIL)) {

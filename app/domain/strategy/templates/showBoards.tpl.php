@@ -30,7 +30,7 @@ $canvasProgress = $this->get('canvasProgress');
                             <span class="userName">
                                     <small><?=$this->__($board['name']) ?> (<?=$board['count']?>)</small><br />
 
-                                    <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas/".$board['lastCanvasId']?>">
+                                    <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas/" . $board['lastCanvasId']?>">
                                         <?=$this->escape($board['lastTitle']) ?>
                                     </a><br />
                                 <small><?=$this->__('label.last_updated')?> <?=$this->getFormattedDateString($board['lastUpdate'])?> <?=$this->getFormattedTimeString($board['lastUpdate'])?></p>
@@ -56,8 +56,7 @@ $canvasProgress = $this->get('canvasProgress');
                     </div>
                 <?php } ?>
 
-                <?php if (!is_array($this->get('recentProgressCanvas')) || count($this->get('recentProgressCanvas')) == 0){
-
+                <?php if (!is_array($this->get('recentProgressCanvas')) || count($this->get('recentProgressCanvas')) == 0) {
                     echo "<div class='col-md-12'><br /><br /><div class='center'>";
 
                     echo "<div style='width:30%' class='svgContainer'>";
@@ -66,11 +65,10 @@ $canvasProgress = $this->get('canvasProgress');
 
                     echo"<h3>" . $this->__("headline.no_blueprints_yet") . "</h3>";
                     echo "<br />" . $this->__("text.no_blueprints_yet");
-                    echo "<br /><a href='".BASE_URL."/valuecanvas/showCanvas' class='btn btn-primary'>" . $this->__("button.start_here_project_value") ."</a>";
+                    echo "<br /><a href='" . BASE_URL . "/valuecanvas/showCanvas' class='btn btn-primary'>" . $this->__("button.start_here_project_value") . "</a>";
 
                     echo"</div></div>";
-
-                     } ?>
+                } ?>
                 </div>
 
 
@@ -115,7 +113,7 @@ $canvasProgress = $this->get('canvasProgress');
         </div>
     </div>
 
-    <?php if($login::userIsAtLeast($roles::$editor)){?>
+    <?php if ($login::userIsAtLeast($roles::$editor)) {?>
     <div class="row">
         <div class="col-md-12">
             <div class="maincontentinner">
@@ -129,8 +127,8 @@ $canvasProgress = $this->get('canvasProgress');
 
 
                     <?php foreach ($this->get('otherBoards') as $board) {
-                        if(!isset($board["visible"]) || $board["visible"] === 1) {
-                        ?>
+                        if (!isset($board["visible"]) || $board["visible"] === 1) {
+                            ?>
                         <div class="col-md-3">
                             <div class="profileBox" style="min-height: 125px;">
                                 <div class="commentImage icon">
@@ -147,7 +145,7 @@ $canvasProgress = $this->get('canvasProgress');
 
                             </div>
                         </div>
-                    <?php }
+                        <?php }
                     } ?>
                 </div>
 

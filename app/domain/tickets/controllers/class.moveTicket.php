@@ -45,22 +45,19 @@ namespace leantime\domain\controllers {
             }
 
             $projectId = null;
-            if(isset($params['projectId'])) {
+            if (isset($params['projectId'])) {
                 $projectId = (int)($params['projectId']);
             }
 
-            if(!empty($ticketId) && !empty($projectId)){
-                if($this->ticketService->moveTicket($ticketId, $projectId)) {
+            if (!empty($ticketId) && !empty($projectId)) {
+                if ($this->ticketService->moveTicket($ticketId, $projectId)) {
                     $this->tpl->setNotification($this->language->__("text.ticket_moved"), "success");
-                }else{
+                } else {
                     $this->tpl->setNotification($this->language->__("text.move_problem"), "error");
                 }
             }
 
-            core\frontcontroller::redirect(BASE_URL."/tickets/moveTicket/".$ticketId."?closeModal=true");
-
-
-
+            core\frontcontroller::redirect(BASE_URL . "/tickets/moveTicket/" . $ticketId . "?closeModal=true");
         }
     }
 

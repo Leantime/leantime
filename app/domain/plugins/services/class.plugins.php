@@ -131,13 +131,13 @@ namespace leantime\domain\services {
                 $plugin->authors = json_encode($pluginFile['authors']);
 
                 //Any installation calls should happen right here.
-                $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
+                $pluginClassName = '\leantime\plugins\services\\' . htmlspecialchars($plugin->foldername);
                 $newPluginSvc = app()->make($pluginClassName);
 
-                if(method_exists($newPluginSvc, "install")) {
+                if (method_exists($newPluginSvc, "install")) {
                     try {
                         $newPluginSvc->install();
-                    }catch(\Exception $e){
+                    } catch (\Exception $e) {
                         error_log($e);
                         return false;
                     }
@@ -167,13 +167,13 @@ namespace leantime\domain\services {
             $plugin = $this->pluginRepository->getPlugin($id);
 
             //Any installation calls should happen right here.
-            $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
+            $pluginClassName = '\leantime\plugins\services\\' . htmlspecialchars($plugin->foldername);
             $newPluginSvc = app()->make($pluginClassName);
 
-            if(method_exists($newPluginSvc, "uninstall")) {
+            if (method_exists($newPluginSvc, "uninstall")) {
                 try {
                     $newPluginSvc->install();
-                }catch(\Exception $e){
+                } catch (\Exception $e) {
                     error_log($e);
                     return false;
                 }

@@ -46,9 +46,11 @@ $companySettings = $this->get('companySettings');
                                 <div class="col-md-8">
                                     <select name="language" id="language">
                                         <?php foreach ($this->get("languageList") as $languagKey => $languageValue) {?>
-                                            <option value="<?=$languagKey?>" <?php if ($companySettings['language'] == $languagKey) {
-                                                echo "selected='selected'";
-                                            } ?>><?=$languageValue?></option>
+                                            <option
+                                                value="<?=$languagKey?>"
+                                                <?php if ($companySettings['language'] == $languagKey) {
+                                                    echo "selected='selected'";
+                                                } ?>><?=$languageValue?></option>
                                         <?php } ?>
                                     </select>
 
@@ -92,36 +94,56 @@ $companySettings = $this->get('companySettings');
                                                     <span class='field'>
                                                         <select name="messageFrequency" class="input" id="messageFrequency" style="width: 220px">
                                                             <option value="">--<?php echo $this->__('label.choose_option') ?>--</option>
-                                                            <option value="300" <?php if ($companySettings['messageFrequency'] == "300") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.5min') ?></option>
-                                                            <option value="900" <?php if ($companySettings['messageFrequency'] == "900") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.15min') ?></option>
-                                                            <option value="1800" <?php if ($companySettings['messageFrequency'] == "1800") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.30min') ?></option>
-                                                            <option value="3600" <?php if ($companySettings['messageFrequency'] == "3600") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.1h') ?></option>
-                                                            <option value="10800" <?php if ($companySettings['messageFrequency'] == "10800") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.3h') ?></option>
-                                                            <option value="36000" <?php if ($companySettings['messageFrequency'] == "36000") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.6h') ?></option>
-                                                            <option value="43200" <?php if ($companySettings['messageFrequency'] == "43200") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.12h') ?></option>
-                                                            <option value="86400" <?php if ($companySettings['messageFrequency'] == "86400") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.24h') ?></option>
-                                                            <option value="172800" <?php if ($companySettings['messageFrequency'] == "172800") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.48h') ?></option>
-                                                            <option value="604800" <?php if ($companySettings['messageFrequency'] == "604800") {
-                                                                echo " selected ";
-                                                            } ?>><?php echo $this->__('label.1w') ?></option>
+                                                            <option
+                                                                value="300"
+                                                                <?php if ($companySettings['messageFrequency'] == "300") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.5min') ?></option>
+                                                            <option
+                                                                value="900"
+                                                                <?php if ($companySettings['messageFrequency'] == "900") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.15min') ?></option>
+                                                            <option
+                                                                value="1800"
+                                                                <?php if ($companySettings['messageFrequency'] == "1800") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.30min') ?></option>
+                                                            <option
+                                                                value="3600"
+                                                                <?php if ($companySettings['messageFrequency'] == "3600") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.1h') ?></option>
+                                                            <option
+                                                                value="10800"
+                                                                <?php if ($companySettings['messageFrequency'] == "10800") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.3h') ?></option>
+                                                            <option
+                                                                value="36000"
+                                                                <?php if ($companySettings['messageFrequency'] == "36000") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.6h') ?></option>
+                                                            <option
+                                                                value="43200"
+                                                                <?php if ($companySettings['messageFrequency'] == "43200") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.12h') ?></option>
+                                                            <option
+                                                                value="86400"
+                                                                <?php if ($companySettings['messageFrequency'] == "86400") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.24h') ?></option>
+                                                            <option
+                                                                value="172800"
+                                                                <?php if ($companySettings['messageFrequency'] == "172800") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.48h') ?></option>
+                                                            <option
+                                                                value="604800"
+                                                                <?php if ($companySettings['messageFrequency'] == "604800") {
+                                                                    echo " selected ";
+                                                                } ?>><?php echo $this->__('label.1w') ?></option>
                                                         </select> <br/>
                                                     </span>
                                 </div>
@@ -222,7 +244,7 @@ $companySettings = $this->get('companySettings');
                         <ul class="sortableTicketList">
 
 
-                        <?php foreach($this->get('apiKeys') as $apiKey) { ?>
+                        <?php foreach ($this->get('apiKeys') as $apiKey) { ?>
                             <li>
                                 <div class="ticketBox">
                                       <div class="inlineDropDownContainer">
