@@ -18,6 +18,8 @@ namespace leantime\domain\services {
         private repositories\timesheets $timesheetsRepo;
         private repositories\setting $settingsRepo;
         private services\projects $projectService;
+        private services\timesheets $timesheetService;
+        private services\sprints $sprintService;
 
         public function __construct(
             core\template $tpl,
@@ -27,7 +29,9 @@ namespace leantime\domain\services {
             repositories\tickets $ticketRepository,
             repositories\timesheets $timesheetsRepo,
             repositories\setting $settingsRepo,
-            services\projects $projectService
+            services\projects $projectService,
+            services\timesheets $timesheetService,
+            services\sprints $sprintService
         ) {
             $this->tpl = $tpl;
             $this->language = $language;
@@ -37,6 +41,8 @@ namespace leantime\domain\services {
             $this->timesheetsRepo = $timesheetsRepo;
             $this->settingsRepo = $settingsRepo;
             $this->projectService = $projectService;
+            $this->timesheetService = $timesheetService;
+            $this->sprintService = $sprintService;
         }
 
         /**
@@ -170,10 +176,12 @@ namespace leantime\domain\services {
                 "users" => "",
                 "status" => "",
                 "term" => "",
+                "effort" => "",
                 "type" => "",
                 "sprint" => $_SESSION['currentSprint'] ?? '',
                 "milestone" => "",
                 "orderBy" => "sortIndex",
+                "orderDirection" => "DESC",
                 "groupBy" => "",
                 "priority" => "",
                 "currentUser" => $_SESSION['userdata']["id"] ?? '',
@@ -200,6 +208,10 @@ namespace leantime\domain\services {
                 $searchCriteria["term"] = $searchParams["term"];
             }
 
+            if (isset($searchParams["effort"]) === true) {
+                $searchCriteria["effort"] = $searchParams["effort"];
+            }
+
             if (isset($searchParams["type"]) === true) {
                 $searchCriteria["type"] = $searchParams["type"];
             }
@@ -214,6 +226,10 @@ namespace leantime\domain\services {
 
             if (isset($searchParams["orderBy"]) === true) {
                 $searchCriteria["orderBy"] = $searchParams["orderBy"];
+            }
+
+            if (isset($searchParams["orderDirection"]) === true) {
+                $searchCriteria["orderDirection"] = $searchParams["orderDirection"];
             }
 
             if (isset($searchParams["priority"]) === true) {
@@ -250,7 +266,13 @@ namespace leantime\domain\services {
         {
             $count = 0;
             foreach ($searchCriteria as $key => $value) {
-                if ($key != "groupBy" && $key != "currentProject" && $key != "orderBy" && $key != "currentUser" &&  $key != "currentClient") {
+                if ($key != "groupBy"
+                    && $key != "currentProject"
+                    && $key != "orderBy"
+                    && $key != "currentUser"
+                    && $key != "currentClient"
+                    && $key != "sprint"
+                    && $key != "orderDirection") {
                     if ($value != '') {
                         $count++;
                     }
@@ -984,9 +1006,19 @@ namespace leantime\domain\services {
                     'label' => 'no_group',
                 ],
                 [
+                    'id' => 'groupByTypeLink',
+                    'status' => 'type',
+                    'label' => 'type',
+                ],
+                [
                     'id' => 'groupByStatusLink',
                     'status' => 'status',
                     'label' => 'todo_status',
+                ],
+                [
+                    'id' => 'groupByEffortLink',
+                    'status' => 'effort',
+                    'label' => 'effort',
                 ],
                 [
                     'id' => 'groupByPriorityLink',
@@ -1016,31 +1048,140 @@ namespace leantime\domain\services {
             ];
         }
 
+        public function getSortByFieldOptions()
+        {
+            return [
+                [
+                    'id' => 'sortByManualLink',
+                    'status' => 'manualSort',
+                    'label' => 'manualSort',
+                ],
+                [
+                    'id' => 'sortByTypeLink',
+                    'status' => 'type',
+                    'label' => 'type',
+                ],
+                [
+                    'id' => 'sortByStatusLink',
+                    'status' => 'status',
+                    'label' => 'todo_status',
+                ],
+                [
+                    'id' => 'sortByEffortLink',
+                    'status' => 'effort',
+                    'label' => 'effort',
+                ],
+                [
+                    'id' => 'sortByPriorityLink',
+                    'status' => 'priority',
+                    'label' => 'priority',
+                ],
+                [
+                    'id' => 'sortByMilestoneLink',
+                    'status' => 'milestone',
+                    'label' => 'milestone',
+                ],
+                [
+                    'id' => 'sortByUserLink',
+                    'status' => 'user',
+                    'label' => 'user',
+                ],
+                [
+                    'id' => 'sortBySprintLink',
+                    'status' => 'sprint',
+                    'label' => 'sprint',
+                ],
+                [
+                    'id' => 'sortByTagsLink',
+                    'status' => 'tags',
+                    'label' => 'tags',
+                ],
+                [
+                    'id' => 'sortByDueDateLink',
+                    'status' => 'dateToFinish',
+                    'label' => 'dueDate',
+                ],
+            ];
+        }
+
         public function getNewFieldOptions()
         {
             if (!defined('BASE_URL')) {
                 return [];
             }
 
-            $baseUrl = BASE_URL;
+            $baseUrl = CURRENT_URL;
 
             return [
                 [
-                    'url' => "$baseUrl/tickets/newTicket",
+                    'url' => "$baseUrl#/tickets/newTicket",
                     'text' => 'links.add_todo',
                     'class' => 'ticketModal',
                 ],
                 [
-                    'url' => "$baseUrl/tickets/editMilestone",
+                    'url' => "$baseUrl#/tickets/editMilestone",
                     'text' => 'links.add_milestone',
                     'class' => 'milestoneModal',
                 ],
                 [
-                    'url' => "$baseUrl/sprints/editSprint",
+                    'url' => "$baseUrl#/sprints/editSprint",
                     'text' => 'links.add_sprint',
                     'class' => 'sprintModal',
                 ],
             ];
+        }
+
+
+        public function getTicketTemplateAssignments($params) {
+
+
+            $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
+
+            $searchCriteria = $this->prepareTicketSearchArray($params);
+            $searchCriteria["orderBy"] = "kanbansort";
+
+            $allTickets = $this->getAll($searchCriteria);
+            $allTicketStates  =  $this->getStatusLabels();
+
+            $efforts  =  $this->getEffortLabels();
+            $priorities  =  $this->getPriorityLabels();
+            $types  =  $this->getTicketTypes();
+            $ticketTypeIcons  =  $this->getTypeIcons();
+
+            $numOfFilters  =  $this->countSetFilters($searchCriteria);
+
+            $onTheClock  =  $this->timesheetService->isClocked($_SESSION["userdata"]["id"]);
+
+            $sprints  =  $this->sprintService->getAllSprints($_SESSION["currentProject"]);
+            $futureSprints  =  $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]);
+
+            $users  =  $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]);
+            $milestones  =  $this->getAllMilestones($_SESSION["currentProject"]);
+
+            $groupByOptions  =  $this->getGroupByFieldOptions();
+            $newField  =  $this->getNewFieldOptions();
+            $sortOptions  =  $this->getSortByFieldOptions();
+
+            return array(
+                'currentSprint' => $_SESSION['currentSprint'],
+                'searchCriteria' => $searchCriteria,
+                'allTickets' => $allTickets,
+                'allTicketStates' =>  $allTicketStates,
+                'efforts' => $efforts,
+                'priorities' => $priorities,
+                'types' => $types,
+                'ticketTypeIcons' => $ticketTypeIcons,
+                'numOfFilters' => $numOfFilters,
+                'onTheClock' => $onTheClock,
+                'sprints' => $sprints,
+                'futureSprints' => $futureSprints,
+                'users' => $users,
+                'milestones' => $milestones,
+                'groupByOptions' => $groupByOptions,
+                'newField' => $newField,
+                'sortOptions' => $sortOptions
+            );
+
         }
     }
 

@@ -1,38 +1,38 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
 
+echo $this->displayNotification();
+
 $milestones = $this->get('milestones');
 
-?>
-
-<?php
 if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
 } else {
     $roadmapView = "Month";
 }
 ?>
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
-    <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headline.milestones"); ?></h1>
-    </div>
-</div><!--pageheader-->
-
+<?php $this->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
+
+    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
+
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
-
         <div class="row">
-            <div class="col-md-6">
-                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
-                <?php } ?>
+            <div class="col-md-4">
+                <?php
+                $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
+
+                $this->displaySubmodule('tickets-ticketNewBtn');
+                $this->displaySubmodule('tickets-ticketFilter');
+
+                $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
                 <div class="pull-right">
 
                     <div class="btn-group dropRight">
@@ -58,15 +58,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                             <li><a href="javascript:void(0);" data-value="Month" class="<?php if ($roadmapView == 'Month') {
                                 echo "active";
                                                                                         }?>"><?=$this->__("buttons.month"); ?></a></li>
-                        </ul>
-                    </div>
-
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.gantt_view") ?> <?=$this->__("links.view") ?></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmap" class="active"><?=$this->__("links.gantt_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$this->__("links.table") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar"><?=$this->__("links.calendar_view") ?></a></li>
                         </ul>
                     </div>
 

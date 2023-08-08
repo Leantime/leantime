@@ -17,10 +17,10 @@ if (isset($currentArticle->id)) {
 
 ?>
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>">
+<form class="formModal" method="post" action="<?=CURRENT_URL ?>">
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <h4 class="widgettitle title-light">
                     <span class="fa fa-folder"></span><?php echo $this->__('subtitles.organization'); ?>
@@ -153,7 +153,8 @@ if (isset($currentArticle->id)) {
             <br />
 
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
+
 
             <div class="btn-group inlineDropDownContainerLeft">
                 <button data-selected="graduation-cap" type="button"
@@ -161,7 +162,6 @@ if (isset($currentArticle->id)) {
                         data-toggle="dropdown">
                     <span class="iconPlaceholder">
                         <i class="fa fa-file"></i>
-
                     </span>
                     <span class="caret"></span>
                 </button>
@@ -174,38 +174,43 @@ if (isset($currentArticle->id)) {
             <br />
             <input type="text" value="<?php $this->e($currentArticle->tags); ?>" name="tags" id="tags" />
 
-            <textarea class="articleEditor complexEditor" id="articleEditor" name="description"><?=htmlentities($currentArticle->description) ?></textarea>
+            <textarea class="complexEditor" id="" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
+
+
+                <div class="row">
+                    <div class="col-md-10 padding-top-sm">
+                        <br />
+                        <input type="hidden" name="saveTicket" value="1" />
+                        <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
+                        <input type="submit" name="saveArticle" value="<?php echo $this->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
+                        <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
+
+
+
+                    </div>
+                    <div class="col-md-2 align-right padding-top-sm">
+                        <?php if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
+                            <br />
+                            <a href="<?=BASE_URL ?>/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?=$this->__('links.delete_article') ?></a>
+                        <?php } ?>
+                    </div>
+                </div>
+
 
 
 
         </div>
-
+        <div class="col-md-2"></div>
     </div>
 
 
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-7 padding-top-sm">
-            <br />
-            <input type="hidden" name="saveTicket" value="1" />
-            <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
-            <input type="submit" name="saveArticle" value="<?php echo $this->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
-            <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
 
-
-
-        </div>
-        <div class="col-md-2 align-right padding-top-sm">
-            <?php if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
-                <br />
-                <a href="<?=BASE_URL ?>/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?=$this->__('links.delete_article') ?></a>
-            <?php } ?>
-        </div>
-    </div>
 
 </form>
 
 <script type="text/javascript">
+
+    leantime.generalController.initComplexEditor();
 
     jQuery(document).ready(function(){
 
@@ -213,7 +218,7 @@ if (isset($currentArticle->id)) {
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.generalController.initComplexEditor();
+
 
 
         jQuery('.iconpicker-container').iconpicker({
@@ -300,6 +305,12 @@ if (isset($currentArticle->id)) {
 
         leantime.ticketsController.initTagsInput();
 
+
+    });
+
+    jQuery(window).load(function () {
+
+        jQuery(window).resize();
 
     });
 

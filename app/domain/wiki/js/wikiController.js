@@ -106,6 +106,6 @@ leantime.wikiController = (function () {
     return {
         initTree: initTree,
         wikiModal:wikiModal,
-        articleModal:articleModal
+
     };
 })();

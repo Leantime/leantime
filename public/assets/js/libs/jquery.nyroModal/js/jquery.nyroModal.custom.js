@@ -201,9 +201,10 @@ jQuery(function($, undefined) {
 
                     if (this.sizes.h > maxHeight || this.sizes.w > maxWidth) {
                         // We're gonna resize the modal as it will goes outside the view port
-                        this.sizes.h = Math.min(this.sizes.h, (maxHeight));
-                        this.sizes.w = Math.min(this.sizes.w, (maxWidth));
+                        this.sizes.h = maxHeight;
+                        this.sizes.w = Math.min(this.sizes.w, (maxWidth-30));
                     }
+
 
                 }
 
@@ -543,6 +544,7 @@ jQuery(function($, undefined) {
                         position: 'absolute',
                         width: this.sizes.w,
                         height: 'auto',
+                        minHeight: (this.sizes.h-topValue),
                         top: topValue,
                         left: leftValue,
                         right: rightValue
@@ -882,6 +884,7 @@ jQuery(function($, undefined) {
                     nm.elts.cont.css({
                         width: nm.sizes.w,
                         height: "auto",
+                        minHeight: (nm.sizes.h-topValue),
                         top: topValue,
                         left: (nm.getInternal().fullSize.viewW - nm.sizes.w - nm.sizes.wMargin)/2
                     });

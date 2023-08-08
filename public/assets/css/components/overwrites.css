@@ -217,12 +217,16 @@ div.tagsinput span.tag
 	margin-bottom:5px;
 	padding-top:5px;
 	margin-top: 10px;
-    background:var(--primary-background);
+    background:var(--secondary-background);
     border-radius:var(--box-radius);
-    z-index: 99;
+    z-index: 9;
     position: absolute;
-    right: 10px;
+    left: 0px;
     box-shadow: var(--large-shadow);
+}
+
+.filterBar label {
+    font-weight:normal;
 }
 
 .headtitle {

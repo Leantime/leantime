@@ -1,6 +1,9 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
+
+    echo $this->displayNotification();
+
     $tickets        = $this->get("tickets");
     $sprints        = $this->get("sprints");
     $searchCriteria = $this->get("searchCriteria");
@@ -24,220 +27,35 @@ if ($numberofColumns > 0) {
 
 ?>
 
- <div class="pageheader">
-
-    <div class="pageicon"><span class="fa fa-fw fa-thumb-tack"></span></div>
-    <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
-        <h1><?=$this->__("headlines.todos"); ?></h1>
-    </div>
-
-</div><!--pageheader-->
+<?php $this->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
 
+    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
+
     <div class="maincontentinner">
-        <?php
-            echo $this->displayNotification();
-        ?>
 
-        <form action="" method="get" id="ticketSearch">
+         <div class="row">
+            <div class="col-md-4">
+                <?php
+                $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
 
-            <input type="hidden" value="true" name="search"/>
-            <input type="hidden" value="<?php echo $_SESSION['currentProject']; ?>" name="projectId" id="projectIdInput"/>
-            <div class="row">
-                <div class="col-md-4">
-                    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <div class="btn-group">
-                            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$this->__("links.new_with_icon") ?> <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/newTicket" class='ticketModal'> <?=$this->__("links.add_todo") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal"><?=$this->__("links.add_milestone") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.add_sprint") ?></a></li>
-                            </ul>
-                        </div>
-                    <?php } ?>
-                </div>
+                $this->displaySubmodule('tickets-ticketNewBtn');
+                $this->displaySubmodule('tickets-ticketFilter');
 
-                <div class="col-md-4 center">
-                    <span class="currentSprint">
-                        <?php  if ($this->get('sprints') !== false && count($this->get('sprints'))  > 0) {?>
-                        <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="form.submit()" id="sprintSelect">
-                            <option value="all" <?php if ($searchCriteria['sprint'] != "all") {
-                                echo"selected='selected'";
-                                                } ?>><?=$this->__("links.all_todos") ?></option>
-                            <option value="backlog" <?php if ($searchCriteria['sprint'] == "backlog") {
-                                echo"selected='selected'";
-                                                    } ?>><?=$this->__("links.backlog") ?></option>
-                            <?php
-                            $dates = "";
-                            foreach ($this->get('sprints') as $sprintRow) {   ?>
-                                <?php echo"<option value='" . $sprintRow->id . "'";
-
-                                if ($this->get("currentSprint") !== false && $sprintRow->id == $this->get("currentSprint")) {
-                                    echo " selected='selected' ";
-
-                                    $dates = sprintf($this->__("label.date_from_date_to"), $this->getFormattedDateString($sprintRow->startDate), $this->getFormattedDateString($sprintRow->endDate));
-                                }
-                                echo ">";
-                                $this->e($sprintRow->name);
-                                echo "</option>";
-                                ?>
-
-                            <?php }     ?>
-                            </select>
-                            <br/>
-                            <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                <small>
-                                    <?php if ($dates != "") {
-                                        echo $dates; ?> - <a href="<?=BASE_URL ?>/sprints/editSprint/<?=$this->get("currentSprint")?>" class="sprintModal"><?=$this->__("links.edit_sprint") ?></a>
-                                    <?php } else { ?>
-                                        <a href="<?=BASE_URL ?>/sprints/editSprint" class="sprintModal"><?=$this->__("links.create_sprint") ?></a>
-                                    <?php } ?>
-                                </small>
-                            <?php } ?>
-                        <?php } ?>
-                    </span>
-                </div>
-                <div class="col-md-4">
-                    <div class="pull-right">
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (" . $this->get('numOfFilters') . ")" : "" ?></a>
-                        <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a
-                                        <?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") { ?>
-                                            href="<?=$_SESSION['lastFilterdTicketKanbanView'] ?>"
-                                        <?php } else { ?>
-                                            href="<?=BASE_URL ?>/tickets/showKanban"
-                                        <?php } ?>
-                                        class="active"><?=$this->__("links.kanban") ?>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a
-                                        <?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") { ?>
-                                            href="<?=$_SESSION['lastFilterdTicketTableView'] ?>"
-                                        <?php } else { ?>
-                                            href="<?=BASE_URL ?>/tickets/showAll"
-                                        <?php } ?>
-                                    ><?=$this->__("links.table") ?></a>
-                                </li>
-                                <li>
-                                    <a
-                                        <?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") { ?>
-                                            href="<?=$_SESSION['lastFilterdTicketListView'] ?>"
-                                        <?php } else { ?>
-                                            href="<?=BASE_URL ?>/tickets/showList"
-                                        <?php } ?>
-                                    ><?=$this->__("links.list_view") ?></a>
-                                </li>
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
+                $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
             </div>
 
-            <div class="clearfix"></div>
-            <div class="filterBar hideOnLoad">
-                <div class="row-fluid" style="opacity:0.4">
+            <div class="col-md-4 center">
 
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$this->__("label.user") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_user") ?>" title="<?=$this->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
-                                <option value=""></option>
-                                <?php
-                                foreach ($this->get('users') as $userRow) {   ?>
-                                    <?php echo"<option value='" . $userRow["id"] . "'";
-
-                                    if ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow["id"], explode(",", $searchCriteria['users'])) !== false) {
-                                        echo" selected='selected' ";
-                                    }
-
-                                    echo">" . sprintf($this->__("text.full_name"), $this->escape($userRow["firstname"]), $this->escape($userRow['lastname'])) . "</option>"; ?>
-
-                                <?php } ?>
-                            </select>
-                        </div>
-
-
-                    </div>
-                    <div class="filterBoxLeft">
-
-                        <label class="inline"><?=$this->__("label.milestone") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="milestone"  id="milestoneSelect">
-                                <option value=""><?=$this->__("label.all_milestones") ?></option>
-                                <?php if ($this->get('milestones')) {
-                                    foreach ($this->get('milestones') as $milestoneRow) {   ?>
-                                        <?php echo"<option value='" . $milestoneRow->id . "'";
-
-                                        if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                            echo" selected='selected' ";
-                                        }
-
-                                        echo">" . $this->escape($milestoneRow->headline) . "</option>"; ?>
-
-                                    <?php }
-                                }     ?>
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <div class="filterBoxLeft">
-
-                        <label class="inline"><?=$this->__("label.todo_type") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" title="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="type" id="typeSelect">
-                                <option value=""><?=$this->__("label.all_types") ?></option>
-                                <?php foreach ($this->get('types') as $type) {    ?>
-                                    <?php echo"<option value='" . $type . "'";
-
-                                    if (isset($searchCriteria['type']) && ($searchCriteria['type'] == $type)) {
-                                        echo" selected='selected' ";
-                                    }
-
-                                    echo">$type</option>"; ?>
-
-                                <?php }     ?>
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <div class="filterBoxLeft">
-
-                        <label class="inline"><?=$this->__("label.todo_priority") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$this->__("input.placeholders.filter_by_priority") ?>" title="<?=$this->__("input.placeholders.filter_by_priority") ?>" name="type" id="prioritySelect">
-                                <option value=""><?=$this->__("label.all_priorities") ?></option>
-                                <?php foreach ($this->get('priorities') as $priorityKey => $priorityValue) {    ?>
-                                    <?php echo"<option value='" . $priorityKey . "'";
-
-                                    if (isset($searchCriteria['priority']) && ($searchCriteria['priority'] == $priorityKey)) {
-                                        echo" selected='selected' ";
-                                    }
-
-                                    echo">$priorityValue</option>"; ?>
-
-                                <?php }     ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$this->__("label.search_term") ?></label><br />
-                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="Search" value="<?php $this->e($searchCriteria['term']); ?>">
-                        <input type="submit" value="Search" name="submitSearch" class="form-control btn btn-primary pull-left" id="filterFormSubmit"/>
-                    </div>
-
-                </div>
             </div>
-        </form>
+            <div class="col-md-4">
+
+            </div>
+        </div>
+
+        <div class="clearfix"></div>
 
         <div id="sortableTicketKanban" class="sortableTicketList kanbanBoard">
 
@@ -523,10 +341,6 @@ if ($numberofColumns > 0) {
 </div>
 
 <script type="text/javascript">
-
-    leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL?>/tickets/showKanban");
-    leantime.ticketsController.initUserSelectBox();
-    leantime.ticketsController.initStatusSelectBox();
 
     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.ticketsController.initUserDropdown();

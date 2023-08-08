@@ -281,10 +281,6 @@
         leantime.ticketsController.initModals();
     });
 
-    leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
-
-    leantime.ticketsController.initUserSelectBox();
-    leantime.ticketsController.initStatusSelectBox();
 
     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
     leantime.ticketsController.initUserDropdown();

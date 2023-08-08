@@ -73,6 +73,9 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .dropdown .dropdown-menu .nav-header {
     padding-left: 10px;
     padding-right: 10px;
+    font-size:var(--font-size-m);
+    color:var(--primary-font-color);
+    text-transform:none;
 }
 
 .ticketDropdown.show {
@@ -80,14 +83,14 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .ticketDropdown {
-    font-size:var(--font-size-s);
+    font-size:var(--font-size-m);
 
 }
 
 .ticketDropdown ul,
 .ticketDropdown ul li a{
     top: 22px;
-    font-size:var(--font-size-s);
+    font-size:var(--font-size-m);
 }
 
 .ticketDropdown.userDropdown {

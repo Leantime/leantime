@@ -75,7 +75,7 @@ $statusLabels = $this->get('statusLabels');
         </select>
 
         <label><?=$this->__("label.color"); ?></label>
-        <input type="text" name="tags" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$this->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
+        <input type="text" name="tags" autocomplete="off" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$this->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
 
         <label><?=$this->__("label.planned_start_date"); ?></label>
         <input type="text" name="editFrom" autocomplete="off" value="<?php echo $this->getFormattedDateString($currentMilestone->editFrom) ?>" placeholder="<?=$this->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />

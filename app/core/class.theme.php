@@ -190,30 +190,61 @@ class theme
         $theme = $this->getActive();
 
         $themes = [];
-        foreach (opendir(ROOT . '/theme') as $themeDir) {
+        $handle = opendir(ROOT . '/theme');
+        if ($handle === false) {
+            return $themes;
+        }
+        while (false !== ($themeDir = readdir($handle))) {
+            if ($themeDir == '.' || $themeDir == '..') {
+                continue;
+            }
             if ($themeDir == $theme) {
                 $themes[$themeDir] = $language->__("theme.name");
                 continue;
             }
 
+            //Check specific language file
             $language_file = ROOT
                 . '/theme/'
-                . $theme
+                . $themeDir
                 . '/language/'
-                . $language->getCurrentLanguage();
+                . $language->getCurrentLanguage()
+                . '.ini';
 
-            if (! file_exists($language_file)) {
-                $themes[$themeDir] = $themeDir;
-                continue;
+            if (file_exists($language_file)) {
+                $iniData = parse_ini_file(
+                    $language_file,
+                    true,
+                    INI_SCANNER_RAW
+                );
+
+                if ($iniData['theme.name'] !== null) {
+                    $themes[$themeDir] = $iniData['theme.name'];
+                    continue;
+                }
             }
 
-            $iniData = parse_ini_file(
-                $language_file,
-                true,
-                INT_SCANNER_TYPE
-            );
+            //Check english language file
+            $language_file = ROOT
+                . '/theme/'
+                . $themeDir
+                . '/language/en-Us.ini';
 
-            $themes[$themeDir] = $iniData['theme']['name'];
+            if (file_exists($language_file)) {
+                $iniData = parse_ini_file(
+                    $language_file,
+                    true,
+                    INI_SCANNER_RAW
+                );
+
+                if ($iniData['theme.name'] !== null) {
+                    $themes[$themeDir] = $iniData['theme.name'];
+                    continue;
+                }
+            }
+
+            //Else use directory name
+            $themes[$themeDir] = $themeDir;
         }
 
         return $themes;

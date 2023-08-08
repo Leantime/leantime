@@ -346,7 +346,6 @@ namespace leantime\domain\repositories {
         {
 
 
-
             $query = "SELECT
 							zp_tickets.id,
 							zp_tickets.headline,

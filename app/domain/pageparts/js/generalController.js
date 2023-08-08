@@ -221,7 +221,7 @@ leantime.generalController = (function () {
                     skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
                     content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
                     + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
-                    content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+                    content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                     plugins : "imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands",
                     toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate",
                 //autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,

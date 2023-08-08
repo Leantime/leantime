@@ -1,6 +1,8 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
 
+echo $this->displayNotification();
+
 $milestones = $this->get('milestones');
 if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
     $_SESSION['submenuToggle']["myProjectCalendarView"] = "dayGridMonth";
@@ -8,25 +10,22 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
 ?>
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
-    <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headline.project_calendar"); ?></h1>
-    </div>
-</div><!--pageheader-->
-
+<?php $this->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
+    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
     <div class="maincontentinner">
-
-        <?php echo $this->displayNotification(); ?>
 
         <div class="row">
             <div class="col-md-4">
-                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
-                <?php } ?>
+                <?php
+                $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
+
+                $this->displaySubmodule('tickets-ticketNewBtn');
+                $this->displaySubmodule('tickets-ticketFilter');
+
+                $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
             </div>
             <div class="col-md-4">
                 <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -34,19 +33,6 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
                 </div>
             </div>
             <div class="col-md-4">
-
-
-                <div class="btn-group viewDropDown pull-right">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.calendar_view") ?> <?=$this->__("links.view") ?></button>
-                    <ul class="dropdown-menu">\
-                        <li><a href="<?=BASE_URL ?>/tickets/roadmap" ><?=$this->__("links.gantt_view") ?></a></li>
-                        <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$this->__("links.table") ?></a></li>
-                        <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar" class="active"><?=$this->__("links.calendar_view") ?></a></li>
-                    </ul>
-                </div>
-
-
-
 
                 <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-right"></span>

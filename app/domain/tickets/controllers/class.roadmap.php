@@ -56,6 +56,9 @@ namespace leantime\domain\controllers {
 
             $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date", $includeTasks);
 
+            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
+            $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
+
             $this->tpl->assign("includeTasks", $includeTasks);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
