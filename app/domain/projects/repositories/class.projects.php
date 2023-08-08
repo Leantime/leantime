@@ -10,8 +10,8 @@ namespace leantime\domain\repositories {
 
     class projects
     {
-
         use core\eventhelpers;
+
         /**
          * @access public
          * @var    string
@@ -20,13 +20,13 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    int
+         * @var    integer
          */
         public $id = 0; // WAS: '';
 
         /**
          * @access public
-         * @var    int
+         * @var    integer
          */
         public $clientId = 0; // WAS: '';
 
@@ -48,11 +48,14 @@ namespace leantime\domain\repositories {
          */
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
 
-        public function __construct()
-        {
-            $config = \leantime\core\environment::getInstance();
-            $this->db = core\db::getInstance();
+        public function __construct(
+            \leantime\core\environment $config,
+            \leantime\core\db $db
+        ) {
+            $this->config = $config;
+            $this->db = $db;
         }
+
 
         /**
          * getAll - get all projects open and closed
@@ -101,19 +104,27 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getNumberOfProjects($clientId = null)
+        public function getNumberOfProjects($clientId = null, $type=null)
         {
 
-            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects`";
+            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0";
 
             if ($clientId != null && is_numeric($clientId)) {
-                $sql .= " WHERE clientId = :clientId";
+                $sql .= " AND clientId = :clientId";
+            }
+
+            if ($type != null) {
+                $sql .= " AND type = :type";
             }
 
             $stmn = $this->db->database->prepare($sql);
 
             if ($clientId != null && is_numeric($clientId)) {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
+            }
+
+            if ($type != null) {
+                $stmn->bindValue(':type', $type, PDO::PARAM_STR);
             }
 
             $stmn->execute();
@@ -182,11 +193,11 @@ namespace leantime\domain\repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            if((isset($hierarchy['program']) && $hierarchy['program']['enabled'] == true) || (isset($hierarchy['strategy']) && $hierarchy['strategy']['enabled'] == true)) {
+            if ((isset($hierarchy['program']) && $hierarchy['program']['enabled'] == true) || (isset($hierarchy['strategy']) && $hierarchy['strategy']['enabled'] == true)) {
                 $query .= " GROUP BY
 					project.id
 				    ORDER BY parentName, clientName, project.name";
-            }else{
+            } else {
                 $query .= " GROUP BY
 					project.id
 				ORDER BY clientName, parentName, project.name";
@@ -385,7 +396,7 @@ namespace leantime\domain\repositories {
 
             $query = "SELECT
 					DISTINCT zp_user.id,
-					zp_user.firstname,
+					IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
 					zp_user.lastname,
 					zp_user.username,
 					zp_user.notifications,
@@ -515,8 +526,8 @@ namespace leantime\domain\repositories {
          * addProject - add a project to a client
          *
          * @access public
-         * @param array|bool $values
-         * @return int|bool returns new project id on success, false on failure.
+         * @param array|boolean $values
+         * @return integer|boolean returns new project id on success, false on failure.
          */
         public function addProject($values): int|bool
         {
@@ -561,14 +572,14 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
 
             $startDate = null;
-            if(isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
+            if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
                 $startDate = $values['start'];
             }
             $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
 
 
             $endDate = null;
-            if(isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
+            if (isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
                 $endDate = $values['end'];
             }
 
@@ -612,6 +623,7 @@ namespace leantime\domain\repositories {
 				dollarBudget = :dollarBudget,
 				psettings = :psettings,
 				menuType = :menuType,
+				type = :type,
 				parent = :parent,
 				start = :start,
 				end = :end
@@ -629,18 +641,19 @@ namespace leantime\domain\repositories {
             $stmn->bindValue('dollarBudget', $values['dollarBudget'], PDO::PARAM_STR);
             $stmn->bindValue('psettings', $values['psettings'], PDO::PARAM_STR);
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
+            $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
 
             $startDate = null;
-            if(isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
+            if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
                 $startDate = $values['start'];
             }
             $stmn->bindValue('start', $startDate, PDO::PARAM_STR);
 
 
             $endDate = null;
-            if(isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
+            if (isset($values['end']) && $values['end'] !== false && $values['end'] != '') {
                 $endDate = $values['end'];
             }
             $stmn->bindValue('end', $endDate, PDO::PARAM_STR);
@@ -649,7 +662,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event("editProject", array("values"=>$values));
+            static::dispatch_event("editProject", array("values" => $values));
         }
 
         /**
@@ -700,7 +713,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return bool
+         * @return boolean
          */
         public function hasTickets($id)
         {
@@ -763,7 +776,7 @@ namespace leantime\domain\repositories {
         public function isUserAssignedToProject($userId, $projectId)
         {
 
-            $userRepo = new users();
+            $userRepo = app()->make(users::class);
             $user = $userRepo->getUser($userId);
 
             if ($user === false) {
@@ -820,7 +833,7 @@ namespace leantime\domain\repositories {
         public function isUserMemberOfProject($userId, $projectId)
         {
 
-            $userRepo = new users();
+            $userRepo = app()->make(users::class);
             $user = $userRepo->getUser($userId);
 
             if ($user === false) {
@@ -870,7 +883,7 @@ namespace leantime\domain\repositories {
 				zp_relationuserproject.projectRole,
 				zp_projects.name,
 				zp_user.username,
-				zp_user.firstname,
+				IF(zp_user.firstname <> '', zp_user.firstname, zp_user.username) AS firstname,
 				zp_user.lastname,
 				zp_user.jobTitle,
 				zp_user.jobLevel,
@@ -903,7 +916,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return bool
+         * @return boolean
          */
         public function editUserProjectRelations($id, $projects)
         {
@@ -1011,7 +1024,7 @@ namespace leantime\domain\repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event("userAddedToProject", array("userId"=> $userId, "projectId"=> $projectId, "projectRole" => $projectRole));
+            static::dispatch_event("userAddedToProject", array("userId" => $userId, "projectId" => $projectId, "projectRole" => $projectRole));
         }
 
         public function patch($id, $params)
@@ -1049,7 +1062,7 @@ namespace leantime\domain\repositories {
 
             $project = $this->getProject($id);
 
-            $files = new files();
+            $files = app()->make(files::class);
 
             if (isset($values['profileId']) && $values['profileId'] > 0) {
                 $file = $files->getFile($values['profileId']);
@@ -1090,18 +1103,15 @@ namespace leantime\domain\repositories {
             }
 
             if ($value !== false && $value['avatar'] != '') {
-
-                $files = new files();
+                $files = app()->make(files::class);
                 $file = $files->getFile($value['avatar']);
 
                 if ($file) {
-
                     $filePath = $file['encName'] . "." . $file['extension'];
                     $type = $file['extension'];
 
-                    return array("filename"=>$filePath, "type"=>"uploaded");
-
-                }else {
+                    return array("filename" => $filePath, "type" => "uploaded");
+                } else {
                     $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                     $image = $avatar
                         ->name("🦄")
@@ -1112,35 +1122,28 @@ namespace leantime\domain\repositories {
 
                     return $image;
                 }
-
-
-
             } elseif ($value !== false && ($value['avatar'] === '' || $value['avatar'] == null)) {
-
                 $imagename = md5($value['name']);
 
-                if(file_exists(APP_ROOT."/cache/avatars/".$imagename.".png")){
-
-                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
-
-                }else{
-
+                if (file_exists(APP_ROOT . "/cache/avatars/" . $imagename . ".png")) {
+                    return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
+                } else {
                     $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                     $image = $avatar
                         ->name($value['name'])
                         ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
                         ->fontSize(0.5)
                         ->size(96)
-                        ->background('#555555')->color("#fff")
-                        ->generate();
+                        ->background('#555555')->color("#fff");
 
-                    $image->save(APP_ROOT."/cache/avatars/".$imagename.".png", 100, "png");
-
-                    return array("filename"=>APP_ROOT."/cache/avatars/".$imagename.".png", "type"=>"generated");
-
+                    if (is_writable(APP_ROOT . "/cache/avatars/")) {
+                        $image->generate()->save(APP_ROOT . "/cache/avatars/" . $imagename . ".png", 100, "png");
+                        return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
+                    } else {
+                        return $image->generateSVG();
+                        ;
+                    }
                 }
-
-
             } else {
                 $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
                 $image = $avatar

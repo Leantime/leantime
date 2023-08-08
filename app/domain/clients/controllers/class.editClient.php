@@ -15,17 +15,16 @@ namespace leantime\domain\controllers {
 
     class editClient extends controller
     {
-        private $clientRepo;
+        private repositories\clients $clientRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\clients $clientRepo)
         {
-
-            $this->clientRepo = new repositories\clients();
+            $this->clientRepo = $clientRepo;
         }
 
         /**
@@ -56,7 +55,7 @@ namespace leantime\domain\controllers {
                         'country' => $row['country'],
                         'phone' => $row['phone'],
                         'internet' => $row['internet'],
-                        'email' => $row['email']
+                        'email' => $row['email'],
                     );
 
                     if (isset($_POST['save']) === true) {
@@ -69,7 +68,7 @@ namespace leantime\domain\controllers {
                             'country' => $_POST['country'],
                             'phone' => $_POST['phone'],
                             'internet' => $_POST['internet'],
-                            'email' => $_POST['email']
+                            'email' => $_POST['email'],
                         );
 
                         if ($values['name'] !== '') {

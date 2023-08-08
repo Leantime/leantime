@@ -9,10 +9,15 @@ use leantime\domain\services;
 
 class showAll extends controller
 {
-    public function init()
-    {
-        $this->filesRepo = new repositories\files();
-        $this->filesService = new services\files();
+    private repositories\files $filesRepo;
+    private services\files $filesService;
+
+    public function init(
+        repositories\files $filesRepo,
+        services\files $filesService
+    ) {
+        $this->filesRepo = $filesRepo;
+        $this->filesService = $filesService;
     }
 
     public function run()
@@ -38,7 +43,7 @@ class showAll extends controller
 
             if ($result === true) {
                 $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                $this->tpl->redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp']??'') ? "?modalPopUp=true" : "");
+                $this->tpl->redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp'] ?? '') ? "?modalPopUp=true" : "");
             } else {
                 $this->tpl->setNotification($result["msg"], "success");
             }

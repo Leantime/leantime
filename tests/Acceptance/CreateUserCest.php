@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Tests\Acceptance;
 
 use Tests\Support\AcceptanceTester;
@@ -20,7 +19,7 @@ class CreateUserCest
         $I->wantTo('Create a user');
         $I->amOnPage('/users/showAll');
         $I->click('Add User');
-        $I->waitForElement('#firstname', 10);
+        $I->waitForElement('#firstname', 30);
         $I->fillField('#firstname', 'John');
         $I->fillField('#lastname', 'Doe');
         $I->selectOption('#role', 'Read Only');
@@ -31,7 +30,7 @@ class CreateUserCest
         $I->fillField('#jobLevel', 'Testing');
         $I->fillField('#department', 'Testing');
         $I->click('Invite User');
-        $I->waitForElement('.growl', 10);
+        $I->waitForElement('.growl', 60);
         $I->see('New user invited successfully');
     }
 
@@ -43,6 +42,7 @@ class CreateUserCest
         $I->see('Edit User');
         $I->fillField(['name' => 'jobTitle'], 'Testing');
         $I->click('Save');
+        $I->waitForElement('.growl', 60);
         $I->see('User edited successfully');
     }
 }

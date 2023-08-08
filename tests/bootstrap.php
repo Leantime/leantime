@@ -21,11 +21,28 @@ define('APP_ROOT', PROJECT_ROOT . 'app/');
 define('DEV_ROOT', PROJECT_ROOT . '.dev/');
 
 $bootstrapper = get_class(new class {
+    /**
+     * @var self
+     */
     protected static $instance;
-    protected $seleniumProcess;
-    protected $dockerProcess;
 
-    public static function getInstance()
+    /**
+     * @var Process
+     */
+    protected Process $seleniumProcess;
+
+    /**
+     * @var Process
+     */
+    protected Process $dockerProcess;
+
+    /**
+     * Get the singleton instance of this class
+     *
+     * @access public
+     * @return self
+     */
+    public static function getInstance(): self
     {
         if (! isset(self::$instance)) {
             self::$instance = new self();
@@ -34,6 +51,12 @@ $bootstrapper = get_class(new class {
         return self::$instance;
     }
 
+    /**
+     * Start the testing environment
+     *
+     * @access public
+     * @return void
+     */
     public function start(): void
     {
         $this->startDevEnvironment();
@@ -42,6 +65,12 @@ $bootstrapper = get_class(new class {
         $this->createStep('Starting Codeception Testing Framework');
     }
 
+    /**
+     * Destroy the testing environment
+     *
+     * @access public
+     * @return void
+     */
     public function destroy(): void
     {
         $this->createStep('Stopping Codeception Testing Framework');
@@ -49,35 +78,80 @@ $bootstrapper = get_class(new class {
         $this->stopDevEnvironment();
     }
 
-    public function stopSelenium(): void
+    /**
+     * Stop Selenium
+     *
+     * @access protected
+     * @return void
+     */
+    protected function stopSelenium(): void
     {
         $this->createStep('Stopping Selenium');
-        $this->seleniumProcess->stop();
+
+        try {
+            $this->seleniumProcess->stop();
+        // we want the script to continue even if failure
+        } catch (Throwable $e) {
+            return;
+        }
     }
 
-    public function stopDevEnvironment(): void
+    /**
+     * Stop the dev environment
+     *
+     * @access protected
+     * @return void
+     */
+    protected function stopDevEnvironment(): void
     {
         $this->createStep('Stopping Leantime Dev Environment');
-        $this->dockerProcess->stop();
-        $this->executeCommand('docker compose down', ['cwd' => DEV_ROOT]);
+
+        foreach (
+            [
+                fn () => $this->dockerProcess->stop(),
+                fn () => $this->executeCommand('docker compose down', ['cwd' => DEV_ROOT]),
+            ] as $count => $shutdown
+        ) {
+            try {
+                $shutdown();
+            // we want the script to continue even if failure
+            } catch (Throwable $e) {
+                if ($count === 1) {
+                    return;
+                }
+
+                continue;
+            }
+        }
     }
 
+    /**
+     * Start the dev environment
+     *
+     * @access protected
+     * @return void
+     */
     protected function startDevEnvironment(): void
     {
         $this->createStep('Build & Start Leantime Dev Environment');
+        $hasLocalOverride = file_exists(DEV_ROOT . 'docker-compose.local.yaml');
         $this->dockerProcess = $this->executeCommand(
-            [
-                'docker',
-                'compose',
-                '-f',
-                'docker-compose.yaml',
-                '-f',
-                'docker-compose.tests.yaml',
-                'up',
-                '-d',
-                '--build',
-                '--remove-orphans',
-            ],
+            array_filter(
+                [
+                    'docker',
+                    'compose',
+                    '-f',
+                    'docker-compose.yaml',
+                    '-f',
+                    'docker-compose.tests.yaml',
+                    $hasLocalOverride ? '-f' : null,
+                    $hasLocalOverride ? 'docker-compose.local.yaml' : null,
+                    'up',
+                    '-d',
+                    '--build',
+                    '--remove-orphans',
+                ]
+            ),
             [
                 'cwd' => DEV_ROOT,
                 'background' => true,
@@ -106,6 +180,12 @@ $bootstrapper = get_class(new class {
         });
     }
 
+    /**
+     * Create the test database
+     *
+     * @access protected
+     * @return void
+     */
     protected function createDatabase(): void
     {
         $this->createStep('Creating Test Database');
@@ -117,10 +197,11 @@ $bootstrapper = get_class(new class {
                 '-T',
                 'db',
                 'mysql',
+                '-h127.0.0.1',
                 '-uroot',
                 '-pleantime',
                 '-e',
-                'DROP DATABASE IF EXISTS leantime_test;'
+                'DROP DATABASE IF EXISTS leantime_test;',
             ],
             ['cwd' => DEV_ROOT]
         );
@@ -141,7 +222,13 @@ $bootstrapper = get_class(new class {
         );
     }
 
-    protected function startSelenium()
+    /**
+     * Start Selenium
+     *
+     * @access protected
+     * @return void
+     */
+    protected function startSelenium(): void
     {
         $this->createStep('Starting Selenium');
         $this->executeCommand(
@@ -162,6 +249,13 @@ $bootstrapper = get_class(new class {
         });
     }
 
+    /**
+     * Create a step in the output
+     *
+     * @access protected
+     * @param  string $message
+     * @return void
+     */
     protected function createStep(string $message): void
     {
         $chars = strlen($message);
@@ -170,6 +264,15 @@ $bootstrapper = get_class(new class {
         echo "\n$line\n$message\n$line\n";
     }
 
+    /**
+     * Execute a command
+     *
+     * @access protected
+     * @param  string|array $command
+     * @param  array $args
+     * @param  bool $required
+     * @return Process|string
+     */
     protected function executeCommand(
         string|array $command,
         array $args = [],
@@ -208,21 +311,30 @@ $bootstrapper = get_class(new class {
         if (
             isset($args['getOutput'])
             && $args['getOutput']
-            && (! isset($args['background']) || ! $args['background'])
         ) {
+            if (isset($args['background']) && $args['background']) {
+                throw new RuntimeException('Cannot get output from background process');
+            }
+
             return $process->getOutput();
         }
 
         return $process;
     }
 
-    private function commandOutputHandler($type, $buffer): void
+    /**
+     * Handle command output
+     *
+     * @access private
+     * @param  string $type
+     * @param  string $buffer
+     * @return void
+     */
+    private function commandOutputHandler(string $type, string $buffer): void
     {
-        if (Process::ERR === $type) {
-            echo "\nSTDERR: $buffer";
-        } else {
-            echo "\nSTDOUT: $buffer";
-        }
+        echo Process::ERR === $type
+            ? "\nSTDERR: $buffer"
+            : "\nSTDOUT: $buffer";
     }
 });
 

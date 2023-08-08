@@ -9,17 +9,18 @@ namespace leantime\domain\services {
 
     class comments
     {
-        private $commentRepository;
-        private $projectService;
+        private repositories\comments $commentRepository;
+        private services\projects $projectService;
         private core\language $language;
 
-
-        public function __construct()
-        {
-
-            $this->commentRepository = new repositories\comments();
-            $this->projectService = new services\projects();
-            $this->language = core\language::getInstance();
+        public function __construct(
+            repositories\comments $commentRepository,
+            services\projects $projectService,
+            core\language $language
+        ) {
+            $this->commentRepository = $commentRepository;
+            $this->projectService = $projectService;
+            $this->language = $language;
         }
 
         public function getComments($module, $entityId, $commentOrder = 0)
@@ -38,7 +39,7 @@ namespace leantime\domain\services {
                     'userId' => ($_SESSION['userdata']['id']),
                     'moduleId' => $entityId,
                     'commentParent' => ($values['father']),
-                    'status' => $values['status'] ?? ''
+                    'status' => $values['status'] ?? '',
                 );
 
                 $comment = $this->commentRepository->addComment($mapper, $module);
@@ -50,8 +51,8 @@ namespace leantime\domain\services {
 
                     switch ($module) {
                         case "ticket":
-                            $subject = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_subject"), $this->language->__("label.".$entity->type), $entity->id, $entity->headline);
-                            $message = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_message"), $_SESSION["userdata"]["name"], $this->language->__("label.".$entity->type), $entity->headline, $values['text']);
+                            $subject = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_subject"), $this->language->__("label." . $entity->type), $entity->id, $entity->headline);
+                            $message = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_message"), $_SESSION["userdata"]["name"], $this->language->__("label." . $entity->type), $entity->headline, $values['text']);
                             $linkLabel = $this->language->__("email_notifications.new_comment_todo_cta");
                             break;
                         case "project":
@@ -67,10 +68,10 @@ namespace leantime\domain\services {
                     }
 
 
-                    $notification = new notification();
+                    $notification = app()->make(notification::class);
                     $notification->url = array(
-                        "url" => $currentUrl."&projectId=".$_SESSION['currentProject'],
-                        "text" => $linkLabel
+                        "url" => $currentUrl . "&projectId=" . $_SESSION['currentProject'],
+                        "text" => $linkLabel,
                     );
 
                     $notification->entity = $mapper;

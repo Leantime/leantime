@@ -27,14 +27,18 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->clientRepo = new repositories\clients();
-            $this->settingsRepo = new repositories\setting();
-            $this->projectService = new services\projects();
-            $this->commentService = new services\comments();
-            $this->fileService = new services\files();
+        public function init(
+            repositories\clients $clientRepo,
+            repositories\setting $settingsRepo,
+            services\projects $projectService,
+            services\comments $commentService,
+            services\files $fileService
+        ) {
+            $this->clientRepo = $clientRepo;
+            $this->settingsRepo = $settingsRepo;
+            $this->projectService = $projectService;
+            $this->commentService = $commentService;
+            $this->fileService = $fileService;
 
             if (!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = BASE_URL . "/clients/showAll";
@@ -69,12 +73,12 @@ namespace leantime\domain\controllers {
                 'country' => $row['country'],
                 'phone' => $row['phone'],
                 'internet' => $row['internet'],
-                'email' => $row['email']
+                'email' => $row['email'],
             );
 
             if (empty($row) === false && auth::userIsAtLeast(roles::$admin)) {
-                $file = new repositories\files();
-                $project = new repositories\projects();
+                $file = app()->make(repositories\files::class);
+                $project = app()->maike(repositories\projects::class);
 
                 if ($_SESSION['userdata']['role'] == 'admin') {
                     $this->tpl->assign('admin', true);
@@ -122,7 +126,7 @@ namespace leantime\domain\controllers {
                         'country' => $_POST['country'],
                         'phone' => $_POST['phone'],
                         'internet' => $_POST['internet'],
-                        'email' => $_POST['email']
+                        'email' => $_POST['email'],
                     );
 
                     if ($clientValues['name'] !== '') {
@@ -138,7 +142,7 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('comments', $this->commentService->getComments('client', $id));
                 $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
                 $this->tpl->assign('client', $clientValues);
-                $this->tpl->assign('users', new repositories\users());
+                $this->tpl->assign('users', app()->make(repositories\users::class));
                 $this->tpl->assign('clientProjects', $project->getClientProjects($id));
                 $this->tpl->assign('files', $file->getFilesByModule('client', $id));
 

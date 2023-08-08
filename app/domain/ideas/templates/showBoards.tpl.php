@@ -107,9 +107,6 @@ foreach ($this->get('allCanvas') as $canvasRow) {
                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                             <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                         </a>
-                                <?php } ?>
-
-                                        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                         &nbsp;&nbsp;&nbsp;
                                         <ul class="dropdown-menu">
                                             <li class="nav-header"><?php echo $this->__("subtitles.edit"); ?></li>
@@ -118,7 +115,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
 
                                         </ul>
                                     </div>
-                               <?php } ?>
+                                <?php } ?>
 
                                 <h4><a href="<?=BASE_URL ?>/ideas/showBoards/#/ideas/ideaDialog/<?php echo $row["id"]; ?>"
                                        data="item_<?php echo $row["id"]; ?>"><?php $this->e($row["description"]); ?></a></h4>
@@ -232,7 +229,6 @@ foreach ($this->get('allCanvas') as $canvasRow) {
 
                     <h3><?php echo $this->__("headlines.have_an_idea") ?></h3><br />
                     <?php echo $this->__("subtitles.start_collecting_ideas") ?><br/><br/>
-                    <?php  if ($login::userIsAtLeast($roles::$editor)) { ?><?php } ?>
                 </div>
             <?php } ?>
             <div class="clearfix"></div>

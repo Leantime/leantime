@@ -28,7 +28,7 @@ class saveSettingCommand extends Command
      *
      * @param  InputInterface  $input
      * @param  OutputInterface $output
-     * @return int 0 if everything went fine, or an exit code.
+     * @return integer 0 if everything went fine, or an exit code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -38,26 +38,24 @@ class saveSettingCommand extends Command
         $key = $input->getOption('key');
         $value = $input->getOption('value');
 
-        if($key == ''){
+        if ($key == '') {
             $io->error("key parameter needs to be set");
             return Command::INVALID;
         }
 
-        if($value == ''){
+        if ($value == '') {
             $io->error("value parameter needs to be set");
             return Command::INVALID;
         }
 
         try {
-
-            $setting = new setting();
+            $setting = app()->make(setting::class);
             $result = $setting->saveSetting($key, $value);
 
             if (!$result) {
                 $io->error("Failed to save setting");
                 return Command::FAILURE;
             }
-
         } catch (Exception $ex) {
             $io->error($ex);
             return Command::FAILURE;

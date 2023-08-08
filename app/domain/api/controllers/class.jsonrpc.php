@@ -96,7 +96,7 @@ class jsonrpc extends controller
             "method" => $params['method'],
             "params" => $paramsDecoded,
             "id" => $params["id"] ?? null,
-            "jsonrpc" => $params["jsonrpc"] ?? ''
+            "jsonrpc" => $params["jsonrpc"] ?? '',
         );
 
         $params["params"] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
@@ -184,7 +184,7 @@ class jsonrpc extends controller
 
         // can be null
         try {
-            $method_response = (new $serviceName())->$methodName(...$preparedParams);
+            $method_response = app()->make($serviceName)->$methodName(...$preparedParams);
         } catch (Error $e) {
             $this->returnServerError($e);
         }
@@ -220,7 +220,7 @@ class jsonrpc extends controller
 
         return [
             'service' => $methodStringPieces[2],
-            'method' => $methodStringPieces[3]
+            'method' => $methodStringPieces[3],
         ];
     }
 
@@ -244,7 +244,7 @@ class jsonrpc extends controller
     /**
      * Checks request params
      *
-     * @param array $params
+     * @param array                  $params
      * @param \ReflectionParameter[] $methodParams
      *
      * @return array
@@ -300,7 +300,7 @@ class jsonrpc extends controller
      * @see https://jsonrpc.org/specification#response_object
      *
      * @param array|null $returnValue
-     * @param string $requestMethod
+     * @param string     $requestMethod
      *
      * @return void
      */
@@ -319,7 +319,7 @@ class jsonrpc extends controller
             'jsonrpc' => '2.0',
             'message' => "Request was successful",
             'result' => $returnValue,
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
@@ -328,8 +328,8 @@ class jsonrpc extends controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param string $errorMessage
-     * @param int $httpResponseCode
+     * @param string  $errorMessage
+     * @param integer $httpResponseCode
      *
      * @return void
      */
@@ -338,7 +338,7 @@ class jsonrpc extends controller
         echo json_encode([
             'code' => $errorcode,
             'message' => $errorMessage,
-            'data' => $additional_info
+            'data' => $additional_info,
         ]);
         exit;
     }

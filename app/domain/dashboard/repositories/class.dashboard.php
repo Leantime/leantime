@@ -25,7 +25,7 @@ namespace leantime\domain\repositories {
          * @access private
          * @var    array
          */
-        private $defaultWidgets = array( 1, 3, 9 );
+        private $defaultWidgets = array(1, 3, 9);
 
         /**
          * __construct - neu db connection
@@ -33,10 +33,9 @@ namespace leantime\domain\repositories {
          * @access public
          * @return
          */
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
     }
 

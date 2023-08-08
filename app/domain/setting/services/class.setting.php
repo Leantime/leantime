@@ -7,20 +7,21 @@ namespace leantime\domain\services {
 
     class setting
     {
-        private $userRepo;
-        private $tpl;
+        private core\template $tpl;
         public repositories\setting $settingsRepo;
 
-        public function __construct()
-        {
-            $this->tpl = new core\template();
-            $this->settingsRepo = new repositories\setting();
+        public function __construct(
+            core\template $tpl,
+            repositories\setting $settingsRepo
+        ) {
+            $this->tpl = $tpl;
+            $this->settingsRepo = $settingsRepo;
         }
 
         public function setLogo($file)
         {
 
-            $upload = new core\fileupload();
+            $upload = app()->make(core\fileupload::class);
 
             $upload->initFile($file['file']);
 
@@ -44,21 +45,23 @@ namespace leantime\domain\services {
             }
         }
 
-        public function resetLogo() {
+        public function resetLogo()
+        {
 
             $url = '/dist/images/logo.svg';
 
             $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
 
             $_SESSION["companysettings.logoPath"] = BASE_URL . $url;
-
         }
 
-        public function saveSetting($key, $value){
+        public function saveSetting($key, $value)
+        {
             return $this->settingsRepo->saveSetting($key, $value);
         }
 
-        public function getSetting($key){
+        public function getSetting($key)
+        {
             return $this->settingsRepo->getSetting($key);
         }
 
@@ -77,8 +80,6 @@ namespace leantime\domain\services {
         {
             $this->settingsRepo = $settingsRepo;
         }
-
-
     }
 
 }

@@ -11,30 +11,28 @@ namespace leantime\domain\controllers {
     {
         private services\projects $projectService;
         private services\tickets $ticketService;
+        private services\setting $settingSvc;
         private repositories\menu $menuRepo;
 
-        private services\setting $settingSvc;
-
-
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->menuRepo = new repositories\menu();
-            $this->settingSvc = new services\setting();
-
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\setting $settingSvc,
+            repositories\menu $menuRepo
+        ) {
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->settingSvc = $settingSvc;
+            $this->menuRepo = $menuRepo;
         }
 
         public function run()
         {
-
             $allAssignedprojects = array();
             $allAvailableProjects = array();
             $recentProjects = array();
 
             if (isset($_SESSION['userdata'])) {
-
                 $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(
                     $_SESSION['userdata']['id'],
                     'open'
@@ -51,10 +49,12 @@ namespace leantime\domain\controllers {
                     $_SESSION['userdata']['clientId']
                 );
 
-                $recent = $this->settingSvc->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
+                $recent = $this->settingSvc->getSetting(
+                    "usersettings." . $_SESSION['userdata']['id'] . ".recentProjects"
+                );
                 $recentArr = unserialize($recent);
 
-                if(is_array($recentArr) && is_array($allAvailableProjects)) {
+                if (is_array($recentArr) && is_array($allAvailableProjects)) {
                     $availableProjectColumn = array_column($allAvailableProjects, 'id');
                     foreach ($recentArr as $recentItem) {
                         $found_key = array_search($recentItem, $availableProjectColumn);
@@ -77,19 +77,23 @@ namespace leantime\domain\controllers {
                     ? $project['type']
                     : "project";
 
-                if($projectType != '' && $projectType != 'project') {
+                if ($projectType != '' && $projectType != 'project') {
                     $menuType = $projectType;
+                }else{
+                    $menuType = repositories\menu::DEFAULT_MENU;
                 }
 
-                if($project !== false && isset($project["clientId"])) {
+                if ($project !== false && isset($project["clientId"])) {
                     $this->tpl->assign('currentClient', $project["clientId"]);
-                }else{
+                } else {
                     $this->tpl->assign('currentClient', '');
                 }
+
             } else {
                 $menuType = repositories\menu::DEFAULT_MENU;
                 $this->tpl->assign('currentClient', "");
             }
+
 
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
             $this->tpl->assign('currentProjectType', $projectType);
@@ -106,6 +110,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('menuStructure', $this->menuRepo->getMenuStructure($menuType));
 
             $this->tpl->displayPartial('menu.menu');
-        }
+       }
     }
+
 }

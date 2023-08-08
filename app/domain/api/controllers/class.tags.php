@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class tags extends controller
     {
-
         private services\tags $tagService;
 
         /**
@@ -19,12 +18,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\tags $tagService)
         {
-            $this->tagService = new services\tags();
-
+            $this->tagService = $tagService;
         }
-
 
         /**
          * get - handle get requests
@@ -46,8 +43,6 @@ namespace leantime\domain\controllers {
          */
         public function post($params)
         {
-
-
         }
 
         /**
@@ -58,7 +53,6 @@ namespace leantime\domain\controllers {
          */
         public function patch($params)
         {
-
         }
 
         /**

@@ -155,7 +155,7 @@ $user = $this->get('user');
                                     <span class='field span6'>
                                         <select name="theme" id="theme" style="width: 220px">
                                             <?php
-                                            $themeCore = new \leantime\core\theme();
+                                            $themeCore = app()->make(\leantime\core\theme::class);
                                             $themeAll = $themeCore->getAll();
                                             foreach ($themeAll as $key => $name) {
                                                 ?>

@@ -21,9 +21,9 @@ namespace leantime\domain\repositories {
 
         /**
          * @access private
-         * @var    object
+         * @var    core\db
          */
-        private $db = '';
+        private ?core\db $db = null;
 
         public $canvasTypes = array(
             "idea" => "status.ideation",
@@ -31,7 +31,7 @@ namespace leantime\domain\repositories {
             "prototype" => "status.delivering",
             "validation" => "status.inreview",
             "implemented" => "status.accepted",
-            "deferred" => "status.deferred"
+            "deferred" => "status.deferred",
         );
 
         public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
@@ -44,11 +44,10 @@ namespace leantime\domain\repositories {
          * @access public
          * @return unknown_type
          */
-        public function __construct()
+        public function __construct(core\db $db, core\language $language)
         {
-
-            $this->db = core\db::getInstance();
-            $this->language = core\language::getInstance();
+            $this->db = $db;
+            $this->language = $language;
         }
 
         public function getCanvasLabels()
@@ -78,7 +77,7 @@ namespace leantime\domain\repositories {
                 foreach ($this->canvasTypes as $key => $label) {
                     $labels[$key] = array(
                         "name" => $this->language->__($label),
-                        "class" => $this->statusClasses[$key]
+                        "class" => $this->statusClasses[$key],
                     );
                 }
 
@@ -86,7 +85,7 @@ namespace leantime\domain\repositories {
                     foreach (unserialize($values['value']) as $key => $label) {
                         $labels[$key] = array(
                             "name" => $label,
-                            "class" => $this->statusClasses[$key]
+                            "class" => $this->statusClasses[$key],
                         );
                     }
                 }
@@ -562,6 +561,5 @@ namespace leantime\domain\repositories {
 
             return true;
         }
-
     }
 }

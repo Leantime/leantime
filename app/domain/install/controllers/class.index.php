@@ -17,10 +17,9 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\install $installRepo)
         {
-
-            $this->installRepo = new repositories\install();
+            $this->installRepo = $installRepo;
 
             if ($this->installRepo->checkIfInstalled()) {
                 core\frontcontroller::redirect(BASE_URL);
@@ -45,7 +44,7 @@ namespace leantime\domain\controllers {
                 'email'         => "",
                 'password'      => "",
                 'firstname'     => "",
-                'lastname'      => ""
+                'lastname'      => "",
             );
 
             if (isset($_POST['install'])) {
@@ -54,7 +53,7 @@ namespace leantime\domain\controllers {
                     'password' => $params['password'],
                     'firstname' => ($params['firstname']),
                     'lastname' => ($params['lastname']),
-                    'company' => ($params['company'])
+                    'company' => ($params['company']),
                 );
 
                 if (isset($params['email']) == false || $params['email'] == '') {

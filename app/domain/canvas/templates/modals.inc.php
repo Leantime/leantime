@@ -88,7 +88,7 @@
                         $canvasTitle = $canvasRow["title"];
                         echo " selected='selected' ";
                     }
-                    echo ">" .$this->escape($canvasRow["title"]) . "</option>";
+                    echo ">" . $this->escape($canvasRow["title"]) . "</option>";
                 }
           } ?>
           </select>

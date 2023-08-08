@@ -15,7 +15,7 @@ namespace leantime\core {
          * @access protected
          *
          * @param string $hook
-         * @param mixed $available_params
+         * @param mixed  $available_params
          *
          * @return void
          */
@@ -30,8 +30,8 @@ namespace leantime\core {
          * @access protected
          *
          * @param string $hook
-         * @param mixed $payload
-         * @param mixed $available_params
+         * @param mixed  $payload
+         * @param mixed  $available_params
          *
          * @return mixed
          */

@@ -10,13 +10,13 @@ namespace leantime\domain\repositories {
     {
         private core\db $db;
 
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
-        public function getAPIKeyUser($apiKeyUser) {
+        public function getAPIKeyUser($apiKeyUser)
+        {
 
             $sql = "SELECT * FROM `zp_user` WHERE username = :apiKeyUsername AND source <=> 'api' LIMIT 1";
 
@@ -28,9 +28,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
-
     }
 
 

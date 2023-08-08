@@ -7,22 +7,27 @@ namespace leantime\domain\services {
 
     class queue
     {
-        private $queue;
-        private $userRepo;
-        private $settingsRepo;
-        private $mailer;
-        private $language;
+        private repositories\queue $queue;
+        private repositories\users $userRepo;
+        private repositories\setting $settingsRepo;
+        private core\mailer $mailer;
+        private core\language $language;
 
-        public function __construct()
-        {
+        public function __construct(
+            repositories\queue $queue,
+            repositories\users $userRepo,
+            repositories\setting $settingsRepo,
+            core\mailer $mailer,
+            core\language $language
+        ) {
             // NEW Queuing messaging system
-            $this->queue = new repositories\queue();
+            $this->queue = $queue;
 
             // We need users and settings and a mailer
-            $this->userRepo = new repositories\users();
-            $this->settingsRepo = new \leantime\domain\repositories\setting();
-            $this->mailer = new \leantime\core\mailer();
-            $this->language = \leantime\core\language::getInstance();
+            $this->userRepo = $userRepo;
+            $this->settingsRepo = $settingsRepo;
+            $this->mailer = $mailer;
+            $this->language = $language;
         }
 
         // Fake template to be replaced by something better
@@ -55,7 +60,7 @@ namespace leantime\domain\services {
                     'thedate' => $message['thedate'],
                     'subject' => $message['subject'],
                     'message' => $message['message'],
-                    'projectId' => $message['projectId']
+                    'projectId' => $message['projectId'],
                 );
                 // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
                 // and here we need to group the messages in an array to know which messages are grouped to group-delete them

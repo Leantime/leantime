@@ -9,18 +9,24 @@ $appSettings = $this->get('appSettings');
         var req = new XMLHttpRequest();
         req.open("GET", "<?=BASE_URL?>/cron/run",true);
         req.send(null);
-
-
     </script>
 <?php } ?>
 
-<?php if(isset($_SESSION['userdata'])) { ?>
+<script>
+    //5 min time to run cron
+    setInterval(function(){
+        jQuery.get('<?=BASE_URL?>/cron/run');
+    }, 300000);
+</script>
+
+<?php if (isset($_SESSION['userdata'])) { ?>
     <script>
         //5 min keep alive timer
         setInterval(function(){
             jQuery.get(leantime.appUrl+'/auth/keepAlive');
-        }, 300000);
+            }, 300000);
     </script>
+
 <?php } ?>
 
 <?php $this->dispatchTplEvent('beforeBodyClose'); ?>

@@ -28,7 +28,7 @@
                                             $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                                                                  $filterRelates == $row['relates'])
         ) {
-            $comments = new \leantime\domain\repositories\comments();
+            $comments = app()->make(\leantime\domain\repositories\comments::class);
             $nbcomments = $comments->countComments(moduleId: $row['id']);
             ?>
 

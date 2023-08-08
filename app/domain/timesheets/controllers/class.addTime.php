@@ -10,21 +10,23 @@ namespace leantime\domain\controllers {
 
     class addTime extends controller
     {
-        private $timesheetsRepo;
-        private $projects;
-        private $tickets;
+        private repositories\timesheets $timesheetsRepo;
+        private repositories\projects $projects;
+        private repositories\tickets $tickets;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->timesheetsRepo = new repositories\timesheets();
-            $this->projects = new repositories\projects();
-            $this->tickets = new repositories\tickets();
+        public function init(
+            repositories\timesheets $timesheetsRepo,
+            repositories\projects $projects,
+            repositories\tickets $tickets
+        ) {
+            $this->timesheetsRepo = $timesheetsRepo;
+            $this->projects = $projects;
+            $this->tickets = $tickets;
         }
 
         /**
@@ -53,7 +55,7 @@ namespace leantime\domain\controllers {
                     'invoicedEmplDate' => '',
                     'invoicedCompDate' => '',
                     'paid' => '',
-                    'paidDate' => ''
+                    'paidDate' => '',
                 );
 
                 if (isset($_POST['save']) === true || isset($_POST['saveNew']) === true) {
@@ -159,7 +161,7 @@ namespace leantime\domain\controllers {
                             'invoicedEmplDate' => '',
                             'invoicedCompDate' => '',
                             'paid' => '',
-                            'paidDate' => ''
+                            'paidDate' => '',
                         );
 
                         $this->tpl->assign('values', $values);

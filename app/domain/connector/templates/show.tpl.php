@@ -20,7 +20,7 @@
         <h3>Sync Leantime with your external applications</h3>
         <p>Available providers</p>
         <div class="row">
-            <?php foreach($this->get("providers") as $provider) { ?>
+            <?php foreach ($this->get("providers") as $provider) { ?>
                 <div class="col-md-3">
                     <div class="profileBox">
                         <div class="commentImage">

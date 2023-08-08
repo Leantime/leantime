@@ -13,16 +13,14 @@ namespace leantime\domain\repositories {
 
         private core\db $db;
 
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
         public function getModules($id)
         {
-
-            $users = new users();
+            $users = app()->make(users::class);
 
             $modules = $this->userModules;
             if ($users->isAdmin($id)) {
@@ -228,7 +226,7 @@ namespace leantime\domain\repositories {
                 $module = "ticket";
             }
 
-            $upload = new core\fileupload();
+            $upload = app()->make(core\fileupload::class);
 
             $path = $file['file']['name'];
             $ext = pathinfo($path, PATHINFO_EXTENSION);
@@ -251,7 +249,7 @@ namespace leantime\domain\repositories {
                         'moduleId'     => $moduleId,
                         'userId'     => $_SESSION['userdata']['id'],
                         'module'    => $module,
-                        'fileId' => ''
+                        'fileId' => '',
                     );
 
                     $fileAddResults = $this->addFile($values, $module);
@@ -262,7 +260,7 @@ namespace leantime\domain\repositories {
                     } else {
                         $return = false;
                     }
-                }else{
+                } else {
                     return $upload->error;
                 }
             }

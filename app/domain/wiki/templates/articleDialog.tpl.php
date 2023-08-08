@@ -174,7 +174,7 @@ if (isset($currentArticle->id)) {
             <br />
             <input type="text" value="<?php $this->e($currentArticle->tags); ?>" name="tags" id="tags" />
 
-            <textarea class="articleEditor complexEditor" id="articleEditor" name="description"><?=$currentArticle->description ?></textarea>
+            <textarea class="articleEditor complexEditor" id="articleEditor" name="description"><?=htmlentities($currentArticle->description) ?></textarea>
 
 
 

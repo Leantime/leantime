@@ -10,19 +10,20 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-        private $projects;
-        private $timesheetsRepo;
+        private repositories\projects $projects;
+        private repositories\timesheets $timesheetsRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projects = new repositories\projects();
-            $this->timesheetsRepo = new repositories\timesheets();
+        public function init(
+            repositories\projects $projects,
+            repositories\timesheets $timesheetsRepo
+        ) {
+            $this->projects = $projects;
+            $this->timesheetsRepo = $timesheetsRepo;
         }
 
         /**
@@ -139,12 +140,12 @@ namespace leantime\domain\controllers {
                     'dateFrom' => $dateFrom,
                     'dateTo' => $dateTo,
                     'invEmplCheck' => $invEmplCheck,
-                    'invCompCheck' => $invCompCheck
+                    'invCompCheck' => $invCompCheck,
                 );
                 $this->timesheetsRepo->export($values);
             }
 
-            $user = new repositories\users();
+            $user = app()->make(repositories\users::class);
             $employees = $user->getAll();
 
             $this->tpl->assign('employeeFilter', $userId);

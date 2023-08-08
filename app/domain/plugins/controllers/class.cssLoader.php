@@ -13,11 +13,10 @@ namespace leantime\domain\controllers {
     {
         private services\plugins $pluginService;
 
-
-        public function init()
+        public function init(services\plugins $pluginService)
         {
             auth::authOrRedirect([roles::$owner, roles::$admin]);
-            $this->pluginService = new services\plugins();
+            $this->pluginService = $pluginService;
         }
 
         /**
@@ -30,16 +29,13 @@ namespace leantime\domain\controllers {
             $cssFiles = self::dispatch_filter("pluginCss", $cssFiles);
 
             $cssString = '';
-            foreach($cssFiles as $file) {
-                if(file_exists(APP_ROOT . "/plugins/".$file)){
-                    $cssString = file_get_contents(APP_ROOT . "/plugins/".$file);
-
+            foreach ($cssFiles as $file) {
+                if (file_exists(APP_ROOT . "/plugins/" . $file)) {
+                    $cssString = file_get_contents(APP_ROOT . "/plugins/" . $file);
                 }
             }
             header("Content-Type: text/css");
             echo $cssString;
-
         }
-
     }
 }

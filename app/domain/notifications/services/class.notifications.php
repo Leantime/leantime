@@ -10,7 +10,6 @@ namespace leantime\domain\services {
 
     class notifications
     {
-
         private core\db $db;
         private repositories\notifications $notificationsRepo;
         private repositories\users $userRepository;
@@ -21,15 +20,17 @@ namespace leantime\domain\services {
          *
          * @access public
          */
-        public function __construct()
-        {
-
-            $this->db = core\db::getInstance();
-            $this->notificationsRepo = new repositories\notifications();
-            $this->userRepository = new repositories\users();
-            $this->language = core\language::getInstance();
+        public function __construct(
+            core\db $db,
+            repositories\notifications $notificationsRepo,
+            repositories\users $userRepository,
+            core\language $language
+        ) {
+            $this->db = $db;
+            $this->notificationsRepo = $notificationsRepo;
+            $this->userRepository = $userRepository;
+            $this->language = $language;
         }
-
 
         public function getAllNotifications($userId, $showNewOnly = 0, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
         {
@@ -47,9 +48,9 @@ namespace leantime\domain\services {
         public function markNotificationRead($id, $userId)
         {
 
-            if($id == "all") {
+            if ($id == "all") {
                 return $this->notificationsRepo->markAllNotificationRead($userId);
-            }else {
+            } else {
                 return $this->notificationsRepo->markAllNotificationRead($id);
             }
         }
@@ -93,13 +94,13 @@ namespace leantime\domain\services {
                             "message" => sprintf($this->language->__('text.x_mentioned_you'), $authorName),
                             "datetime" => date("Y-m-d H:i:s"),
                             "url" => $url,
-                            "authorId" => $authorId
+                            "authorId" => $authorId,
                         );
 
                         $this->addNotifications(array($notification));
 
                         //send email
-                        $mailer = new core\mailer();
+                        $mailer = app()->make(core\mailer::class);
                         $mailer->setContext('notify_project_users');
 
                         $subject = sprintf($this->language->__('text.x_mentioned_you'), $authorName);

@@ -17,21 +17,23 @@ namespace leantime\domain\controllers {
     class showProjectCalendar extends controller
     {
         private repositories\calendar $calendarRepo;
-        private $projectsRepo;
-        private $sprintService;
+        private repositories\projects $projectsRepo;
+        private services\sprints $sprintService;
         private services\tickets $ticketService;
 
         /**
          * init - initialize private variables
          */
-        public function init()
-        {
-
-            $this->calendarRepo = new repositories\calendar();
-            $this->projectsRepo = new repositories\projects();
-            $this->sprintService = new services\sprints();
-            $this->ticketService = new services\tickets();
-
+        public function init(
+            repositories\calendar $calendarRepo,
+            repositories\projects $projectsRepo,
+            services\sprints $sprintService,
+            services\tickets $ticketService
+        ) {
+            $this->calendarRepo = $calendarRepo;
+            $this->projectsRepo = $projectsRepo;
+            $this->sprintService = $sprintService;
+            $this->ticketService = $ticketService;
         }
 
         /**
@@ -79,7 +81,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
         }
-
     }
 
 }

@@ -21,7 +21,7 @@ namespace leantime\domain\models\auth {
             20 => 'editor',       //prev: developer
             30 => 'manager',      //prev: clientmanager
             40 => 'admin',        //prev: manager
-            50 => 'owner'         //prev: admin
+            50 => 'owner',         //prev: admin
         );
 
         private static function getFilteredRoles()

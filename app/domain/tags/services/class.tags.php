@@ -10,15 +10,18 @@ namespace leantime\domain\services {
 
     class tags
     {
-        private $projectRepository;
-        private $ticketRepository;
-        private $canvasRepository;
+        private repositories\projects $projectRepository;
+        private repositories\canvas $ticketRepository;
+        private repositories\tickets $canvasRepository;
 
-        public function __construct()
-        {
-            $this->projectRepository = new repositories\projects();
-            $this->canvasRepository = new repositories\canvas();
-            $this->ticketRepository = new repositories\tickets();
+        public function __construct(
+            repositories\projects $projectRepository,
+            repositories\canvas $canvasRepository,
+            repositories\tickets $ticketRepository
+        ) {
+            $this->projectRepository = $projectRepository;
+            $this->canvasRepository = $canvasRepository;
+            $this->ticketRepository = $ticketRepository;
         }
 
         public function getTags(int $projectId, string $term): array
@@ -30,11 +33,13 @@ namespace leantime\domain\services {
 
             $canvasTags = $this->canvasRepository->getTags($projectId);
             $tags = $this->explodeAndMergeTags($canvasTags, $tags);
-            $unique =array_unique($tags);
+            $unique = array_unique($tags);
 
-            $tagArray=[];
-            foreach($unique as $tag)  {
-                if (strpos($tag, strip_tags($term)) !== false) { $tagArray[] = $tag; }
+            $tagArray = [];
+            foreach ($unique as $tag) {
+                if (strpos($tag, strip_tags($term)) !== false) {
+                    $tagArray[] = $tag;
+                }
             }
             return $tagArray;
         }
@@ -42,7 +47,7 @@ namespace leantime\domain\services {
         private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
         {
             foreach ($dbTagValues as $tagGroup) {
-                if(isset($tagGroup["tags"]) && $tagGroup["tags"] != null) {
+                if (isset($tagGroup["tags"]) && $tagGroup["tags"] != null) {
                     $tagArray = explode(",", $tagGroup["tags"]);
                     $mergeInto = array_merge($tagArray, $mergeInto);
                 }

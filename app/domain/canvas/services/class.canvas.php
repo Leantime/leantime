@@ -11,17 +11,17 @@ namespace leantime\domain\services {
          * import - Import canvas from XML file
          *
          * @access public
-         * @param  string   $filename    File to import
-         * @param  string   $canvcasName Canvas name
-         * @param  int      $projectId   Project identifier
-         * @param  int      $auhtorId    Author identifier
-         * @return bool|int False if import failed and the id of the newly created canvas otherwise
+         * @param  string  $filename    File to import
+         * @param  string  $canvcasName Canvas name
+         * @param  integer $projectId   Project identifier
+         * @param  integer $auhtorId    Author identifier
+         * @return boolean|integer False if import failed and the id of the newly created canvas otherwise
          */
         public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
         {
 
             $dom = new \DOMDocument('1.0', 'UTF-8');
-            $users = new repositories\users();
+            $users = app()->make(repositories\users::class);
 
             // Read file
             $canvasData = file_get_contents($filename);
@@ -38,7 +38,7 @@ namespace leantime\domain\services {
             }
 
             // Decode XMP data
-            $canvasAry = [ 'projectId' => $projectId, 'author' => $authorId ];
+            $canvasAry = ['projectId' => $projectId, 'author' => $authorId];
             $recordsAry = [];
 
             // - Canvas
@@ -134,7 +134,8 @@ namespace leantime\domain\services {
                     $conclusion = empty($conclusionNodeList->item(0)->nodeValue) ? '' :
                         $dom->saveHTML($conclusionNodeList->item(0)->firstChild);
 
-                    $recordsAry[] = [ 'description' => $description,
+                    $recordsAry[] = [
+                    'description' => $description,
                                       'assumptions' => $assumptions,
                                       'data' => $data,
                                       'conclusion' => $conclusion,
@@ -142,7 +143,8 @@ namespace leantime\domain\services {
                                       'author' => $author,
                                       'status' => $status,
                                       'relates' => $relates,
-                                      'milestoneId' => '' ];
+                                      'milestoneId' => '',
+                    ];
                 }
             }
 
@@ -152,7 +154,7 @@ namespace leantime\domain\services {
             }
 
             $canvasRepoName = "\\leantime\\domain\\repositories\\$canvasName";
-            $canvasRepo = new $canvasRepoName();
+            $canvasRepo = app()->make($canvasRepoName);
 
             // Check if canvas already exists?
             $canvasAry['title'] .= ' [imported]';
@@ -178,14 +180,14 @@ namespace leantime\domain\services {
          * getBoardProgress - gets the progress of canvas types. counts items in each box-type and calculates percent done if each box type has at least 1 item.
          *
          * @access public
-         * @param  string   $projectId    projectId (optional)
-         * @param  array    $boards Array of project board types
+         * @param  string $projectId projectId (optional)
+         * @param  array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          */
         public function getBoardProgress($projectId = '', $boards = array()): array
         {
 
-            $canvasRepo = new repositories\canvas();
+            $canvasRepo = app()->make(repositories\canvas::class);
             $values = $canvasRepo->getCanvasProgressCount($projectId, $boards);
 
             $results = array();
@@ -199,7 +201,7 @@ namespace leantime\domain\services {
                     $classname = 'leantime\\domain\\repositories\\' . $row['canvasType'];
 
 
-                    $canvasTypeRepo = new $classname();
+                    $canvasTypeRepo = app()->make($classname);
                     $results[$row['canvasType']][$row['canvasId']] = array();
 
                     foreach ($canvasTypeRepo->getCanvasTypes() as $type => $box) {
@@ -217,7 +219,7 @@ namespace leantime\domain\services {
             //Once the count is done calculate progress per canvastype Id
             foreach ($results as $key => &$canvas) {
                 $classname = 'leantime\\domain\\repositories\\' . $key;
-                $canvasTypeRepo = new $classname();
+                $canvasTypeRepo = app()->make($classname);
 
                 $numOfBoxes = count($canvasTypeRepo->getCanvasTypes());
 
@@ -250,13 +252,13 @@ namespace leantime\domain\services {
          * getLastUpdatedCanvas - gets the list of canvas boards ordered by last updated item
          *
          * @access public
-         * @param  string   $projectId    projectId (optional)
-         * @param  array    $boards Array of project board types
+         * @param  string $projectId projectId (optional)
+         * @param  array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          */
         public function getLastUpdatedCanvas($projectId = '', $boards = array())
         {
-            $canvasRepo = new repositories\canvas();
+            $canvasRepo = app()->make(repositories\canvas::class);
             return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
         }
     }

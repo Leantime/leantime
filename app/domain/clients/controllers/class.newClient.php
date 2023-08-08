@@ -15,19 +15,19 @@ namespace leantime\domain\controllers {
 
     class newClient extends controller
     {
-        private $clientRepo;
-        private $user;
+        private repositories\clients $clientRepo;
+        private repositories\users $user;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\clients $clientRepo, repositories\users $user)
         {
 
-            $this->clientRepo = new repositories\clients();
-            $this->user = new repositories\users();
+            $this->clientRepo = $clientRepo;
+            $this->user = $user;
         }
 
         /**
@@ -51,7 +51,7 @@ namespace leantime\domain\controllers {
                     'country' => '',
                     'phone' => '',
                     'internet' => '',
-                    'email' => ''
+                    'email' => '',
                 );
 
                 if (isset($_POST['save']) === true) {
@@ -64,13 +64,13 @@ namespace leantime\domain\controllers {
                         'country' => ($_POST['country']),
                         'phone' => ($_POST['phone']),
                         'internet' => ($_POST['internet']),
-                        'email' => ($_POST['email'])
+                        'email' => ($_POST['email']),
                     );
 
                     if ($values['name'] !== '') {
                         if ($this->clientRepo->isClient($values) !== true) {
                             $id = $this->clientRepo->addClient($values);
-                            $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success');
+                            $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
                             $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id);
                         } else {
                             $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');

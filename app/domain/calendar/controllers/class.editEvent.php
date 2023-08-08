@@ -15,15 +15,14 @@ namespace leantime\domain\controllers {
 
     class editEvent extends controller
     {
-        private $calendarRepo;
+        private repositories\calendar $calendarRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(repositories\calendar $calendarRepo)
         {
-
-            $this->calendarRepo = new repositories\calendar();
+            $this->calendarRepo = $calendarRepo;
         }
 
         /**
@@ -40,7 +39,7 @@ namespace leantime\domain\controllers {
 
                 $row = $this->calendarRepo->getEvent($id);
 
-                if($row === false){
+                if ($row === false) {
                     $this->tpl->displayPartial('errors.error404');
                     exit();
                 }
@@ -50,12 +49,11 @@ namespace leantime\domain\controllers {
                     'dateFrom' => $row['dateFrom'],
                     'dateTo' => $row['dateTo'],
                     'allDay' => $row['allDay'],
-                    'id' => $row['id']
+                    'id' => $row['id'],
                 );
 
 
                 if (isset($_POST['save']) === true) {
-
                     if (isset($_POST['allDay']) === true) {
                         $allDay = 'true';
                     } else {
@@ -77,7 +75,7 @@ namespace leantime\domain\controllers {
                         'dateFrom' => $dateFrom,
                         'dateTo' => $dateTo,
                         'allDay' => $allDay,
-                        'id' => $row['id']
+                        'id' => $row['id'],
                     );
 
                     if ($values['description'] !== '') {
@@ -90,7 +88,7 @@ namespace leantime\domain\controllers {
                             'dateFrom' => $row['dateFrom'],
                             'dateTo' => $row['dateTo'],
                             'allDay' => $row['allDay'],
-                            'id' => $row['id']
+                            'id' => $row['id'],
                         );
 
                         $this->tpl->setNotification('notification.event_edited_successfully', 'success');

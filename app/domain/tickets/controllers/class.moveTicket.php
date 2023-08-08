@@ -11,20 +11,20 @@ namespace leantime\domain\controllers {
     class moveTicket extends controller
     {
         private services\tickets $ticketService;
+        private services\projects $projectService;
 
-        public function init()
-        {
+        public function init(
+            services\tickets $ticketService,
+            services\projects $projectService
+        ) {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->ticketService = new services\tickets();
-            $this->projectService = new services\projects();
-
+            $this->ticketService = $ticketService;
+            $this->projectService = $projectService;
         }
-
 
         public function get($params)
         {
-
             $ticketId = $params['id'] ?? '';
 
             $ticket = $this->ticketService->getTicket($ticketId);
@@ -35,7 +35,6 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('projects', $projects);
 
             $this->tpl->displayPartial('tickets.moveTicket');
-
         }
 
         public function post($params)
@@ -46,22 +45,19 @@ namespace leantime\domain\controllers {
             }
 
             $projectId = null;
-            if(isset($params['projectId'])) {
+            if (isset($params['projectId'])) {
                 $projectId = (int)($params['projectId']);
             }
 
-            if(!empty($ticketId) && !empty($projectId)){
-                if($this->ticketService->moveTicket($ticketId, $projectId)) {
+            if (!empty($ticketId) && !empty($projectId)) {
+                if ($this->ticketService->moveTicket($ticketId, $projectId)) {
                     $this->tpl->setNotification($this->language->__("text.ticket_moved"), "success");
-                }else{
+                } else {
                     $this->tpl->setNotification($this->language->__("text.move_problem"), "error");
                 }
             }
 
-            core\frontcontroller::redirect(BASE_URL."/tickets/moveTicket/".$ticketId."?closeModal=true");
-
-
-
+            core\frontcontroller::redirect(BASE_URL . "/tickets/moveTicket/" . $ticketId . "?closeModal=true");
         }
     }
 

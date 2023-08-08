@@ -66,7 +66,7 @@ min-width: 1200px
 
     .maincontentinner .btn,
     .maincontentinner .btn-group{
-        width:100%;
+
         margin-bottom:5px;
     }
 
@@ -144,6 +144,13 @@ min-width: 1200px
     }
     .hidden-gt-sm {
         display:block!important;
+    }
+
+    .loginpage .header {
+        margin-left: 0 !important;
+        /* margin-bottom: 10px; */
+
+        width: 100%;
     }
 
     .headmenu > li > a {
@@ -634,7 +641,7 @@ min-width: 1200px
     }
 
     .leftpanel {
-        width: 240px;
+        width: 68px;
     }
 
     .header .logo {

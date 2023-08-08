@@ -137,6 +137,6 @@
 }
 
 .ss-option:hover {
-	color: white;
-	background-color: var(--accent1) !important;
+    color: white;
+    background-color: var(--accent1) !important;
 }

@@ -117,7 +117,7 @@
                         <?php $this->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
 
                         <div id="tableButtons" style="display:inline-block"></div>
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (".$this->get('numOfFilters').")" : "" ?></a>
+                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$this->get('numOfFilters') > 0 ? " (" . $this->get('numOfFilters') . ")" : "" ?></a>
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.group_by") ?>"><span class="fa fa-object-group"></span></button>
                             <ul class="dropdown-menu">
@@ -145,21 +145,33 @@
                         <div class="btn-group viewDropDown">
                             <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class="fa fa-table"></i></button>
                             <ul class="dropdown-menu">
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
-                                    echo $_SESSION['lastFilterdTicketKanbanView'];
-                                             } else {
-                                                 echo BASE_URL . "/tickets/showKanban";
-                                             } ?>" ><?=$this->__("links.kanban") ?></a></li>
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") {
-                                    echo $_SESSION['lastFilterdTicketTableView'];
-                                             } else {
-                                                 echo BASE_URL . "/tickets/showAll";
-                                             } ?>" class="active"><?=$this->__("links.table") ?></a></li>
-                                <li><a href="<?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") {
-                                        echo $_SESSION['lastFilterdTicketListView'];
-                                    } else {
-                                        echo BASE_URL . "/tickets/showList";
-                                    } ?>"><?=$this->__("links.list_view") ?></a></li>
+                                <li>
+                                    <a
+                                        <?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") { ?>
+                                            href="<?= $_SESSION['lastFilterdTicketKanbanView'] ?>"
+                                        <?php } else { ?>
+                                            href="<?= BASE_URL ?>/tickets/showKanban"
+                                        <?php } ?>
+                                    ><?=$this->__("links.kanban") ?></a>
+                                </li>
+                                <li>
+                                    <a
+                                        <?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") { ?>
+                                            href="<?= $_SESSION['lastFilterdTicketTableView'] ?>"
+                                        <?php } else { ?>
+                                            href="<?= BASE_URL ?>/tickets/showAll"
+                                        <?php } ?>
+                                    ><?=$this->__("links.table") ?></a>
+                                </li>
+                                <li>
+                                    <a
+                                        <?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") { ?>
+                                            href="<?= $_SESSION['lastFilterdTicketListView'] ?>"
+                                        <?php } else { ?>
+                                            href="<?= BASE_URL ?>/tickets/showList"
+                                        <?php } ?>
+                                    ><?=$this->__("links.list_view") ?></a>
+                                </li>
                             </ul>
                         </div>
 
@@ -343,7 +355,7 @@
                         </td>
 
                         <td data-order="<?=$this->e($row['headline']); ?>">
-                            <?php if($row['dependingTicketId'] > 0){ ?>
+                            <?php if ($row['dependingTicketId'] > 0) { ?>
                                 <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a></small> //<br />
                             <?php } ?>
                             <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
@@ -352,11 +364,11 @@
 
                         <?php
 
-                        if(isset($statusLabels[$row['status']])){
-                            $class=$statusLabels[$row['status']]["class"];
-                            $name=$statusLabels[$row['status']]["name"];
+                        if (isset($statusLabels[$row['status']])) {
+                            $class = $statusLabels[$row['status']]["class"];
+                            $name = $statusLabels[$row['status']]["name"];
                             $sortKey = $statusLabels[$row['status']]["sortKey"];
-                        }else{
+                        } else {
                             $class = 'label-important';
                             $name = 'new';
                             $sortKey = 0;
@@ -580,19 +592,37 @@
                                         <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                         <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                         <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
-                                            <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
-                                                echo"style='display:none;'";
-                                            }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
-                                            <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
-                                                echo"style='display:none;'";
-                                            }?>><span class="fa-stop"></span> <?php if (is_array($clockedIn) == true) {
+                                            <a
+                                                class="punchIn"
+                                                href="javascript:void(0);"
+                                                data-value="<?php echo $row["id"]; ?>"
+                                                <?php if ($clockedIn !== false) {
+                                                    echo"style='display:none;'";
+                                                } ?>
+                                            ><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
+                                            <a
+                                                class="punchOut"
+                                                href="javascript:void(0);"
+                                                data-value="<?php echo $row["id"]; ?>"
+                                                <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
+                                                    echo"style='display:none;'";
+                                                }?>
+                                            >
+                                                <span class="fa-stop"></span>
+                                                <?php if (is_array($clockedIn) == true) {
                                                     echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"]));
                                                 } else {
                                                     echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time()));
-                                                }?></a>
-                                            <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
-                                                echo"style='display:none;'";
-                                            }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
+                                                } ?>
+                                            </a>
+                                            <span
+                                                class='working'
+                                                <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
+                                                    echo"style='display:none;'";
+                                                } ?>
+                                            >
+                                                <?php echo $this->__("text.timer_set_other_todo"); ?>
+                                            </span>
                                         </li>
                                     </ul>
                                 </div>

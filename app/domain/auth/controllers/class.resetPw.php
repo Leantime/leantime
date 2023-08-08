@@ -10,9 +10,9 @@ namespace leantime\domain\controllers {
 
     class resetPw extends controller
     {
-        private $fileRepo;
-        private $authService;
-        private $usersService;
+        private repositories\files $fileRepo;
+        private services\auth $authService;
+        private services\users $usersService;
 
         /**
          * init - initialize private variables
@@ -20,13 +20,14 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-
-            $this->fileRepo = new repositories\files();
-
-            $this->authService = services\auth::getInstance();
-            $this->usersService = new services\users();
+        public function init(
+            repositories\files $fileRepo,
+            services\auth $authService,
+            services\users $usersService
+        ) {
+            $this->fileRepo = $fileRepo;
+            $this->authService = $authService;
+            $this->usersService = $usersService;
         }
 
 

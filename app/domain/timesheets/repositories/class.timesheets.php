@@ -33,10 +33,9 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
         /**
@@ -601,8 +600,8 @@ namespace leantime\domain\repositories {
          * @access private
          * @param $first first date
          * @param $last last date
-         * @param string $step default 1 day, can be changed to get every other day, week etc.
-         * @param string $format date format
+         * @param string           $step   default 1 day, can be changed to get every other day, week etc.
+         * @param string           $format date format
          * @return array
          */
         private function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
@@ -804,7 +803,7 @@ namespace leantime\domain\repositories {
         public function isClocked($id)
         {
 
-            if(!isset($_SESSION['userdata'])){
+            if (!isset($_SESSION['userdata'])) {
                 return false;
             }
 

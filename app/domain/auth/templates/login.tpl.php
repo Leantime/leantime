@@ -37,7 +37,7 @@
         </div>
         <?php $this->dispatchTplEvent('beforeFormClose'); ?>
     </form>
-    <?php if($this->get('oidcEnabled')) { ?>
+    <?php if ($this->get('oidcEnabled')) { ?>
         <?php $this->dispatchTplEvent('beforeOidcButton'); ?>
         <div class="">
             <a href="<?=BASE_URL ?>/oidc/login" style="width:100%;" class="btn btn-primary">

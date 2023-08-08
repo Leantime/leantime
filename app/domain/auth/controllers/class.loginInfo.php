@@ -14,17 +14,20 @@ namespace leantime\domain\controllers {
 
         private services\auth $authService;
 
-        public function init()
-        {
-            $this->userRepo = new repositories\users();
-            $this->userService = new services\users();
-            $this->authService = services\auth::getInstance();
+        public function init(
+            repositories\users $userRepo,
+            services\users $userService,
+            services\auth $authService
+        ) {
+            $this->userRepo = $userRepo;
+            $this->userService = $userService;
+            $this->authService = $authService;
         }
 
         public function run()
         {
             $user = false;
-            if(isset($_SESSION['userdata'])) {
+            if (isset($_SESSION['userdata'])) {
                 $user = $this->userService->getUser($_SESSION['userdata']['id']);
             }
 

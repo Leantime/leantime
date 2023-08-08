@@ -10,21 +10,23 @@ namespace leantime\domain\controllers {
 
     class editUser extends controller
     {
-        private $projectsRepo;
+        private repositories\projects $projectsRepo;
         private repositories\users $userRepo;
-        private $clientsRepo;
+        private repositories\clients $clientsRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projectsRepo = new repositories\projects();
-            $this->userRepo = new repositories\users();
-            $this->clientsRepo = new repositories\clients();
+        public function init(
+            repositories\projects $projectsRepo,
+            repositories\users $userRepo,
+            repositories\clients $clientsRepo
+        ) {
+            $this->projectsRepo = $projectsRepo;
+            $this->userRepo = $userRepo;
+            $this->clientsRepo = $clientsRepo;
         }
 
         /**
@@ -80,7 +82,7 @@ namespace leantime\domain\controllers {
                             'pwReset' => $row['pwReset'],
                             'jobTitle' => ($_POST['jobTitle'] ?? $row['jobTitle']),
                             'jobLevel' => ($_POST['jobLevel'] ?? $row['jobLevel']),
-                            'department' => ($_POST['department'] ?? $row['department'])
+                            'department' => ($_POST['department'] ?? $row['department']),
                         );
 
                         $changedEmail = 0;

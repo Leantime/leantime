@@ -6,14 +6,13 @@ use leantime\core\controller;
 use leantime\domain\services;
 use leantime\core\frontcontroller;
 
-class login extends controller {
-
+class login extends controller
+{
     private services\oidc $oidc;
 
-    public function init()
+    public function init(services\oidc $oidc, frontcontroller $frontcontroller)
     {
-        $this->oidc = services\oidc::getInstance();
-        frontcontroller::redirect($this->oidc->buildLoginUrl() , 302);
+        $this->oidc = $oidc;
+        $frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
     }
-
 }

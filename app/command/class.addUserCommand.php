@@ -21,20 +21,20 @@ class addUserCommand extends Command
     {
         parent::configure();
         $this->addOption('email', null, InputOption::VALUE_REQUIRED, "User's Email")
-                ->addOption('password', null, InputOption::VALUE_REQUIRED, "User's Password")
-                ->addOption(
-                    'role',
-                    null,
-                    InputOption::VALUE_REQUIRED,
-                    "User's Role",
-                    function (CompletionInput $input) {
-                        return array_values(roles::getRoles());
-                    }
-                )
-                ->addOption('client-id', null, InputOption::VALUE_OPTIONAL, "Id of The Client to Assign the User To", null)
-                ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", "")
-                ->addOption('last-name', null, InputOption::VALUE_OPTIONAL, "User's Last Name", "")
-                ->addOption('phone', null, InputOption::VALUE_OPTIONAL, "User's Phone", "");
+            ->addOption('password', null, InputOption::VALUE_REQUIRED, "User's Password")
+            ->addOption(
+                'role',
+                null,
+                InputOption::VALUE_REQUIRED,
+                "User's Role",
+                function (CompletionInput $input) {
+                    return array_values(roles::getRoles());
+                }
+            )
+            ->addOption('client-id', null, InputOption::VALUE_OPTIONAL, "Id of The Client to Assign the User To", null)
+            ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", "")
+            ->addOption('last-name', null, InputOption::VALUE_OPTIONAL, "User's Last Name", "")
+            ->addOption('phone', null, InputOption::VALUE_OPTIONAL, "User's Phone", "");
     }
 
     /**
@@ -42,30 +42,49 @@ class addUserCommand extends Command
      *
      * @param  InputInterface  $input
      * @param  OutputInterface $output
-     * @return int 0 if everything went fine, or an exit code.
+     * @return integer 0 if everything went fine, or an exit code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        define('BASE_URL', "");
-        define('CURRENT_URL', "");
+        ! defined('BASE_URL') && define('BASE_URL', "");
+        ! defined('CURRENT_URL') && define('CURRENT_URL', "");
         $io = new SymfonyStyle($input, $output);
+
         $email = $input->getOption('email');
-        $password = $input->getOption('password');
-        $clientId = $input->getOption('client-id');
-        $firstName = $input->getOption("first-name");
-        $lastName = $input->getOption("last-name");
-        $phone = $input->getOption("phone");
-        $role = $input->getOption('role');
+
+        if ($email === null) {
+            $io->error("Email is Required \"--email\"");
+            return Command::INVALID;
+        }
+
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $io->error("Email is Invalid");
             return Command::INVALID;
         }
+
+        $password = $input->getOption('password');
+
+        if ($password === null) {
+            $io->error("Password is Required \"--password\"");
+            return Command::INVALID;
+        }
+
+        $role = $input->getOption('role');
+
+        if ($role === null) {
+            $io->error("Role is Required \"--role\"");
+            return Command::INVALID;
+        }
+
         if (!in_array($role, array_values(roles::getRoles()))) {
             $io->error("Role is Invalid");
             return Command::INVALID;
         }
+
+        $clientId = $input->getOption('client-id');
+
         if ($clientId === null) {
-            $clientsRepository = new clients();
+            $clientsRepository = app()->make(clients::class);
             $clients = $clientsRepository->getAll();
             if (sizeof($clients) < 1) {
                 $io->error("No clients found, cannot add user");
@@ -73,6 +92,11 @@ class addUserCommand extends Command
             }
             $clientId = $clients[0]["id"];
         }
+
+        $firstName = $input->getOption("first-name");
+        $lastName = $input->getOption("last-name");
+        $phone = $input->getOption("phone");
+
         $user = array(
             "user" => $email,
             "password" => $password,
@@ -80,15 +104,19 @@ class addUserCommand extends Command
             "clientId" => $clientId,
             "firstname" => $firstName,
             "lastname" => $lastName,
-            "phone" => $phone
+            "phone" => $phone,
         );
+
         try {
-            $usersRepo = new users();
+            $usersRepo = app()->make(users::class);
+
             if ($usersRepo->usernameExist($email)) {
                 $io->error("User Already Exists");
                 return Command::INVALID;
             }
+
             $userId = $usersRepo->addUser($user);
+
             if (!$userId) {
                 $io->error("Failed to Add User");
                 return Command::FAILURE;
@@ -97,6 +125,7 @@ class addUserCommand extends Command
             $io->error($ex);
             return Command::FAILURE;
         }
+
         return Command::SUCCESS;
     }
 }

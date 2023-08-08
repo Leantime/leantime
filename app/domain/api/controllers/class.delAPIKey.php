@@ -12,16 +12,17 @@ namespace leantime\domain\controllers {
     class delAPIKey extends controller
     {
         private api $APIService;
+        private repositories\users $userRepo;
+
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(api $APIService, repositories\users $userRepo)
         {
-
-            $this->APIService = new api();
-            $this->userRepo = new repositories\users();
+            $this->APIService = $APIService;
+            $this->userRepo = $userRepo;
         }
 
         /**
@@ -42,7 +43,6 @@ namespace leantime\domain\controllers {
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
-
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                         $this->userRepo->deleteUser($id);
 

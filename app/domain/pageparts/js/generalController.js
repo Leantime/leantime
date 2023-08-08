@@ -87,9 +87,7 @@ leantime.generalController = (function () {
                 width: "100%",
                 skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
-                    + leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css,'
-                    + leantime.appUrl + '/assets/css/components/wysiwyg-overrides.css,'
-                    + leantime.appUrl + '/assets/css/libs/roboto.css',
+                    + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands",
                 toolbar : "bold italic strikethrough | link unlink image | checklist bullist numlist | emoticons",
@@ -183,29 +181,23 @@ leantime.generalController = (function () {
                     editor.on('focus',function () {
                         var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
                         if (placeholder.length > 0) {
-
-                            while(placeholder[0]) {
+                            while (placeholder[0]) {
                                 placeholder[0].parentNode.removeChild(placeholder[0]);
                             }
                         }
 
                     });
 
-                    editor.on("submit", function(){
+                    editor.on("submit", function () {
 
                         var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
 
-                        console.log(placeholder);
-
                         if (placeholder.length > 0) {
-
-                            while(placeholder[0]) {
+                            while (placeholder[0]) {
                                 console.log(placeholder[0]);
                                 placeholder[0].remove();
                             }
                             editor.save();
-
-                            console.log(editor.getDoc());
                         }
                     });
                 }
@@ -223,41 +215,36 @@ leantime.generalController = (function () {
 
 
             jQuery('textarea.complexEditor').tinymce(
-            {
+                {
                 // General options
-                width: "100%",
-                skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl + '/assets/css/components/style.default.css,'
-                    + leantime.appUrl + '/assets/css/components/dropdowns.css,'
-                    + leantime.appUrl + '/assets/css/libs/bootstrap-grid.min.css,'
-                    + leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
-                    + leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css,'
-                    + leantime.appUrl + '/assets/css/components/wysiwyg-overrides.css,'
-                    + leantime.appUrl + '/assets/css/libs/roboto.css',
-                content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                plugins : "imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands",
-                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate",
+                    width: "100%",
+                    skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
+                    content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
+                    + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
+                    content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+                    plugins : "imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands",
+                    toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate",
                 //autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
                 //autosave_restore_when_empty: true,
                 //autosave_retention: '120m',
                 //autosave_interval: '10s',
                 //autosave_ask_before_unload: false,
-                branding: false,
-                statusbar: false,
-                convert_urls: true,
-                menubar:false,
-                resizable: true,
-                templates : leantime.appUrl + "/wiki/templates",
-                body_class: 'mce-content-body',
-                paste_data_images: true,
-                relative_urls : true,
-                document_base_url: leantime.appUrl + "/",
-                table_appearance_options: false,
-                min_height: 200,
-                max_height: height,
-                default_link_target: '_blank',
-                codesample_global_prismjs: true,
-                codesample_languages: [
+                    branding: false,
+                    statusbar: false,
+                    convert_urls: true,
+                    menubar:false,
+                    resizable: true,
+                    templates : leantime.appUrl + "/wiki/templates",
+                    body_class: 'mce-content-body',
+                    paste_data_images: true,
+                    relative_urls : true,
+                    document_base_url: leantime.appUrl + "/",
+                    table_appearance_options: false,
+                    min_height: 200,
+                    max_height: height,
+                    default_link_target: '_blank',
+                    codesample_global_prismjs: true,
+                    codesample_languages: [
                     { text: 'HTML/XML', value: 'markup' },
                     { text: 'JavaScript', value: 'javascript' },
                     { text: 'CSS', value: 'css' },
@@ -273,105 +260,102 @@ leantime.generalController = (function () {
                     { text: 'C', value: 'c' },
                     { text: 'C#', value: 'csharp' },
                     { text: 'C++', value: 'cpp' }
-                ],
-                mentions: mentionsConfig,
-                images_upload_handler: function (blobInfo, success, failure) {
-                    var xhr, formData;
+                    ],
+                    mentions: mentionsConfig,
+                    images_upload_handler: function (blobInfo, success, failure) {
+                        var xhr, formData;
 
-                    xhr = new XMLHttpRequest();
-                    xhr.withCredentials = false;
-                    xhr.open('POST', leantime.appUrl + '/api/files');
+                        xhr = new XMLHttpRequest();
+                        xhr.withCredentials = false;
+                        xhr.open('POST', leantime.appUrl + '/api/files');
 
-                    xhr.onload = function () {
-                        var json;
+                        xhr.onload = function () {
+                            var json;
 
-                        if (xhr.status < 200 || xhr.status >= 300) {
-                            failure('HTTP Error: ' + xhr.status);
-                            return;
-                        }
-
-                        success(xhr.responseText);
-                    };
-
-                    formData = new FormData();
-                    formData.append('file', blobInfo.blob());
-
-                    xhr.send(formData);
-                },
-                file_picker_callback: function (callback, value, meta) {
-
-                    window.filePickerCallback = callback;
-
-                    var shortOptions = {
-                        afterShowCont: function () {
-                            jQuery(".fileModal").nyroModal({callbacks:shortOptions});
-
-                        }
-                    };
-
-                    jQuery.nmManual(
-                        leantime.appUrl + '/files/showAll&modalPopUp=true',
-                        {
-                            stack: true,
-                            callbacks: shortOptions,
-                            sizes: {
-                                minW: 500,
-                                minH: 500,
-                            }
-                        }
-                    );
-                    jQuery.nmTop().elts.cont.css("zIndex", "1000010");
-                    jQuery.nmTop().elts.bg.css("zIndex", "1000010");
-                    jQuery.nmTop().elts.load.css("zIndex", "1000010");
-                    jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
-
-                },
-                setup: function (editor) {
-                    editor.on('init', function (e) {
-
-                        var confettiElement = editor.getDoc().getElementsByClassName("confetti");
-
-                        if (confettiElement && confettiElement.length > 0) {
-                            confettiElement[0].addEventListener("click", function () {
-                                confetti.start();
-                            });
-                        }
-
-                        //&& !editor.plugins.autosave.hasDraft()
-                        if (editor.getContent() === '' ) {
-                            editor.setContent("<p class='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
-                        }
-
-                    });
-
-
-                    //and remove it on focus
-                    editor.on('focus',function () {
-                        var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
-                        if (placeholder.length > 0) {
-
-                            while(placeholder[0]) {
-                                placeholder[0].parentNode.removeChild(placeholder[0]);
+                            if (xhr.status < 200 || xhr.status >= 300) {
+                                failure('HTTP Error: ' + xhr.status);
+                                return;
                             }
 
-                        }
+                            success(xhr.responseText);
+                        };
 
-                    });
+                        formData = new FormData();
+                        formData.append('file', blobInfo.blob());
 
-                    editor.on("submit", function(){
+                        xhr.send(formData);
+                    },
+                    file_picker_callback: function (callback, value, meta) {
 
-                        var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
-                        if (placeholder.length > 0) {
+                        window.filePickerCallback = callback;
 
-                            while(placeholder[0]) {
-                                placeholder[0].parentNode.removeChild(placeholder[0]);
+                        var shortOptions = {
+                            afterShowCont: function () {
+                                jQuery(".fileModal").nyroModal({callbacks:shortOptions});
+
                             }
-                            editor.save();
-                        }
-                    });
+                        };
+
+                        jQuery.nmManual(
+                            leantime.appUrl + '/files/showAll&modalPopUp=true',
+                            {
+                                stack: true,
+                                callbacks: shortOptions,
+                                sizes: {
+                                    minW: 500,
+                                    minH: 500,
+                                }
+                            }
+                        );
+                        jQuery.nmTop().elts.cont.css("zIndex", "1000010");
+                        jQuery.nmTop().elts.bg.css("zIndex", "1000010");
+                        jQuery.nmTop().elts.load.css("zIndex", "1000010");
+                        jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
+
+                    },
+                    setup: function (editor) {
+                        editor.on('init', function (e) {
+
+                            var confettiElement = editor.getDoc().getElementsByClassName("confetti");
+
+                            if (confettiElement && confettiElement.length > 0) {
+                                confettiElement[0].addEventListener("click", function () {
+                                    confetti.start();
+                                });
+                            }
+
+                            //&& !editor.plugins.autosave.hasDraft()
+                            if (editor.getContent() === '' ) {
+                                editor.setContent("<p class='tinyPlaceholder'>" + leantime.i18n.__('placeholder.type_slash') + "</p>");
+                            }
+
+                        });
+
+
+                        //and remove it on focus
+                        editor.on('focus',function () {
+                            var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
+                            if (placeholder.length > 0) {
+                                while (placeholder[0]) {
+                                    placeholder[0].parentNode.removeChild(placeholder[0]);
+                                }
+                            }
+
+                        });
+
+                        editor.on("submit", function () {
+
+                            var placeholder = editor.getDoc().getElementsByClassName("tinyPlaceholder");
+                            if (placeholder.length > 0) {
+                                while (placeholder[0]) {
+                                    placeholder[0].parentNode.removeChild(placeholder[0]);
+                                }
+                                editor.save();
+                            }
+                        });
+                    }
                 }
-            }
-        );
+            );
 
 
     };
@@ -386,9 +370,7 @@ leantime.generalController = (function () {
                 width: "100%",
                 skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
-                    + leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css,'
-                    + leantime.appUrl + '/assets/css/components/wysiwyg-overrides.css,'
-                    + leantime.appUrl + '/assets/css/libs/roboto.css',
+                    + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 height:"400",
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",

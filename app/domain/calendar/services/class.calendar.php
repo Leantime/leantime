@@ -11,9 +11,10 @@ namespace leantime\domain\services {
         private repositories\calendar $calendarRepo;
         private core\language $language;
 
-        public function __construct() {
-            $this->calendarRepo = new repositories\calendar();
-            $this->language = core\language::getInstance();
+        public function __construct(repositories\calendar $calendarRepo, core\language $language)
+        {
+            $this->calendarRepo = $calendarRepo;
+            $this->language = $language;
         }
 
 
@@ -24,13 +25,14 @@ namespace leantime\domain\services {
          * @params $id id of event to be updated (only events can be updated. Tickets need to be updated via ticket api
          * @params $params key value array of columns to be updated
          *
-         * @return bool true on success, false on failure
+         * @return boolean true on success, false on failure
          */
-        public function patch($id, $params): bool {
+        public function patch($id, $params): bool
+        {
 
             //Admins can always change anything.
             //Otherwise user has to own the event
-            if($this->userIsAllowedToUpdate($id)) {
+            if ($this->userIsAllowedToUpdate($id)) {
                 return $this->calendarRepo->patch($id, $params);
             }
 
@@ -43,15 +45,16 @@ namespace leantime\domain\services {
          * @access public
          * @params int $eventId Id of event to be checked
          *
-         * @return bool true on success, false on failure
+         * @return boolean true on success, false on failure
          */
-        private function userIsAllowedToUpdate($eventId) {
+        private function userIsAllowedToUpdate($eventId)
+        {
 
-            if(auth::userIsAtLeast(roles::$admin)) {
+            if (auth::userIsAtLeast(roles::$admin)) {
                 return true;
             } else {
                 $event = $this->calendarRepo->getEvent($eventId);
-                if($event && $event["userId"] == $_SESSION['userdata']['id']){
+                if ($event && $event["userId"] == $_SESSION['userdata']['id']) {
                     return true;
                 }
             }
@@ -66,9 +69,10 @@ namespace leantime\domain\services {
          * @access public
          * @params array $values array of event values
          *
-         * @return int|false returns the id on success, false on failure
+         * @return integer|false returns the id on success, false on failure
          */
-        public function addEvent(array $values): int|false {
+        public function addEvent(array $values): int|false
+        {
 
             if (isset($values['allDay']) === true) {
                 $allDay = 'true';
@@ -90,17 +94,13 @@ namespace leantime\domain\services {
             $values['dateTo'] = $dateTo;
 
             if ($values['description'] !== '') {
-
                 $result = $this->calendarRepo->addEvent($values);
 
                 return $result;
-
             } else {
-
                 return false;
             }
         }
-
     }
 
 }

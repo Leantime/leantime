@@ -1435,8 +1435,14 @@ jQuery(function($, undefined) {
 
 
                     e.preventDefault();
-                    nm.opener.append("<input type='hidden' name='submitAction' value='"+e.originalEvent.submitter.value+"' />")
+                    console.log(e);
+                    let submitAction = "";
+                    if(e && e.originalEvent &&
+                        e.originalEvent.submitter && e.originalEvent.submitter.value) {
+                        submitAction = e.originalEvent.submitter.value;
+                    }
 
+                    nm.opener.append("<input type='hidden' name='submitAction' value='" + submitAction + "' />")
                     nm.opener.trigger('nyroModal');
                 });
             },

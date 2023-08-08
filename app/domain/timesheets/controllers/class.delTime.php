@@ -10,17 +10,16 @@ namespace leantime\domain\controllers {
 
     class delTime extends controller
     {
-        private $timesheetsRepo;
+        private repositories\timesheets $timesheetsRepo;
 
         /**
          * init - initialize private variable
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\timesheets $timesheetsRepo)
         {
-
-            $this->timesheetsRepo = new repositories\timesheets();
+            $this->timesheetsRepo = $timesheetsRepo;
         }
 
         /**

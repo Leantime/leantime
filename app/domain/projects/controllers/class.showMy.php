@@ -9,20 +9,24 @@ namespace leantime\domain\controllers {
 
     class showMy extends controller
     {
-
         private services\projects $projectService;
         private services\tickets $ticketService;
         private services\reports $reportService;
         private services\comments $commentService;
+        private repositories\clients $clientRepo;
 
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->reportService = new services\reports();
-            $this->commentService = new services\comments();
-            $this->clientRepo = new repositories\clients();
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\reports $reportService,
+            services\comments $commentService,
+            repositories\clients $clientRepo
+        ) {
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->reportService = $reportService;
+            $this->commentService = $commentService;
+            $this->clientRepo = $clientRepo;
         }
 
         /**
@@ -40,7 +44,7 @@ namespace leantime\domain\controllers {
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int)$_GET['client'];
                 $currentClient = $this->clientRepo->getClient($clientId);
-                if(is_array($currentClient) && count($currentClient) >0) {
+                if (is_array($currentClient) && count($currentClient) > 0) {
                     $currentClientName = $currentClient['name'];
                 }
             }
@@ -58,7 +62,6 @@ namespace leantime\domain\controllers {
                     }
 
                     if ($clientId == "" || $project["clientId"] == $clientId) {
-
                         $projectResults[$i] = $project;
                         $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
                         $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);

@@ -3,7 +3,7 @@
 
     $appSettings = $this->get('appSettings');
     $debugRenderer = $this->get('debugRenderer');
-    $themeCore = new \leantime\core\theme();
+    $themeCore = app()->make(\leantime\core\theme::class);
     $theme = $this->get('theme');
 ?>
 
@@ -17,6 +17,8 @@
 <meta name="theme-color" content="<?php $this->e($_SESSION["companysettings.primarycolor"]) ?>">
 <meta name="color-scheme" content="<?php $this->e($theme ?? 'default') ?>">
 <meta name="identifier-URL" content="<?=BASE_URL?>">
+<meta name="leantime-version" content="<?=$settings->appVersion ?>">
+
 <?php $this->dispatchTplEvent('afterMetaTags'); ?>
 
 <link rel="shortcut icon" href="<?=BASE_URL?>/dist/images/favicon.png"/>
@@ -59,7 +61,6 @@
     }
 </style>
 
-
 <?php $this->dispatchTplEvent('afterThemeColors'); ?>
 
 <!-- customize -->
@@ -72,4 +73,6 @@
 <?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if ($styleUrl !== false) { ?>
     <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
 <?php } ?>
+
 <?php $this->dispatchTplEvent('afterCustomizeTags'); ?>
+

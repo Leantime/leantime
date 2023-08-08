@@ -159,10 +159,10 @@
 
                             <?php
 
-                            if(isset($statusLabels[$row->status])){
-                                $class=$statusLabels[$row->status]["class"];
-                                $name=$statusLabels[$row->status]["name"];
-                            }else{
+                            if (isset($statusLabels[$row->status])) {
+                                $class = $statusLabels[$row->status]["class"];
+                                $name = $statusLabels[$row->status]["name"];
+                            } else {
                                 $class = 'label-important';
                                 $name = 'new';
                             }
@@ -240,10 +240,7 @@
                                 </div>
                             </td>
                             <td>
-                                 <?php if ($login::userIsAtLeast($roles::$editor)) {
-
-
-                                    ?>
+                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="inlineDropDownContainer">
 
                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">

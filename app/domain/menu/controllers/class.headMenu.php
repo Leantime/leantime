@@ -8,21 +8,20 @@ namespace leantime\domain\controllers {
 
     class headMenu extends controller
     {
-        private $timesheets;
+        private services\timesheets $timesheets;
 
-        public function init()
+        public function init(services\timesheets $timesheets)
         {
-
-            $this->timesheets = new services\timesheets();
+            $this->timesheets = $timesheets;
         }
 
         public function run()
         {
 
-            $notificationService = new services\notifications();
+            $notificationService = app()->make(services\notifications::class);
             $notifications = array();
             $newnotificationCount = 0;
-            if(isset($_SESSION['userdata'])){
+            if (isset($_SESSION['userdata'])) {
                 $notifications = $notificationService->getAllNotifications($_SESSION['userdata']['id']);
                 $newnotificationCount = $notificationService->getAllNotifications($_SESSION['userdata']['id'], true);
             }
@@ -36,9 +35,9 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('notifications', $notifications);
             $this->tpl->assign('current', explode(".", core\frontcontroller::getCurrentRoute()));
 
-            if(isset($_SESSION['userdata'])) {
+            if (isset($_SESSION['userdata'])) {
                 $this->tpl->assign("onTheClock", $this->timesheets->isClocked($_SESSION["userdata"]["id"]));
-            }else{
+            } else {
                 $this->tpl->assign("onTheClock", false);
             }
             $this->tpl->displayPartial("menu.headMenu");

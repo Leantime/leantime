@@ -1,5 +1,5 @@
 <?php
-$comments = new leantime\domain\repositories\comments();
+$comments = app()->make(leantime\domain\repositories\comments::class);
 $formUrl = CURRENT_URL;
 
 //Controller may not redirect. Make sure delComment is only added once
@@ -14,7 +14,6 @@ if (strpos($formUrl, '?delComment=') !== false) {
 <form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm" class="formModal">
 
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
-
         <div class="" id="mainToggler">
             <div class="commentImage">
                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>" />

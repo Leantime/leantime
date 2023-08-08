@@ -159,11 +159,11 @@
                             </td>
                             <?php
 
-                            if(isset($statusLabels[$row->status])){
-                                $class=$statusLabels[$row->status]["class"];
-                                $name=$statusLabels[$row->status]["name"];
+                            if (isset($statusLabels[$row->status])) {
+                                $class = $statusLabels[$row->status]["class"];
+                                $name = $statusLabels[$row->status]["name"];
                                 $sortKey = $statusLabels[$row->status]["sortKey"];
-                            }else{
+                            } else {
                                 $class = 'label-important';
                                 $name = 'new';
                                 $sortKey = 0;
@@ -242,10 +242,7 @@
                                 </div>
                             </td>
                             <td>
-                                 <?php if ($login::userIsAtLeast($roles::$editor)) {
-
-
-                                    ?>
+                                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="inlineDropDownContainer">
 
                                         <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">

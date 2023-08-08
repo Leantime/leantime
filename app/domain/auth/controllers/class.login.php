@@ -19,10 +19,12 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-            $this->authService = services\auth::getInstance();
-            $this->config = environment::getInstance();
+        public function init(
+            services\auth $authService,
+            environment $config
+        ) {
+            $this->authService = $authService;
+            $this->config = $config;
         }
 
         /**
@@ -62,10 +64,9 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
             if (isset($_POST['username']) === true && isset($_POST['password']) === true) {
-
-                if(isset($_POST['redirectUrl'])) {
+                if (isset($_POST['redirectUrl'])) {
                     $redirectUrl = urldecode(filter_var($_POST['redirectUrl'], FILTER_SANITIZE_URL));
-                }else{
+                } else {
                     $redirectUrl = "";
                 }
 
@@ -79,6 +80,8 @@ namespace leantime\domain\controllers {
                     if ($this->authService->use2FA()) {
                         core\frontcontroller::redirect(BASE_URL . "/auth/twoFA");
                     }
+
+                    self::dispatch_event("afterAuthServiceCall", ['post' => $_POST]);
 
                     core\frontcontroller::redirect($redirectUrl);
                 } else {

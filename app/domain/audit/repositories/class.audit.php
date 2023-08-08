@@ -7,14 +7,11 @@ namespace leantime\domain\repositories {
 
     class audit
     {
-
         private core\db $db;
 
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
-
+            $this->db = $db;
         }
 
         public function storeEvent($action = "ping", $values = "", $entity = "", $entityId = 0, $userId = 0, $projectId = 0, $thedate = '')

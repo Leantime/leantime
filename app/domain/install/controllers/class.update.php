@@ -10,24 +10,24 @@ namespace leantime\domain\controllers {
 
     class update extends controller
     {
-        private $installRepo;
-        private $settingsRepo;
-        private $appSettings;
-
+        private repositories\install $installRepo;
+        private repositories\setting $settingsRepo;
+        private core\appSettings $appSettings;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->installRepo = new repositories\install();
-            $this->settingsRepo = new repositories\setting();
-            $this->appSettings = new core\appSettings();
+        public function init(
+            repositories\install $installRepo,
+            repositories\setting $settingsRepo,
+            core\appSettings $appSettings
+        ) {
+            $this->installRepo = $installRepo;
+            $this->settingsRepo = $settingsRepo;
+            $this->appSettings = $appSettings;
         }
-
 
         /**
          * get - handle get requests
@@ -54,16 +54,14 @@ namespace leantime\domain\controllers {
 
                 if (is_array($success) === true) {
                     foreach ($success as $errorMessage) {
-
+                        $this->tpl->setNotification("There was a problem. Please reach out to support@leantime.io for assistance.", "error");
                         error_log($errorMessage);
-
                     }
                     $this->tpl->setNotification("There was a problem updating your database. Please check your error logs to verify your database is up to date.", "error");
                     core\frontcontroller::redirect(BASE_URL . "/install/update");
                 }
 
                 if ($success === true) {
-                    $this->tpl->setNotification(sprintf($this->language->__("text.update_was_successful"), BASE_URL), "success");
                     core\frontcontroller::redirect(BASE_URL);
                 }
             }

@@ -11,7 +11,9 @@ namespace leantime\domain\controllers {
 
     class tickets extends controller
     {
-        private $projects;
+        private repositories\projects $projects;
+        private services\tickets $ticketsApiService;
+        private services\api $apiService;
 
         /**
          * init - initialize private variables
@@ -19,14 +21,15 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-
-            $this->projects = new repositories\projects();
-            $this->ticketsApiService = new services\tickets();
-            $this->apiService = new services\api();
+        public function init(
+            repositories\projects $projects,
+            services\tickets $ticketsApiService,
+            services\api $apiService
+        ) {
+            $this->projects = $projects;
+            $this->ticketsApiService = $ticketsApiService;
+            $this->apiService = $apiService;
         }
-
 
         /**
          * get - handle get requests
@@ -50,7 +53,6 @@ namespace leantime\domain\controllers {
             ob_start();
 
             if (services\auth::userIsAtLeast(roles::$editor)) {
-
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
                     if (isset($params["handler"]) == true) {
@@ -62,26 +64,22 @@ namespace leantime\domain\controllers {
                     if ($results === false) {
                         $this->apiService->setError(-32000, "Could not update status", "");
                     }
-
                 }
 
                 if (isset($params['action']) && $params['action'] == "ganttSort") {
-
                     $results = $this->ticketsApiService->updateTicketSorting($params["payload"]);
 
                     if ($results === false) {
                         $this->apiService->setError(-32000, "Could not update status", "");
                     }
-
                 }
-
             } else {
                 $this->apiService->setError(-32000, "Not authorized", "");
             }
 
             $htmlOutput = ob_get_clean();
 
-            $result = array("html"=>$htmlOutput);
+            $result = array("html" => $htmlOutput);
             $this->apiService->jsonResponse(1, $result);
         }
 
@@ -106,14 +104,13 @@ namespace leantime\domain\controllers {
                 if ($results === false) {
                     $this->apiService->setError(-32000, "Could not update status", "");
                 }
-
             } else {
                 $this->apiService->setError(-32000, "Not authorized", "");
             }
 
             $htmlOutput = ob_get_clean();
 
-            $result = array("html"=>$htmlOutput);
+            $result = array("html" => $htmlOutput);
             $this->apiService->jsonResponse(1, $result);
         }
 

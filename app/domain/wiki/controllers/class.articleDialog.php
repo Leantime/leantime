@@ -12,21 +12,19 @@ namespace leantime\domain\controllers {
 
     class articleDialog extends controller
     {
-
         private services\wiki $wikiService;
         private services\tickets $ticketService;
 
-        public function init()
+        public function init(services\wiki $wikiService, services\tickets $ticketService)
         {
-
-            $this->wikiService = new services\wiki();
-            $this->ticketService = new services\tickets();
+            $this->wikiService = $wikiService;
+            $this->ticketService = $ticketService;
         }
 
         public function get($params)
         {
 
-            $article = new wiki\article();
+            $article = app()->make(wiki\article::class);
             $article->data = "far fa-file-alt";
 
             if (isset($params['id'])) {
@@ -35,7 +33,6 @@ namespace leantime\domain\controllers {
 
             //Delete milestone relationship
             if (isset($params['removeMilestone']) === true) {
-
                 $article->milestoneId = "";
                 $results = $this->wikiService->updateArticle($article);
 
@@ -43,8 +40,6 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
                     $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
                 }
-
-
             }
 
             if ($_SESSION['currentWiki'] != '') {
@@ -62,7 +57,7 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            $article = new wiki\article();
+            $article = app()->make(wiki\article::class);
 
             if (isset($_GET["id"])) {
                 $id = $_GET["id"];

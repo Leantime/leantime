@@ -9,15 +9,13 @@ namespace leantime\domain\controllers {
 
     class changeCurrentProject extends controller
     {
-
         private services\projects $projectService;
         private services\setting $settingService;
 
-        public function init()
+        public function init(services\projects $projectService, services\setting $settingService)
         {
-
-            $this->projectService = new services\projects();
-            $this->settingService = new services\setting();
+            $this->projectService = $projectService;
+            $this->settingService = $settingService;
         }
 
         /**
@@ -36,18 +34,17 @@ namespace leantime\domain\controllers {
                     if ($project !== false) {
                         $this->projectService->changeCurrentSessionProject($id);
 
-                        if(isset($params['redirect'])){
+                        if (isset($params['redirect'])) {
                             $redirect = strip_tags($params['redirect']);
                             $urlParts = explode("/", $redirect);
-                            if(count($urlParts) >2) {
-                                $this->tpl->redirect(BASE_URL . "/" . $urlParts[1] ."/".$urlParts[2]);
+                            if (count($urlParts) > 2) {
+                                $this->tpl->redirect(BASE_URL . "/" . $urlParts[1] . "/" . $urlParts[2]);
                             }
                         }
 
                         $defaultURL = "/dashboard/show";
                         $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL);
                         $this->tpl->redirect(BASE_URL . $redirectFilter);
-
                     } else {
                         $this->tpl->redirect(BASE_URL . "/errors/error404");
                     }

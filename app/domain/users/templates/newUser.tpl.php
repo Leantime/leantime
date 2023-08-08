@@ -68,7 +68,7 @@ $projects = $this->get('relations');
 <?php echo $this->displayNotification() ?>
 
 <form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal">
-    <div class="row">
+    <div class="row" style="width:800px;">
         <div class="col-md-7">
 
                 <h4 class="widgettitle title-light"><?php echo $this->__('label.profile_information'); ?></h4>
@@ -102,8 +102,8 @@ $projects = $this->get('relations');
                 <?php } ?>
                 <?php foreach ($this->get('clients') as $client) : ?>
                     <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
-                    ?>selected="selected"<?php
-                    endif; ?>><?php $this->e($client['name']) ?></option>
+                        ?>selected="selected"<?php
+                                   endif; ?>><?php $this->e($client['name']) ?></option>
                 <?php endforeach; ?>
             </select><br/>
             <br/>
@@ -146,6 +146,9 @@ $projects = $this->get('relations');
                     $currentClient = '';
                     $i = 0;
                     foreach ($this->get('allProjects') as $row) {
+                        if($row['clientName'] == ''){
+                            $row['clientName'] = "Not assigned to client";
+                        }
                         if ($currentClient != $row['clientName']) {
                             if ($i > 0) {
                                 echo"</div>";

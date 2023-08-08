@@ -7,14 +7,14 @@
 
 Leantime is a strategic open source project management system for innovative companies and teams looking to go from start to finish. Built for the non-project manager, we combine the plans and the work while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Notion, and Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
 
-[![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html)
+[![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)](https://github.com/Leantime/leantime/releases)
 [![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
 [![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)](https://discord.gg/4zMzJtAq9z)
 [![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
 <br />
 
-  ![alt text](public/images/Screenshots/ProjectDashboard.png "Dashboard")
+  ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Dashboard")
 
 </div>
 <br /><br />
@@ -48,11 +48,11 @@ Leantime is a strategic open source project management system for innovative com
 
 ### Screenshots ###
 
-| ![alt text](public/images/Screenshots/UserDashboard.png "My Dashboard")   | ![alt text](public/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
+| ![alt text](public/assets/images/Screenshots/UserDashboard.png "My Dashboard")   | ![alt text](public/assets/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/assets/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
 |---------------------------------------------------------------------|:--------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-| ![alt text](public/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/images/Screenshots/Ideas.png "Idea Board")     |
-| ![alt text](public/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/images/Screenshots/Reports.png "Report Screens")                                                                     |
-| ![alt text](public/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/images/Screenshots/Confetti.png "Confetti")                                                                     |
+| ![alt text](public/assets/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/assets/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/assets/images/Screenshots/Ideas.png "Idea Board")     |
+| ![alt text](public/assets/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/assets/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/assets/images/Screenshots/Reports.png "Report Screens")                                                                     |
+| ![alt text](public/assets/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/assets/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/assets/images/Screenshots/Confetti.png "Confetti")                                                                     |
 
 ### System Requirements ###
 
@@ -100,24 +100,12 @@ There are two ways to install a development setup of LeanTime. The first (but mo
 
 #### Local Development Installation ####
 
-* Install composer and npm
 * Clone repository to your local server
 * Create MySQL database
-* Run composer to load php dependencies
-```
-composer install
-```
-then
-```
-npm install
-```
-to load Javascript dependencies and finally run the grunt task to create the compiled js files
-```
-./node_modules/grunt/bin/grunt Build-All
-```
+* Run wbepack builder via `make build-dev`
 * Point your local domain to the `public/` directory
-* Rename `config/configuration.sample.php` to `config/configuration.php`
-* Fill in your database credentials (username, password, host, dbname) in `config/configuration.php`
+* Rename `config/.env.sample` to `config/.env`
+* Fill in your database credentials (username, password, host, dbname) in `config/.env`
 * Navigate to `<localdomain>/install`
 * Follow instructions to install database and user account
 
@@ -153,9 +141,18 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 
 ### Update ###
 
+#### Manual
 * Make sure to take a backup of your database and files
 * Replace all files in your directory with the updated version
 * If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
+
+#### Script
+* Execute ./updateLeantime.sh in the root of your leantime application
+
+#### Docker
+* Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
+* Delete/Stop existing container
+* Pull the latest docker image and rebuild using your compose file
 
 ## LICENSE Exceptions ##
 

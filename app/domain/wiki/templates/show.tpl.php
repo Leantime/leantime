@@ -53,7 +53,6 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-
                         <li><a class="wikiModal inlineEdit" href="<?=BASE_URL ?>/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$this->__("link.edit_wiki") ?></a></li>
                         <li><a class="delete wikiModal" href="<?=BASE_URL ?>/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$this->__('links.delete_wiki') ?></a></li>
 
@@ -69,7 +68,11 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
             <span class="dropdown dropdownWrapper">
                 <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
                     <?php
-                    if($currentWiki !== false) $this->e($currentWiki->title); else $this->__('label.select_board'); ?>
+                    if ($currentWiki !== false) {
+                        $this->e($currentWiki->title);
+                    } else {
+                        $this->__('label.select_board');
+                    } ?>
                     <i class="fa fa-caret-down"></i>
                 </a>
 
@@ -86,7 +89,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                 </ul>
             </span>
-        <?php } ?>
+         <?php } ?>
         </h1>
     </div>
 
@@ -120,8 +123,6 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
             <?php } ?>
 
             <?php if ($wikis != false && count($wikis) > 0) {?>
-
-
                 <div class="col-lg-12">
                     <div class="maincontentinner">
                     <?php
@@ -186,7 +187,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                                     <?php
                                     $tagsArray = explode(",", $currentArticle->tags);
-                                    if(count($tagsArray)>0){
+                                    if (count($tagsArray) > 0) {
                                         echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
                                     }
 

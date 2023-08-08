@@ -8,13 +8,9 @@ require('laravel-mix-eslint');
 
 require('dotenv').config({ path: 'config/.env' });
 
-const appUrlEnv = process.env.LEAN_APP_URL ?? '';
-const appUrl = appUrlEnv.match(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)(:[0-9]{4})?((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/) ?? '';
-const basePath = Array.isArray(appUrl) ? appUrl[0] : '';
-
 mix
     .setPublicPath('public/dist') // this is the URL to place assets referenced in the CSS/JS
-    .setResourceRoot(`${basePath}/dist`) // this is what to prefix the URL with
+    .setResourceRoot(`../`) // this is what to prefix the URL with
     .js('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .combine([
         "./public/assets/js/app/app.js",
@@ -110,6 +106,7 @@ mix
         "./public/assets/js/libs/uppy/uppy.js",
     ], `public/dist/js/compiled-extended-libs.${version}.min.js`)
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`)
+    .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`)
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
     .eslint({
