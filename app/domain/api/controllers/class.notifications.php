@@ -56,7 +56,7 @@ namespace leantime\domain\controllers {
         public function patch($params)
         {
             if (isset($params['action']) && $params['action'] == "read") {
-                $this->notificationService->markNotificationRead($params['id'], $_SESSION['userdata']['id']);
+                $this->notificationsService->markNotificationRead($params['id'], $_SESSION['userdata']['id']);
             }
         }
 

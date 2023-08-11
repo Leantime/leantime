@@ -1,22 +1,23 @@
 <?php
     defined('RESTRICTED') or die('Restricted access');
-    $ticket = $this->get("ticket");
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $ticket = $tpl->get("ticket");
 ?>
 
 <?php if ($ticket->type == "milestone") {?>
-    <h4 class="widgettitle title-light"><?=$this->__("headline.move_milestone"); ?> </h4>
+    <h4 class="widgettitle title-light"><?=$tpl->__("headline.move_milestone"); ?> </h4>
 <?php } else { ?>
-    <h4 class="widgettitle title-light"><?=$this->__("headline.move_todo"); ?> </h4>
+    <h4 class="widgettitle title-light"><?=$tpl->__("headline.move_todo"); ?> </h4>
 <?php } ?>
 
 
     <form method="post" action="<?=BASE_URL?>/tickets/moveTicket/<?=$ticket->id ?>" class="formModal">
-        <h3>#<?=$ticket->id ?> - <?=$this->escape($ticket->headline); ?></h3> <br />
+        <h3>#<?=$ticket->id ?> - <?=$tpl->escape($ticket->headline); ?></h3> <br />
         <p>
             <?php if ($ticket->type == "milestone") {?>
-                <?php echo $this->__('text.moving_milestones'); ?>
+                <?php echo $tpl->__('text.moving_milestones'); ?>
             <?php } else { ?>
-                <?php echo $this->__('text.moving'); ?>
+                <?php echo $tpl->__('text.moving'); ?>
             <?php } ?>
 
             <br /><br />
@@ -26,22 +27,22 @@
         <?php
         $i = 0;
         $lastClient = '';
-        foreach ($this->get('projects') as $projectRow) {
+        foreach ($tpl->get('projects') as $projectRow) {
             if ($lastClient != $projectRow['clientName']) {
                 $lastClient = $projectRow['clientName'];
                 if ($i > 1) {
                     echo"</optgroup>";
                 }
-                echo "<optgroup label='" . $this->escape($projectRow['clientName']) . "'> ";
+                echo "<optgroup label='" . $tpl->escape($projectRow['clientName']) . "'> ";
             }
-            echo "<option value='" . $projectRow["id"] . "'>" . $this->escape($projectRow["name"]) . "</option>";
+            echo "<option value='" . $projectRow["id"] . "'>" . $tpl->escape($projectRow["name"]) . "</option>";
             $i++;
         }
         ?>
         </select><br /><br /><br /><br />
         <br />
-        <input type="submit" value="<?php echo $this->__('buttons.move'); ?>" name="move" class="button" />
-        <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();"><?php echo $this->__('buttons.back'); ?></a>
+        <input type="submit" value="<?php echo $tpl->__('buttons.move'); ?>" name="move" class="button" />
+        <a class="pull-right" href="javascript:void(0);" onclick="jQuery.nmTop().close();"><?php echo $tpl->__('buttons.back'); ?></a>
         <div class="clearall"></div>
         <br />
     </form>

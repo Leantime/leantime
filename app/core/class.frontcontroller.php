@@ -200,7 +200,7 @@ class frontcontroller
     {
         if ($method == 'patch') {
             parse_str(file_get_contents("php://input"), $patch_vars);
-        } else if (! in_array($method, ['patch', 'post', 'delete', 'get'])) {
+        } elseif (! in_array($method, ['patch', 'post', 'delete', 'get'])) {
             error_log("Unexpected HTTP Method: " . $method);
         }
 

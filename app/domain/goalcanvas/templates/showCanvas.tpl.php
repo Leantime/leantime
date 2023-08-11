@@ -6,14 +6,18 @@
 
 defined('RESTRICTED') or die('Restricted access');
 
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 $canvasName = 'goal';
 $elementName = 'goal';
 
 ?>
 
-<?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
+<?php echo $tpl->viewFactory->make(
+    $tpl->getTemplatePath('canvas', 'delCanvasItem'),
+    array_merge($__data, ['canvasName' => 'goal'])
+)->render(); ?>
 
-    <?php if (count($this->get('allCanvas')) > 0) { ?>
+    <?php if (count($tpl->get('allCanvas')) > 0) { ?>
         <div id="sortableCanvasKanban" class="sortableTicketList disabled" style="padding-top:15px;">
             <div class="row">
                 <div class="col-md-12">
@@ -46,22 +50,22 @@ $elementName = 'goal';
                                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                                 &nbsp;&nbsp;&nbsp;
                                                 <ul class="dropdown-menu">
-                                                    <li class="nav-header"><?=$this->__("subtitles.edit"); ?></li>
+                                                    <li class="nav-header"><?=$tpl->__("subtitles.edit"); ?></li>
                                                     <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
                                                            class="<?=$canvasName ?>CanvasModal"
-                                                           data="item_<?php echo $row["id"];?>"> <?=$this->__("links.edit_canvas_item"); ?></a></li>
+                                                           data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.edit_canvas_item"); ?></a></li>
                                                     <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
                                                            class="delete <?=$canvasName ?>CanvasModal"
-                                                           data="item_<?php echo $row["id"];?>"> <?=$this->__("links.delete_canvas_item"); ?></a></li>
+                                                           data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.delete_canvas_item"); ?></a></li>
                                                 </ul>
                                             <?php } ?>
                                         </div>
 
                                         <h4><strong>Goal:</strong> <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
                                                class="<?=$canvasName ?>CanvasModal"
-                                               data="item_<?=$row['id'] ?>"><?php $this->e($row['title']);?></a></h4>
+                                               data="item_<?=$row['id'] ?>"><?php $tpl->e($row['title']);?></a></h4>
                                         <br />
-                                        <strong>Metric:</strong> <?=$this->escape($row["description"]) ?>
+                                        <strong>Metric:</strong> <?=$tpl->escape($row["description"]) ?>
                                         <br /><br />
 
 
@@ -75,7 +79,7 @@ $elementName = 'goal';
                                         if ($row["metricType"] == "percent") {
                                             $metricTypeBack = '%';
                                         } elseif ($row["metricType"] == "currency") {
-                                            $metricTypeFront = $this->__("language.currency");
+                                            $metricTypeFront = $tpl->__("language.currency");
                                         }
 
                                         ?>
@@ -84,13 +88,13 @@ $elementName = 'goal';
                                             <div class="col-md-4"></div>
                                             <div class="col-md4 center">
 
-                                                <small><?=sprintf($this->__("text.percent_complete"), $percentDone); ?></small>
+                                                <small><?=sprintf($tpl->__("text.percent_complete"), $percentDone); ?></small>
                                             </div>
                                             <div class="col-md-4"></div>
                                         </div>
                                         <div class="progress" style="margin-bottom:0px;">
                                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percentDone; ?>%">
-                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $percentDone)?></span>
+                                                <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $percentDone)?></span>
                                             </div>
                                         </div>
                                         <div class="row" style="padding-bottom:0px;">
@@ -98,10 +102,10 @@ $elementName = 'goal';
                                                 <small>Start:<br /><?=$metricTypeFront . $row["startValue"] . $metricTypeBack ?></small>
                                             </div>
                                             <div class="col-md-4 center">
-                                                <small><?=$this->__('label.current') ?>:<br /><?=$metricTypeFront . $row["currentValue"] . $metricTypeBack ?></small>
+                                                <small><?=$tpl->__('label.current') ?>:<br /><?=$metricTypeFront . $row["currentValue"] . $metricTypeBack ?></small>
                                             </div>
                                             <div class="col-md-4" style="text-align:right">
-                                                <small><?=$this->__('label.goal') ?>:<br /><?=$metricTypeFront . $row["endValue"] . $metricTypeBack ?></small>
+                                                <small><?=$tpl->__('label.goal') ?>:<br /><?=$metricTypeFront . $row["endValue"] . $metricTypeBack ?></small>
                                             </div>
                                         </div>
 
@@ -116,7 +120,7 @@ $elementName = 'goal';
                                                                                                                               aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
-                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
+                                                    <li class="nav-header border"><?=$tpl->__("dropdown.choose_status")?></li>
                                                     <?php foreach ($statusLabels as $key => $data) { ?>
                                                         <?php if ($data['active'] || true) { ?>
                                                             <li class='dropdown-item'>
@@ -140,7 +144,7 @@ $elementName = 'goal';
                                                                                                                                 aria-hidden="true"></i>
                                                 </a>
                                                 <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink<?=$row['id']?>">
-                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_relates")?></li>
+                                                    <li class="nav-header border"><?=$tpl->__("dropdown.choose_relates")?></li>
                                                     <?php foreach ($relatesLabels as $key => $data) { ?>
                                                         <?php if ($data['active'] || true) { ?>
                                                             <li class='dropdown-item'>
@@ -172,22 +176,22 @@ $elementName = 'goal';
                                                 </span>
                                             </a>
                                             <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
-                                                <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
-                                                    <?php foreach ($this->get('users') as $user) {
+                                                <li class="nav-header border"><?=$tpl->__("dropdown.choose_user")?></li>
+                                                    <?php foreach ($tpl->get('users') as $user) {
                                                         echo "<li class='dropdown-item'>" .
                                                         "<a href='javascript:void(0);' data-label='" .
                                                         sprintf(
-                                                            $this->__("text.full_name"),
-                                                            $this->escape($user["firstname"]),
-                                                            $this->escape($user['lastname'])
+                                                            $tpl->__("text.full_name"),
+                                                            $tpl->escape($user["firstname"]),
+                                                            $tpl->escape($user['lastname'])
                                                         ) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" .
                                                         $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" .
                                                         BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' " .
                                                         "style='vertical-align: middle; margin-right:5px;'/>" .
                                                         sprintf(
-                                                            $this->__("text.full_name"),
-                                                            $this->escape($user["firstname"]),
-                                                            $this->escape($user['lastname'])
+                                                            $tpl->__("text.full_name"),
+                                                            $tpl->escape($user["firstname"]),
+                                                            $tpl->escape($user['lastname'])
                                                         ) . "</a>";
                                                         echo"</li>";
                                                     }?>
@@ -209,10 +213,10 @@ $elementName = 'goal';
                                         <div class="row">
                                             <div class="col-md-5" >
                                                 <?php strlen($row['milestoneHeadline']) > 60 ?
-                                                    $this->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") :  $this->e($row['milestoneHeadline']); ?>
+                                                    $tpl->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") :  $tpl->e($row['milestoneHeadline']); ?>
                                             </div>
                                             <div class="col-md-7" style="text-align:right">
-                                                <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
+                                                <?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -221,7 +225,7 @@ $elementName = 'goal';
                                                     <div class="progress-bar progress-bar-success" role="progressbar"
                                                          aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100"
                                                          style="width: <?php echo $row['percentDone']; ?>%">
-                                                        <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
+                                                        <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -248,8 +252,8 @@ $elementName = 'goal';
                     echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                     echo "</div>";
 
-                echo"<h3>" . $this->__("headlines.goal.analysis") . "</h3>";
-                echo "<br />" . $this->__("text.goal.helper_content");
+                echo"<h3>" . $tpl->__("headlines.goal.analysis") . "</h3>";
+                echo "<br />" . $tpl->__("text.goal.helper_content");
 
 
                 echo"</div>";
@@ -259,4 +263,7 @@ $elementName = 'goal';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require($this->getTemplatePath('canvas', 'showCanvasBottom.inc.php')); ?>
+<?php echo $tpl->viewFactory->make(
+    $tpl->getTemplatePath('canvas', 'showCanvasBottom'),
+    array_merge($__data, ['canvasName' => 'goal'])
+)->render(); ?>

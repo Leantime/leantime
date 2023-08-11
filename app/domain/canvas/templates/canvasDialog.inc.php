@@ -8,14 +8,14 @@
  */
 
 defined('RESTRICTED') or die('Restricted access');
-
-$canvasItem = $this->get('canvasItem');
-$canvasTypes = $this->get('canvasTypes');
-$hiddenStatusLabels = $this->get('statusLabels');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$canvasItem = $tpl->get('canvasItem');
+$canvasTypes = $tpl->get('canvasTypes');
+$hiddenStatusLabels = $tpl->get('statusLabels');
 $statusLabels = $statusLabels ?? $hiddenStatusLabels;
-$hiddenRelatesLabels = $this->get('relatesLabels');
+$hiddenRelatesLabels = $tpl->get('relatesLabels');
 $relatesLabels = $relatesLabels ?? $hiddenRelatesLabels;
-$dataLabels = $this->get('dataLabels');
+$dataLabels = $tpl->get('dataLabels');
 
 $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
@@ -36,19 +36,19 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
   <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
-    <?php echo $this->displayNotification(); ?>
+    <?php echo $tpl->displayNotification(); ?>
 
     <form class="<?=$canvasName ?>CanvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
-        <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
-        <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>
+        <input type="hidden" value="<?php echo $tpl->get('currentCanvas'); ?>" name="canvasId" />
+        <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
 
-        <label><?=$this->__("label.description") ?></label>
-        <input type="text" name="description" value="<?php $this->e($canvasItem['description']) ?>" style="width:100%" /><br />
+        <label><?=$tpl->__("label.description") ?></label>
+        <input type="text" name="description" value="<?php $tpl->e($canvasItem['description']) ?>" style="width:100%" /><br />
 
         <?php if (!empty($statusLabels)) { ?>
-            <label><?=$this->__("label.status") ?></label>
+            <label><?=$tpl->__("label.status") ?></label>
             <select name="status" style="width: 50%" id="statusCanvas">
             </select><br /><br />
         <?php } else { ?>
@@ -56,7 +56,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if (!empty($relatesLabels)) { ?>
-            <label><?=$this->__("label.relates") ?></label>
+            <label><?=$tpl->__("label.relates") ?></label>
             <select name="relates"  style="width: 50%" id="relatesCanvas">
             </select><br />
         <?php } else { ?>
@@ -64,7 +64,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if ($dataLabels[1]['active']) { ?>
-          <label><?=$this->__($dataLabels[1]['title']) ?></label>
+          <label><?=$tpl->__($dataLabels[1]['title']) ?></label>
             <?php if (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[1]['field'] ?>" value="<?=$canvasItem[$dataLabels[1]['field']] ?>"/><br />
             <?php } elseif (isset($dataLabels[1]['type']) && $dataLabels[1]['type'] == 'string') { ?>
@@ -77,7 +77,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if ($dataLabels[2]['active']) { ?>
-          <label><?=$this->__($dataLabels[2]['title']) ?></label>
+          <label><?=$tpl->__($dataLabels[2]['title']) ?></label>
             <?php if (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[2]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
             <?php } elseif (isset($dataLabels[2]['type']) && $dataLabels[2]['type'] == 'string') { ?>
@@ -90,7 +90,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } ?>
 
         <?php if ($dataLabels[3]['active']) { ?>
-          <label><?=$this->__($dataLabels[3]['title']) ?></label>
+          <label><?=$tpl->__($dataLabels[3]['title']) ?></label>
             <?php if (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'int') { ?>
                 <input type="number" name="<?=$dataLabels[3]['field'] ?>" value="<?=$canvasItem[$dataLabels[2]['field']] ?>"/><br />
             <?php } elseif (isset($dataLabels[3]['type']) && $dataLabels[3]['type'] == 'string') { ?>
@@ -107,30 +107,30 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <input type="hidden" name="changeItem" value="1" />
 
         <?php if ($id != '') {?>
-            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $this->__("links.delete") ?></a>
+            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $tpl->__("links.delete") ?></a>
         <?php } ?>
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            <input type="submit" value="<?=$this->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
-            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"><?=$this->__("buttons.save_and_close") ?></button>
+            <input type="submit" value="<?=$tpl->__("buttons.save") ?>" id="primaryCanvasSubmitButton"/>
+            <button type="submit" class="btn btn-default" value="closeModal" id="saveAndClose" onclick="leantime.<?=$canvasName ?>CanvasController.setCloseModal();"><?=$tpl->__("buttons.save_and_close") ?></button>
 
         <?php } ?>
 
         <?php if ($id !== '') { ?>
             <br /><br />
-            <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$this->__("headlines.attached_milestone") ?></h4>
+            <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$tpl->__("headlines.attached_milestone") ?></h4>
 
             <ul class="sortableTicketList" style="width: 100%">
 
             <?php if ($canvasItem['milestoneId'] == '') {?>
                 <li class="ui-state-default center" id="milestone_0">
-                    <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
+                    <h4><?=$tpl->__("headlines.no_milestone_attached") ?></h4>
                         <div class="row" id="milestoneSelectors">
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
-                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$this->__("links.create_attach_milestone") ?></a>
-                                <?php if (count($this->get('milestones')) > 0) { ?>
-                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$this->__("links.attach_existing_milestone") ?></a>
+                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_attach_milestone") ?></a>
+                                <?php if (count($tpl->get('milestones')) > 0) { ?>
+                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.attach_existing_milestone") ?></a>
                                 <?php } ?>
                              </div>
                             <?php } ?>
@@ -140,16 +140,16 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 <input type="text" width="50%" name="newMilestone"></textarea><br />
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
-                                <input type="button" value="<?=$this->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$this->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                             </div>
                         </div>
 
                         <div class="row" id="existingMilestone" style="display:none;">
                             <div class="col-md-12">
-                                <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
+                                <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
                                     <option value=""></option>
-                                        <?php foreach ($this->get('milestones') as $milestoneRow) { ?>
+                                        <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
                                             <?php echo"<option value='" . $milestoneRow->id . "'";
 
                                             if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
@@ -162,8 +162,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                 </select>
                                 <input type="hidden" name="type" value="milestone" />
                                 <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
-                                <input type="button" value="<?=$this->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                <input type="button" value="<?=$this->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                                <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                             </div>
                         </div>
 
@@ -171,10 +171,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 <?php
             } else {
                 if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
-                    $date = $this->__("text.no_date_defined");
+                    $date = $tpl->__("text.no_date_defined");
                 } else {
                     $date = new DateTime($canvasItem['milestoneEditTo']);
-                    $date = $date->format($this->__("language.dateformat"));
+                    $date = $date->format($tpl->__("language.dateformat"));
                 }
 
                 ?>
@@ -184,27 +184,27 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php $this->e($canvasItem['milestoneHeadline']); ?></a></strong>
+                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php $tpl->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
+                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
                                 </div>
                             </div>
                             <div class="row">
 
                                 <div class="col-md-7">
-                                    <?=$this->__("label.due") ?>
+                                    <?=$tpl->__("label.due") ?>
                                     <?php echo $date; ?>
                                 </div>
                                 <div class="col-md-5" style="text-align:right">
-                                    <?=sprintf($this->__("text.percent_complete"), $canvasItem['percentDone'])?>
+                                    <?=sprintf($tpl->__("text.percent_complete"), $canvasItem['percentDone'])?>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="progress">
                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $canvasItem['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $canvasItem['percentDone']; ?>%">
-                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $canvasItem['percentDone'])?></span>
+                                            <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $canvasItem['percentDone'])?></span>
                                         </div>
                                     </div>
                                 </div>
@@ -222,10 +222,10 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     <?php if ($id !== '') { ?>
         <br />
         <input type="hidden" name="comment" value="1" />
-        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
+        <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
         <?php
-        $this->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/" . $id . "");
-        $this->displaySubmodule('comments-generalComment');?>
+        $tpl->assign("formUrl", "/<?=$canvasName ?>canvas/editCanvasItem/" . $id . "");
+        $tpl->displaySubmodule('comments-generalComment');?>
     <?php } ?>
 </div>
 

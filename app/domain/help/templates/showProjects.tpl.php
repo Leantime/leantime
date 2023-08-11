@@ -1,5 +1,6 @@
 <?php
-  $currentSprint = $this->get('sprint');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $currentSprint = $tpl->get('sprint');
 ?>
 
 <div class="center padding-lg">
@@ -10,7 +11,7 @@
                 <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_Organizing_projects_0p9a.svg");
                 echo"</div>";?><br />
             <h3 class="primaryColor"></h3><br />
-            <?php echo $this->__('text.show_projects_helper_content') ?>
+            <?php echo $tpl->__('text.show_projects_helper_content') ?>
             <br /><br />
         </div>
     </div>
@@ -19,8 +20,8 @@
     <div class="row">
         <div class="col-md-12">
 
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('showProjects')"><?php echo $this->__('links.close_dont_show_again') ?></a>
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('showProjects')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
         </div>
     </div>
 

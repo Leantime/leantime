@@ -1,18 +1,19 @@
 
 <?php
-$availableStrategyBoards = $this->get('availableStrategyBoards');
-$canvasProgress = $this->get('canvasProgress');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$availableStrategyBoards = $tpl->get('availableStrategyBoards');
+$canvasProgress = $tpl->get('canvasProgress');
 ?>
 
 
 <div class="pageheader">
     <div class="pageicon"><span class="fa-solid fa-chess"></span></div>
     <div class="pagetitle">
-        <h1><?=$this->__('headlines.blueprints') ?></h1>
+        <h1><?=$tpl->__('headlines.blueprints') ?></h1>
     </div>
 </div>
 
-<?php echo $this->displayNotification(); ?>
+<?php echo $tpl->displayNotification(); ?>
 
 <div class="maincontent">
 
@@ -21,19 +22,19 @@ $canvasProgress = $this->get('canvasProgress');
             <div class="maincontentinner">
                 <h5 class="subtitle">Jump right back in</h5>
                 <div class="row">
-                <?php foreach ($this->get('recentProgressCanvas') as $board) {?>
+                <?php foreach ($tpl->get('recentProgressCanvas') as $board) {?>
                     <div class="col-md-3">
                         <div class="profileBox">
                             <div class="commentImage icon">
                                 <i class="<?=$board['icon']?>"></i>
                             </div>
                             <span class="userName">
-                                    <small><?=$this->__($board['name']) ?> (<?=$board['count']?>)</small><br />
+                                    <small><?=$tpl->__($board['name']) ?> (<?=$board['count']?>)</small><br />
 
                                     <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas/" . $board['lastCanvasId']?>">
-                                        <?=$this->escape($board['lastTitle']) ?>
+                                        <?=$tpl->escape($board['lastTitle']) ?>
                                     </a><br />
-                                <small><?=$this->__('label.last_updated')?> <?=$this->getFormattedDateString($board['lastUpdate'])?> <?=$this->getFormattedTimeString($board['lastUpdate'])?></p>
+                                <small><?=$tpl->__('label.last_updated')?> <?=$tpl->getFormattedDateString($board['lastUpdate'])?> <?=$tpl->getFormattedTimeString($board['lastUpdate'])?></p>
                                 </small>
                                 </span>
                                <div class="clearall"></div>
@@ -46,26 +47,26 @@ $canvasProgress = $this->get('canvasProgress');
                             <br />
                             <div class="progress">
                                 <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percentDone; ?>%">
-                                    <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $percentDone)?></span>
+                                    <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $percentDone)?></span>
                                 </div>
                             </div>
-                            <?=sprintf($this->__("text.percent_complete"), $percentDone)?>
+                            <?=sprintf($tpl->__("text.percent_complete"), $percentDone)?>
 
 
                         </div>
                     </div>
                 <?php } ?>
 
-                <?php if (!is_array($this->get('recentProgressCanvas')) || count($this->get('recentProgressCanvas')) == 0) {
+                <?php if (!is_array($tpl->get('recentProgressCanvas')) || count($tpl->get('recentProgressCanvas')) == 0) {
                     echo "<div class='col-md-12'><br /><br /><div class='center'>";
 
                     echo "<div style='width:30%' class='svgContainer'>";
                     echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                     echo "</div>";
 
-                    echo"<h3>" . $this->__("headline.no_blueprints_yet") . "</h3>";
-                    echo "<br />" . $this->__("text.no_blueprints_yet");
-                    echo "<br /><a href='" . BASE_URL . "/valuecanvas/showCanvas' class='btn btn-primary'>" . $this->__("button.start_here_project_value") . "</a>";
+                    echo"<h3>" . $tpl->__("headline.no_blueprints_yet") . "</h3>";
+                    echo "<br />" . $tpl->__("text.no_blueprints_yet");
+                    echo "<br /><a href='" . BASE_URL . "/valuecanvas/showCanvas' class='btn btn-primary'>" . $tpl->__("button.start_here_project_value") . "</a>";
 
                     echo"</div></div>";
                 } ?>
@@ -78,19 +79,19 @@ $canvasProgress = $this->get('canvasProgress');
                 <?php
                 /*
 
-                if ($this->get('recentlyUpdatedCanvas') !== false && count($this->get('recentlyUpdatedCanvas')) > 0) { ?>
+                if ($tpl->get('recentlyUpdatedCanvas') !== false && count($tpl->get('recentlyUpdatedCanvas')) > 0) { ?>
                     <ul class="sortableTicketList" id="lastUpdatedCanvasList" >
-                        <?php foreach ($this->get('recentlyUpdatedCanvas') as $canvas) { ?>
+                        <?php foreach ($tpl->get('recentlyUpdatedCanvas') as $canvas) { ?>
                             <li style="margin-bottom:10px;">
 
                                 <div class="col-md-12 ticketBox fixed" style="padding:10px; margin-bottom:0px;">
-                                    <small><?=$this->__("label." . $canvas['type'])?></small><br />
+                                    <small><?=$tpl->__("label." . $canvas['type'])?></small><br />
                                     <h3>
                                         <a href="<?=BASE_URL?>/<?=$canvas['type'] ?>/showCanvas/<?=$canvas['id']?>">
-                                            <?php $this->e($canvas['title'])?>
+                                            <?php $tpl->e($canvas['title'])?>
                                         </a>
                                     </h3>
-                                    <p><?=$this->__('label.last_updated')?> <?=$this->getFormattedDateString($canvas['modified'])?> <?=$this->getFormattedTimeString($canvas['modified'])?></p>
+                                    <p><?=$tpl->__('label.last_updated')?> <?=$tpl->getFormattedDateString($canvas['modified'])?> <?=$tpl->getFormattedTimeString($canvas['modified'])?></p>
                                 </div>
 
                             </li>
@@ -103,8 +104,8 @@ $canvasProgress = $this->get('canvasProgress');
                     echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                     echo "</div>";
 
-                    echo"<h4>" . $this->__("headlines.so_empty") . "</h4>";
-                    echo "<br />" . $this->__("text.no_canvas");
+                    echo"<h4>" . $tpl->__("headlines.so_empty") . "</h4>";
+                    echo "<br />" . $tpl->__("text.no_canvas");
 
 
                     echo"</div>";
@@ -122,11 +123,11 @@ $canvasProgress = $this->get('canvasProgress');
                         <i class="fa fa-angle-down"></i> Templates
                     </a>
                 </h5>
-                <p style="padding-left:19px;"><?=$this->__('description.other_tools') ?></p>
+                <p style="padding-left:19px;"><?=$tpl->__('description.other_tools') ?></p>
                 <div id="accordion_other" class="row teamBox" style="padding-left:19px;">
 
 
-                    <?php foreach ($this->get('otherBoards') as $board) {
+                    <?php foreach ($tpl->get('otherBoards') as $board) {
                         if (!isset($board["visible"]) || $board["visible"] === 1) {
                             ?>
                         <div class="col-md-3">
@@ -136,10 +137,10 @@ $canvasProgress = $this->get('canvasProgress');
                                 </div>
                                 <span class="userName">
                             <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas" ?>">
-                                <?=$this->__($board['name']) ?>
+                                <?=$tpl->__($board['name']) ?>
                             </a>
                         </span>
-                                <?=$this->__($board['description']) ?>
+                                <?=$tpl->__($board['description']) ?>
                                 <div class="clearall"></div>
 
 

@@ -1,16 +1,17 @@
 <?php
-    $allProjects = $this->get('allProjects');
-    $clients = $this->get('clients');
-    $currentClient = $this->get("currentClient");
-    $currentClientName = $this->get("currentClientName");
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $allProjects = $tpl->get('allProjects');
+    $clients = $tpl->get('clients');
+    $currentClient = $tpl->get("currentClient");
+    $currentClientName = $tpl->get("currentClientName");
 ?>
 
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-briefcase"></span></div>
     <div class="pagetitle">
 
-        <h5><?php $this->__("headlines.projects"); ?></h5>
-        <h1><?php echo $this->__("headlines.my_portfolio"); ?>
+        <h5><?php $tpl->__("headlines.projects"); ?></h5>
+        <h1><?php echo $tpl->__("headlines.my_portfolio"); ?>
 
             <?php if (count($clients) > 0) {?>
                 //
@@ -18,18 +19,18 @@
                 <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
                     <?php
                     if ($currentClientName != '') {
-                        $this->e($currentClientName);
+                        $tpl->e($currentClientName);
                     } else {
-                        echo $this->__("headline.all_clients");
+                        echo $tpl->__("headline.all_clients");
                     }
                     ?>
                     <i class="fa fa-caret-down"></i>
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a href="<?=BASE_URL . "/projects/showMy" ?>"><?=$this->__("headline.all_clients"); ?></a></li>
+                    <li><a href="<?=BASE_URL . "/projects/showMy" ?>"><?=$tpl->__("headline.all_clients"); ?></a></li>
                     <?php foreach ($clients as $key => $value) {
-                        echo "<li><a href='" . BASE_URL . "/projects/showMy?client=" . $key . "'>" . $this->escape($value) . "</a></li>";
+                        echo "<li><a href='" . BASE_URL . "/projects/showMy?client=" . $key . "'>" . $tpl->escape($value) . "</a></li>";
                     }
                     ?>
                 </ul>
@@ -45,7 +46,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
             <div class="col-md-4">
@@ -57,11 +58,11 @@
             <div class="col-md-4">
                 <div class="pull-right">
                     <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
                         <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$this->__("menu.milestone_gantt") ?></a></li>
-                            <li class="active"><a href="<?=BASE_URL ?>/projects/showMy"><?=$this->__("menu.card_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$this->__("menu.table_view") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$tpl->__("menu.milestone_gantt") ?></a></li>
+                            <li class="active"><a href="<?=BASE_URL ?>/projects/showMy"><?=$tpl->__("menu.card_view") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$tpl->__("menu.table_view") ?></a></li>
                         </ul>
                     </div>
                 </div>
@@ -82,9 +83,9 @@
                     echo "<div class='col-md-12'><br /><br /><div class='center'>";
                     echo"<div style='width:30%' class='svgContainer'>";
                         echo file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg");
-                        echo $this->__('notifications.not_assigned_to_any_project');
+                        echo $tpl->__('notifications.not_assigned_to_any_project');
                     if ($login::userIsAtLeast($roles::$manager)) {
-                        echo"<br /><br /><a href='" . BASE_URL . "/projects/newProject' class='btn btn-primary'>" . $this->__('link.new_project') . "</a>";
+                        echo"<br /><br /><a href='" . BASE_URL . "/projects/newProject' class='btn btn-primary'>" . $tpl->__('link.new_project') . "</a>";
                     }
                         echo"</div></div>";
                 }?>
@@ -99,17 +100,17 @@
                                     <div class="projectAvatar">
                                         <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>"/>
                                     </div>
-                                    <small><?php $this->e($project['clientName'])?></small>
+                                    <small><?php $tpl->e($project['clientName'])?></small>
                                     <h4>
-                                        <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"><?php $this->e($project['name'])?></a>
+                                        <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"><?php $tpl->e($project['name'])?></a>
                                     </h4>
                                     </div>
                                     <div class="col-md-4" style="text-align:right">
                                         <?php if ($project['status'] !== null && $project['status'] != '') {?>
-                                            <span class="label label-<?php $this->e($project['status'])?>"><?=$this->__("label.project_status_" . $project['status']) ?></span><br />
+                                            <span class="label label-<?php $tpl->e($project['status'])?>"><?=$tpl->__("label.project_status_" . $project['status']) ?></span><br />
 
                                         <?php } else { ?>
-                                            <span class="label label-grey"><?=$this->__("label.no_status")?></span><br />
+                                            <span class="label label-grey"><?=$tpl->__("label.no_status")?></span><br />
                                         <?php } ?>
                                     </div>
                                 </div>
@@ -117,10 +118,10 @@
                                 <div class="row">
 
                                     <div class="col-md-7">
-                                        <?=$this->__("subtitles.project_progress") ?>
+                                        <?=$tpl->__("subtitles.project_progress") ?>
                                     </div>
                                     <div class="col-md-5" style="text-align:right">
-                                        <?=sprintf($this->__("text.percent_complete"), round($project['progress']['percent']))?>
+                                        <?=sprintf($tpl->__("text.percent_complete"), round($project['progress']['percent']))?>
                                     </div>
                                 </div>
                                 <div class="progress">
@@ -132,17 +133,17 @@
 
                                 <?php if ($project['lastUpdate'] !== false) {?>
                                     <div class="lastStatus">
-                                        <div class="commentStatus-<?=$this->escape($project['lastUpdate']['status']); ?>">
+                                        <div class="commentStatus-<?=$tpl->escape($project['lastUpdate']['status']); ?>">
                                             <h4 class="">
                                                 <?php printf(
-                                                    $this->__('text.report_written_on'),
-                                                    $this->getFormattedDateString($project['lastUpdate']['date']),
-                                                    $this->getFormattedTimeString($project['lastUpdate']['date'])
+                                                    $tpl->__('text.report_written_on'),
+                                                    $tpl->getFormattedDateString($project['lastUpdate']['date']),
+                                                    $tpl->getFormattedTimeString($project['lastUpdate']['date'])
                                                 ); ?>
 
                                             </h4>
 
-                                            <div class="text" id="commentText-<?=$project['lastUpdate']['id']?>"><?php echo $this->escapeMinimal($project['lastUpdate']['text']); ?></div>
+                                            <div class="text" id="commentText-<?=$project['lastUpdate']['id']?>"><?php echo $tpl->escapeMinimal($project['lastUpdate']['text']); ?></div>
 
                                         </div>
 
@@ -153,7 +154,7 @@
                             </div>
                         </div>
                         <div class="center">
-                            <a class="showMoreLink" href="javascript:void(0);"  onclick="jQuery('#moreInfo-<?=$project['id']?>').toggle('fast')"><?=$this->__("links.read_more") ?></a>
+                            <a class="showMoreLink" href="javascript:void(0);"  onclick="jQuery('#moreInfo-<?=$project['id']?>').toggle('fast')"><?=$tpl->__("links.read_more") ?></a>
 
                         </div>
                         <div id="moreInfo-<?=$project['id']?>" style="display:none;">
@@ -161,7 +162,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-6 border-bottom">
-                                            <h5><?=$this->__("label.open_todos") ?></h5>
+                                            <h5><?=$tpl->__("label.open_todos") ?></h5>
                                         </div>
                                         <div class="col-md-6 border-bottom">
                                             <?php
@@ -176,7 +177,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6 border-bottom">
-                                            <h5><?=$this->__("label.planned_hours") ?></h5>
+                                            <h5><?=$tpl->__("label.planned_hours") ?></h5>
                                         </div>
                                         <div class="col-md-6 border-bottom">
                                             <?php if ($project['report'] !== false && $project['report']['sum_planned_hours'] != null) {
@@ -189,7 +190,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6 border-bottom">
-                                            <h5><?=$this->__("label.estimated_hours_remaining") ?></h5>
+                                            <h5><?=$tpl->__("label.estimated_hours_remaining") ?></h5>
                                         </div>
                                         <div class="col-md-6 border-bottom">
                                             <?php if ($project['report'] !== false && $project['report']['sum_estremaining_hours'] != null) {
@@ -202,7 +203,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6 border-bottom">
-                                            <h5><?=$this->__("label.booked_hours") ?></h5>
+                                            <h5><?=$tpl->__("label.booked_hours") ?></h5>
                                         </div>
                                         <div class="col-md-6 border-bottom">
                                             <?php if ($project['report'] !== false && $project['report']['sum_logged_hours'] != null) {
@@ -219,12 +220,12 @@
 
                             <div class="row" id="milestoneProgressContainer">
                                 <div class="col-md-12">
-                                    <h5 class="subtitle" style="font-size:14px;"><?=$this->__("headline.milestones") ?></h5>
+                                    <h5 class="subtitle" style="font-size:14px;"><?=$tpl->__("headline.milestones") ?></h5>
                                     <ul class="sortableTicketList" >
                                         <?php
                                         if (count($project['milestones']) == 0) {
-                                            echo"<div class='center'><br /><h4>" . $this->__("headlines.no_milestones") . "</h4>
-                                            " . $this->__("text.milestones_help_organize_projects") . "<br /><br />";
+                                            echo"<div class='center'><br /><h4>" . $tpl->__("headlines.no_milestones") . "</h4>
+                                            " . $tpl->__("text.milestones_help_organize_projects") . "<br /><br />";
                                         }
                                         ?>
                                         <?php foreach ($project['milestones'] as $row) {
@@ -232,10 +233,10 @@
 
 
                                             if ($row->editTo == "0000-00-00 00:00:00") {
-                                                $date = $this->__("text.no_date_defined");
+                                                $date = $tpl->__("text.no_date_defined");
                                             } else {
                                                 $date = new DateTime($row->editTo);
-                                                $date = $date->format($this->__("language.dateformat"));
+                                                $date = $date->format($tpl->__("language.dateformat"));
                                             }
                                             if ($row->percentDone < 100 || $date >= new DateTime()) {
                                                 ?>
@@ -244,24 +245,24 @@
 
                                                         <div class="row">
                                                             <div class="col-md-12">
-                                                                <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
+                                                                <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $tpl->e($row->headline); ?></a></strong>
                                                             </div>
                                                         </div>
                                                         <div class="row">
 
                                                             <div class="col-md-7">
-                                                                <?=$this->__("label.due") ?>
+                                                                <?=$tpl->__("label.due") ?>
                                                                 <?php echo $date; ?>
                                                             </div>
                                                             <div class="col-md-5" style="text-align:right">
-                                                                <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
+                                                                <?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="progress">
                                                                     <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
-                                                                        <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
+                                                                        <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?></span>
                                                                     </div>
                                                                 </div>
                                                             </div>

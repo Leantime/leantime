@@ -4,5 +4,8 @@
  * Delete Item
  */
 
-$canvasName = 'insights';
-require($this->getTemplatePath('canvas', 'delCanvasItem.inc.php'));
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+echo $tpl->viewFactory->make(
+    $tpl->getTemplatePath('canvas', 'delCanvasItem'),
+    array_merge($__data, ['canvasName' => 'insights'])
+)->render();

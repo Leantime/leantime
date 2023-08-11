@@ -3,6 +3,8 @@
 /**
  * Dialog
  */
-
-$canvasName = 'cp';
-require($this->getTemplatePath('canvas', 'canvasDialog.inc.php'));
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+echo $tpl->viewFactory->make(
+    $tpl->getTemplatePath('canvas', 'canvasDialog'),
+    array_merge($__data, ['canvasName' => 'cp'])
+)->render();

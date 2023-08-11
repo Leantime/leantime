@@ -1,8 +1,8 @@
 <?php
 
 defined('RESTRICTED') or die('Restricted access');
-
-$values = $this->get('values');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$values = $tpl->get('values');
 ?>
 <script type="text/javascript">
 
@@ -54,16 +54,16 @@ $values = $this->get('values');
 </script>
 
 
-<?php echo $this->displayNotification() ?>
+<?php echo $tpl->displayNotification() ?>
 
-<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $this->__('headlines.edit_time'); ?></h4>
+<h4  class="widgettitle title-light"><span class="fa-regular fa-clock"></span> <?php echo $tpl->__('headlines.edit_time'); ?></h4>
 <form action="<?=BASE_URL?>/timesheets/editTime/<?=(int)$_GET['id']?>" method="post" class="editTimeModal">
 
-<label for="projects"><?php echo $this->__('label.project')?></label>
+<label for="projects"><?php echo $tpl->__('label.project')?></label>
 <select name="projects" id="projects" class="project-select">
-    <option value="all"><?php echo $this->__('headline.all_projects'); ?></option>
+    <option value="all"><?php echo $tpl->__('headline.all_projects'); ?></option>
 
-    <?php foreach ($this->get('allProjects') as $row) {
+    <?php foreach ($tpl->get('allProjects') as $row) {
         echo'<option value="' . $row['id'] . '"';
         if ($row['id'] == $values['project']) {
             echo' selected="selected" ';
@@ -75,10 +75,10 @@ $values = $this->get('values');
 </select> <br />
 
 <div id="ticketSelect">
-<label for="tickets"><?php echo $this->__('label.ticket')?></label>
+<label for="tickets"><?php echo $tpl->__('label.ticket')?></label>
 <select name="tickets" id="tickets" class="ticket-select">
 
-    <?php foreach ($this->get('allTickets') as $row) {
+    <?php foreach ($tpl->get('allTickets') as $row) {
         echo'<option class="project_' . $row['projectId'] . '" data-value="' . $row["projectId"] . '" value="' . $row['id'] . '"';
         if ($row['id'] == $values['ticket']) {
             echo' selected="selected" ';
@@ -88,26 +88,26 @@ $values = $this->get('values');
 
 </select> <br />
 </div>
-    <label for="kind"><?php echo $this->__('label.kind')?></label> <select id="kind"
+    <label for="kind"><?php echo $tpl->__('label.kind')?></label> <select id="kind"
     name="kind">
     <?php
-    foreach ($this->get('kind') as $key => $row) {
+    foreach ($tpl->get('kind') as $key => $row) {
         echo'<option value="' . $key . '"';
         if ($key == $values['kind']) {
             echo ' selected="selected"';
         }
-        echo'>' . $this->__($row) . '</option>';
+        echo'>' . $tpl->__($row) . '</option>';
     }
     ?>
 
 </select><br />
-<label for="date"><?php echo $this->__('label.date')?></label> <input type="text" autocomplete="off"
-    id="datepicker" name="date" value="<?php echo $this->getFormattedDateString($values['date']); ?>" size="7" />
+<label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
+    id="datepicker" name="date" value="<?php echo $tpl->getFormattedDateString($values['date']); ?>" size="7" />
 <br />
-<label for="hours"><?php echo $this->__('label.hours')?></label> <input
+<label for="hours"><?php echo $tpl->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"
     value="<?php echo $values['hours'] ?>" size="7" /> <br />
-<label for="description"><?php echo $this->__('label.description')?></label> <textarea
+<label for="description"><?php echo $tpl->__('label.description')?></label> <textarea
     rows="5" cols="50" id="description" name="description"><?php echo $values['description']; ?></textarea><br />
 
 
@@ -120,11 +120,11 @@ $values = $this->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-            <label for="invoicedEmpl"><?php echo $this->__('label.invoiced') ?></label>
+            <label for="invoicedEmpl"><?php echo $tpl->__('label.invoiced') ?></label>
 
-            <?php echo $this->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
+            <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
-                                                  value="<?php echo $this->getFormattedDateString($values['invoicedEmplDate']); ?>"
+                                                  value="<?php echo $tpl->getFormattedDateString($values['invoicedEmplDate']); ?>"
                                                   size="7"/><br/>
 
 
@@ -135,11 +135,11 @@ $values = $this->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-        <label for="invoicedComp"><?php echo $this->__('label.invoiced_comp') ?></label>
-        <?php echo $this->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
+        <label for="invoicedComp"><?php echo $tpl->__('label.invoiced_comp') ?></label>
+        <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
-                                                      value="<?php echo $this->getFormattedDateString($values['invoicedCompDate']); ?>"
+                                                      value="<?php echo $tpl->getFormattedDateString($values['invoicedCompDate']); ?>"
                                                       size="7"/><br/>
 
         <br/>
@@ -149,11 +149,11 @@ $values = $this->get('values');
                 echo ' checked="checked"';
             } ?> />
 
-        <label for="paid"><?php echo $this->__('label.paid') ?></label>
-        <?php echo $this->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
+        <label for="paid"><?php echo $tpl->__('label.paid') ?></label>
+        <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                           id="paidDate"
                                                           name="paidDate"
-                                                          value="<?php echo $this->getFormattedDateString($values['paidDate']); ?>"
+                                                          value="<?php echo $tpl->getFormattedDateString($values['paidDate']); ?>"
                                                           size="7"/><br/>
     <?php } ?>
 
@@ -161,9 +161,9 @@ $values = $this->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <?php echo $this->displayLink('timesheets.delTime', $this->__('links.delete'), array('id' => $_GET['id']), array('class' => 'delete editTimeModal pull-right')); ?>
+        <?php echo $tpl->displayLink('timesheets.delTime', $tpl->__('links.delete'), array('id' => $_GET['id']), array('class' => 'delete editTimeModal pull-right')); ?>
 
-        <input type="submit" value="<?php echo $this->__('buttons.save'); ?>" name="save" class="button" />
+        <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>
 

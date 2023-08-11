@@ -1,15 +1,14 @@
 <?php
-    $states = $this->get('states');
-    $projectProgress = $this->get('projectProgress');
-    $projectProgress = $this->get('projectProgress');
-    $sprintBurndown = $this->get('sprintBurndown');
-    $backlogBurndown = $this->get('backlogBurndown');
-    $efforts = $this->get('efforts');
-    $statusLabels = $this->get('statusLabels');
-    $fullReport = $this->get('fullReport');
-    $fullReportLatest = $this->get('fullReportLatest');
-
-
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $states = $tpl->get('states');
+    $projectProgress = $tpl->get('projectProgress');
+    $projectProgress = $tpl->get('projectProgress');
+    $sprintBurndown = $tpl->get('sprintBurndown');
+    $backlogBurndown = $tpl->get('backlogBurndown');
+    $efforts = $tpl->get('efforts');
+    $statusLabels = $tpl->get('statusLabels');
+    $fullReport = $tpl->get('fullReport');
+    $fullReportLatest = $tpl->get('fullReportLatest');
 ?>
 
 <div class="pageheader">
@@ -17,8 +16,8 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h5><?php $this->e($_SESSION["currentProjectClient"] . " // " . $_SESSION['currentProjectName']); ?></h5>
-                <h1><?php echo $this->__("headlines.reports"); ?></h1>
+                <h5><?php $tpl->e($_SESSION["currentProjectClient"] . " // " . $_SESSION['currentProjectName']); ?></h5>
+                <h1><?php echo $tpl->__("headlines.reports"); ?></h1>
             </div>
         </div>
     </div>
@@ -27,7 +26,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
             <div class="col-lg-8">
@@ -35,14 +34,14 @@
                 <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
 
-                            <h5 class="subtitle"><?=$this->__("subtitles.summary")?> <?php if ($fullReportLatest != false) {
-                                ?>(<?=$this->getFormattedDateString($fullReportLatest['date']) ?>)<?php
+                            <h5 class="subtitle"><?=$tpl->__("subtitles.summary")?> <?php if ($fullReportLatest != false) {
+                                ?>(<?=$tpl->getFormattedDateString($fullReportLatest['date']) ?>)<?php
                                                  } ?> </h5>
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="boxedHighlight">
 
-                                        <span class="headline"><?=$this->__("label.planned_hours")?></span>
+                                        <span class="headline"><?=$tpl->__("label.planned_hours")?></span>
                                         <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_planned_hours'] != null) {
                                             echo $fullReportLatest['sum_planned_hours'];
                                                             } else {
@@ -54,7 +53,7 @@
                                     <div class="boxedHighlight">
 
 
-                                        <span class="headline"><?=$this->__("label.estimated_hours_remaining")?></span>
+                                        <span class="headline"><?=$tpl->__("label.estimated_hours_remaining")?></span>
                                         <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_estremaining_hours'] != null) {
                                             echo $fullReportLatest['sum_estremaining_hours'];
                                                             } else {
@@ -66,7 +65,7 @@
                                     <div class="boxedHighlight">
 
 
-                                        <span class="headline"><?=$this->__("label.booked_hours")?></span>
+                                        <span class="headline"><?=$tpl->__("label.booked_hours")?></span>
                                         <span class="value"><?php if ($fullReportLatest !== false && $fullReportLatest['sum_logged_hours'] != null) {
                                             echo $fullReportLatest['sum_logged_hours'];
                                                             } else {
@@ -77,7 +76,7 @@
 
                                 <div class="col-md-3">
                                     <div class="boxedHighlight">
-                                        <span class="headline"><?=$this->__("label.open_todos")?></span>
+                                        <span class="headline"><?=$tpl->__("label.open_todos")?></span>
                                         <span class="value">
                                             <?php
                                             if ($fullReportLatest !== false) {
@@ -92,26 +91,26 @@
 
                             </div>
 
-                            <?php if ($this->get('allSprints') !== false) { ?>
-                                <h5 class="subtitle"><?=$this->__("subtitles.sprint_burndown")?></h5>
+                            <?php if ($tpl->get('allSprints') !== false) { ?>
+                                <h5 class="subtitle"><?=$tpl->__("subtitles.sprint_burndown")?></h5>
                                 <br />
                                 <span class="pull-left">
-                                <?php  if ($this->get('allSprints') !== false && count($this->get('allSprints'))  > 0) {?>
-                                    <select data-placeholder="<?=$this->__("input.placeholders.filter_by_sprint") ?>" title="<?=$this->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='<?=BASE_URL ?>/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
+                                <?php  if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints'))  > 0) {?>
+                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_sprint") ?>" title="<?=$tpl->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='<?=BASE_URL ?>/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
 
-                                        <option value="" ><?=$this->__("input.placeholders.filter_by_sprint") ?></option>
+                                        <option value="" ><?=$tpl->__("input.placeholders.filter_by_sprint") ?></option>
                                         <?php
                                         $dates = "";
-                                        foreach ($this->get('allSprints') as $sprintRow) {    ?>
+                                        foreach ($tpl->get('allSprints') as $sprintRow) {    ?>
                                             <?php echo"<option value='" . $sprintRow->id . "'";
 
-                                            if ($this->get("currentSprint") !== false && $sprintRow->id == $this->get("currentSprint")) {
+                                            if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint")) {
                                                 echo " selected='selected' ";
 
-                                                $dates = sprintf($this->__("label.date_from_date_to"), $this->getFormattedDateString($sprintRow->startDate), $this->getFormattedDateString($sprintRow->endDate));
+                                                $dates = sprintf($tpl->__("label.date_from_date_to"), $tpl->getFormattedDateString($sprintRow->startDate), $tpl->getFormattedDateString($sprintRow->endDate));
                                             }
                                             echo ">";
-                                            $this->e($sprintRow->name);
+                                            $tpl->e($sprintRow->name);
                                             echo "</option>";
                                             ?>
 
@@ -122,9 +121,9 @@
 
                                 <div class="pull-right">
                                     <div class="btn-group mt-1 mx-auto" role="group">
-                                        <a href="javascript:void(0)" id="NumChartButtonSprint" class="btn btn-sm btn-secondary active chartButtons"><?=$this->__("label.num_tickets")?></a>
-                                        <a href="javascript:void(0)" id="EffortChartButtonSprint" class="btn btn-sm btn-secondary chartButtons"><?=$this->__("label.effort")?></a>
-                                        <a href="javascript:void(0)" id="HourlyChartButtonSprint" class="btn btn-sm btn-secondary chartButtons"><?=$this->__("label.hours")?></a>
+                                        <a href="javascript:void(0)" id="NumChartButtonSprint" class="btn btn-sm btn-secondary active chartButtons"><?=$tpl->__("label.num_tickets")?></a>
+                                        <a href="javascript:void(0)" id="EffortChartButtonSprint" class="btn btn-sm btn-secondary chartButtons"><?=$tpl->__("label.effort")?></a>
+                                        <a href="javascript:void(0)" id="HourlyChartButtonSprint" class="btn btn-sm btn-secondary chartButtons"><?=$tpl->__("label.hours")?></a>
                                     </div>
 
                                 </div>
@@ -139,13 +138,13 @@
                         <div class="clearall"></div>
                         <br />
                         <br />
-                        <h5 class="subtitle"><?=$this->__("subtitles.cummulative_flow")?></h5>
+                        <h5 class="subtitle"><?=$tpl->__("subtitles.cummulative_flow")?></h5>
 
                         <div class="pull-right">
                             <div class="btn-group mt-1 mx-auto" role="group">
-                                <a href="javascript:void(0)" id="NumChartButtonBacklog" class="btn btn-sm btn-secondary active backlogChartButtons"><?=$this->__("label.num_tickets")?></a>
-                                <a href="javascript:void(0)" id="EffortChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons"><?=$this->__("label.effort")?></a>
-                                <a href="javascript:void(0)" id="HourlyChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons"><?=$this->__("label.hours")?></a>
+                                <a href="javascript:void(0)" id="NumChartButtonBacklog" class="btn btn-sm btn-secondary active backlogChartButtons"><?=$tpl->__("label.num_tickets")?></a>
+                                <a href="javascript:void(0)" id="EffortChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons"><?=$tpl->__("label.effort")?></a>
+                                <a href="javascript:void(0)" id="HourlyChartButtonBacklog" class="btn btn-sm btn-secondary backlogChartButtons"><?=$tpl->__("label.hours")?></a>
                             </div>
 
                         </div>
@@ -166,7 +165,7 @@
                 <div class="row" id="projectProgressContainer">
                     <div class="col-md-12">
 
-                        <h5 class="subtitle"><?=$this->__("subtitles.project_progress")?></h5>
+                        <h5 class="subtitle"><?=$tpl->__("subtitles.project_progress")?></h5>
 
                         <div id="canvas-holder" style="width:100%; height:250px;">
                             <canvas id="chart-area" ></canvas>
@@ -176,20 +175,20 @@
                 </div>
                 <div class="row" id="milestoneProgressContainer">
                     <div class="col-md-12">
-                        <h5 class="subtitle"><?=$this->__("headline.milestones") ?></h5>
+                        <h5 class="subtitle"><?=$tpl->__("headline.milestones") ?></h5>
                         <ul class="sortableTicketList" >
                             <?php
-                            if (count($this->get('milestones')) == 0) {
-                                echo"<div class='center'><br /><h4>" . $this->__("headlines.no_milestones") . "</h4>
-                                " . $this->__("text.milestones_help_organize_projects") . "<br /><br /><a href='" . BASE_URL . "/tickets/roadmap'>" . $this->__("links.goto_milestones") . "</a>";
+                            if (count($tpl->get('milestones')) == 0) {
+                                echo"<div class='center'><br /><h4>" . $tpl->__("headlines.no_milestones") . "</h4>
+                                " . $tpl->__("text.milestones_help_organize_projects") . "<br /><br /><a href='" . BASE_URL . "/tickets/roadmap'>" . $tpl->__("links.goto_milestones") . "</a>";
                             }
                             ?>
-                            <?php foreach ($this->get('milestones') as $row) {
+                            <?php foreach ($tpl->get('milestones') as $row) {
                                 if ($row->editTo == "0000-00-00 00:00:00") {
-                                    $date = $this->__("text.no_date_defined");
+                                    $date = $tpl->__("text.no_date_defined");
                                 } else {
                                     $date = new DateTime($row->editTo);
-                                    $date = $date->format($this->__("language.dateformat"));
+                                    $date = $date->format($tpl->__("language.dateformat"));
                                 }
 
                                 ?>
@@ -198,24 +197,24 @@
 
                                             <div class="row">
                                                 <div class="col-md-12">
-                                                    <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $this->e($row->headline); ?></a></strong>
+                                                    <strong><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id;?>" class="milestoneModal"><?php $tpl->e($row->headline); ?></a></strong>
                                                 </div>
                                             </div>
                                             <div class="row">
 
                                                 <div class="col-md-7">
-                                                    <?=$this->__("label.due") ?>
+                                                    <?=$tpl->__("label.due") ?>
                                                     <?php echo $date; ?>
                                                 </div>
                                                 <div class="col-md-5" style="text-align:right">
-                                                    <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
+                                                    <?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12">
                                                     <div class="progress">
                                                         <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
-                                                            <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
+                                                            <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -255,21 +254,21 @@
         echo "'" . $value['actualNum'] . "',";
     }
                                                                                 }  ?> ]);
-           leantime.dashboardController.initChartButtonClick('HourlyChartButtonSprint', '<?=$this->__('label.hours') ?>', [<?php foreach ($sprintBurndown as $value) {
+           leantime.dashboardController.initChartButtonClick('HourlyChartButtonSprint', '<?=$tpl->__('label.hours') ?>', [<?php foreach ($sprintBurndown as $value) {
                 echo "'" . $value['plannedHours'] . "',";
                                                                                          } ?>], [ <?php foreach ($sprintBurndown as $value) {
     if ($value['actualHours'] !== '') {
         echo "'" . round($value['actualHours']) . "',";
     }
                                                                                          }  ?> ], sprintBurndownChart);
-           leantime.dashboardController.initChartButtonClick('EffortChartButtonSprint', '<?=$this->__('label.effort') ?>', [<?php foreach ($sprintBurndown as $value) {
+           leantime.dashboardController.initChartButtonClick('EffortChartButtonSprint', '<?=$tpl->__('label.effort') ?>', [<?php foreach ($sprintBurndown as $value) {
                 echo "'" . $value['plannedEffort'] . "',";
                                                                                          } ?>], [ <?php foreach ($sprintBurndown as $value) {
     if ($value['actualEffort'] !== '') {
         echo "'" . $value['actualEffort'] . "',";
     }
                                                                                          }  ?> ], sprintBurndownChart);
-           leantime.dashboardController.initChartButtonClick('NumChartButtonSprint', '<?=$this->__('label.num_tickets') ?>', [<?php foreach ($sprintBurndown as $value) {
+           leantime.dashboardController.initChartButtonClick('NumChartButtonSprint', '<?=$tpl->__('label.num_tickets') ?>', [<?php foreach ($sprintBurndown as $value) {
                 echo "'" . $value['plannedNum'] . "',";
                                                                                       } ?>], [ <?php foreach ($sprintBurndown as $value) {
     if ($value['actualNum'] !== '') {
@@ -331,7 +330,7 @@
 
             <?php
 
-            echo " 
+            echo "
            statusBurnupEffort['open'] = {
                         'label': 'Open',
                         'data':
@@ -343,7 +342,7 @@
             }
             echo"]};";
 
-            echo " 
+            echo "
            statusBurnupEffort['progress'] = {
                                 'label': 'Progress',
                                 'data':
@@ -355,7 +354,7 @@
             }
             echo"]};";
 
-            echo " 
+            echo "
            statusBurnupEffort['done'] = {
                                         'label': 'Done',
                                         'data':
@@ -373,7 +372,7 @@
 
             <?php
 
-            echo " 
+            echo "
        statusBurnupHours['open'] = {
                         'label': 'Open',
                         'data':
@@ -385,7 +384,7 @@
             }
             echo"]};";
 
-            echo " 
+            echo "
        statusBurnupHours['progress'] = {
                                 'label': 'Progress',
                                 'data':
@@ -397,7 +396,7 @@
             }
             echo"]};";
 
-            echo " 
+            echo "
        statusBurnupHours['done'] = {
                                         'label': 'Done',
                                         'data':
@@ -411,9 +410,9 @@
 
             ?>
 
-           leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButtonBacklog', statusBurnupHours, '<?=$this->__('label.hours') ?>', backlogBurndown);
-           leantime.dashboardController.initBacklogChartButtonClick('EffortChartButtonBacklog', statusBurnupEffort, '<?=$this->__('label.effort') ?>', backlogBurndown);
-           leantime.dashboardController.initBacklogChartButtonClick('NumChartButtonBacklog', statusBurnupNum, '<?=$this->__('label.num_tickets') ?>', backlogBurndown);
+           leantime.dashboardController.initBacklogChartButtonClick('HourlyChartButtonBacklog', statusBurnupHours, '<?=$tpl->__('label.hours') ?>', backlogBurndown);
+           leantime.dashboardController.initBacklogChartButtonClick('EffortChartButtonBacklog', statusBurnupEffort, '<?=$tpl->__('label.effort') ?>', backlogBurndown);
+           leantime.dashboardController.initBacklogChartButtonClick('NumChartButtonBacklog', statusBurnupNum, '<?=$tpl->__('label.num_tickets') ?>', backlogBurndown);
 
        <?php } ?>
 
