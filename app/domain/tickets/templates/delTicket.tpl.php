@@ -11,7 +11,7 @@
         <h1><?php echo $this->__('headline.delete_ticket'); ?>: <?= $this->e($ticket->headline);?></h1>
     </div>
 </div><!--pageheader-->
-        
+
 <div class="maincontent">
     <div class="maincontentinner">
 
@@ -20,7 +20,7 @@
             <form method="post">
                 <p><?php echo $this->__('text.confirm_ticket_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $this->__('buttons.yes_delete'); ?>" name="del" class="button" />
-                <a class="btn btn-primary" href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>"><?php echo $this->__('buttons.back'); ?></a>
+                <a class="btn btn-primary" href="#/tickets/showTicket/<?php echo $ticket->id ?>"><?php echo $this->__('buttons.back'); ?></a>
             </form>
         </div>
     </div>

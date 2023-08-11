@@ -39,7 +39,7 @@ if (is_array($currentLink)) {
             ?>
             <ul class="dropdown-menu">
                 <li>
-                    <a href='<?=BASE_URL ?>/tickets/showTicket/<?php $this->e($this->get('onTheClock')['id']); ?>'>
+                    <a href='#/tickets/showTicket/<?php $this->e($this->get('onTheClock')['id']); ?>'>
                         <?=$this->__("links.view_todo")?>
                     </a>
                 </li>

@@ -180,6 +180,14 @@ $settingsLink = $this->dispatchTplFilter('settingsLink', $settingsLink, array("t
 <?php } ?>
 
 <script>
+    jQuery(document).ready(
+        function () {
+            leantime.menuController.initProjectSelector();
+            leantime.menuController.initLeftMenuHamburgerButton();
+            leantime.menuController.initProjectSelectorToggle();
+        }
+    );
+
     jQuery('.projectSelectorTabs').tabs();
 
     let clientId = <?= $this->get('currentClient') != '' ? $this->get('currentClient') : '-1' ?>;

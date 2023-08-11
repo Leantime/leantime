@@ -15,10 +15,10 @@ mix
     .js('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .combine([
         "./public/assets/js/app/app.js",
+        "./public/assets/js/app/core/editors.js",
+        "./public/assets/js/app/core/snippets.js",
         "./public/assets/js/app/core/modals.js",
-        "./public/assets/js/app/core/custom.js",
         "./public/assets/js/app/core/tableHandling.js",
-        "./public/assets/js/app/core/wysiwyg.js",
         ...[
             ...glob.sync("./app/domain/**/*.js"),
             ...glob.sync("./custom/domain/**/*.js"),
@@ -28,32 +28,43 @@ mix
     ], `public/dist/js/compiled-app.${version}.min.js`)
     .combine([
         "./node_modules/jquery/dist/jquery.min.js",
-        "./node_modules/jquery-migrate/dist/jquery-migrate.min.js",
         "./node_modules/jquery-ui-dist/jquery-ui.js",
         "./node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
+        "./node_modules/chosen-js/chosen.jquery.js",
+        "./public/assets/js/libs/jquery.growl.js",
+        "./public/assets/js/libs/jquery.form.js",
+        "./public/assets/js/libs/jquery.tagsinput.min.js",
+
+        "./public/assets/js/libs/bootstrap.min.js",
+        //"./public/assets/js/libs/bootstrap-timepicker.min.js",
+        "./public/assets/js/libs/bootstrap-fileupload.min.js",
+
+
+    ], `public/dist/js/compiled-frameworks.${version}.min.js`)
+    .combine([
         "./node_modules/moment/moment.js",
         "./node_modules/js-cookie/dist/js.cookie.js",
         "./node_modules/@popperjs/core/dist/umd/popper.js",
         "./node_modules/tippy.js/dist/tippy-bundle.umd.js",
-        "./node_modules/chosen-js/chosen.jquery.js",
-        "./public/assets/js/libs/bootstrap.min.js",
-        //"./public/assets/js/libs/bootstrap-timepicker.min.js",
-        "./public/assets/js/libs/bootstrap-fileupload.min.js",
-        "./public/assets/js/libs/jquery.growl.js",
         "./public/assets/js/libs/slimselect.min.js",
-        "./public/assets/js/libs/jquery.form.js",
-        "./public/assets/js/libs/jquery.tagsinput.min.js",
         "./public/assets/js/libs/confetti/js/confetti.js",
-        "./node_modules/fullcalendar/index.global.min.js",
-    ], `public/dist/js/compiled-base-libs.${version}.min.js`)
-    .combine([
+        "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
+        "./public/assets/js/libs/uppy/uppy.js",
         "./node_modules/croppie/croppie.js",
-        "./node_modules/chart.js/dist/chart.js",
-        "./node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",
         "./node_modules/packery/dist/packery.pkgd.js",
         "./node_modules/imagesloaded/imagesloaded.pkgd.js",
         "./node_modules/tether-shepherd/dist/js/tether.js",
         "./node_modules/tether-shepherd/dist/js/shepherd.js",
+        "./node_modules/isotope-layout/dist/isotope.pkgd.js",
+        "./node_modules/jstree/dist/jstree.js",
+        "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
+        "./node_modules/leader-line/leader-line.min.js",
+        "./public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
+    ], `public/dist/js/compiled-global-component.${version}.min.js`)
+    .combine([
+        "./node_modules/fullcalendar/index.global.min.js",
+    ], `public/dist/js/compiled-calendar-component.${version}.min.js`)
+    .combine([
         "./node_modules/datatables.net/js/jquery.dataTables.js",
         "./node_modules/datatables.net-rowgroup/js/dataTables.rowGroup.js",
         "./node_modules/datatables.net-rowreorder/js/dataTables.rowReorder.js",
@@ -61,6 +72,8 @@ mix
         "./node_modules/datatables.net-buttons/js/buttons.html5.js",
         "./node_modules/datatables.net-buttons/js/buttons.print.js",
         "./node_modules/datatables.net-buttons/js/buttons.colVis.js",
+    ], `public/dist/js/compiled-table-component.${version}.min.js`)
+    .combine([
         "./node_modules/tinymce/tinymce.js",
         "./node_modules/tinymce/icons/default/icons.js",
         "./node_modules/tinymce/jquery.tinymce.js",
@@ -85,10 +98,6 @@ mix
         "./node_modules/tinymce/plugins/advlist/plugin.js",
         "./node_modules/tinymce/plugins/autoresize/plugin.js",
         "./node_modules/tinymce/plugins/codesample/plugin.js",
-        "./node_modules/isotope-layout/dist/isotope.pkgd.js",
-        "./node_modules/jstree/dist/jstree.js",
-        "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
-        "./node_modules/leader-line/leader-line.min.js",
         "./public/assets/js/libs/tinymce-plugins/helper.js",
         "./public/assets/js/libs/tinymce-plugins/checklist/index.js",
         "./public/assets/js/libs/tinymce-plugins/shortlink/index.js",
@@ -99,13 +108,18 @@ mix
         "./public/assets/js/libs/tinymce-plugins/slashcommands/slashcommands.js",
         "./public/assets/js/libs/tinymce-plugins/mention/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/advancedTemplate/plugin.js",
-        "./public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
-        "./public/assets/js/libs/simpleGantt/moment.min.js",
+    ], `public/dist/js/compiled-editor-component.${version}.min.js`)
+    .combine([
         "./public/assets/js/libs/simpleGantt/snap.svg-min.js",
         "./public/assets/js/libs/simpleGantt/frappe-gantt.min.js",
-        "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
-        "./public/assets/js/libs/uppy/uppy.js",
-    ], `public/dist/js/compiled-extended-libs.${version}.min.js`)
+
+    ], `public/dist/js/compiled-gantt-component.${version}.min.js`)
+    .combine([
+        "./node_modules/chart.js/dist/chart.js",
+        "./node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",
+
+    ], `public/dist/js/compiled-chart-component.${version}.min.js`)
+
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
         sourceMap: true,
     })

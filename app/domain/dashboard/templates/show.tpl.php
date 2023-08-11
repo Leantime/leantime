@@ -51,7 +51,7 @@
                         <a class="dropdown-toggle btn" data-toggle="dropdown" data-tippy-content="<?=$this->__('label.copy_url_tooltip') ?>" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
                         <div class="dropdown-menu padding-md">
                             <input type="text" id="projectUrl" value="<?=BASE_URL?>/projects/changeCurrentProject/<?=$project['id']; ?>" />
-                            <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('projectUrl');"><?=$this->__('links.copy_url') ?></button>
+                            <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl');"><?=$this->__('links.copy_url') ?></button>
                         </div>
                     </div>
 
@@ -210,9 +210,9 @@
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
-                                                        <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
-                                                        <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/dashboard/show#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/dashboard/show#/tickets/moveTicket/<?php echo $row["id"]; ?>" ><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
+                                                        <li><a href="<?=BASE_URL ?>/dashboard/show#/tickets/delTicket/<?php echo $row["id"]; ?>" ><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                                         <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                         <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                             <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
@@ -563,7 +563,7 @@
 
                         <script type='text/javascript'>
 
-                            leantime.generalController.initSimpleEditor();
+                            leantime.editorController.initSimpleEditor();
 
                             function toggleCommentBoxes(id) {
 
@@ -578,7 +578,7 @@
                                 jQuery('.commentBox').hide('fast', function () {});
 
                                 jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-                                leantime.generalController.initSimpleEditor();
+                                leantime.editorController.initSimpleEditor();
 
                                 jQuery('#comment' + id + '').show('fast');
                                 jQuery('#father').val(id);
@@ -754,9 +754,6 @@
         });
 
 
-
-        leantime.ticketsController.initModals();
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.dashboardController.prepareHiddenDueDate();
             leantime.ticketsController.initEffortDropdown();
@@ -766,7 +763,7 @@
             leantime.usersController.initUserEditModal();
 
         <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
 
         <?php } ?>
 

@@ -519,7 +519,7 @@ namespace leantime\domain\services {
 
             if ($result > 0) {
                 $values['id'] = $result;
-                $actual_link = BASE_URL . "/tickets/showTicket/" . $result;
+                $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $result;
                 $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION["userdata"]["name"], $params['headline']);
                 $subject = $this->language->__("email_notifications.new_todo_subject");
 
@@ -646,7 +646,7 @@ namespace leantime\domain\services {
                 if ($addTicketResponse !== false) {
                     $values["id"] = $addTicketResponse;
                     $subject = sprintf($this->language->__("email_notifications.new_todo_subject"), $addTicketResponse, $values['headline']);
-                    $actual_link = BASE_URL . "/tickets/showTicket/" . $addTicketResponse;
+                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $addTicketResponse;
                     $message = sprintf($this->language->__("email_notifications.new_todo_message"), $_SESSION['userdata']['name'], $values['headline']);
 
                     $notification = app()->make(models\notifications\notification::class);
@@ -733,7 +733,7 @@ namespace leantime\domain\services {
                 //Update Ticket
                 if ($this->ticketRepository->updateTicket($values, $id) === true) {
                     $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $values['headline']);
-                    $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
+                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $values['headline']);
 
 
@@ -916,7 +916,7 @@ namespace leantime\domain\services {
 
                 if ($ticket) {
                     $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $ticket->headline);
-                    $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
+                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
 
                     $notification = app()->make(models\notifications\notification::class);

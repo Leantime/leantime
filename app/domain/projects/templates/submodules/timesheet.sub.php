@@ -126,7 +126,7 @@ $bookedHours = $this->get('bookedHours');
     foreach ($this->get('allTimesheets') as $row) {
         $sum = $sum + $row['hours'];?>
         <tr>
-            <td><a href="index.php?act=timesheets.editTime&amp;id=<?php echo $row['id']; ?>"><?php echo $row['id']; ?></a></td>
+            <td><a href="<?=BASE_URL ?>/timesheets/editTime/<?php echo $row['id']; ?>"><?php echo $row['id']; ?></a></td>
             <td><?php echo $this->getFormattedDateString($row['workDate']); ?></td>
             <td><?php echo $row['hours']; ?></td>
             <td><?php echo $row['planHours']; ?></td>
@@ -134,8 +134,8 @@ $bookedHours = $this->get('bookedHours');
             <td <?php if ($diff < 0) {
                 echo'class="new" ';
                 }?>><?php echo $diff; ?></td>
-            <td><a href="index.php?act=tickets.showTicket&amp;id=<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
-            <td><a href="index.php?act=projects.showProject&amp;id=<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
+            <td><a href="<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php echo $row['headline']; ?></a></td>
+            <td><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php echo $row['name']; ?></a></td>
             <td><?php printf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></td>
             <td><?php echo $this->__($row['kind']); ?></td>
             <td><?php echo $row['description']; ?></td>

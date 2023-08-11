@@ -122,7 +122,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 <script type='text/javascript'>
 
 
-    leantime.generalController.initSimpleEditor();
+    leantime.editorController.initSimpleEditor();
 
     function toggleCommentBoxes(id) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
@@ -134,7 +134,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
             jQuery('.commentBox').hide('fast', function () {
                 jQuery('.commentBox textarea').remove();
                 jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-                leantime.generalController.initSimpleEditor();
+                leantime.editorController.initSimpleEditor();
             });
 
             jQuery('#comment' + id + '').show('fast');

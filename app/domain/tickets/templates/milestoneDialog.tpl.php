@@ -112,16 +112,15 @@ $statusLabels = $this->get('statusLabels');
     <script type="text/javascript">
         jQuery(document).ready(function(){
 
-            leantime.ticketsController.initModals();
             leantime.ticketsController.initMilestoneDates();
 
             <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
-                leantime.generalController.makeInputReadonly(".nyroModalCont");
+                leantime.authController.makeInputReadonly(".nyroModalCont");
 
             <?php } ?>
 
             <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-                leantime.generalController.enableCommenterForms();
+                leantime.commentsController.enableCommenterForms();
             <?php }?>
 
 

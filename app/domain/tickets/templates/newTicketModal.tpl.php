@@ -19,7 +19,7 @@
             </ul>
 
             <div id="ticketdetails">
-                <form class="ticketModal" action="<?=BASE_URL ?>/tickets/newTicket" method="post">
+                <form class="formModal" action="<?=BASE_URL ?>/tickets/newTicket" method="post">
                     <?php $this->displaySubmodule('tickets-ticketDetails') ?>
                 </form>
             </div>
@@ -35,7 +35,7 @@
 
         leantime.ticketsController.initTicketTabs();
         leantime.ticketsController.initTagsInput();
-        leantime.generalController.initComplexEditor();
+        leantime.editorController.initComplexEditor();
 
         leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initDates();

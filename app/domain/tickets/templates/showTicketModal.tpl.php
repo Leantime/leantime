@@ -18,7 +18,7 @@
 <div style="min-width:90%">
 
     <?php if ($ticket->dependingTicketId > 0) { ?>
-        <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$ticket->dependingTicketId ?>"><?=$this->escape($ticket->parentHeadline) ?></a></small> //
+        <small><a href="#/tickets/showTicket/<?=$ticket->dependingTicketId ?>"><?=$this->escape($ticket->parentHeadline) ?></a></small> //
     <?php } ?>
     <h1><i class="fa <?php echo $todoTypeIcons[strtolower($ticket->type)]; ?>"></i> #<?=$ticket->id ?> - <?php $this->e($ticket->headline); ?></h1>
 
@@ -35,8 +35,8 @@
             </a>
             <ul class="dropdown-menu">
                 <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
-                <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                <li><a href="#/tickets/moveTicket/<?php echo $ticket->id; ?>" class="moveTicketModal sprintModal ticketModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
+                <li><a href="#/tickets/delTicket/<?php echo $ticket->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                 <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                 <li id="timerContainer-<?php echo $ticket->id;?>" class="timerContainer">
                     <a
@@ -118,7 +118,7 @@
         <?php } ?>
 
         leantime.ticketsController.initTicketTabs();
-        leantime.timesheetsController._initTicketTimers();
+        leantime.timesheetsController.initTicketTimers();
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();
@@ -131,12 +131,12 @@
             leantime.ticketsController.initStatusDropdown();
 
         <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
         <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-            leantime.generalController.enableCommenterForms();
+            leantime.commentsController.enableCommenterForms();
         <?php }?>
 
     });

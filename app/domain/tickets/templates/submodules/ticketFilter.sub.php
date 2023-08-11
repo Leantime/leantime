@@ -14,7 +14,7 @@ $searchCriteria = $this->get("searchCriteria");
 
     <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom;">
         <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
-           class="btn btn-default" data-tippy-content="<?=$this->__("popover.filter") ?>">
+           class="btn btn-link" data-tippy-content="<?=$this->__("popover.filter") ?>">
             <i class="fas fa-filter"></i> Filter <?=$this->get('numOfFilters') > 0 ? " (" . $this->get('numOfFilters') . ")" : "" ?>
         </a>
         <div class="filterBar hideOnLoad" style="width:250px;">
@@ -127,9 +127,8 @@ $searchCriteria = $this->get("searchCriteria");
             </div>
 
         </div>
-    </div>
-    <div class="btn-group viewDropDown" >
-        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.group_by") ?>"><span class="fa-solid fa-diagram-project"></span> Group By</button>
+    </div><div class="btn-group viewDropDown" >
+        <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.group_by") ?>"><span class="fa-solid fa-diagram-project"></span> Group By</button>
         <ul class="dropdown-menu">
             <?php foreach ($groupBy as $input) { ?>
                 <li>

@@ -58,7 +58,7 @@
             leantime.canvasController.initStatusDropdown();
             leantime.canvasController.initRelatesDropdown();
         <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
 
         <?php } ?>
 

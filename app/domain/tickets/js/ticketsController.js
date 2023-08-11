@@ -2,69 +2,6 @@ leantime.ticketsController = (function () {
 
     //Variables
 
-    var milestoneModalConfig = {
-        sizes: {
-            minW: 900,
-            minH: 750
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-            },
-            afterShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                _initSprintDates();
-                _initSimpleColorPicker();
-                jQuery(".formModal, #commentForm, .deleteComment").nyroModal(milestoneModalConfig);
-            },
-            beforeClose: function () {
-
-                location.reload();
-            }
-
-
-        },
-        titleFromIframe: true
-    };
-
-    var ticketModalConfig = {
-        sizes: {
-            minW:  1600,
-            minH: 1000
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforePostSubmit: function () {
-                jQuery(".showDialogOnLoad").show();
-                jQuery('textarea.complexEditor').tinymce().save();
-            },
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-
-            },
-            afterShowCont: function () {
-                jQuery('textarea.complexEditor').tinymce().save();
-                jQuery('textarea.complexEditor').tinymce().remove();
-                leantime.generalController.initComplexEditor();
-                jQuery("#commentForm, .deleteComment, .ticketModal, .formModal").nyroModal(ticketModalConfig);
-
-
-
-            },
-            beforeClose: function () {
-
-                location.reload();
-            },
-
-
-
-        },
-        titleFromIframe: true
-    };
-
     //Constructor
     (function () {
         jQuery(document).ready(
@@ -111,18 +48,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var triggerMilestoneModal = function (id) {
-        jQuery.nmManual(leantime.appUrl + '/tickets/editMilestone/' + id, milestoneModalConfig);
-
-    };
-
-    var openMilestoneModalManually = function (url) {
-        jQuery.nmManual(url, milestoneModalConfig);
-    };
-
-    var openTicketModalManually = function (url) {
-        jQuery.nmManual(url, ticketModalConfig);
-    };
 
     var toggleFilterBar = function () {
         jQuery(".filterBar").toggle("fast");
@@ -175,14 +100,14 @@ leantime.ticketsController = (function () {
                                 popUpHTML += '<small>' + task.type + ' #' + task.id + ' </small>';
 
                                 if (task.type === 'milestone') {
-                                    popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                    popUpHTML += '<h4><a href="#/tickets/editMilestone/' + task.id + '" >' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                      '' + Math.round(task.progress) + '%</p> ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/editMilestone/' + task.id + '" class="milestoneModal"><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
+                                     '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
                                      '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
-                                    popUpHTML += '<h4><a href="' + leantime.appUrl + '/tickets/showTicket/' + task.id + '" class="ticketModal">' + htmlEntities(task.name) + '</a></h4><br /> ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/showTicket/' + task.id + '" class="ticketModal"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
+                                    popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
+                                     '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
                                 }
 
                                  popUpHTML += '</div>';
@@ -190,12 +115,11 @@ leantime.ticketsController = (function () {
                                 return popUpHTML;
                             },
                             on_click: function (task) {
-                                _initModals();
+
                             },
                             on_date_change: function (task, start, end) {
 
                                 leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
-                                _initModals();
 
                             },
                             on_sort_change: function (tasks) {
@@ -224,10 +148,10 @@ leantime.ticketsController = (function () {
                             on_view_change: function (mode) {
 
                                 leantime.usersRepository.updateUserViewSettings("roadmap", mode);
-                                _initModals();
+
                             },
                             on_popup_show: function (task) {
-                                _initModals();
+
                             }
                         }
                     );
@@ -249,7 +173,7 @@ leantime.ticketsController = (function () {
                                     '<h4>' + htmlEntities(task.name) + '</h4><br /> ' +
                                     '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + end_date + '</strong><br /> ' +
                                     '' + Math.round(task.progress) + '%</p> ' +
-                                    '<a class="milestoneModal" href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
+                                    '<a href="#/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ' +
 
                                     '</div>';
                             },
@@ -262,12 +186,12 @@ leantime.ticketsController = (function () {
                             },
                             on_progress_change: function (task, progress) {
 
-                                //_initModals();
+
                             },
                             on_view_change: function (mode) {
 
                                 leantime.usersRepository.updateUserViewSettings("roadmap", mode);
-                                _initModals();
+
                             }
                         }
                     );
@@ -316,9 +240,7 @@ leantime.ticketsController = (function () {
         );
     };
 
-    var initModals = function () {
-        _initModals();
-    };
+
 
     var _initSprintDates = function () {
 
@@ -585,82 +507,6 @@ leantime.ticketsController = (function () {
         jQuery('[data-toggle="tooltip"]').tooltip();
     };
 
-    var _initModals = function () {
-
-        var regularModelConfig = {
-            callbacks: {
-                afterShowCont: function () {
-                    jQuery(".showDialogOnLoad").show();
-                    _initDates();
-                    jQuery(".regularModal, .formModal").nyroModal(regularModelConfig);
-                }
-            }
-        };
-
-        jQuery(".regularModal").nyroModal(regularModelConfig);
-
-        var sprintModalConfig = {
-            sizes: {
-                minW: 400,
-                minH: 350
-            },
-            resizable: true,
-            autoSizable: true,
-            callbacks: {
-                afterShowCont: function () {
-                    _initSprintDates();
-                    initToolTips();
-
-                    jQuery(".formModal").nyroModal(sprintModalConfig);
-                },
-                beforeClose: function () {
-                    location.reload();
-                }
-
-
-            },
-            titleFromIframe: true
-        };
-        jQuery(".sprintModal").nyroModal(sprintModalConfig);
-
-        jQuery(".milestoneModal").nyroModal(milestoneModalConfig);
-
-        jQuery(".ticketModal").nyroModal(ticketModalConfig);
-
-    };
-
-    var initSprintPopover = function () {
-        jQuery('.sprintPopover').popover(
-            {
-                template:'<div class="popover sprintPopoverContainer" role="tooltip"><div class="popover-arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-
-            }
-        );
-
-        jQuery(".sprintPopoverContainer input").unbind().on("click", function () {
-
-                var ticket = jQuery(this).attr("name").split("_");
-                var val = jQuery(this).val();
-
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/tickets',
-                        data:
-                        {
-                            id : ticket[1],
-                            sprint:val
-                        }
-                    }
-                ).done(
-                    function () {
-
-                    }
-                );
-
-        });
-    };
-
     var initEffortDropdown = function () {
 
         var storyPointLabels = {
@@ -920,7 +766,7 @@ leantime.ticketsController = (function () {
         });
     };
 
-    var _initSimpleColorPicker = function () {
+    var cinitSimpleColorPicker = function () {
 
             var colors = ['#821219',
                 '#BB1B25',
@@ -956,7 +802,7 @@ leantime.ticketsController = (function () {
 
     };
 
-    var _initDueDateTimePickers = function () {
+    var initDueDateTimePickers = function () {
 
         jQuery(".quickDueDates").datepicker(
             {
@@ -1100,7 +946,8 @@ leantime.ticketsController = (function () {
 
                     url = new URL(window.location.href);
 
-                    url.searchParams.set('tab', ui.newPanel.selector.substring(1));
+
+                    url.searchParams.set('tab', ui.newPanel[0].id);
 
                     window.history.replaceState(null, null, url);
 
@@ -1310,18 +1157,6 @@ leantime.ticketsController = (function () {
             icon.toggleClass("ui-icon-minusthick ui-icon-plusthick");
             icon.closest(".portlet").find(".portlet-content").toggle();
         });
-
-    };
-
-    var initUserSelectBox = function () {
-
-        //jQuery(".user-select").chosen();
-
-    };
-
-    var initStatusSelectBox = function () {
-
-        //jQuery(".status-select").chosen();
 
     };
 
@@ -1949,19 +1784,14 @@ leantime.ticketsController = (function () {
     // Make public what you want to have public, everything else is private
     return {
         toggleFilterBar: toggleFilterBar,
-        triggerMilestoneModal: triggerMilestoneModal,
+
         initGanttChart:initGanttChart,
         updateRemainingHours:updateRemainingHours,
         updatePlannedHours:updatePlannedHours,
-        initModals:initModals,
-        openMilestoneModalManually:openMilestoneModalManually,
-        openTicketModalManually: openTicketModalManually,
         initTimeSheetChart:initTimeSheetChart,
         initTicketTabs:initTicketTabs,
         initTicketSearchSubmit:initTicketSearchSubmit,
         initTicketKanban:initTicketKanban,
-        initUserSelectBox:initUserSelectBox,
-        initStatusSelectBox:initStatusSelectBox,
         initTicketsTable:initTicketsTable,
         initEffortDropdown:initEffortDropdown,
         initPriorityDropdown:initPriorityDropdown,
@@ -1973,7 +1803,7 @@ leantime.ticketsController = (function () {
         initTagsInput:initTagsInput,
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
         initAsyncInputChange:initAsyncInputChange,
-        initDueDateTimePickers:_initDueDateTimePickers,
+        initDueDateTimePickers:initDueDateTimePickers,
         initDates:_initDates,
         setUpKanbanColumns:setUpKanbanColumns,
         addCommentTimesheetContent:addCommentTimesheetContent,

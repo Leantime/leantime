@@ -1,16 +1,5 @@
 leantime.helperController = (function () {
 
-    //Variables
-
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-
-            }
-        );
-
-    })();
 
     //Functions
     var showHelperModal = function (module, minW, minH) {

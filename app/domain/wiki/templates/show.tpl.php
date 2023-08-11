@@ -53,7 +53,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <li><a class="inlineEdit" href="<?=BASE_URL ?>/wiki/show#/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$this->__("link.edit_wiki") ?></a></li>
+                        <li><a class="inlineEdit" href="#/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$this->__("link.edit_wiki") ?></a></li>
                         <li><a class="delete wikiModal" href="<?=BASE_URL ?>/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$this->__('links.delete_wiki') ?></a></li>
 
                     <?php } ?>
@@ -78,7 +78,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                 <ul class="dropdown-menu">
 
-                    <li><a class="inlineEdit" href="<?=BASE_URL ?>/wiki/show#/wiki/wikiModal/"><?=$this->__("link.new_wiki") ?></a></li>
+                    <li><a class="inlineEdit" href="#/wiki/wikiModal/"><?=$this->__("link.new_wiki") ?></a></li>
                     <li class='nav-header border'></li>
                     <?php foreach ($wikis as $wiki) {?>
                         <li>
@@ -114,7 +114,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
 
                             echo "" . $this->__("text.create_new_wiki") . "<br /><br />
-                                            <a href='" . BASE_URL . "/wiki/show#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>" . $this->__("links.icon.create_new_board") . "</a><br/><br/>";
+                                            <a href='#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>" . $this->__("links.icon.create_new_board") . "</a><br/><br/>";
                         echo"</div>";
                         ?>
                     </div>
@@ -150,7 +150,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                     </div>
                                     <?php if ($wikis != false && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
                                         <div class="creationLinks">
-                                            <a class="inlineEdit" href="<?=BASE_URL ?>/wiki/show#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$this->__("link.create_article") ?></a>
+                                            <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$this->__("link.create_article") ?></a>
                                         </div>
                                     <?php } ?>
 
@@ -163,12 +163,12 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                                 <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="right">
-                                        <a class="btn btn-default" href="<?=CURRENT_URL?>#/wiki/articleDialog/<?=$currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
+                                        <a class="btn btn-default" href="#/wiki/articleDialog/<?=$currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
                                         <div class="dropdownWrapper pull-right" style="margin-left:10px;">
                                             <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>"><i class="fa fa-link"></i></a>
                                             <div class="dropdown-menu padding-md">
                                                 <input type="text" id="wikiURL" value="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>" />
-                                                <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('wikiURL');"><?=$this->__('links.copy_url') ?></button>
+                                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('wikiURL');"><?=$this->__('links.copy_url') ?></button>
                                             </div>
                                         </div>
 
@@ -262,7 +262,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                         echo"<br /><h3>" . $this->__("headlines.no_articles_yet") . "</h3>";
 
                                             echo "" . $this->__("text.create_new_content") . "<br /><br />
-                                            <a href='" . BASE_URL . "/wiki/show#/wiki/articleDialog/' class='inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $this->__("link.create_article") . "</a><br/><br/>";
+                                            <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $this->__("link.create_article") . "</a><br/><br/>";
 
 
                                         echo"</div>";
@@ -296,7 +296,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
        leantime.wikiController.wikiModal();
 
        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-        leantime.generalController.enableCommenterForms();
+        leantime.commentsController.enableCommenterForms();
        <?php }?>
 
     });

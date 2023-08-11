@@ -160,13 +160,13 @@
         <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
 
-        leantime.ticketsController.initModals();
+        leantime.timesheetsController.initTicketTimers();
 
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initStatusDropdown();
         <?php } else { ?>
-        leantime.generalController.makeInputReadonly(".maincontentinner");
+        leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>
 
 

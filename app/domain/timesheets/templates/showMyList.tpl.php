@@ -123,7 +123,7 @@ defined('RESTRICTED') or die('Restricted access');
                         <td data-order="<?php $this->e($row['planHours']); ?>"><?php $this->e($row['planHours'] ?: 0); ?></td>
                         <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
                         <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
-                        <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
+                        <td data-order="<?=$this->e($row['headline']); ?>"><a class='ticketModal' href="<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $this->e($row['headline']); ?></a></td>
 
                         <td data-order="<?=$this->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $this->e($row['name']); ?></a></td>
                         <td><?php sprintf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></td>

@@ -90,7 +90,6 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
     jQuery(document).ready(function(){
 
-    leantime.ticketsController.initModals();
 
     <?php if (isset($_GET['showMilestoneModal'])) {
         if ($_GET['showMilestoneModal'] == "") {
@@ -154,12 +153,12 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
             <?php endif; ?>
             enitityId: <?php echo $mlst->id ?>,
             <?php if ($mlst->type == "milestone") { ?>
-            url: '<?=CURRENT_URL ?>#/tickets/editMilestone/<?php echo $mlst->id ?>',
+            url: '#/tickets/editMilestone/<?php echo $mlst->id ?>',
             color: '<?=$color?>',
             enitityType: "milestone",
             allDay: true,
             <?php } else { ?>
-            url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $mlst->id ?>',
+            url: '#/tickets/showTicket/<?php echo $mlst->id ?>',
             color: '<?=$color?>',
             enitityType: "ticket",
             allDay: false,

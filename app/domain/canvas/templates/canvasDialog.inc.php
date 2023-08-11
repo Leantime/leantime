@@ -264,15 +264,15 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             });
         <?php } ?>
 
-        leantime.generalController.initSimpleEditor();
+        leantime.editorController.initSimpleEditor();
 
         <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.generalController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
         <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-            leantime.generalController.enableCommenterForms();
+            leantime.commentsController.enableCommenterForms();
         <?php }?>
 
     })

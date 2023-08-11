@@ -28,16 +28,6 @@ leantime.dashboardController = (function () {
 
     var _progressChart = '';
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-                _initDueDateTimePickers();
-
-            }
-        );
-    })();
-
     //Functions
 
     var prepareHiddenDueDate = function () {
@@ -320,7 +310,7 @@ leantime.dashboardController = (function () {
 
     };
 
-    var _initDueDateTimePickers = function () {
+    var initDueDateTimePickers = function () {
         jQuery(document).ready(function () {
 
 
@@ -370,6 +360,6 @@ leantime.dashboardController = (function () {
         initBacklogChartButtonClick:initBacklogChartButtonClick,
         initProgressChart:initProgressChart,
         prepareHiddenDueDate:prepareHiddenDueDate,
-        _initDueDateTimePickers:_initDueDateTimePickers
+        initDueDateTimePickers:initDueDateTimePickers
     };
 })();

@@ -174,7 +174,7 @@ if (isset($currentArticle->id)) {
             <br />
             <input type="text" value="<?php $this->e($currentArticle->tags); ?>" name="tags" id="tags" />
 
-            <textarea class="complexEditor" id="" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
+            <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
 
 
                 <div class="row">
@@ -208,9 +208,11 @@ if (isset($currentArticle->id)) {
 
 </form>
 
-<script type="text/javascript">
+<script>
 
-    leantime.generalController.initComplexEditor();
+
+    jQuery("#articleContentEditor").show();
+    leantime.editorController.initComplexEditor();
 
     jQuery(document).ready(function(){
 
@@ -305,12 +307,6 @@ if (isset($currentArticle->id)) {
 
         leantime.ticketsController.initTagsInput();
 
-
-    });
-
-    jQuery(window).load(function () {
-
-        jQuery(window).resize();
 
     });
 

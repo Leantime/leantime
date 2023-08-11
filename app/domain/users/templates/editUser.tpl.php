@@ -77,7 +77,7 @@
                             <a class="dropdown-toggle" data-toggle="dropdown" href="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>"><i class="fa fa-link"></i> <?=$this->__("label.inviteLink") ?></a>
                             <div class="dropdown-menu padding-md noClickProp">
                                 <input type="text" id="inviteURL" value="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>" />
-                                <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('inviteURL');"><?=$this->__('links.copy_url') ?></button>
+                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');"><?=$this->__('links.copy_url') ?></button>
                             </div>
                         </div>
                         <?php } ?>

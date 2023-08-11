@@ -51,17 +51,6 @@ leantime.retrosCanvasController = (function () {
 
     };
 
-
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-                _initModals();
-            }
-        );
-
-    })();
-
     //Functions
 
     var _initModals = function () {

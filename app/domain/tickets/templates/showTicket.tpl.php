@@ -38,7 +38,7 @@
             </ul>
 
             <div id="ticketdetails">
-                <form class="ticketModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
+                <form class="formModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                     <?php $this->displaySubmodule('tickets-ticketDetails') ?>
                 </form>
             </div>
@@ -66,7 +66,7 @@
     </div>
 
     <div class="maincontentinner">
-        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
+        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="formModal">
             <input type="hidden" name="comment" value="1" />
             <?php
             $this->assign('formUrl', BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
@@ -86,10 +86,9 @@
 
 <script type="text/javascript">
 
-    leantime.ticketsController.initTicketTabs();
-    leantime.ticketsController.initTagsInput();
-
     jQuery(window).load(function () {
+        leantime.timesheetsController.initTicketTimers();
+        leantime.ticketsController.initTicketTabs();
 
         jQuery(window).resize();
 

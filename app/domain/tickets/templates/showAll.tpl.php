@@ -114,9 +114,9 @@
 
                         <td data-order="<?=$this->e($row['headline']); ?>">
                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a></small> //<br />
+                                <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a></small> //<br />
                             <?php } ?>
-                            <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
+                            <a href="#/tickets/showTicket/<?=$this->e($row['id']); ?>"><?=$this->e($row['headline']); ?></a></td>
 
 
 
@@ -345,9 +345,9 @@
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
-                                        <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
-                                        <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                        <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
+                                        <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
+                                        <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
                                         <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                         <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                             <a
@@ -403,9 +403,6 @@
     jQuery(document).ready(function() {
         <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
 
-
-        leantime.ticketsController.initModals();
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initUserDropdown();
             leantime.ticketsController.initMilestoneDropdown();
@@ -413,8 +410,9 @@
             leantime.ticketsController.initPriorityDropdown();
             leantime.ticketsController.initSprintDropdown();
             leantime.ticketsController.initStatusDropdown();
+            leantime.timesheetsController.initTicketTimers();
         <?php } else { ?>
-        leantime.generalController.makeInputReadonly(".maincontentinner");
+        leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>
 
 

@@ -30,8 +30,16 @@
 <script src="<?=BASE_URL?>/api/i18n"></script>
 
 <!-- libs -->
-<script src="<?=BASE_URL?>/dist/js/compiled-base-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
-<script src="<?=BASE_URL?>/dist/js/compiled-extended-libs.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-frameworks.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-global-component.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-calendar-component.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-table-component.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-editor-component.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-gantt-component.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-chart-component.<?php echo $settings->appVersion; ?>.min.js"></script>
+<script src="<?=BASE_URL?>/dist/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>
+
+
 <?php $this->dispatchTplEvent('afterScriptLibTags'); ?>
 
 <!-- app -->
