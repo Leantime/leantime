@@ -28,7 +28,7 @@
 
                 <span class="userName">
                     <a href="https://discord.gg/4zMzJtAq9z" target="_blank">
-                        <?=$tpl->__('links.discord') ?>
+                        Community Chat
                     </a>
                 </span>
 

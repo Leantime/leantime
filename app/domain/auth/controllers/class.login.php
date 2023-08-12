@@ -81,6 +81,8 @@ namespace leantime\domain\controllers {
                         core\frontcontroller::redirect(BASE_URL . "/auth/twoFA");
                     }
 
+                    self::dispatch_event("afterAuthServiceCall", ['post' => $_POST]);
+
                     core\frontcontroller::redirect($redirectUrl);
                 } else {
                     $this->tpl->setNotification("notifications.username_or_password_incorrect", "error");

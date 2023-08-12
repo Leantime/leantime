@@ -69,7 +69,7 @@ $projects = $tpl->get('relations');
 <?php echo $tpl->displayNotification() ?>
 
 <form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal">
-    <div class="row">
+    <div class="row" style="width:800px;">
         <div class="col-md-7">
 
                 <h4 class="widgettitle title-light"><?php echo $tpl->__('label.profile_information'); ?></h4>
@@ -147,6 +147,9 @@ $projects = $tpl->get('relations');
                     $currentClient = '';
                     $i = 0;
                     foreach ($tpl->get('allProjects') as $row) {
+                        if ($row['clientName'] == '') {
+                            $row['clientName'] = "Not assigned to client";
+                        }
                         if ($currentClient != $row['clientName']) {
                             if ($i > 0) {
                                 echo"</div>";

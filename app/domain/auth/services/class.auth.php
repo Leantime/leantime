@@ -315,6 +315,7 @@ namespace leantime\domain\services {
                         'twoFAVerified' => false,
                         'twoFASecret' => $this->twoFASecret,
                         'isLdap' => $isLdap,
+                        'createdOn' => $user['createdOn'] ?? ''
             ]);
 
             $this->updateUserSessionDB($this->userId, $this->session);
@@ -377,6 +378,9 @@ namespace leantime\domain\services {
                 foreach ($sessionsToDestroy as $key) {
                     unset($_SESSION[$key]);
                 }
+
+                self::dispatch_event("afterSessionDestroy", ['authService' => app()->make(self::class)]);
+
             }
         }
 

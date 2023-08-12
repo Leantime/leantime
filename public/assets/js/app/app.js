@@ -30,9 +30,6 @@ jQuery(document).on('click', function (e) {
     });
 });
 
-//Run Prism code highlighting centrally
-
-
 
 leantime.replaceSVGColors = function () {
 
@@ -82,6 +79,10 @@ leantime.handleAsyncResponse = function(response)  {
         }
     }
 };
+
+
+
+
 
 
 

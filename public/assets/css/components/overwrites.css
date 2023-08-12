@@ -41,7 +41,8 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 
 
 
-.loginpanelinner {
+.loginpanelinner,
+.leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
 	background-color: var(--primary-color) !important;
 	color:var(--main-action-color);
 }

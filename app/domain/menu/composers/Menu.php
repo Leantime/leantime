@@ -75,16 +75,14 @@ class Menu extends Composer
         if (isset($_SESSION['currentProject'])) {
             $project = $this->projectService->getProject($_SESSION['currentProject']);
 
-            $menuType = ($project !== false && isset($project['menuType']))
-                ? $project['menuType']
-                : repositories\menu::DEFAULT_MENU;
-
             $projectType = ($project !== false && isset($project['type']))
                 ? $project['type']
                 : "project";
 
             if ($projectType != '' && $projectType != 'project') {
                 $menuType = $projectType;
+            } else {
+                $menuType = repositories\menu::DEFAULT_MENU;
             }
 
             if ($project !== false && isset($project["clientId"])) {

@@ -1,9 +1,13 @@
 <?php
-    defined('RESTRICTED') or die('Restricted access');
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
-    $project = $tpl->get('project');
-    $menuTypes = $tpl->get('menuTypes');
-    $showClosedProjects = $tpl->get('showClosedProjects');
+
+use leantime\plugins\services\billing;
+
+defined( 'RESTRICTED' ) or die( 'Restricted access' );
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$project = $tpl->get('project');
+$menuTypes = $tpl->get('menuTypes');
+$showClosedProjects = $tpl->get('showClosedProjects');
+
 ?>
 
 <div class="pageheader">
@@ -80,7 +84,7 @@
                 <tr class='gradeA'>
 
                     <td style="padding:6px;">
-                        <?php echo $tpl->displayLink('projects.changeCurrentProject', $tpl->escape($row['name']), array('id' => $row['id'])) ?>
+                        <?php echo $tpl->displayLink('projects.showProject', $tpl->escape($row['name']), array('id' => $row['id'])) ?>
                     <td>
                         <?php echo $tpl->displayLink('clients.showClient', $tpl->escape($row['clientName']), array('id' => $row['clientId']), null, true) ?>
                     </td>

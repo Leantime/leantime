@@ -652,34 +652,31 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllAvailableKPIs($parentProject)
+        public function getAllAvailableKPIs($projectId)
         {
             $sql = "SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.description,
                         project.name as projectName,
-                        board.title AS boardTitle,
+                        zp_canvas.title AS boardTitle
 
+                FROM zp_canvas_items
+                LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
+                LEFT JOIN zp_projects AS project ON zp_canvas.projectId = project.id
+                WHERE
 
-                        parentProject.name as parentProjectName,
-                        parentBoards.title as parentBoardTitle,
-                        parentKPI.id as parentKPIId,
-                        parentKPI.description AS parentKPIDescription
-
-                FROM
-                zp_canvas_items
-                LEFT JOIN zp_canvas AS board ON board.id = zp_canvas_items.canvasId
-                LEFT JOIN zp_projects AS project ON board.projectId = project.id
-
-                LEFT JOIN zp_projects AS parentProject ON project.parent = parentProject.id
-                LEFT JOIN zp_canvas AS parentBoards ON parentBoards.projectId = parentProject.id
-                LEFT JOIN zp_canvas_items AS parentKPI ON parentKPI.canvasId = parentBoards.id
-
-                WHERE board.projectId = :id AND
-                      (project.type = 'strategy' OR project.type = 'program' OR
-                           parentProject.type = 'strategy' OR parentProject.type = 'program' )
-
-                ORDER BY board.id
+                    FIND_IN_SET(zp_canvas.projectId, (
+                                    SELECT
+                                        CONCAT(zp_projects.parent, ',', IF(parents.parent IS NOT NULL, parents.parent, 0)) AS parentslist
+                                    FROM zp_projects
+                                    LEFT JOIN zp_projects as parents ON zp_projects.parent = parents.id
+                                    WHERE
+                                        zp_projects.id = :id AND
+                                        (project.type = 'strategy' OR project.type = 'program')
+                                    )
+                            )
+                    AND (zp_canvas_items.setting = 'linkAndReport' OR zp_canvas_items.setting = 'linkonly')
+                ORDER BY zp_canvas.id
                 ";
 
             // programs
@@ -691,7 +688,7 @@ namespace leantime\domain\repositories {
 
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':id', $parentProject, PDO::PARAM_STR);
+            $stmn->bindValue(':id', $projectId, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();

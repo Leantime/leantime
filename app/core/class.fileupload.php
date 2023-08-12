@@ -2,6 +2,7 @@
 
 namespace leantime\core;
 
+use GuzzleHttp\Exception\RequestException;
 use leantime\core\eventhelpers;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
@@ -90,20 +91,15 @@ class fileupload
                 [
                     'version' => 'latest',
                     'region' => $this->config->s3Region,
-                    'endpoint' => $this->config->s3EndPoint,
-                    'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
+                    'endpoint' => $this->config->s3EndPoint == "" ? null : $this->config->s3EndPoint,
+                    'use_path_style_endpoint' => !($this->config->s3UsePathStyleEndpoint == "false"),
                     'credentials' => [
                         'key' => $this->config->s3Key,
                         'secret' => $this->config->s3Secret,
                     ],
                 ]
             );
-        } else {
-            //Can discuss whether we want to allow local uploads again at some point...
-            return false;
         }
-
-        return false;
     }
 
     /**
@@ -275,6 +271,7 @@ class fileupload
                 $url = $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
 
                 return $url;
+
             } catch (S3Exception $e) {
                 error_log($e, 0);
                 return false;
@@ -311,7 +308,14 @@ class fileupload
             $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
 
             return true;
+
         } catch (S3Exception $e) {
+
+            error_log($e, 0);
+            return false;
+
+        } catch (RequestException $e) {
+
             error_log($e, 0);
             return false;
         }
@@ -389,22 +393,15 @@ class fileupload
             }
 
             if (file_exists(realpath($fullPath))) {
-                if ($fd = fopen(realpath($fullPath), 'rb')) {
-                    $path_parts = pathinfo($fullPath);
-                    $ext = $path_parts["extension"];
 
-                    if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
-                        header('Content-type: ' . $mimes[$ext]);
-                        header('Content-disposition: inline; filename="' . $imageName . '";');
+                $path_parts = pathinfo($fullPath);
+                $ext = $path_parts["extension"];
 
-                        $chunkSize = 1024 * 1024;
+                if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+                    header('Content-type: ' . $mimes[$ext]);
+                    header('Content-disposition: inline; filename="' . $imageName . '";');
 
-                        while (!feof($fd)) {
-                            $buffer = fread($fd, $chunkSize);
-                            echo $buffer;
-                        }
-                        fclose($fd);
-                    }
+                    readfile($fullPath);
                 }
             }
         }

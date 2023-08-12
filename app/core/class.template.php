@@ -228,15 +228,15 @@ class template
     {
         $bladeCompiler->directive(
             'dispatchEvent',
-            function ($eventKey) {
-                return "<?php app()->make('leantime\\\\core\\\\template')->dispatchTplEvent($eventKey); ?>";
+            function ($args) {
+                return "<?php \$tpl->dispatchTplEvent($args); ?>";
             }
         );
 
         $bladeCompiler->directive(
             'dispatchFilter',
-            function ($filterKey) {
-                return "<?php echo app()->make('leantime\\\\core\\\\template')->dispatchTplFilter($filterKey); ?>";
+            function ($args) {
+                return "<?php echo \$tpl->dispatchTplFilter($args); ?>";
             }
         );
     }
@@ -268,25 +268,28 @@ class template
      * @param $value
      * @return void
      */
-    public function assign($name, $value): void
+    public function assign(string $name, mixed $value): void
     {
         $value = self::dispatch_filter("var.$name", $value);
 
         $this->vars[$name] = $value;
     }
 
-    /**
-     * setError - assign errors to the template
-     *
-     * @param  $msg
-     * @param  $type
-     * @return string
-     */
-    public function setNotification($msg, $type): void
-    {
-        $_SESSION['notification'] = $msg;
-        $_SESSION['notifcationType'] = $type;
-    }
+        /**
+         * setNotification - assign errors to the template
+         *
+         * @param  string $msg
+         * @param  string $type
+         * @param  string $event_id as a string for further identification
+         * @return string
+         */
+        public function setNotification(string $msg, string $type, string $event_id = ''): void
+        {
+
+            $_SESSION['notification'] = $msg;
+            $_SESSION['notifcationType'] = $type;
+            $_SESSION['event_id'] = $event_id;
+        }
 
     /**
      * getTemplatePath - Find template in custom and src directories
@@ -330,15 +333,8 @@ class template
      * @param  $template
      * @return void
      */
-    public function display($template, $layout = "app"): void
+    public function display(string $template, string $layout = "app"): void
     {
-        //These variables are available in the template
-        $config = $this->config;
-        $settings = $this->settings;
-        $login = $this->login;
-        $roles = $this->roles;
-        $language = $this->language;
-
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
 
@@ -355,18 +351,24 @@ class template
 
         $view = $this->viewFactory->make($loadFile);
 
-        /** @todo this can be reduced to just the else code after removal of php template support */
+        /** @todo this can be reduced to just the 'else' code after removal of php template support */
         if ($view->getEngine() instanceof \Illuminate\View\Engines\PhpEngine) {
-            $view = $this->viewFactory->make($layout, [
-                'tpl' => $this,
-                'module' => $module,
-                'action' => $action,
-            ]);
+            $view = $this->viewFactory->make($layout, array_merge(
+                $this->vars,
+                [
+                    'tpl' => $this,
+                    'module' => $module,
+                    'action' => $action,
+                ]
+            ));
         } else {
-            $view->with([
-                'tpl' => $this,
-                'layout' => $layout,
-            ]);
+            $view->with(array_merge(
+                $this->vars,
+                [
+                    'tpl' => $this,
+                    'layout' => $layout,
+                ]
+            ));
         }
 
         $content = $view->render();
@@ -423,7 +425,7 @@ class template
      * @param  $name
      * @return array
      */
-    public function get($name)
+    public function get(string $name): mixed
     {
         if (!isset($this->vars[$name])) {
             return null;
@@ -441,9 +443,14 @@ class template
     public function getNotification(): array
     {
         if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
-            return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification']);
+            if(isset($_SESSION['event_id'])) {
+                $event_id = $_SESSION['event_id'];
+            }else{
+                $event_id='';
+            }
+            return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
         } else {
-            return array('type' => "", 'msg' => "");
+            return array('type' => "", 'msg' => "", 'event_id' => "");
         }
     }
 
@@ -464,7 +471,7 @@ class template
 
         $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
 
-        echo $this->viewFactory->make($relative_path, ['tpl' => $this])->render();
+        echo $this->viewFactory->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
     }
 
     /**
@@ -495,8 +502,11 @@ class template
             $notification = '<script type="text/javascript">jQuery.growl({message: "'
                 . $message . '", style: "' . $note['type'] . '"});</script>';
 
+            self::dispatch_event("notification_displayed", $note);
+
             $_SESSION['notification'] = "";
             $_SESSION['notificationType'] = "";
+            $_SESSION['event_id'] = "";
         }
 
         return $notification;
@@ -528,16 +538,18 @@ class template
         );
 
         if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification = <<<EOT
-                <div class='inputwrapper login-alert login-"{$note['type']}"'>
-                    <div class='alert alert-"{$note['type']}"'>
-                        {$message}
-                    </div>
-                </div>
-            EOT;
+            $notification = "<div class='inputwrapper login-alert login-" . $note['type'] . "' style='position: relative;'>
+                                <div class='alert alert-" . $note['type'] . "' style='padding:15px;' >
+                                    <strong>" . $message . "</strong>
+                                </div>
+                            </div>
+                            ";
+
+            self::dispatch_event("notification_displayed", $note);
 
             $_SESSION['notification'] = "";
             $_SESSION['notificationType'] = "";
+            $_SESSION['event_id'] = "";
         }
 
         return $notification;
@@ -781,22 +793,22 @@ class template
         $base = BASE_URL;
 
         // base url needs trailing /
-        if (substr($base, -1, 1) != "/") {
-            $base .= "/";
-        }
+        $base = rtrim($base, "/") . "/";
 
         // Replace links
-        $pattern = "/<a([^>]*) " .
-                "href=\"([^http|ftp|https|mailto|#][^\"]*)\"/";
-        $replace = "<a\${1} href=\"" . $base . "\${2}\"";
-        $text = preg_replace($pattern, $replace, $text);
+        $text = preg_replace(
+            '/<a([^>]*) href="([^http|ftp|https|mailto|#][^"]*)"/',
+            "<a\${1} href=\"$base\${2}\"",
+            $text
+        );
 
         // Replace images
-        $pattern = "/<img([^>]*) " .
-                "src=\"([^http|ftp|https][^\"]*)\"/";
-        $replace = "<img\${1} src=\"" . $base . "\${2}\"";
+        $text = preg_replace(
+            '/<img([^>]*) src="([^http|ftp|https][^"]*)"/',
+            "<img\${1} src=\"$base\${2}\"",
+            $text
+        );
 
-        $text = preg_replace($pattern, $replace, $text);
         // Done
         return $text;
     }

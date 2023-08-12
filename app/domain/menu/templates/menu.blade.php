@@ -1,8 +1,16 @@
 @php
+/**
+ * @todo Move this to Composer, or find a better
+ *       way to add filters for all passed variables
+ */
 $settingsLink = $tpl->dispatchTplFilter(
     'settingsLink',
     $settingsLink,
     ['type' => $currentProjectType]
+);
+$projectHierarchy = $tpl->dispatchTplFilter(
+    'projectHierarchyRestore',
+    $projectHierarchy,
 );
 @endphp
 
@@ -193,13 +201,26 @@ $settingsLink = $tpl->dispatchTplFilter(
 
     @php $childSelector = $projectHierarchy['program']['enabled'] ? 'program' : 'project'; @endphp
 
-    @if ($projectHierarchy['program']['enabled'] || $projectHierarchy['strategy']['enabled'])
+    @if($projectHierarchy['program']['enabled'] || $projectHierarchy['strategy']['enabled'])
         @isset($_SESSION['submenuToggle']['strategy'])
             leantime.menuController.toggleHierarchy({{ "'{$_SESSION['submenuToggle']['strategy']}', '$childSelector' , 'strategy'" }});
+        @else
+            @if(isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
+                leantime.menuController.toggleHierarchy('noStretegyParent', 'program', 'strategy');
+            @else
+                leantime.menuController.toggleHierarchy('noStretegyParent', 'project', 'strategy');
+            @endif
         @endisset
 
         @if(isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
             leantime.menuController.toggleHierarchy({{ "'{$_SESSION['submenuToggle']['program']}', 'project', 'program'"}});
+        @else
+            @if(! isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
+                leantime.menuController.toggleHierarchy('noProgramParent', 'project', 'program');
+            @elseif(! isset($_SESSION['submenuToggle']['program']) && ! $projectHierarchy['strategy']['enabled'])
+                leantime.menuController.toggleHierarchy('noStrategyParent', 'project', 'strategy');
+
+            @endif
         @endif
 
         @foreach($projectHierarchy['project']['items'] as $key => $typeRow)

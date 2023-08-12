@@ -1,15 +1,13 @@
 <?php
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
-    $states = $tpl->get('states');
-    $projectProgress = $tpl->get('projectProgress');
-    $projectProgress = $tpl->get('projectProgress');
-    $sprintBurndown = $tpl->get('sprintBurndown');
-    $backlogBurndown = $tpl->get('backlogBurndown');
-    $efforts = $tpl->get('efforts');
-    $statusLabels = $tpl->get('statusLabels');
-    $project = $tpl->get('project');
-    $tickets = $tpl->get('tickets');
-
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$states = $tpl->get('states');
+$projectProgress = $tpl->get('projectProgress');
+$sprintBurndown = $tpl->get('sprintBurndown');
+$backlogBurndown = $tpl->get('backlogBurndown');
+$efforts = $tpl->get('efforts');
+$statusLabels = $tpl->get('statusLabels');
+$project = $tpl->get('project');
+$tickets = $tpl->get('tickets');
 ?>
 
 <?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
@@ -17,8 +15,8 @@
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
-        <?php if (count($tpl->get('allUsers')) == 1) {?>
-            <a href="<?=BASE_URL ?>/dashboard/show/#/users/newUser/" class="headerCTA">
+        <?php if (count($tpl->get('allUsers')) == 1) { ?>
+            <a href="<?=BASE_URL ?>/dashboard/show/#/users/newUser" class="headerCTA">
                 <i class="fa fa-users"></i>
                 <span style="font-size:14px; line-height:25px;">
                     <?php echo $tpl->__("links.dont_do_it_alone"); ?>
@@ -335,6 +333,7 @@
                                                 $tpl->escape($assignedUser['lastname'])
                                             );
                                             echo "<br/><small>" . $tpl->escape($assignedUser['jobTitle']) . "</small>";
+                                            $tpl->dispatchTplEvent("usercardBottom", ["user " => $assignedUser, "project" => $project]);
                                         } else {
                                             echo $tpl->escape($assignedUser['username']);
                                             if ($assignedUser['status'] == "i") {
@@ -355,7 +354,7 @@
                                     <i class="fa fa-user-plus"></i>
                                 </div>
                                 <span class="userName">
-                                         <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>"><?=$tpl->__('links.invite_user'); ?></a>
+                                    <a href="<?=BASE_URL?>/dashboard/show#/users/newUser?preSelectProjectId=<?=$project['id'] ?>"><?=$tpl->__('links.invite_user'); ?></a>
                                     <br />&nbsp;
                                 </span>
 

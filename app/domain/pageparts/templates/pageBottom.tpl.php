@@ -24,8 +24,9 @@ $appSettings = $tpl->get('appSettings');
         //5 min keep alive timer
         setInterval(function(){
             jQuery.get(leantime.appUrl+'/auth/keepAlive');
-        }, 300000);
+            }, 300000);
     </script>
+
 <?php } ?>
 
 <?php $tpl->dispatchTplEvent('beforeBodyClose'); ?>

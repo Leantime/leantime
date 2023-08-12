@@ -319,6 +319,9 @@
             </div>
 
             <div class="col-md-4">
+
+                <?php $this->dispatchTplEvent('beforeCalendar'); ?>
+
                 <div class="maincontentinner minCalendar">
 
                     <button class="fc-next-button btn btn-default right" type="button" style="position:relative; z-index:9;">

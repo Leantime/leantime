@@ -232,6 +232,9 @@
                         >
                             <a href="{{ BASE_URL }}/setting/editCompanySettings/">{!! __('menu.company_settings') !!}</a>
                         </li>
+
+                        @dispatchEvent('companyMenuEnd', ["module" => $module])
+
                     @endif
                 @endif
             </ul>

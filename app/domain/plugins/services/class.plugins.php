@@ -10,13 +10,15 @@ namespace leantime\domain\services {
 
     class plugins
     {
-        private $pluginRepository;
-        private $pluginDirectory =  ROOT . "/../app/plugins/";
+        private repositories\plugins $pluginRepository;
+        private string $pluginDirectory =  ROOT . "/../app/plugins/";
+        private core\environment $config;
 
 
-        public function __construct(repositories\plugins $pluginRepository)
+        public function __construct(repositories\plugins $pluginRepository, core\environment $config)
         {
             $this->pluginRepository = $pluginRepository;
+            $this->config = $config;
         }
 
         public function getAllPlugins()
@@ -40,12 +42,31 @@ namespace leantime\domain\services {
 
         public function getEnabledPlugins()
         {
+            if (isset($_SESSION['enabledPlugins'])) {
+                return $_SESSION['enabledPlugins'];
+            }
 
-            if (!isset($_SESSION['enabledPlugins'])) {
-                $_SESSION['enabledPlugins'] = $this->pluginRepository->getAllPlugins(true);
+            $_SESSION['enabledPlugins'] = $this->pluginRepository->getAllPlugins(true);
+
+            // Gets plugins from the config, which are automatically enabled
+            if (
+                isset($this->config->plugins)
+                && $configplugins = explode(',', $this->config->plugins)
+            ) {
+                $configplugins = array_map(function ($pluginStr) {
+                    $pluginModel = app()->make(\leantime\domain\models\plugins::class);
+                    $pluginModel->foldername = $pluginStr;
+                    $pluginModel->name = $pluginStr;
+                    $pluginModel->enabled = true;
+
+                    return $pluginModel;
+                }, $configplugins);
+
+                $_SESSION['enabledPlugins'] = array_merge($_SESSION['enabledPlugins'], $configplugins);
             }
 
             return $_SESSION['enabledPlugins'];
+
         }
 
         public function discoverNewPlugins()
@@ -143,7 +164,7 @@ namespace leantime\domain\services {
         public function removePlugin(int $id)
         {
             unset($_SESSION['enabledPlugins']);
-            $plugin = $this->pluginRepository->getRepository($id);
+            $plugin = $this->pluginRepository->getPlugin($id);
 
             //Any installation calls should happen right here.
             $pluginClassName = '\leantime\plugins\services\\' . htmlspecialchars($plugin->foldername);

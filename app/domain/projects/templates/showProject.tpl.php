@@ -77,12 +77,16 @@
                                                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>"/>
                                             </div>
                                             <label for="user-<?php echo $userId ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])); ?>
-
-                                                <?php
-                                                echo "<small>(" . $tpl->escape($assignedUser['jobTitle']) . ")</small><br />";
-                                                if ($assignedUser['status'] == 'i') {
-                                                    echo "<small>(" . $tpl->__('label.invited') . ")</small>";
-                                                } ?></label>
+                                                <?php if ($assignedUser['jobTitle'] != '') { ?>
+                                                    <small>
+                                                        <?= $tpl->escape($assignedUser['jobTitle']) ?>
+                                                    </small>
+                                                    <br/>
+                                                <?php } ?>
+                                                <?php if ($assignedUser['status'] == 'i') { ?>
+                                                    <small><?= $tpl->__('label.invited') ?></small>
+                                                <?php } ?>
+                                            </label>
                                             <?php
                                             if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
                                                 <input type="text" readonly disabled value="<?php echo $tpl->__("label.roles." . $roles::getRoles()[$assignedUser['role']]) ?>" />
@@ -176,17 +180,15 @@
 
                                     <?php }
                                 } ?>
-                                 <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
-                                     <div class="col-md-4">
-                                         <div class="userBox">
+                                <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                    <div class="col-md-4">
 
-
-                                                 <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$tpl->__('links.create_user'); ?></a>
-
-                                             <div class="clearall"></div>
-                                         </div>
-                                     </div>
-                                 <?php } ?>
+                                        <div class="userBox">
+                                            <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$tpl->__('links.create_user'); ?></a>
+                                            <div class="clearall"></div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </div>
                              <div class="row">
                                  <div class="col-md-12">

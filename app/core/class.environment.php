@@ -368,6 +368,11 @@ class environment
     public string $redisURL;
 
     /**
+     * @var string list of default plugins
+     */
+    public ?string $plugins;
+
+    /**
      * environment constructor.
      * @param \leantime\core\config $defaultConfiguration
      * @return self
@@ -435,7 +440,7 @@ class environment
             $this->smtpPassword = $this->environmentHelper("LEAN_EMAIL_SMTP_PASSWORD", $defaultConfiguration->smtpPassword ?? '');
             $this->smtpAutoTLS = $this->environmentHelper("LEAN_EMAIL_SMTP_AUTO_TLS", $defaultConfiguration->smtpAutoTLS ?? false, "boolean");
             $this->smtpSecure = $this->environmentHelper("LEAN_EMAIL_SMTP_SECURE", $defaultConfiguration->smtpSecure ?? '');
-            $this->smtpPort = $this->environmentHelper("LEAN_EMAIL_SMTP_PORT", $defaultConfiguration->smtpPort ?? '');
+            $this->smtpPort = $this->environmentHelper("LEAN_EMAIL_SMTP_PORT", $defaultConfiguration->smtpPort ?? 465, "number");
             $this->smtpSSLNoverify = $this->environmentHelper("LEAN_EMAIL_SMTP_SSLNOVERIFY", $defaultConfiguration->smtpSSLNoverify ?? false, "boolean");
         }
 
@@ -478,6 +483,8 @@ class environment
         if ($this->useRedis) {
             $this->redisURL = $this->getString('LEAN_REDIS_URL', '');
         }
+
+        $this->plugins = $this->getString('LEAN_PLUGINS', '');
     }
 
     /**
@@ -499,7 +506,7 @@ class environment
      * @param string $default
      * @return string
      */
-    private function getString(string $envVar, string $default): string
+    private function getString(string $envVar, string $default = ''): string
     {
         return $this->environmentHelper($envVar, $default, 'string');
     }
