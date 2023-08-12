@@ -1,11 +1,12 @@
 <?php
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
     $maxSize = \leantime\core\fileupload::getMaximumFileUploadSize();
     $moduleId = $_GET['id'] ?? '';
 ?>
 
 <div id="fileManager">
 
-    <?php echo $this->displayNotification() ?>
+    <?php echo $tpl->displayNotification() ?>
 
     <div class="uploadWrapper" style="width:300px">
 
@@ -13,7 +14,7 @@
 
         <div class="extra" style="margin-top:5px;"></div>
         <div class="fileUploadDrop">
-            <p><i><?=$this->__("text.drop_files"); ?></i></p>
+            <p><i><?=$tpl->__("text.drop_files"); ?></i></p>
             <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
         </div>
 

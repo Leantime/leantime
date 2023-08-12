@@ -1,116 +1,117 @@
 <?php
     defined('RESTRICTED') or die('Restricted access');
-    $values = $this->get('values');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $values = $tpl->get('values');
 ?>
 
-<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
+<?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-address-book"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('label.administration') ?></h5>
-        <h1><?php echo $this->__('headline.new_client'); ?></h1>
+        <h5><?php echo $tpl->__('label.administration') ?></h5>
+        <h1><?php echo $tpl->__('headline.new_client'); ?></h1>
     </div>
-    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
+    <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
-<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
+<?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification() ?>
+        <?php echo $tpl->displayNotification() ?>
 
         <div class="widget">
-           <h4 class="widgettitle"><?php echo $this->__('subtitle.details'); ?></h4>
+           <h4 class="widgettitle"><?php echo $tpl->__('subtitle.details'); ?></h4>
            <div class="widgetcontent">
 
                 <form action="" method="post" class="stdform">
 
-                    <?php $this->dispatchTplEvent('afterFormOpen'); ?>
+                    <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
                     <div class="row row-fluid">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.name') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.name') ?></label>
                                 <div class="span6">
-                                    <input type="text" name="name" id="name" value="<?php $this->e($values['name']); ?>" />
+                                    <input type="text" name="name" id="name" value="<?php $tpl->e($values['name']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.email') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.email') ?></label>
                                 <div class="span6">
-                                    <input type="text" name="email" id="email" value="<?php $this->e($values['email']); ?>" />
+                                    <input type="text" name="email" id="email" value="<?php $tpl->e($values['email']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.url') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.url') ?></label>
                                 <div class="span6">
                                     <input
                                             type="text" name="internet" id="internet"
-                                            value="<?php $this->e($values['internet']); ?>" />
+                                            value="<?php $tpl->e($values['internet']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.street') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.street') ?></label>
                                 <div class="span6">
                                     <input
                                             type="text" name="street" id="street"
-                                            value="<?php $this->e($values['street']); ?>" />
+                                            value="<?php $tpl->e($values['street']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.zip') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.zip') ?></label>
                                 <div class="span6">
                                     <input type="text"
-                                           name="zip" id="zip" value="<?php $this->e($values['zip']); ?>" />
+                                           name="zip" id="zip" value="<?php $tpl->e($values['zip']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.city') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.city') ?></label>
                                 <div class="span6">
                                     <input type="text"
-                                           name="city" id="city" value="<?php $this->e($values['city']); ?>" />
+                                           name="city" id="city" value="<?php $tpl->e($values['city']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.state') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.state') ?></label>
                                 <div class="span6">
                                     <input
                                             type="text" name="state" id="state"
-                                            value="<?php $this->e($values['state']); ?>" />
+                                            value="<?php $tpl->e($values['state']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.country') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.country') ?></label>
                                 <div class="span6">
                                     <input
                                             type="text" name="country" id="country"
-                                            value="<?php $this->e($values['country']); ?>" />
+                                            value="<?php $tpl->e($values['country']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $this->__('label.phone') ?></label>
+                                <label class="span4 control-label"><?php echo $tpl->__('label.phone') ?></label>
                                 <div class="span6">
                                     <input
                                             type="text" name="phone" id="phone"
-                                            value="<?php $this->e($values['phone']); ?>" />
+                                            value="<?php $tpl->e($values['phone']); ?>" />
                                 </div>
                             </div>
 
-                            <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+                            <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
                             <div class="form-group">
                                 <div class="span4 control-label">
                                     <input type="submit" name="save" id="save"
-                                           value="<?php echo $this->__('buttons.save') ?>" class="btn btn-primary" />
+                                           value="<?php echo $tpl->__('buttons.save') ?>" class="btn btn-primary" />
                                 </div>
                                 <div class="span6">
 
@@ -119,7 +120,7 @@
                         </div>
                     </div>
 
-                    <?php $this->dispatchTplEvent('beforeFormClose'); ?>
+                    <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
                 </form>
             </div>

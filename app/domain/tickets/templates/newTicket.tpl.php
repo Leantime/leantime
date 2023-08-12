@@ -1,20 +1,20 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-
-$ticket = $this->get('ticket');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$ticket = $tpl->get('ticket');
 
 ?>
 
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$this->__("links.go_back") ?></a>
+        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$tpl->__("links.go_back") ?></a>
     </div>
 
-    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headlines.new_to_do") ?></h1>
+        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+        <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -22,20 +22,20 @@ $ticket = $this->get('ticket');
     <div class="maincontentinner">
 
         <?php
-            echo $this->displayNotification();
+            echo $tpl->displayNotification();
         ?>
 
         <div class="tabbedwidget tab-primary ticketTabs">
 
             <ul>
                 <li>
-                    <a href="#ticketdetails"><?php echo $this->__("tabs.ticketDetails") ?></a>
+                    <a href="#ticketdetails"><?php echo $tpl->__("tabs.ticketDetails") ?></a>
                 </li>
             </ul>
 
             <div id="ticketdetails">
                 <form class="ticketModal" action="<?=BASE_URL ?>/tickets/newTicket" method="post">
-                    <?php $this->displaySubmodule('tickets-ticketDetails') ?>
+                    <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
                 </form>
             </div>
 

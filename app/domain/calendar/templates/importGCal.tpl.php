@@ -1,40 +1,41 @@
 <?php
     defined('RESTRICTED') or die('Restricted access');
-    $values = $this->get('values');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $values = $tpl->get('values');
 ?>
 
-<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
+<?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <form action="<?=BASE_URL ?>/index.php?act=tickets.showAll" method="post" class="searchbar">
         <input type="text" name="term" placeholder="To search type and hit enter..." />
     </form>
 
     <div class="pageicon"><span class="fa-laptop"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('OVERVIEW'); ?></h5>
-        <h1><?php echo $this->__('GOOGLE_CALENDAR_IMPORT'); ?></h1>
+        <h5><?php echo $tpl->__('OVERVIEW'); ?></h5>
+        <h1><?php echo $tpl->__('GOOGLE_CALENDAR_IMPORT'); ?></h1>
     </div>
-    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
+    <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
-<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
+<?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification() ?>
+        <?php echo $tpl->displayNotification() ?>
 
             <form action="" method="post">
 
-                <?php $this->dispatchTplEvent('afterFormOpen'); ?>
+                <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
-                <label for="name"><?php echo $this->__('DESCRIPTION') ?>:</label>
+                <label for="name"><?php echo $tpl->__('DESCRIPTION') ?>:</label>
                 <input type="text" id="name" name="name" value="<?php echo $values['name']; ?>" /><br />
 
-                <label for="url"><?php echo $this->__('URL') ?>:</label>
+                <label for="url"><?php echo $tpl->__('URL') ?>:</label>
                 <input type="text" id="url" name="url" style="width:300px;" value="<?php echo $values['url']; ?>" /><br />
 
-                <label for="color"><?php echo $this->__('COLOR') ?>:</label>
+                <label for="color"><?php echo $tpl->__('COLOR') ?>:</label>
                 <select name="color" id="color">
                     <option value="c0033ff" class="c0033ff" <?php if ($values['colorClass'] == 'c0033ff') {
                         echo 'selected="selected"';
@@ -93,17 +94,17 @@
                                                             }?>>ffffff</option>
                 </select><br/>
 
-                <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+                <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
-                <input type="submit" name="save" id="save" value="<?php echo $this->__('SAVE') ?>" class="button" />
+                <input type="submit" name="save" id="save" value="<?php echo $tpl->__('SAVE') ?>" class="button" />
                 <br/><br/>
-                <h3><?php echo $this->__('EXPLANATION') ?></h3>
+                <h3><?php echo $tpl->__('EXPLANATION') ?></h3>
 
-                <p><?php echo $this->__('FOLLOW_STEPS') ?></p><br/>
-                <p>1. <?php echo $this->__('STEP_ONE_IMPORT') ?></p>
-                <p>2. <?php echo $this->__('STEP_TWO_IMPORT') ?></p>
-                <p>3. <?php echo $this->__('STEP_THREE_IMPORT') ?></p>
+                <p><?php echo $tpl->__('FOLLOW_STEPS') ?></p><br/>
+                <p>1. <?php echo $tpl->__('STEP_ONE_IMPORT') ?></p>
+                <p>2. <?php echo $tpl->__('STEP_TWO_IMPORT') ?></p>
+                <p>3. <?php echo $tpl->__('STEP_THREE_IMPORT') ?></p>
 
-                <?php $this->dispatchTplEvent('beforeFormClose'); ?>
+                <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
             </form>

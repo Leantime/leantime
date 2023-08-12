@@ -1,21 +1,22 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-    $ticket = $this->get('ticket');
-    $projectData = $this->get('projectData');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $ticket = $tpl->get('ticket');
+    $projectData = $tpl->get('projectData');
 
 ?>
 
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$this->__("links.go_back") ?></a>
+        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$tpl->__("links.go_back") ?></a>
     </div>
 
-    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headlines.edit_todo") ?></h1>
+        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+        <h1><?=$tpl->__("headlines.edit_todo") ?></h1>
     </div>
 
 </div><!--pageheader-->
@@ -24,41 +25,41 @@
 
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <div class="tabbedwidget tab-primary ticketTabs" style="visibility:hidden;">
 
             <ul>
-                <li><a href="#ticketdetails"><?php echo $this->__("tabs.ticketDetails") ?></a></li>
-                <li><a href="#subtasks"><?php echo $this->__('tabs.subtasks') ?> (<?php echo $this->get('numSubTasks'); ?>)</a></li>
-                <li><a href="#files"><?php echo $this->__("tabs.files") ?> (<?php echo $this->get('numFiles'); ?>)</a></li>
+                <li><a href="#ticketdetails"><?php echo $tpl->__("tabs.ticketDetails") ?></a></li>
+                <li><a href="#subtasks"><?php echo $tpl->__('tabs.subtasks') ?> (<?php echo $tpl->get('numSubTasks'); ?>)</a></li>
+                <li><a href="#files"><?php echo $tpl->__("tabs.files") ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
                 <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
-                    <li><a href="#timesheet" id="timesheetTab"><?php echo $this->__("tabs.time_tracking") ?></a></li>
+                    <li><a href="#timesheet" id="timesheetTab"><?php echo $tpl->__("tabs.time_tracking") ?></a></li>
                 <?php } ?>
             </ul>
 
             <div id="ticketdetails">
                 <form class="ticketModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
-                    <?php $this->displaySubmodule('tickets-ticketDetails') ?>
+                    <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
                 </form>
             </div>
 
             <div id="subtasks">
 
-                    <?php $this->displaySubmodule('tickets-subTasks') ?>
+                    <?php $tpl->displaySubmodule('tickets-subTasks') ?>
 
             </div>
 
             <div id="files">
                 <form action='#files' method='POST' enctype="multipart/form-data" class="ticketModal">
-                    <?php $this->displaySubmodule('tickets-attachments') ?>
+                    <?php $tpl->displaySubmodule('tickets-attachments') ?>
                 </form>
             </div>
 
 
             <?php if ($_SESSION["userdata"]["role"] != "client") { ?>
                 <div id="timesheet">
-                    <?php $this->displaySubmodule('tickets-timesheet') ?>
+                    <?php $tpl->displaySubmodule('tickets-timesheet') ?>
                 </div>
             <?php } ?>
         </div>
@@ -69,9 +70,9 @@
         <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>#comments" class="ticketModal">
             <input type="hidden" name="comment" value="1" />
             <?php
-            $this->assign('formUrl', BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
+            $tpl->assign('formUrl', BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
 
-            $this->displaySubmodule('comments-generalComment') ;
+            $tpl->displaySubmodule('comments-generalComment') ;
             ?>
         </form>
     </div>

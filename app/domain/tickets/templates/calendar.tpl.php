@@ -1,7 +1,8 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
 
-$milestones = $this->get('milestones');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$milestones = $tpl->get('milestones');
 if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
     $_SESSION['submenuToggle']["myProjectCalendarView"] = "dayGridMonth";
 }
@@ -11,8 +12,8 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-sliders"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headline.project_calendar"); ?></h1>
+        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+        <h1><?=$tpl->__("headline.project_calendar"); ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -20,12 +21,12 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
             <div class="col-md-4">
                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
+                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$tpl->__("links.add_milestone"); ?></a>
                 <?php } ?>
             </div>
             <div class="col-md-4">
@@ -37,11 +38,11 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
 
                 <div class="btn-group viewDropDown pull-right">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.calendar_view") ?> <?=$this->__("links.view") ?></button>
+                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.calendar_view") ?> <?=$tpl->__("links.view") ?></button>
                     <ul class="dropdown-menu">\
-                        <li><a href="<?=BASE_URL ?>/tickets/roadmap" ><?=$this->__("links.gantt_view") ?></a></li>
-                        <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$this->__("links.table") ?></a></li>
-                        <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar" class="active"><?=$this->__("links.calendar_view") ?></a></li>
+                        <li><a href="<?=BASE_URL ?>/tickets/roadmap" ><?=$tpl->__("links.gantt_view") ?></a></li>
+                        <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$tpl->__("links.table") ?></a></li>
+                        <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar" class="active"><?=$tpl->__("links.calendar_view") ?></a></li>
                     </ul>
                 </div>
 
@@ -67,9 +68,9 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
                 <div class="pull-right btn-group" style="margin-right:10px;">
                     <form action="" method="get" id="searchForm">
-                        <label class="pull-right" for="includeTasks">&nbsp;<?=$this->__('label.showTasks'); ?></label>
+                        <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
                         <input type="hidden" name="submitIncludeTasks" value="1" />
-                        <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($this->get('includeTasks') === true) {
+                        <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
                             echo "checked='checked'";
                                                                                                                                       } ?>/>
                     </form>
@@ -87,10 +88,10 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>" . $this->__("headlines.no_milestones") . "<br/>
+            <h4>" . $tpl->__("headlines.no_milestones") . "<br/>
 
             <br />
-            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
+            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $tpl->__("links.add_milestone") . "</a></h4></div>";
         }
         ?>
         <div class="calendar-wrapper">
@@ -131,7 +132,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
     var events = [
         <?php foreach ($milestones as $mlst) :
-            $headline = $this->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
+            $headline = $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
             if ($mlst->type == "milestone") {
                 $headline .= " (" . $mlst->percentDone . "% Done)";
             }

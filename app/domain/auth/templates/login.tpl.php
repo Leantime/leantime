@@ -1,49 +1,50 @@
 <?php
-    $redirectUrl = $this->get('redirectUrl');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $redirectUrl = $tpl->get('redirectUrl');
 ?>
 
-<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
+<?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pagetitle">
-        <h1><?php echo $this->language->__("headlines.login"); ?></h1>
+        <h1><?php echo $tpl->language->__("headlines.login"); ?></h1>
     </div>
-    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
+    <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div>
-<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
+<?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="regcontent">
-    <?php $this->dispatchTplEvent('afterRegcontentOpen'); ?>
+    <?php $tpl->dispatchTplEvent('afterRegcontentOpen'); ?>
     <form id="login" action="<?=BASE_URL . "/auth/login"?>" method="post">
-        <?php $this->dispatchTplEvent('afterFormOpen'); ?>
+        <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
 
-        <?php echo $this->displayInlineNotification(); ?>
+        <?php echo $tpl->displayInlineNotification(); ?>
 
         <div class="">
-            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $this->language->__($this->get("inputPlaceholder")); ?>" value=""/>
+            <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $tpl->language->__($tpl->get("inputPlaceholder")); ?>" value=""/>
         </div>
         <div class="">
-            <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $this->language->__("input.placeholders.enter_password"); ?>" value=""/>
+            <input type="password" name="password" id="password" class="form-control" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_password"); ?>" value=""/>
             <div class="forgotPwContainer">
-                <a href="<?=BASE_URL ?>/auth/resetPw" class="forgotPw"><?php echo $this->language->__("links.forgot_password"); ?></a>
+                <a href="<?=BASE_URL ?>/auth/resetPw" class="forgotPw"><?php echo $tpl->language->__("links.forgot_password"); ?></a>
             </div>
         </div>
-        <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+        <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
         <div class="">
-            <input type="submit" name="login" value="<?php echo $this->language->__("buttons.login"); ?>" class="btn btn-primary"/>
+            <input type="submit" name="login" value="<?php echo $tpl->language->__("buttons.login"); ?>" class="btn btn-primary"/>
         </div>
         <div>
         </div>
-        <?php $this->dispatchTplEvent('beforeFormClose'); ?>
+        <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
     </form>
-    <?php if ($this->get('oidcEnabled')) { ?>
-        <?php $this->dispatchTplEvent('beforeOidcButton'); ?>
+    <?php if ($tpl->get('oidcEnabled')) { ?>
+        <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>
         <div class="">
             <a href="<?=BASE_URL ?>/oidc/login" style="width:100%;" class="btn btn-primary">
-            <?php echo $this->language->__("buttons.oidclogin"); ?>
+            <?php echo $tpl->language->__("buttons.oidclogin"); ?>
             </a>
         </div>
     <?php } ?>
-    <?php $this->dispatchTplEvent('beforeRegcontentClose'); ?>
+    <?php $tpl->dispatchTplEvent('beforeRegcontentClose'); ?>
 </div>

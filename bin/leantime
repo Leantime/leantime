@@ -5,7 +5,7 @@ define('ROOT', dirname(__FILE__, 2)."/public");
 define('APP_ROOT', dirname(__FILE__, 2));
 define('LEAN_CLI', true);
 
-require APP_ROOT . '/app/core/class.autoload.php';
+require_once APP_ROOT . '/app/core/class.autoload.php';
 require_once APP_ROOT. '/config/appSettings.php';
 
 use leantime\command\migrateCommand;
