@@ -1154,3 +1154,7 @@ body .btn.btn-link.active {
     color: var(--main-action-color);
     background: var(--main-action-bg);
 }
+
+.btn .badge {
+    top:0px;
+}

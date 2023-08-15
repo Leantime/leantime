@@ -16,9 +16,9 @@ leantime.ticketsController = (function () {
     function countTickets()
     {
 
-        jQuery("#sortableTicketKanban .column").each(function () {
+        jQuery(".sortableTicketKanban .column").each(function () {
             var counting = jQuery(this).find('.moveable').length;
-            jQuery(this).find(' .count').text(counting);
+            jQuery(this).find('.count').text(counting);
         });
 
     }
@@ -1060,23 +1060,25 @@ leantime.ticketsController = (function () {
             countTickets();
             jQuery(".filterBar .row-fluid").css("opacity", "1");
 
-            var height = jQuery("html").height() - 250;
+            var height = 250;
 
-            jQuery("#sortableTicketKanban .column .contentInner").each(function () {
+            jQuery(".sortableTicketKanban .column .contentInner").each(function () {
                 if (jQuery(this).height() > height) {
                     height = jQuery(this).height();
                 }
             });
             height = height + 50;
-            jQuery("#sortableTicketKanban .column .contentInner").css("min-height", height);
+            jQuery(".sortableTicketKanban .column .contentInner").css("min-height", height);
 
         });
 
     }
 
-    var initTicketKanban = function (ticketStatusList) {
+    var initTicketKanban = function (ticketStatusListParameter) {
 
-        jQuery("#sortableTicketKanban .ticketBox").hover(function () {
+        var ticketStatusList = ticketStatusListParameter;
+
+        jQuery(".sortableTicketList.kanbanBoard .ticketBox").hover(function () {
             jQuery(this).css("background", "var(--kanban-card-hover)");
         },function () {
             jQuery(this).css("background", "var(--kanban-card-bg)");
@@ -1084,50 +1086,65 @@ leantime.ticketsController = (function () {
 
         var position_updated = false;
 
-        jQuery("#sortableTicketKanban .contentInner").sortable({
-            connectWith: ".contentInner",
-            items: "> .moveable",
-            tolerance: 'intersect',
-            placeholder: "ui-state-highlight",
-            forcePlaceholderSize: true,
-            cancel: ".portlet-toggle,:input,a,input",
-            distance: 25,
+        jQuery(".sortableTicketList").each(function() {
+            console.log(this);
 
-            start: function (event, ui) {
-                ui.item.addClass('tilt');
-                tilt_direction(ui.item);
-            },
-            stop: function (event, ui) {
-                ui.item.removeClass("tilt");
-                jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
-                ui.item.removeData("move_handler");
+            var currentElement = this;
 
-                countTickets();
+            jQuery(currentElement).find(".contentInner").sortable({
+                connectWith: ".contentInner",
+                items: "> .moveable",
+                tolerance: 'intersect',
+                placeholder: "ui-state-highlight",
+                forcePlaceholderSize: true,
+                cancel: ".portlet-toggle,:input,a,input",
+                distance: 25,
 
-                var statusPostData = {
-                    action: "kanbanSort",
-                    payload: {},
-                    handler: ui.item[0].id
-                };
+                start: function (event, ui) {
+                    ui.item.addClass('tilt');
+                    tilt_direction(ui.item);
+                },
+                stop: function (event, ui) {
+                    ui.item.removeClass("tilt");
+                    jQuery("html").unbind('mousemove', ui.item.data("move_handler"));
+                    ui.item.removeData("move_handler");
 
-                for (var i = 0; i < ticketStatusList.length; i++) {
-                    if (jQuery(".contentInner.status_" + ticketStatusList[i]).length) {
-                        statusPostData.payload[ticketStatusList[i]] = jQuery(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                    countTickets();
+
+                    var statusPostData = {
+                        action: "kanbanSort",
+                        payload: {},
+                        handler: ui.item[0].id
+                    };
+
+
+                    for (var i = 0; i < ticketStatusList.length; i++) {
+
+
+                        if (jQuery(currentElement).find(".contentInner.status_" + ticketStatusList[i]).length) {
+                            statusPostData.payload[ticketStatusList[i]] = jQuery(currentElement).find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
+                        }
                     }
+
+                    // POST to server using $.post or $.ajax
+                    jQuery.ajax({
+                        type: 'POST',
+                        url: leantime.appUrl + '/api/tickets',
+                        data: statusPostData
+
+                    }).done(function (response) {
+                        leantime.handleAsyncResponse(response);
+                    });
+
                 }
+            });
 
-                // POST to server using $.post or $.ajax
-                jQuery.ajax({
-                    type: 'POST',
-                    url: leantime.appUrl + '/api/tickets',
-                    data: statusPostData
-
-                }).done(function (response) {
-                    leantime.handleAsyncResponse(response);
-                });
-
-            }
         });
+
+
+
+
+
 
         function tilt_direction(item)
         {

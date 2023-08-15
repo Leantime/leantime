@@ -1,10 +1,13 @@
 
 <?php
 
-$currentUrlPath = BASE_URL . "/". str_replace(".", "/", \leantime\core\frontcontroller::getCurrentRoute());
+$currentRoute = \leantime\core\frontcontroller::getCurrentRoute();
+
+$currentUrlPath = BASE_URL . "/". str_replace(".", "/", $currentRoute);
 $groupBy        = $this->get('groupByOptions');
 $sortBy        = $this->get('sortOptions');
 $searchCriteria = $this->get("searchCriteria");
+$statusLabels = $this->get("allTicketStates");
 
 ?>
 <form action="" method="get" id="ticketSearch">
@@ -12,10 +15,11 @@ $searchCriteria = $this->get("searchCriteria");
     <input type="hidden" value="1" name="search"/>
     <input type="hidden" value="<?php echo $_SESSION['currentProject']; ?>" name="projectId" id="projectIdInput"/>
 
-    <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom;">
+    <div class="filterWrapper" style="display:inline-block; position:relative; vertical-align: bottom; margin-bottom:20px;">
         <a onclick="leantime.ticketsController.toggleFilterBar();" style="margin-right:5px;"
            class="btn btn-link" data-tippy-content="<?=$this->__("popover.filter") ?>">
-            <i class="fas fa-filter"></i> Filter <?=$this->get('numOfFilters') > 0 ? " (" . $this->get('numOfFilters') . ")" : "" ?>
+            <i class="fas fa-filter"></i> Filter
+            <?=$this->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $this->get('numOfFilters') . "</span> " : "" ?>
         </a>
         <div class="filterBar hideOnLoad" style="width:250px;">
 
@@ -127,29 +131,38 @@ $searchCriteria = $this->get("searchCriteria");
             </div>
 
         </div>
-    </div><div class="btn-group viewDropDown" >
-        <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.group_by") ?>"><span class="fa-solid fa-diagram-project"></span> Group By</button>
-        <ul class="dropdown-menu">
-            <?php foreach ($groupBy as $input) { ?>
-                <li>
-                    <span class="radio">
-                        <input
-                            type="radio"
-                            name="groupBy"
-                            <?php if ($searchCriteria["groupBy"] == $input['field']) {
-                                echo "checked='checked'";
-                            }?>
-                            value="<?php echo $input['field']; ?>"
-                            id="<?php echo $input['id']; ?>"
-                            onclick="leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"
-                        />
-                        <label for="<?php echo $input['id'] ?>"><?=$this->__("label.{$input['label']}") ?></label>
-                    </span>
-                </li>
-            <?php }; ?>
-        </ul>
 
+        <?php if($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar"){?>
+            <div class="btn-group viewDropDown">
+            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.group_by") ?>">
+                <span class="fa-solid fa-diagram-project"></span> Group By
+                <?php if($searchCriteria["groupBy"] != 'all' && $searchCriteria["groupBy"] != '') { ?>
+                    <span class="badge badge-primary">1</span>
+                <?php } ?>
+            </button>
+            <ul class="dropdown-menu">
+                <?php foreach ($groupBy as $input) { ?>
+                    <li>
+                        <span class="radio">
+                            <input
+                                type="radio"
+                                name="groupBy"
+                                <?php if ($searchCriteria["groupBy"] == $input['field']) {
+                                    echo "checked='checked'";
+                                }?>
+                                value="<?php echo $input['field']; ?>"
+                                id="<?php echo $input['id']; ?>"
+                                onclick="leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"
+                            />
+                            <label for="<?php echo $input['id'] ?>"><?=$this->__("label.{$input['label']}") ?></label>
+                        </span>
+                    </li>
+                <?php }; ?>
+            </ul>
+        </div>
+        <?php } ?>
     </div>
+    <div class="clearall"></div>
 
     <?php $this->dispatchTplEvent('filters.beforeBar'); ?>
 

@@ -1108,7 +1108,7 @@ a .label.feature-label:after {
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
     margin-bottom: 10px;
-    font-weight:lighter;
+    font-weight:bold;
 }
 
 .maincontentinner .accordionTitle i {

@@ -266,13 +266,15 @@ namespace leantime\domain\services {
         {
             $count = 0;
             foreach ($searchCriteria as $key => $value) {
-                if ($key != "groupBy"
+                if (
+                    $key != "groupBy"
                     && $key != "currentProject"
                     && $key != "orderBy"
                     && $key != "currentUser"
                     && $key != "currentClient"
                     && $key != "sprint"
-                    && $key != "orderDirection") {
+                    && $key != "orderDirection"
+                ) {
                     if ($value != '') {
                         $count++;
                     }
@@ -289,7 +291,8 @@ namespace leantime\domain\services {
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
-        public function getAllGrouped($searchCriteria) {
+        public function getAllGrouped($searchCriteria)
+        {
             $ticketGroups = array();
 
             $tickets = $this->ticketRepository->getAllBySearchCriteria(
@@ -297,29 +300,29 @@ namespace leantime\domain\services {
                 $searchCriteria['orderBy'] ?? 'date'
             );
 
-            if($searchCriteria['groupBy'] == null
+            if (
+                $searchCriteria['groupBy'] == null
                 || $searchCriteria['groupBy'] == ''
-                || $searchCriteria['groupBy'] == 'all'){
-
+                || $searchCriteria['groupBy'] == 'all'
+            ) {
                 $ticketGroups['all'] = array(
                     "label" => "all",
                     "id" => 'all',
-                    'items' => $tickets
+                    'items' => $tickets,
                 );
 
                 return $ticketGroups;
             }
 
             $groupByOptions = $this->getGroupByFieldOptions();
-            foreach($tickets as $ticket){
-                if(isset($ticket[$searchCriteria['groupBy']])) {
+            foreach ($tickets as $ticket) {
+                if (isset($ticket[$searchCriteria['groupBy']])) {
                     $groupedFieldValue = $ticket[$searchCriteria['groupBy']];
 
-                    if(isset($ticketGroups[$groupedFieldValue])){
+                    if (isset($ticketGroups[$groupedFieldValue])) {
                         $ticketGroups[$groupedFieldValue]['items'][] = $ticket;
                     } else {
-
-                        switch($searchCriteria['groupBy']){
+                        switch ($searchCriteria['groupBy']) {
                             case "status":
                                 $status = $this->getStatusLabels();
                                 $label = $status[$groupedFieldValue]["name"];
@@ -327,31 +330,37 @@ namespace leantime\domain\services {
                                 break;
                             case "priority":
                                 $priorities = $this->getPriorityLabels();
-                                if(isset($priorities[$groupedFieldValue])){
+                                if (isset($priorities[$groupedFieldValue])) {
                                     $label = $priorities[$groupedFieldValue];
-
                                 } else {
                                     $label = "No Priority Set";
                                 }
                                 break;
-                            case "effort":
+                            case "storypoints":
                                 $efforts  =  $this->getEffortLabels();
-                                $label = $efforts[$groupedFieldValue];
+                                if (isset($efforts[$groupedFieldValue])) {
+                                    $label = $efforts[$groupedFieldValue];
+                                } else {
+                                    $label = "No Effort Set";
+                                }
                                 break;
-                            case "milestone":
+                            case "milestoneid":
                                 $label = $ticket["milestoneHeadline"];
+                                if($label == ''){
+                                    $label = "No Milestone Set";
+                                }
                                 break;
                             case "editorId":
-                                $label = "<div class='profileImage'><img src='".BASE_URL."/api/users?profileImage=". $ticket["editorId"] ."' /></div> ". $ticket["editorFirstname"]." ".$ticket["editorLastname"];
+                                $label = "<div class='profileImage'><img src='" . BASE_URL . "/api/users?profileImage=" . $ticket["editorId"] . "' /></div> " . $ticket["editorFirstname"] . " " . $ticket["editorLastname"];
 
-                                if($ticket["editorFirstname"] == '' && $ticket["editorLastname"] == ''){
-                                    $label = "Not assigned to anyone";
+                                if ($ticket["editorFirstname"] == '' && $ticket["editorLastname"] == '') {
+                                    $label = "Not Assigned to Anyone";
                                 }
 
                                 break;
                             case "sprint":
                                 $label = $ticket["sprintName"];
-                                if($label == ''){
+                                if ($label == '') {
                                     $label = "Not assigned to a sprint";
                                 }
                                 break;
@@ -359,26 +368,18 @@ namespace leantime\domain\services {
                             default:
                                 $label = $groupedFieldValue;
                                 break;
-
                         }
-
-
-
 
                         $ticketGroups[$groupedFieldValue] = array(
                             "label" => $label,
                             "id" => $groupedFieldValue,
-                            'items' => [$ticket]
+                            'items' => [$ticket],
                         );
                     }
-
                 }
-
             }
 
             return $ticketGroups;
-
-
         }
 
         public function getAllPossibleParents(models\tickets $ticket, $projectId = 'currentProject'): array
@@ -1112,7 +1113,7 @@ namespace leantime\domain\services {
                 ],
                 "effort" => [
                     'id' => 'effort',
-                    'field' => 'effort',
+                    'field' => 'storypoints',
                     'label' => 'effort',
                     'function' => 'getEffortLabels',
                 ],
@@ -1124,7 +1125,7 @@ namespace leantime\domain\services {
                 ],
                 "milestone" => [
                     'id' => 'milestone',
-                    'field' => 'milestone',
+                    'field' => 'milestoneid',
                     'label' => 'milestone',
                     'function' => null,
                 ],
@@ -1235,7 +1236,8 @@ namespace leantime\domain\services {
         }
 
 
-        public function getTicketTemplateAssignments($params) {
+        public function getTicketTemplateAssignments($params)
+        {
 
 
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
@@ -1243,7 +1245,7 @@ namespace leantime\domain\services {
             $searchCriteria = $this->prepareTicketSearchArray($params);
             $searchCriteria["orderBy"] = "kanbansort";
 
-            $allTickets = $this->getAll($searchCriteria);
+            $allTickets = $this->getAllGrouped($searchCriteria);
             $allTicketStates  =  $this->getStatusLabels();
 
             $efforts  =  $this->getEffortLabels();
@@ -1282,9 +1284,8 @@ namespace leantime\domain\services {
                 'milestones' => $milestones,
                 'groupByOptions' => $groupByOptions,
                 'newField' => $newField,
-                'sortOptions' => $sortOptions
+                'sortOptions' => $sortOptions,
             );
-
         }
     }
 
