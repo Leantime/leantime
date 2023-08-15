@@ -136,10 +136,10 @@ $searchCriteria = $this->get("searchCriteria");
                         <input
                             type="radio"
                             name="groupBy"
-                            <?php if ($searchCriteria["groupBy"] == $input['status']) {
+                            <?php if ($searchCriteria["groupBy"] == $input['field']) {
                                 echo "checked='checked'";
                             }?>
-                            value="<?php echo $input['status']; ?>"
+                            value="<?php echo $input['field']; ?>"
                             id="<?php echo $input['id']; ?>"
                             onclick="leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"
                         />

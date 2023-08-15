@@ -1115,7 +1115,7 @@ a .label.feature-label:after {
     display:inline-block;
     width:10px;
     text-align:center;
-    margin-right:5px;
+    margin-right:10px;
 }
 
 .subtitle {
@@ -3839,7 +3839,7 @@ body .widgettitle .editHeadline:hover {
 
 .simpleAccordionContainer {
     margin-bottom:30px;
-    padding-left: 15px;
+    padding-left: 20px;
 }
 
 .teamBox {
@@ -4178,6 +4178,24 @@ h3.todaysDate {
     border-radius:var(--element-radius);
 }
 
+.profileImage {
+
+    overflow:hidden;
+    display:inline-block;
+    vertical-align: middle;
+    margin-right:5px;
+    padding:0px;
+
+
+}
+
+.profileImage img {
+    width:30px;
+    height:30px;
+    border-radius:20px;
+    padding:1px;
+    border:1px solid var(--neutral);
+}
 
 
 

@@ -289,6 +289,98 @@ namespace leantime\domain\services {
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
+        public function getAllGrouped($searchCriteria) {
+            $ticketGroups = array();
+
+            $tickets = $this->ticketRepository->getAllBySearchCriteria(
+                $searchCriteria,
+                $searchCriteria['orderBy'] ?? 'date'
+            );
+
+            if($searchCriteria['groupBy'] == null
+                || $searchCriteria['groupBy'] == ''
+                || $searchCriteria['groupBy'] == 'all'){
+
+                $ticketGroups['all'] = array(
+                    "label" => "all",
+                    "id" => 'all',
+                    'items' => $tickets
+                );
+
+                return $ticketGroups;
+            }
+
+            $groupByOptions = $this->getGroupByFieldOptions();
+            foreach($tickets as $ticket){
+                if(isset($ticket[$searchCriteria['groupBy']])) {
+                    $groupedFieldValue = $ticket[$searchCriteria['groupBy']];
+
+                    if(isset($ticketGroups[$groupedFieldValue])){
+                        $ticketGroups[$groupedFieldValue]['items'][] = $ticket;
+                    } else {
+
+                        switch($searchCriteria['groupBy']){
+                            case "status":
+                                $status = $this->getStatusLabels();
+                                $label = $status[$groupedFieldValue]["name"];
+
+                                break;
+                            case "priority":
+                                $priorities = $this->getPriorityLabels();
+                                if(isset($priorities[$groupedFieldValue])){
+                                    $label = $priorities[$groupedFieldValue];
+
+                                } else {
+                                    $label = "No Priority Set";
+                                }
+                                break;
+                            case "effort":
+                                $efforts  =  $this->getEffortLabels();
+                                $label = $efforts[$groupedFieldValue];
+                                break;
+                            case "milestone":
+                                $label = $ticket["milestoneHeadline"];
+                                break;
+                            case "editorId":
+                                $label = "<div class='profileImage'><img src='".BASE_URL."/api/users?profileImage=". $ticket["editorId"] ."' /></div> ". $ticket["editorFirstname"]." ".$ticket["editorLastname"];
+
+                                if($ticket["editorFirstname"] == '' && $ticket["editorLastname"] == ''){
+                                    $label = "Not assigned to anyone";
+                                }
+
+                                break;
+                            case "sprint":
+                                $label = $ticket["sprintName"];
+                                if($label == ''){
+                                    $label = "Not assigned to a sprint";
+                                }
+                                break;
+
+                            default:
+                                $label = $groupedFieldValue;
+                                break;
+
+                        }
+
+
+
+
+                        $ticketGroups[$groupedFieldValue] = array(
+                            "label" => $label,
+                            "id" => $groupedFieldValue,
+                            'items' => [$ticket]
+                        );
+                    }
+
+                }
+
+            }
+
+            return $ticketGroups;
+
+
+        }
+
         public function getAllPossibleParents(models\tickets $ticket, $projectId = 'currentProject'): array
         {
 
@@ -1000,51 +1092,60 @@ namespace leantime\domain\services {
         public function getGroupByFieldOptions()
         {
             return [
-                [
-                    'id' => 'groupByNothingLink',
-                    'status' => '',
+                "all" => [
+                    'id' => 'all',
+                    'field' => 'all',
                     'label' => 'no_group',
+
                 ],
-                [
-                    'id' => 'groupByTypeLink',
-                    'status' => 'type',
+                "type" => [
+                    'id' => 'type',
+                    'field' => 'type',
                     'label' => 'type',
+                    'function' => 'getTicketTypes',
                 ],
-                [
-                    'id' => 'groupByStatusLink',
-                    'status' => 'status',
+                "status" => [
+                    'id' => 'status',
+                    'field' => 'status',
                     'label' => 'todo_status',
+                    'function' => 'getStatusLabels',
                 ],
-                [
-                    'id' => 'groupByEffortLink',
-                    'status' => 'effort',
+                "effort" => [
+                    'id' => 'effort',
+                    'field' => 'effort',
                     'label' => 'effort',
+                    'function' => 'getEffortLabels',
                 ],
-                [
-                    'id' => 'groupByPriorityLink',
-                    'status' => 'priority',
+                "priority" => [
+                    'id' => 'priority',
+                    'field' => 'priority',
                     'label' => 'priority',
+                    'function' => 'getPriorityLabels',
                 ],
-                [
-                    'id' => 'groupByMilestoneLink',
-                    'status' => 'milestone',
+                "milestone" => [
+                    'id' => 'milestone',
+                    'field' => 'milestone',
                     'label' => 'milestone',
+                    'function' => null,
                 ],
-                [
-                    'id' => 'groupByUserLink',
-                    'status' => 'user',
+                "user" => [
+                    'id' => 'user',
+                    'field' => 'editorId',
                     'label' => 'user',
+                    'funtion' => 'buildEditorName',
                 ],
-                [
-                    'id' => 'groupBySprintLink',
-                    'status' => 'sprint',
+                "sprint" => [
+                    'id' => 'sprint',
+                    'field' => 'sprint',
                     'label' => 'sprint',
                 ],
-                [
+
+                /*
+                "tags" => [
                     'id' => 'groupByTagsLink',
-                    'status' => 'tags',
+                    'field' => 'tags',
                     'label' => 'tags',
-                ],
+                ],*/
             ];
         }
 
@@ -1065,11 +1166,13 @@ namespace leantime\domain\services {
                     'id' => 'sortByStatusLink',
                     'status' => 'status',
                     'label' => 'todo_status',
+
                 ],
                 [
                     'id' => 'sortByEffortLink',
                     'status' => 'effort',
                     'label' => 'effort',
+
                 ],
                 [
                     'id' => 'sortByPriorityLink',

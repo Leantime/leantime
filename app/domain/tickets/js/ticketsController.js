@@ -1167,9 +1167,10 @@ leantime.ticketsController = (function () {
             var size = 100;
             var columnIndex = false;
 
+            /*
             if (groupBy != "") {
                 columnIndex = jQuery("#allTicketsTable thead").find("." + groupBy + "-col").index();
-            }
+            }*/
 
             var plannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
             var remainingHoursIndex =  jQuery("#allTicketsTable thead").find(".remaining-hours-col").index();
@@ -1180,6 +1181,7 @@ leantime.ticketsController = (function () {
             var orderFixedOption = false;
             var defaultOrder = [];
 
+            /*
             if (columnIndex !== false) {
                 rowGroupOption = {
                     startRender: function (rows, group) {
@@ -1254,7 +1256,9 @@ leantime.ticketsController = (function () {
                 defaultOrder = [[columnIndex, 'asc'], [dueDateCol, 'asc']];
             }
 
-            var allTickets = jQuery("#allTicketsTable").DataTable({
+             */
+
+            var allTickets = jQuery(".ticketTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
                     "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
@@ -1284,7 +1288,7 @@ leantime.ticketsController = (function () {
                     }
 
                 },
-                "dom": '<"top">rt<"bottom"ilp><"clear">',
+                "dom": '<"top">rt<"bottom"ip><"clear">',
                /*'ajax': {
                     url: leantime.appUrl+'/api/tickets?search=1',
                     dataSrc: 'result'
@@ -1294,7 +1298,7 @@ leantime.ticketsController = (function () {
                 "displayLength":100,
                 "orderFixed": orderFixedOption,
                 "order": defaultOrder,
-                "rowGroup": rowGroupOption,
+                //"rowGroup": rowGroupOption,
                 /*columns: [
                     { data: 'id' },
                     { data: 'headline' },
@@ -1320,7 +1324,7 @@ leantime.ticketsController = (function () {
 
             });
 
-            var buttons = new jQuery.fn.dataTable.Buttons(allTickets, {
+            var buttons = new jQuery.fn.dataTable.Buttons(allTickets.table(0), {
                 buttons: [
                     {
                         extend: 'csvHtml5',
@@ -1339,24 +1343,28 @@ leantime.ticketsController = (function () {
                             }
                         }
                 },
-                    {
-                        extend: 'colvis',
-                        columns: ':not(.noVis)'
+                {
+                    extend: 'colvis',
+                    columns: ':not(.noVis)'
                 }
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            jQuery('#allTicketsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
-                allTickets.draw(false);
+            // When the column visibility changes on the firs table, also change it on // the others tables.
+            allTickets.table(0).on('column-visibility',
+                function ( e, settings, colIdx, visibility ) {
+                    allTickets.tables(':gt(0)').column( colIdx ).visible( visibility );
+                    allTickets.draw(false);
             });
 
-            jQuery('#allTicketsTable input').on('change', function ( e, settings, column, state ) {
+            jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
 
                 jQuery(this).parent().attr('data-order',jQuery(this).val());
                 allTickets.draw();
 
             });
 
+            /*
             var asc = true;
             if (groupBy != "") {
                 jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
@@ -1365,6 +1373,8 @@ leantime.ticketsController = (function () {
                     allTickets.order.fixed(orderFixed).draw();
                 });
             }
+
+             */
 
 
         });
@@ -1515,9 +1525,10 @@ leantime.ticketsController = (function () {
             var size = 100;
             var columnIndex = false;
 
+            /*
             if (groupBy != "") {
                 columnIndex = jQuery("#allTicketsTable thead").find("." + groupBy + "-col").index();
-            }
+            }*/
 
             var plannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
             var remainingHoursIndex =  jQuery("#allTicketsTable thead").find(".remaining-hours-col").index();
@@ -1528,6 +1539,7 @@ leantime.ticketsController = (function () {
             var orderFixedOption = false;
             var defaultOrder = [];
 
+            /*
             if (columnIndex !== false) {
                 rowGroupOption = {
                     startRender: function (rows, group) {
@@ -1600,7 +1612,10 @@ leantime.ticketsController = (function () {
                 defaultOrder = [[columnIndex, 'asc'], [dueDateCol, 'asc']];
             }
 
-            var allTickets = jQuery("#allTicketsTable").DataTable({
+
+             */
+
+            var allTickets = jQuery(".ticketsTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
                     "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
@@ -1636,7 +1651,7 @@ leantime.ticketsController = (function () {
                 "displayLength":100,
                 "orderFixed": orderFixedOption,
                 "order": defaultOrder,
-                "rowGroup": rowGroupOption,
+                //"rowGroup": rowGroupOption,
                 "columnDefs": [
                     { "visible": false, "targets": 7 },
                     { "visible": false, "targets": 8 },
@@ -1671,17 +1686,18 @@ leantime.ticketsController = (function () {
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            jQuery('#allTicketsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
+            jQuery('.ticketsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTickets.draw(false);
             });
 
-            jQuery('#allTicketsTable input').on('change', function ( e, settings, column, state ) {
+            jQuery('.ticketsTable input').on('change', function ( e, settings, column, state ) {
 
                 jQuery(this).parent().attr('data-order',jQuery(this).val());
                 allTickets.draw();
 
             });
 
+            /*
             var asc = true;
             if (groupBy != "") {
                 jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
@@ -1689,7 +1705,7 @@ leantime.ticketsController = (function () {
                     var orderFixed = {"pre":[[columnIndex, asc === true ? 'asc' : 'desc']]};
                     allTickets.order.fixed(orderFixed).draw();
                 });
-            }
+            }*/
 
 
         });
@@ -1697,7 +1713,7 @@ leantime.ticketsController = (function () {
 
     var loadTicketToContainer = function (id, element) {
 
-        if (jQuery('textarea.complexEditor').length > 0) {
+        if (jQuery('textarea.complexEditor').length > 0 && jQuery('textarea.complexEditor').tinymce() !== null) {
             jQuery('textarea.complexEditor').tinymce().save();
             jQuery('textarea.complexEditor').tinymce().remove();
         }
@@ -1705,7 +1721,7 @@ leantime.ticketsController = (function () {
         jQuery(".ticketRows").removeClass("active");
         jQuery("#row-" + id).addClass("active");
 
-        jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/images/svg/loading-animation.svg' width='100px' /></div>");
+        jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px' /></div>");
 
         function formSubmitHandler(element)
         {

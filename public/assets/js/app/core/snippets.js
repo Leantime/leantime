@@ -23,10 +23,29 @@ leantime.snippets = (function () {
         });
     };
 
+    var accordionToggle = function (id) {
+
+        var currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
+
+        if(currentLink.hasClass("fa-angle-right")){
+            currentLink.removeClass("fa-angle-right");
+            currentLink.addClass("fa-angle-down");
+            jQuery('#accordion_'+id).slideDown("fast");
+        }else{
+
+            currentLink.removeClass("fa-angle-down");
+            currentLink.addClass("fa-angle-right");
+
+            jQuery('#accordion_'+id).slideUp("fast");
+        }
+
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         copyUrl:copyUrl,
-        initConfettiClick:initConfettiClick
+        initConfettiClick:initConfettiClick,
+        accordionToggle:accordionToggle
     };
 
 })();

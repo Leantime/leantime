@@ -37,7 +37,7 @@ namespace leantime\domain\controllers {
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
-            $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
+            $this->tpl->assign('allTickets', $this->ticketService->getAllGrouped($searchCriteria));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
@@ -59,7 +59,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
             // fields
-            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
+            $this->tpl->assign('groupByOptions', $this->ticketService->getGroupByFieldOptions());
             $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
 
             $this->tpl->display('tickets.showAll');

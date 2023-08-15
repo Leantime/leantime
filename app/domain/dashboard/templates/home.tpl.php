@@ -444,8 +444,6 @@
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
-
-
             if(currentLink.hasClass("fa-angle-right")){
                 currentLink.removeClass("fa-angle-right");
                 currentLink.addClass("fa-angle-down");
