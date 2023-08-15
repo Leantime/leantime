@@ -38,7 +38,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
   <hr style="margin-top: 5px; margin-bottom: 15px;">
     <?php echo $this->displayNotification(); ?>
 
-    <form class="<?=$canvasName ?>CanvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
+    <form class="formModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
         <input type="hidden" value="<?php echo $this->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $this->e($canvasItem['box']) ?>" name="box" id="box"/>

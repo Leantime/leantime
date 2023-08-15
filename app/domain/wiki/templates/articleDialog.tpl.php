@@ -120,7 +120,7 @@ if (isset($currentArticle->id)) {
                                         <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $currentArticle->milestoneId;?>" ><?php echo $currentArticle->milestoneHeadline; ?></a></strong>
                                     </div>
                                     <div class="col-md-4 align-right">
-                                        <a href="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete formModal"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
+                                        <a href="#/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -191,7 +191,7 @@ if (isset($currentArticle->id)) {
                     <div class="col-md-2 align-right padding-top-sm">
                         <?php if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
                             <br />
-                            <a href="<?=BASE_URL ?>/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?=$this->__('links.delete_article') ?></a>
+                            <a href="#/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__('links.delete_article') ?></a>
                         <?php } ?>
                     </div>
                 </div>

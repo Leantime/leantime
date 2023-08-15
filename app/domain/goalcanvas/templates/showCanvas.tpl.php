@@ -47,18 +47,17 @@ $elementName = 'goal';
                                                 &nbsp;&nbsp;&nbsp;
                                                 <ul class="dropdown-menu">
                                                     <li class="nav-header"><?=$this->__("subtitles.edit"); ?></li>
-                                                    <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
-                                                           class="<?=$canvasName ?>CanvasModal"
+                                                    <li><a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
                                                            data="item_<?php echo $row["id"];?>"> <?=$this->__("links.edit_canvas_item"); ?></a></li>
-                                                    <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
-                                                           class="delete <?=$canvasName ?>CanvasModal"
+                                                    <li><a href="#/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
+
                                                            data="item_<?php echo $row["id"];?>"> <?=$this->__("links.delete_canvas_item"); ?></a></li>
                                                 </ul>
                                             <?php } ?>
                                         </div>
 
-                                        <h4><strong>Goal:</strong> <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
-                                               class="<?=$canvasName ?>CanvasModal"
+                                        <h4><strong>Goal:</strong> <a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
+
                                                data="item_<?=$row['id'] ?>"><?php $this->e($row['title']);?></a></h4>
                                         <br />
                                         <strong>Metric:</strong> <?=$this->escape($row["description"]) ?>
@@ -195,10 +194,8 @@ $elementName = 'goal';
                                         </div>
 
                                         <div class="right" style="margin-right:10px;">
-                                            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
-                                               class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
-                                                    <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
-                                                    ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
+                                            <a href="#/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
+                                               class="commentCountLink" data="item_<?=$row['id'] ?>"><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
                                         </div>
 
                                     </div>

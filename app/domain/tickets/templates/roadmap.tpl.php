@@ -86,7 +86,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             <h4>" . $this->__("headlines.no_milestones") . "<br/>
 
             <br />
-            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
+            <a href=\"#/tickets/editMilestone\" class=\"addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
         }
         ?>
         <div class="gantt-wrapper">

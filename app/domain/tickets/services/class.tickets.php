@@ -1125,7 +1125,7 @@ namespace leantime\domain\services {
                 ],
                 [
                     'url' => "$baseUrl#/sprints/editSprint",
-                    'text' => 'links.add_sprint',
+                    'text' => 'links.create_sprint',
                     'class' => 'sprintModal',
                 ],
             ];

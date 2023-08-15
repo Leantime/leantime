@@ -41,7 +41,12 @@ if(is_array($this->get('sprints'))) {
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
 
-        <?php  if (($this->get('sprints') !== false) && ($this->get('sprints') !== null) && count($this->get('sprints'))  > 0) {?>
+        <?php  if (($this->get('sprints') !== false)
+            && ($this->get('sprints') !== null)
+            && count($this->get('sprints'))  > 0
+            && $sprint->id != 'all'
+            && $sprint->id != 'backlog'
+        ) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
@@ -69,7 +74,7 @@ if(is_array($this->get('sprints'))) {
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a class="wikiModal inlineEdit" href="<?=CURRENT_URL ?>/sprint/editSprint/"><?=$this->__("links.add_sprint") ?></a></li>
+                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> <?=$this->__("links.create_sprint_no_icon") ?></a></li>
                     <li class='nav-header border'></li>
                     <li>
                         <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$this->__("links.all_todos") ?></a>

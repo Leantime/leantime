@@ -548,6 +548,8 @@
         leantime.projectsController.initSelectFields();
         leantime.usersController.initUserEditModal();
 
+        leantime.editorController.initComplexEditor();
+
     });
 
 </script>

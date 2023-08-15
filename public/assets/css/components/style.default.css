@@ -3696,6 +3696,11 @@ body .widgettitle .editHeadline:hover {
     font-weight: bold;
 }
 
+.commentContent .text {
+    text-align:left;
+    margin: 0;
+}
+
 #mainToggler {
     margin-bottom:15px;
     display:block;

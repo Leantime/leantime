@@ -50,7 +50,7 @@
                     class="fa-solid fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?></h4>
 
         <div class="row-fluid">
-        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="ticketModal">
+        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
             <input type="hidden" name="comment" value="1" />
             <?php
             $this->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "");

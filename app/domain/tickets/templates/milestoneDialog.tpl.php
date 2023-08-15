@@ -91,7 +91,7 @@ $statusLabels = $this->get('statusLabels');
                 <?php if (
                 isset($currentMilestone->id) && $currentMilestone->id != ''
 ) { ?>
-                    <a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete formModal milestoneModal"><i class="fa fa-trash"></i> <?=$this->__("buttons.delete"); ?></a>
+                    <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__("buttons.delete"); ?></a>
                 <?php } ?>
             </div>
         </div>

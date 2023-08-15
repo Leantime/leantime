@@ -76,7 +76,7 @@ if ($numberofColumns > 0) {
                                     </a>
 
                                     <ul class="dropdown-menu">
-                                        <li><a href="<?=BASE_URL ?>/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$this->__('headlines.edit_label')?></a>
+                                        <li><a href="#/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$this->__('headlines.edit_label')?></a>
                                         </li>
                                         <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><?=$this->__('links.add_remove_col')?></a></li>
                                     </ul>
@@ -286,7 +286,7 @@ if ($numberofColumns > 0) {
 
                                             <div class="col-md-12 border-top" style="white-space: nowrap;">
                                                 <?php if ($row["commentCount"] > 0) {?>
-                                                    <a href="<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $row["id"];?>"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
+                                                    <a href="#/tickets/showTicket/<?php echo $row["id"];?>"><span class="fa-regular fa-comments"></span> <?php echo $row["commentCount"] ?></a>&nbsp;
                                                 <?php } ?>
 
                                                 <?php if ($row["subtaskCount"] > 0) {?>

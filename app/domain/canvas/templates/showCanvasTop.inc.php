@@ -55,7 +55,7 @@ foreach ($this->get('allCanvas') as $canvasRow) {
             <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $this->get('currentCanvas');?>"><?=$this->__("links.icon.export") ?></a></li>
             <li><a href="javascript:window.print();"><?=$this->__("links.icon.print") ?></a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
+                <li><a href="#/<?=$canvasName ?>canvas/delCanvas/<?php echo $this->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
             <?php } ?>
         </ul>
         </span>
@@ -96,8 +96,8 @@ foreach ($this->get('allCanvas') as $canvasRow) {
             <div class="col-md-3">
 
                 <?php if ($login::userIsAtLeast($roles::$editor) && count($canvasTypes) == 1 && count($allCanvas) > 0) { ?>
-                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
-                       class="<?=$canvasName ?>CanvasModal btn btn-primary" id="<?php echo $elementName; ?>"><?=$this->__('links.add_new_canvas_item' . $canvasName) ?></a>
+                    <a href="#/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+                       class="btn btn-primary" id="<?php echo $elementName; ?>"><?=$this->__('links.add_new_canvas_item' . $canvasName) ?></a>
                 <?php } ?>
 
             </div>

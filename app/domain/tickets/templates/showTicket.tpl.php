@@ -50,7 +50,7 @@
             </div>
 
             <div id="files">
-                <form action='#files' method='POST' enctype="multipart/form-data" class="ticketModal">
+                <form action='#files' method='POST' enctype="multipart/form-data" class="formModal">
                     <?php $this->displaySubmodule('tickets-attachments') ?>
                 </form>
             </div>
