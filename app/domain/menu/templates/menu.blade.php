@@ -200,9 +200,11 @@ $projectHierarchy = $tpl->dispatchTplFilter(
             leantime.menuController.initProjectSelector();
             leantime.menuController.initLeftMenuHamburgerButton();
             leantime.menuController.initProjectSelectorToggle();
+
+            jQuery('.projectSelectorTabs').tabs();
         }
     );
-    jQuery('.projectSelectorTabs').tabs();
+
 
     let clientId = {{ !empty($currentClient) ? $currentClient : '-1' }};
 

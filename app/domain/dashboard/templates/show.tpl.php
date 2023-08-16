@@ -189,16 +189,16 @@ $tickets = $tpl->get('tickets');
                                     <div class="row">
                                         <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
                                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                                <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
+                                                <a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
                                             <?php } ?>
-                                            <strong><a href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
+                                            <strong><a href="#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
 
                                             <?php if ($login::userIsAtLeast($roles::$editor)) {
                                                 $clockedIn = $tpl->get("onTheClock");
                                                 ?>
 
                                                 <div class="inlineDropDownContainer">
-                                                    <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu">
