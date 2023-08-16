@@ -137,6 +137,16 @@
     --teal: #1bbbb1;
     --teal-text-color: #fff;
 
+    --zlayer-1: 1; /*Background*/
+    --zlayer-2: 5; /* Maincontentinnnter */
+    --zlayer-3: 10; /* Element contentinner */
+    --zlayer-4: 15; /* over element contentinnter (headlines, status) */
+    --zlayer-5: 20; /* Highest layer on content inner (Filters) */
+    --zlayer-6: 25; /* modal */
+    --zlayer-7: 30; /* modal dropdowns*/
+    --zlayer-8: 35; /* modal dialogs */
+    --zlayer-9: 40; /* modal modals*/
+
 
 
 

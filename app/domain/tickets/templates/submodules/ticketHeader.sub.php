@@ -9,6 +9,7 @@ $sprints        = $this->get("sprints");
 
 $sprint = false;
 
+$currentSprintId = $currentSprintId == '' ? "all" : $currentSprintId;
 if($currentSprintId == 'all') {
     $sprint = new \leantime\domain\models\sprints();
     $sprint->id = 'all';
@@ -41,8 +42,8 @@ if(is_array($this->get('sprints'))) {
     <div class="pagetitle">
         <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
 
-        <?php  if (($this->get('sprints') !== false)
-            && ($this->get('sprints') !== null)
+        <?php  if (($this->get('currentSprint') !== false)
+            && ($this->get('currentSprint') !== null)
             && count($this->get('sprints'))  > 0
             && $sprint->id != 'all'
             && $sprint->id != 'backlog'
@@ -51,7 +52,7 @@ if(is_array($this->get('sprints'))) {
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <li><a href="#/sprints/editSprint/<?=$this->get("currentSprint")?>"><?=$this->__("link.edit_sprint") ?></a></li>
+                        <li><a href="#/sprints/editSprint/<?=$this->get("v")?>"><?=$this->__("link.edit_sprint") ?></a></li>
                     <?php } ?>
                 </ul>
             </span>

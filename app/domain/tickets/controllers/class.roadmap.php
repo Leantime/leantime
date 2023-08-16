@@ -39,27 +39,13 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if (isset($_SESSION["usersettings.showMilestoneTasks"]) && $_SESSION["usersettings.showMilestoneTasks"] === true) {
-                $includeTasks = true;
-            } else {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
-            }
+           $searchResults= $this->ticketService->prepareTicketSearchArray($params);
 
-            if (isset($_GET['includeTasks']) && $_GET['includeTasks'] == "on") {
-                $includeTasks = true;
-                $_SESSION["usersettings.showMilestoneTasks"] = true;
-            } elseif (isset($_GET['submitIncludeTasks']) && !isset($_GET['includeTasks'])) {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
-            }
-
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date", $includeTasks);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($searchResults, "date");
 
             $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
             $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
 
-            $this->tpl->assign("includeTasks", $includeTasks);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
         }
@@ -73,9 +59,10 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
-
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
             $this->tpl->display('tickets.roadmap');
         }
 

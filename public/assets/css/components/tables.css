@@ -48,7 +48,6 @@
 
 .dataTables_wrapper {
     position: relative;
-    overflow-x:auto;
     padding-bottom: 150px;
 }
 

@@ -63,14 +63,15 @@ namespace leantime\domain\controllers {
                 $_SESSION["usersettings.showMilestoneTasks"] = false;
             }
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date", $includeTasks);
+
 
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
             $params["orderBy"] = "date";
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
-            $this->tpl->assign("includeTasks", $includeTasks);
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
@@ -86,7 +87,9 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('futureSprints', $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]));
 
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
-            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $this->tpl->assign('milestones', $allProjectMilestones);
 
             $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
@@ -105,8 +108,8 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
-
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->display('tickets.roadmap');
         }

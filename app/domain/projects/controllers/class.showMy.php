@@ -64,7 +64,11 @@ namespace leantime\domain\controllers {
                     if ($clientId == "" || $project["clientId"] == $clientId) {
                         $projectResults[$i] = $project;
                         $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
-                        $projectResults[$i]['milestones'] = $this->ticketService->getAllMilestones($project['id']);
+
+                        $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone", "currentProject" => $project['id']]);
+                        $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+
+                        $projectResults[$i]['milestones'] = $allProjectMilestones;
                         $projectComment = $this->commentService->getComments("project", $project['id']);
 
                         if (is_array($projectComment) && count($projectComment) > 0) {

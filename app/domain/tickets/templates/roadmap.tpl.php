@@ -122,13 +122,19 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
             <?php
             $lastMilestoneSortIndex = array();
-            //Set sort index first
+
+            //Set sort index first format: 0.0
+            //Sort is milestone sorting first with the milestone sort id as first index
+            //Then sort by task as second index
+
             foreach ($milestones as $mlst) {
                 if ($mlst->type == "milestone") {
-                    $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex;
+                    $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex != '' ? $mlst->sortIndex : 999;
                 }
             }
+
             foreach ($milestones as $mlst) {
+
                 $headline = $this->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
                 if ($mlst->type == "milestone") {
                     $headline .= " (" . $mlst->percentDone . "% Done)";
@@ -141,17 +147,22 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
                 $sortIndex = 0;
 
-                if ($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)) {
-                    if ($mlst->type == "milestone") {
-                        $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
+
+
+                //Item is milestone itself, set first index + .0
+                if ($mlst->type == "milestone") {
+                    $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
+                }else {
+                    //If it has a milestone dependency, add milestone index
+                    if ($mlst->milestoneid > 0) {
+                        $sortIndex = $lastMilestoneSortIndex[$mlst->milestoneid] . "." . ($mlst->sortIndex ?? 999);
                     } else {
-                        if ($mlst->milestoneid != 0) {
-                            $sortIndex = $lastMilestoneSortIndex[$mlst->milestoneid] . "." . $mlst->sortIndex;
-                        } else {
-                            $sortIndex = "0" . "." . $mlst->sortIndex;
-                        }
+                        $sortIndex = "999" . "." . ($mlst->sortIndex ?? 999);
                     }
                 }
+
+
+
 
                 $dependencyList = array();
                 if ($mlst->milestoneid != 0) {

@@ -65,7 +65,11 @@ if ($numberofColumns > 0) {
                 }
                 ?>
                 <div class="row-fluid" style="width: 100%;
-    display: flex;">
+                    display: flex;
+                    position: sticky;
+                    top: 50px;
+                    background: var(--secondary-background);
+                    z-index: 9;">
                 <?php foreach ($this->get('allKanbanColumns') as $key => $statusRow) { ?>
                     <div class="column" style="width:<?=$size?>%;">
 
@@ -121,7 +125,7 @@ if ($numberofColumns > 0) {
                                 <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
                             </a>
                         </h5>
-                        <div class="simpleAccordionContainer" id="accordion_<?=$group['id'] ?>">
+                        <div class="simpleAccordionContainer kanban" id="accordion_<?=$group['id'] ?>">
                     <?php } ?>
 
                             <div class="sortableTicketList kanbanBoard">

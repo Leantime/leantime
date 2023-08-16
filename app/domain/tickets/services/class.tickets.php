@@ -525,11 +525,10 @@ namespace leantime\domain\services {
             return $tickets;
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "duedate", $includeTasks = false)
+        public function getAllMilestones($searchCriteria, $sortBy = "duedate")
         {
-
-            if ($projectId > 0) {
-                return $this->ticketRepository->getAllMilestones($projectId, $includeArchived, $sortBy, $includeTasks);
+            if ($searchCriteria['currentProject'] > 0) {
+                return $this->ticketRepository->getAllMilestones($searchCriteria,$sortBy);
             }
 
             return false;
@@ -537,7 +536,12 @@ namespace leantime\domain\services {
 
         public function getAllMilestonesOverview($includeArchived = false, $sortBy = "duedate", $includeTasks = false, $clientId = false)
         {
-            return $this->ticketRepository->getAllMilestones(0, $includeArchived, $sortBy, $includeTasks, $clientId);
+
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+
+
+            return $allProjectMilestones;
         }
 
         public function getAllMilestonesByUserProjects($userId)
@@ -548,12 +552,16 @@ namespace leantime\domain\services {
             $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
             if ($userProjects) {
                 foreach ($userProjects as $project) {
-                    $milestones[$project['id']] = $this->ticketRepository->getAllMilestones($project['id']);
+                    $prepareTicketSearchArray = $this->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone", "currentProject"=>$project['id']]);
+                    $allProjectMilestones = $this->getAllMilestones($prepareTicketSearchArray);
+                    $milestones[$project['id']] = $allProjectMilestones;
                 }
             }
 
             if (isset($_SESSION['currentProject'])) {
-                $milestones[$_SESSION['currentProject']] = $this->ticketRepository->getAllMilestones($_SESSION['currentProject']);
+                $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+                $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+                $milestones[$_SESSION['currentProject']] =$allProjectMilestones;
             }
 
             //There is a non zero chance that a user has tickets assigned to them without a project assignment.
@@ -563,7 +571,11 @@ namespace leantime\domain\services {
 
             foreach ($allTickets as $row) {
                 if (!isset($milestones[$row['projectId']])) {
-                    $milestones[$row['projectId']] = $this->ticketRepository->getAllMilestones($row['projectId']);
+
+                    $prepareTicketSearchArray = $this->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone", "currentProject"=>$row['projectId']]);
+                    $allProjectMilestones = $this->getAllMilestones($prepareTicketSearchArray);
+
+                    $milestones[$row['projectId']] = $allProjectMilestones;
                 }
             }
 
@@ -972,7 +984,7 @@ namespace leantime\domain\services {
 
             //ticketId: sortIndex
             foreach ($params as $id => $sortKey) {
-                if ($this->ticketRepository->patchTicket($id, ["sortIndex" => $sortKey * 100]) === false) {
+                if ($this->ticketRepository->patchTicket($id, ["sortIndex" => $sortKey]) === false) {
                     return false;
                 }
             }
@@ -1261,7 +1273,9 @@ namespace leantime\domain\services {
             $futureSprints  =  $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]);
 
             $users  =  $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]);
-            $milestones  =  $this->getAllMilestones($_SESSION["currentProject"]);
+
+            $prepareTicketSearchArray = $this->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $milestones = $this->getAllMilestones($prepareTicketSearchArray);
 
             $groupByOptions  =  $this->getGroupByFieldOptions();
             $newField  =  $this->getNewFieldOptions();

@@ -3842,6 +3842,10 @@ body .widgettitle .editHeadline:hover {
     padding-left: 20px;
 }
 
+.simpleAccordionContainer.kanban {
+    padding-left:0px;
+}
+
 .teamBox {
     padding-top:15px;
 }
