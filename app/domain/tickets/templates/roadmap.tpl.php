@@ -3,7 +3,7 @@ defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 $milestones = $tpl->get('milestones');
 
-echo $this->displayNotification();
+echo $tpl->displayNotification();
 
 if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
@@ -15,7 +15,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
 <div class="maincontent">
 
-    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
 
     <div class="maincontentinner">
 

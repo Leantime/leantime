@@ -14,7 +14,7 @@
     $efforts        = $tpl->get('efforts');
     $priorities     = $tpl->get('priorities');
 
-    $allTicketGroups = $this->get("allTickets");
+    $allTicketGroups = $tpl->get("allTickets");
 
 
 
@@ -33,7 +33,7 @@ if ($numberofColumns > 0) {
 
 <div class="maincontent">
 
-    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
 
     <div class="maincontentinner">
 
@@ -145,7 +145,7 @@ if ($numberofColumns > 0) {
 
 
                                                             <?php if ($login::userIsAtLeast($roles::$editor)) {
-                                                                $clockedIn = $this->get("onTheClock");
+                                                                $clockedIn = $tpl->get("onTheClock");
 
                                                                 ?>
                                                                 <div class="inlineDropDownContainer" style="float:right;">
@@ -154,11 +154,11 @@ if ($numberofColumns > 0) {
                                                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                                     </a>
                                                                     <ul class="dropdown-menu">
-                                                                        <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
+                                                                        <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
                                                                         <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>" class=''><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
                                                                         <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
                                                                         <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
-                                                                        <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
+                                                                        <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
                                                                         <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                             <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
                                                                                 echo"style='display:none;'";
@@ -166,24 +166,24 @@ if ($numberofColumns > 0) {
                                                                             <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
                                                                                 echo"style='display:none;'";
                                                                                                                                        }?>><span class="fa fa-stop"></span> <?php if (is_array($clockedIn) == true) {
-                                                                                                                                       echo sprintf($this->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
+                                                                                                                                       echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
                                                                                                                                        } else {
-                                                                                                                                           echo sprintf($this->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
+                                                                                                                                           echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
                                                                                                                                        }?></a>
                                                                             <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
                                                                                 echo"style='display:none;'";
-                                                                                                  }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
+                                                                                                  }?>><?php echo $tpl->__("text.timer_set_other_todo"); ?></span>
                                                                         </li>
                                                                     </ul>
                                                                 </div>
                                                             <?php } ?>
                                                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                                                <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$this->escape($row['parentHeadline']) ?></a></small> //
+                                                                <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$tpl->escape($row['parentHeadline']) ?></a></small> //
                                                             <?php } ?>
-                                                            <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $this->__("label." . strtolower($row['type'])); ?></small>
+                                                            <small><i class="fa <?php echo $todoTypeIcons[strtolower($row['type'])]; ?>"></i> <?php echo $tpl->__("label." . strtolower($row['type'])); ?></small>
                                                             <small>#<?php echo $row['id']; ?></small>
                                                             <div class="kanbanCardContent">
-                                                                <h4><a href="#/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
+                                                                <h4><a href="#/tickets/showTicket/<?php echo $row["id"];?>"><?php $tpl->e($row["headline"]);?></a></h4>
 
                                                                 <div class="kanbanContent" style="margin-bottom: 20px">
                                                                     <?php echo $tpl->escapeMinimal($row['description']); ?>
@@ -217,7 +217,7 @@ if ($numberofColumns > 0) {
                                                                 </a>
                                                                 <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
                                                                     <li class="nav-header border"><?=$tpl->__("dropdown.choose_milestone")?></li>
-                                                                    <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
+                                                                    <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$tpl->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
 
                                                                     <?php foreach ($tpl->get('milestones') as $milestone) {
                                                                         echo"<li class='dropdown-item'>

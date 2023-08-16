@@ -40,7 +40,7 @@
 <script src="<?=BASE_URL?>/dist/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>
 
 
-<?php $this->dispatchTplEvent('afterScriptLibTags'); ?>
+<?php $tpl->dispatchTplEvent('afterScriptLibTags'); ?>
 
 <!-- app -->
 <script src="<?=BASE_URL?>/dist/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>

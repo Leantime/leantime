@@ -70,7 +70,7 @@ $companySettings = $tpl->get('companySettings');
                             </div>
                             <br />
 
-                            <?php $this->dispatchTplEvent('beforeTelemetrySettings'); ?>
+                            <?php $tpl->dispatchTplEvent('beforeTelemetrySettings'); ?>
 
                             <div class="row" id="telemetryContainer">
                                 <div class="col-md-2">

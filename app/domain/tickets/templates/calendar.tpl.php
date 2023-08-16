@@ -11,21 +11,21 @@ echo $tpl->displayNotification();
 
 ?>
 
-<?php $this->displaySubmodule('tickets-ticketHeader') ?>
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
-    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
     <div class="maincontentinner">
 
         <div class="row">
             <div class="col-md-4">
                 <?php
-                $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
 
-                $this->displaySubmodule('tickets-ticketNewBtn');
-                $this->displaySubmodule('tickets-ticketFilter');
+                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                $tpl->displaySubmodule('tickets-ticketFilter');
 
-                $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>
             <div class="col-md-4">

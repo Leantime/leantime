@@ -7,7 +7,7 @@
     $currentSprint  = $tpl->get("currentSprint");
     $allTickets     = $tpl->get('allTickets');
 
-    echo $this->displayNotification();
+    echo $tpl->displayNotification();
 
     $searchCriteria = $tpl->get("searchCriteria");
     $currentSprint  = $tpl->get("currentSprint");
@@ -32,7 +32,7 @@
 
 <div class="maincontent">
 
-    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
 
     <div class="maincontentinner">
 
@@ -210,7 +210,7 @@
                                     </ul>
                                 </div>
                             </td>
-                            <td class="dropdown-cell"  data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $this->__("label.story_points_unkown"); ?>">
+                            <td class="dropdown-cell"  data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $tpl->__("label.story_points_unkown"); ?>">
                                 <div class="dropdown ticketDropdown effortDropdown show">
                                     <a class="dropdown-toggle label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php

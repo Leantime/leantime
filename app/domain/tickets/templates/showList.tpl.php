@@ -7,12 +7,7 @@
     $currentSprint  = $tpl->get("currentSprint");
     $allTickets     = $tpl->get('allTickets');
 
-    echo $this->displayNotification();
-
-    $sprints        = $this->get("sprints");
-    $searchCriteria = $this->get("searchCriteria");
-    $currentSprint  = $this->get("currentSprint");
-    $allTickets     = $this->get('allTickets');
+    echo $tpl->displayNotification();
 
     $efforts        = $tpl->get('efforts');
     $priorities     = $tpl->get('priorities');
@@ -26,11 +21,11 @@
 
 ?>
 
-<?php $this->displaySubmodule('tickets-ticketHeader') ?>
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
 
-    <?php $this->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
 
     <div class="maincontentinner">
 

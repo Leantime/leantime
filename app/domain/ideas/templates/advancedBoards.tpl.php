@@ -71,7 +71,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
         <div class="row">
             <div class="col-md-4">
                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                    <?php if (count($this->get('allCanvas')) > 0) { ?>
+                    <?php if (count($tpl->get('allCanvas')) > 0) { ?>
                     <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span
                                 class="far fa-lightbulb"></span><?php echo $tpl->__("buttons.add_idea"); ?></a>
 

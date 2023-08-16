@@ -320,7 +320,7 @@
 
             <div class="col-md-4">
 
-                <?php $this->dispatchTplEvent('beforeCalendar'); ?>
+                <?php $tpl->dispatchTplEvent('beforeCalendar'); ?>
 
                 <div class="maincontentinner minCalendar">
 
