@@ -2,24 +2,24 @@
 
     defined('RESTRICTED') or die('Restricted access');
 
-    echo $this->displayNotification();
+    echo $tpl->displayNotification();
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $tickets        = $tpl->get("tickets");
+    $sprints        = $tpl->get("sprints");
+    $searchCriteria = $tpl->get("searchCriteria");
+    $currentSprint  = $tpl->get("currentSprint");
 
-    $tickets        = $this->get("tickets");
-    $sprints        = $this->get("sprints");
-    $searchCriteria = $this->get("searchCriteria");
-    $currentSprint  = $this->get("currentSprint");
+    $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
-    $todoTypeIcons  = $this->get("ticketTypeIcons");
-
-    $efforts        = $this->get('efforts');
-    $priorities     = $this->get('priorities');
+    $efforts        = $tpl->get('efforts');
+    $priorities     = $tpl->get('priorities');
 
     $allTicketGroups = $this->get("allTickets");
 
 
 
     //Count Columns to show
-    $numberofColumns = count($this->get('allKanbanColumns'));
+    $numberofColumns = count($tpl->get('allKanbanColumns'));
 
 if ($numberofColumns > 0) {
     $size = floor(100 / $numberofColumns);
@@ -29,7 +29,7 @@ if ($numberofColumns > 0) {
 
 ?>
 
-<?php $this->displaySubmodule('tickets-ticketHeader') ?>
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
 
@@ -40,12 +40,12 @@ if ($numberofColumns > 0) {
          <div class="row">
             <div class="col-md-4">
                 <?php
-                $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
 
-                $this->displaySubmodule('tickets-ticketNewBtn');
-                $this->displaySubmodule('tickets-ticketFilter');
+                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                $tpl->displaySubmodule('tickets-ticketFilter');
 
-                $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>
 
@@ -70,7 +70,7 @@ if ($numberofColumns > 0) {
                     top: 50px;
                     background: var(--secondary-background);
                     z-index: 9;">
-                <?php foreach ($this->get('allKanbanColumns') as $key => $statusRow) { ?>
+                <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
                     <div class="column" style="width:<?=$size?>%;">
 
                         <h4 class="widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
@@ -81,27 +81,27 @@ if ($numberofColumns > 0) {
                                     </a>
 
                                     <ul class="dropdown-menu">
-                                        <li><a href="#/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$this->__('headlines.edit_label')?></a>
+                                        <li><a href="#/setting/editBoxLabel?module=ticketlabels&label=<?=$key?>" class="editLabelModal"><?=$tpl->__('headlines.edit_label')?></a>
                                         </li>
-                                        <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><?=$this->__('links.add_remove_col')?></a></li>
+                                        <li><a href="<?=BASE_URL ?>/projects/showProject/<?=$_SESSION['currentProject'];?>#todosettings"><?=$tpl->__('links.add_remove_col')?></a></li>
                                     </ul>
                                 </div>
                             <?php } ?>
                             <strong class="count">0</strong>
-                            <?php $this->e($statusRow['name']); ?></h4>
+                            <?php $tpl->e($statusRow['name']); ?></h4>
                         <div class="contentInner <?php echo"status_" . $key;?>" >
                             <div>
-                                <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $this->__("links.add_todo_no_icon"); ?></a>
+                                <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $tpl->__("links.add_todo_no_icon"); ?></a>
                                 <div class="ticketBox hideOnLoad " id="ticket_new_<?=$key?>" style="padding:10px">
 
                                     <form method="post">
-                                        <input type="text" name="headline" style="width:100%;" title="<?=$this->__("label.headline") ?>"/><br />
+                                        <input type="text" name="headline" style="width:100%;" title="<?=$tpl->__("label.headline") ?>"/><br />
                                         <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
                                         <input type="hidden" name="status" value="<?php echo $key; ?> " />
                                         <input type="hidden" name="sprint" value="<?php echo $_SESSION["currentSprint"]; ?> " />
                                         <input type="submit" value="Save" name="quickadd" />
                                         <a href="javascript:void(0);" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery('#ticket_new_link_<?=$key?>').toggle('fast');">
-                                            <?=$this->__("links.cancel") ?>
+                                            <?=$tpl->__("links.cancel") ?>
                                         </a>
                                     </form>
 
@@ -132,7 +132,7 @@ if ($numberofColumns > 0) {
 
                                 <div class="row-fluid">
 
-                                <?php foreach ($this->get('allKanbanColumns') as $key => $statusRow) { ?>
+                                <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
                                     <div class="column" style="width:<?=$size?>%;">
                                         <div class="contentInner <?php echo"status_" . $key;?>" >
                                             <?php foreach ($allTickets as $row) { ?>
@@ -155,20 +155,20 @@ if ($numberofColumns > 0) {
                                                                     </a>
                                                                     <ul class="dropdown-menu">
                                                                         <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                                        <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>" class=''><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
-                                                                        <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
-                                                                        <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
+                                                                        <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>" class=''><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
+                                                                        <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
+                                                                        <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
                                                                         <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
                                                                         <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                             <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
                                                                                 echo"style='display:none;'";
-                                                                                                                                      }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
+                                                                                                                                      }?>><span class="fa-regular fa-clock"></span> <?php echo $tpl->__("links.start_work"); ?></a>
                                                                             <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
                                                                                 echo"style='display:none;'";
                                                                                                                                        }?>><span class="fa fa-stop"></span> <?php if (is_array($clockedIn) == true) {
-                                                                                                                                       echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"]));
+                                                                                                                                       echo sprintf($this->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
                                                                                                                                        } else {
-                                                                                                                                           echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time()));
+                                                                                                                                           echo sprintf($this->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
                                                                                                                                        }?></a>
                                                                             <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
                                                                                 echo"style='display:none;'";
@@ -186,15 +186,15 @@ if ($numberofColumns > 0) {
                                                                 <h4><a href="#/tickets/showTicket/<?php echo $row["id"];?>"><?php $this->e($row["headline"]);?></a></h4>
 
                                                                 <div class="kanbanContent" style="margin-bottom: 20px">
-                                                                    <?php echo $this->escapeMinimal($row['description']); ?>
+                                                                    <?php echo $tpl->escapeMinimal($row['description']); ?>
                                                                 </div>
 
                                                             </div>
                                                             <?php if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
                                                                 $date = new DateTime($row['dateToFinish']);
-                                                                $date = $date->format($this->__("language.dateformat"));
-                                                                echo $this->__("label.due_icon"); ?>
-                                                                <input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
+                                                                $date = $date->format($tpl->__("language.dateformat"));
+                                                                echo $tpl->__("label.due_icon"); ?>
+                                                                <input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
 
                                                             <?php } ?>
                                                         </div>
@@ -205,23 +205,23 @@ if ($numberofColumns > 0) {
                                                     <div class="timerContainer " id="timerContainer-<?php echo $row["id"]; ?>" >
 
                                                             <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
-                                                                <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                <a style="background-color:<?=$tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text"><?php
                                                                     if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
-                                                                        $this->e($row['milestoneHeadline']);
+                                                                        $tpl->e($row['milestoneHeadline']);
                                                                     } else {
-                                                                        echo $this->__("label.no_milestone");
+                                                                        echo $tpl->__("label.no_milestone");
                                                                     }?>
                                                                     </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                                 </a>
                                                                 <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
-                                                                    <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                                                    <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                                                    <li class="nav-header border"><?=$tpl->__("dropdown.choose_milestone")?></li>
+                                                                    <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
 
-                                                                    <?php foreach ($this->get('milestones') as $milestone) {
+                                                                    <?php foreach ($tpl->get('milestones') as $milestone) {
                                                                         echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-label='" . $this->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $this->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $this->escape($milestone->tags) . "'>" . $this->escape($milestone->headline) . "</a>";
+                                                                            <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
                                                                         echo"</li>";
                                                                     }?>
                                                                 </ul>
@@ -235,13 +235,13 @@ if ($numberofColumns > 0) {
                                                                 if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
                                                                     echo $efforts[$row['storypoints']];
                                                                 } else {
-                                                                    echo $this->__("label.story_points_unkown");
+                                                                    echo $tpl->__("label.story_points_unkown");
                                                                 }?>
                                                                 </span>
                                                                 &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink<?=$row['id']?>">
-                                                                <li class="nav-header border"><?=$this->__("dropdown.how_big_todo")?></li>
+                                                                <li class="nav-header border"><?=$tpl->__("dropdown.how_big_todo")?></li>
                                                                 <?php foreach ($efforts as $effortKey => $effortValue) {
                                                                     echo"<li class='dropdown-item'>
                                                                                         <a href='javascript:void(0);' data-value='" . $row['id'] . "_" . $effortKey . "' id='ticketEffortChange" . $row['id'] . $effortKey . "'>" . $effortValue . "</a>";
@@ -258,13 +258,13 @@ if ($numberofColumns > 0) {
                                                                 if ($row['priority'] != '' && $row['priority'] > 0) {
                                                                     echo $priorities[$row['priority']];
                                                                 } else {
-                                                                    echo $this->__("label.priority_unkown");
+                                                                    echo $tpl->__("label.priority_unkown");
                                                                 }?>
                                                                 </span>
                                                                 &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="priorityDropdownMenuLink<?=$row['id']?>">
-                                                                <li class="nav-header border"><?=$this->__("dropdown.select_priority")?></li>
+                                                                <li class="nav-header border"><?=$tpl->__("dropdown.select_priority")?></li>
                                                                 <?php foreach ($priorities as $priorityKey => $priorityValue) {
                                                                     echo"<li class='dropdown-item'>
                                                                                         <a href='javascript:void(0);' class='priority-bg-" . $priorityKey . "' data-value='" . $row['id'] . "_" . $priorityKey . "' id='ticketPriorityChange" . $row['id'] . $priorityKey . "'>" . $priorityValue . "</a>";
@@ -286,20 +286,20 @@ if ($numberofColumns > 0) {
                                                                 </span>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
-                                                                <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
+                                                                <li class="nav-header border"><?=$tpl->__("dropdown.choose_user")?></li>
 
                                                                 <?php
-                                                                if (is_array($this->get('users'))) {
-                                                                    foreach ($this->get('users') as $user) {
+                                                                if (is_array($tpl->get('users'))) {
+                                                                    foreach ($tpl->get('users') as $user) {
                                                                         echo "<li class='dropdown-item'>
                                                                             <a href='javascript:void(0);' data-label='" . sprintf(
-                                                                            $this->__("text.full_name"),
-                                                                            $this->escape($user["firstname"]),
-                                                                            $this->escape($user['lastname'])
+                                                                                $tpl->__("text.full_name"),
+                                                                                $tpl->escape($user["firstname"]),
+                                                                                $tpl->escape($user['lastname'])
                                                                         ) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf(
-                                                                            $this->__("text.full_name"),
-                                                                            $this->escape($user["firstname"]),
-                                                                            $this->escape($user['lastname'])
+                                                                                $tpl->__("text.full_name"),
+                                                                                $tpl->escape($user["firstname"]),
+                                                                                $tpl->escape($user['lastname'])
                                                                         ) . "</a>";
                                                                         echo "</li>";
                                                                     }
@@ -383,7 +383,7 @@ if ($numberofColumns > 0) {
         leantime.ticketsController.initPriorityDropdown();
         leantime.timesheetsController.initTicketTimers();
 
-        var ticketStatusList = [<?php foreach ($this->get('allTicketStates') as $key => $statusRow) {
+        var ticketStatusList = [<?php foreach ($tpl->get('allTicketStates') as $key => $statusRow) {
             echo "'" . $key . "',";
                                 }?>];
         leantime.ticketsController.initTicketKanban(ticketStatusList);

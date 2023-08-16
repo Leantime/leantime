@@ -1,28 +1,29 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
     $_SESSION['submenuToggle']["myCalendarView"] = "dayGridMonth";
 }
 ?>
 
-<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
+<?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
-    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
+    <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('headline.calendar'); ?></h5>
-        <h1><?php echo $this->__('headline.my_calendar'); ?></h1>
+        <h5><?php echo $tpl->__('headline.calendar'); ?></h5>
+        <h1><?php echo $tpl->__('headline.my_calendar'); ?></h1>
     </div>
-    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
+    <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div><!--pageheader-->
-<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
+<?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
 
         <div class="row">
             <div class="col-md-4">
-                <a href="<?=BASE_URL ?>/calendar/showMyCalendar/#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$this->__('buttons.add_event')?></a>
+                <a href="<?=BASE_URL ?>/calendar/showMyCalendar/#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_event')?></a>
             </div>
             <div class="col-md-4">
                 <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -62,7 +63,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
 <script type='text/javascript'>
 
-    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+    <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
 
     jQuery(document).ready(function() {
@@ -75,7 +76,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
 
     var events = [
-        <?php foreach ($this->get('calendar') as $calendar) : ?>
+        <?php foreach ($tpl->get('calendar') as $calendar) : ?>
         {
             title: <?php echo json_encode($calendar['title']); ?>,
 
@@ -222,6 +223,6 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
         });
     });
 
-    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
+    <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

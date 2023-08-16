@@ -1,7 +1,8 @@
 <?php
-$currentMilestone = $this->get('milestone');
-$milestones = $this->get('milestones');
-$statusLabels = $this->get('statusLabels');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$currentMilestone = $tpl->get('milestone');
+$milestones = $tpl->get('milestones');
+$statusLabels = $tpl->get('statusLabels');
 
 
 ?>
@@ -18,16 +19,16 @@ $statusLabels = $this->get('statusLabels');
 
 
 
-    <h4 class="widgettitle title-light"><?=$this->__("headline.milestone"); ?> </h4>
+    <h4 class="widgettitle title-light"><?=$tpl->__("headline.milestone"); ?> </h4>
 
-    <?php echo $this->displayNotification(); ?>
+    <?php echo $tpl->displayNotification(); ?>
 
     <form class="formModal" method="post" action="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $currentMilestone->id ?>" style="min-width: 250px;">
 
-        <label><?=$this->__("label.milestone_title"); ?></label>
-        <input type="text" name="headline" value="<?php $this->e($currentMilestone->headline) ?>" placeholder="<?=$this->__("label.milestone_title"); ?>"/><br />
+        <label><?=$tpl->__("label.milestone_title"); ?></label>
+        <input type="text" name="headline" value="<?php $tpl->e($currentMilestone->headline) ?>" placeholder="<?=$tpl->__("label.milestone_title"); ?>"/><br />
 
-        <label><?php echo $this->__('label.todo_status'); ?></label>
+        <label><?php echo $tpl->__('label.todo_status'); ?></label>
         <select id="status-select" name="status" class="span11"
                 data-placeholder="<?php echo isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]["name"] : ''; ?>">
 
@@ -36,14 +37,14 @@ $statusLabels = $this->get('statusLabels');
                     <?php if ($currentMilestone->status == $key) {
                         echo "selected='selected'";
                     } ?>
-                ><?php echo $this->escape($label["name"]); ?></option>
+                ><?php echo $tpl->escape($label["name"]); ?></option>
             <?php } ?>
         </select>
 
-        <label><?=$this->__("label.dependent_on"); ?></label>
+        <label><?=$tpl->__("label.dependent_on"); ?></label>
         <select name="dependentMilestone"  class="span11">
-            <option value=""><?=$this->__("label.no_dependency"); ?></option>
-            <?php foreach ($this->get('milestones') as $milestoneRow) {
+            <option value=""><?=$tpl->__("label.no_dependency"); ?></option>
+            <?php foreach ($tpl->get('milestones') as $milestoneRow) {
                 if ($milestoneRow->id !== $currentMilestone->id) {
                     echo "<option value='" . $milestoneRow->id . "'";
 
@@ -51,47 +52,47 @@ $statusLabels = $this->get('statusLabels');
                         echo " selected='selected' ";
                     }
 
-                    echo ">" . $this->escape($milestoneRow->headline) . " </option>";
+                    echo ">" . $tpl->escape($milestoneRow->headline) . " </option>";
                 }
             }
             ?>
 
         </select>
 
-        <label><?=$this->__("label.owner"); ?></label>
-        <select data-placeholder="<?php echo $this->__('input.placeholders.filter_by_user'); ?>"
+        <label><?=$tpl->__("label.owner"); ?></label>
+        <select data-placeholder="<?php echo $tpl->__('input.placeholders.filter_by_user'); ?>"
                 name="editorId" class="user-select span11">
-            <option value=""><?=$this->__("dropdown.not_assigned"); ?></option>
-            <?php foreach ($this->get('users') as $userRow) { ?>
+            <option value=""><?=$tpl->__("dropdown.not_assigned"); ?></option>
+            <?php foreach ($tpl->get('users') as $userRow) { ?>
                 <?php echo "<option value='" . $userRow["id"] . "'";
 
                 if ($currentMilestone->editorId == $userRow["id"]) {
                     echo " selected='selected' ";
                 }
 
-                echo ">" . $this->escape($userRow["firstname"]) . " " . $this->escape($userRow["lastname"]) . "</option>"; ?>
+                echo ">" . $tpl->escape($userRow["firstname"]) . " " . $tpl->escape($userRow["lastname"]) . "</option>"; ?>
 
             <?php } ?>
         </select>
 
-        <label><?=$this->__("label.color"); ?></label>
-        <input type="text" name="tags" autocomplete="off" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$this->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
+        <label><?=$tpl->__("label.color"); ?></label>
+        <input type="text" name="tags" autocomplete="off" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$tpl->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
 
-        <label><?=$this->__("label.planned_start_date"); ?></label>
-        <input type="text" name="editFrom" autocomplete="off" value="<?php echo $this->getFormattedDateString($currentMilestone->editFrom) ?>" placeholder="<?=$this->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
+        <label><?=$tpl->__("label.planned_start_date"); ?></label>
+        <input type="text" name="editFrom" autocomplete="off" value="<?php echo $tpl->getFormattedDateString($currentMilestone->editFrom) ?>" placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
 
-        <label><?=$this->__("label.planned_end_date"); ?></label>
-        <input type="text" name="editTo" autocomplete="off" value="<?php echo $this->getFormattedDateString($currentMilestone->editTo) ?>"  placeholder="<?=$this->__("language.dateformat"); ?>" id="milestoneEditTo" /><br />
+        <label><?=$tpl->__("label.planned_end_date"); ?></label>
+        <input type="text" name="editTo" autocomplete="off" value="<?php echo $tpl->getFormattedDateString($currentMilestone->editTo) ?>"  placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditTo" /><br />
 
         <div class="row">
             <div class="col-md-6">
-                <input type="submit" value="<?=$this->__("buttons.save"); ?>" class="btn btn-primary"/>
+                <input type="submit" value="<?=$tpl->__("buttons.save"); ?>" class="btn btn-primary"/>
             </div>
             <div class="col-md-6 align-right padding-top-sm">
                 <?php if (
                 isset($currentMilestone->id) && $currentMilestone->id != ''
 ) { ?>
-                    <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__("buttons.delete"); ?></a>
+                    <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__("buttons.delete"); ?></a>
                 <?php } ?>
             </div>
         </div>
@@ -105,8 +106,8 @@ $statusLabels = $this->get('statusLabels');
         <input type="hidden" name="comment" value="1" />
 
             <?php
-            $this->assign("formUrl", "/tickets/editMilestone/" . $currentMilestone->id . "");
-            $this->displaySubmodule('comments-generalComment');?>
+            $tpl->assign("formUrl", "/tickets/editMilestone/" . $currentMilestone->id . "");
+            $tpl->displaySubmodule('comments-generalComment');?>
         <?php } ?>
 
     <script type="text/javascript">

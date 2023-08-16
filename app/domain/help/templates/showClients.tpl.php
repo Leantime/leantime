@@ -1,5 +1,6 @@
 <?php
-  $currentSprint = $this->get('sprint');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $currentSprint = $tpl->get('sprint');
 ?>
 
 <div class="center padding-lg">
@@ -9,8 +10,8 @@
             <div style='width:50%' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_complete_task_u2c3.svg");
                 echo"</div>";?><br />
-            <h3 class="primaryColor"><?php echo $this->__('headlines.welcome_to_clients_products') ?></h3><br />
-            <?php echo $this->__('text.show_clients_helper_content') ?>
+            <h3 class="primaryColor"><?php echo $tpl->__('headlines.welcome_to_clients_products') ?></h3><br />
+            <?php echo $tpl->__('text.show_clients_helper_content') ?>
             <br /><br />
         </div>
     </div>
@@ -20,8 +21,8 @@
         <div class="col-md-12">
             <p>
              </p>
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $this->__('links.close') ?></a><br />
-            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('showClients')"><?php echo $this->__('links.close_dont_show_again') ?></a>
+            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
+            <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('showClients')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
         </div>
     </div>
 

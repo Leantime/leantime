@@ -1,15 +1,16 @@
 <?php
     defined('RESTRICTED') or die('Restricted access');
-    $project = $this->get('project');
-    $bookedHours = $this->get('bookedHours');
-    $state = $this->get('state');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $project = $tpl->get('project');
+    $bookedHours = $tpl->get('bookedHours');
+    $state = $tpl->get('state');
 ?>
 
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('label.administration') ?></h5>
-        <h1><?php echo sprintf($this->__('headline.project'), $this->escape($project['name'])); ?>
+        <h5><?php echo $tpl->__('label.administration') ?></h5>
+        <h1><?php echo sprintf($tpl->__('headline.project'), $tpl->escape($project['name'])); ?>
         </h1>
     </div>
 </div><!--pageheader-->
@@ -17,12 +18,12 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification() ?>
+        <?php echo $tpl->displayNotification() ?>
 
         <div class="row">
             <div class="col-md-12">
                 <div class="pull-right">
-                    <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal btn btn-default"><?=$this->__("links.duplicate_project") ?></a>
+                    <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal btn btn-default"><?=$tpl->__("links.duplicate_project") ?></a>
 
                 </div>
             </div>
@@ -31,18 +32,18 @@
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
-                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> <?php echo $this->__('tabs.projectdetails'); ?></a></li>
-                <li><a href="#team"><span class="fa fa-group"></span> <?php echo $this->__('tabs.team'); ?></a></li>
+                <li><a href="#projectdetails"><span class="fa fa-leaf"></span> <?php echo $tpl->__('tabs.projectdetails'); ?></a></li>
+                <li><a href="#team"><span class="fa fa-group"></span> <?php echo $tpl->__('tabs.team'); ?></a></li>
 
-                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> <?php echo $this->__('tabs.Integrations'); ?></a></li>
-                <li><a href="#files"><span class="fa fa-file"></span> <?php echo sprintf($this->__('tabs.files_with_count'), $this->get('numFiles')); ?></a></li>
-                <li><a href="#comment"><span class="fa fa-comments"></span> <?php echo sprintf($this->__('tabs.discussion_with_count'), $this->get('numComments')); ?></a></li>
-                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $this->__('tabs.todosettings'); ?></a></li>
-                <?php $this->dispatchTplEvent('projectTabsList'); ?>
+                <li><a href="#integrations"> <span class="fa fa-asterisk"></span> <?php echo $tpl->__('tabs.Integrations'); ?></a></li>
+                <li><a href="#files"><span class="fa fa-file"></span> <?php echo sprintf($tpl->__('tabs.files_with_count'), $tpl->get('numFiles')); ?></a></li>
+                <li><a href="#comment"><span class="fa fa-comments"></span> <?php echo sprintf($tpl->__('tabs.discussion_with_count'), $tpl->get('numComments')); ?></a></li>
+                <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $tpl->__('tabs.todosettings'); ?></a></li>
+                <?php $tpl->dispatchTplEvent('projectTabsList'); ?>
             </ul>
 
             <div id="projectdetails">
-                <?php echo $this->displaySubmodule('projects-projectDetails'); ?>
+                <?php echo $tpl->displaySubmodule('projects-projectDetails'); ?>
             </div>
 
             <div id="team">
@@ -54,13 +55,13 @@
                     <div class="span12">
 
                          <div class="form-group">
-                             <br /><?=$this->__('text.choose_access_for_users'); ?><br />
+                             <br /><?=$tpl->__('text.choose_access_for_users'); ?><br />
                              <br />
 
                             <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="widgettitle title-light">
-                                        <span class="fa fa-users"></span><?=$this->__('headlines.team_member'); ?>
+                                        <span class="fa fa-users"></span><?=$tpl->__('headlines.team_member'); ?>
                                     </h4>
                                 </div>
                             </div>
@@ -75,20 +76,20 @@
                                             <div class="commentImage">
                                                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>"/>
                                             </div>
-                                            <label for="user-<?php echo $userId ?>" ><?php printf($this->__('text.full_name'), $this->escape($assignedUser['firstname']), $this->escape($assignedUser['lastname'])); ?>
-
-                                                <?php
-                                                if ($assignedUser['jobTitle'] != '') {
-                                                    echo "<small>(" . $this->escape(
-                                                            $assignedUser['jobTitle']
-                                                        ) . ")</small><br />";
-                                                }
-                                                if ($assignedUser['status'] == 'i') {
-                                                    echo "<small>(" . $this->__('label.invited') . ")</small>";
-                                                } ?></label>
+                                            <label for="user-<?php echo $userId ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])); ?>
+                                                <?php if ($assignedUser['jobTitle'] != '') { ?>
+                                                    <small>
+                                                        <?= $tpl->escape($assignedUser['jobTitle']) ?>
+                                                    </small>
+                                                    <br/>
+                                                <?php } ?>
+                                                <?php if ($assignedUser['status'] == 'i') { ?>
+                                                    <small><?= $tpl->__('label.invited') ?></small>
+                                                <?php } ?>
+                                            </label>
                                             <?php
                                             if (($roles::getRoles()[$assignedUser['role']] == $roles::$admin || $roles::getRoles()[$assignedUser['role']] == $roles::$owner)) { ?>
-                                                <input type="text" readonly disabled value="<?php echo $this->__("label.roles." . $roles::getRoles()[$assignedUser['role']]) ?>" />
+                                                <input type="text" readonly disabled value="<?php echo $tpl->__("label.roles." . $roles::getRoles()[$assignedUser['role']]) ?>" />
                                             <?php } else { ?>
                                                 <select name="userProjectRole-<?php echo $userId ?>">
                                                     <option value="inherit">Inherit</option>
@@ -96,23 +97,23 @@
                                                         <?php if ($assignedUser['projectRole'] == array_search($roles::$readonly, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles." . $roles::$readonly) ?></option>
+                                                    ><?php echo $tpl->__("label.roles." . $roles::$readonly) ?></option>
 
                                                     <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
                                                         <?php if ($assignedUser['projectRole'] == array_search($roles::$commenter, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles." . $roles::$commenter) ?></option>
+                                                    ><?php echo $tpl->__("label.roles." . $roles::$commenter) ?></option>
                                                     <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
                                                         <?php if ($assignedUser['projectRole'] == array_search($roles::$editor, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles." . $roles::$editor) ?></option>
+                                                    ><?php echo $tpl->__("label.roles." . $roles::$editor) ?></option>
                                                     <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
                                                         <?php if ($assignedUser['projectRole'] == array_search($roles::$manager, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                    ><?php echo $this->__("label.roles." . $roles::$manager) ?></option>
+                                                    ><?php echo $tpl->__("label.roles." . $roles::$manager) ?></option>
                                                 </select>
                                             <?php } ?>
                                             <div class="clearall"></div>
@@ -126,13 +127,13 @@
                 `           <div class="row">
                                 <div class="col-md-12">
                                     <h4 class="widgettitle title-light">
-                                        <span class="fa fa-user-friends "></span><?=$this->__('headlines.assign_users_to_project'); ?>
+                                        <span class="fa fa-user-friends "></span><?=$tpl->__('headlines.assign_users_to_project'); ?>
                                     </h4>
                                 </div>
                             </div>
 
                              <div class="row">
-                                <?php foreach ($this->get('availableUsers') as $row) { ?>
+                                <?php foreach ($tpl->get('availableUsers') as $row) { ?>
                                     <?php if (!isset($project['assignedUsers'][$row['id']])) { ?>
                                         <div class="col-md-4">
                                             <div class="userBox">
@@ -141,9 +142,9 @@
                                                 <div class="commentImage">
                                                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>"/>
                                                 </div>
-                                                <label for="user-<?php echo $row['id'] ?>" ><?php printf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></label>
+                                                <label for="user-<?php echo $row['id'] ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></label>
                                                 <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>
-                                                    <input type="text" readonly disabled value="<?php echo $this->__("label.roles." . $roles::getRoles()[$row['role']]) ?>" />
+                                                    <input type="text" readonly disabled value="<?php echo $tpl->__("label.roles." . $roles::getRoles()[$row['role']]) ?>" />
                                                 <?php } else { ?>
                                                     <select name="userProjectRole-<?php echo $row['id'] ?>">
                                                         <option value="inherit">Inherit</option>
@@ -151,23 +152,23 @@
                                                         <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$readonly, $roles::getRoles())) {
                                                             echo" selected='selected' ";
                                                         }?>
-                                                            ><?php echo $this->__("label.roles." . $roles::$readonly) ?></option>
+                                                            ><?php echo $tpl->__("label.roles." . $roles::$readonly) ?></option>
 
                                                         <option value="<?php echo array_search($roles::$commenter, $roles::getRoles()); ?>"
                                                             <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$commenter, $roles::getRoles())) {
                                                                 echo" selected='selected' ";
                                                             }?>
-                                                        ><?php echo $this->__("label.roles." . $roles::$commenter) ?></option>
+                                                        ><?php echo $tpl->__("label.roles." . $roles::$commenter) ?></option>
                                                         <option value="<?php echo array_search($roles::$editor, $roles::getRoles()); ?>"
                                                             <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$editor, $roles::getRoles())) {
                                                                 echo" selected='selected' ";
                                                             }?>
-                                                        ><?php echo $this->__("label.roles." . $roles::$editor) ?></option>
+                                                        ><?php echo $tpl->__("label.roles." . $roles::$editor) ?></option>
                                                         <option value="<?php echo array_search($roles::$manager, $roles::getRoles()); ?>"
                                                             <?php if (isset($project['assignedUsers'][$row['id']]) && $project['assignedUsers'][$row['id']] == array_search($roles::$manager, $roles::getRoles())) {
                                                                 echo" selected='selected' ";
                                                             }?>
-                                                        ><?php echo $this->__("label.roles." . $roles::$manager) ?></option>
+                                                        ><?php echo $tpl->__("label.roles." . $roles::$manager) ?></option>
                                                     </select>
                                                 <?php } ?>
                                                 <div class="clearall"></div>
@@ -179,15 +180,15 @@
 
                                     <?php }
                                 } ?>
-                                 <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
-                                     <div class="col-md-4">
+                                <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                    <div class="col-md-4">
 
-                                         <div class="userBox">
-                                             <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$this->__('links.create_user'); ?></a>
-                                             <div class="clearall"></div>
-                                         </div>
-                                     </div>
-                                 <?php } ?>
+                                        <div class="userBox">
+                                            <a class="userEditModal" href="<?=BASE_URL?>/users/newUser?preSelectProjectId=<?=$project['id'] ?>" style="font-size:var(--font-size-l); line-height:61px"><span class="fa fa-user-plus"></span> <?=$tpl->__('links.create_user'); ?></a>
+                                            <div class="clearall"></div>
+                                        </div>
+                                    </div>
+                                <?php } ?>
                             </div>
                              <div class="row">
                                  <div class="col-md-12">
@@ -200,7 +201,7 @@
                     </div>
                 </div>
                     <br/>
-                    <input type="submit" name="saveUsers" id="save" class="button" value="<?php echo $this->__('buttons.save'); ?>" class="button" />
+                    <input type="submit" name="saveUsers" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
 
                 </form>
 
@@ -208,7 +209,7 @@
 
             <div id="files">
 
-                <?php $this->displaySubmodule('files-showAll'); ?>
+                <?php $tpl->displaySubmodule('files-showAll'); ?>
 
                 <?php /*
                 <div class="mediamgr_category">
@@ -223,16 +224,16 @@
                                             <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                                         </div>
                                         <span class="btn btn-file">
-                                            <span class="fileupload-new"><?=$this->__('label.select_file'); ?></span>
-                                            <span class='fileupload-exists'><?=$this->__('label.change'); ?></span>
+                                            <span class="fileupload-new"><?=$tpl->__('label.select_file'); ?></span>
+                                            <span class='fileupload-exists'><?=$tpl->__('label.change'); ?></span>
                                             <input type='file' name='file' />
                                         </span>
-                                        <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?=$this->__('buttons.remove'); ?></a>
+                                        <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?=$tpl->__('buttons.remove'); ?></a>
                                     </div>
                                   </div>
                                </div>
 
-                               <input type="submit" name="upload" class="button" value="<?=$this->__('buttons.upload'); ?>" />
+                               <input type="submit" name="upload" class="button" value="<?=$tpl->__('buttons.upload'); ?>" />
 
                             </form>
                 </div>
@@ -241,7 +242,7 @@
                 <div class="mediamgr_content">
 
                     <ul id='medialist' class='listfile'>
-                            <?php foreach($this->get('files') as $file): ?>
+                            <?php foreach($tpl->get('files') as $file): ?>
                                             <li class="<?php echo $file['moduleId'] ?>">
                                                 <div class="inlineDropDownContainer" style="float:right;">
 
@@ -249,22 +250,22 @@
                                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu">
-                                                        <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
-                                                        <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
+                                                        <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
+                                                        <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
 
                                                         <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                                            <li><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
+                                                            <li><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
                                                         <?php  } ?>
 
                                                     </ul>
                                                 </div>
                                                   <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                                                    <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
+                                                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
                                                         <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                                         <?php else: ?>
                                                         <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
                                                         <?php endif; ?>
-                                                    <span class="filename"><?php $this->e($file['realName']) ?></span>
+                                                    <span class="filename"><?php $tpl->e($file['realName']) ?></span>
 
                                                   </a>
 
@@ -284,8 +285,8 @@
                 <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment">
                     <input type="hidden" name="comment" value="1" />
                     <?php
-                    $this->assign('formUrl', BASE_URL . "/projects/showProject/" . $project['id'] . "");
-                    $this->displaySubmodule('comments-generalComment') ;
+                    $tpl->assign('formUrl', BASE_URL . "/projects/showProject/" . $project['id'] . "");
+                    $tpl->displaySubmodule('comments-generalComment') ;
                     ?>
                 </form>
 
@@ -299,14 +300,14 @@
                         <img src="<?=BASE_URL ?>/dist/images/mattermost-logoHorizontal.png" width="200" />
                     </div>
                     <div class="col-md-5">
-                        <?=$this->__('text.mattermost_instructions'); ?>
+                        <?=$tpl->__('text.mattermost_instructions'); ?>
                     </div>
                     <div class="col-md-4">
-                        <strong><?=$this->__('label.webhook_url'); ?></strong><br />
+                        <strong><?=$tpl->__('label.webhook_url'); ?></strong><br />
                         <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $this->get("mattermostWebhookURL"); ?>"/>
+                            <input type="text" name="mattermostWebhookURL" id="mattermostWebhookURL" value="<?php echo $tpl->get("mattermostWebhookURL"); ?>"/>
                             <br />
-                            <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="mattermostSave" />
+                            <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="mattermostSave" />
                         </form>
                     </div>
                 </div>
@@ -318,14 +319,14 @@
                     </div>
 
                     <div class="col-md-5">
-                        <?=$this->__('text.slack_instructions'); ?>
+                        <?=$tpl->__('text.slack_instructions'); ?>
                     </div>
                     <div class="col-md-4">
-                        <strong><?=$this->__('label.webhook_url'); ?></strong><br />
+                        <strong><?=$tpl->__('label.webhook_url'); ?></strong><br />
                         <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $this->get("slackWebhookURL"); ?>"/>
+                            <input type="text" name="slackWebhookURL" id="slackWebhookURL" value="<?php echo $tpl->get("slackWebhookURL"); ?>"/>
                             <br />
-                            <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="slackSave" />
+                            <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="slackSave" />
                         </form>
                     </div>
                 </div>
@@ -337,27 +338,27 @@
                     </div>
 
                     <div class="col-md-5">
-                        <?=$this->__('text.zulip_instructions'); ?>
+                        <?=$tpl->__('text.zulip_instructions'); ?>
                     </div>
                     <div class="col-md-4">
 
                         <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
-                            <strong><?=$this->__('label.base_url'); ?></strong><br />
-                            <input type="text" name="zulipURL" id="zulipURL" placeholder="<?=$this->__('input.placeholders.zulip_url'); ?>" value="<?php echo $this->get("zulipHook")['zulipURL']; ?>"/>
+                            <strong><?=$tpl->__('label.base_url'); ?></strong><br />
+                            <input type="text" name="zulipURL" id="zulipURL" placeholder="<?=$tpl->__('input.placeholders.zulip_url'); ?>" value="<?php echo $tpl->get("zulipHook")['zulipURL']; ?>"/>
                             <br />
-                            <strong><?=$this->__('label.bot_email'); ?></strong><br />
-                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $this->get("zulipHook")['zulipEmail']; ?>"/>
+                            <strong><?=$tpl->__('label.bot_email'); ?></strong><br />
+                            <input type="text" name="zulipEmail" id="zulipEmail" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipEmail']; ?>"/>
                             <br />
-                            <strong><?=$this->__('label.botkey'); ?></strong><br />
-                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $this->get("zulipHook")['zulipBotKey']; ?>"/>
+                            <strong><?=$tpl->__('label.botkey'); ?></strong><br />
+                            <input type="text" name="zulipBotKey" id="zulipBotKey" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipBotKey']; ?>"/>
                             <br />
-                            <strong><?=$this->__('label.stream'); ?></strong><br />
-                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $this->get("zulipHook")['zulipStream']; ?>"/>
+                            <strong><?=$tpl->__('label.stream'); ?></strong><br />
+                            <input type="text" name="zulipStream" id="zulipStream" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipStream']; ?>"/>
                             <br />
-                            <strong><?=$this->__('label.topic'); ?></strong><br />
-                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $this->get("zulipHook")['zulipTopic']; ?>"/>
+                            <strong><?=$tpl->__('label.topic'); ?></strong><br />
+                            <input type="text" name="zulipTopic" id="zulipTopic" placeholder="" value="<?php echo $tpl->get("zulipHook")['zulipTopic']; ?>"/>
                             <br />
-                            <input type="submit" value="<?=$this->__('buttons.save'); ?>" name="zulipSave" />
+                            <input type="submit" value="<?=$tpl->__('buttons.save'); ?>" name="zulipSave" />
                         </form>
                     </div>
                 </div>
@@ -370,15 +371,15 @@
                     </div>
 
                     <div class='col-md-5'>
-                      <?= $this->__('text.discord_instructions'); ?>
+                      <?= $tpl->__('text.discord_instructions'); ?>
                     </div>
                     <div class="col-md-4">
-                        <strong><?= $this->__('label.webhook_url'); ?></strong><br/>
+                        <strong><?= $tpl->__('label.webhook_url'); ?></strong><br/>
                         <form action="<?= BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#integrations" method="post">
                             <?php for ($i = 1; 3 >= $i; $i++) : ?>
-                            <input type="text" name="discordWebhookURL<?=$i; ?>" id="discordWebhookURL<?=$i; ?>" placeholder="<?= $this->__('input.placeholders.discord_url'); ?>" value="<?php echo $this->get('discordWebhookURL' . $i); ?>"/><br/>
+                            <input type="text" name="discordWebhookURL<?=$i; ?>" id="discordWebhookURL<?=$i; ?>" placeholder="<?= $tpl->__('input.placeholders.discord_url'); ?>" value="<?php echo $tpl->get('discordWebhookURL' . $i); ?>"/><br/>
                             <?php endfor; ?>
-                            <input type="submit" value="<?= $this->__('buttons.save'); ?>" name="discordSave"/>
+                            <input type="submit" value="<?= $tpl->__('buttons.save'); ?>" name="discordSave"/>
                         </form>
                     </div>
                 </div>
@@ -388,7 +389,7 @@
             <div id="todosettings">
                 <form action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#todosettings" method="post">
                     <ul class="sortableTicketList" id="todoStatusList">
-                        <?php foreach ($this->get('todoStatus') as $key => $ticketStatus) { ?>
+                        <?php foreach ($tpl->get('todoStatus') as $key => $ticketStatus) { ?>
                             <li>
                                 <div class="ticketBox">
                                     <div class="row statusList" id="todostatus-<?=$key?>">
@@ -398,44 +399,44 @@
                                             <span class="fa fa-sort"></span>
                                         </div>
                                         <div class="col-md-1">
-                                            <label><?=$this->__("label.sortindex") ?></label>
-                                            <input type="text" name="labelSort-<?=$key?>" class="sorter" id="labelSort-<?=$key ?>" value="<?=$this->escape($ticketStatus['sortKey']);?>" style="width:30px;"/>
+                                            <label><?=$tpl->__("label.sortindex") ?></label>
+                                            <input type="text" name="labelSort-<?=$key?>" class="sorter" id="labelSort-<?=$key ?>" value="<?=$tpl->escape($ticketStatus['sortKey']);?>" style="width:30px;"/>
                                         </div>
                                         <div class="col-md-2">
-                                            <label><?=$this->__("label.label") ?></label>
-                                            <input type="text" name="label-<?=$key?>" id="label-<?=$key?>" value="<?=$this->escape($ticketStatus['name']);?>" />
+                                            <label><?=$tpl->__("label.label") ?></label>
+                                            <input type="text" name="label-<?=$key?>" id="label-<?=$key?>" value="<?=$tpl->escape($ticketStatus['name']);?>" />
 
                                         </div>
                                         <div class="col-md-2">
-                                            <label><?=$this->__("label.color") ?></label>
+                                            <label><?=$tpl->__("label.color") ?></label>
                                             <select name="labelClass-<?=$key?>" id="labelClass-<?=$key ?>" class="colorChosen">
-                                                <option value="label-purple" class="label-purple" <?=$ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : ""; ?>><span class="label-purple"><?=$this->__('label.purple'); ?></span></option>
-                                                <option value="label-pink" class="label-pink" <?=$ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : ""; ?>><span class="label-pink"><?=$this->__('label.pink'); ?></span></option>
-                                                <option value="label-darker-blue" class="label-darker-blue" <?=$ticketStatus['class'] == 'label-darker-blue' ? 'selected="selected"' : ""; ?>><span class="label-darker-blue"><?=$this->__('label.darker-blue'); ?></span></option>
-                                                <option value="label-info" class="label-info" <?=$ticketStatus['class'] == 'label-info' ? 'selected="selected"' : ""; ?>><span class="label-info"><?=$this->__('label.dark-blue'); ?></span></option>
-                                                <option value="label-blue" class="label-blue"  <?=$ticketStatus['class'] == 'label-blue' ? 'selected="selected"' : ""; ?>><span class="label-blue"><?=$this->__('label.blue'); ?></span></option>
-                                                <option value="label-dark-green" class="label-dark-green" <?=$ticketStatus['class'] == 'label-dark-green' ? 'selected="selected"' : ""; ?>><span class="label-dark-green"><?=$this->__('label.dark-green'); ?></span></option>
-                                                <option value="label-success" class="label-success" <?=$ticketStatus['class'] == 'label-success' ? 'selected="selected"' : ""; ?>><span class="label-success"><?=$this->__('label.green'); ?></span></option>
-                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class'] == 'label-warning' ? 'selected="selected"' : ""; ?>><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
-                                                <option value="label-brown" class="label-brown" <?=$ticketStatus['class'] == 'label-brown' ? 'selected="selected"' : ""; ?>><span class="label-brown"><?=$this->__('label.brown'); ?></span></option>
-                                                <option value="label-danger" class="label-danger" <?=$ticketStatus['class'] == 'label-danger' ? 'selected="selected"' : ""; ?>><span class="label-danger"><?=$this->__('label.dark-red'); ?></span></option>
-                                                <option value="label-important" class="label-important" <?=$ticketStatus['class'] == 'label-important' ? 'selected="selected"' : ""; ?>><span class="label-important"><?=$this->__('label.red'); ?></span></option>
-                                                <option value="label-default" class="label-default" <?=$ticketStatus['class'] == 'label-default' ? 'selected="selected"' : ""; ?>><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
+                                                <option value="label-purple" class="label-purple" <?=$ticketStatus['class'] == 'label-purple' ? 'selected="selected"' : ""; ?>><span class="label-purple"><?=$tpl->__('label.purple'); ?></span></option>
+                                                <option value="label-pink" class="label-pink" <?=$ticketStatus['class'] == 'label-pink' ? 'selected="selected"' : ""; ?>><span class="label-pink"><?=$tpl->__('label.pink'); ?></span></option>
+                                                <option value="label-darker-blue" class="label-darker-blue" <?=$ticketStatus['class'] == 'label-darker-blue' ? 'selected="selected"' : ""; ?>><span class="label-darker-blue"><?=$tpl->__('label.darker-blue'); ?></span></option>
+                                                <option value="label-info" class="label-info" <?=$ticketStatus['class'] == 'label-info' ? 'selected="selected"' : ""; ?>><span class="label-info"><?=$tpl->__('label.dark-blue'); ?></span></option>
+                                                <option value="label-blue" class="label-blue"  <?=$ticketStatus['class'] == 'label-blue' ? 'selected="selected"' : ""; ?>><span class="label-blue"><?=$tpl->__('label.blue'); ?></span></option>
+                                                <option value="label-dark-green" class="label-dark-green" <?=$ticketStatus['class'] == 'label-dark-green' ? 'selected="selected"' : ""; ?>><span class="label-dark-green"><?=$tpl->__('label.dark-green'); ?></span></option>
+                                                <option value="label-success" class="label-success" <?=$ticketStatus['class'] == 'label-success' ? 'selected="selected"' : ""; ?>><span class="label-success"><?=$tpl->__('label.green'); ?></span></option>
+                                                <option value="label-warning" class="label-warning" <?=$ticketStatus['class'] == 'label-warning' ? 'selected="selected"' : ""; ?>><span class="label-warning"><?=$tpl->__('label.yellow'); ?></span></option>
+                                                <option value="label-brown" class="label-brown" <?=$ticketStatus['class'] == 'label-brown' ? 'selected="selected"' : ""; ?>><span class="label-brown"><?=$tpl->__('label.brown'); ?></span></option>
+                                                <option value="label-danger" class="label-danger" <?=$ticketStatus['class'] == 'label-danger' ? 'selected="selected"' : ""; ?>><span class="label-danger"><?=$tpl->__('label.dark-red'); ?></span></option>
+                                                <option value="label-important" class="label-important" <?=$ticketStatus['class'] == 'label-important' ? 'selected="selected"' : ""; ?>><span class="label-important"><?=$tpl->__('label.red'); ?></span></option>
+                                                <option value="label-default" class="label-default" <?=$ticketStatus['class'] == 'label-default' ? 'selected="selected"' : ""; ?>><span class="label-default"><?=$tpl->__('label.grey'); ?></span></option>
 
 
 
                                             </select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label><?=$this->__("label.reportType") ?></label>
+                                            <label><?=$tpl->__("label.reportType") ?></label>
                                             <select name="labelType-<?=$key?>" id="labelType-<?=$key ?>">
-                                                <option value="NEW" <?=($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : ""; ?>><?=$this->__('status.new'); ?></option>
-                                                <option value="INPROGRESS" <?=($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : ""; ?>><?=$this->__('status.in_progress'); ?></option>
-                                                <option value="DONE" <?=($ticketStatus['statusType'] == 'DONE') ? 'selected="selected"' : ""; ?>><?=$this->__('status.done'); ?></option>
+                                                <option value="NEW" <?=($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.new'); ?></option>
+                                                <option value="INPROGRESS" <?=($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.in_progress'); ?></option>
+                                                <option value="DONE" <?=($ticketStatus['statusType'] == 'DONE') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.done'); ?></option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for=""><?=$this->__('label.showInKanban'); ?></label>
+                                            <label for=""><?=$tpl->__('label.showInKanban'); ?></label>
                                             <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?=($ticketStatus['kanbanCol'] == true) ? 'checked="checked"' : ""; ?>/>
                                         </div>
                                         <div class="remove">
@@ -449,13 +450,13 @@
                         <?php } ?>
                     </ul>
 
-                    <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink" style="text-align:left;"><?=$this->__('links.add_status'); ?></a>
+                    <a href="javascript:void(0);" onclick="leantime.projectsController.addToDoStatus();" class="quickAddLink" style="text-align:left;"><?=$tpl->__('links.add_status'); ?></a>
                     <br />
-                    <input type="submit" value="<?=$this->__('buttons.save')?>" name="submitSettings" class="btn btn-primary"/>
+                    <input type="submit" value="<?=$tpl->__('buttons.save')?>" name="submitSettings" class="btn btn-primary"/>
                 </form>
             </div>
 
-            <?php $this->dispatchTplEvent('projectTabsContent'); ?>
+            <?php $tpl->dispatchTplEvent('projectTabsContent'); ?>
         </div>
     </div>
 </div>
@@ -471,42 +472,42 @@
             <span class="fa fa-sort"></span>
         </div>
         <div class="col-md-1">
-            <label><?=$this->__("label.sortindex") ?></label>
+            <label><?=$tpl->__("label.sortindex") ?></label>
             <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:30px;"/>
         </div>
         <div class="col-md-2">
-            <label><?=$this->__("label.label") ?></label>
+            <label><?=$tpl->__("label.label") ?></label>
             <input type="text" name="label-XXNEWKEYXX" id="label-XXNEWKEYXX" value="" />
 
         </div>
         <div class="col-md-2">
-            <label><?=$this->__("label.color") ?></label>
+            <label><?=$tpl->__("label.color") ?></label>
             <select name="labelClass-XXNEWKEYXX" id="labelClass-XXNEWKEYXX" class="colorChosen">
-                <option value="label-blue" class="label-blue"><span class="label-blue"><?=$this->__('label.blue'); ?></span></option>
-                <option value="label-info" class="label-info"><span class="label-info"><?=$this->__('label.dark-blue'); ?></span></option>
-                <option value="label-darker-blue" class="label-darker-blue"><span class="label-darker-blue"><?=$this->__('label.darker-blue'); ?></span></option>
-                <option value="label-warning" class="label-warning"><span class="label-warning"><?=$this->__('label.yellow'); ?></span></option>
-                <option value="label-success" class="label-success"><span class="label-success"><?=$this->__('label.green'); ?></span></option>
-                <option value="label-dark-green" class="label-dark-green"><span class="label-dark-green"><?=$this->__('label.dark-green'); ?></span></option>
-                <option value="label-important" class="label-important"><span class="label-important"><?=$this->__('label.red'); ?></span></option>
-                <option value="label-danger" class="label-danger"><span class="label-danger"><?=$this->__('label.dark-red'); ?></span></option>
-                <option value="label-pink" class="label-pink"><span class="label-pink"><?=$this->__('label.pink'); ?></span></option>
-                <option value="label-purple" class="label-purple"><span class="label-purple"><?=$this->__('label.purple'); ?></span></option>
-                <option value="label-brown" class="label-brown"><span class="label-brown"><?=$this->__('label.brown'); ?></span></option>
-                <option value="label-default" class="label-default"><span class="label-default"><?=$this->__('label.grey'); ?></span></option>
+                <option value="label-blue" class="label-blue"><span class="label-blue"><?=$tpl->__('label.blue'); ?></span></option>
+                <option value="label-info" class="label-info"><span class="label-info"><?=$tpl->__('label.dark-blue'); ?></span></option>
+                <option value="label-darker-blue" class="label-darker-blue"><span class="label-darker-blue"><?=$tpl->__('label.darker-blue'); ?></span></option>
+                <option value="label-warning" class="label-warning"><span class="label-warning"><?=$tpl->__('label.yellow'); ?></span></option>
+                <option value="label-success" class="label-success"><span class="label-success"><?=$tpl->__('label.green'); ?></span></option>
+                <option value="label-dark-green" class="label-dark-green"><span class="label-dark-green"><?=$tpl->__('label.dark-green'); ?></span></option>
+                <option value="label-important" class="label-important"><span class="label-important"><?=$tpl->__('label.red'); ?></span></option>
+                <option value="label-danger" class="label-danger"><span class="label-danger"><?=$tpl->__('label.dark-red'); ?></span></option>
+                <option value="label-pink" class="label-pink"><span class="label-pink"><?=$tpl->__('label.pink'); ?></span></option>
+                <option value="label-purple" class="label-purple"><span class="label-purple"><?=$tpl->__('label.purple'); ?></span></option>
+                <option value="label-brown" class="label-brown"><span class="label-brown"><?=$tpl->__('label.brown'); ?></span></option>
+                <option value="label-default" class="label-default"><span class="label-default"><?=$tpl->__('label.grey'); ?></span></option>
             </select>
         </div>
         <div class="col-md-2">
-            <label><?=$this->__("label.reportType") ?></label>
+            <label><?=$tpl->__("label.reportType") ?></label>
             <select name="labelType-XXNEWKEYXX" id="labelType-XXNEWKEYXX">
-                <option value="NEW"><?=$this->__('status.new'); ?></option>
-                <option value="INPROGRESS"><?=$this->__('status.in_progress'); ?></option>
-                <option value="DONE"><?=$this->__('status.done'); ?></option>
-                <option value="NONE"><?=$this->__('status.dont_report'); ?></option>
+                <option value="NEW"><?=$tpl->__('status.new'); ?></option>
+                <option value="INPROGRESS"><?=$tpl->__('status.in_progress'); ?></option>
+                <option value="DONE"><?=$tpl->__('status.done'); ?></option>
+                <option value="NONE"><?=$tpl->__('status.dont_report'); ?></option>
             </select>
         </div>
         <div class="col-md-2">
-            <label for=""><?=$this->__('label.showInKanban'); ?></label>
+            <label for=""><?=$tpl->__('label.showInKanban'); ?></label>
             <input type="checkbox" name="labelKanbanCol-XXNEWKEYXX" id="labelKanbanCol-XXNEWKEYXX"/>
         </div>
         <div class="remove">

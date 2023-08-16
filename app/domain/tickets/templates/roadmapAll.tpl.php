@@ -1,10 +1,10 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$milestones = $tpl->get('milestones');
+$clients = $tpl->get('clients');
 
-$milestones = $this->get('milestones');
-$clients = $this->get('clients');
-
-$clientNameSelected = $this->__("headline.all_clients");
+$clientNameSelected = $tpl->__("headline.all_clients");
 $htmlDropdownClients = '';
 foreach ($clients as $client) {
     $href = BASE_URL . "/tickets/roadmapAll?clientId=" . $client['id'];
@@ -25,8 +25,8 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-briefcase"></span></div>
     <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("label.all_milestones_portfolio"); ?></h1>
+        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+        <h1><?=$tpl->__("label.all_milestones_portfolio"); ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -34,7 +34,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
             <div class="col-md-6">
@@ -43,9 +43,9 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                 <div class="pull-right">
 
                     <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("label.roles.client") ?>: <span class="viewText"><?=$clientNameSelected?></span><span class="caret"></span></button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("label.roles.client") ?>: <span class="viewText"><?=$clientNameSelected?></span><span class="caret"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a href=<?=BASE_URL . "/tickets/roadmapAll"?> <?= empty($labelActive) ? "class='active'" : '' ?> > <?=$this->__("headline.all_clients") ?> </a></li>
+                            <li><a href=<?=BASE_URL . "/tickets/roadmapAll"?> <?= empty($labelActive) ? "class='active'" : '' ?> > <?=$tpl->__("headline.all_clients") ?> </a></li>
                             <?=$htmlDropdownClients?>
                         </ul>
                     </div>
@@ -55,41 +55,41 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                         <?php
                             $currentView = "";
                         if ($roadmapView == 'Day') {
-                            $currentView = $this->__("buttons.day");
+                            $currentView = $tpl->__("buttons.day");
                         } elseif ($roadmapView == 'Week') {
-                            $currentView = $this->__("buttons.week");
+                            $currentView = $tpl->__("buttons.week");
                         } elseif ($roadmapView == 'Month') {
-                            $currentView = $this->__("buttons.month");
+                            $currentView = $tpl->__("buttons.month");
                         }
                         ?>
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
                         <ul class="dropdown-menu" id="ganttTimeControl">
                             <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
                                 echo "active";
-                                                                                      }?>"> <?=$this->__("buttons.day"); ?></a></li>
+                                                                                      }?>"> <?=$tpl->__("buttons.day"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Week" class="<?php if ($roadmapView == 'Week') {
                                 echo "active";
-                                                                                       }?>"><?=$this->__("buttons.week"); ?></a></li>
+                                                                                       }?>"><?=$tpl->__("buttons.week"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Month" class="<?php if ($roadmapView == 'Month') {
                                 echo "active";
-                                                                                        }?>"><?=$this->__("buttons.month"); ?></a></li>
+                                                                                        }?>"><?=$tpl->__("buttons.month"); ?></a></li>
                         </ul>
                     </div>
 
                     <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$this->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
                         <ul class="dropdown-menu">
-                            <li class="active"><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$this->__("menu.milestone_gantt") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/projects/showMy"><?=$this->__("menu.card_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$this->__("menu.table_view") ?></a></li>
+                            <li class="active"><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$tpl->__("menu.milestone_gantt") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/projects/showMy"><?=$tpl->__("menu.card_view") ?></a></li>
+                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$tpl->__("menu.table_view") ?></a></li>
                         </ul>
                     </div>
 
                     <div class="pull-left btn-group" style="margin-right:10px;">
                         <form action="" method="get" id="searchForm">
-                            <label class="pull-right" for="includeTasks">&nbsp;<?=$this->__('label.showTasks'); ?></label>
+                            <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
                             <input type="hidden" name="submitIncludeTasks" value="1" />
-                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($this->get('includeTasks') === true) {
+                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
                                 echo "checked='checked'";
                                                                                                                                           } ?>/>
                         </form>
@@ -107,10 +107,10 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>" . $this->__("headlines.no_milestones") . "<br/>
+            <h4>" . $tpl->__("headlines.no_milestones") . "<br/>
 
             <br />
-            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
+            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $tpl->__("links.add_milestone") . "</a></h4></div>";
         }
         ?>
         <div class="gantt-wrapper">
@@ -146,7 +146,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
             <?php foreach ($milestones as $mlst) {
                 $headline = '[' . $mlst->projectName . '] ';
-                $headline .= $this->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
+                $headline .= $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
                 if ($mlst->type == "milestone") {
                     $headline .= " (" . $mlst->percentDone . "% Done)";
                 }

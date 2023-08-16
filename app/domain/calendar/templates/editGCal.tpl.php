@@ -1,28 +1,28 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-$values = $this->get('values');
-
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$values = $tpl->get('values');
 ?>
 
 <link rel='stylesheet' type='text/css' href='includes/libs/fullCalendar/fullcalendar.css' />
 <h1>Google Kalender bearbeiten</h1>
 
-<?php if ($this->get('info') != '') { ?>
-<div class="fail"><span class="info"><?php echo $this->get('info'); ?></span>
+<?php if ($tpl->get('info') != '') { ?>
+<div class="fail"><span class="info"><?php echo $tpl->get('info'); ?></span>
 </div>
 <?php } ?>
 
 <form action="" method="post">
 
 <fieldset class="left">
-    <legend>Google Kalender bearbeiten</legend> 
+    <legend>Google Kalender bearbeiten</legend>
 
     <label for="name">Bezeichnung</label>
     <input type="text" id="name" name="name" value="<?php echo $values['name']; ?>" /><br />
-    
+
     <label for="url">URL:</label>
     <input type="text" id="url" name="url" style="width:300px;" value="<?php echo $values['url']; ?>" /><br />
-    
+
     <label for="color">Farbe:</label>
     <select name="color" id="color">
         <option value="c0033ff" class="c0033ff" <?php if ($values['colorClass'] == 'c0033ff') {
@@ -43,7 +43,7 @@ $values = $this->get('values');
         <option value="c33ffff" class="c33ffff" <?php if ($values['colorClass'] == 'c33ffff') {
             echo 'selected="selected"';
                                                 }?>>33ffff</option>
-        
+
         <option value="c6633ff" class="c6633ff" <?php if ($values['colorClass'] == 'c6633ff') {
             echo 'selected="selected"';
                                                 }?>>6633ff</option>
@@ -81,8 +81,8 @@ $values = $this->get('values');
             echo 'selected="selected"';
                                                 }?>>ffffff</option>
     </select>
-    
-    
+
+
 <input type="submit" name="save" id="save" value="Speichern" class="button" /></fieldset>
 
 <fieldset>

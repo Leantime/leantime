@@ -29,7 +29,7 @@ class template
      *
      * @var string
      */
-    private $frontcontroller = '';
+    public $frontcontroller = '';
 
     /**
      * @var string
@@ -90,6 +90,11 @@ class template
     private theme $theme;
 
     /**
+     * @var \Illuminate\View\Factory
+     */
+    public \Illuminate\View\Factory $viewFactory;
+
+    /**
      * __construct - get instance of frontcontroller
      *
      * @param  theme $theme
@@ -111,7 +116,8 @@ class template
         environment $config,
         appSettings $settings,
         services\auth $login,
-        roles $roles
+        roles $roles,
+        \Illuminate\View\Factory $viewFactory = null
     ) {
         $this->theme = $theme;
         $this->language = $language;
@@ -121,6 +127,138 @@ class template
         $this->settings = $settings;
         $this->login = $login;
         $this->roles = $roles;
+
+        if (! is_null($viewFactory)) {
+            $this->viewFactory = $viewFactory;
+        } else {
+            app()->call([$this, 'setupBlade']);
+            app()->call([$this, 'attachComposers']);
+            app()->call([$this, 'setupDirectives']);
+            app()->call([$this, 'setupGlobalVars']);
+        }
+    }
+
+    /**
+     * Create View Factory capable of rendering PHP and Blade templates
+     *
+     * @param \leantime\core\application $app
+     * @param \Illuminate\Filesystem\Filesystem $filesystem
+     * @param \Illuminate\Events\Dispatcher $eventDispatcher
+     * @param \Illuminate\View\Engines\EngineResolver $viewResolver
+     *
+     * @return void
+     */
+    public function setupBlade(
+        \leantime\core\application $app,
+        \Illuminate\Filesystem\Filesystem $filesystem,
+        \Illuminate\Events\Dispatcher $eventDispatcher,
+        \Illuminate\View\Engines\EngineResolver $viewResolver,
+    ) {
+        $bladeCompiler = new \Illuminate\View\Compilers\BladeCompiler($filesystem, APP_ROOT . '/cache/views');
+
+        $viewResolver->register('blade', fn () => new \Illuminate\View\Engines\CompilerEngine($bladeCompiler));
+        $viewResolver->register('php', fn () => new \Illuminate\View\Engines\PhpEngine($filesystem));
+
+        if (empty($_SESSION['template_paths']) || $this->config->debug) {
+            $domainPaths = $customPaths = [];
+            $domainModules = glob(APP_ROOT . '/app/domain/*');
+            array_walk($domainModules, function ($path, $key) use (&$domainPaths, &$customPaths) {
+                $domainPaths[basename($path)] = "$path/templates";
+                $customPaths['custom' . basename($path)] = APP_ROOT . '/app/custom/' . basename($path) . '/templates';
+            });
+
+            $pluginPaths = glob(APP_ROOT . '/app/plugins/*');
+            array_walk($pluginPaths, function ($path, $key) use (&$pluginPaths) {
+                $domainPaths[basename($path)] = "$path/templates";
+            });
+
+            $_SESSION['template_paths'] = array_merge($domainPaths, $customPaths, $pluginPaths, ['global' => APP_ROOT . '/app/views/templates']);
+        }
+
+        $viewFinder = new \Illuminate\View\FileViewFinder($filesystem, []);
+        array_map([$viewFinder, 'addNamespace'], array_keys($_SESSION['template_paths']), array_values($_SESSION['template_paths']));
+        $viewFactory = new \Illuminate\View\Factory($viewResolver, $viewFinder, $eventDispatcher);
+        array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['tpl.php', 'sub.php', 'inc.php']);
+        $viewFactory->setContainer($app);
+
+        $app->instance(\Illuminate\View\Compilers\BladeCompiler::class, $bladeCompiler);
+        $app->instance(\Illuminate\View\Factory::class, $viewFactory);
+        $this->viewFactory = $viewFactory;
+    }
+
+    /**
+     * attachComposers - attach view composers
+     *
+     * @param \Illuminate\View\Factory $viewFactory
+     * @return void
+     */
+    public function attachComposers(\Illuminate\View\Factory $viewFactory)
+    {
+        if (empty($_SESSION['composers']) || $this->config->debug) {
+            $globalComposerClasses = array_map(
+                fn ($composerFile) => "leantime\\views\\composers\\" . basename($composerFile, '.php'),
+                glob(APP_ROOT . '/app/views/composers/*.php')
+            );
+
+            $domainComposerClasses = array_map(function ($composerFile) {
+                $domain = basename(dirname($composerFile, 2));
+                $class = basename($composerFile, '.php');
+                return "leantime\\domain\\composers\\$domain\\$class";
+            }, glob(APP_ROOT . '/app/domain/*/composers/*.php'));
+
+            $_SESSION['composers'] = array_merge($globalComposerClasses, $domainComposerClasses);
+        }
+
+        foreach ($_SESSION['composers'] as $composerClass) {
+            if (
+                is_subclass_of($composerClass, Composer::class) &&
+                ! (new \ReflectionClass($composerClass))->isAbstract()
+            ) {
+                $viewFactory->composer($composerClass::$views, $composerClass);
+            }
+        }
+    }
+
+    /**
+     * setupDirectives - setup blade directives
+     *
+     * @return void
+     */
+    public function setupDirectives(\Illuminate\View\Compilers\BladeCompiler $bladeCompiler)
+    {
+        $bladeCompiler->directive(
+            'dispatchEvent',
+            function ($args) {
+                return "<?php \$tpl->dispatchTplEvent($args); ?>";
+            }
+        );
+
+        $bladeCompiler->directive(
+            'dispatchFilter',
+            function ($args) {
+                return "<?php echo \$tpl->dispatchTplFilter($args); ?>";
+            }
+        );
+    }
+
+    /**
+     * setupGlobalVars - setup global vars
+     *
+     * @param \Illuminate\View\Factory $viewFactory
+     * @return void
+     */
+    public function setupGlobalVars(\Illuminate\View\Factory $viewFactory)
+    {
+        $viewFactory->share([
+            'frontController' => $this->frontcontroller,
+            'config' => $this->config,
+            /** @todo remove settings after renaming all uses to appSettings */
+            'settings' => $this->settings,
+            'appSettings' => $this->settings,
+            'login' => $this->login,
+            'roles' => $this->roles,
+            'language' => $this->language,
+        ]);
     }
 
     /**
@@ -157,60 +295,35 @@ class template
      * getTemplatePath - Find template in custom and src directories
      *
      * @access public
-     * @param  string $module Module template resides in
-     * @param  string $name   Template filename name (including tpl.php extension)
+     * @throws \Exception If template not found.
+     * @param  string $namespace The namespace the template is for.
+     * @param  string $path      The path to the template.
      * @return string|boolean Full template path or false if file does not exist
      */
-    public function getTemplatePath(string $module, string $name): string|false
+    public function getTemplatePath(string $namespace, string $path): string
     {
-        if ($module == '' || $name == '') {
-            return false;
+        if ($namespace == '' || $path == '') {
+            throw new \Exception("Both namespace and path must be provided");
         }
 
-        $plugin_path = self::dispatch_filter('relative_plugin_template_path', '', [
-                    'module' => $module,
-                    'name' => $name,
-        ]);
+        $fullpath = self::dispatch_filter(
+            "template_path__{$namespace}_{$path}",
+            "$namespace::$path",
+            [
+                'namespace' => $namespace,
+                'path' => $path,
+            ]
+        );
 
-        if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
-            $pluginService = app()->make(services\plugins::class);
+        if ($this->viewFactory->exists("custom$fullpath")) {
+            return $fullpath;
         }
 
-        if (empty($plugin_path) || !file_exists($plugin_path)) {
-            $file = '/' . $module . '/templates/' . $name;
-
-            if (file_exists(ROOT . '/../app/custom' . $file) && is_readable(ROOT . '/../app/custom' . $file)) {
-                return ROOT . '/../app/custom' . $file;
-            }
-
-            if (file_exists(ROOT . '/../app/plugins' . $file) && is_readable(ROOT . '/../app/plugins' . $file)) {
-                if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($module)) {
-                    return ROOT . '/../app/plugins' . $file;
-                }
-            }
-
-            if (file_exists(ROOT . '/../app/domain' . $file) && is_readable(ROOT . '/../app/domain/' . $file)) {
-                return ROOT . '/../app/domain/' . $file;
-            }
-
-            return false;
+        if ($this->viewFactory->exists($fullpath)) {
+            return $fullpath;
         }
 
-        if (file_exists(ROOT . '/../app/custom' . $plugin_path) && is_readable(ROOT . '/../app/custom' . $plugin_path)) {
-            return ROOT . '/../app/custom' . $plugin_path;
-        }
-
-        if (file_exists(ROOT . '/../app/plugins' . $plugin_path) && is_readable(ROOT . '/../app/plugins' . $plugin_path)) {
-            if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true && $pluginService->isPluginEnabled($module)) {
-                return ROOT . '/../app/plugins' . $plugin_path;
-            }
-        }
-
-        if (file_exists(ROOT . '/../app/domain' . $plugin_path) && is_readable(ROOT . '/../app/domain/' . $plugin_path)) {
-            return ROOT . '/../app/domain/' . $plugin_path;
-        }
-
-        return false;
+        throw new \Exception("Template $fullpath not found");
     }
 
     /**
@@ -220,75 +333,60 @@ class template
      * @param  $template
      * @return void
      */
-    public function display(string $template, string $layout = "app")
+    public function display(string $template, string $layout = "app"): void
     {
-        //These variables are available in the template
-        $config = $this->config;
-        $settings = $this->settings;
-        $login = $this->login;
-        $roles = $this->roles;
-        $language = $this->language;
-
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
 
         $this->template = $template;
 
-        //Load Layout file
-        $layout = htmlspecialchars($layout);
+        $layout = $this->confirmLayoutName($layout, $template);
 
-        $layout = self::dispatch_filter('layout', $layout);
-        $layout = self::dispatch_filter("layout.$template", $layout);
-
-        $layoutFilename = $this->theme->getLayoutFilename($layout . '.php', $template);
-
-        if ($layoutFilename === false) {
-            $layoutFilename = $this->theme->getLayoutFilename('app.php');
-        }
-
-        if ($layoutFilename === false) {
-            die("Cannot find default 'app.php' layout file");
-        }
-
-        ob_start();
-
-        require($layoutFilename);
-
-        $layoutContent = ob_get_clean();
-
-        $layoutContent = self::dispatch_filter('layoutContent', $layoutContent);
-        $layoutContent = self::dispatch_filter("layoutContent.$template", $layoutContent);
-
-        //Load Template
-        //frontcontroller splits the name (actionname.modulename)
         $action = $this->frontcontroller::getActionName($template);
         $module = $this->frontcontroller::getModuleName($template);
 
-        $loadFile = $this->getTemplatePath($module, $action . '.tpl.php');
+        $loadFile = $this->getTemplatePath($module, $action);
 
         $this->hookContext = "tpl.$module.$action";
 
-        ob_start();
+        $view = $this->viewFactory->make($loadFile);
 
-        if ($loadFile !== false) {
-            require_once($loadFile);
+        /** @todo this can be reduced to just the 'else' code after removal of php template support */
+        if ($view->getEngine() instanceof \Illuminate\View\Engines\PhpEngine) {
+            $view = $this->viewFactory->make($layout, array_merge(
+                $this->vars,
+                [
+                    'tpl' => $this,
+                    'module' => $module,
+                    'action' => $action,
+                ]
+            ));
         } else {
-            error_log("Tried loading " . $loadFile . ". File not found");
-            $this->frontcontroller::redirect(BASE_URL . "/error/error404");
+            $view->with(array_merge(
+                $this->vars,
+                [
+                    'tpl' => $this,
+                    'layout' => $layout,
+                ]
+            ));
         }
 
-        $content = ob_get_clean();
-
+        $content = $view->render();
         $content = self::dispatch_filter('content', $content);
         $content = self::dispatch_filter("content.$template", $content);
 
-        //Load template content into layout content
-        $render = str_replace("<!--###MAINCONTENT###-->", $content, $layoutContent);
+        echo $content;
+    }
 
-        $render = self::dispatch_filter('render', $render);
-        $render = self::dispatch_filter("render.$template", $render);
+    protected function confirmLayoutName($layoutName, $template)
+    {
+        $layout = htmlspecialchars($layoutName);
+        $layout = self::dispatch_filter('layout', $layout);
+        $layout = self::dispatch_filter("layout.$template", $layout);
 
-        echo $render;
+        $layout = $this->getTemplatePath('global', "layouts.$layout");
+
+        return $layout;
     }
 
     /**
@@ -360,43 +458,20 @@ class template
      * displaySubmodule - display a submodule for a given module
      *
      * @access public
-     * @param  $alias
+     * @param  string $alias
      * @return void
      */
-    public function displaySubmodule($alias)
+    public function displaySubmodule(string $alias)
     {
-        $frontController = $this->frontcontroller;
-        $config = $this->config;
-        $settings = $this->settings;
-        $login = $this->login;
-        $roles = $this->roles;
-
-        $submodule = array("module" => '', "submodule" => '');
-
-        $aliasParts = explode("-", $alias);
-        if (count($aliasParts) > 1) {
-            $submodule['module'] = $aliasParts[0];
-            $submodule['submodule'] = $aliasParts[1];
+        if (! str_contains($alias, '-')) {
+            throw new \Exception("Submodule alias must be in the format module-submodule");
         }
 
-        $relative_path = self::dispatch_filter(
-            'submodule_relative_path',
-            "{$submodule['module']}/templates/submodules/{$submodule['submodule']}.sub.php",
-            [
-                'module' => $submodule['module'],
-                'submodule' => $submodule['submodule'],
-            ]
-        );
+        [$module, $submodule] = explode("-", $alias);
 
-        $file = "../custom/domain/$relative_path";
+        $relative_path = $this->getTemplatePath($module, "submodules.$submodule");
 
-        if (!file_exists($file)) {
-            $file = "../app/domain/$relative_path";
-        }
-
-        if (file_exists($file)) {
-            include $file;
-        }
+        echo $this->viewFactory->make($relative_path, array_merge($this->vars, ['tpl' => $this]))->render();
     }
 
     /**
@@ -718,22 +793,22 @@ class template
         $base = BASE_URL;
 
         // base url needs trailing /
-        if (substr($base, -1, 1) != "/") {
-            $base .= "/";
-        }
+        $base = rtrim($base, "/") . "/";
 
         // Replace links
-        $pattern = "/<a([^>]*) " .
-                "href=\"([^http|ftp|https|mailto|#][^\"]*)\"/";
-        $replace = "<a\${1} href=\"" . $base . "\${2}\"";
-        $text = preg_replace($pattern, $replace, $text);
+        $text = preg_replace(
+            '/<a([^>]*) href="([^http|ftp|https|mailto|#][^"]*)"/',
+            "<a\${1} href=\"$base\${2}\"",
+            $text
+        );
 
         // Replace images
-        $pattern = "/<img([^>]*) " .
-                "src=\"([^http|ftp|https][^\"]*)\"/";
-        $replace = "<img\${1} src=\"" . $base . "\${2}\"";
+        $text = preg_replace(
+            '/<img([^>]*) src="([^http|ftp|https][^"]*)"/',
+            "<img\${1} src=\"$base\${2}\"",
+            $text
+        );
 
-        $text = preg_replace($pattern, $replace, $text);
         // Done
         return $text;
     }
@@ -831,7 +906,7 @@ class template
      * @param string $hookName
      * @param mixed  $payload
      */
-    private function dispatchTplEvent($hookName, $payload = [])
+    public function dispatchTplEvent($hookName, $payload = [])
     {
         $this->dispatchTplHook('event', $hookName, $payload);
     }
@@ -843,7 +918,7 @@ class template
      *
      * @return mixed
      */
-    private function dispatchTplFilter($hookName, $payload = [], $available_params = [])
+    public function dispatchTplFilter($hookName, $payload = [], $available_params = [])
     {
         return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
     }

@@ -1,45 +1,38 @@
 <?php
-
-    $states = $this->get('states');
-    $projectProgress = $this->get('projectProgress');
-    $projectProgress = $this->get('projectProgress');
-    $sprintBurndown = $this->get('sprintBurndown');
-    $backlogBurndown = $this->get('backlogBurndown');
-    $efforts = $this->get('efforts');
-    $statusLabels = $this->get('statusLabels');
-    $project = $this->get('project');
-    $tickets = $this->get('tickets');
-
-
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$states = $tpl->get('states');
+$projectProgress = $tpl->get('projectProgress');
+$sprintBurndown = $tpl->get('sprintBurndown');
+$backlogBurndown = $tpl->get('backlogBurndown');
+$efforts = $tpl->get('efforts');
+$statusLabels = $tpl->get('statusLabels');
+$project = $tpl->get('project');
+$tickets = $tpl->get('tickets');
 ?>
 
-<?php $this->dispatchTplEvent('beforePageHeaderOpen'); ?>
+<?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
 <div class="pageheader">
-    <?php $this->dispatchTplEvent('afterPageHeaderOpen'); ?>
+    <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon"><span class="fa fa-home"></span></div>
     <div class="pagetitle">
-
-        <?php if (count($this->get('allUsers')) == 1) {
-
-            ?>
+        <?php if (count($tpl->get('allUsers')) == 1) { ?>
             <a href="<?=BASE_URL ?>/dashboard/show/#/users/newUser" class="headerCTA">
                 <i class="fa fa-users"></i>
                 <span style="font-size:14px; line-height:25px;">
-                    <?php echo $this->__("links.dont_do_it_alone"); ?>
+                    <?php echo $tpl->__("links.dont_do_it_alone"); ?>
                 </span>
             </a>
-
         <?php } ?>
-        <h5><?php $this->e($_SESSION["currentProjectClient"]); ?></h5>
-        <h1><?php echo $this->__("headlines.project_dashboard"); ?></h1>
+        <h5><?php $tpl->e($_SESSION["currentProjectClient"]); ?></h5>
+        <h1><?php echo $tpl->__("headlines.project_dashboard"); ?></h1>
     </div>
-    <?php $this->dispatchTplEvent('beforePageHeaderClose'); ?>
+    <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
 </div>
-<?php $this->dispatchTplEvent('afterPageHeaderClose'); ?>
+<?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
 <div class="maincontent">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
 
@@ -48,18 +41,18 @@
                 <div class="maincontentinner">
 
                     <div class="pull-right dropdownWrapper">
-                        <a class="dropdown-toggle btn" data-toggle="dropdown" data-tippy-content="<?=$this->__('label.copy_url_tooltip') ?>" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
+                        <a class="dropdown-toggle btn" data-toggle="dropdown" data-tippy-content="<?=$tpl->__('label.copy_url_tooltip') ?>" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
                         <div class="dropdown-menu padding-md">
                             <input type="text" id="projectUrl" value="<?=BASE_URL?>/projects/changeCurrentProject/<?=$project['id']; ?>" />
-                            <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl');"><?=$this->__('links.copy_url') ?></button>
+                            <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl');"><?=$tpl->__('links.copy_url') ?></button>
                         </div>
                     </div>
 
-                    <a href="javascript:void(0);" id="favoriteProject" class="btn pull-right margin-right <?=$this->get("isFavorite") ? 'isFavorite' : '' ?>" style="margin-right:5px;" data-tippy-content="<?=$this->__('label.favorite_tooltip') ?>">
-                        <i class="<?=$this->get("isFavorite") ? 'fa-solid' : 'fa-regular' ?> fa-star"></i>
+                    <a href="javascript:void(0);" id="favoriteProject" class="btn pull-right margin-right <?=$tpl->get("isFavorite") ? 'isFavorite' : '' ?>" style="margin-right:5px;" data-tippy-content="<?=$tpl->__('label.favorite_tooltip') ?>">
+                        <i class="<?=$tpl->get("isFavorite") ? 'fa-solid' : 'fa-regular' ?> fa-star"></i>
                     </a>
-                    <h3><?php $this->e($_SESSION["currentProjectClient"]); ?></h3>
-                    <h1 class="articleHeadline"><?php $this->e($this->get('currentProjectName')); ?></h1>
+                    <h3><?php $tpl->e($_SESSION["currentProjectClient"]); ?></h3>
+                    <h1 class="articleHeadline"><?php $tpl->e($tpl->get('currentProjectName')); ?></h1>
                     <br />
                     <strong>Project Checklist</strong><br /><br />
                     <form name="progressForm" id="progressForm">
@@ -69,7 +62,7 @@
                                 <div class="progress">
                                     <?php
 
-                                    $progressSteps = $this->get("progressSteps");
+                                    $progressSteps = $tpl->get("progressSteps");
                                     $progress = 0;
                                     $totalSteps = 0;
                                     $stepsDone = 1;
@@ -104,7 +97,7 @@
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
                                             <span class='title'>
-                                               <i class='fa fa-check'></i> " . $this->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                               <i class='fa fa-check'></i> " . $tpl->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
                                             </span>
                                          </a>";
                                     } elseif ($positionLeft == $percentDone) {
@@ -112,7 +105,7 @@
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
                                             <span class='title'>
-                                                " . $this->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                                " . $tpl->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
                                             </span>
                                           </a>";
                                     } else {
@@ -120,7 +113,7 @@
                                         echo"<a href='javascript:void(0)'  data-toggle='dropdown' class='dropdown-toggle'>
                                             <span class='innerCircle'></span>
                                             <span class='title'>
-                                                " . $this->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
+                                                " . $tpl->__($step['title']) . " <i class='fa fa-caret-down' aria-hidden='true'></i>
                                             </span>
                                           </a>";
                                     }
@@ -139,7 +132,7 @@
                                             echo"checked='checked'";
                                         }
 
-                                        echo"/><label for='progress_" . $key . "'>" . $this->__($task['title'] ?? '') . "</label>";
+                                        echo"/><label for='progress_" . $key . "'>" . $tpl->__($task['title'] ?? '') . "</label>";
                                         echo"</li>";
                                     }
                                     echo "</ul>";
@@ -155,14 +148,14 @@
                         </div>
                     </form>
                     <br /><br />
-                    <strong><?=$this->__("label.background"); ?></strong><br />
+                    <strong><?=$tpl->__("label.background"); ?></strong><br />
                     <div class="mce-content-body kanbanContent closed" style="max-height:200px;" id="projectDescription">
-                    <?=$this->escapeMinimal($project['details']) ?>
+                    <?=$tpl->escapeMinimal($project['details']) ?>
                     </div>
 
                     <?php if (strlen($project['details']) > 100) {?>
                     <div class="center">
-                        <a href="javascript:void(0);" id="descriptionReadMoreToggle"><?=$this->__("label.read_more") ?></a>
+                        <a href="javascript:void(0);" id="descriptionReadMoreToggle"><?=$tpl->__("label.read_more") ?></a>
                     </div>
                     <?php } ?>
 
@@ -174,7 +167,7 @@
                 </div>
 
                 <div class="maincontentinner">
-                    <h5 class="subtitle"><?=$this->__('headlines.latest_todos')?></h5>
+                    <h5 class="subtitle"><?=$tpl->__('headlines.latest_todos')?></h5>
                     <br />
                     <ul class="sortableTicketList" >
 
@@ -184,10 +177,10 @@
 
                         <?php foreach ($tickets as $row) {
                             if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
-                                $date = $this->__("text.anytime");
+                                $date = $tpl->__("text.anytime");
                             } else {
                                 $date = new DateTime($row['dateToFinish']);
-                                $date = $date->format($this->__("language.dateformat"));
+                                $date = $date->format($tpl->__("language.dateformat"));
                             }
 
                             ?>
@@ -196,12 +189,12 @@
                                     <div class="row">
                                         <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
                                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                                <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$this->escape($row['parentHeadline']) ?></a> //
+                                                <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
                                             <?php } ?>
-                                            <strong><a href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $this->e($row['headline']); ?></a></strong>
+                                            <strong><a href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
 
                                             <?php if ($login::userIsAtLeast($roles::$editor)) {
-                                                $clockedIn = $this->get("onTheClock");
+                                                $clockedIn = $tpl->get("onTheClock");
                                                 ?>
 
                                                 <div class="inlineDropDownContainer">
@@ -209,25 +202,25 @@
                                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu">
-                                                        <li class="nav-header"><?php echo $this->__("subtitles.todo"); ?></li>
-                                                        <li><a href="<?=BASE_URL ?>/dashboard/show#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $this->__("links.edit_todo"); ?></a></li>
-                                                        <li><a href="<?=BASE_URL ?>/dashboard/show#/tickets/moveTicket/<?php echo $row["id"]; ?>" ><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $this->__("links.move_todo"); ?></a></li>
-                                                        <li><a href="<?=BASE_URL ?>/dashboard/show#/tickets/delTicket/<?php echo $row["id"]; ?>" ><i class="fa fa-trash"></i> <?php echo $this->__("links.delete_todo"); ?></a></li>
-                                                        <li class="nav-header border"><?php echo $this->__("subtitles.track_time"); ?></li>
+                                                        <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
+                                                        <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
+                                                        <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>" ><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
+                                                        <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>" ><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
+                                                        <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
                                                         <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                             <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
                                                                 echo"style='display:none;'";
-                                                                                                                      }?>><span class="fa-regular fa-clock"></span> <?php echo $this->__("links.start_work"); ?></a>
+                                                                                                                      }?>><span class="fa-regular fa-clock"></span> <?php echo $tpl->__("links.start_work"); ?></a>
                                                             <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
                                                                 echo"style='display:none;'";
                                                                                                                        }?>><span class="fa-stop"></span> <?php if (is_array($clockedIn) == true) {
-                                                                                                                       echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), $clockedIn["since"]));
+                                                                                                                       echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
                                                                                                                        } else {
-                                                                                                                           echo sprintf($this->__("links.stop_work_started_at"), date($this->__("language.timeformat"), time()));
+                                                                                                                           echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
                                                                                                                        }?></a>
                                                             <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
                                                                 echo"style='display:none;'";
-                                                                                  }?>><?php echo $this->__("text.timer_set_other_todo"); ?></span>
+                                                                                  }?>><?php echo $tpl->__("text.timer_set_other_todo"); ?></span>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -237,7 +230,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4" style="padding:0 15px;">
-                                            <?php echo $this->__("label.due"); ?><input type="text" title="<?php echo $this->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+                                            <?php echo $tpl->__("label.due"); ?><input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                                         </div>
                                         <div class="col-md-8" style="padding-top:3px;" >
                                             <div class="right">
@@ -248,13 +241,13 @@
                                                                 if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
                                                                     echo $efforts[$row['storypoints']];
                                                                 } else {
-                                                                    echo $this->__("label.story_points_unkown");
+                                                                    echo $tpl->__("label.story_points_unkown");
                                                                 }?>
                                                                 </span>
                                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink<?=$row['id']?>">
-                                                        <li class="nav-header border"><?=$this->__("dropdown.how_big_todo")?></li>
+                                                        <li class="nav-header border"><?=$tpl->__("dropdown.how_big_todo")?></li>
                                                         <?php foreach ($efforts as $effortKey => $effortValue) {
                                                             echo"<li class='dropdown-item'>
                                                                             <a href='javascript:void(0);' data-value='" . $row['id'] . "_" . $effortKey . "' id='ticketEffortChange" . $row['id'] . $effortKey . "'>" . $effortValue . "</a>";
@@ -265,23 +258,23 @@
 
 
                                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                                    <a style="background-color:<?=$this->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    <a style="background-color:<?=$tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
-                                                                    $this->e($row['milestoneHeadline']);
+                                                                    $tpl->e($row['milestoneHeadline']);
                                                                 } else {
-                                                                    echo $this->__("label.no_milestone");
+                                                                    echo $tpl->__("label.no_milestone");
                                                                 }?>
                                                                 </span>
                                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink<?=$row['id']?>">
-                                                        <li class="nav-header border"><?=$this->__("dropdown.choose_milestone")?></li>
-                                                        <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$this->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$this->__("label.no_milestone")?> </a></li>
+                                                        <li class="nav-header border"><?=$tpl->__("dropdown.choose_milestone")?></li>
+                                                        <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$tpl->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
 
-                                                        <?php foreach ($this->get('milestones') as $milestone) {
+                                                        <?php foreach ($tpl->get('milestones') as $milestone) {
                                                             echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-label='" . $this->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $this->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $this->escape($milestone->tags) . "'>" . $this->escape($milestone->headline) . "</a>";
+                                                                            <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
                                                             echo"</li>";
                                                         }?>
                                                     </ul>
@@ -296,11 +289,11 @@
                                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
-                                                        <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
+                                                        <li class="nav-header border"><?=$tpl->__("dropdown.choose_status")?></li>
 
                                                         <?php foreach ($statusLabels as $key => $label) {
                                                             echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' class='" . $label["class"] . "' data-label='" . $this->escape($label["name"]) . "' data-value='" . $row['id'] . "_" . $key . "_" . $label["class"] . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $this->escape($label["name"]) . "</a>";
+                                                                            <a href='javascript:void(0);' class='" . $label["class"] . "' data-label='" . $tpl->escape($label["name"]) . "' data-value='" . $row['id'] . "_" . $key . "_" . $label["class"] . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $tpl->escape($label["name"]) . "</a>";
                                                             echo"</li>";
                                                         }?>
                                                     </ul>
@@ -319,11 +312,11 @@
                 <div class="maincontentinner">
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                         <div class="pull-right">
-                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-users"></i> <?=$this->__('links.manage_team') ?></a>
+                            <a class="titleInsertLink" href="<?=BASE_URL?>/projects/showProject/<?=$project['id']?>#team"><i class="fa fa-users"></i> <?=$tpl->__('links.manage_team') ?></a>
 
                         </div>
                     <?php } ?>
-                    <h5 class="subtitle"><?=$this->__('tabs.team') ?></h5>
+                    <h5 class="subtitle"><?=$tpl->__('tabs.team') ?></h5>
                     <div class="row teamBox">
                         <?php foreach ($project['assignedUsers'] as $userId => $assignedUser) {?>
                             <div class="col-md-3">
@@ -335,16 +328,16 @@
                                         <?php
                                         if ($assignedUser['firstname'] != '' || $assignedUser['lastname'] != '') {
                                             printf(
-                                                $this->__('text.full_name'),
-                                                $this->escape($assignedUser['firstname']),
-                                                $this->escape($assignedUser['lastname'])
+                                                $tpl->__('text.full_name'),
+                                                $tpl->escape($assignedUser['firstname']),
+                                                $tpl->escape($assignedUser['lastname'])
                                             );
-                                            echo "<br/><small>" . $this->escape($assignedUser['jobTitle']) . "</small>";
-                                            $this->dispatchTplEvent("usercardBottom", ["user"=>$assignedUser, "project"=>$project]);
+                                            echo "<br/><small>" . $tpl->escape($assignedUser['jobTitle']) . "</small>";
+                                            $tpl->dispatchTplEvent("usercardBottom", ["user " => $assignedUser, "project" => $project]);
                                         } else {
-                                            echo $this->escape($assignedUser['username']);
+                                            echo $tpl->escape($assignedUser['username']);
                                             if ($assignedUser['status'] == "i") {
-                                                echo "<br /><small>(" . $this->__('label.invited') . ")</small>";
+                                                echo "<br /><small>(" . $tpl->__('label.invited') . ")</small>";
                                             }
                                         }
                                         ?></span>
@@ -361,7 +354,7 @@
                                     <i class="fa fa-user-plus"></i>
                                 </div>
                                 <span class="userName">
-                                    <a href="<?=BASE_URL?>/dashboard/show#/users/newUser?preSelectProjectId=<?=$project['id'] ?>"><?=$this->__('links.invite_user'); ?></a>
+                                    <a href="<?=BASE_URL?>/dashboard/show#/users/newUser?preSelectProjectId=<?=$project['id'] ?>"><?=$tpl->__('links.invite_user'); ?></a>
                                     <br />&nbsp;
                                 </span>
 
@@ -381,12 +374,12 @@
                     <div class="pull-right">
                         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                         <a href="javascript:void(0);" onclick="toggleCommentBoxes(0); jQuery('.noCommentsMessage').toggle();" id="mainToggler">
-                            <span class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_report') ?>
+                            <span class="fa fa-plus-square"></span> <?php echo $tpl->__('links.add_new_report') ?>
                         </a>
                         <?php } ?>
                     </div>
                     <h5 class="subtitle">
-                        <?=$this->__('subtitles.project_updates') ?>
+                        <?=$tpl->__('subtitles.project_updates') ?>
                     </h5>
 
                     <form method="post" action="<?=BASE_URL ?>/dashboard/show">
@@ -409,17 +402,17 @@
 
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                 <div id="comment0" class="commentBox" style="display:none;">
-                                    <label for="projectStatus" style="display:inline"><?=$this->__('label.project_status_is') ?></label>
+                                    <label for="projectStatus" style="display:inline"><?=$tpl->__('label.project_status_is') ?></label>
                                     <select name="status" id="projectStatus" style="margin-left: 0px; margin-bottom:10px;">
-                                        <option value="green"><?=$this->__('label.project_status_green') ?></option>
-                                        <option value="yellow"><?=$this->__('label.project_status_yellow') ?></option>
-                                        <option value="red"><?=$this->__('label.project_status_red') ?></option>
+                                        <option value="green"><?=$tpl->__('label.project_status_green') ?></option>
+                                        <option value="yellow"><?=$tpl->__('label.project_status_yellow') ?></option>
+                                        <option value="red"><?=$tpl->__('label.project_status_red') ?></option>
                                     </select>
                                     <div class="commentReply">
 
                                         <textarea rows="5" cols="50" class="tinymceSimple" name="text" style="width:100%;"></textarea>
-                                        <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
-                                        <a href="javascript:void(0)" onclick="toggleCommentBoxes(-1); jQuery('.noCommentsMessage').toggle();" style="line-height: 50px;"><?=$this->__('links.cancel');?></a>
+                                        <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
+                                        <a href="javascript:void(0)" onclick="toggleCommentBoxes(-1); jQuery('.noCommentsMessage').toggle();" style="line-height: 50px;"><?=$tpl->__('links.cancel');?></a>
 
                                     </div>
                                     <input type="hidden" name="comment" value="1"/>
@@ -432,23 +425,23 @@
                                 <div>
                                     <?php
                                         $i = 0;
-                                    foreach ($this->get('comments') as $row) : ?>
+                                    foreach ($tpl->get('comments') as $row) : ?>
                                         <?php $i++; ?>
 
                                         <?php if ($i == 3) {?>
-                                            <a href="javascript:void(0)" onclick="jQuery('.readMore').toggle('fast');"><?=$this->__('links.read_more'); ?></a>
+                                            <a href="javascript:void(0)" onclick="jQuery('.readMore').toggle('fast');"><?=$tpl->__('links.read_more'); ?></a>
 
                                             <div class="readMore" style="display:none; margin-top:20px;">
                                         <?php } ?>
                                         <div class="clearall">
 
                                             <div class="">
-                                                <div class="commentContent statusUpdate commentStatus-<?=$this->escape($row['status']); ?>">
+                                                <div class="commentContent statusUpdate commentStatus-<?=$tpl->escape($row['status']); ?>">
                                                     <h3 class="">
                                                         <?php printf(
-                                                            $this->__('text.report_written_on'),
-                                                            $this->getFormattedDateString($row['date']),
-                                                            $this->getFormattedTimeString($row['date'])
+                                                            $tpl->__('text.report_written_on'),
+                                                            $tpl->getFormattedDateString($row['date']),
+                                                            $tpl->getFormattedTimeString($row['date'])
                                                         ); ?>
 
                                                         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
@@ -460,19 +453,19 @@
                                                                 <ul class="dropdown-menu">
                                                                     <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
                                                                         <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment">
-                                                                                <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                                                <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                                             </a></li>
                                                                     <?php } ?>
                                                                     <?php
-                                                                    if (isset($this->get('ticket')->id)) {?>
-                                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?=$row['id'] ?>, <?=$this->get('ticket')->id ?>);"><?=$this->__("links.add_to_timesheets"); ?></a></li>
+                                                                    if (isset($tpl->get('ticket')->id)) {?>
+                                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?=$row['id'] ?>, <?=$tpl->get('ticket')->id ?>);"><?=$tpl->__("links.add_to_timesheets"); ?></a></li>
                                                                     <?php } ?>
                                                                 </ul>
                                                             </div>
                                                         <?php } ?>
                                                     </h3>
 
-                                                    <div class="text" id="commentText-<?=$row['id']?>"><?php echo $this->escapeMinimal($row['text']); ?></div>
+                                                    <div class="text" id="commentText-<?=$row['id']?>"><?php echo $tpl->escapeMinimal($row['text']); ?></div>
 
 
                                                 </div>
@@ -480,17 +473,17 @@
                                                 <div class="commentLinks">
                                                     <small class="right">
                                                         <?php printf(
-                                                            $this->__('text.written_on_by'),
-                                                            $this->getFormattedDateString($row['date']),
-                                                            $this->getFormattedTimeString($row['date']),
-                                                            $this->escape($row['firstname']),
-                                                            $this->escape($row['lastname'])
+                                                            $tpl->__('text.written_on_by'),
+                                                            $tpl->getFormattedDateString($row['date']),
+                                                            $tpl->getFormattedTimeString($row['date']),
+                                                            $tpl->escape($row['firstname']),
+                                                            $tpl->escape($row['lastname'])
                                                         ); ?>
                                                     </small>
                                                     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                                         <a href="javascript:void(0);"
                                                            onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                                                            <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
+                                                            <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                                         </a>
                                                     <?php } ?>
                                                 </div>
@@ -506,25 +499,25 @@
                                                                     <div class="commentContent">
                                                                         <div class="right commentDate">
                                                                             <?php printf(
-                                                                                $this->__('text.written_on'),
-                                                                                $this->getFormattedDateString($comment['date']),
-                                                                                $this->getFormattedTimeString($comment['date'])
+                                                                                $tpl->__('text.written_on'),
+                                                                                $tpl->getFormattedDateString($comment['date']),
+                                                                                $tpl->getFormattedTimeString($comment['date'])
                                                                             ); ?>
                                                                         </div>
-                                                                        <span class="name"><?php printf($this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?></span>
-                                                                        <div class="text"><?php echo $this->escapeMinimal($comment['text']); ?></div>
+                                                                        <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?></span>
+                                                                        <div class="text"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
                                                                     </div>
 
                                                                     <div class="commentLinks">
                                                                         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                                                             <a href="javascript:void(0);"
                                                                                onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                                                                                <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
+                                                                                <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                                                             </a>
                                                                             <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
                                                                                 <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
                                                                                    class="deleteComment">
-                                                                                    <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                                                    <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                                                 </a>
                                                                             <?php } ?>
                                                                         <?php } ?>
@@ -539,7 +532,7 @@
                                                             <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>"/>
                                                         </div>
                                                         <div class="commentReply">
-                                                            <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-default"/>
+                                                            <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" class="btn btn-default"/>
                                                         </div>
                                                         <div class="clearall"></div>
                                                     </div>
@@ -547,15 +540,15 @@
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
-                                    <?php if (count($this->get('comments')) >= 3) { ?>
+                                    <?php if (count($tpl->get('comments')) >= 3) { ?>
                                             </div>
                                     <?php } ?>
                                 </div>
                             </div>
 
-                            <?php if (count($this->get('comments')) == 0) { ?>
+                            <?php if (count($tpl->get('comments')) == 0) { ?>
                                 <div style="padding-left:0px; clear:both;" class="noCommentsMessage">
-                                    <?php echo $this->__('text.no_updates') ?>
+                                    <?php echo $tpl->__('text.no_updates') ?>
                                 </div>
                             <?php } ?>
                             <div class="clearall"></div>
@@ -595,7 +588,7 @@
                     <div class="row" id="projectProgressContainer">
                         <div class="col-md-12">
 
-                            <h5 class="subtitle"><?=$this->__("subtitles.project_progress")?></h5>
+                            <h5 class="subtitle"><?=$tpl->__("subtitles.project_progress")?></h5>
 
                             <div id="canvas-holder" style="width:100%; height:250px;">
                                 <canvas id="chart-area" ></canvas>
@@ -605,23 +598,23 @@
                     </div>
                     <div class="row" id="milestoneProgressContainer">
                         <div class="col-md-12">
-                            <h5 class="subtitle"><?=$this->__("headline.milestones") ?></h5>
+                            <h5 class="subtitle"><?=$tpl->__("headline.milestones") ?></h5>
                             <ul class="sortableTicketList" >
                                 <?php
-                                if (count($this->get('milestones')) == 0) {
-                                    echo"<div class='center'><br /><h4>" . $this->__("headlines.no_milestones") . "</h4>
-                                    " . $this->__("text.milestones_help_organize_projects") . "<br /><br /><a href='" . BASE_URL . "/tickets/roadmap'>" . $this->__("links.goto_milestones") . "</a>";
+                                if (count($tpl->get('milestones')) == 0) {
+                                    echo"<div class='center'><br /><h4>" . $tpl->__("headlines.no_milestones") . "</h4>
+                                    " . $tpl->__("text.milestones_help_organize_projects") . "<br /><br /><a href='" . BASE_URL . "/tickets/roadmap'>" . $tpl->__("links.goto_milestones") . "</a>";
                                 }
                                 ?>
-                                <?php foreach ($this->get('milestones') as $row) {
+                                <?php foreach ($tpl->get('milestones') as $row) {
                                     $percent = 0;
 
 
                                     if ($row->editTo == "0000-00-00 00:00:00") {
-                                        $date = $this->__("text.no_date_defined");
+                                        $date = $tpl->__("text.no_date_defined");
                                     } else {
                                         $date = new DateTime($row->editTo);
-                                        $date = $date->format($this->__("language.dateformat"));
+                                        $date = $date->format($tpl->__("language.dateformat"));
                                     }
                                     if ($row->percentDone < 100 || $date >= new DateTime()) {
                                         ?>
@@ -630,24 +623,24 @@
 
                                                 <div class="row">
                                                     <div class="col-md-12">
-                                                        <strong><a href="<?=BASE_URL ?>/tickets/showKanban?search=true&milestone=<?php echo $row->id;?>"><?php $this->e($row->headline); ?></a></strong>
+                                                        <strong><a href="<?=BASE_URL ?>/tickets/showKanban?search=true&milestone=<?php echo $row->id;?>"><?php $tpl->e($row->headline); ?></a></strong>
                                                     </div>
                                                 </div>
                                                 <div class="row">
 
                                                     <div class="col-md-7">
-                                                        <?=$this->__("label.due") ?>
+                                                        <?=$tpl->__("label.due") ?>
                                                         <?php echo $date; ?>
                                                     </div>
                                                     <div class="col-md-5" style="text-align:right">
-                                                        <?=sprintf($this->__("text.percent_complete"), $row->percentDone)?>
+                                                        <?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-md-12">
                                                         <div class="progress">
                                                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $row->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row->percentDone; ?>%">
-                                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row->percentDone)?></span>
+                                                                <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?></span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -671,7 +664,7 @@
 
 <script type="text/javascript">
 
-    <?php $this->dispatchTplEvent('scripts.afterOpen'); ?>
+    <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
     jQuery(document).ready(function() {
 
@@ -788,6 +781,6 @@
 
     });
 
-    <?php $this->dispatchTplEvent('scripts.beforeClose'); ?>
+    <?php $tpl->dispatchTplEvent('scripts.beforeClose'); ?>
 
 </script>

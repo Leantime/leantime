@@ -1,9 +1,9 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$milestones = $tpl->get('milestones');
 
 echo $this->displayNotification();
-
-$milestones = $this->get('milestones');
 
 if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
@@ -11,7 +11,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = "Month";
 }
 ?>
-<?php $this->displaySubmodule('tickets-ticketHeader') ?>
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
 
@@ -22,12 +22,12 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
         <div class="row">
             <div class="col-md-4">
                 <?php
-                $this->dispatchTplEvent('filters.afterLefthandSectionOpen');
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
 
-                $this->displaySubmodule('tickets-ticketNewBtn');
-                $this->displaySubmodule('tickets-ticketFilter');
+                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                $tpl->displaySubmodule('tickets-ticketFilter');
 
-                $this->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
             </div>
             <div class="col-md-4">
@@ -40,32 +40,32 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                         <?php
                             $currentView = "";
                         if ($roadmapView == 'Day') {
-                            $currentView = $this->__("buttons.day");
+                            $currentView = $tpl->__("buttons.day");
                         } elseif ($roadmapView == 'Week') {
-                            $currentView = $this->__("buttons.week");
+                            $currentView = $tpl->__("buttons.week");
                         } elseif ($roadmapView == 'Month') {
-                            $currentView = $this->__("buttons.month");
+                            $currentView = $tpl->__("buttons.month");
                         }
                         ?>
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
                         <ul class="dropdown-menu" id="ganttTimeControl">
                             <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
                                 echo "active";
-                                                                                      }?>"> <?=$this->__("buttons.day"); ?></a></li>
+                                                                                      }?>"> <?=$tpl->__("buttons.day"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Week" class="<?php if ($roadmapView == 'Week') {
                                 echo "active";
-                                                                                       }?>"><?=$this->__("buttons.week"); ?></a></li>
+                                                                                       }?>"><?=$tpl->__("buttons.week"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Month" class="<?php if ($roadmapView == 'Month') {
                                 echo "active";
-                                                                                        }?>"><?=$this->__("buttons.month"); ?></a></li>
+                                                                                        }?>"><?=$tpl->__("buttons.month"); ?></a></li>
                         </ul>
                     </div>
 
                     <div class="pull-left btn-group" style="margin-right:10px;">
                         <form action="" method="get" id="searchForm">
-                            <label class="pull-right" for="includeTasks">&nbsp;<?=$this->__('label.showTasks'); ?></label>
+                            <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
                             <input type="hidden" name="submitIncludeTasks" value="1" />
-                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($this->get('includeTasks') === true) {
+                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
                                 echo "checked='checked'";
                                                                                                                                           } ?>/>
                         </form>
@@ -83,10 +83,10 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>" . $this->__("headlines.no_milestones") . "<br/>
+            <h4>" . $tpl->__("headlines.no_milestones") . "<br/>
 
             <br />
-            <a href=\"#/tickets/editMilestone\" class=\"addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
+            <a href=\"#/tickets/editMilestone\" class=\"addCanvasLink btn btn-primary\">" . $tpl->__("links.add_milestone") . "</a></h4></div>";
         }
         ?>
         <div class="gantt-wrapper">
@@ -134,8 +134,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             }
 
             foreach ($milestones as $mlst) {
-
-                $headline = $this->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
+                $headline = $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
                 if ($mlst->type == "milestone") {
                     $headline .= " (" . $mlst->percentDone . "% Done)";
                 }

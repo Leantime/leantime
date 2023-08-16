@@ -1,31 +1,31 @@
 <?php
     defined('RESTRICTED') or die('Restricted access');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 
-    $appSettings = $this->get('appSettings');
-    $debugRenderer = $this->get('debugRenderer');
+    $appSettings = $tpl->get('appSettings');
+    $debugRenderer = $tpl->get('debugRenderer');
     $themeCore = app()->make(\leantime\core\theme::class);
-    $theme = $this->get('theme');
+    $theme = $tpl->get('theme');
 ?>
 
-<title><?php $this->e($this->dispatchTplFilter('page_title', $_SESSION["companysettings.sitename"])); ?></title>
+<title><?php $tpl->e($tpl->dispatchTplFilter('page_title', $_SESSION["companysettings.sitename"])); ?></title>
 
-<meta name="description" content="<?php $this->e($_SESSION["companysettings.sitename"]) ?>">
+<meta name="description" content="<?php $tpl->e($_SESSION["companysettings.sitename"]) ?>">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-touch-fullscreen" content="yes">
-<meta name="theme-color" content="<?php $this->e($_SESSION["companysettings.primarycolor"]) ?>">
-<meta name="color-scheme" content="<?php $this->e($theme ?? 'default') ?>">
+<meta name="theme-color" content="<?php $tpl->e($_SESSION["companysettings.primarycolor"]) ?>">
+<meta name="color-scheme" content="<?php $tpl->e($theme ?? 'default') ?>">
 <meta name="identifier-URL" content="<?=BASE_URL?>">
 <meta name="leantime-version" content="<?=$settings->appVersion ?>">
-
-<?php $this->dispatchTplEvent('afterMetaTags'); ?>
+<?php $tpl->dispatchTplEvent('afterMetaTags'); ?>
 
 <link rel="shortcut icon" href="<?=BASE_URL?>/dist/images/favicon.png"/>
 <link rel="apple-touch-icon" href="<?=BASE_URL?>/dist/images/apple-touch-icon.png">
 
 <link rel="stylesheet" href="<?=BASE_URL?>/dist/css/main.<?php echo $settings->appVersion; ?>.min.css"/>
-<?php $this->dispatchTplEvent('afterLinkTags'); ?>
+<?php $tpl->dispatchTplEvent('afterLinkTags'); ?>
 
 <script src="<?=BASE_URL?>/api/i18n"></script>
 
@@ -44,7 +44,7 @@
 
 <!-- app -->
 <script src="<?=BASE_URL?>/dist/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>
-<?php $this->dispatchTplEvent('afterMainScriptTag'); ?>
+<?php $tpl->dispatchTplEvent('afterMainScriptTag'); ?>
 
 <!-- theme -->
 <?php $jsUrl = $themeCore->getJsUrl(); if ($jsUrl !== false) { ?>
@@ -55,7 +55,7 @@
     <link rel="stylesheet" id="themeStylesheet" href="<?=$themeCore->getStyleUrl(); ?>"/>
 <?php } ?>
 
-<?php $this->dispatchTplEvent('afterThemeScripts'); ?>
+<?php $tpl->dispatchTplEvent('afterThemeScripts'); ?>
 
 <!-- Replace main theme colors -->
 <style>
@@ -69,7 +69,8 @@
     }
 </style>
 
-<?php $this->dispatchTplEvent('afterThemeColors'); ?>
+
+<?php $tpl->dispatchTplEvent('afterThemeColors'); ?>
 
 <!-- customize -->
 <?php $jsUrl = $themeCore->getJsUrl(); if ($jsUrl !== false) { ?>
@@ -81,6 +82,4 @@
 <?php $customStyleUrl = $themeCore->getCustomStyleUrl(); if ($styleUrl !== false) { ?>
     <link rel="stylesheet" href="<?=$customStyleUrl ?>" />
 <?php } ?>
-
-<?php $this->dispatchTplEvent('afterCustomizeTags'); ?>
-
+<?php $tpl->dispatchTplEvent('afterCustomizeTags'); ?>

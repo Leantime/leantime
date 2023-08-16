@@ -1,21 +1,22 @@
 <?php
-  $currentLabel = $this->get('currentLabel');
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $currentLabel = $tpl->get('currentLabel');
 ?>
 
-<h4 class="widgettitle title-light"><?=$this->__("headlines.edit_label")?></h4>
+<h4 class="widgettitle title-light"><?=$tpl->__("headlines.edit_label")?></h4>
 
 <?php
-    echo $this->displayNotification();
+    echo $tpl->displayNotification();
 ?>
 
-<form class="editLabelModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php $this->e($_GET['module']) ?>&label=<?php  $this->e($_GET['label']) ?>">
+<form class="editLabelModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php $tpl->e($_GET['module']) ?>&label=<?php  $tpl->e($_GET['label']) ?>">
 
-    <label><?=$this->__("label.label")?></label>
+    <label><?=$tpl->__("label.label")?></label>
     <input type="text" name="newLabel" value="<?php echo $currentLabel; ?>" /><br />
-    
+
     <div class="row">
         <div class="col-md-6">
-            <input type="submit" value="<?=$this->__("buttons.save")?>"/>
+            <input type="submit" value="<?=$tpl->__("buttons.save")?>"/>
         </div>
 
     </div>

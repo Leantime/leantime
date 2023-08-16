@@ -1,7 +1,7 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-
-$appSettings = $this->get('appSettings');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$appSettings = $tpl->get('appSettings');
 ?>
 
 <?php if (isset($_SESSION['do_cron'])) { ?>
@@ -29,7 +29,7 @@ $appSettings = $this->get('appSettings');
 
 <?php } ?>
 
-<?php $this->dispatchTplEvent('beforeBodyClose'); ?>
+<?php $tpl->dispatchTplEvent('beforeBodyClose'); ?>
 
 <script src="<?=BASE_URL?>/dist/js/compiled-footer.<?php echo $appSettings->appVersion; ?>.min.js"> </script>
 </body>

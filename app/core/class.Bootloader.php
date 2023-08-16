@@ -165,12 +165,8 @@ class Bootloader
     {
         $this->app ??= application::getInstance();
 
-        // app aliases
-        $this->app->alias('app', application::class);
-        $this->app->alias('app', IlluminateContainerContract::class);
-        $this->app->alias('app', PsrContainerContract::class);
-
         // specify singletons
+        $this->app->instance(PsrContainerContract::class, $this->app);
         $this->app->instance(environment::class, $this->app->make(environment::class));
         $this->app->instance(db::class, $this->app->make(db::class));
         $this->app->instance(frontcontroller::class, $this->app->make(frontcontroller::class));
@@ -179,6 +175,10 @@ class Bootloader
         $this->app->instance(services\auth::class, $this->app->make(services\auth::class));
         $this->app->instance(services\oidc::class, $this->app->make(services\oidc::class));
         $this->app->instance(services\modulemanager::class, $this->app->make(services\modulemanager::class));
+
+        // app aliases
+        $this->app->alias(PsrContainerContract::class, application::class);
+        $this->app->alias(PsrContainerContract::class, IlluminateContainerContract::class);
 
         /**
          * Filter on container right after initial bindings.

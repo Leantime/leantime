@@ -6,9 +6,6 @@ use Exception;
 
 /**
  * theme - Engine for handling themes
- *
- * @package    leantime
- * @subpackage core
  */
 class theme
 {
@@ -147,8 +144,8 @@ class theme
      * Note: After setActive, the language settings need to be reloaded/reset, because languages are theme specific
      *
      * @access public
-     * @param string $id Active theme identifier
-     * @throws Exception exception if theme does not exist
+     * @param  string $id Active theme identifier.
+     * @throws Exception Exception if theme does not exist.
      * @return void
      */
     public function setActive(string $id): void
@@ -171,10 +168,10 @@ class theme
             'theme',
             $id,
             [
-                    'expires' => time() + 60 * 60 * 24 * 30,
-                    'path' => $this->config->appUrlRoot . '/',
-                    'samesite' => 'Strict',
-                ]
+                'expires' => time() + 60 * 60 * 24 * 30,
+                'path' => $this->config->appUrlRoot . '/',
+                'samesite' => 'Strict',
+            ]
         );
     }
 
@@ -375,8 +372,8 @@ class theme
      * getAssetPath - Get localized name of theme
      *
      * @access private
-     * @param string $fileName  filename of asset without extension
-     * @param string $assetType asset type either js or css
+     * @param string $fileName  Filename of asset without extension.
+     * @param string $assetType Asset type either js or css.
      * @return string|boolean returns file path to asset. false if file does not exist
      */
     private function getAssetPath(string $fileName, string $assetType): string|bool

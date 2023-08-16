@@ -1,12 +1,13 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
 
-echo $this->displayNotification();
-
-$milestones = $this->get('milestones');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$milestones = $tpl->get('milestones');
 if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
     $_SESSION['submenuToggle']["myProjectCalendarView"] = "dayGridMonth";
 }
+
+echo $tpl->displayNotification();
 
 ?>
 
@@ -53,9 +54,9 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
                 <div class="pull-right btn-group" style="margin-right:10px;">
                     <form action="" method="get" id="searchForm">
-                        <label class="pull-right" for="includeTasks">&nbsp;<?=$this->__('label.showTasks'); ?></label>
+                        <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
                         <input type="hidden" name="submitIncludeTasks" value="1" />
-                        <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($this->get('includeTasks') === true) {
+                        <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
                             echo "checked='checked'";
                                                                                                                                       } ?>/>
                     </form>
@@ -73,10 +74,10 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>" . $this->__("headlines.no_milestones") . "<br/>
+            <h4>" . $tpl->__("headlines.no_milestones") . "<br/>
 
             <br />
-            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
+            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $tpl->__("links.add_milestone") . "</a></h4></div>";
         }
         ?>
         <div class="calendar-wrapper">
@@ -116,7 +117,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
     var events = [
         <?php foreach ($milestones as $mlst) :
-            $headline = $this->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
+            $headline = $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
             if ($mlst->type == "milestone") {
                 $headline .= " (" . $mlst->percentDone . "% Done)";
             }

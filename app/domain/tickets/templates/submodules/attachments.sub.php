@@ -1,5 +1,6 @@
 <?php
-$ticket = $this->get('ticket');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$ticket = $tpl->get('ticket');
 ?>
 <div class="mediamgr_category">
 
@@ -13,16 +14,16 @@ $ticket = $this->get('ticket');
                     <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
                 </div>
                 <span class="btn btn-file">
-                    <span class="fileupload-new"><?php echo $this->__("buttons.select_file"); ?></span>
-                    <span class='fileupload-exists'><?php echo $this->__("buttons.change"); ?></span>
+                    <span class="fileupload-new"><?php echo $tpl->__("buttons.select_file"); ?></span>
+                    <span class='fileupload-exists'><?php echo $tpl->__("buttons.change"); ?></span>
                     <input type='file' name='file' />
                 </span>
-                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?php echo $this->__("buttons.remove"); ?></a>
+                <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?php echo $tpl->__("buttons.remove"); ?></a>
             </div>
          </div>
        </div>
 
-       <input type="submit" name="upload" class="button" value="<?php echo $this->__('buttons.upload'); ?>" />
+       <input type="submit" name="upload" class="button" value="<?php echo $tpl->__('buttons.upload'); ?>" />
 
     </form>
 
@@ -32,7 +33,7 @@ $ticket = $this->get('ticket');
 <div class="mediamgr_content">
 
     <ul id='medialist' class='listfile'>
-    <?php foreach ($this->get('files') as $file) : ?>
+    <?php foreach ($tpl->get('files') as $file) : ?>
         <li class="<?php echo $file['moduleId'] ?>">
             <div class="inlineDropDownContainer dropright" style="float:right;">
 
@@ -40,12 +41,12 @@ $ticket = $this->get('ticket');
                     <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                 </a>
                 <ul class="dropdown-menu">
-                    <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
-                    <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank"><?php echo $this->__("links.download"); ?></a></li>
+                    <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
+                    <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank"><?php echo $tpl->__("links.download"); ?></a></li>
 
                     <?php
                     if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
+                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
                     <?php  } ?>
 
                 </ul>
@@ -53,7 +54,7 @@ $ticket = $this->get('ticket');
 
 
               <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank">
-                  <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
+                  <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
                       <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                   <?php else : ?>
                       <div style="font-size:50px; margin-bottom:10px;">
@@ -72,11 +73,11 @@ $ticket = $this->get('ticket');
 
 
 
-<?php if (count($this->get('files')) == 0) { ?>
+<?php if (count($tpl->get('files')) == 0) { ?>
     <div class="text-center">
         <div style='width:33%' class='svgContainer'>
             <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_image__folder_re_hgp7.svg"); ?>
-            <?php echo $this->__('text.no_files') ?>
+            <?php echo $tpl->__('text.no_files') ?>
         </div>
     </div>
 <?php } ?>
