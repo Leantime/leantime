@@ -3882,3 +3882,17 @@ Stack trace:
 [11-Aug-2023 13:08:19 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/ticketFilter.sub.php on line 110
 [11-Aug-2023 13:08:32 America/Los_Angeles] PHP Warning:  Undefined variable $statusLabels in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/ticketFilter.sub.php on line 110
 [11-Aug-2023 13:08:32 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/ticketFilter.sub.php on line 110
+[16-Aug-2023 09:10:12 America/Los_Angeles] cron start
+[16-Aug-2023 09:10:12 America/Los_Angeles] cron end
+[16-Aug-2023 09:15:12 America/Los_Angeles] cron start
+[16-Aug-2023 09:15:12 America/Los_Angeles] cron end
+[16-Aug-2023 09:20:12 America/Los_Angeles] cron start
+[16-Aug-2023 09:20:12 America/Los_Angeles] cron end
+[16-Aug-2023 09:25:12 America/Los_Angeles] cron start
+[16-Aug-2023 09:25:12 America/Los_Angeles] cron end
+[16-Aug-2023 09:30:17 America/Los_Angeles] cron start
+[16-Aug-2023 09:30:17 America/Los_Angeles] cron end
+[16-Aug-2023 09:35:17 America/Los_Angeles] cron start
+[16-Aug-2023 09:35:17 America/Los_Angeles] cron end
+[16-Aug-2023 09:40:17 America/Los_Angeles] cron start
+[16-Aug-2023 09:40:17 America/Los_Angeles] cron end

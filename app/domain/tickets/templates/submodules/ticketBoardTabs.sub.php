@@ -24,7 +24,7 @@ findActive("");
                 <?php } else { ?>
                     href="<?=BASE_URL ?>/tickets/showKanban"
                 <?php } ?>
-            ><?=$this->__("links.kanban") ?>
+            ><?=$tpl->__("links.kanban") ?>
             </a>
         </li>
         <li class="<?=findActive('showAll'); ?>">
@@ -34,7 +34,7 @@ findActive("");
                 <?php } else { ?>
                     href="<?=BASE_URL ?>/tickets/showAll"
                 <?php } ?>
-            ><?=$this->__("links.table") ?></a>
+            ><?=$tpl->__("links.table") ?></a>
         </li>
         <li class="<?=findActive('showList'); ?>">
             <a
@@ -43,17 +43,17 @@ findActive("");
                 <?php } else { ?>
                     href="<?=BASE_URL ?>/tickets/showList"
                 <?php } ?>
-            ><?=$this->__("links.list_view") ?>
+            ><?=$tpl->__("links.list_view") ?>
             </a>
         </li>
         <li class="<?=findActive('roadmap'); ?>">
             <a href="<?=BASE_URL ?>/tickets/roadmap">
-                <?=$this->__("links.timeline_view") ?>
+                <?=$tpl->__("links.timeline_view") ?>
             </a>
         </li>
         <li class="<?=findActive('Calendar'); ?>">
             <a href="<?=BASE_URL ?>/tickets/showProjectCalendar">
-                <?=$this->__("links.calendar_view") ?>
+                <?=$tpl->__("links.calendar_view") ?>
             </a>
         </li>
     </ul>
