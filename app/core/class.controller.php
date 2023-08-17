@@ -31,19 +31,27 @@ abstract class controller
      *
      * @access public
      *
-     * @param string       $method the method to be initialized
-     * @param array|object $params parameters or body of the request
+     * @param IncomingRequest $incomingRequest The request to be initialized.
+     * @param template        $tpl             The template to be initialized.
+     * @param language        $language        The language to be initialized.
      * @return self
      */
-    public function __construct($method, $params)
-    {
+    public function __construct(
+        IncomingRequest $incomingRequest,
+        template $tpl,
+        language $language
+    ) {
         self::dispatch_event('begin');
 
-        $this->tpl = app()->make(template::class);
-        $this->language = app()->make(language::class);
+        $this->incomingRequest = $incomingRequest;
+        $this->tpl = $tpl;
+        $this->language = $language;
 
         // initialize
-        $this->executeActions($method, $params);
+        $this->executeActions(
+            $incomingRequest->getMethod(),
+            $incomingRequest->getRequestParams()
+        );
 
         self::dispatch_event('end', $this);
     }
@@ -73,6 +81,13 @@ abstract class controller
 
         self::dispatch_event('before_action', $available_params);
         if (method_exists($this, $method)) {
+            /**
+             * @todo non GET requests should only be accessible from HTMX and API requests
+             * if ($method !== 'get') && ! $incomingRequest instanceof HtmxRequest|ApiRequest) {
+             *    self::redirect(BASE_URL . "/errors/error400", 400);
+             * }
+             */
+
             $this->$method($params);
         } else {
             $this->run();

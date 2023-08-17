@@ -117,7 +117,8 @@ class template
         appSettings $settings,
         services\auth $login,
         roles $roles,
-        \Illuminate\View\Factory $viewFactory = null
+        \Illuminate\Contracts\View\Factory $viewFactory = null,
+        \Illuminate\View\Compilers\Compiler $bladeCompiler = null
     ) {
         $this->theme = $theme;
         $this->language = $language;
@@ -128,13 +129,14 @@ class template
         $this->login = $login;
         $this->roles = $roles;
 
-        if (! is_null($viewFactory)) {
+        if (! is_null($viewFactory) && ! is_null($bladeCompiler)) {
             $this->viewFactory = $viewFactory;
+            $this->bladeCompiler = $bladeCompiler;
         } else {
             app()->call([$this, 'setupBlade']);
-            app()->call([$this, 'attachComposers']);
-            app()->call([$this, 'setupDirectives']);
-            app()->call([$this, 'setupGlobalVars']);
+            $this->attachComposers();
+            $this->setupDirectives();
+            $this->setupGlobalVars();
         }
     }
 
@@ -142,23 +144,26 @@ class template
      * Create View Factory capable of rendering PHP and Blade templates
      *
      * @param \leantime\core\application $app
-     * @param \Illuminate\Filesystem\Filesystem $filesystem
-     * @param \Illuminate\Events\Dispatcher $eventDispatcher
      * @param \Illuminate\View\Engines\EngineResolver $viewResolver
      *
      * @return void
      */
     public function setupBlade(
         \leantime\core\application $app,
-        \Illuminate\Filesystem\Filesystem $filesystem,
-        \Illuminate\Events\Dispatcher $eventDispatcher,
         \Illuminate\View\Engines\EngineResolver $viewResolver,
+        \Illuminate\Events\Dispatcher $eventDispatcher
     ) {
-        $bladeCompiler = new \Illuminate\View\Compilers\BladeCompiler($filesystem, APP_ROOT . '/cache/views');
+        // Setup Blade Compiler
+        $app->singleton(
+            \Illuminate\View\Compilers\Compiler::class,
+            fn ($app) => $app->make(\Illuminate\View\Compilers\BladeCompiler::class, ['cachePath' => APP_ROOT . '/cache/views'])
+        );
 
-        $viewResolver->register('blade', fn () => new \Illuminate\View\Engines\CompilerEngine($bladeCompiler));
-        $viewResolver->register('php', fn () => new \Illuminate\View\Engines\PhpEngine($filesystem));
+        // Register Blade Engines
+        $viewResolver->register('blade', fn () => app(\Illuminate\View\Engines\CompilerEngine::class));
+        $viewResolver->register('php', fn () => app(\Illuminate\View\Engines\PhpEngine::class));
 
+        // Find Template Paths
         if (empty($_SESSION['template_paths']) || $this->config->debug) {
             $domainPaths = $customPaths = [];
             $domainModules = glob(APP_ROOT . '/app/domain/*');
@@ -175,24 +180,45 @@ class template
             $_SESSION['template_paths'] = array_merge($domainPaths, $customPaths, $pluginPaths, ['global' => APP_ROOT . '/app/views/templates']);
         }
 
-        $viewFinder = new \Illuminate\View\FileViewFinder($filesystem, []);
-        array_map([$viewFinder, 'addNamespace'], array_keys($_SESSION['template_paths']), array_values($_SESSION['template_paths']));
-        $viewFactory = new \Illuminate\View\Factory($viewResolver, $viewFinder, $eventDispatcher);
-        array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['tpl.php', 'sub.php', 'inc.php']);
-        $viewFactory->setContainer($app);
+        // Setup View Finder
+        $app->singleton(
+            \Illuminate\View\ViewFinderInterface::class,
+            function ($app) {
+                $viewFinder = $app->make(\Illuminate\View\FileViewFinder::class, ['paths' => []]);
+                array_map([$viewFinder, 'addNamespace'], array_keys($_SESSION['template_paths']), array_values($_SESSION['template_paths']));
+                return $viewFinder;
+            }
+        );
 
-        $app->instance(\Illuminate\View\Compilers\BladeCompiler::class, $bladeCompiler);
-        $app->instance(\Illuminate\View\Factory::class, $viewFactory);
-        $this->viewFactory = $viewFactory;
+        // Setup Events Dispatcher
+        $app->bind(
+            \Illuminate\Contracts\Events\Dispatcher::class,
+            \Illuminate\Events\Dispatcher::class
+        );
+
+        // Setup View Factory
+        $app->singleton(
+            \Illuminate\Contracts\View\Factory::class,
+            function ($app) {
+                $viewFactory = $app->make(\Illuminate\View\Factory::class);
+                array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['tpl.php', 'sub.php', 'inc.php']);
+                $viewFactory->setContainer($app);
+                return $viewFactory;
+            }
+        );
+
+        $this->bladeCompiler = $app->make(\Illuminate\View\Compilers\Compiler::class);
+        $this->viewFactory = $app->make(\Illuminate\Contracts\View\Factory::class);
+
+        app()->setInstance($app);
     }
 
     /**
      * attachComposers - attach view composers
      *
-     * @param \Illuminate\View\Factory $viewFactory
      * @return void
      */
-    public function attachComposers(\Illuminate\View\Factory $viewFactory)
+    public function attachComposers()
     {
         if (empty($_SESSION['composers']) || $this->config->debug) {
             $globalComposerClasses = array_map(
@@ -214,7 +240,7 @@ class template
                 is_subclass_of($composerClass, Composer::class) &&
                 ! (new \ReflectionClass($composerClass))->isAbstract()
             ) {
-                $viewFactory->composer($composerClass::$views, $composerClass);
+                $this->viewFactory->composer($composerClass::$views, $composerClass);
             }
         }
     }
@@ -224,32 +250,45 @@ class template
      *
      * @return void
      */
-    public function setupDirectives(\Illuminate\View\Compilers\BladeCompiler $bladeCompiler)
+    public function setupDirectives()
     {
-        $bladeCompiler->directive(
+        $this->bladeCompiler->directive(
             'dispatchEvent',
             function ($args) {
                 return "<?php \$tpl->dispatchTplEvent($args); ?>";
             }
         );
 
-        $bladeCompiler->directive(
+        $this->bladeCompiler->directive(
             'dispatchFilter',
             function ($args) {
                 return "<?php echo \$tpl->dispatchTplFilter($args); ?>";
             }
+        );
+
+        $this->bladeCompiler->directive(
+            'spaceless',
+            function ($args) {
+                return "<?php ob_start(); ?>";
+            },
+        );
+
+        $this->bladeCompiler->directive(
+            'endspaceless',
+            function ($args) {
+                return "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>";
+            },
         );
     }
 
     /**
      * setupGlobalVars - setup global vars
      *
-     * @param \Illuminate\View\Factory $viewFactory
      * @return void
      */
-    public function setupGlobalVars(\Illuminate\View\Factory $viewFactory)
+    public function setupGlobalVars()
     {
-        $viewFactory->share([
+        $this->viewFactory->share([
             'frontController' => $this->frontcontroller,
             'config' => $this->config,
             /** @todo remove settings after renaming all uses to appSettings */
@@ -349,6 +388,7 @@ class template
 
         $this->hookContext = "tpl.$module.$action";
 
+        /** @var \Illuminate\View\View */
         $view = $this->viewFactory->make($loadFile);
 
         /** @todo this can be reduced to just the 'else' code after removal of php template support */

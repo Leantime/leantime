@@ -16,6 +16,7 @@
     "datatables.net-rowgroup": "^1.4.0",
     "datatables.net-rowreorder": "^1.4.0",
     "fullcalendar": "^6.1.8",
+    "htmx.org": "^1.9.4",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
     "jquery": "3.7.0",
@@ -35,6 +36,7 @@
     "uppy": "^2.13.3"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.22.10",
     "eslint": "^8.44.0",
     "eslint-plugin-vue": "^9.15.1",
     "eslint-webpack-plugin": "^4.0.1",
@@ -43,9 +45,11 @@
     "laravel-mix-eslint": "^0.2.0",
     "less": "^4.1.3",
     "less-loader": "^11.1.3",
+    "mix-tailwindcss": "^1.3.0",
+    "selenium-standalone": "^8.3.0",
+    "tailwindcss": "^3.3.3",
     "webpack": "^5.88.1",
-    "webpack-cli": "^5.1.4",
-    "selenium-standalone": "^8.3.0"
+    "webpack-cli": "^5.1.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

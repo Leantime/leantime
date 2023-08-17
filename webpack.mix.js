@@ -5,6 +5,7 @@ const version = pjson.version;
 
 let mix = require('laravel-mix');
 require('laravel-mix-eslint');
+require('mix-tailwindcss');
 
 require('dotenv').config({ path: 'config/.env' });
 
@@ -12,6 +13,7 @@ mix
     .setPublicPath('public/dist') // this is the URL to place assets referenced in the CSS/JS
     .setResourceRoot(`../`) // this is what to prefix the URL with
     .js('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
+    .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
     .combine([
         "./public/assets/js/app/app.js",
         "./public/assets/js/app/core/modals.js",
@@ -105,6 +107,8 @@ mix
         "./public/assets/js/libs/jquery.nyroModal/js/jquery.nyroModal.custom.js",
         "./public/assets/js/libs/uppy/uppy.js",
     ], `public/dist/js/compiled-extended-libs.${version}.min.js`)
+    .less('./public/assets/less/app.less', `public/dist/css/app.${version}.min.css`)
+    .tailwind()
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`)
     .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`)
     .copy('./public/assets/images', 'public/dist/images')
@@ -116,6 +120,9 @@ mix
             'node_modules',
             'public/assets/js/libs',
         ],
+        overrideConfig: {
+            parser: '@babel/eslint-parser',
+        }
     })
     .webpackConfig({
         resolve: {

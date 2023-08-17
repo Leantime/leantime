@@ -996,7 +996,28 @@ namespace leantime\domain\services {
                 }
             }
 
-            return $progressSteps;
+            $halfStep = (1 / count($progressSteps)) / 2 * 100;
+            $percentDone = $position = 0;
+            array_map(function ($step) use (&$percentDone, &$position, $halfStep, $progressSteps) {
+                $step['positionLeft'] = ($position++ / count($progressSteps) * 100) - $halfStep;
+                $step['stepType'] = '';
+
+                if ($step['status'] == 'done') {
+                    $percentDone += (1 / count($progressSteps) * 100);
+                    $step['stepType'] = 'complete';
+                } elseif ($step['positionLeft'] == $percentDone) {
+                    $step['stepType'] = 'current';
+                }
+
+                return $step;
+            }, $progressSteps);
+            // Reduce half step to allow for spacing
+            $percentDone -= $halfStep;
+
+            return [
+                $progressSteps,
+                $percentDone,
+            ];
         }
 
         public function updateProjectProgress($stepsComplete, $projectId)

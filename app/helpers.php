@@ -8,9 +8,9 @@ if (! function_exists('app')) {
      * Returns the application instance.
      *
      * @param string $abstract
-     * @return \leantime\core\application
+     * @return mixed|\leantime\core\application
      */
-    function app(string $abstract = '', array $parameters = []): application
+    function app(string $abstract = '', array $parameters = []): mixed
     {
         $app = application::getInstance();
         return !empty($abstract) ? $app->make($abstract, $parameters) : $app;

@@ -97,7 +97,7 @@ class Menu extends Composer
 
         [$module, $action] = explode(".", core\frontcontroller::getCurrentRoute());
 
-        if (str_contains($redirectUrl = $this->incomingRequest->getRequestURI(BASE_URL), 'showProject')) {
+        if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
             $redirectUrl = '/dashboard/show';
         }
 

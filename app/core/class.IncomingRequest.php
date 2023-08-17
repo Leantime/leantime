@@ -2,43 +2,43 @@
 
 namespace leantime\core;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Incoming Request information
  *
  * @package    leantime
  * @subpackage core
  */
-class IncomingRequest
+class IncomingRequest extends Request
 {
     /**
-     * Constructor
-     *
-     * @return self
+     * @param array                $query      The GET parameters
+     * @param array                $request    The POST parameters
+     * @param array                $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param array                $cookies    The COOKIE parameters
+     * @param array                $files      The FILES parameters
+     * @param array                $server     The SERVER parameters
+     * @param string|resource|null $content    The raw body data
      */
-    public function __construct()
+    public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
     {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+
+        $this->setActFromRequestUri();
     }
 
     /**
-     * Gets the base fqdn including protocol
-     * Note: HTTP_HOST will return port number as well
+     * Sets the act parameter from the request uri
      *
-     * @return string
+     * @param string $requestUri
+     * @return void
      */
-    public function getBaseURL(): string
+    protected function setActFromRequestUri(string $requestUri = null): void
     {
-        if (
-            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-            || $_SERVER['SERVER_PORT'] == 443
-            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
-        ) {
-            $protocol = "https://";
-        } else {
-            $protocol = "http://";
-        }
-
-        $domainName = $_SERVER['HTTP_HOST'];
-        return $protocol . $domainName;
+        $requestUri ??= $this->getRequestUri();
+        $act = str_replace('/', '.', trim($requestUri, '/'));
+        $this->query->set('act', $act);
     }
 
     /**
@@ -46,56 +46,45 @@ class IncomingRequest
      *
      * @return string
      */
-    public function getFullURL()
+    public function getFullUrl()
     {
-        return $this->getBaseURL() . rtrim($this->getRequestURI(), "/");
+        return $request->getSchemeAndHttpHost() . $request->getBaseUrl() . $request->getPathInfo();
     }
 
     /**
      * Gets the request URI (path behind domain name)
      * Will adjust for subfolder installations
      *
-     * @param string $baseURL Base Url in case of subfolder installations
      * @return string
      */
-    public function getRequestURI(string $baseURL = ""): string
+    public function getRequestUri()
     {
-        //$_SERVER['REQUEST_URI'] will include the subfolder if one is set. Let's make sure to take it out
-        if ($baseURL != "") {
-            $trimmedBaseURL = rtrim($baseURL, "/");
-            $baseURLParts = explode("/", $trimmedBaseURL);
+        $requestUri = parent::getRequestUri();
 
-            //We only need to update Request URI if we have a subfolder install
-            if (is_array($baseURLParts) && count($baseURLParts) == 4) {
-                //0: http, 1: "", 2: domain.com 3: subfolder
-                $subfolderName = $baseURLParts[3];
+        static $subfolderFixApplied;
 
-                //Remove subfoldername from Request URI
-                $requestURI = preg_replace('/^\/' . $subfolderName . '/', '', $_SERVER['REQUEST_URI']);
-
-                if (is_string($requestURI) === true) {
-                    return $requestURI;
-                } else {
-                    return '';
-                }
-            }
+        if ($subfolderFixApplied) {
+            return $requestUri;
         }
 
-        return $_SERVER['REQUEST_URI'] ?? '';
-    }
+        $config = app()->make(environment::class);
 
-    /**
-     * Gets the request method
-     *
-     * @return string|false
-     */
-    public static function getRequestMethod(): string|false
-    {
-        if (isset($_SERVER['REQUEST_METHOD'])) {
-            return strtolower($_SERVER['REQUEST_METHOD']);
+        if (empty($config->appUrl)) {
+            return $requestUri;
         }
 
-        return false;
+        $baseUrlParts = explode('/', rtrim($config->appUrl, '/'));
+
+        if (! is_array($baseUrlParts) || count($baseUrlParts) < 4) {
+            return $requestUri;
+        }
+
+        $subfolderName = $baseUrlParts[3];
+        $requestUri = preg_replace('/^\/' . $subfolderName . '/', '', $requestUri);
+
+        $subfolderFixApplied = true;
+
+        return $requestUri;
     }
 
     /**
@@ -104,65 +93,34 @@ class IncomingRequest
      * @param string $method
      * @return array
      */
-    public static function getRequestParams($method)
+    public function getRequestParams(string $method = null): array
     {
-        if ($method == 'patch') {
-            parse_str(file_get_contents("php://input"), $patch_vars);
+        $method ??= $this->getMethod();
+        $method = strtoupper($method);
+
+        if ($method == 'PATCH') {
+            parse_str($this->request->getContent(), $patch_vars);
         }
 
-        match ($method) {
-            'patch' => $patch_vars,
-            'post' => $_POST,
-            'delete', 'get' => $_GET,
-            default => $_GET,
+        return match ($method) {
+            'PATCH' => $patch_vars,
+            'POST' => $this->request->all(),
+            'DELETE', 'GET' => $this->query->all(),
+            default => $this->query->all(),
         };
     }
 
     /**
-     * Get header Authorization
+     * is htmx request
      *
-     * @return string
+     * @return bool
      */
-    public function getAuthorizationHeader(): string
+    public function isHtmx(): bool
     {
-        if (isset($_SERVER['Authorization'])) {
-            return trim($_SERVER["Authorization"]);
-        }
-
-        //Nginx or fast CGI
-        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            return trim($_SERVER["HTTP_AUTHORIZATION"]);
-        }
-
-        //Nginx or fast CGI
-        if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
-            return trim($_SERVER["REDIRECT_HTTP_AUTHORIZATION"]);
-        }
-
-        if (function_exists('apache_request_headers')) {
-            $requestHeaders = apache_request_headers();
-            // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
-            $requestHeaders = array_combine(
-                array_map('ucwords', array_keys($requestHeaders)),
-                array_values($requestHeaders)
-            );
-
-            if (isset($requestHeaders['Authorization'])) {
-                return trim($requestHeaders['Authorization']);
-            }
-        }
-
-        return '';
-    }
-
-    /**
-     * get api key from header
-     *
-     * @return string
-     */
-    public function getAPIKey(): string
-    {
-        return trim($_SERVER["HTTP_X_API_KEY"]);
+        return filter_var(
+            $this->headers->get('HX-Request') ?? 'false',
+            FILTER_VALIDATE_BOOLEAN
+        );
     }
 
     /**
@@ -170,30 +128,12 @@ class IncomingRequest
      *
      * @return bool
      */
-    public function hasAPIKey(): bool
+    public function hasApiKey(): bool
     {
-        if (isset($_SERVER["HTTP_X_API_KEY"])) {
+        if ($this->headers->get('HTTP_X_API_KEY')) {
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * get access token from header
-     *
-     * @return ?string
-     */
-    public function getBearerToken(): ?string
-    {
-        $headers = $this->getAuthorizationHeader();
-        // HEADER: Get the access token from the header
-        if (!empty($headers)) {
-            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-                return $matches[1];
-            }
-        }
-
-        return null;
     }
 }

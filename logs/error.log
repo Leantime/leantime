@@ -1,0 +1,944 @@
+[16-Aug-2023 21:21:03 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:21:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:21:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:21:11 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:21:11 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:21:11 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:22:33 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(385): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:22:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:22:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:24:21 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:24:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:24:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:24:34 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:24:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:24:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:02 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:25:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:11 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:25:11 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:11 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:35 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(384): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(153): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:25:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:50 America/Los_Angeles] cron start
+[16-Aug-2023 21:25:50 America/Los_Angeles] cron end
+[16-Aug-2023 21:25:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:52 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(384): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(153): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:25:52 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:25:52 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:30:22 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:30:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:30:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:30:50 America/Los_Angeles] cron start
+[16-Aug-2023 21:30:50 America/Los_Angeles] cron end
+[16-Aug-2023 21:30:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:30:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:33:50 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:54
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('dashboard.show', Array, 200)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(382): leantime\core\frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#24 {main}
+[16-Aug-2023 21:33:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:33:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:17 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:17 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:17 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:17 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:17 America/Los_Angeles] 2023-08-16T21:34:17-07:00 [warning] Uncaught Warning: session_destroy(): Trying to destroy uninitialized session
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:36 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:37 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:37 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:42 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:43 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:43 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:43 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:43 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:43 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:43 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:45 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:49 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:49 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:51 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:52 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:52 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:53 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:54 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:34:55 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:00 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:01 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:01 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:01 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:01 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:03 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:04 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:04 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:04 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:35:04 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:21 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:22 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:25 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:26 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:27 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:27 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:27 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:27 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:27 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:27 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:32 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:33 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:34 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:35 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:50 America/Los_Angeles] cron start
+[16-Aug-2023 21:40:50 America/Los_Angeles] cron end
+[16-Aug-2023 21:40:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:40:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:44:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:44:44 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:44:48 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:44:48 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:44:48 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:44:48 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:45:02 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(181): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(124): Illuminate\Container\BoundMethod::addDependencyForCallParameter(Object(leantime\core\application), Object(ReflectionParameter), Array, Array)
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(36): Illuminate\Container\BoundMethod::getMethodDependencies(Object(leantime\core\application), Array, Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod(Object(leantime\core\application), Array, Object(Closure))
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(661): Illuminate\Container\BoundMethod::call(Object(leantime\core\application), Array, Array, NULL)
+#16 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(79): Illuminate\Container\Container->call(Array)
+#17 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#18 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#19 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#20 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#21 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#22 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#23 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#24 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(325): leantime\core\frontcontroller::dispatch()
+#25 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#26 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#27 {main}
+[16-Aug-2023 21:45:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:45:02 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:45:50 America/Los_Angeles] cron start
+[16-Aug-2023 21:45:50 America/Los_Angeles] cron end
+[16-Aug-2023 21:45:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:45:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:46:09 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(181): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(124): Illuminate\Container\BoundMethod::addDependencyForCallParameter(Object(leantime\core\application), Object(ReflectionParameter), Array, Array)
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(36): Illuminate\Container\BoundMethod::getMethodDependencies(Object(leantime\core\application), Array, Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod(Object(leantime\core\application), Array, Object(Closure))
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(661): Illuminate\Container\BoundMethod::call(Object(leantime\core\application), Array, Array, NULL)
+#16 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(79): Illuminate\Container\Container->call(Array)
+#17 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#18 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#19 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#20 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#21 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#22 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#23 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#24 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(325): leantime\core\frontcontroller::dispatch()
+#25 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#26 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#27 {main}
+[16-Aug-2023 21:46:09 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:46:09 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:46:48 America/Los_Angeles] ErrorException: Warning: session_destroy(): Trying to destroy uninitialized session in /Users/josephroberts/localdev/leantime/app/core/class.session.php:50
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(181): leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): leantime\core\Bootloader->leantime\core\{closure}(Object(leantime\core\application), Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(leantime\core\application), Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#19 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#22 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#23 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(325): leantime\core\frontcontroller::dispatch()
+#24 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#25 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#26 {main}
+[16-Aug-2023 21:46:48 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:46:48 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:47:23 America/Los_Angeles] ErrorException: Warning: session_destroy(): Trying to destroy uninitialized session in /Users/josephroberts/localdev/leantime/app/core/class.session.php:78
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(181): leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): leantime\core\Bootloader->leantime\core\{closure}(Object(leantime\core\application), Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(leantime\core\application), Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\domain...')
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\t...')
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\t...', Array)
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\t...')
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#19 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#20 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#21 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#22 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#23 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(325): leantime\core\frontcontroller::dispatch()
+#24 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#25 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#26 {main}
+[16-Aug-2023 21:47:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:47:23 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:47:46 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(181): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(124): Illuminate\Container\BoundMethod::addDependencyForCallParameter(Object(leantime\core\application), Object(ReflectionParameter), Array, Array)
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(36): Illuminate\Container\BoundMethod::getMethodDependencies(Object(leantime\core\application), Array, Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod(Object(leantime\core\application), Array, Object(Closure))
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(661): Illuminate\Container\BoundMethod::call(Object(leantime\core\application), Array, Array, NULL)
+#16 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(79): Illuminate\Container\Container->call(Array)
+#17 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#18 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#19 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#20 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#21 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#22 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#23 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#24 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(325): leantime\core\frontcontroller::dispatch()
+#25 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#26 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#27 {main}
+[16-Aug-2023 21:47:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:47:46 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:49:09 America/Los_Angeles] ErrorException: Warning: ini_set(): Session ini settings cannot be changed when a session is active in /Users/josephroberts/localdev/leantime/app/core/class.session.php:52
+Stack trace:
+#0 [internal function]: leantime\core\session->__construct(Object(leantime\core\environment))
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\core\\s...')
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\core\\s...', Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('leantime\\core\\s...')
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(181): Illuminate\Container\Container->make('leantime\\domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(124): Illuminate\Container\BoundMethod::addDependencyForCallParameter(Object(leantime\core\application), Object(ReflectionParameter), Array, Array)
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(36): Illuminate\Container\BoundMethod::getMethodDependencies(Object(leantime\core\application), Array, Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+#14 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod(Object(leantime\core\application), Array, Object(Closure))
+#15 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(661): Illuminate\Container\BoundMethod::call(Object(leantime\core\application), Array, Array, NULL)
+#16 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(79): Illuminate\Container\Container->call(Array)
+#17 /Users/josephroberts/localdev/leantime/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#18 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#19 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#20 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#21 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#22 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(143): Illuminate\Container\Container->make('leantime\\domain...')
+#23 /Users/josephroberts/localdev/leantime/app/core/class.frontcontroller.php(77): leantime\core\frontcontroller::executeAction('auth.login', Array, 200)
+#24 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(325): leantime\core\frontcontroller::dispatch()
+#25 /Users/josephroberts/localdev/leantime/app/core/class.Bootloader.php(151): leantime\core\Bootloader->handleRequest()
+#26 /Users/josephroberts/localdev/leantime/public/index.php(13): leantime\core\Bootloader->boot()
+#27 {main}
+[16-Aug-2023 21:49:09 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:49:09 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:50:50 America/Los_Angeles] cron start
+[16-Aug-2023 21:50:50 America/Los_Angeles] cron end
+[16-Aug-2023 21:50:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:50:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:55:50 America/Los_Angeles] cron start
+[16-Aug-2023 21:55:50 America/Los_Angeles] cron end
+[16-Aug-2023 21:55:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 21:55:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 22:00:50 America/Los_Angeles] cron start
+[16-Aug-2023 22:00:50 America/Los_Angeles] cron end
+[16-Aug-2023 22:00:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[16-Aug-2023 22:00:50 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
