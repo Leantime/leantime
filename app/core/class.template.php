@@ -150,18 +150,10 @@ class template
      */
     public function setupBlade(
         \leantime\core\application $app,
-        \Illuminate\View\Engines\EngineResolver $viewResolver,
         \Illuminate\Events\Dispatcher $eventDispatcher
     ) {
-        // Setup Blade Compiler
-        $app->singleton(
-            \Illuminate\View\Compilers\Compiler::class,
-            fn ($app) => $app->make(\Illuminate\View\Compilers\BladeCompiler::class, ['cachePath' => APP_ROOT . '/cache/views'])
-        );
-
-        // Register Blade Engines
-        $viewResolver->register('blade', fn () => app(\Illuminate\View\Engines\CompilerEngine::class));
-        $viewResolver->register('php', fn () => app(\Illuminate\View\Engines\PhpEngine::class));
+        // ComponentTagCompiler Expects the Foundation\Application Implmentation, let's trick it and give it the container.
+        $app->instance(\Illuminate\Contracts\Foundation\Application::class, $app::getInstance());
 
         // Find Template Paths
         if (empty($_SESSION['template_paths']) || $this->config->debug) {
@@ -180,6 +172,37 @@ class template
             $_SESSION['template_paths'] = array_merge($domainPaths, $customPaths, $pluginPaths, ['global' => APP_ROOT . '/app/views/templates']);
         }
 
+        // Setup Blade Compiler
+        $app->singleton(
+            \Illuminate\View\Compilers\CompilerInterface::class,
+            function ($app) {
+                $bladeCompiler = new \Illuminate\View\Compilers\BladeCompiler(
+                    $app->make(\Illuminate\Filesystem\Filesystem::class),
+                    APP_ROOT . '/cache/views'
+                );
+
+                $namespaces = array_keys($_SESSION['template_paths']);
+                array_map(
+                    [$bladeCompiler, 'anonymousComponentNamespace'],
+                    array_map(fn ($namespace) => "$namespace::components", $namespaces),
+                    $namespaces
+                );
+
+                return $bladeCompiler;
+            }
+        );
+
+        // Register Blade Engines
+        $app->singleton(
+            \Illuminate\View\Engines\EngineResolver::class,
+            function ($app) {
+                $viewResolver = new \Illuminate\View\Engines\EngineResolver();
+                $viewResolver->register('blade', fn () => $app->make(\Illuminate\View\Engines\CompilerEngine::class));
+                $viewResolver->register('php', fn () => $app->make(\Illuminate\View\Engines\PhpEngine::class));
+                return $viewResolver;
+            }
+        );
+
         // Setup View Finder
         $app->singleton(
             \Illuminate\View\ViewFinderInterface::class,
@@ -191,10 +214,7 @@ class template
         );
 
         // Setup Events Dispatcher
-        $app->bind(
-            \Illuminate\Contracts\Events\Dispatcher::class,
-            \Illuminate\Events\Dispatcher::class
-        );
+        $app->bind(\Illuminate\Contracts\Events\Dispatcher::class, \Illuminate\Events\Dispatcher::class);
 
         // Setup View Factory
         $app->singleton(
@@ -202,15 +222,15 @@ class template
             function ($app) {
                 $viewFactory = $app->make(\Illuminate\View\Factory::class);
                 array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['tpl.php', 'sub.php', 'inc.php']);
+
                 $viewFactory->setContainer($app);
                 return $viewFactory;
             }
         );
+        $app->alias(\Illuminate\Contracts\View\Factory::class, 'view');
 
-        $this->bladeCompiler = $app->make(\Illuminate\View\Compilers\Compiler::class);
+        $this->bladeCompiler = $app->make(\Illuminate\View\Compilers\CompilerInterface::class);
         $this->viewFactory = $app->make(\Illuminate\Contracts\View\Factory::class);
-
-        app()->setInstance($app);
     }
 
     /**
@@ -387,27 +407,21 @@ class template
         $loadFile = $this->getTemplatePath($module, $action);
 
         $this->hookContext = "tpl.$module.$action";
+        $this->viewFactory->share(['tpl' => $this]);
 
         /** @var \Illuminate\View\View */
         $view = $this->viewFactory->make($loadFile);
 
-        /** @todo this can be reduced to just the 'else' code after removal of php template support */
-        if ($view->getEngine() instanceof \Illuminate\View\Engines\PhpEngine) {
-            $view = $this->viewFactory->make($layout, array_merge(
-                $this->vars,
-                [
-                    'tpl' => $this,
-                    'module' => $module,
-                    'action' => $action,
-                ]
-            ));
-        } else {
+        /** @todo this can be reduced to just the 'if' code after removal of php template support */
+        if ($view->getEngine() instanceof \Illuminate\View\Engines\CompilerEngine) {
             $view->with(array_merge(
                 $this->vars,
-                [
-                    'tpl' => $this,
-                    'layout' => $layout,
-                ]
+                ['layout' => $layout]
+            ));
+        } else {
+            $view = $this->viewFactory->make($layout, array_merge(
+                $this->vars,
+                ['module' => $module, 'action' => $action]
             ));
         }
 

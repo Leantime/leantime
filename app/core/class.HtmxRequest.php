@@ -19,11 +19,11 @@ class HtmxRequest extends IncomingRequest
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
 
-        if (! str_starts_with($requestUri = $this->getRequestUri(), '/hx/')) {
+        if (! str_starts_with($path = $this->getPathInfo(), '/hx/')) {
             return;
         }
 
-        $this->setActFromRequestUri(substr($requestUri, 4));
+        $this->setRequestDest(substr($path, 4));
     }
 
     /**

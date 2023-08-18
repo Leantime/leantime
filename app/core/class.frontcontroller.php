@@ -61,25 +61,17 @@ class frontcontroller
      */
     public static function dispatch($action = '', $httpResponseCode = 200): void
     {
-        //Set action-name from request
-        if (!empty($fullaction = self::getCurrentRoute())) {
-            self::$fullAction = $fullaction;
-        }
+        self::$fullAction = empty($action) ? self::getCurrentRoute() : $action;
 
-        //action parameter overrides Request['act']
-        if ($action !== '') {
-            self::$fullAction = $action;
-        }
-
-        if (self::$fullAction != '') {
-            //execute action
-            try {
-                self::executeAction(self::$fullAction, array(), $httpResponseCode);
-            } catch (Exception $e) {
-                echo $e->getMessage();
-            }
-        } else {
+        if (self::$fullAction == '') {
             self::dispatch("errors.error404", 404);
+        }
+
+        //execute action
+        try {
+            self::executeAction(self::$fullAction, array(), $httpResponseCode);
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
     }
 
@@ -175,9 +167,10 @@ class frontcontroller
      * @param  string $completeName
      * @return string
      */
-    public static function getActionName(string $completeName): string
+    public static function getActionName(string $completeName = null): string
     {
-        $actionParts = explode(".", $completeName);
+        $completeName ??= self::getCurrentRoute();
+        $actionParts = explode(".", empty($completeName) ? self::getCurrentRoute() : $completeName);
 
         //If not action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 1) {
@@ -196,13 +189,11 @@ class frontcontroller
      * @param  string $completeName
      * @return string
      */
-    public static function getModuleName(string $completeName): string
+    public static function getModuleName(string $completeName = null): string
     {
-        if ($completeName == '') {
-            $completeName = self::getCurrentRoute();
-        }
+        $completeName ??= self::getCurrentRoute();
 
-        $actionParts = explode(".", $completeName);
+        $actionParts = explode(".", empty($completeName) ? self::getCurrentRoute() : $completeName);
 
         if (is_array($actionParts)) {
             return $actionParts[0];
@@ -220,11 +211,15 @@ class frontcontroller
      */
     public static function getCurrentRoute(): string
     {
-        if (!empty($act = app(\leantime\core\IncomingRequest::class)->query->get('act'))) {
-            return htmlspecialchars($act);
+        static $route;
+
+        if (isset($route)) {
+            return $route;
         }
 
-        return '';
+        $route = app()->make(IncomingRequest::class)->query->get('act', '');
+
+        return $route;
     }
 
     /**

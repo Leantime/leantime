@@ -25,20 +25,39 @@ class IncomingRequest extends Request
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
 
-        $this->setActFromRequestUri();
+        $this->setRequestDest();
     }
 
     /**
-     * Sets the act parameter from the request uri
+     * Sets the request destination from the path
      *
      * @param string $requestUri
      * @return void
      */
-    protected function setActFromRequestUri(string $requestUri = null): void
+    protected function setRequestDest(string $requestUri = null): void
     {
-        $requestUri ??= $this->getRequestUri();
-        $act = str_replace('/', '.', trim($requestUri, '/'));
-        $this->query->set('act', $act);
+        $requestUri ??= $this->getPathInfo();
+        preg_match_all('#\/([^\/.]+)#', $requestUri, $uriParts);
+        $uriParts = $uriParts[1] ?? array_map('ltrim', $uriParts[0] ?? [], '/');
+
+        switch (count($uriParts)) {
+            case 0:
+                $act = 'dashboard.show';
+                break;
+
+            case 1:
+            case 2:
+                $act = join('.', $uriParts);
+                break;
+
+            default:
+                $act = join('.', [$uriParts[0], $uriParts[1]]);
+                $id = $uriParts[2];
+                break;
+        };
+
+        isset($act) && $this->query->set('act', $act);
+        isset($id) && $this->query->set('id', $id);
     }
 
     /**
@@ -108,32 +127,5 @@ class IncomingRequest extends Request
             'DELETE', 'GET' => $this->query->all(),
             default => $this->query->all(),
         };
-    }
-
-    /**
-     * is htmx request
-     *
-     * @return bool
-     */
-    public function isHtmx(): bool
-    {
-        return filter_var(
-            $this->headers->get('HX-Request') ?? 'false',
-            FILTER_VALIDATE_BOOLEAN
-        );
-    }
-
-    /**
-     * check if api key is set
-     *
-     * @return bool
-     */
-    public function hasApiKey(): bool
-    {
-        if ($this->headers->get('HTTP_X_API_KEY')) {
-            return true;
-        }
-
-        return false;
     }
 }

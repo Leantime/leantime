@@ -998,7 +998,7 @@ namespace leantime\domain\services {
 
             $halfStep = (1 / count($progressSteps)) / 2 * 100;
             $percentDone = $position = 0;
-            array_map(function ($step) use (&$percentDone, &$position, $halfStep, $progressSteps) {
+            $progressSteps = array_map(function ($step) use (&$percentDone, &$position, $halfStep, $progressSteps) {
                 $step['positionLeft'] = ($position++ / count($progressSteps) * 100) - $halfStep;
                 $step['stepType'] = '';
 

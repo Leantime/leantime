@@ -106,6 +106,8 @@ class HeadMenu extends Composer
             'notifications' => $notifications ?? [],
             'onTheClock' => isset($_SESSION['userdata']) ? $this->timesheets->isClocked($_SESSION["userdata"]["id"]) : false,
             'activePath' => core\frontcontroller::getCurrentRoute(),
+            'action' => core\frontcontroller::getActionName(),
+            'module' => core\frontcontroller::getModuleName(),
             'user' => $user ?? [],
             'modal' => $modal,
         ];

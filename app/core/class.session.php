@@ -43,16 +43,19 @@ class session
      * __construct - get and test Session or make session
      *
      * @param environment $config
-     * @return self
+     * @return void
      */
     public function __construct(environment $config)
     {
         $this->config = $config;
+        $this->sessionpassword = $config->sessionpassword;
+
+        if (session_status() == PHP_SESSION_ACTIVE) {
+            return;
+        }
 
         $maxLifeTime = ini_set('session.gc_maxlifetime', ($config->sessionExpiration * 2));
         $cookieLifetime = ini_set('session.cookie_lifetime', ($config->sessionExpiration * 2));
-
-        $this->sessionpassword = $config->sessionpassword;
 
         //Get sid from cookie
         $testSession = false;

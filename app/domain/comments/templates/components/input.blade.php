@@ -1,6 +1,6 @@
 <div class="commentBox tw-hidden" id="comment{!! $commentId !!}">
     <div class="commentImage">
-        <x-users-profile-image :userId="$userId" />
+        <x-users::profile-image :userId="$userId" />
     </div>
     <div class="commentReply">
         <input

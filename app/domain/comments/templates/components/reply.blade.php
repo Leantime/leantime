@@ -1,14 +1,16 @@
 <div id="#{{ $comment['id'] }}">
     <div class="commentImage">
-        <x-user-profile-image :userId="$comment['userId']" />
+        <x-users::profile-image :userId="$comment['userId']" />
     </div>
     <div class="commentMain">
         <div class="commentContent">
-            {!! sprintf(
-                __('text.written_on'),
-                $tpl->getFormattedDateString($comment['date']),
-                $tpl->getFormattedTimeString($comment['date'])
-            ) !!}
+            @fragment('content')
+                {!! sprintf(
+                    __('text.written_on'),
+                    $tpl->getFormattedDateString($comment['date']),
+                    $tpl->getFormattedTimeString($comment['date'])
+                ) !!}
+            @endfragment
         </div>
 
         <span class="name">{!! sprintf(
@@ -24,8 +26,8 @@
         @if($isthecurrentuser)
             <button
                 hx-post="/hx/comment/delete-comment/{{ $comment['id'] }}"
-                hx-swap="outerHTML"
-                hx-target="#{{ $comment['id'] }}"
+                hx-swap="innerHTML"
+                hx-target="#{{ $comment['id'] }} .commentContent"
             >Update Comment</button>
         @endif
     </div>

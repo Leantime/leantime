@@ -1,7 +1,7 @@
 @extends($layout)
 
 @section('content')
-<x-global-pageheader :icon="'fa fa-home'">
+<x-global::pageheader :icon="'fa fa-home'">
     @if (count($allUsers) == 1)
         <a href="{{ BASE_URL }}/dashboard/show/#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
@@ -13,7 +13,7 @@
 
     <h5>{{ $_SESSION['currentProjectClient'] }}</h5>
     <h1>{!! __('headlines.project_dashboard') !!}</h1>
-</x-global-pageheader>
+</x-global::pageheader>
 
 <div class="maincontent">
     {!! $tpl->displayNotification() !!}
@@ -66,14 +66,14 @@
                             </div>
 
                             @foreach ($progressSteps as $step)
-                                <div class="step {{ $step['type'] }}" style="left: {{ $step['positionLeft'] }}%;">
+                                <div class="step {{ $step['stepType'] }}" style="left: {{ $step['positionLeft'] }}%;">
                                     <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                                         <span class="innerCircle"></span>
                                         <span class="title">
                                             @if ($step['status'] == 'done')
                                                 <i class="fa fa-check"></i>
                                             @endif
-                                            {{ $step['title'] }}
+                                            {{ __($step['title']) }}
                                             <i class="fa fa-caret-down" aria-hidden="true"></i>
                                         </span>
                                     </a>
@@ -116,7 +116,7 @@
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
-                    @if (count($tickets == 0))
+                    @if (count($tickets) == 0)
                         <em>Nothing to see here. Move on.</em><br/><br/>
                     @endif
 
@@ -126,7 +126,7 @@
                                 <div class="row">
                                     <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
                                         <a href="{{ BASE_URL }}/#/tickets/showTicket/{!! $row['dependingTicketId'] > 0 ? $row['dependingTicketId'] : $row['id'] !!}">
-                                            {{ $row['dependingTicketId'] > 0 ? $row['parentHeadline'] : sprintf("<strong>%s</strong>", $row['headline']) }}
+                                            {!! $row['dependingTicketId'] > 0 ? $row['parentHeadline'] : sprintf("<strong>%s</strong>", $row['headline']) !!}
                                         </a>
 
                                         @if ($login::userIsAtLeast($roles::$editor))
@@ -160,20 +160,20 @@
                                                     <li class="nav-header border">{{ __('subtitles.tracktime') }}</li>
                                                     <li id="timerContainer-{{ $row['id'] }}" class="timerContainer">
                                                         <a
-                                                            class="punchIn {{ $clockedIn !== false ? 'tw-hidden' : '' }}"
+                                                            class="punchIn {{ $onTheClock !== false ? 'tw-hidden' : '' }}"
                                                             href="javascript:void(0);"
                                                             data-value="{{ $row['id'] }}"
                                                         ><span class="fa-regular fa-clock"></span> {{ __('links.start_work') }}</a>
                                                         <a
-                                                            class="punchOut {{ ! $clockedIn || $clockedIn != $row['id'] ? 'tw-hidden' : '' }}"
+                                                            class="punchOut {{ ! $onTheClock || $onTheClock != $row['id'] ? 'tw-hidden' : '' }}"
                                                             href="javascript:void(0);"
                                                             data-value="{{ $row['id'] }}"
                                                         ><span class="fa-stop"></span> {{ sprintf(
                                                             __('links.stop_work_started_at'),
                                                             date(__('language.timeformat')),
-                                                            is_array($clockedIn) ? $clockedIn['since'] : time()
+                                                            is_array($onTheClock) ? $onTheClock['since'] : time()
                                                         ) }}</a>
-                                                        <span class="working {{ ! $clockedIn || $clockedIn['id'] == $row['id'] ? 'tw-hidden' : '' }}">
+                                                        <span class="working {{ ! $onTheClock || $onTheClock['id'] == $row['id'] ? 'tw-hidden' : '' }}">
                                                             {{ __('text.timer_set_other_todo') }}
                                                         </span>
                                                     </li>
@@ -184,7 +184,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-4 tw-py-[15px] tw-px-0">
+                                    <div class="col-md-4 tw-px-[15px] tw-py-0">
                                         {{ __('label.due') }}<input
                                             type="text"
                                             title="{{ __('label.due') }}"
@@ -319,7 +319,7 @@
                 <div class="row teamBox">
                     @foreach ($project['assignedUsers'] as $userId => $assignedUser)
                         <div class="col-md-3">
-                            <x-user-profile-box :user="$assignedUser">
+                            <x-users::profile-box :user="$assignedUser">
                                 @spaceless
                                     @php $hasName = $assignedUser['firstname'] != '' || $assignedUser['lastname'] != ''; @endphp
 
@@ -340,17 +340,17 @@
                                         @dispatchEvent('usercardBottom', ['user' => $assignedUser, 'project' => $project])
                                     @endif
                                 @endspaceless
-                            </x-user-profile-box>
+                            </x-users::profile-box>
                         </div>
                     @endforeach
 
                     @if ($login::userIsAtLeast($roles::$manager))
                         <div class="col-md-3">
-                            <x-user-profile-box>
+                            <x-users::profile-box>
                                 <a href="{{ BASE_URL }}/dashboard/show#/users/newUser?preSelectProjectId={{ $project['id'] }}">
                                     {{ __('links.invite_user') }}
                                 </a><br/>&nbsp;
-                            </x-user-profile-box>
+                            </x-users::profile-box>
                         </div>
                     @endif
                 </div>
@@ -377,7 +377,7 @@
                     <input type="hidden" name="comment" value="1" />
                     <form method="post" accept-charset="utf-8" action="{!! CURRENT_URL !!}" id="commentForm">
                         @if ($login::userIsAtLeast($roles::$editor))
-                            <div class="comment0 tw-hidden" class="commentBox">
+                            <div id="comment0" class="commentBox tw-hidden">
                                 <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
 
                                 <select name="status" id="projectStatus" class="tw-ml-0 tw-mb-[10px]">
@@ -475,17 +475,17 @@
                                             @if ($row['replies'])
                                                 @foreach ($row['replies'] as $comment)
                                                     @fragment("comments.reply.{$loop->iterator}")
-                                                        <x-comments-reply :comment="$comment" :iteration="$loop->iterator" />
+                                                        <x-comments::reply :comment="$comment" :iteration="$loop->iterator" />
                                                     @endfragment
                                                 @endforeach
                                             @endif
-                                            <x-comments-input :commentId="$row['id']" :userId="$_SESSION['userdata']['id']" />
+                                            <x-comments::input :commentId="$row['id']" :userId="$_SESSION['userdata']['id']" />
                                         </div>
                                     </div>
                                 </div>
                             @endforeach
 
-                            @if (count($comments >= 3))
+                            @if (count($comments) >= 3)
                                 </div>
                             @endif
                         </div>

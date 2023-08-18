@@ -3,9 +3,8 @@
 namespace leantime\core;
 
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
-use Illuminate\Contracts\Debug\ExceptionHandler as IlluminateExceptionHandlerContract;
+use Illumiante\Contracts\Foundation\Application as IlluminateApplicationContract;
 use Psr\Container\ContainerInterface as PsrContainerContract;
-use Symfony\Component\ErrorHandler\Debug as SymfonyDebug;
 use leantime\domain\services;
 use leantime\domain\repositories;
 
@@ -171,10 +170,14 @@ class Bootloader
     {
         $this->app ??= application::getInstance();
 
+        // attach container to container
+        $this->app->bind(application::class, fn () => application::getInstance());
+        $this->app->alias(application::class, IlluminateContainerContract::class);
+        $this->app->alias(application::class, PsrContainerContract::class);
+
         $this->bindRequest();
 
-        // specify singletons
-        $this->app->singleton(PsrContainerContract::class, application::class);
+        // specify singletons/instances
         $this->app->singleton(environment::class, environment::class);
         $this->app->singleton(db::class, db::class);
         $this->app->singleton(frontcontroller::class, frontcontroller::class);
@@ -184,10 +187,6 @@ class Bootloader
         $this->app->singleton(services\oidc::class, services\oidc::class);
         $this->app->singleton(services\modulemanager::class, services\modulemanager::class);
 
-        // point contracts to container
-        $this->app->alias(IlluminateContainerContract::class, PsrContainerContract::class);
-        $this->app->alias(application::class, PsrContainerContract::class);
-
         /**
          * Filter on container right after initial bindings.
          *
@@ -195,6 +194,8 @@ class Bootloader
          * @return \Illuminate\Contracts\Container\Container $container The container object.
          */
         $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
+
+        application::setInstance($this->app);
 
         return $this->app;
     }
@@ -348,15 +349,6 @@ class Bootloader
             return;
         }
 
-        // REMOVE THIS
-        $username = $incomingRequest->headers->get('username');
-        $password = $incomingRequest->headers->get('password');
-
-        if (! empty($username) && ! empty($password)) {
-            $loggedIn = $this->app->make(services\auth::class)->login($username, $password);
-        }
-        // END REMOVE THIS
-
         // handle unathorized requests
         if (! $this->app->make(services\auth::class)->logged_in()) {
             $this->redirectWithOrigin('auth.login', $incomingRequest->getRequestUri());
@@ -456,7 +448,7 @@ class Bootloader
             return;
         }
 
-        SymfonyDebug::enable();
+        \Symfony\Component\ErrorHandler\Debug::enable();
     }
 
     /**
@@ -466,12 +458,10 @@ class Bootloader
      */
     private function bindRequest(): void
     {
-        $incomingRequest = IncomingRequest::createFromGlobals();
-
         $incomingRequest = $this->app->instance(IncomingRequest::class, match (true) {
-            $incomingRequest->isHtmx() => HtmxRequest::createFromGlobals(),
-            $incomingRequest->hasApiKey() => ApiRequest::createFromGlobals(),
-            default => $incomingRequest,
+            $_SERVER['HX-Request'] ?? false => HtmxRequest::createFromGlobals(),
+            $_SERVER['HTTP_X_API_KEY'] ?? false => ApiRequest::createFromGlobals(),
+            default => IncomingRequest::createFromGlobals(),
         });
 
         $incomingRequest->overrideGlobals();
