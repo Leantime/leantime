@@ -51,18 +51,18 @@ $canvasItems = $tpl->get('canvasItems');
                             &nbsp;&nbsp;&nbsp;
                             <ul class="dropdown-menu">
                                 <li class="nav-header"><?=$tpl->__("subtitles.edit"); ?></li>
-                                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
-                                       class="<?=$canvasName ?>CanvasModal"
+                                <li><a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
+
                                        data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.edit_canvas_item"); ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
-                                       class="delete <?=$canvasName ?>CanvasModal"
+                                <li><a href="#/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
+                                       class="delete"
                                        data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.delete_canvas_item"); ?></a></li>
                             </ul>
                         <?php } ?>
                     </div>
 
-                    <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
-                           class="<?=$canvasName ?>CanvasModal"
+                    <h4><a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
+
                            data="item_<?=$row['id'] ?>"><?php $tpl->e($row["description"]);?></a></h4>
 
                     <?php if ($row["conclusion"] != "") {
@@ -157,9 +157,9 @@ $canvasItems = $tpl->get('canvasItems');
                         </ul>
                     </div>
                     <div class="pull-right" style="margin-right:10px;">
-                        <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
-                           class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
-                            <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
+                        <a href="#/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
+                           class="commentCountLink" data="item_<?=$row['id'] ?>"
+
                             ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
                     </div>
                 </div>
@@ -193,8 +193,8 @@ $canvasItems = $tpl->get('canvasItems');
     <?php } ?>
   <br />
   <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-      <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
-         class="<?=$canvasName ?>CanvasModal" id="<?php echo $elementName; ?>"
+      <a href="#/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+         class="" id="<?php echo $elementName; ?>"
          style="padding-bottom: 10px;"><?=$tpl->__('links.add_new_canvas_item') ?></a>
   <?php } ?>
 </div>

@@ -18,10 +18,10 @@ if (isset($currentArticle->id)) {
 
 ?>
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>">
+<form class="formModal" method="post" action="<?=CURRENT_URL ?>">
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <h4 class="widgettitle title-light">
                     <span class="fa fa-folder"></span><?php echo $tpl->__('subtitles.organization'); ?>
@@ -121,7 +121,7 @@ if (isset($currentArticle->id)) {
                                         <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $currentArticle->milestoneId;?>" ><?php echo $currentArticle->milestoneHeadline; ?></a></strong>
                                     </div>
                                     <div class="col-md-4 align-right">
-                                        <a href="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                                        <a href="#/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -154,7 +154,8 @@ if (isset($currentArticle->id)) {
             <br />
 
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
+
 
             <div class="btn-group inlineDropDownContainerLeft">
                 <button data-selected="graduation-cap" type="button"
@@ -162,7 +163,6 @@ if (isset($currentArticle->id)) {
                         data-toggle="dropdown">
                     <span class="iconPlaceholder">
                         <i class="fa fa-file"></i>
-
                     </span>
                     <span class="caret"></span>
                 </button>
@@ -175,38 +175,45 @@ if (isset($currentArticle->id)) {
             <br />
             <input type="text" value="<?php $tpl->e($currentArticle->tags); ?>" name="tags" id="tags" />
 
-            <textarea class="articleEditor complexEditor" id="articleEditor" name="description"><?=htmlentities($currentArticle->description) ?></textarea>
+            <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
+
+
+                <div class="row">
+                    <div class="col-md-10 padding-top-sm">
+                        <br />
+                        <input type="hidden" name="saveTicket" value="1" />
+                        <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
+                        <input type="submit" name="saveArticle" value="<?php echo $tpl->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
+                        <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
+
+
+
+                    </div>
+                    <div class="col-md-2 align-right padding-top-sm">
+                        <?php if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
+                            <br />
+                            <a href="#/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_article') ?></a>
+                        <?php } ?>
+                    </div>
+                </div>
+
 
 
 
         </div>
-
+        <div class="col-md-2"></div>
     </div>
 
 
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-7 padding-top-sm">
-            <br />
-            <input type="hidden" name="saveTicket" value="1" />
-            <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
-            <input type="submit" name="saveArticle" value="<?php echo $tpl->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
-            <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
 
-
-
-        </div>
-        <div class="col-md-2 align-right padding-top-sm">
-            <?php if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
-                <br />
-                <a href="<?=BASE_URL ?>/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_article') ?></a>
-            <?php } ?>
-        </div>
-    </div>
 
 </form>
 
-<script type="text/javascript">
+<script>
+
+
+    jQuery("#articleContentEditor").show();
+    leantime.editorController.initComplexEditor();
 
     jQuery(document).ready(function(){
 
@@ -214,7 +221,7 @@ if (isset($currentArticle->id)) {
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.generalController.initComplexEditor();
+
 
 
         jQuery('.iconpicker-container').iconpicker({

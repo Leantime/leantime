@@ -42,7 +42,7 @@
 
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="{{ BASE_URL}}/tickets/showTicket/{{ $onTheClick['id'] }}">
+                        <a href="#/tickets/showTicket/{{ $onTheClick['id'] }}">
                             {{ __('links.view_todo') }}
                         </a>
                     </li>

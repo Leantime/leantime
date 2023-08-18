@@ -104,7 +104,7 @@ if ($calendars) {
         if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') {
             $url = BASE_URL . "/calendar/editEvent/" . $calendar['id'] . "";
         } else {
-            $url = BASE_URL . "/tickets/showTicket" . $calendar['id'] . "?projectId=" . $calendar['projectId'] . "";
+            $url = BASE_URL . "/dashboard/home#/tickets/showTicket" . $calendar['id'] . "?projectId=" . $calendar['projectId'] . "";
         }
 
         $tpl->dispatchTplEvent('calendarOutputBeginning', $calendar, [

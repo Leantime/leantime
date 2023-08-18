@@ -1,6 +1,14 @@
+
 .mce-content-body  {
     font-size:var(--base-font-size);
     background:var(--secondary-background);
+    max-width:760px;
+    margin:auto;
+    text-align:left;
+}
+
+.viewDescription.mce-content-body {
+    margin:0px;
 }
 
 .commentContent .mce-content-body {

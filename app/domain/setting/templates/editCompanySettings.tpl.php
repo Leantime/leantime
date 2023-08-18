@@ -70,7 +70,7 @@ $companySettings = $tpl->get('companySettings');
                             </div>
                             <br />
 
-                            <?php $this->dispatchTplEvent('beforeTelemetrySettings'); ?>
+                            <?php $tpl->dispatchTplEvent('beforeTelemetrySettings'); ?>
 
                             <div class="row" id="telemetryContainer">
                                 <div class="col-md-2">
@@ -240,7 +240,7 @@ $companySettings = $tpl->get('companySettings');
                     </div>
 
                     <div id="apiKeys">
-                        <a href="<?=BASE_URL?>/setting/editCompanySettings/#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
+                        <a href="#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
                         <br /> <br />
                         <ul class="sortableTicketList">
 
@@ -254,11 +254,11 @@ $companySettings = $tpl->get('companySettings');
                                         </a>
                                         <ul class="dropdown-menu">
 
-                                            <li><a href="<?=BASE_URL?>/setting/editCompanySettings/#/api/apiKey/<?=$apiKey["id"] ?>"><i class="fa fa-edit"></i> Edit Key</a></li>
+                                            <li><a href="#/api/apiKey/<?=$apiKey["id"] ?>"><i class="fa fa-edit"></i> Edit Key</a></li>
                                             <li><a href="<?=BASE_URL?>/api/delAPIKey/<?=$apiKey["id"] ?>" class="delete"><i class="fa fa-trash"></i> Delete Key</a></li>
                                         </ul>
                                     </div>
-                                    <a href="<?=BASE_URL?>/setting/editCompanySettings/#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />
+                                    <a href="#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />
                                     lt_<?=$apiKey["username"] ?>***
                                     | <?=$tpl->__("labels.created_on")?>: <?=$tpl->getFormattedDateString($apiKey["createdOn"]) ?> | <?=$tpl->__("labels.last_used")?>: <?= $tpl->getFormattedDateString($apiKey["lastlogin"]) ?>
 

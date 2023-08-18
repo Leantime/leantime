@@ -12,7 +12,7 @@ function openModal() {
         callbacks: {
             beforePostSubmit: function () {
                 jQuery(".showDialogOnLoad").show();
-
+                console.log(tinymce.editors);
                 if(tinymce.editors.length>0) {
                     jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().save();
                     jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().remove();
@@ -37,9 +37,11 @@ function openModal() {
     };
 
     var url = window.location.hash.substring(1);
-    if(url.includes("showTicket") ||
-        url.includes("ideaDialog")) {
-        modalOptions.sizes.minW = 1500;
+    if(url.includes("showTicket")
+        || url.includes("ideaDialog")
+        || url.includes("articleDialog")) {
+        modalOptions.sizes.minW = 1800;
+        modalOptions.sizes.minH = 1800;
     }
 
     var urlParts = url.split("/");

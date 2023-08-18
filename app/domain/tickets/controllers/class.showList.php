@@ -37,8 +37,8 @@ namespace leantime\domain\controllers {
 
             $params["orderBy"] = "date";
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
-
             $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
+
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
@@ -54,13 +54,15 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('futureSprints', $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]));
 
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
-            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $this->tpl->assign('milestones', $allProjectMilestones);
 
             $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
             // fields
-            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
+            $this->tpl->assign('groupByOptions', $this->ticketService->getGroupByFieldOptions());
             $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
 
             $this->tpl->display('tickets.showList');

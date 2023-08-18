@@ -7,27 +7,26 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
     $_SESSION['submenuToggle']["myProjectCalendarView"] = "dayGridMonth";
 }
 
+echo $tpl->displayNotification();
+
 ?>
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
-    <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$tpl->__("headline.project_calendar"); ?></h1>
-    </div>
-</div><!--pageheader-->
-
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
     <div class="maincontentinner">
-
-        <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
             <div class="col-md-4">
-                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$tpl->__("links.add_milestone"); ?></a>
-                <?php } ?>
+                <?php
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+
+                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                $tpl->displaySubmodule('tickets-ticketFilter');
+
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
             </div>
             <div class="col-md-4">
                 <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -35,19 +34,6 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
                 </div>
             </div>
             <div class="col-md-4">
-
-
-                <div class="btn-group viewDropDown pull-right">
-                    <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.calendar_view") ?> <?=$tpl->__("links.view") ?></button>
-                    <ul class="dropdown-menu">\
-                        <li><a href="<?=BASE_URL ?>/tickets/roadmap" ><?=$tpl->__("links.gantt_view") ?></a></li>
-                        <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$tpl->__("links.table") ?></a></li>
-                        <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar" class="active"><?=$tpl->__("links.calendar_view") ?></a></li>
-                    </ul>
-                </div>
-
-
-
 
                 <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-right"></span>
@@ -105,7 +91,6 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
     jQuery(document).ready(function(){
 
-    leantime.ticketsController.initModals();
 
     <?php if (isset($_GET['showMilestoneModal'])) {
         if ($_GET['showMilestoneModal'] == "") {
@@ -169,12 +154,12 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
             <?php endif; ?>
             enitityId: <?php echo $mlst->id ?>,
             <?php if ($mlst->type == "milestone") { ?>
-            url: '<?=CURRENT_URL ?>#/tickets/editMilestone/<?php echo $mlst->id ?>',
+            url: '#/tickets/editMilestone/<?php echo $mlst->id ?>',
             color: '<?=$color?>',
             enitityType: "milestone",
             allDay: true,
             <?php } else { ?>
-            url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $mlst->id ?>',
+            url: '#/tickets/showTicket/<?php echo $mlst->id ?>',
             color: '<?=$color?>',
             enitityType: "ticket",
             allDay: false,

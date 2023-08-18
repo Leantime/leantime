@@ -194,9 +194,9 @@
                                                                 </a>
                                                                 <ul class="dropdown-menu">
                                                                     <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                                                    <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
-                                                                    <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
-                                                                    <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/moveTicket/<?php echo $row["id"]; ?>" ><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
                                                                     <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
                                                                     <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                         <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
@@ -320,7 +320,7 @@
 
             <div class="col-md-4">
 
-                <?php $this->dispatchTplEvent('beforeCalendar'); ?>
+                <?php $tpl->dispatchTplEvent('beforeCalendar'); ?>
 
                 <div class="maincontentinner minCalendar">
 
@@ -445,8 +445,6 @@
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
-
-
             if(currentLink.hasClass("fa-angle-right")){
                 currentLink.removeClass("fa-angle-right");
                 currentLink.addClass("fa-angle-down");
@@ -462,7 +460,6 @@
     }
 
    jQuery(document).ready(function() {
-       leantime.ticketsController.initModals();
 
        jQuery('.todaysDate').text(moment().format('LLLL'));
 
@@ -473,7 +470,7 @@
            leantime.ticketsController.initStatusDropdown();
            leantime.ticketsController.initDueDateTimePickers();
        <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
        <?php } ?>
 
        <?php if ($tpl->get('completedOnboarding') === false) { ?>

@@ -399,6 +399,10 @@ h3 { font-size:var(--font-size-xl); font-weight:bold;}
 h4 { font-size:var(--base-font-size); font-weight:bold;}
 h5 { font-size:var(--base-font-size); font-weight:bold;}
 
+h1 small {
+    font-size: var(--font-size-s);
+    color:var(--primary-font-color);
+}
 /* TOOLS */
 .f-right {
     float: right !important;
@@ -1104,14 +1108,14 @@ a .label.feature-label:after {
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
     margin-bottom: 10px;
-    font-weight:lighter;
+    font-weight:bold;
 }
 
 .maincontentinner .accordionTitle i {
     display:inline-block;
     width:10px;
     text-align:center;
-    margin-right:5px;
+    margin-right:10px;
 }
 
 .subtitle {
@@ -2725,7 +2729,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
     display: inline-block;
     color:var(--primary-font-color);
     opacity:0.5;
-    font-size:var(--font-size-l);
+    font-size:var(--font-size-m);
 }
 
 .progressWrapper .step .title:hover {
@@ -3299,22 +3303,27 @@ a.filter-term {
     text-decoration: none;
 }
 
-
-
 div.color-picker {
     background: #fff;
     border: 0px;
-    padding: 5px;
+    padding: 10px 10px 0px 10px;
     box-shadow: var(--regular-shadow);
     z-index: 10000008;
+    border-radius:var(--element-radius);
 }
 
 div.color-picker ul li {
-    margin-right: 5px;
-    width: 20px;
-    height: 20px;
+    margin-right: 10px;
+    margin-bottom:10px;
+    border-radius: 20px;
+    width: 30px;
+    height: 30px;
     border-right: 0px solid #000;
     border-bottom: 0px solid #000;
+}
+
+div.color-picker ul li:hover {
+    box-shadow:var(--regular-shadow);
 }
 
 
@@ -3687,6 +3696,11 @@ body .widgettitle .editHeadline:hover {
     font-weight: bold;
 }
 
+.commentContent .text {
+    text-align:left;
+    margin: 0;
+}
+
 #mainToggler {
     margin-bottom:15px;
     display:block;
@@ -3777,6 +3791,11 @@ body .widgettitle .editHeadline:hover {
     padding:15px 0px;
 }
 
+.articleWrapper {
+    max-width:760px;
+    margin:auto;
+    text-align:left;
+}
 
 .articleHeadline {
     font-size:var(--font-size-xxxl);
@@ -3820,7 +3839,11 @@ body .widgettitle .editHeadline:hover {
 
 .simpleAccordionContainer {
     margin-bottom:30px;
-    padding-left: 15px;
+    padding-left: 20px;
+}
+
+.simpleAccordionContainer.kanban {
+    padding-left:0px;
 }
 
 .teamBox {
@@ -4158,3 +4181,30 @@ h3.todaysDate {
 .minCalendar .fc .fc-daygrid-day.fc-day-today {
     border-radius:var(--element-radius);
 }
+
+.profileImage {
+
+    overflow:hidden;
+    display:inline-block;
+    vertical-align: middle;
+    margin-right:5px;
+    padding:0px;
+
+
+}
+
+.profileImage img {
+    width:30px;
+    height:30px;
+    border-radius:20px;
+    padding:1px;
+    border:1px solid var(--neutral);
+}
+
+
+
+
+
+
+
+

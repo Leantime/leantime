@@ -44,7 +44,7 @@ $tickets = $tpl->get('tickets');
                         <a class="dropdown-toggle btn" data-toggle="dropdown" data-tippy-content="<?=$tpl->__('label.copy_url_tooltip') ?>" href="<?=BASE_URL?>/project/changeCurrentProject/<?=$project['id']; ?>"><i class="fa fa-link"></i></a>
                         <div class="dropdown-menu padding-md">
                             <input type="text" id="projectUrl" value="<?=BASE_URL?>/projects/changeCurrentProject/<?=$project['id']; ?>" />
-                            <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('projectUrl');"><?=$tpl->__('links.copy_url') ?></button>
+                            <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl');"><?=$tpl->__('links.copy_url') ?></button>
                         </div>
                     </div>
 
@@ -189,23 +189,23 @@ $tickets = $tpl->get('tickets');
                                     <div class="row">
                                         <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
                                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                                <a href="<?=BASE_URL?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
+                                                <a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
                                             <?php } ?>
-                                            <strong><a href="<?=BASE_URL ?>/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
+                                            <strong><a href="#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
 
                                             <?php if ($login::userIsAtLeast($roles::$editor)) {
                                                 $clockedIn = $tpl->get("onTheClock");
                                                 ?>
 
                                                 <div class="inlineDropDownContainer">
-                                                    <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
                                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                                     </a>
                                                     <ul class="dropdown-menu">
                                                         <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                                        <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
-                                                        <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
-                                                        <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
+                                                        <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
+                                                        <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>" ><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
+                                                        <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>" ><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
                                                         <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
                                                         <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                             <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
@@ -556,7 +556,7 @@ $tickets = $tpl->get('tickets');
 
                         <script type='text/javascript'>
 
-                            leantime.generalController.initSimpleEditor();
+                            leantime.editorController.initSimpleEditor();
 
                             function toggleCommentBoxes(id) {
 
@@ -571,7 +571,7 @@ $tickets = $tpl->get('tickets');
                                 jQuery('.commentBox').hide('fast', function () {});
 
                                 jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-                                leantime.generalController.initSimpleEditor();
+                                leantime.editorController.initSimpleEditor();
 
                                 jQuery('#comment' + id + '').show('fast');
                                 jQuery('#father').val(id);
@@ -747,9 +747,6 @@ $tickets = $tpl->get('tickets');
         });
 
 
-
-        leantime.ticketsController.initModals();
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.dashboardController.prepareHiddenDueDate();
             leantime.ticketsController.initEffortDropdown();
@@ -759,7 +756,7 @@ $tickets = $tpl->get('tickets');
             leantime.usersController.initUserEditModal();
 
         <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
 
         <?php } ?>
 

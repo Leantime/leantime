@@ -1,17 +1,5 @@
 leantime.projectsController = (function () {
 
-    //Variables
-
-
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-
-            }
-        );
-
-    })();
 
     function countTickets()
     {

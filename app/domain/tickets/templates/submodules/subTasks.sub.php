@@ -64,7 +64,7 @@ foreach ($tpl->get('allSubTasks') as $subticket) {
                         </div>
                     <?php } ?>
 
-                    <a href="<?=$_SESSION['lastPage']?>#/tickets/showTicket/<?=$subticket['id']?>"><?=$tpl->escape($subticket['headline'])?></a>
+                    <a href="#/tickets/showTicket/<?=$subticket['id']?>"><?=$tpl->escape($subticket['headline'])?></a>
 
                 </div>
             </div>

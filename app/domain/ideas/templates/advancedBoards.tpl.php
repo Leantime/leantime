@@ -72,7 +72,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
             <div class="col-md-4">
                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                     <?php if (count($tpl->get('allCanvas')) > 0) { ?>
-                    <a href="<?=BASE_URL ?>/ideas/advancedBoards/#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span
+                    <a href="#/ideas/ideaDialog?type=idea" class="btn btn-primary" id="customersegment"><span
                                 class="far fa-lightbulb"></span><?php echo $tpl->__("buttons.add_idea"); ?></a>
 
                     <?php }
@@ -134,8 +134,8 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
                                                         &nbsp;&nbsp;&nbsp;
                                                         <ul class="dropdown-menu">
                                                             <li class="nav-header"><?php echo $tpl->__("subtitles.edit"); ?></li>
-                                                            <li><a href="<?=BASE_URL ?>/ideas/advancedBoards/#/ideas/ideaDialog/<?php echo $row["id"];?>" class="" data="item_<?php echo $row["id"];?>"> <?php echo $tpl->__("links.edit_canvas_item"); ?></a></li>
-                                                            <li><a href="<?=BASE_URL ?>/ideas/advancedBoards/#/ideas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete" data="item_<?php echo $row["id"];?>"> <?php echo $tpl->__("links.delete_canvas_item"); ?></a></li>
+                                                            <li><a href="#/ideas/ideaDialog/<?php echo $row["id"];?>" class="" data="item_<?php echo $row["id"];?>"> <?php echo $tpl->__("links.edit_canvas_item"); ?></a></li>
+                                                            <li><a href="#/ideas/delCanvasItem/<?php echo $row["id"]; ?>" class="delete" data="item_<?php echo $row["id"];?>"> <?php echo $tpl->__("links.delete_canvas_item"); ?></a></li>
 
                                                         </ul>
                                                     </div>
@@ -182,7 +182,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
 
                                                 <div class="pull-right" style="margin-right:10px;">
 
-                                                    <a href="<?=BASE_URL ?>/ideas/advancedBoards/#/ideas/ideaDialog/<?php echo $row["id"]; ?>"
+                                                    <a href="#/ideas/ideaDialog/<?php echo $row["id"]; ?>"
                                                         data="item_<?=$row['id'] ?>"
                                                         <?php echo $row['commentCount'] == 0 ? 'style="color: grey;"' : '' ?>>
                                                         <span class="fas fa-comments"></span></a> <small><?=$row['commentCount'] ?></small>
@@ -321,7 +321,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
             leantime.ideasController.initIdeaKanban(ideaStatusList);
             leantime.ideasController.initUserDropdown();
         <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
 
         <?php } ?>
 

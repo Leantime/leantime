@@ -26,7 +26,7 @@
                 </div>
                 <div class="form-group" id="descriptionEditor" style="display:none;">
                     <textarea name="description" rows="10" cols="80" id="ticketDescription"
-                              class="complexEditor"><?php echo htmlentities($ticket->description); ?></textarea><br/>
+                              class="complexEditor"><?php echo $ticket->description !== null ? htmlentities($ticket->description) : ''; ?></textarea><br/>
                 </div>
                 <input type="hidden" name="acceptanceCriteria" value=""/>
 
@@ -50,7 +50,7 @@
                     class="fa-solid fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
 
         <div class="row-fluid">
-        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="ticketModal">
+        <form method="post" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id; ?>" class="formModal">
             <input type="hidden" name="comment" value="1" />
             <?php
             $tpl->assign('formUrl', "" . BASE_URL . "/tickets/showTicket/" . $ticket->id . "");
@@ -335,7 +335,8 @@
 </div>
 
 <script>
-    leantime.generalController.initComplexEditor();
+
+    leantime.ticketsController.initTagsInput();
 
     jQuery(document).ready(function(){
         jQuery("select").chosen();
@@ -348,6 +349,7 @@
             e.stopPropagation();
             jQuery(this).hide();
             jQuery('#descriptionEditor').show();
+            leantime.editorController.initComplexEditor();
         }
     });
 

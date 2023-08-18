@@ -195,7 +195,16 @@ $projectHierarchy = $tpl->dispatchTplFilter(
 
 @once @push('scripts')
 <script>
-    jQuery('.projectSelectorTabs').tabs();
+    jQuery(document).ready(
+        function () {
+            leantime.menuController.initProjectSelector();
+            leantime.menuController.initLeftMenuHamburgerButton();
+            leantime.menuController.initProjectSelectorToggle();
+
+            jQuery('.projectSelectorTabs').tabs();
+        }
+    );
+
 
     let clientId = {{ !empty($currentClient) ? $currentClient : '-1' }};
 

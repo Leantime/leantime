@@ -48,7 +48,9 @@ namespace leantime\domain\controllers {
                 $wikiHeadlines = array();
             }
 
-            $this->tpl->assign("milestones", $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign("wikiHeadlines", $wikiHeadlines);
             $this->tpl->assign("article", $article);
             $this->tpl->displayPartial("wiki.articleDialog");
