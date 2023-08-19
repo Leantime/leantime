@@ -149,29 +149,26 @@
 .dataTable thead th.sorting:hover,
 .dataTable thead th.sorting_asc:hover,
 .dataTable thead th.sorting_desc:hover {
-    background: var(--col-content-bg);
+    background: var(--dropdown-link-hover-bg);
+    color:var(--dropdown-link-hover-color);
 
 }
 
 .dataTable thead th.sorting:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dc";
-    color:var(--neutral);
     font-size:var(--font-size-s);
 }
 
 .dataTable thead th.sorting_asc:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0de";
-    color:var(--primary-font-color);
 
 }
 
 .dataTable thead th.sorting_desc:after {
     font-family: FontAwesome;
-
     content: "\00a0\00a0\f0dd";
-    color:var(--primary-font-color);
 }
 
 .maincontentinner .table,
@@ -215,6 +212,7 @@
     background:var(--col-title-bg);
     padding: 10px 10px;
     font-weight:bold;
+    transition: all 0.2s ease-in-out 0s;
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -233,8 +231,6 @@
 
 .maincontentinner .table th.sorting_desc,
 .maincontentinner .table th.sorting_asc {
-    color: var(--primary-font-color);
-    background:var(--col-content-bg);
 }
 
 
