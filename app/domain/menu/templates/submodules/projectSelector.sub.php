@@ -33,7 +33,6 @@ use leantime\core\eventhelpers;
 
             <div class="row" style="margin:0px;">
                 <?php
-                $projectHierarchy = $tpl->get('allAssignedProjectsHierarchy') ?? false;
 
                 $numCol = 1;
 

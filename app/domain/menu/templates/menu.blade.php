@@ -159,9 +159,9 @@ $projectHierarchy = $tpl->dispatchTplFilter(
                             <span class="projectAvatar">
                                 <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $_SESSION['currentProject'] }}" />
                             </span>
-
-                            @include('menu::submodules.projectSelector')
                         </a>
+                        @include('menu::submodules.projectSelector')
+
                     </form>
                 </div>
             </li>

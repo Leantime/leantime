@@ -250,7 +250,7 @@
 
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li a:hover {
+.leftpanel .leftmenu .nav-tabs .projectselector > li a:hover {
     color:var(--dropdown-link-hover-color);
 }
 
