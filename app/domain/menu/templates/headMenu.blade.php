@@ -42,8 +42,8 @@
 
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="#/tickets/showTicket/{{ $onTheClick['id'] }}">
-                            {{ __('links.view_todo') }}
+                        <a href="#/tickets/showTicket/{{ $onTheClock['id'] }}">
+                            {!! __('links.view_todo') !!}
                         </a>
                     </li>
                     <li>
@@ -51,7 +51,7 @@
                             href="javascript:void(0);"
                             class="punchOut"
                             data-value="{{ $onTheClock['id'] }}"
-                        >{{ __('links.stop_timer') }}</a>
+                        >{!! __('links.stop_timer') !!}</a>
                     </li>
                 </ul>
 
@@ -81,15 +81,18 @@
 
     @endif
 
-    <li class="notifcationDropdown">
+    <li class="notificationDropdown">
 
         <a
             href='javascript:void(0);'
-            class='dropdown-toggle profileHandler notificationHandler'
+            class="dropdown-toggle profileHandler notificationHandler"
             data-toggle='dropdown'
             data-tippy-content='{{ __('popover.notifications') }}'
         >
-            <span class='notificationCounter'>{{ $newNotificationCount }}</span>
+            <span class="fa-solid fa-bell"></span>
+            @if($newNotificationCount>0)
+                <span class='notificationCounter'>{{ $newNotificationCount }}</span>
+            @endif
         </a>
 
         <div class='dropdown-menu' id='notificationsDropdown'>
