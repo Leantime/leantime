@@ -83,10 +83,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>" . $tpl->__("headlines.no_milestones") . "<br/>
-
-            <br />
-            <a href=\"#/tickets/editMilestone\" class=\"addCanvasLink btn btn-primary\">" . $tpl->__("links.add_milestone") . "</a></h4></div>";
+            <h4>" . $tpl->__("headlines.no_tickets") . "<br /></h4></div>";
         }
         ?>
         <div class="gantt-wrapper">
@@ -154,7 +151,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                 }else {
                     //If it has a milestone dependency, add milestone index
                     if ($mlst->milestoneid > 0) {
-                        $sortIndex = $lastMilestoneSortIndex[$mlst->milestoneid] . "." . ($mlst->sortIndex ?? 999);
+                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ). "." . ($mlst->sortIndex ?? 999);
                     } else {
                         $sortIndex = "999" . "." . ($mlst->sortIndex ?? 999);
                     }

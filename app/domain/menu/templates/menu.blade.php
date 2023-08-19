@@ -63,7 +63,7 @@ $projectHierarchy = $tpl->dispatchTplFilter(
                     @foreach ($menuStructure as $key => $menuItem)
                         @switch ($menuItem['type'])
                             @case('header')
-                                <li><a href="javascript:void(0);"><strong>{{ __($menuItem['title']) }}</strong></a></li>
+                                <li><a href="javascript:void(0);"><strong>{!! __($menuItem['title']) !!}</strong></a></li>
                                 @break
 
                             @case('separator')
@@ -79,16 +79,54 @@ $projectHierarchy = $tpl->dispatchTplFilter(
                                         class="active"
                                     @endif
                                 >
-                                    <a href="{!! BASE_URL . $menuItem['href'] !!}">{{ __($menuItem['title']) }}</a>
+                                    <a href="{!! BASE_URL . $menuItem['href'] !!}">{!! __($menuItem['title']) !!}</a>
                                 </li>
                                 @break
+                            @case('submenu')
+                                <li class="submenuToggle">
+                                    <a href="javascript:void(0);"
+                                        @if ( $menuItem['visual'] !== 'always' )
+                                            onclick="leantime.menuController.toggleSubmenu('{{ $menuItem['id'] }}')"
+                                        @endif
+                                       >
+                                        <i class="submenuCaret fa fa-angle-{{ $menuItem['visual'] == 'closed' ? 'right' : 'down' }}" id="submenu-icon-{{ $menuItem['id'] }}"></i>
+                                        <strong>{!! __($menuItem['title']) !!}</strong>
+                                    </a>
+                                </li>
+                                <ul style="display: {{ $menuItem['visual'] == 'closed' ? 'none' : 'block' }}" id="submenu-{{ $menuItem['id'] }}" class="submenu">
+                                    @foreach ($menuItem['submenu'] as $subkey => $submenuItem)
+                                        @switch ($submenuItem['type'])
+                                            @case('header')
+                                                <li class="title">
+                                                    <a href="javascript:void(0);">
+                                                        <strong>{!! __($submenuItem['title']) !!}</strong>
+                                                    </a>
+                                                </li>
+                                                @break
+                                            @case('item')
+                                                <li
+                                                    @if(
+                                                        $module == $submenuItem['module']
+                                                        && (!isset($submenuItem['active']) || in_array($action, $submenuItem['active']))
+                                                    )
+                                                        class='active'
+                                                    @endif
+                                                >
+                                                    <a href="{{ BASE_URL . $submenuItem['href'] }}">
+                                                        {!! __($submenuItem['title']) !!}
+                                                    </a>
+                                                </li>
+                                        @endswitch
+                                    @endforeach
+                                </ul>
+                            @break
                         @endswitch
                     @endforeach
 
                     @if ($login::userIsAtLeast($roles::$manager))
                         <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
                             <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ $_SESSION['currentProject'] }}">
-                                {{ $settingsLink['label'] }}
+                                {!! $settingsLink['label']  !!}
                             </a>
                         </li>
                     @endif

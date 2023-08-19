@@ -52,34 +52,9 @@ echo $tpl->displayNotification();
                     <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=$_SESSION['submenuToggle']["myProjectCalendarView"] == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
                 </select>
 
-                <div class="pull-right btn-group" style="margin-right:10px;">
-                    <form action="" method="get" id="searchForm">
-                        <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
-                        <input type="hidden" name="submitIncludeTasks" value="1" />
-                        <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
-                            echo "checked='checked'";
-                                                                                                                                      } ?>/>
-                    </form>
-                </div>
-
-
             </div>
 
         </div>
-
-        <?php
-        if (count($milestones) == 0) {
-            echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
-            echo"<div style='width:30%' class='svgContainer'>";
-            echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
-            echo"</div>";
-            echo"
-            <h4>" . $tpl->__("headlines.no_milestones") . "<br/>
-
-            <br />
-            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $tpl->__("links.add_milestone") . "</a></h4></div>";
-        }
-        ?>
         <div class="calendar-wrapper">
             <div id="calendar"></div>
         </div>

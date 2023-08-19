@@ -39,14 +39,12 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-           $searchResults= $this->ticketService->prepareTicketSearchArray($params);
+            $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+            array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($searchResults, "date");
-
-            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
-            $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
-
+            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
             $this->tpl->display('tickets.roadmap');
         }
 

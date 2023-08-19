@@ -5,7 +5,8 @@
     $sprints        = $tpl->get("sprints");
     $searchCriteria = $tpl->get("searchCriteria");
     $currentSprint  = $tpl->get("currentSprint");
-    $allTickets     = $tpl->get('allTickets');
+
+    $allTicketGroups     = $tpl->get('allTickets');
 
     echo $tpl->displayNotification();
 
@@ -62,7 +63,23 @@
                         <input type="hidden" name="quickadd" value="1"/>
                         <input type="submit" class="btn btn-default" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; margin-top:3px;  width:100px;"/>
                     </form>
-                    <table id="allTicketsTable" class="table display listStyleTable" style="width:100%">
+
+
+                    <?php foreach($allTicketGroups as $group) {?>
+
+                        <?php if($group['label'] != 'all') { ?>
+                            <h5 class="accordionTitle <?=$group['class']?>" id="accordion_link_<?=$group['id'] ?>">
+                                <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?=$group['id'] ?>');">
+                                    <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
+                                </a>
+                            </h5>
+                            <div class="simpleAccordionContainer" id="accordion_<?=$group['id'] ?>">
+                        <?php } ?>
+
+                        <?php $allTickets = $group['items']; ?>
+
+
+                        <table class="table display listStyleTable" style="width:100%">
 
                         <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
                         <thead>
@@ -71,12 +88,6 @@
 
                             <th style="width:20px" class="status-col"><?= $tpl->__("label.todo_status"); ?></th>
                             <th><?= $tpl->__("label.title"); ?></th>
-
-                            <th class="milestone-col"><?= $tpl->__("label.milestone"); ?></th>
-                            <th class="priority-col"><?= $tpl->__("label.priority"); ?></th>
-                            <th class="user-col"><?= $tpl->__("label.editor"); ?>.</th>
-                            <th class="sprint-col"><?= $tpl->__("label.sprint"); ?></th>
-                            <th class="tags-col"><?= $tpl->__("label.tags"); ?></th>
                         </tr>
 
                         <?php $tpl->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
@@ -105,25 +116,6 @@
 
                                 <td data-search="<?=$statusLabels[$row['status']]["name"]; ?>" data-order="<?=$tpl->e($row['headline']); ?>" >
                                     <a href="javascript:void(0);"><strong><?=$tpl->e($row['headline']); ?></strong></a></td>
-                                <td data-search="<?=$tpl->escape($row['milestoneHeadline']) ?>" data-order="<?=$tpl->escape($row['milestoneHeadline']) ?>"><?=$tpl->escape($row['milestoneHeadline']) ?></td>
-                                <td data-search="<?=$row['priority'] ? $priorities[$row['priority']] : $tpl->__("label.priority_unkown"); ?>" data-order="<?=$row['priority'] ? $priorities[$row['priority']] : $tpl->__("label.priority_unkown"); ?>"><?=$row['priority'] ? $priorities[$row['priority']] : $tpl->__("label.priority_unkown"); ?></td>
-                                <td data-search="<?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?>" data-order="<?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?>"><?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?></td>
-                                <td data-search="<?=$tpl->escape($row['sprintName']); ?>"><?=$tpl->escape($row['sprintName']); ?></td>
-                                <td data-search="<?=$row['tags'] ?>">
-                                    <?php if ($row['tags'] != '') {?>
-                                        <?php  $tagsArray = explode(",", $row['tags']); ?>
-                                        <div class='tagsinput readonly'>
-                                            <?php
-
-                                            foreach ($tagsArray as $tag) {
-                                                echo"<span class='tag'><span>" . $tag . "</span></span>";
-                                            }
-
-                                            ?>
-                                        </div>
-                                    <?php } ?>
-                                </td>
-
 
                                 <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                             </tr>
@@ -132,6 +124,12 @@
                         </tbody>
                         <?php $tpl->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
                     </table>
+
+                        <?php if($group['label'] != 'all') { ?>
+                            </div>
+                        <?php } ?>
+                    <?php } ?>
+
                 </div>
             </div>
             <div class="col-md-8 hidden-sm"  >

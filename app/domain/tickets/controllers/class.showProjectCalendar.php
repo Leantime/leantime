@@ -48,54 +48,12 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if (isset($_SESSION["usersettings.showMilestoneTasks"]) && $_SESSION["usersettings.showMilestoneTasks"] === true) {
-                $includeTasks = true;
-            } else {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
-            }
+            $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+            array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            if (isset($_GET['includeTasks']) && $_GET['includeTasks'] == "on") {
-                $includeTasks = true;
-                $_SESSION["usersettings.showMilestoneTasks"] = true;
-            } elseif (isset($_GET['submitIncludeTasks']) && !isset($_GET['includeTasks'])) {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
-            }
-
-
-
-            $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
-
-            $params["orderBy"] = "date";
-            $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
-
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
-            $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
-            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-            $this->tpl->assign('types', $this->ticketService->getTicketTypes());
-            $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
-
-            $this->tpl->assign('searchCriteria', $searchCriteria);
-            $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
-
-            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
-            $this->tpl->assign('futureSprints', $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]));
-
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
-            $this->tpl->assign('milestones', $allProjectMilestones);
-
-            $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
-            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
-
-            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
-            $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
             $this->tpl->display('tickets.calendar');
         }
 

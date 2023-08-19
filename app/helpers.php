@@ -70,3 +70,24 @@ if (! function_exists('view')) {
         return app()->make(\Illuminate\View\Factory::class);
     }
 }
+
+if (! function_exists('array_sort')) {
+    /**
+     * sort array of arrqays by value
+     *
+     * @param array $array
+     * @param string $sortyBy
+     * @return array
+     */
+    function array_sort($array, $sortyBy): array
+    {
+        $collection = collect($array);
+
+        $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
+
+        return $sorted->values()->all();
+
+    }
+}
+
+

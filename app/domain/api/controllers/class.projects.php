@@ -116,8 +116,6 @@ namespace leantime\domain\controllers {
 
             if (isset($params['id'])) {
                 $results = $this->projectService->patch($params['id'], $params);
-            } else {
-                echo "{status:failure, message: 'ID not set'}";
             }
 
             if (isset($params['patchModalSettings'])) {
