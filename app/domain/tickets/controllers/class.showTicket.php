@@ -98,8 +98,10 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
                 $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
 
-                $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-                $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+                 $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '',
+                 "type" => "milestone",
+                 "currentProject" => $_SESSION["currentProject"]
+                ]);
                 $this->tpl->assign('milestones', $allProjectMilestones);
                 $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 

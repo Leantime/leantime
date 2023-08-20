@@ -125,41 +125,43 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
             <?php if ($wikis != false && count($wikis) > 0) {?>
                 <div class="col-lg-12">
-                    <div class="maincontentinner">
+
                     <?php
 
                     if ($currentArticle && $currentArticle->id != null) { ?>
                     <div class="row">
+
                         <div class="col-md-3">
                             <div class="row stickyRow">
+                                    <div class="col-md-12" style="">
+                                        <div class="maincontentinner">
 
-                                <div class="col-md-12" style="border-right:1px solid var(--neutral);">
+                                            <h5 class="subtitle">Contents</h5>
+                                            <div id="article-toc-wrapper">
 
 
-                                    <h5 class="subtitle">Contents</h5>
-                                    <div id="article-toc-wrapper">
+                                            <?php
 
+                                            createTreeView($wikiHeadlines, 0, 0, -1, $tpl);
+                                            ?>
 
-                                        <?php
+                                            <?php /*
 
-                                        createTreeView($wikiHeadlines, 0, 0, -1, $tpl);
-                                        ?>
-
-                                        <?php /*
-
-                                   */?>
-                                    </div>
-                                    <?php if ($wikis != false && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
-                                        <div class="creationLinks">
-                                            <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
+                                       */?>
                                         </div>
-                                    <?php } ?>
+                                            <?php if ($wikis != false && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
+                                            <div class="creationLinks">
+                                                <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
+                                            </div>
+                                        <?php } ?>
 
-                                </div>
+                                        </div>
+
+                                    </div>
                             </div>
                         </div>
                         <div class="col-md-9" style="text-align: center">
-
+                            <div class="maincontentinner">
                             <div class="articleWrapper">
 
                                 <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
@@ -248,6 +250,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                 </div>
 
                             </div>
+                            </div>
 
                         </div>
                     </div>
@@ -271,7 +274,6 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                     </div>
                             </div>
                     <?php } ?>
-                </div>
                 </div>
 
 

@@ -45,7 +45,6 @@
 
 .dropdownTabs a:hover {
     text-decoration: none;
-    color:var(--dropdown-link-hover-color);
 }
 
 

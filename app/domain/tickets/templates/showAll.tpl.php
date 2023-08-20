@@ -77,7 +77,7 @@
         <?php foreach($allTicketGroups as $group) {?>
 
             <?php if($group['label'] != 'all') { ?>
-                <h5 class="accordionTitle" id="accordion_link_<?=$group['id'] ?>">
+                <h5 class="accordionTitle <?=$group['class']?>" id="accordion_link_<?=$group['id'] ?>">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?=$group['id'] ?>');">
                         <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
                     </a>
@@ -138,9 +138,9 @@
 
                         <td data-order="<?=$tpl->e($row['headline']); ?>">
                             <?php if ($row['dependingTicketId'] > 0) { ?>
-                                <small><a href="<?=$_SESSION['lastPage'] ?>/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a></small> //<br />
+                                <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a></small> //<br />
                             <?php } ?>
-                            <a class='ticketModal' href="<?=BASE_URL ?>/tickets/showTicket/<?=$tpl->e($row['id']); ?>"><?=$tpl->e($row['headline']); ?></a></td>
+                            <a class='ticketModal' href="#/tickets/showTicket/<?=$tpl->e($row['id']); ?>"><?=$tpl->e($row['headline']); ?></a></td>
 
 
 

@@ -32,9 +32,7 @@ namespace leantime\domain\controllers {
         public function get(array $params)
         {
 
-
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
-
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
             $this->tpl->assign('allKanbanColumns', $this->ticketService->getKanbanColumns());

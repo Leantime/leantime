@@ -250,7 +250,7 @@
 
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li a:hover {
+.leftpanel .leftmenu .nav-tabs .projectselector > li a:hover {
     color:var(--dropdown-link-hover-color);
 }
 
@@ -1015,7 +1015,7 @@
     right: 5px;
     height: 15px;
     width: 15px;
-    background: var(--dark-red);
+    background: var(--red);
     border-radius: 10px;
     line-height: 15px;
     text-align: center;

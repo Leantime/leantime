@@ -302,6 +302,37 @@ body .maincontent .ticketDropdown .priority-bg-5{
     color:var(--dark-grey-text-color);
 }
 
+
+body .maincontent .priority-text-1,
+body .maincontent .priority-text-1 a,
+body .maincontent .priority-text-1 a:link{
+    color:var(--dark-red);
+}
+
+body .maincontent .priority-text-2,
+body .maincontent .priority-text-2 a,
+body .maincontent .priority-text-2 a:link {
+    color:var(--red);
+}
+
+body .maincontent .priority-text-3,
+body .maincontent .priority-text-3 a,
+body .maincontent .priority-text-3 a:link {
+    color:var(--yellow);
+}
+
+body .maincontent .priority-text-4,
+body .maincontent .priority-text-4 a,
+body .maincontent .priority-text-4 a:link {
+    color:var(--green);
+}
+
+body .maincontent .priority-text-5,
+body .maincontent .priority-text-5 a,
+body .maincontent .priority-text-5 a:link {
+    color:var(--dark-grey);
+}
+
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
@@ -324,7 +355,6 @@ body .maincontent .ticketDropdown .priority-bg-5{
 .sortableTicketList .row-fluid {
     width:100%;
     display:flex;
-    overflow-x:auto;
     padding-bottom: 20px;
 }
 
@@ -353,6 +383,7 @@ body .maincontent .ticketDropdown .priority-bg-5{
     color: var(--kanban-col-title-color);
     padding: 10px 10px;
     font-size: var(--base-font-size);
+    padding-top:0px;
 }
 
 .kanbanLane a {

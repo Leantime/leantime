@@ -1405,60 +1405,10 @@ leantime.ticketsController = (function () {
             var columnIndex = false;
             var collapsedGroups = {};
 
-            if (groupBy != "") {
-                columnIndex = jQuery("#allTicketsTable thead").find("." + groupBy + "-col").index();
-            }
-
-
-            var rowGroupOption = false;
-            var orderFixedOption = false;
             var defaultOrder = [];
 
-            if (columnIndex !== false) {
-                rowGroupOption = {
-                    startRender: function (rows, group) {
 
-                        var collapsed = !!collapsedGroups[group];
-
-                        rows.nodes().each(function (r) {
-                            r.style.display = '';
-
-                            if (collapsed) {
-                                r.style.display = 'none';
-                            }});
-
-                        var totalColumns = jQuery("#allTicketsTable thead tr:first-child th").length;
-
-
-
-                        var link = '<h5 class="accordionTitle" id="accordion_link_' + columnIndex + '">' +
-                            '<a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_' + columnIndex + '">';
-
-                        if (collapsed) {
-                            link += '<i class="fa fa-angle-right"></i> ' + group + ' (' + rows.count() + ')';
-                        } else {
-                            link += '<i class="fa fa-angle-down"></i> ' + group + ' (' + rows.count() + ')';
-                        }
-                        link += '</a></h5>';
-
-                        var groupOutput = jQuery('<tr/>').append('<td colspan="' + totalColumns + '">' + link + '</td>').attr('data-name', group);
-
-
-                        return groupOutput;
-
-
-                    },
-                    dataSrc: function (row) {
-
-                        return row[columnIndex]["@data-search"];
-                    }
-                };
-
-                orderFixedOption = {"pre":[[columnIndex, 'asc']]};
-                defaultOrder = [[columnIndex, 'asc']];
-            }
-
-            var allTickets = jQuery("#allTicketsTable").DataTable({
+            var allTickets = jQuery(".listStyleTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
                     "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
@@ -1494,7 +1444,6 @@ leantime.ticketsController = (function () {
                 "displayLength":25,
                 "orderFixed": orderFixedOption,
                 "order": defaultOrder,
-                "rowGroup": rowGroupOption,
                 "columnDefs": [
                     { "visible": false, "targets": 2, "orderable": true },
                     { "visible": false, "targets": 3, "orderable": true },
@@ -1511,24 +1460,6 @@ leantime.ticketsController = (function () {
                     }
 
                 }
-            });
-
-
-
-
-            var asc = true;
-            if (groupBy != "") {
-                jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
-                    asc = !asc;
-                    var orderFixed = {"pre":[[columnIndex, asc === true ? 'asc' : 'desc']]};
-                    allTickets.order.fixed(orderFixed).draw();
-                });
-            }
-
-            jQuery('#allTicketsTable tbody').on('click', 'tr.dtrg-start', function () {
-                var name = jQuery(this).data('name');
-                collapsedGroups[name] = !collapsedGroups[name];
-                allTickets.draw(false);
             });
 
 
