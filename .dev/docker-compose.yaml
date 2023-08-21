@@ -1,7 +1,8 @@
 version: "3.9"
 networks:
   leantime:
-    external: false
+      external: false
+      driver: bridge
 volumes:
   mysql:
   s3ninja-data:
