@@ -24,6 +24,7 @@ class TicketsCest
         $I->type('test-tag,');
         $I->click('.mce-content-body');
         $I->switchToIFrame('#ticketDescription_ifr');
+        $I->waitForElementClickable('html', 60);
         $I->click("#tinymce");
         $I->type('Test Description');
         $I->switchToIFrame();
@@ -46,6 +47,7 @@ class TicketsCest
         $I->click('.mce-content-body');
         $I->waitForElementClickable('#ticketDescription_ifr', 60);
         $I->switchToIFrame('#ticketDescription_ifr');
+        $I->waitForElementClickable('html', 60);
         $I->click("#tinymce");
         $I->type('Test Description Edited');
         $I->switchToIFrame();

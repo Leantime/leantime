@@ -167,6 +167,7 @@ $bootstrapper = get_class(new class {
                     'dev-phpmyadmin-1' => false,
                     'dev-leantime-dev-1' => false,
                     'dev-chrome-1' => false,
+                    'dev-framework-1' => false,
                 ];
             }
 
@@ -198,10 +199,9 @@ $bootstrapper = get_class(new class {
                 '-T',
                 'db',
                 'mysql',
-                '-h127.0.0.1',
+                '-hlocalhost',
                 '-uroot',
                 '-pleantime',
-                '-P3307',
                 '-e',
                 'DROP DATABASE IF EXISTS leantime_test;',
             ],
@@ -215,10 +215,9 @@ $bootstrapper = get_class(new class {
                 '-T',
                 'db',
                 'mysql',
-                '-h127.0.0.1',
+                '-hlocalhost',
                 '-uroot',
                 '-pleantime',
-                '-P3307',
                 '-e',
                 'CREATE DATABASE IF NOT EXISTS leantime_test; GRANT ALL PRIVILEGES ON leantime_test.* TO \'leantime\'@\'%\'; FLUSH PRIVILEGES;',
             ],

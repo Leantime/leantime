@@ -12,16 +12,3 @@ services:
       MYSQL_DATABASE: leantime_test
     ports:
       - 3307:3306
-  chrome:
-    image: selenium/standalone-chrome:latest
-    hostname: chrome
-    networks:
-      - leantime
-    privileged: true
-    shm_size: 2g
-  framework:
-      build: .
-      networks:
-        - leantime
-      depends_on:
-        - chrome

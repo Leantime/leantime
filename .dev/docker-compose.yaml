@@ -37,15 +37,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql:rw
     healthcheck:
-      test: [
-        "CMD",
-        'mysqladmin',
-        'ping',
-        '-h',
-        'localhost',
-        '-u$$MYSQL_USER',
-        '-p$$MYSQL_PASSWORD'
-      ]
+      test: "mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1'"
       interval: 5s
       timeout: 5s
       retries: 20
@@ -75,5 +67,17 @@ services:
       - leantime
     volumes:
       - s3ninja-data:/home/sirius/data
-
+  chrome:
+    image: selenium/standalone-chrome:latest
+    hostname: chrome
+    networks:
+      - leantime
+    privileged: true
+    shm_size: 2g
+  framework:
+    build: .
+    networks:
+      - leantime
+    depends_on:
+      - chrome
 
