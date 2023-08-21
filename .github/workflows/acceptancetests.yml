@@ -17,6 +17,8 @@ jobs:
         if: runner.os == 'macos'
         run: |
           brew install docker
+          brew install colima
+          colima delete
           colima start
       
       - uses: actions/checkout@v3
