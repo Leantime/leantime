@@ -44,7 +44,7 @@ class TicketsCest
         $I->amOnPage('/tickets/showKanban#/tickets/showTicket/10');
         $I->waitForElementVisible(".main-title-input", 30);
         $I->click('.mce-content-body');
-        $I->waitForElement('#ticketDescription_ifr', 60);
+        $I->waitForElementClickable('#ticketDescription_ifr', 60);
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->click("#tinymce");
         $I->type('Test Description Edited');

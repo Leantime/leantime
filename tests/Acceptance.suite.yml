@@ -9,6 +9,7 @@ modules:
   enabled:
     - WebDriver:
         url: 'https://127.0.0.1:8090'
+        host: '127.0.0.1'
         browser: chrome
         wait: 10
         log_js_errors: true
