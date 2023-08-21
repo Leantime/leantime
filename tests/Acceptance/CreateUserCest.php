@@ -31,6 +31,7 @@ class CreateUserCest
         $I->fillField('#department', 'Testing');
         $I->click('Invite User');
         $I->waitForElement('.growl', 60);
+        $I->wait(2);
         $I->see('New user invited successfully');
     }
 

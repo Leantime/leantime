@@ -20,7 +20,6 @@ modules:
               "--allow-insecure-localhost",
               "--headless",
               "--window-size=1920,1080",
-              "--no-sandbox",
               "--disable-gpu",
               "--ignore-certificate-errors",
             ]
