@@ -29,6 +29,7 @@ namespace leantime\domain\models {
         public $url;
         public $editFrom;
         public $timeFrom;
+        public $editTo;
         public $timeTo;
         public $dependingTicketId;
         public $parentHeadline;

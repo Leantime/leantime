@@ -18,15 +18,18 @@ class TicketsCest
         $I->wantTo('Create a ticket');
 
         $I->amOnPage('/tickets/showKanban#/tickets/newTicket');
-        $I->waitForElementVisible('.main-title-input', 30);
-        $I->fillField('.main-title-input', 'Test Ticket');
+        $I->waitForElementVisible(".main-title-input", 30);
+        $I->fillField(["class" => "main-title-input"], 'Test Ticket');
         $I->click('#tags_tagsinput');
         $I->type('test-tag,');
         $I->click('.mce-content-body');
-        $I->click('#ticketDescription_ifr');
+        $I->switchToIFrame('#ticketDescription_ifr');
+        $I->click("#tinymce");
         $I->type('Test Description');
+        $I->switchToIFrame();
         $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 30);
         $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
+        $I->waitForElement('.growl', 60);
         $I->seeInDatabase('zp_tickets', [
             'id' => 10,
             'headline' => 'Test Ticket',
@@ -39,11 +42,13 @@ class TicketsCest
         $I->wantTo('Edit a ticket');
 
         $I->amOnPage('/tickets/showKanban#/tickets/showTicket/10');
-        $I->waitForElementClickable('.nyroModalCont .mce-content-body', 60);
+        $I->waitForElementVisible(".main-title-input", 30);
         $I->click('.mce-content-body');
         $I->waitForElement('#ticketDescription_ifr', 60);
-        $I->click('#ticketDescription_ifr');
+        $I->switchToIFrame('#ticketDescription_ifr');
+        $I->click("#tinymce");
         $I->type('Test Description Edited');
+        $I->switchToIFrame();
         $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 30);
         $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
         $I->waitForElement('.growl', 60);

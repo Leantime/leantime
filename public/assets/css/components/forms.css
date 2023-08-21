@@ -73,7 +73,11 @@ body div.tagsinput span.tag {
 }
 
 div.tagsinput span.tag {
-    font-size:var(--font-size-s);
+    font-size:var(--font-size-m);
+}
+
+div.tagsinput span.tag a {
+    vertical-align: text-bottom;
 }
 
 select {
@@ -545,8 +549,9 @@ select,
     min-height: 29px;
 }
 
-.row-fluid.marginBottom {
-    margin-bottom:30px;
+.row-fluid.marginBottom,
+.row.marginBottom{
+    margin-bottom:15px;
 }
 
 .marginBottomMd {
