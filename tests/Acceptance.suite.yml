@@ -11,14 +11,14 @@ modules:
         url: 'https://127.0.0.1:8090'
         host: '127.0.0.1'
         browser: chrome
-        wait: 10
+        wait: 20
         log_js_errors: true
         capabilities:
           acceptInsecureCerts: true
           chromeOptions:
             args: [
               "--allow-insecure-localhost",
-              "--headless",
+              #"--headless",
               "--window-size=1920,1080",
               "--no-sandbox",
               "--disable-gpu",

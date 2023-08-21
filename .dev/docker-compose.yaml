@@ -75,5 +75,17 @@ services:
       - leantime
     volumes:
       - s3ninja-data:/home/sirius/data
-
+  chrome:
+    image: selenium/standalone-chrome:latest
+    hostname: chrome
+    networks:
+      - leantime
+    privileged: true
+    shm_size: 2g
+  framework:
+    build: .
+    networks:
+      - leantime
+    depends_on:
+      - chrome
 
