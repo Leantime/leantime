@@ -24,6 +24,8 @@ class TicketsCest
         $I->type('test-tag,');
         $I->click('.mce-content-body');
         $I->switchToIFrame('#ticketDescription_ifr');
+        $I->waitForElementVisible("#tinymce", 60);
+        $I->wait(5);
         $I->click("#tinymce");
         $I->type('Test Description');
         $I->switchToIFrame();
@@ -33,7 +35,9 @@ class TicketsCest
         $I->seeInDatabase('zp_tickets', [
             'id' => 10,
             'headline' => 'Test Ticket',
+            'description' => "<p>Test Description</p>"
         ]);
+
     }
 
     #[Depends('createTicket')]
@@ -46,12 +50,15 @@ class TicketsCest
         $I->click('.mce-content-body');
         $I->waitForElementClickable('#ticketDescription_ifr', 60);
         $I->switchToIFrame('#ticketDescription_ifr');
+        $I->waitForElementVisible("#tinymce", 60);
+        $I->wait(5);
         $I->click("#tinymce");
         $I->type('Test Description Edited');
         $I->switchToIFrame();
         $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 30);
         $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
         $I->waitForElement('.growl', 60);
+        $I->wait(2);
         $I->see('To-Do was saved successfully');
     }
 }
