@@ -18,7 +18,7 @@ modules:
           chromeOptions:
             args: [
               "--allow-insecure-localhost",
-              #"--headless",
+              "--headless",
               "--window-size=1920,1080",
               "--no-sandbox",
               "--disable-gpu",

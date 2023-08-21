@@ -270,12 +270,14 @@
                                                                     <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$tpl->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
 
                                                                     <?php
-
-                                                                    foreach ($milestones[$row['projectId']] as $milestone) {
-                                                                        echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
-                                                                        echo"</li>";
-                                                                    }?>
+                                                                    if(isset($milestones[$row['projectId']])){
+                                                                        foreach ($milestones[$row['projectId']] as $milestone) {
+                                                                            echo"<li class='dropdown-item'>
+                                                                                <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
+                                                                            echo"</li>";
+                                                                        }
+                                                                    }
+                                                                    ?>
                                                                 </ul>
                                                             </div>
 
