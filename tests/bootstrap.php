@@ -61,7 +61,7 @@ $bootstrapper = get_class(new class {
     {
         $this->startDevEnvironment();
         $this->createDatabase();
-        //$this->startSelenium();
+        $this->startSelenium();
         $this->createStep('Starting Codeception Testing Framework');
     }
 
@@ -166,8 +166,6 @@ $bootstrapper = get_class(new class {
                     'dev-s3ninja-1' => false,
                     'dev-phpmyadmin-1' => false,
                     'dev-leantime-dev-1' => false,
-                    'dev-chrome-1' => false,
-                    'dev-framework-1' => false,
                 ];
             }
 
