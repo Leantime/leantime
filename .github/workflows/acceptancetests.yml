@@ -10,8 +10,8 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
-    container: ubuntu
+    runs-on: macos-latest
+
     steps:
     - uses: actions/checkout@v3
 
