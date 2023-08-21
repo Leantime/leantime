@@ -37,15 +37,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql:rw
     healthcheck:
-      test: [
-        "CMD",
-        'mysqladmin',
-        'ping',
-        '-h',
-        'localhost',
-        '-u$$MYSQL_USER',
-        '-p$$MYSQL_PASSWORD'
-      ]
+      test: "mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1'"
       interval: 5s
       timeout: 5s
       retries: 20
