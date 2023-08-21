@@ -222,7 +222,6 @@ class template
             function ($app) {
                 $viewFactory = $app->make(\Illuminate\View\Factory::class);
                 array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['tpl.php', 'sub.php', 'inc.php']);
-
                 $viewFactory->setContainer($app);
                 return $viewFactory;
             }
@@ -334,21 +333,20 @@ class template
         $this->vars[$name] = $value;
     }
 
-        /**
-         * setNotification - assign errors to the template
-         *
-         * @param  string $msg
-         * @param  string $type
-         * @param  string $event_id as a string for further identification
-         * @return string
-         */
-        public function setNotification(string $msg, string $type, string $event_id = ''): void
-        {
-
-            $_SESSION['notification'] = $msg;
-            $_SESSION['notifcationType'] = $type;
-            $_SESSION['event_id'] = $event_id;
-        }
+    /**
+     * setNotification - assign errors to the template
+     *
+     * @param  string $msg
+     * @param  string $type
+     * @param  string $event_id as a string for further identification
+     * @return string
+     */
+    public function setNotification(string $msg, string $type, string $event_id = ''): void
+    {
+        $_SESSION['notification'] = $msg;
+        $_SESSION['notifcationType'] = $type;
+        $_SESSION['event_id'] = $event_id;
+    }
 
     /**
      * getTemplatePath - Find template in custom and src directories
@@ -383,6 +381,22 @@ class template
         }
 
         throw new \Exception("Template $fullpath not found");
+    }
+
+    /**
+     * gives HTMX response
+     *
+     * @param string $view     The blade view path.
+     * @param string $fragment The fragment key.
+     * @return never
+     */
+    public function displayFragment(string $view, string $fragment = ''): never
+    {
+        $this->viewFactory->share(['tpl' => $this]);
+        echo $this->viewFactory
+            ->make($view, $this->vars)
+            ->fragmentIf(! empty($fragment), $fragment);
+        exit;
     }
 
     /**

@@ -27,7 +27,7 @@ if (! function_exists('dd')) {
     function dd(...$args): never
     {
         echo sprintf('<pre>%s</pre>', var_export($args, true));
-        die(1);
+        exit;
     }
 }
 

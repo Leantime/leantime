@@ -31,11 +31,15 @@ class IncomingRequest extends Request
     /**
      * Sets the request destination from the path
      *
-     * @param string $requestUri
+     * @param ?string $requestUri
      * @return void
      */
-    protected function setRequestDest(string $requestUri = null): void
+    protected function setRequestDest(?string $requestUri = null): void
     {
+        $this->query->remove('act');
+        $this->query->remove('id');
+        $this->query->remove('request_parts');
+
         $requestUri ??= $this->getPathInfo();
         preg_match_all('#\/([^\/.]+)#', $requestUri, $uriParts);
         $uriParts = $uriParts[1] ?? array_map('ltrim', $uriParts[0] ?? [], '/');
@@ -53,11 +57,13 @@ class IncomingRequest extends Request
             default:
                 $act = join('.', [$uriParts[0], $uriParts[1]]);
                 $id = $uriParts[2];
+                isset($uriParts[3]) && $request_parts = join('.', array_slice($uriParts, 3));
                 break;
         };
 
-        isset($act) && $this->query->set('act', $act);
+        isset($act) && $this->query->set('act', str_replace('-', '', $act));
         isset($id) && $this->query->set('id', $id);
+        isset($request_parts) && $this->query->set('request_parts', $request_parts);
     }
 
     /**
@@ -118,7 +124,7 @@ class IncomingRequest extends Request
         $method = strtoupper($method);
 
         if ($method == 'PATCH') {
-            parse_str($this->request->getContent(), $patch_vars);
+            parse_str($this->getContent(), $patch_vars);
         }
 
         return match ($method) {

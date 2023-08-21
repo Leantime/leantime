@@ -4,6 +4,7 @@ module.exports = {
   prefix: 'tw-', // temporary prefix until bootstrap is removed
   theme: {
     extend: {},
+    colors: {}
   },
   plugins: [],
 }

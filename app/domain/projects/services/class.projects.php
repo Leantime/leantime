@@ -896,7 +896,6 @@ namespace leantime\domain\services {
 
         public function getProjectSetupChecklist($projectId)
         {
-
             $progressSteps = array(
                 "define" => array(
                     "title" => "label.define",
@@ -973,21 +972,39 @@ namespace leantime\domain\services {
             }
 
             //Add overrides
-            $stepsCompleted = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".stepsComplete");
+            $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete");
+
+            /*
+            if ($stepsCompleted !== false) {
+                $stepsCompleted = unserialize($stepsCompleted);
+
+                foreach ($progressSteps as $key => $step) {
+                    $tasks = data_get($step, 'tasks.*.status', []);
+                    $allDone = ! in_array('', $tasks) ? true : false;
+
+                    data_set($progressSteps, "$key.status", "done");
+                }
+            }
+            */
 
             if ($stepsCompleted !== false) {
                 $stepsCompleted = unserialize($stepsCompleted);
+
                 foreach ($progressSteps as $key => $step) {
+
                     $progressSteps[$key]["tasks"] = $step['tasks'];
 
                     $stepCompleted = true;
                     foreach ($progressSteps[$key]["tasks"] as $taskKey => $task) {
                         if (isset($stepsCompleted[$taskKey])) {
                             $progressSteps[$key]["tasks"][$taskKey]['status'] = "done";
-                        } elseif ($progressSteps[$key]["tasks"][$taskKey]['status'] == 'done') {
-                        } else {
-                            $stepCompleted = false;
                         }
+
+                        if ($progressSteps[$key]["tasks"][$taskKey]['status'] == 'done') {
+                            continue;
+                        }
+
+                        $stepCompleted = false;
                     }
 
                     if ($stepCompleted) {
@@ -999,20 +1016,22 @@ namespace leantime\domain\services {
             $halfStep = (1 / count($progressSteps)) / 2 * 100;
             $percentDone = $position = 0;
             $progressSteps = array_map(function ($step) use (&$percentDone, &$position, $halfStep, $progressSteps) {
-                $step['positionLeft'] = ($position++ / count($progressSteps) * 100) - $halfStep;
+                $step['positionLeft'] = ($position++ / count($progressSteps) * 100) + $halfStep;
                 $step['stepType'] = '';
 
                 if ($step['status'] == 'done') {
                     $percentDone += (1 / count($progressSteps) * 100);
                     $step['stepType'] = 'complete';
-                } elseif ($step['positionLeft'] == $percentDone) {
+                } elseif ($step['positionLeft'] == ($percentDone + $halfStep)) {
                     $step['stepType'] = 'current';
                 }
 
                 return $step;
             }, $progressSteps);
-            // Reduce half step to allow for spacing
-            $percentDone -= $halfStep;
+
+            $percentDone = $percentDone > 0
+                ? $percentDone - $halfStep // Reduce half step to allow for spacing
+                : $percentDone + $halfStep; // Add half step so progress bar looks started
 
             return [
                 $progressSteps,
@@ -1022,19 +1041,21 @@ namespace leantime\domain\services {
 
         public function updateProjectProgress($stepsComplete, $projectId)
         {
-
-            $stepsDoneArray = array();
-
-            if ($stepsComplete != '') {
-                //Steps complete comes in as serialized js string: key=on&key2=on etc. Only on keys will be submitted
-                parse_str($stepsComplete, $stepsDoneArray);
-                $this->settingsRepo->saveSetting(
-                    "projectsettings." . $projectId . ".stepsComplete",
-                    serialize($stepsDoneArray)
-                );
-            } else {
+            if (empty($stepsComplete)) {
                 return;
             }
+
+            $stepsDoneArray = [];
+            if (is_string($stepsComplete)) {
+                parse_str($stepsComplete, $stepsDoneArray);
+            } else {
+                $stepsDoneArray = $stepsComplete;
+            }
+
+            $this->settingsRepo->saveSetting(
+                "projectsettings.$projectId.stepsComplete",
+                serialize($stepsDoneArray)
+            );
         }
 
         public function updateProjectSorting($params)

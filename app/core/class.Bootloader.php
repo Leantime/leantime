@@ -458,9 +458,16 @@ class Bootloader
      */
     private function bindRequest(): void
     {
+        $headers = array_map(
+            fn ($val) => in_array($val, ['false', 'true'])
+                ? filter_var($val, FILTER_VALIDATE_BOOLEAN)
+                : $val,
+            getallheaders()
+        );
+
         $incomingRequest = $this->app->instance(IncomingRequest::class, match (true) {
-            $_SERVER['HX-Request'] ?? false => HtmxRequest::createFromGlobals(),
-            $_SERVER['HTTP_X_API_KEY'] ?? false => ApiRequest::createFromGlobals(),
+            $headers['Hx-Request'] ?? false => HtmxRequest::createFromGlobals(),
+            $headers['X_API_KEY'] ?? false => ApiRequest::createFromGlobals(),
             default => IncomingRequest::createFromGlobals(),
         });
 

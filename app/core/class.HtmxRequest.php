@@ -23,7 +23,7 @@ class HtmxRequest extends IncomingRequest
             return;
         }
 
-        $this->setRequestDest(substr($path, 4));
+        $this->setRequestDest(substr($path, 3));
     }
 
     /**
@@ -52,7 +52,7 @@ class HtmxRequest extends IncomingRequest
     public function isBoosted(): bool
     {
         return filter_var(
-            $this->headers->get('HX-Boost', 'false'),
+            $this->headers->get('Hx-Boost', 'false'),
             FILTER_VALIDATE_BOOLEAN
         );
     }
@@ -64,7 +64,7 @@ class HtmxRequest extends IncomingRequest
      */
     public function getReferrer(): string
     {
-        return $this->headers->get('HX-Current-URL', '');
+        return $this->headers->get('Hx-Current-URL', '');
     }
 
     /**
@@ -75,7 +75,7 @@ class HtmxRequest extends IncomingRequest
     public function isHistoryRestoreRequest(): bool
     {
         return filter_var(
-            $this->headers->get('HX-History-Restore-Request', 'false'),
+            $this->headers->get('Hx-History-Restore-Request', 'false'),
             FILTER_VALIDATE_BOOLEAN
         );
     }
@@ -87,7 +87,7 @@ class HtmxRequest extends IncomingRequest
      */
     public function getPromptResponse(): string
     {
-        return $this->headers->get('HX-Prompt', '');
+        return $this->headers->get('Hx-Prompt', '');
     }
 
     /**
@@ -97,7 +97,7 @@ class HtmxRequest extends IncomingRequest
      */
     public function getTarget(): string
     {
-        return $this->headers->get('HX-Target', '');
+        return $this->headers->get('Hx-Target', '');
     }
 
     /**
@@ -107,7 +107,7 @@ class HtmxRequest extends IncomingRequest
      */
     public function getTriggerName(): string
     {
-        return $this->headers->get('HX-Trigger-Name');
+        return $this->headers->get('Hx-Trigger-Name');
     }
 
     /**
@@ -117,6 +117,6 @@ class HtmxRequest extends IncomingRequest
      */
     public function getTriggerId(): string
     {
-        return $this->headers->get('HX-Trigger', '');
+        return $this->headers->get('Hx-Trigger', '');
     }
 }

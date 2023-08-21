@@ -2,6 +2,7 @@
 
 namespace leantime\core;
 
+use Illuminate\Support\Str;
 use Exception;
 
 /**
@@ -98,38 +99,53 @@ class frontcontroller
         }
 
         // Check If Route Exists And Fetch Right Route Based On Priority
-        $routeExists = false;
-        foreach (['custom/plugins', 'custom/domain', 'plugins', 'domain'] as $path) {
-            $fullpath = APP_ROOT . "/app/$path/$moduleName/$controllerType/class.$actionName.php";
+        $paths = collect(['custom/domain', 'app/plugins', 'app/domain'])
+            ->crossJoin(['class.', '']);
+
+        $goodPath = '';
+
+        $dumper = [];
+
+        $paths->first(function ($combination) use ($moduleName, $controllerType, $actionName, $ltInstalledandUpdated, $pluginService, &$controllerNs, &$goodPath, &$dumper) {
+            [$path, $prefix] = $combination;
+
+            $fullpath = APP_ROOT . "/$path/$moduleName/$controllerType/{$prefix}$actionName.php";
+
+            $dumper[] = $fullpath;
 
             if (!file_exists($fullpath)) {
-                continue;
+                return false;
             }
 
-            if ($path == 'plugins') {
-                if (! $ltInstalledandUpdated || ! $pluginService->isPluginEnabled($moduleName)) {
-                    break;
+            if ($path == 'app/plugins') {
+                if (!$ltInstalledandUpdated || !$pluginService->isPluginEnabled($moduleName)) {
+                    return false;
                 }
 
                 $controllerNs = 'plugins';
             }
 
-            $routeExists = true;
-            require $fullpath;
-            break;
-        }
+            $goodPath = $fullpath;
+            return true;
+        });
 
-        if (!$routeExists) {
+        if (empty($goodPath)) {
             self::redirect(BASE_URL . "/errors/error404", 404);
             return;
         }
 
+        require $goodPath;
+
         // Execute The Route
         try {
-            $classname = "leantime\\$controllerNs\\$controllerType\\$actionName";
-
             //Setting default response code to 200, can be changed in controller
             self::setResponseCode(200);
+
+            $classname = "leantime\\$controllerNs\\$controllerType\\"
+                . ($controllerType == 'hxcontrollers'
+                    ? Str::studly($actionName)
+                    : $actionName
+                );
 
             if (class_exists($classname)) {
                 app()->make($classname);
@@ -192,7 +208,6 @@ class frontcontroller
     public static function getModuleName(string $completeName = null): string
     {
         $completeName ??= self::getCurrentRoute();
-
         $actionParts = explode(".", empty($completeName) ? self::getCurrentRoute() : $completeName);
 
         if (is_array($actionParts)) {

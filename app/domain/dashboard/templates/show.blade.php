@@ -49,52 +49,10 @@
 
                 <br/>
 
-                <strong>Project Checklist</strong><br/><br/>
-
-                <form name="progressForm" id="progressForm">
-                    <div class="projectSteps">
-                        <div class="progressWrapper">
-                            <div class="progress">
-                                <div
-                                    class="progress-bar progress-bar-success"
-                                    role="progressbar"
-                                    aria-valuenow="0"
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                    style="width: {{ $percentDone }}%"
-                                ><span class="sr-only">{{ $percentDone }}%</span></div>
-                            </div>
-
-                            @foreach ($progressSteps as $step)
-                                <div class="step {{ $step['stepType'] }}" style="left: {{ $step['positionLeft'] }}%;">
-                                    <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
-                                        <span class="innerCircle"></span>
-                                        <span class="title">
-                                            @if ($step['status'] == 'done')
-                                                <i class="fa fa-check"></i>
-                                            @endif
-                                            {{ __($step['title']) }}
-                                            <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        @foreach ($step['tasks'] as $key => $task)
-                                            <li @if ($task['status'] == 'done') class="done" @endif>
-                                                <input
-                                                    type="checkbox"
-                                                    name="{{ $key }}"
-                                                    id="progress_{{ $key }}"
-                                                    @if ($task['status'] == 'done') checked @endif
-                                                />
-                                                <label for="progress_{{ $key }}">{{ __($task['title'] ?? '') }}</label>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </form>
+                @include('projects::partials.checklist', [
+                    'progressSteps' => $progressSteps,
+                    'percentDone' => $percentDone
+                ])
 
                 <br/><br/>
                 <strong>{{ __('label.background') }}</strong><br/>
@@ -627,6 +585,7 @@
             }
         });
 
+        /** Deprecated by HTMX
         jQuery('.progressWrapper .dropdown-menu li input').change(function (e) {
             if (jQuery(this).parent().hasClass('done')) {
                 jQuery(this).parent().removeClass('done');
@@ -684,6 +643,7 @@
             var percentComplete = stepsComplete / totalSteps * 100 - halfSteps;
             jQuery(".projectSteps .progress .progress-bar").css("width", percentComplete+"%");
         });
+        **/
 
         jQuery(document).on('click', '.progressWrapper .dropdown-menu', function (e) {
             e.stopPropagation();
