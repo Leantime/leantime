@@ -1,3 +1,4 @@
+@php use leantime\domain\models\auth\roles; @endphp
 @dispatchEvent('beforeHeadMenu')
 
 <ul class="headmenu">
@@ -24,7 +25,7 @@
         >{!! __("menu.my_portfolio") !!}</a>
     </li>
 
-    @if ($login::userIsAtLeast($roles::$editor, true))
+    @if ($login::userIsAtLeast(roles::$editor, true))
 
         @if ($onTheClock !== false|null)
 
@@ -133,7 +134,7 @@
                         >
                             <a href="{{ $notif['url'] }}">
                                 <span class="notificationProfileImage">
-                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}" />
+                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
                                 <span class="notificationTitle">{{ $notif['message'] }}</span>
                                 <span class="notificationDate">@formatDate($notif['datetime'])</span>
@@ -161,7 +162,7 @@
                         >
                             <a href="{{ $notif['url'] }}">
                                 <span class="notificationProfileImage">
-                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}" />
+                                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
                                 <span class="notificationTitle">{{ $notif['message'] }}</span>
                                 <span class="notificationDate">@formatDate($notif['datetime']) @formatTime($notif['datetime'])</span>
@@ -175,7 +176,7 @@
 
     </li>
 
-    @if ($login::userIsAtLeast($roles::$manager))
+    @if ($login::userIsAtLeast(roles::$manager))
 
         <li class="appsDropdown">
 
@@ -185,7 +186,8 @@
                 data-toggle="dropdown"
                 data-tippy-content="{{ __('popover.company') }}"
             >
-                <img src="{{ BASE_URL }}/dist/images/svg/apps-grid-icon.svg" style="width:13px; vertical-align: middle;" />
+                <img src="{{ BASE_URL }}/dist/images/svg/apps-grid-icon.svg"
+                     style="width:13px; vertical-align: middle;"/>
             </a>
 
             <ul class="dropdown-menu">
@@ -200,7 +202,7 @@
                     <a href="{{ BASE_URL }}/projects/showAll">{!! __('menu.all_projects') !!}</a>
                 </li>
 
-                @if ($login::userIsAtLeast($roles::$admin))
+                @if ($login::userIsAtLeast(roles::$admin))
                     <li
                         @if (str_starts_with($activePath, 'clients'))
                             class="active"
@@ -217,7 +219,7 @@
                         <a href="{{ BASE_URL }}/users/showAll">{!! __('menu.all_users') !!}</a>
                     </li>
 
-                    @if ($login::userIsAtLeast($roles::$owner))
+                    @if ($login::userIsAtLeast(roles::$owner))
                         <li class="nav-header border">{!! __('label.administration') !!}</li>
 
                         <li
@@ -260,7 +262,7 @@
                     class="dropdown-toggle profileHandler"
                     data-toggle="dropdown"
                 >
-                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" class="profilePicture" />
+                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" class="profilePicture"/>
                     <i class="fa fa-caret-down" aria-hidden="true"></i>
                 </a>
 
@@ -269,15 +271,15 @@
                     @dispatchEvent('afterUserinfoMenuOpen')
 
                     <li><a href="{{ BASE_URL }}/users/editOwn/">
-                        {!! __('menu.my_profile') !!}
-                    </a></li>
+                            {!! __('menu.my_profile') !!}
+                        </a></li>
 
                     <li class="nav-header border">{{ __('menu.help_support') }}</li>
 
                     <li><a
-                        href="javascript:void(0);"
-                        onclick="leantime.helperController.showHelperModal('{{ __($modal) }}', 300, 500)"
-                    >{!! __('menu.what_is_this_page') !!}</a></li>
+                            href="javascript:void(0);"
+                            onclick="leantime.helperController.showHelperModal('{{ __($modal) }}', 300, 500)"
+                        >{!! __('menu.what_is_this_page') !!}</a></li>
 
                     <li><a href="https://docs.leantime.io" target="_blank">{!! __('menu.knowledge_base') !!}</a></li>
 
@@ -305,42 +307,44 @@
 
 @dispatchEvent('afterHeadMenu')
 
-@once @push('scripts')
-    <script>
-        function toggleNotificationTabs(active) {
-            jQuery(".notifcationTabs").removeClass("active");
-            jQuery('#'+active+'ListLink').addClass("active");
-            jQuery('.notifcationViewLists').hide();
-            jQuery('#'+active+'List').show();
-        }
+@once
+    @push('scripts')
+        <script>
+            function toggleNotificationTabs(active) {
+                jQuery(".notifcationTabs").removeClass("active");
+                jQuery('#' + active + 'ListLink').addClass("active");
+                jQuery('.notifcationViewLists').hide();
+                jQuery('#' + active + 'List').show();
+            }
 
-        jQuery(document).ready(function () {
-            jQuery('.notificationHandler').on('click', function () {
-                jQuery.ajax(
-                    {
-                        type: 'PATCH',
-                        url: leantime.appUrl + '/api/notifications',
-                        data: {
-                            id: 'all',
-                            action: 'read'
+            jQuery(document).ready(function () {
+                jQuery('.notificationHandler').on('click', function () {
+                    jQuery.ajax(
+                        {
+                            type: 'PATCH',
+                            url: leantime.appUrl + '/api/notifications',
+                            data: {
+                                id: 'all',
+                                action: 'read'
+                            }
                         }
-                    }
-                ).done(function () {
-                    jQuery(".notifcationViewLists li.new").removeClass("new");
-                    jQuery(".notificationCounter").fadeOut();
+                    ).done(function () {
+                        jQuery(".notifcationViewLists li.new").removeClass("new");
+                        jQuery(".notificationCounter").fadeOut();
+                    })
+                });
+
+                jQuery('.notificationDropdown .dropdown-menu').on('click', function (e) {
+                    e.stopPropagation();
+                });
+
+                jQuery('notificationsDropdown li').click(function () {
+                    const url = jQuery(this).data('url');
+                    const id = jQuery(this).data('id');
+
+                    window.location.href = url;
                 })
             });
-
-            jQuery('.notificationDropdown .dropdown-menu').on('click', function (e) {
-                e.stopPropagation();
-            });
-
-            jQuery('notificationsDropdown li').click(function () {
-                const url = jQuery(this).data('url');
-                const id = jQuery(this).data('id');
-
-                window.location.href = url;
-            })
-        });
-    </script>
-@endpush @endonce
+        </script>
+    @endpush
+@endonce

@@ -10,6 +10,8 @@ modules:
     - WebDriver:
         url: 'https://127.0.0.1:8090'
         browser: chrome
+        wait: 10
+        log_js_errors: true
         capabilities:
           acceptInsecureCerts: true
           chromeOptions:
@@ -20,7 +22,7 @@ modules:
               "--ignore-certificate-errors",
             ]
     - Db:
-        dsn: "mysql:host=127.0.0.1;port=3306;dbname=leantime_test"
+        dsn: "mysql:host=127.0.0.1;port=3307;dbname=leantime_test"
         user: leantime
         password: leantime
 # add Codeception\Step\Retry trait to AcceptanceTester to enable retries

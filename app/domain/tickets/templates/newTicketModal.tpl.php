@@ -8,7 +8,7 @@
 
 ?>
 
-
+<div style="min-width:90%">
         <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
 
         <?php echo $tpl->displayNotification(); ?>
@@ -26,7 +26,7 @@
             </div>
 
         </div>
-
+</div>
         <br />
 
 

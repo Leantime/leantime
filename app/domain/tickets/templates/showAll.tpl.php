@@ -215,7 +215,7 @@
                                     <a class="dropdown-toggle label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                    echo $efforts[$row['storypoints']];
+                                                                    echo $efforts["".$row['storypoints']];
                                                                 } else {
                                                                     echo $tpl->__("label.story_points_unkown");
                                                                 }?>
