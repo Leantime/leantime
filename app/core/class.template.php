@@ -221,7 +221,9 @@ class template
             \Illuminate\Contracts\View\Factory::class,
             function ($app) {
                 $viewFactory = $app->make(\Illuminate\View\Factory::class);
-                array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['tpl.php', 'sub.php', 'inc.php']);
+                array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php',]);
+                // reprioritize blade
+                $viewFactory->addExtension('blade.php', 'blade');
                 $viewFactory->setContainer($app);
                 return $viewFactory;
             }

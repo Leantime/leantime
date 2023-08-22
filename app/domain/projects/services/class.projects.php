@@ -972,66 +972,65 @@ namespace leantime\domain\services {
             }
 
             //Add overrides
-            $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete");
-
-            /*
-            if ($stepsCompleted !== false) {
+            if (! $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete")) {
+                $stepsCompleted = [];
+            } else {
                 $stepsCompleted = unserialize($stepsCompleted);
-
-                foreach ($progressSteps as $key => $step) {
-                    $tasks = data_get($step, 'tasks.*.status', []);
-                    $allDone = ! in_array('', $tasks) ? true : false;
-
-                    data_set($progressSteps, "$key.status", "done");
-                }
             }
-            */
 
-            if ($stepsCompleted !== false) {
-                $stepsCompleted = unserialize($stepsCompleted);
-
-                foreach ($progressSteps as $key => $step) {
-
-                    $progressSteps[$key]["tasks"] = $step['tasks'];
-
-                    $stepCompleted = true;
-                    foreach ($progressSteps[$key]["tasks"] as $taskKey => $task) {
-                        if (isset($stepsCompleted[$taskKey])) {
-                            $progressSteps[$key]["tasks"][$taskKey]['status'] = "done";
-                        }
-
-                        if ($progressSteps[$key]["tasks"][$taskKey]['status'] == 'done') {
-                            continue;
-                        }
-
-                        $stepCompleted = false;
-                    }
-
-                    if ($stepCompleted) {
-                        $progressSteps[$key]['status'] = 'done';
-                    }
-                }
-            }
+            $stepsCompleted = array_map(fn ($status) => 'done', $stepsCompleted);
 
             $halfStep = (1 / count($progressSteps)) / 2 * 100;
-            $percentDone = $position = 0;
-            $progressSteps = array_map(function ($step) use (&$percentDone, &$position, $halfStep, $progressSteps) {
-                $step['positionLeft'] = ($position++ / count($progressSteps) * 100) + $halfStep;
-                $step['stepType'] = '';
+            $position = 0;
+            $debug = [];
+            foreach ($progressSteps as $name => $step) {
+                // set the "left" css position for the step on the progress bar
+                $progressSteps[$name]['positionLeft'] = ($position++ / count($progressSteps) * 100) + $halfStep;
 
-                if ($step['status'] == 'done') {
-                    $percentDone += (1 / count($progressSteps) * 100);
-                    $step['stepType'] = 'complete';
-                } elseif ($step['positionLeft'] == ($percentDone + $halfStep)) {
-                    $step['stepType'] = 'current';
+                // set the status based on the stepsCompleted setting
+                data_set(
+                    $progressSteps,
+                    "$name.tasks",
+                    collect(data_get($progressSteps, "$name.tasks"))
+                        ->map(function ($task, $key) use ($stepsCompleted) {
+                            $task['status'] = $stepsCompleted[$key] ?? '';
+                            return $task;
+                        })
+                        ->toArray()
+                );
+
+                // check for any open tasks
+                if (in_array('', data_get($progressSteps, "$name.tasks.*.status"))) {
+                    if (
+                        $name == array_key_first($progressSteps)
+                        || ($previousValue['stepType'] ?? '') == 'complete'
+                    ) {
+                        $progressSteps[$name]['stepType'] = 'current';
+                    } else {
+                        $progressSteps[$name]['stepType'] = '';
+                    }
+
+                    $progressSteps[$name]['status'] = '';
+                    $previousValue = $progressSteps[$name];
+                    continue;
                 }
 
-                return $step;
-            }, $progressSteps);
+                // otherwise, set the step as completed
+                $progressSteps[$name]['status'] = 'done';
+                if (! in_array($previousValue['stepType'] ?? null, ['current', ''])
+                    || $name == array_key_first($progressSteps)
+                ) {
+                    $progressSteps[$name]['stepType'] = 'complete';
+                } else {
+                    $progressSteps[$name]['stepType'] = '';
+                }
+                $previousValue = $progressSteps[$name];
+            }
 
-            $percentDone = $percentDone > 0
-                ? $percentDone - $halfStep // Reduce half step to allow for spacing
-                : $percentDone + $halfStep; // Add half step so progress bar looks started
+            // Set the Percentage done of the progress Bar
+            $numberDone = count(array_filter(data_get($progressSteps, '*.stepType'), fn ($status) => $status == 'complete'));
+            $stepsTotal = count($progressSteps);
+            $percentDone = $numberDone == $stepsTotal ? 100 : $numberDone / $stepsTotal * 100 + $halfStep;
 
             return [
                 $progressSteps,

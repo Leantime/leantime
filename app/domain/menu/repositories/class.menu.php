@@ -115,7 +115,7 @@ namespace leantime\domain\repositories {
             $this->ticketsService = $ticketsService;
             $this->authService = $authService;
 
-            if (isset($_SESSION['submenuToggle']) === false) {
+            if (isset($_SESSION['submenuToggle']) === false && isset($_SESSION['userdata']['id'])) {
                 $setting = $this->settingsRepo;
                 $_SESSION['submenuToggle'] = unserialize(
                     $setting->getSetting("usersetting." . $_SESSION['userdata']['id'] . ".submenuToggle")

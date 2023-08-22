@@ -40,6 +40,7 @@ class Checklist extends HtmxController
 
         // update project progress
         $projectProgress = $this->incomingRequest->request->all();
+
         $this->projectService->updateProjectProgress($projectProgress, $_SESSION['currentProject']);
 
         // return view with new data

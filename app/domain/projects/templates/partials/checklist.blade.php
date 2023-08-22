@@ -44,6 +44,9 @@
                                     hx-target="#progressForm"
                                     hx-swap="outerHTML"
                                     @if ($task['status'] == 'done') checked @endif
+                                    @if (! in_array($step['stepType'], ['complete', 'current']))
+                                        disabled
+                                    @endif
                                 />
                                 <label for="progress_{{ $key }}">{{ __($task['title'] ?? '') }}</label>
                             </li>
