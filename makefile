@@ -14,10 +14,10 @@ install-deps:
 	composer install --no-dev --optimize-autoloader
 
 build: install-deps
-	npx mix
+	npx mix --production
 
 build-dev: install-deps-dev
-	npx mix
+	npx mix --production
 
 package: build
 	mkdir -p $(TARGET_DIR)
@@ -30,6 +30,7 @@ package: build
 	mkdir -p $(TARGET_DIR)/logs
 	mkdir -p $(TARGET_DIR)/cache
 	mkdir -p $(TARGET_DIR)/cache/avatars
+	mkdir -p $(TARGET_DIR)/cache/views
 	touch $(TARGET_DIR)/logs/.gitkeep
 	cp -R ./public $(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)/userfiles

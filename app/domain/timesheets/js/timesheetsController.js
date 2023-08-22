@@ -1,19 +1,9 @@
 leantime.timesheetsController = (function () {
     var closeModal = false;
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-                _initTicketTimers();
-            }
-        );
-
-    })();
-
     //Functions
 
-    var _initTicketTimers = function () {
+    var initTicketTimers = function () {
 
         jQuery(".punchIn").on(
             "click",
@@ -209,7 +199,7 @@ leantime.timesheetsController = (function () {
     return {
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
-        _initTicketTimers:_initTicketTimers
+        initTicketTimers:initTicketTimers
 
     };
 })();

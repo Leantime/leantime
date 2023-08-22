@@ -10,3 +10,5 @@ services:
   db:
     environment:
       MYSQL_DATABASE: leantime_test
+    ports:
+      - 3307:3306

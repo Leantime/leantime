@@ -43,3 +43,51 @@ if (! function_exists('bootstrap_minimal_app')) {
         return Bootloader::getInstance($app)->getApplication();
     }
 }
+
+if (! function_exists('__')) {
+    /**
+     * Translate a string.
+     *
+     * @param string $index
+     * @return string
+     */
+    function __(string $index): string
+    {
+        return app()->make(\leantime\core\language::class)->__($index);
+    }
+}
+
+if (! function_exists('view')) {
+    /**
+     * Get the view factory instance.
+     *
+     * @param string $view
+     * @param array $data
+     * @return \Illuminate\View\Factory
+     */
+    function view(): \Illuminate\View\Factory
+    {
+        return app()->make(\Illuminate\View\Factory::class);
+    }
+}
+
+if (! function_exists('array_sort')) {
+    /**
+     * sort array of arrqays by value
+     *
+     * @param array $array
+     * @param string $sortyBy
+     * @return array
+     */
+    function array_sort($array, $sortyBy): array
+    {
+        $collection = collect($array);
+
+        $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
+
+        return $sorted->values()->all();
+
+    }
+}
+
+

@@ -6,12 +6,13 @@
  * Required variables:
  * - $canvasName       Name of current canvas
  */
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 
 ?>
-    <?php if (count($this->get('allCanvas')) > 0) {
+    <?php if (count($tpl->get('allCanvas')) > 0) {
         if (isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>
         <p class="align-center"><br />
-            <?php echo sprintf($this->__("tour.$canvasName.once_your_done"), BASE_URL); ?>
+            <?php echo sprintf($tpl->__("tour.$canvasName.once_your_done"), BASE_URL); ?>
         </p>
         <?php } ?>
 
@@ -22,20 +23,22 @@
         echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
         echo "</div>";
 
-        echo"<h3>" . $this->__("headlines.$canvasName.analysis") . "</h3>";
-        echo "<br />" . $this->__("text.$canvasName.helper_content");
+        echo"<h3>" . $tpl->__("headlines.$canvasName.analysis") . "</h3>";
+        echo "<br />" . $tpl->__("text.$canvasName.helper_content");
 
         if ($login::userIsAtLeast($roles::$editor)) {
             echo "<br /><br /><a href='javascript:void(0)' class='addCanvasLink btn btn-primary'>
-                 " . $this->__("links.icon.create_new_board") . "</a>.";
+                 " . $tpl->__("links.icon.create_new_board") . "</a>.";
         }
         echo"</div>";
     }
-    if (!empty($disclaimer) && count($this->get('allCanvas')) > 0) { ?>
+    if (!empty($disclaimer) && count($tpl->get('allCanvas')) > 0) { ?>
         <small class="align-center"><?=$disclaimer ?></small>
         <?php
     }
-    require($this->getTemplatePath('canvas', '/modals.inc.php'));
+
+    echo $tpl->viewFactory->make($tpl->getTemplatePath('canvas', 'modals'), $__data)->render();
+
     ?>
     </div>
 </div>
@@ -58,7 +61,7 @@
             leantime.canvasController.initStatusDropdown();
             leantime.canvasController.initRelatesDropdown();
         <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
 
         <?php } ?>
 

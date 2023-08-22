@@ -33,35 +33,10 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
 
-            $params["orderBy"] = "date";
-            $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
+            $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+            array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
-            $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
-            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-            $this->tpl->assign('types', $this->ticketService->getTicketTypes());
-            $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
-
-            $this->tpl->assign('searchCriteria', $searchCriteria);
-            $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
-
-            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
-
-            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
-            $this->tpl->assign('futureSprints', $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]));
-
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
-            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
-
-            $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
-            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
-
-            // fields
-            $this->tpl->assign('groupBy', $this->ticketService->getGroupByFieldOptions());
-            $this->tpl->assign('newField', $this->ticketService->getNewFieldOptions());
 
             $this->tpl->display('tickets.showList');
         }

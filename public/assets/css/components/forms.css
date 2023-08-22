@@ -73,7 +73,11 @@ body div.tagsinput span.tag {
 }
 
 div.tagsinput span.tag {
-    font-size:var(--font-size-s);
+    font-size:var(--font-size-m);
+}
+
+div.tagsinput span.tag a {
+    vertical-align: text-bottom;
 }
 
 select {
@@ -545,8 +549,9 @@ select,
     min-height: 29px;
 }
 
-.row-fluid.marginBottom {
-    margin-bottom:30px;
+.row-fluid.marginBottom,
+.row.marginBottom{
+    margin-bottom:15px;
 }
 
 .marginBottomMd {
@@ -1108,4 +1113,53 @@ input[type=range]:focus::-ms-fill-upper {
     transition: background-color .2s;
 }
 
+.ss-main {
+    margin-bottom:5px;
+}
 
+.ss-main .ss-multi-selected {
+    min-height: 37px;
+    background-color: var(--secondary-background);
+    line-height: 21px;
+    border: 1px solid var(--main-border-color);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    transition: border linear .2s, box-shadow linear .2s;
+    border-radius: var(--input-radius);
+}
+
+.ss-main .ss-multi-selected .ss-values .ss-disabled {
+    color:#999999;
+}
+
+.ss-main .ss-multi-selected .ss-add {
+    display: flex;
+    flex: 1 1 3px;
+    margin: 12px 12px 0 5px;
+}
+
+.ss-main .ss-multi-selected .ss-values .ss-value {
+    background:var(--primary-color);
+}
+
+
+body .btn.btn-link {
+    background:transparent;
+    color:var(--primary-font-color);
+    border:1px solid transparent;
+}
+
+body .btn.btn-link:hover {
+    color:var(--main-action-hover-color);
+    background:var(--main-action-hover-bg);
+    border:1px solid var(--main-action-hover-bg);
+    text-decoration:none;
+}
+
+body .btn.btn-link.active {
+    color: var(--main-action-color);
+    background: var(--main-action-bg);
+}
+
+.btn .badge {
+    top:0px;
+}

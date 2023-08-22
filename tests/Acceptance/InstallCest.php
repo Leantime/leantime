@@ -15,6 +15,8 @@ class InstallCest
     public function installPageWorks(AcceptanceTester $I)
     {
         $I->amOnPage('/install');
+        $I->wait(10);
+
         $I->see('Install');
     }
 

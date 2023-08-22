@@ -1,4 +1,7 @@
-<?php $step = $this->get("currentStep"); ?>
+<?php
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $step = $tpl->get("currentStep");
+?>
 
 <?php
 
@@ -16,15 +19,15 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
         <input type="hidden" name="step" value="1" />
         <div class="row">
             <div class="col-md-6">
-                <h1><?=$this->__('headlines.hi_there'); ?></h1>
-                <p><?=$this->__('text.first_login_intro') ?></p>
+                <h1><?=$tpl->__('headlines.hi_there'); ?></h1>
+                <p><?=$tpl->__('text.first_login_intro') ?></p>
                 <br />
-                <label><?=$this->__('label.name_your_first_project') ?></label>
+                <label><?=$tpl->__('label.name_your_first_project') ?></label>
                 <input type="text" id="projectName" name="projectname" value="" placeholder=""/><br />
 
-                <input type="submit" value="<?=$this->__('buttons.next') ?>"/>
-                <a href="javascript:void(0);"  onclick="skipOnboarding();"><?=$this->__('links.skip_for_now') ?></a>
-            </div>
+                <input type="submit" value="<?=$tpl->__('buttons.next') ?>"/>
+                <a href="javascript:void(0);"  onclick="skipOnboarding();"><?=$tpl->__('links.skip_for_now') ?></a>
+tpl            </div>
             <div class="col-md-6">
                 <div class='svgContainer' style="width:300px">
                     <?= file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg"); ?>
@@ -41,8 +44,8 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
         <input type="hidden" name="step" value="2" />
         <div class="row">
             <div class="col-md-6">
-                <h1><?=$this->__('headlines.your_theme'); ?></h1>
-                <p><?=$this->__('text.theme_choice') ?></p>
+                <h1><?=$tpl->__('headlines.your_theme'); ?></h1>
+                <p><?=$tpl->__('text.theme_choice') ?></p>
                 <br />
                 <br />
                 <select name="theme" id="theme" style="width: 220px">
@@ -51,11 +54,11 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
                     $themeAll = $themeCore->getAll();
                     foreach ($themeAll as $key => $name) {
                         ?>
-                        <option value="<?=$key ?>"><?=$this->__($name) ?></option>
+                        <option value="<?=$key ?>"><?=$tpl->__($name) ?></option>
                     <?php } ?>
                 </select>
                 <br /><br />
-                <input type="submit" value="<?=$this->__('buttons.next') ?>"/>
+                <input type="submit" value="<?=$tpl->__('buttons.next') ?>"/>
             </div>
             <div class="col-md-6">
                 <div class='svgContainer' style="width:300px">
@@ -72,15 +75,15 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
         <input type="hidden" name="step" value="3" />
         <div class="row">
             <div class="col-md-6">
-                <h1><?=$this->__('headlines.invite_crew'); ?></h1>
-                <p><?=$this->__('text.invite_team') ?></p>
+                <h1><?=$tpl->__('headlines.invite_crew'); ?></h1>
+                <p><?=$tpl->__('text.invite_team') ?></p>
                 <br />
-                <input type="email" name="email1" value="" placeholder="<?=$this->__('input.placeholder.email_invite');?>" style="width: 100%;"/><br />
-                <input type="email" name="email2" value="" placeholder="<?=$this->__('input.placeholder.email_invite');?>" style="width: 100%;"/><br />
-                <input type="email" name="email3" value="" placeholder="<?=$this->__('input.placeholder.email_invite');?>" style="width: 100%;"/><br />
+                <input type="email" name="email1" value="" placeholder="<?=$tpl->__('input.placeholder.email_invite');?>" style="width: 100%;"/><br />
+                <input type="email" name="email2" value="" placeholder="<?=$tpl->__('input.placeholder.email_invite');?>" style="width: 100%;"/><br />
+                <input type="email" name="email3" value="" placeholder="<?=$tpl->__('input.placeholder.email_invite');?>" style="width: 100%;"/><br />
                 <br />
-                <input type="submit" value="<?=$this->__('buttons.lets_go') ?>"/>
-                <a href="javascript:void(0);"  onclick="jQuery.nmTop().close();"><?=$this->__('links.skip_for_now') ?></a>
+                <input type="submit" value="<?=$tpl->__('buttons.lets_go') ?>"/>
+                <a href="javascript:void(0);"  onclick="jQuery.nmTop().close();"><?=$tpl->__('links.skip_for_now') ?></a>
             </div>
             <div class="col-md-6">
                 <div class='svgContainer' style="width:300px; margin-top:60px;">

@@ -64,7 +64,10 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
             $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());

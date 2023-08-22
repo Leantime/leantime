@@ -250,7 +250,7 @@
 
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li a:hover {
+.leftpanel .leftmenu .nav-tabs .projectselector > li a:hover {
     color:var(--dropdown-link-hover-color);
 }
 
@@ -1015,7 +1015,7 @@
     right: 5px;
     height: 15px;
     width: 15px;
-    background: var(--dark-red);
+    background: var(--red);
     border-radius: 10px;
     line-height: 15px;
     text-align: center;
@@ -1174,4 +1174,70 @@
 .mainwrapper.menuopen #expandedMenu {
     display:block;
 }
+
+
+
+/* New horizontal Tab nav */
+
+.maincontentinner.tabs {
+    height: 50px;
+    margin-bottom: 7px;
+    padding: 5px;
+    padding-top:10px;
+}
+
+
+.maincontentinner.tabs ul {
+    margin:0px;
+    padding:0px;
+}
+
+.maincontentinner.tabs ul li {
+    display:inline-block;
+    float:left;
+    padding:0px 5px;
+    background:var(--secondary-background);
+
+}
+
+.maincontentinner.tabs ul li.active {
+    padding-bottom:20px;
+    box-shadow: var(--regular-shadow);
+    border-radius: 5px;
+}
+
+.maincontentinner.tabs ul li a {
+    font-weight:bold;
+    padding:5px 12px;
+    border-radius:var(--element-radius);
+    line-height:21px;
+    display:block;
+    transition: all 0.2s ease-in-out 0s;
+    color:var(--primary-font-color);
+}
+
+.maincontentinner.tabs ul li.active a {
+    color:var(--primary-color);
+}
+
+.maincontentinner.tabs ul li a:hover,
+.maincontentinner.tabs ul li.active a:hover {
+    background:var(--main-menu-link-active-bg);
+    color:var(--primary-color);
+}
+
+.maincontentinner.tabs ul li a.active {
+
+}
+
+.maincontentinner.tabs .intro {
+    display: inline-block;
+    padding-top: 5px;
+    padding-left: 10px;
+    float: left;
+
+}
+
+
+
 

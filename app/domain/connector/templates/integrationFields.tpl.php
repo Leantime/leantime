@@ -1,8 +1,9 @@
 <?php
-    $providerFields = $this->get("providerFields");
-    $provider = $this->get("provider");
-    $leantimeFields = $this->get("leantimeFields");
-    $numberOfFields = $this->get("maxFields");
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $providerFields = $tpl->get("providerFields");
+    $provider = $tpl->get("provider");
+    $leantimeFields = $tpl->get("leantimeFields");
+    $numberOfFields = $tpl->get("maxFields");
 ?>
 
 <div class="pageheader">
@@ -10,7 +11,7 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $this->__("headlines.integrations"); ?></h1>
+                <h1><?php echo $tpl->__("headlines.integrations"); ?></h1>
             </div>
         </div>
     </div>
@@ -19,7 +20,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <h3>Map and Convert Fields Entity Here</h3>
         <?=$provider->name ?><br />

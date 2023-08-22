@@ -1,20 +1,20 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-
-$values = $this->get('values');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$values = $tpl->get('values');
 ?>
 
 
 <div class="pageheader">
     <form action="index.php?act=tickets.showAll" method="post" class="searchbar">
         <input type="text" name="term"
-               placeholder="<?php echo $this->__('input.placeholders.search_type_hit_enter') ?>"/>
+               placeholder="<?php echo $tpl->__('input.placeholders.search_type_hit_enter') ?>"/>
     </form>
 
     <div class="pageicon"><span class="fa-laptop"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('OVERVIEW'); ?></h5>
-        <h1><?php echo $this->__('MY_TIMESHEETS'); ?></h1>
+        <h5><?php echo $tpl->__('OVERVIEW'); ?></h5>
+        <h1><?php echo $tpl->__('MY_TIMESHEETS'); ?></h1>
     </div>
 </div><!--pageheader-->
 
@@ -22,9 +22,9 @@ $values = $this->get('values');
     <div class="maincontentinner">
 
 
-        <div class="fail"><?php if ($this->get('info') != '') {
+        <div class="fail"><?php if ($tpl->get('info') != '') {
             ?> <span
-                    class="info"><?php echo $this->displayNotification() ?></span> <?php
+                    class="info"><?php echo $tpl->displayNotification() ?></span> <?php
                           } ?>
 
         </div>
@@ -37,19 +37,19 @@ $values = $this->get('values');
 
 
                     <div class="widget">
-                        <h4 class="widgettitle"><?php echo $this->__('OVERVIEW'); ?></h4>
+                        <h4 class="widgettitle"><?php echo $tpl->__('OVERVIEW'); ?></h4>
                         <div class="widgetcontent" style="min-height: 460px">
 
 
-                            <label for="projects"><?php echo $this->__('PROJECT') ?></label> <select
+                            <label for="projects"><?php echo $tpl->__('PROJECT') ?></label> <select
                                     name="projects" id="projects"
                                     onchange="removeOptions($('select#projects option:selected').val());">
 
 
-                                <option value="all"><?php echo $this->__('ALL_PROJECTS'); ?></option>
+                                <option value="all"><?php echo $tpl->__('ALL_PROJECTS'); ?></option>
 
                                 <optgroup>
-                                    <?php foreach ($this->get('allProjects') as $row) {
+                                    <?php foreach ($tpl->get('allProjects') as $row) {
                                         $currentClientName = $row['clientName'];
                                         if ($currentClientName != $lastClientName) {
                                             echo '</optgroup><optgroup label="' . $currentClientName . '">';
@@ -68,10 +68,10 @@ $values = $this->get('values');
                                 </optgroup>
                             </select> <br/>
 
-                            <label for="tickets"><?php echo $this->__('TICKET') ?></label>
+                            <label for="tickets"><?php echo $tpl->__('TICKET') ?></label>
                             <select name="tickets" id="tickets">
 
-                                <?php foreach ($this->get('allTickets') as $row) {
+                                <?php foreach ($tpl->get('allTickets') as $row) {
                                     echo '<option class="' . $row['projectId'] . '" value="' . $row['projectId'] . '|' . $row['id'] . '"';
                                     if ($row['id'] == $values['ticket']) {
                                         echo ' selected="selected" ';
@@ -81,36 +81,36 @@ $values = $this->get('values');
 
                             </select> <br/>
                             <br/>
-                            <label for="kind"><?php echo $this->__('KIND') ?></label> <select id="kind"
+                            <label for="kind"><?php echo $tpl->__('KIND') ?></label> <select id="kind"
                                                                                               name="kind">
-                                <?php foreach ($this->get('kind') as $row) {
+                                <?php foreach ($tpl->get('kind') as $row) {
                                     echo '<option value="' . $row . '"';
                                     if ($row == $values['kind']) {
                                         echo ' selected="selected"';
                                     }
-                                    echo '>' . $this->__($row) . '</option>';
+                                    echo '>' . $tpl->__($row) . '</option>';
                                 } ?>
 
                             </select><br/>
-                            <label for="date"><?php echo $this->__('DATE') ?></label> <input type="text" autocomplete="off"
+                            <label for="date"><?php echo $tpl->__('DATE') ?></label> <input type="text" autocomplete="off"
                                                                                              id="date" name="date"
                                                                                              value="<?php echo $values['date'] ?>"
                                                                                              size="7"/>
                             <br/>
-                            <label for="hours"><?php echo $this->__('HOURS') ?></label> <input
+                            <label for="hours"><?php echo $tpl->__('HOURS') ?></label> <input
                                     type="text" id="hours" name="hours"
                                     value="<?php echo $values['hours'] ?>" size="7"/> <br/>
-                            <label for="description"><?php echo $this->__('DESCRIPTION') ?></label> <textarea
+                            <label for="description"><?php echo $tpl->__('DESCRIPTION') ?></label> <textarea
                                     rows="5" cols="50" id="description"
                                     name="description"><?php echo $values['description']; ?></textarea><br/>
                             <br/>
                             <br/>
-                            <label for="invoicedEmpl"><?php echo $this->__('INVOICED') ?></label> <input
+                            <label for="invoicedEmpl"><?php echo $tpl->__('INVOICED') ?></label> <input
                                     type="checkbox" name="invoicedEmpl" id="invoicedEmpl"
                                 <?php if (isset($values['invoicedEmpl']) === true && $values['invoicedEmpl'] == '1') {
                                     echo ' checked="checked"';
                                 } ?> />
-                            <?php echo $this->__('ONDATE') ?>&nbsp;<input type="text"
+                            <?php echo $tpl->__('ONDATE') ?>&nbsp;<input type="text"
                                                                           id="invoicedEmplDate" name="invoicedEmplDate"
                                                                           value="<?php echo $values['invoicedEmplDate'] ?>"
                                                                           size="7"/><br/>
@@ -118,23 +118,23 @@ $values = $this->get('values');
 
                             <?php if ($login::userIsAtLeast($roles::$manager)) {
                                 ?> <br/>
-                                <label for="invoicedComp"><?php echo $this->__('INVOICED_COMP') ?></label> <input
+                                <label for="invoicedComp"><?php echo $tpl->__('INVOICED_COMP') ?></label> <input
                                         type="checkbox" name="invoicedComp" id="invoicedComp"
                                     <?php if ($values['invoicedComp'] == '1') {
                                         echo ' checked="checked"';
                                     } ?> />
-                                <?php echo $this->__('ONDATE') ?>&nbsp;<input type="text" autocomplete="off"
+                                <?php echo $tpl->__('ONDATE') ?>&nbsp;<input type="text" autocomplete="off"
                                                                               id="invoicedCompDate"
                                                                               name="invoicedCompDate"
                                                                               value="<?php echo $values['invoicedCompDate'] ?>"
                                                                               size="7"/><br/>
 
-                                <label for="paid"><?php echo $this->__('labels.paid') ?></label> <input
+                                <label for="paid"><?php echo $tpl->__('labels.paid') ?></label> <input
                                     type="checkbox" name="paid" id="paid"
                                     <?php if ($values['paid'] == '1') {
                                         echo ' checked="checked"';
                                     } ?> />
-                                <?php echo $this->__('ONDATE') ?>&nbsp;<input type="text" autocomplete="off"
+                                <?php echo $tpl->__('ONDATE') ?>&nbsp;<input type="text" autocomplete="off"
                                                                               id="paidDate"
                                                                               name="paidDate"
                                                                               value="<?php echo $values['paidDate'] ?>"
@@ -142,9 +142,9 @@ $values = $this->get('values');
 
 
 
-                            <?php } ?> <input type="submit" value="<?php echo $this->__('SAVE'); ?>"
+                            <?php } ?> <input type="submit" value="<?php echo $tpl->__('SAVE'); ?>"
                                               name="save" class="button"/> <input type="submit"
-                                                                                  value="<?php echo $this->__('SAVE_NEW'); ?>"
+                                                                                  value="<?php echo $tpl->__('SAVE_NEW'); ?>"
                                                                                   name="saveNew" class="button"/>
 
 

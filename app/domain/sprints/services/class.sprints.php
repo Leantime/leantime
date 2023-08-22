@@ -93,7 +93,7 @@ namespace leantime\domain\services {
                 return $sprints;
             }
 
-            return false;
+            return [];
         }
 
         public function getAllFutureSprints($projectId)

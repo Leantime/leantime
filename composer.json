@@ -1,11 +1,12 @@
 {
     "name": "leantime/leantime",
     "description": "Open source project management system",
+    "version": "2.4.0",
     "type": "project",
     "config": {
         "platform-check": false,
         "platform": {
-            "php": "8.0"
+            "php": "8.1"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
@@ -56,7 +57,6 @@
         "codeception/codeception": "^5.0",
         "codeception/module-phpbrowser": "*",
         "codeception/module-asserts": "*",
-        "leantime/leantime-documentor": "dev-main",
         "symfony/process": "^5.4",
         "codeception/module-db": "^3.1",
         "codeception/module-webdriver": "^3.2",

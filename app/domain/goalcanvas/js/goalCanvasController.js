@@ -67,18 +67,6 @@ leantime.goalCanvasController = (function () {
         jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
     };
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-                _initModals();
-            }
-        );
-
-    })();
-
-    //Functions
-
 
 
     var openModalManually = function (url) {

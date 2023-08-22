@@ -6,11 +6,6 @@ leantime.settingController = (function () {
 
     var _uploadResult;
 
-    //Constructor
-    (function () {
-
-    })();
-
     //Functions
 
     var readURL = function (input) {

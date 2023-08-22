@@ -38,4 +38,16 @@ class application extends Container
     {
         self::$bootstrapped = true;
     }
+
+    /**
+     * Get the application namespace
+     *
+     * @return string
+     *
+     * @see \Illuminate\Contracts\Foundation\Application::getNamespace()
+     */
+    public function getNamespace(): string
+    {
+        return 'leantime\\';
+    }
 }

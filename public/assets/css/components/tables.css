@@ -48,8 +48,11 @@
 
 .dataTables_wrapper {
     position: relative;
-    overflow-x:auto;
     padding-bottom: 150px;
+}
+
+.simpleAccordionContainer .dataTables_wrapper{
+    padding-bottom:0px
 }
 
 .dataTables_length, .dataTables_info {
@@ -146,29 +149,26 @@
 .dataTable thead th.sorting:hover,
 .dataTable thead th.sorting_asc:hover,
 .dataTable thead th.sorting_desc:hover {
-    background: var(--col-content-bg);
+    background: var(--dropdown-link-hover-bg);
+    color:var(--dropdown-link-hover-color);
 
 }
 
 .dataTable thead th.sorting:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0dc";
-    color:var(--neutral);
     font-size:var(--font-size-s);
 }
 
 .dataTable thead th.sorting_asc:after {
     font-family: FontAwesome;
     content: "\00a0\00a0\f0de";
-    color:var(--primary-font-color);
 
 }
 
 .dataTable thead th.sorting_desc:after {
     font-family: FontAwesome;
-
     content: "\00a0\00a0\f0dd";
-    color:var(--primary-font-color);
 }
 
 .maincontentinner .table,
@@ -212,6 +212,7 @@
     background:var(--col-title-bg);
     padding: 10px 10px;
     font-weight:bold;
+    transition: all 0.2s ease-in-out 0s;
 }
 
 .table-bordered colgroup+thead tr:first-child th:first-child {
@@ -230,8 +231,6 @@
 
 .maincontentinner .table th.sorting_desc,
 .maincontentinner .table th.sorting_asc {
-    color: var(--primary-font-color);
-    background:var(--col-content-bg);
 }
 
 
@@ -265,6 +264,7 @@
 
 .maincontentinner .table td input {
     margin-bottom:0px;
+    padding:3px 7px;
 }
 
 .dataTable tr:hover {
@@ -473,8 +473,8 @@ table td{
     width:100%;
     height:100%;
     border-radius:0px !important;
-    padding: 0px 10px 0px 10px !important;
-    line-height:37px;
+    padding: 5px 10px 3px 10px !important;
+    line-height: 32px;
     font-size:var(--base-font-size);
     box-shadow:none;
     display:inline-block;
@@ -484,7 +484,7 @@ table td{
 }
 .table td.dropdown-cell .dropdown > a i {
     float:right;
-    line-height:37px;
+    line-height:31px;
 }
 
 .table td.dropdown-cell .dropdown.ticketDropdown ul {

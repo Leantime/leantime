@@ -1,13 +1,14 @@
 <?php
-  $currentArticle = $this->get('article');
-  $wikiHeadlines = $this->get("wikiHeadlines");
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $currentArticle = $tpl->get('article');
+    $wikiHeadlines = $tpl->get("wikiHeadlines");
 ?>
 
 
 <?php
 
 if (!isset($_GET['closeModal'])) {
-    echo $this->displayNotification();
+    echo $tpl->displayNotification();
 }
 
 $id = "";
@@ -17,13 +18,13 @@ if (isset($currentArticle->id)) {
 
 ?>
 
-<form class="formModal" method="post" action="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>">
+<form class="formModal" method="post" action="<?=CURRENT_URL ?>">
 
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="row-fluid marginBottom">
                 <h4 class="widgettitle title-light">
-                    <span class="fa fa-folder"></span><?php echo $this->__('subtitles.organization'); ?>
+                    <span class="fa fa-folder"></span><?php echo $tpl->__('subtitles.organization'); ?>
                 </h4>
                 <label>Parent</label>
                 <select name="parent" style="width:100%;">
@@ -31,33 +32,33 @@ if (isset($currentArticle->id)) {
                     <?php foreach ($wikiHeadlines as $parent) {?>
                         <?php if ($id != $parent->id) {?>
                             <option value="<?=$parent->id ?>"
-                                    <?=($parent->id == $currentArticle->parent) ? "selected='selected'" : '' ?> ><?php $this->e($parent->title) ?></option>
+                                    <?=($parent->id == $currentArticle->parent) ? "selected='selected'" : '' ?> ><?php $tpl->e($parent->title) ?></option>
                         <?php } ?>
                     <?php } ?>
                 </select>
 
-                <label><?=$this->__('label.status') ?></label>
+                <label><?=$tpl->__('label.status') ?></label>
                 <select name="status" style="width:100%;">
-                    <option value="draft" <?=$currentArticle->status == 'draft' ? "selected='selected'" : "" ?>><?=$this->__('label.draft') ?></option>
-                    <option value="published" <?=$currentArticle->status == 'published' ? "selected='selected'" : "" ?>><?=$this->__('label.published') ?></option>
+                    <option value="draft" <?=$currentArticle->status == 'draft' ? "selected='selected'" : "" ?>><?=$tpl->__('label.draft') ?></option>
+                    <option value="published" <?=$currentArticle->status == 'published' ? "selected='selected'" : "" ?>><?=$tpl->__('label.published') ?></option>
                 </select>
             </div>
 
             <?php if ($id !== '') { ?>
-                <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$this->__("headlines.attached_milestone") ?></h4>
+                <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$tpl->__("headlines.attached_milestone") ?></h4>
 
                 <ul class="sortableTicketList" style="width:99%">
                     <?php
                     if ($currentArticle->milestoneId == '') {
                         ?>
                         <li class="ui-state-default center" id="milestone_0">
-                            <h4><?=$this->__("headlines.no_milestone_attached") ?></h4>
-                            <?=$this->__("text.use_milestone_to_track_leancanvas") ?><br />
+                            <h4><?=$tpl->__("headlines.no_milestone_attached") ?></h4>
+                            <?=$tpl->__("text.use_milestone_to_track_leancanvas") ?><br />
                             <div class="row" id="milestoneSelectors">
                                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?=$this->__("links.create_attach_milestone") ?></a>
-                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?=$this->__("links.attach_existing_milestone") ?></a>
+                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_attach_milestone") ?></a>
+                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.attach_existing_milestone") ?></a>
 
                                     </div>
                                 <?php } ?>
@@ -67,18 +68,18 @@ if (isset($currentArticle->id)) {
                                     <textarea name="newMilestone"></textarea><br />
                                     <input type="hidden" name="type" value="milestone" />
                                     <input type="hidden" name="leancanvasitemid" value="<?php echo $id; ?> " />
-                                    <input type="button" value="<?=$this->__("buttons.save") ?>" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
+                                    <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
                                     <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
-                                        <i class="fas fa-times"></i> <?=$this->__("links.cancel") ?>
+                                        <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
                                 </div>
                             </div>
 
                             <div class="row" id="existingMilestone" style="display:none;">
                                 <div class="col-md-12">
-                                    <select data-placeholder="<?=$this->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
-                                        <option value=""><?=$this->__("label.all_milestones") ?></option>
-                                        <?php foreach ($this->get('milestones') as $milestoneRow) {
+                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
+                                        <option value=""><?=$tpl->__("label.all_milestones") ?></option>
+                                        <?php foreach ($tpl->get('milestones') as $milestoneRow) {
                                             ?>
 
                                             <?php echo"<option value='" . $milestoneRow->id . "'";
@@ -95,7 +96,7 @@ if (isset($currentArticle->id)) {
                                     <input type="hidden" name="articleId" value="<?php echo $id; ?> " />
                                     <input type="button" value="Save" onclick="jQuery('#primaryArticleSubmitButton').click()" class="btn btn-primary" />
                                     <a href="javascript:void(0);"  onclick="leantime.leanCanvasController.toggleMilestoneSelectors('hide');">
-                                        <i class="fas fa-times"></i> <?=$this->__("links.cancel") ?>
+                                        <i class="fas fa-times"></i> <?=$tpl->__("links.cancel") ?>
                                     </a>
                                 </div>
                             </div>
@@ -104,10 +105,10 @@ if (isset($currentArticle->id)) {
                         <?php
                     } else {
                         if ($currentArticle->milestoneEditTo == "0000-00-00 00:00:00") {
-                            $date = $this->__("text.no_date_defined");
+                            $date = $tpl->__("text.no_date_defined");
                         } else {
                             $date = new DateTime($currentArticle->milestoneEditTo);
-                            $date = $date->format($this->__("language.dateformat"));
+                            $date = $date->format($tpl->__("language.dateformat"));
                         }
 
                         ?>
@@ -120,24 +121,24 @@ if (isset($currentArticle->id)) {
                                         <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $currentArticle->milestoneId;?>" ><?php echo $currentArticle->milestoneHeadline; ?></a></strong>
                                     </div>
                                     <div class="col-md-4 align-right">
-                                        <a href="<?=BASE_URL ?>/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete formModal"><i class="fa fa-close"></i> <?=$this->__("links.remove") ?></a>
+                                        <a href="#/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="col-md-7">
-                                        <?=$this->__("label.due") ?>
+                                        <?=$tpl->__("label.due") ?>
                                         <?php echo $date; ?>
                                     </div>
                                     <div class="col-md-5" style="text-align:right">
-                                        <?=sprintf($this->__("text.percent_complete"), $currentArticle->percentDone)?>
+                                        <?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="progress">
                                             <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $currentArticle->percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $currentArticle->percentDone; ?>%">
-                                                <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $currentArticle->percentDone)?></span>
+                                                <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?></span>
                                             </div>
                                         </div>
                                     </div>
@@ -153,7 +154,8 @@ if (isset($currentArticle->id)) {
             <br />
 
         </div>
-        <div class="col-md-9">
+        <div class="col-md-8">
+
 
             <div class="btn-group inlineDropDownContainerLeft">
                 <button data-selected="graduation-cap" type="button"
@@ -161,7 +163,6 @@ if (isset($currentArticle->id)) {
                         data-toggle="dropdown">
                     <span class="iconPlaceholder">
                         <i class="fa fa-file"></i>
-
                     </span>
                     <span class="caret"></span>
                 </button>
@@ -169,43 +170,50 @@ if (isset($currentArticle->id)) {
             </div>
             <input type="hidden" class="articleIcon" value="<?=$currentArticle->data ?>" name="articleIcon"/>
 
-            <input type="text" name="title" class="main-title-input" value="<?=$this->escape($currentArticle->title) ?>" placeholder="<?=$this->__('input.placeholders.wiki_title') ?>" style="width:80%"/>
+            <input type="text" name="title" class="main-title-input" value="<?=$tpl->escape($currentArticle->title) ?>" placeholder="<?=$tpl->__('input.placeholders.wiki_title') ?>" style="width:80%"/>
 
             <br />
-            <input type="text" value="<?php $this->e($currentArticle->tags); ?>" name="tags" id="tags" />
+            <input type="text" value="<?php $tpl->e($currentArticle->tags); ?>" name="tags" id="tags" />
 
-            <textarea class="articleEditor complexEditor" id="articleEditor" name="description"><?=htmlentities($currentArticle->description) ?></textarea>
+            <textarea class="complexEditor" rows="20" cols="80"  name="description"><?=htmlentities($currentArticle->description ?? '') ?></textarea>
+
+
+                <div class="row">
+                    <div class="col-md-10 padding-top-sm">
+                        <br />
+                        <input type="hidden" name="saveTicket" value="1" />
+                        <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
+                        <input type="submit" name="saveArticle" value="<?php echo $tpl->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
+                        <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $tpl->__('buttons.save_and_close'); ?>"/>
+
+
+
+                    </div>
+                    <div class="col-md-2 align-right padding-top-sm">
+                        <?php if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
+                            <br />
+                            <a href="#/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_article') ?></a>
+                        <?php } ?>
+                    </div>
+                </div>
+
 
 
 
         </div>
-
+        <div class="col-md-2"></div>
     </div>
 
 
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-7 padding-top-sm">
-            <br />
-            <input type="hidden" name="saveTicket" value="1" />
-            <input type="hidden" id="saveAndCloseButton" name="saveAndCloseArticle" value="0" />
-            <input type="submit" name="saveArticle" value="<?php echo $this->__('buttons.save'); ?>" id="primaryArticleSubmitButton"/>
-            <input type="submit" name="saveAndCloseArticle" onclick="jQuery('#saveAndCloseButton').val('1');" value="<?php echo $this->__('buttons.save_and_close'); ?>"/>
 
-
-
-        </div>
-        <div class="col-md-2 align-right padding-top-sm">
-            <?php if (isset($currentArticle->id) && $currentArticle->id != '' && $login::userIsAtLeast($roles::$editor)) { ?>
-                <br />
-                <a href="<?=BASE_URL ?>/wiki/delArticle/<?php echo $currentArticle->id; ?>" class="delete formModal"><i class="fa fa-trash"></i> <?=$this->__('links.delete_article') ?></a>
-            <?php } ?>
-        </div>
-    </div>
 
 </form>
 
-<script type="text/javascript">
+<script>
+
+
+    jQuery("#articleContentEditor").show();
+    leantime.editorController.initComplexEditor();
 
     jQuery(document).ready(function(){
 
@@ -213,7 +221,7 @@ if (isset($currentArticle->id)) {
             jQuery.nmTop().close();
         <?php } ?>
 
-        leantime.generalController.initComplexEditor();
+
 
 
         jQuery('.iconpicker-container').iconpicker({

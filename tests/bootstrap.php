@@ -60,6 +60,7 @@ $bootstrapper = get_class(new class {
     public function start(): void
     {
         $this->startDevEnvironment();
+        $this->setFolderPermissions();
         $this->createDatabase();
         $this->startSelenium();
         $this->createStep('Starting Codeception Testing Framework');
@@ -158,6 +159,9 @@ $bootstrapper = get_class(new class {
                 'timeout' => 0,
             ]
         );
+
+
+
         $this->dockerProcess->waitUntil(function ($type, $buffer) {
             if (! isset($started)) {
                 static $started = [
@@ -176,6 +180,8 @@ $bootstrapper = get_class(new class {
             }
 
             $this->commandOutputHandler($type, $buffer);
+
+
             return ! in_array(false, $started, true);
         });
     }
@@ -197,7 +203,7 @@ $bootstrapper = get_class(new class {
                 '-T',
                 'db',
                 'mysql',
-                '-h127.0.0.1',
+                '-hlocalhost',
                 '-uroot',
                 '-pleantime',
                 '-e',
@@ -213,12 +219,38 @@ $bootstrapper = get_class(new class {
                 '-T',
                 'db',
                 'mysql',
+                '-hlocalhost',
                 '-uroot',
                 '-pleantime',
                 '-e',
                 'CREATE DATABASE IF NOT EXISTS leantime_test; GRANT ALL PRIVILEGES ON leantime_test.* TO \'leantime\'@\'%\'; FLUSH PRIVILEGES;',
             ],
             ['cwd' => DEV_ROOT]
+        );
+    }
+
+    protected function setFolderPermissions(): void
+    {
+
+         $this->createStep('Setting folder permissions on cache folder');
+        //Set file permissions
+        $this->executeCommand(
+            array_filter(
+                [
+                    'docker',
+                    'compose',
+                    'exec',
+                    '-T',
+                    'leantime-dev',
+                    'chown',
+                    '-R',
+                    'www-data:www-data',
+                    '/var/www/html/cache/',
+                ]
+            ),
+            [
+                'cwd' => DEV_ROOT,
+            ]
         );
     }
 
@@ -269,8 +301,8 @@ $bootstrapper = get_class(new class {
      *
      * @access protected
      * @param  string|array $command
-     * @param  array $args
-     * @param  bool $required
+     * @param  array        $args
+     * @param  boolean      $required
      * @return Process|string
      */
     protected function executeCommand(

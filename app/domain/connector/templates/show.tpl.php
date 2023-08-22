@@ -1,5 +1,5 @@
 <?php
-
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 ?>
 
 <div class="pageheader">
@@ -7,7 +7,7 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $this->__("headlines.connector"); ?></h1>
+                <h1><?php echo $tpl->__("headlines.connector"); ?></h1>
             </div>
         </div>
     </div>
@@ -16,11 +16,11 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
         <h3>Sync Leantime with your external applications</h3>
         <p>Available providers</p>
         <div class="row">
-            <?php foreach ($this->get("providers") as $provider) { ?>
+            <?php foreach ($tpl->get("providers") as $provider) { ?>
                 <div class="col-md-3">
                     <div class="profileBox">
                         <div class="commentImage">

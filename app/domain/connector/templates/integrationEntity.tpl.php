@@ -1,8 +1,9 @@
 <?php
-$providerEntities = $this->get("providerEntities");
-$provider = $this->get("provider");
-$leantimeEntities = $this->get("leantimeEntities");
-$integrationId = $this->get("integrationId");
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$providerEntities = $tpl->get("providerEntities");
+$provider = $tpl->get("provider");
+$leantimeEntities = $tpl->get("leantimeEntities");
+$integrationId = $tpl->get("integrationId");
 
 $urlAppend = '';
 if (isset($integrationId) && is_numeric($integrationId)) {
@@ -15,7 +16,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $this->__("headlines.integrations"); ?></h1>
+                <h1><?php echo $tpl->__("headlines.integrations"); ?></h1>
             </div>
         </div>
     </div>
@@ -24,7 +25,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <h3>Align Systems Here</h3>
         <?=$provider->name ?><br />

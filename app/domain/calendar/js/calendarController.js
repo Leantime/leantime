@@ -2,16 +2,6 @@ leantime.calendarController = (function () {
 
     var closeModal = false;
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-
-            }
-        );
-
-    })();
-
     //Functions
     var initCalendar = function (userEvents) {
 

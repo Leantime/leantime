@@ -1,4 +1,5 @@
 <?php
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 $comments = app()->make(leantime\domain\repositories\comments::class);
 $formUrl = CURRENT_URL;
 
@@ -20,7 +21,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
             </div>
             <div class="commentReply" style="border:1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius); margin-bottom:10px;">
                 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)">
-                    <?php echo $this->__('links.add_new_comment') ?>
+                    <?php echo $tpl->__('links.add_new_comment') ?>
                 </a>
             </div>
         </div>
@@ -31,7 +32,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
-                <input type="submit" value="<?php echo $this->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
+                <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
             </div>
             <input type="hidden" name="comment" value="1"/>
             <input type="hidden" name="father" id="father" value="0"/>
@@ -41,7 +42,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
     <div id="comments">
         <div>
-            <?php foreach ($this->get('comments') as $row) : ?>
+            <?php foreach ($tpl->get('comments') as $row) : ?>
                 <div class="clearall">
                     <div class="commentImage">
                         <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>"/>
@@ -50,9 +51,9 @@ if (strpos($formUrl, '?delComment=') !== false) {
                         <div class="commentContent">
                             <div class="right commentDate">
                                 <?php printf(
-                                    $this->__('text.written_on'),
-                                    $this->getFormattedDateString($row['date']),
-                                    $this->getFormattedTimeString($row['date'])
+                                    $tpl->__('text.written_on'),
+                                    $tpl->getFormattedDateString($row['date']),
+                                    $tpl->getFormattedTimeString($row['date'])
                                 ); ?>
                                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                         <div class="inlineDropDownContainer" style="float:right; margin-left:10px;">
@@ -63,20 +64,20 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                             <ul class="dropdown-menu">
                                                 <?php if (($row['userId'] == $_SESSION['userdata']['id']) || $login::userIsAtLeast($roles::$manager)) { ?>
                                                     <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment">
-                                                        <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                        <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                     </a></li>
                                                 <?php } ?>
                                                 <?php
-                                                if (isset($this->get('ticket')->id)) {?>
-                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?=$row['id'] ?>, <?=$this->get('ticket')->id ?>);"><?=$this->__("links.add_to_timesheets"); ?></a></li>
+                                                if (isset($tpl->get('ticket')->id)) {?>
+                                                        <li><a href="javascript:void(0);" onclick="leantime.ticketsController.addCommentTimesheetContent(<?=$row['id'] ?>, <?=$tpl->get('ticket')->id ?>);"><?=$tpl->__("links.add_to_timesheets"); ?></a></li>
                                                 <?php } ?>
                                             </ul>
                                         </div>
                                     <?php } ?>
                             </div>
-                            <span class="name"><?php printf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?></span>
+                            <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></span>
                             <div class="text mce-content-body" id="commentText-<?=$row['id']?>">
-                                <?php echo $this->escapeMinimal($row['text']); ?>
+                                <?php echo $tpl->escapeMinimal($row['text']); ?>
                             </div>
 
 
@@ -86,7 +87,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                             <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                 <a href="javascript:void(0);"
                                    onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                                    <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
+                                    <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                 </a>
                             <?php } ?>
                         </div>
@@ -102,25 +103,25 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                             <div class="commentContent">
                                                 <div class="right commentDate">
                                                     <?php printf(
-                                                        $this->__('text.written_on'),
-                                                        $this->getFormattedDateString($comment['date']),
-                                                        $this->getFormattedTimeString($comment['date'])
+                                                        $tpl->__('text.written_on'),
+                                                        $tpl->getFormattedDateString($comment['date']),
+                                                        $tpl->getFormattedTimeString($comment['date'])
                                                     ); ?>
                                                 </div>
-                                                <span class="name"><?php printf($this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?></span>
-                                                <div class="text mce-content-body"><?php echo $this->escapeMinimal($comment['text']); ?></div>
+                                                <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?></span>
+                                                <div class="text mce-content-body"><?php echo $tpl->escapeMinimal($comment['text']); ?></div>
                                             </div>
 
                                             <div class="commentLinks">
                                                 <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                                     <a href="javascript:void(0);"
                                                        onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                                                        <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
+                                                        <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                                     </a>
                                                     <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
                                                         <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
                                                            class="deleteComment">
-                                                            <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                                            <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                         </a>
                                                     <?php } ?>
                                                 <?php } ?>
@@ -135,7 +136,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>"/>
                                 </div>
                                 <div class="commentReply">
-                                    <input type="submit" value="<?php echo $this->__('links.reply') ?>" name="comment" class="btn btn-primary"/>
+                                    <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" class="btn btn-primary"/>
                                 </div>
                                 <div class="clearall"></div>
                             </div>
@@ -146,9 +147,9 @@ if (strpos($formUrl, '?delComment=') !== false) {
         </div>
     </div>
 
-    <?php if (count($this->get('comments')) == 0) { ?>
+    <?php if (count($tpl->get('comments')) == 0) { ?>
         <div style="padding-left:40px;">
-            <?php echo $this->__('text.no_comments') ?>
+            <?php echo $tpl->__('text.no_comments') ?>
         </div>
     <?php } ?>
     <div class="clearall"></div>
@@ -156,7 +157,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
 <script type='text/javascript'>
 
-    leantime.generalController.initSimpleEditor();
+    leantime.editorController.initSimpleEditor();
 
     function toggleCommentBoxes(id) {
 
@@ -171,7 +172,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
             jQuery('.commentBox').hide();
 
             jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-            leantime.generalController.initSimpleEditor();
+            leantime.editorController.initSimpleEditor();
 
             jQuery('#comment' + id + '').show();
             jQuery('#father').val(id);

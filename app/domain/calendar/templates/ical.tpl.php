@@ -1,6 +1,6 @@
 <?php
-
-$calendars = $this->get('calendar');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$calendars = $tpl->get('calendar');
 $eol = "\r\n";
 $env = app()->make(\leantime\core\environment::class);
 $timezone = $env->defaultTimezone;
@@ -8,7 +8,7 @@ $timezone = $env->defaultTimezone;
 $timezoneObject = new DateTimeZone($timezone);
 
 
-$this->dispatchTplEvent('beforeOutput', $calendars, ['eol' => $eol]);
+$tpl->dispatchTplEvent('beforeOutput', $calendars, ['eol' => $eol]);
 
 echo "BEGIN:VCALENDAR" . $eol;
 echo "CALSCALE:GREGORIAN" . $eol;
@@ -104,10 +104,10 @@ if ($calendars) {
         if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') {
             $url = BASE_URL . "/calendar/editEvent/" . $calendar['id'] . "";
         } else {
-            $url = BASE_URL . "/tickets/showTicket" . $calendar['id'] . "?projectId=" . $calendar['projectId'] . "";
+            $url = BASE_URL . "/dashboard/home#/tickets/showTicket" . $calendar['id'] . "?projectId=" . $calendar['projectId'] . "";
         }
 
-        $this->dispatchTplEvent('calendarOutputBeginning', $calendar, [
+        $tpl->dispatchTplEvent('calendarOutputBeginning', $calendar, [
             'url' => $url,
             'eol' => $eol,
         ]);
@@ -123,7 +123,7 @@ if ($calendars) {
             echo "END:VEVENT" . $eol;
         }
 
-        $this->dispatchTplEvent('calendarOutputEnd', $calendar, [
+        $tpl->dispatchTplEvent('calendarOutputEnd', $calendar, [
             'url' => $url,
             'eol' => $eol,
         ]);
@@ -132,4 +132,4 @@ if ($calendars) {
 
 echo "END:VCALENDAR" . $eol;
 
-$this->dispatchTplEvent('afterOutput', $calendars, ['eol' => $eol]);
+$tpl->dispatchTplEvent('afterOutput', $calendars, ['eol' => $eol]);
