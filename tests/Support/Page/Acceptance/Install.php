@@ -31,11 +31,8 @@ class Install
         $this->I->fillField(['name' => 'lastname'], $lastname);
         $this->I->fillField(['name' => 'company'], $company);
         $this->I->click('Install');
-
-        $this->I->wait(5);
-
-        $content = $this->I->grabTextFrom("body");
-        echo $content;
+        
+        $this->I->waitForElementVisible(".login-alert");
 
         $this->I->see('The installation was successful');
 
