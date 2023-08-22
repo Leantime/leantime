@@ -16,8 +16,7 @@ class InstallCest
     {
         $I->amOnPage('/install');
         $I->wait(10);
-        $content = $I->grabTextFrom("body");
-        echo $content;
+
         $I->see('Install');
     }
 
