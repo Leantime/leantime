@@ -32,33 +32,10 @@ namespace leantime\domain\controllers {
         public function get(array $params)
         {
 
-            $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
+            $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+            array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
-            $searchCriteria["orderBy"] = "kanbansort";
-
-            $this->tpl->assign('allTickets', $this->ticketService->getAll($searchCriteria));
-            $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
             $this->tpl->assign('allKanbanColumns', $this->ticketService->getKanbanColumns());
-            $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-            $this->tpl->assign('types', $this->ticketService->getTicketTypes());
-            $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
-
-            $this->tpl->assign('searchCriteria', $searchCriteria);
-            $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
-
-            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
-
-
-            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
-            $this->tpl->assign('futureSprints', $this->sprintService->getAllFutureSprints($_SESSION["currentProject"]));
-
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
-            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
-
-            $this->tpl->assign('currentSprint', $_SESSION["currentSprint"]);
-            $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
             $this->tpl->display('tickets.showKanban');
         }

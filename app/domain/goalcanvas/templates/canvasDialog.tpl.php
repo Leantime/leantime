@@ -44,7 +44,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
     <?php echo $tpl->displayNotification(); ?>
 
-    <form class="<?=$canvasName ?>CanvasModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
+    <form class="formModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
         <input type="hidden" value="<?php echo $tpl->get('currentCanvas'); ?>" name="canvasId" />
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
@@ -310,15 +310,15 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             });
         <?php } ?>
 
-        leantime.generalController.initSimpleEditor();
+        leantime.editorController.initSimpleEditor();
 
         <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.generalController.makeInputReadonly(".nyroModalCont");
+            leantime.authController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
         <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-            leantime.generalController.enableCommenterForms();
+            leantime.commentsController.enableCommenterForms();
         <?php }?>
 
     })

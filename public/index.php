@@ -9,3 +9,4 @@ require_once APP_ROOT . '/app/core/class.autoload.php';
 require_once APP_ROOT . '/config/appSettings.php';
 
 leantime\core\Bootloader::getInstance()->boot();
+

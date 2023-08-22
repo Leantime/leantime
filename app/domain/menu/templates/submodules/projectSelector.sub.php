@@ -33,7 +33,6 @@ use leantime\core\eventhelpers;
 
             <div class="row" style="margin:0px;">
                 <?php
-                $projectHierarchy = $tpl->get('allAssignedProjectsHierarchy') ?? false;
 
                 $numCol = 1;
 
@@ -99,12 +98,12 @@ use leantime\core\eventhelpers;
                                 }
                             }
                             ?>
-                            <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                            <?php if ($login::userIsAtLeast(\leantime\domain\models\auth\roles::$manager)) { ?>
                                 <li class='nav-header border alwaysVisible'></li>
                                 <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/newProject/"><?=$tpl->__("menu.create_project") ?></a></li>
                                 <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/showAll"><?=$tpl->__("menu.view_all_projects") ?></a></li>
                             <?php } ?>
-                            <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                            <?php if ($login::userIsAtLeast(\leantime\domain\models\auth\roles::$admin)) { ?>
                                 <li class="alwaysVisible"><a href="<?=BASE_URL ?>/clients/showAll"><?=$tpl->__("menu.view_all_clients") ?></a></li>
                             <?php } ?>
                         </ul>

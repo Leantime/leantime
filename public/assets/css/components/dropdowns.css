@@ -45,7 +45,6 @@
 
 .dropdownTabs a:hover {
     text-decoration: none;
-    color:var(--dropdown-link-hover-color);
 }
 
 
@@ -69,10 +68,23 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     background:var(--dropdown-link-hover-bg) !important;
 }
 
+.dropdown-menu > li > a:hover small,
+.dropdown-menu > li > a:focus small,
+.dropdown-submenu:hover > a small,
+.dropdown-submenu:focus > a small,
+.bigMenu ul li a small,
+.bigMenu ul li a:hover small,
+.bigMenu ul li a:focus small {
+    color: var(--dropdown-link-hover-color) !important;
+}
+
 
 .dropdown .dropdown-menu .nav-header {
     padding-left: 10px;
     padding-right: 10px;
+    font-size:var(--font-size-m);
+    color:var(--primary-font-color);
+    text-transform:none;
 }
 
 .ticketDropdown.show {
@@ -80,14 +92,14 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .ticketDropdown {
-    font-size:var(--font-size-s);
+    font-size:var(--font-size-m);
 
 }
 
 .ticketDropdown ul,
 .ticketDropdown ul li a{
     top: 22px;
-    font-size:var(--font-size-s);
+    font-size:var(--font-size-m);
 }
 
 .ticketDropdown.userDropdown {
@@ -153,15 +165,20 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontentinner .dropdown img {
-    width:21px;
-    border-radius: 10px;
+    width:23px;
+    border-radius: 12px;
     border: 1px solid var(--neutral);
     margin-top:1px;
+    padding:1px;
 }
 
 
 .maincontentinner .ticketDropdown.noBg >a:hover {
     color:#000;
+}
+
+.maincontentinner .ticketDropdown.noBg >a:hover img {
+    border-color:var(--dropdown-link-hover-bg) !important
 }
 
 .maincontentinner .ticketDropdown ul li a[class*="label-"],

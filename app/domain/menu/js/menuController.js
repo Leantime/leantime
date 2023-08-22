@@ -1,18 +1,5 @@
 leantime.menuController = (function () {
 
-    //Variables
-
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-                _initProjectSelector();
-                _initLeftMenuHamburgerButton();
-                _initProjectSelectorToggle();
-            }
-        );
-
-    })();
 
     //Functions
 
@@ -47,13 +34,13 @@ leantime.menuController = (function () {
         });
     }
 
-    var _initProjectSelector = function () {
+    var initProjectSelector = function () {
 
         jQuery(".project-select").chosen();
 
     };
 
-    var _initLeftMenuHamburgerButton = function () {
+    var initLeftMenuHamburgerButton = function () {
 
 
         var newWidth = 68;
@@ -111,7 +98,7 @@ leantime.menuController = (function () {
 
     };
 
-    var _initProjectSelectorToggle = function (id, element) {
+    var initProjectSelectorToggle = function (id, element) {
 
         jQuery(document).on('click', '.project-selector .dropdown-menu', function (e) {
             e.stopPropagation();
@@ -243,7 +230,10 @@ leantime.menuController = (function () {
     return {
         toggleClientList:toggleClientList,
         toggleSubmenu:toggleSubmenu,
-        toggleHierarchy:toggleHierarchy
+        toggleHierarchy:toggleHierarchy,
+        initProjectSelector:initProjectSelector,
+        initLeftMenuHamburgerButton:initLeftMenuHamburgerButton,
+        initProjectSelectorToggle:initProjectSelectorToggle,
     };
 
 })();

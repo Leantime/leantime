@@ -3,9 +3,9 @@
 <a href="https://leantime.io"><img src="https://leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
 
 
-### Leantime&trade; ###
+### Leantime&reg; ###
 
-Leantime is a strategic open source project management system for innovative companies and teams looking to go from start to finish. Built for the non-project manager, we combine the plans and the work while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Notion, and Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+Leantime is a strategic open source project management system for innovative companies and teams looking to go from start to finish. Built for the non-project manager, we combine the plans and the work while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Version](https://img.shields.io/github/package-json/v/leantime/leantime/master?style=flat-square)](https://github.com/Leantime/leantime/releases)

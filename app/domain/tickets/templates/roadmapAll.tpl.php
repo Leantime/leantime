@@ -124,7 +124,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
     jQuery(document).ready(function(){
 
-    leantime.ticketsController.initModals();
 
     <?php if (isset($_GET['showMilestoneModal'])) {
         if ($_GET['showMilestoneModal'] == "") {

@@ -95,7 +95,9 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('comments', $comments);
 
-            $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION['currentProject']));
+            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $this->tpl->assign('milestones', $allProjectMilestones);
 
             $this->tpl->assign('canvasItem', $canvasItem);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());

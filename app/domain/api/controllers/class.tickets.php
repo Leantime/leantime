@@ -39,6 +39,14 @@ namespace leantime\domain\controllers {
          */
         public function get($params)
         {
+            if (isset($params['search'])) {
+
+                $searchCriteria = $this->ticketsApiService->prepareTicketSearchArray($params);
+
+                $results = $this->ticketsApiService->getAll($searchCriteria);
+
+                $this->apiService->jsonResponse(1, $results);
+            }
         }
 
         /**
@@ -52,7 +60,8 @@ namespace leantime\domain\controllers {
 
             ob_start();
 
-            if (services\auth::userIsAtLeast(roles::$editor)) {
+                if (services\auth::userIsAtLeast(roles::$editor)) {
+
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
                     if (isset($params["handler"]) == true) {

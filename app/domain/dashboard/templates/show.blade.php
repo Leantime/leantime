@@ -32,7 +32,7 @@
                     ><i class="fa fa-link"></i></a>
                     <div class="dropdown-menu padding-md">
                         <input type="text" id="projectUrl" value="{{ BASE_URL }}/projects/changeCurrentProject/{{ $project['id'] }}" />
-                        <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('projectUrl')">{{ __('links.copy_url') }}</button>
+                        <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('projectUrl')">{{ __('links.copy_url') }}</button>
                     </div>
                 </div>
 
@@ -98,22 +98,19 @@
                                                 <ul class="dropdown-menu">
                                                     <li class="nav-header">{{ __('subtitles.todo') }}</li>
                                                     <li>
-                                                        <a
-                                                            href="{{ BASE_URL }}/tickets/showTicket/{{ $row['id'] }}"
-                                                            class="ticketModal"
-                                                        ><i class="fa fa-edit"></i> {{ __('links.edit_todo') }}</a>
+                                                        <a href="{{ BASE_URL }}/dashboard/show#/tickets/showTicket/{{ $row['id'] }}">
+                                                            <i class="fa fa-edit"></i> {{ __('links.edit_todo') }}
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a
-                                                            href="{{ BASE_URL }}/tickets/moveTicket/{{ $row['id'] }}"
-                                                            class="moveTicketModal sprintModal"
-                                                        ><i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __('links.move_todo') }}</a>
+                                                        <a href="{{ BASE_URL }}/dashboard/show#/tickets/moveTicket/{{ $row['id'] }}">
+                                                            <i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __('links.move_todo') }}
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a
-                                                            href="{{ BASE_URL }}/tickets/delTicket/{{ $row['id'] }}"
-                                                            class="delete"
-                                                        ><i class="fa fa-trash"></i> {{ __('links.delete_todo') }}</a>
+                                                        <a href="{{ BASE_URL }}/dashboard/show#/tickets/delTicket/{{ $row['id'] }}">
+                                                            <i class="fa fa-trash"></i> {{ __('links.delete_todo') }}
+                                                        </a>
                                                     </li>
                                                     <li class="nav-header border">{{ __('subtitles.tracktime') }}</li>
                                                     <li id="timerContainer-{{ $row['id'] }}" class="timerContainer">
@@ -542,7 +539,7 @@
 
 @once @push('scripts')
 <script type='text/javascript'>
-    leantime.generalController.initSimpleEditor();
+    leantime.editorController.initSimpleEditor();
 
     function toggleCommentBoxes(id) {
 
@@ -558,7 +555,7 @@
         jQuery('.commentBox').hide('fast', function () {});
 
         jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-        leantime.generalController.initSimpleEditor();
+        leantime.editorController.initSimpleEditor();
 
         jQuery('#comment' + id + '').show('fast');
         jQuery('#father').val(id);
@@ -649,8 +646,6 @@
             e.stopPropagation();
         });
 
-        leantime.ticketsController.initModals();
-
         @if ($login::userIsAtLeast($roles::$editor))
             leantime.dashboardController.prepareHiddenDueDate();
             leantime.ticketsController.initEffortDropdown();
@@ -659,7 +654,7 @@
             leantime.ticketsController.initDueDateTimePickers();
             leantime.usersController.initUserEditModal();
         @else
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
         @endif
 
         leantime.dashboardController.initProgressChart(

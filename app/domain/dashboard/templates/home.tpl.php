@@ -194,9 +194,9 @@
                                                                 </a>
                                                                 <ul class="dropdown-menu">
                                                                     <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                                                    <li><a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"]; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
-                                                                    <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row["id"]; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
-                                                                    <li><a href="<?=BASE_URL ?>/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/moveTicket/<?php echo $row["id"]; ?>" ><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
+                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
                                                                     <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
                                                                     <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
                                                                         <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
@@ -236,7 +236,7 @@
                                                                 <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                    echo $efforts[$row['storypoints']];
+                                                                    echo $efforts["".$row['storypoints']];
                                                                 } else {
                                                                     echo $tpl->__("label.story_points_unkown");
                                                                 }?>
@@ -270,12 +270,14 @@
                                                                     <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$tpl->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
 
                                                                     <?php
-
-                                                                    foreach ($milestones[$row['projectId']] as $milestone) {
-                                                                        echo"<li class='dropdown-item'>
-                                                                            <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
-                                                                        echo"</li>";
-                                                                    }?>
+                                                                    if(isset($milestones[$row['projectId']])){
+                                                                        foreach ($milestones[$row['projectId']] as $milestone) {
+                                                                            echo"<li class='dropdown-item'>
+                                                                                <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
+                                                                            echo"</li>";
+                                                                        }
+                                                                    }
+                                                                    ?>
                                                                 </ul>
                                                             </div>
 
@@ -445,8 +447,6 @@
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
-
-
             if(currentLink.hasClass("fa-angle-right")){
                 currentLink.removeClass("fa-angle-right");
                 currentLink.addClass("fa-angle-down");
@@ -462,7 +462,6 @@
     }
 
    jQuery(document).ready(function() {
-       leantime.ticketsController.initModals();
 
        jQuery('.todaysDate').text(moment().format('LLLL'));
 
@@ -473,7 +472,7 @@
            leantime.ticketsController.initStatusDropdown();
            leantime.ticketsController.initDueDateTimePickers();
        <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
        <?php } ?>
 
        <?php if ($tpl->get('completedOnboarding') === false) { ?>

@@ -1,17 +1,18 @@
 @php
-/**
- * @todo Move this to Composer, or find a better
- *       way to add filters for all passed variables
- */
-$settingsLink = $tpl->dispatchTplFilter(
-    'settingsLink',
-    $settingsLink,
-    ['type' => $currentProjectType]
-);
-$projectHierarchy = $tpl->dispatchTplFilter(
-    'projectHierarchyRestore',
-    $projectHierarchy,
-);
+    /**
+     * @todo Move this to Composer, or find a better
+     *       way to add filters for all passed variables
+     */
+    use leantime\domain\models\auth\roles;
+    $settingsLink = $tpl->dispatchTplFilter(
+        'settingsLink',
+        $settingsLink,
+        ['type' => $currentProjectType]
+    );
+    $projectHierarchy = $tpl->dispatchTplFilter(
+        'projectHierarchyRestore',
+        $projectHierarchy,
+    );
 @endphp
 
 @isset($_SESSION['currentProjectName'])
@@ -36,16 +37,17 @@ $projectHierarchy = $tpl->dispatchTplFilter(
                             <span class="projectAvatar {{ $currentProjectType }}">
                                 @switch($currentProjectType)
                                     @case('strategy')
-                                    <span class="fa fa-chess"></span>
-                                    @break
+                                        <span class="fa fa-chess"></span>
+                                        @break
 
                                     @case('program')
-                                    <span class="fa fa-layer-group"></span>
-                                    @break
+                                        <span class="fa fa-layer-group"></span>
+                                        @break
 
                                     @default
-                                    <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $_SESSION['currentProject'] }}" />
-                                    @break
+                                        <img
+                                            src="{{ BASE_URL }}/api/projects?projectAvatar={{ $_SESSION['currentProject'] }}"/>
+                                        @break
                                 @endswitch
                             </span>
                             {{ $_SESSION['currentProjectName'] }}&nbsp;<i class="fa fa-caret-right"></i>
@@ -63,7 +65,8 @@ $projectHierarchy = $tpl->dispatchTplFilter(
                     @foreach ($menuStructure as $key => $menuItem)
                         @switch ($menuItem['type'])
                             @case('header')
-                                <li><a href="javascript:void(0);"><strong>{{ __($menuItem['title']) }}</strong></a></li>
+                                <li><a href="javascript:void(0);"><strong>{!! __($menuItem['title']) !!}</strong></a>
+                                </li>
                                 @break
 
                             @case('separator')
@@ -79,16 +82,56 @@ $projectHierarchy = $tpl->dispatchTplFilter(
                                         class="active"
                                     @endif
                                 >
-                                    <a href="{!! BASE_URL . $menuItem['href'] !!}">{{ __($menuItem['title']) }}</a>
+                                    <a href="{!! BASE_URL . $menuItem['href'] !!}">{!! __($menuItem['title']) !!}</a>
                                 </li>
+                                @break
+                            @case('submenu')
+                                <li class="submenuToggle">
+                                    <a href="javascript:void(0);"
+                                       @if ( $menuItem['visual'] !== 'always' )
+                                           onclick="leantime.menuController.toggleSubmenu('{{ $menuItem['id'] }}')"
+                                        @endif
+                                    >
+                                        <i class="submenuCaret fa fa-angle-{{ $menuItem['visual'] == 'closed' ? 'right' : 'down' }}"
+                                           id="submenu-icon-{{ $menuItem['id'] }}"></i>
+                                        <strong>{!! __($menuItem['title']) !!}</strong>
+                                    </a>
+                                </li>
+                                <ul style="display: {{ $menuItem['visual'] == 'closed' ? 'none' : 'block' }}"
+                                    id="submenu-{{ $menuItem['id'] }}" class="submenu">
+                                    @foreach ($menuItem['submenu'] as $subkey => $submenuItem)
+                                        @switch ($submenuItem['type'])
+                                            @case('header')
+                                                <li class="title">
+                                                    <a href="javascript:void(0);">
+                                                        <strong>{!! __($submenuItem['title']) !!}</strong>
+                                                    </a>
+                                                </li>
+                                                @break
+                                            @case('item')
+                                                <li
+                                                    @if(
+                                                        $module == $submenuItem['module']
+                                                        && (!isset($submenuItem['active']) || in_array($action, $submenuItem['active']))
+                                                    )
+                                                        class='active'
+                                                    @endif
+                                                >
+                                                    <a href="{{ BASE_URL . $submenuItem['href'] }}">
+                                                        {!! __($submenuItem['title']) !!}
+                                                    </a>
+                                                </li>
+                                        @endswitch
+                                    @endforeach
+                                </ul>
                                 @break
                         @endswitch
                     @endforeach
 
-                    @if ($login::userIsAtLeast($roles::$manager))
+                    @if ($login::userIsAtLeast(roles::$manager))
                         <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
                             <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ $_SESSION['currentProject'] }}">
-                                {{ $settingsLink['label'] }}
+                                {!! $settingsLink['label']  !!}
                             </a>
                         </li>
                     @endif
@@ -119,11 +162,11 @@ $projectHierarchy = $tpl->dispatchTplFilter(
                             data-tippy-placement="right"
                         >
                             <span class="projectAvatar">
-                                <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $_SESSION['currentProject'] }}" />
+                                <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $_SESSION['currentProject'] }}"/>
                             </span>
-
-                            @include('menu::submodules.projectSelector')
                         </a>
+                        @include('menu::submodules.projectSelector')
+
                     </form>
                 </div>
             </li>
@@ -193,63 +236,74 @@ $projectHierarchy = $tpl->dispatchTplFilter(
 
 @endisset
 
-@once @push('scripts')
-<script>
-    jQuery('.projectSelectorTabs').tabs();
+@once
+    @push('scripts')
+        <script>
+            jQuery(document).ready(
+                function () {
+                    leantime.menuController.initProjectSelector();
+                    leantime.menuController.initLeftMenuHamburgerButton();
+                    leantime.menuController.initProjectSelectorToggle();
 
-    let clientId = {{ !empty($currentClient) ? $currentClient : '-1' }};
+                    jQuery('.projectSelectorTabs').tabs();
+                }
+            );
 
-    @php $childSelector = $projectHierarchy['program']['enabled'] ? 'program' : 'project'; @endphp
 
-    @if($projectHierarchy['program']['enabled'] || $projectHierarchy['strategy']['enabled'])
-        @isset($_SESSION['submenuToggle']['strategy'])
+            let clientId = {{ !empty($currentClient) ? $currentClient : '-1' }};
+
+            @php $childSelector = $projectHierarchy['program']['enabled'] ? 'program' : 'project'; @endphp
+
+            @if($projectHierarchy['program']['enabled'] || $projectHierarchy['strategy']['enabled'])
+            @isset($_SESSION['submenuToggle']['strategy'])
             leantime.menuController.toggleHierarchy({{ "'{$_SESSION['submenuToggle']['strategy']}', '$childSelector' , 'strategy'" }});
-        @else
-            @if(isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
-                leantime.menuController.toggleHierarchy('noStretegyParent', 'program', 'strategy');
             @else
-                leantime.menuController.toggleHierarchy('noStretegyParent', 'project', 'strategy');
+            @if(isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
+            leantime.menuController.toggleHierarchy('noStretegyParent', 'program', 'strategy');
+            @else
+            leantime.menuController.toggleHierarchy('noStretegyParent', 'project', 'strategy');
             @endif
-        @endisset
+            @endisset
 
-        @if(isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
+            @if(isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
             leantime.menuController.toggleHierarchy({{ "'{$_SESSION['submenuToggle']['program']}', 'project', 'program'"}});
-        @else
+            @else
             @if(! isset($_SESSION['submenuToggle']['program']) && $projectHierarchy['program']['enabled'])
-                leantime.menuController.toggleHierarchy('noProgramParent', 'project', 'program');
+            leantime.menuController.toggleHierarchy('noProgramParent', 'project', 'program');
             @elseif(! isset($_SESSION['submenuToggle']['program']) && ! $projectHierarchy['strategy']['enabled'])
-                leantime.menuController.toggleHierarchy('noStrategyParent', 'project', 'strategy');
+            leantime.menuController.toggleHierarchy('noStrategyParent', 'project', 'strategy');
 
             @endif
-        @endif
+            @endif
 
-        @foreach($projectHierarchy['project']['items'] as $key => $typeRow)
+            @foreach($projectHierarchy['project']['items'] as $key => $typeRow)
             @foreach($typeRow as $projectRow)
-                @if($projectHierarchy['program']['enabled'] && $projectHierarchy['strategy']['enabled'])
-                    @isset($_SESSION['submenuToggle']['program'], $_SESSION['submenuToggle']["clientDropdown-{$_SESSION['submenuToggle']['program']}-{$projectRow['clientId']}"])
-                        leantime.menuController.toggleClientList({{ "'{$projectRow['clientId']}', '.clientIdHead-{$projectRow['clientId']} a', '{$_SESSION['submenuToggle']['clientDropdown-' . $_SESSION['submenuToggle']['program'] . '-' . $projectRow['clientId']]}'"}});
-                    @endisset
+            @if($projectHierarchy['program']['enabled'] && $projectHierarchy['strategy']['enabled'])
+            @isset($_SESSION['submenuToggle']['program'], $_SESSION['submenuToggle']["clientDropdown-{$_SESSION['submenuToggle']['program']}-{$projectRow['clientId']}"])
+            leantime.menuController.toggleClientList({{ "'{$projectRow['clientId']}', '.clientIdHead-{$projectRow['clientId']} a', '{$_SESSION['submenuToggle']['clientDropdown-' . $_SESSION['submenuToggle']['program'] . '-' . $projectRow['clientId']]}'"}});
+            @endisset
 
-                    @isset($_SESSION['submenuToggle']['strategy'], $_SESSION['submenuToggle']["clientDropdown-{$_SESSION['submenuToggle']['strategy']}-{$projectRow['clientId']}"])
-                        leantime.menuController.toggleClientList({{ "'{$projectRow['clientId']}', '.clientIdHead-{$projectRow['clientId']} a', '{$_SESSION['submenuToggle']['clientDropdown-' . $_SESSION['submenuToggle']['strategy'] . '-' . $projectRow['clientId']]}'"}});
-                    @endisset
+            @isset($_SESSION['submenuToggle']['strategy'], $_SESSION['submenuToggle']["clientDropdown-{$_SESSION['submenuToggle']['strategy']}-{$projectRow['clientId']}"])
+            leantime.menuController.toggleClientList({{ "'{$projectRow['clientId']}', '.clientIdHead-{$projectRow['clientId']} a', '{$_SESSION['submenuToggle']['clientDropdown-' . $_SESSION['submenuToggle']['strategy'] . '-' . $projectRow['clientId']]}'"}});
+            @endisset
 
-                    @if(isset($_SESSION['submenuToggle']['clientDropdown--' . $projectRow['clientId']]) || $projectRow['clientId'] == $currentClient)
-                        @php
-                            $state = "closed";
+            @if(isset($_SESSION['submenuToggle']['clientDropdown--' . $projectRow['clientId']]) || $projectRow['clientId'] == $currentClient)
+            @php
+                $state = "closed";
 
-                            if ($projectRow['clientId'] == $currentClient) {
-                                $state = "open";
-                            } else {
-                                $state = $_SESSION['submenuToggle']['clientDropdown--' . $projectRow['clientId']];
-                            }
-                        @endphp
+                if ($projectRow['clientId'] == $currentClient) {
+                    $state = "open";
+                } else {
+                    $state = $_SESSION['submenuToggle']['clientDropdown--' . $projectRow['clientId']];
+                }
+            @endphp
 
-                        leantime.menuController.toggleClientList({{ "'{$projectRow['clientId']}', '.clientIdHead-{$projectRow['clientId']} a', '$state'"}});
-                    @endif
-                @endif
+            leantime.menuController.toggleClientList({{ "'{$projectRow['clientId']}', '.clientIdHead-{$projectRow['clientId']} a', '$state'"}});
+            @endif
+            @endif
             @endforeach
-        @endforeach
-    @endif
-</script>
-@endpush @endonce
+            @endforeach
+            @endif
+        </script>
+    @endpush
+@endonce

@@ -29,6 +29,7 @@
     "masonry-layout": "^4.2.2",
     "moment": "^2.29.4",
     "packery": "^2.1.2",
+    "tailwind": "^4.0.0",
     "tether-shepherd": "^1.8.1",
     "tinymce": "^5.10.7",
     "tinymce-mention": "^4.0.2",

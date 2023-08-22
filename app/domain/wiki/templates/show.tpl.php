@@ -54,8 +54,8 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <li><a class="wikiModal inlineEdit" href="<?=BASE_URL ?>/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$tpl->__("link.edit_wiki") ?></a></li>
-                        <li><a class="delete wikiModal" href="<?=BASE_URL ?>/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_wiki') ?></a></li>
+                        <li><a class="inlineEdit" href="#/wiki/wikiModal/<?=$currentWiki->id ?>"><?=$tpl->__("link.edit_wiki") ?></a></li>
+                        <li><a class="delete" href="#/wiki/delWiki/<?php echo $currentWiki->id; ?>" ><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_wiki') ?></a></li>
 
                     <?php } ?>
                 </ul>
@@ -79,7 +79,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
                 <ul class="dropdown-menu">
 
-                    <li><a class="wikiModal inlineEdit" href="<?=BASE_URL ?>/wiki/wikiModal/"><?=$tpl->__("link.new_wiki") ?></a></li>
+                    <li><a class="inlineEdit" href="#/wiki/wikiModal/"><?=$tpl->__("link.new_wiki") ?></a></li>
                     <li class='nav-header border'></li>
                     <?php foreach ($wikis as $wiki) {?>
                         <li>
@@ -115,7 +115,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
 
                             echo "" . $tpl->__("text.create_new_wiki") . "<br /><br />
-                                            <a href='" . BASE_URL . "/wiki/wikiModal/' class='wikiModal inlineEdit btn btn-primary'>" . $tpl->__("links.icon.create_new_board") . "</a><br/><br/>";
+                                            <a href='#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>" . $tpl->__("links.icon.create_new_board") . "</a><br/><br/>";
                         echo"</div>";
                         ?>
                     </div>
@@ -125,124 +125,131 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
             <?php if ($wikis != false && count($wikis) > 0) {?>
                 <div class="col-lg-12">
-                    <div class="maincontentinner">
+
                     <?php
 
                     if ($currentArticle && $currentArticle->id != null) { ?>
                     <div class="row">
+
                         <div class="col-md-3">
                             <div class="row stickyRow">
+                                    <div class="col-md-12" style="">
+                                        <div class="maincontentinner">
 
-                                <div class="col-md-12" style="border-right:1px solid var(--neutral);">
+                                            <h5 class="subtitle">Contents</h5>
+                                            <div id="article-toc-wrapper">
 
 
-                                    <h5 class="subtitle">Contents</h5>
-                                    <div id="article-toc-wrapper">
+                                            <?php
 
+                                            createTreeView($wikiHeadlines, 0, 0, -1, $tpl);
+                                            ?>
 
-                                        <?php
+                                            <?php /*
 
-                                        createTreeView($wikiHeadlines, 0, 0, -1, $tpl);
-                                        ?>
-
-                                        <?php /*
-
-                                   */?>
-                                    </div>
-                                    <?php if ($wikis != false && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
-                                        <div class="creationLinks">
-                                            <a class="articleModal inlineEdit" href="<?=BASE_URL ?>/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
+                                       */?>
                                         </div>
-                                    <?php } ?>
+                                            <?php if ($wikis != false && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
+                                            <div class="creationLinks">
+                                                <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
+                                            </div>
+                                        <?php } ?>
 
-                                </div>
+                                        </div>
+
+                                    </div>
                             </div>
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-md-9" style="text-align: center">
+                            <div class="maincontentinner">
+                            <div class="articleWrapper">
 
-                            <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                <div class="right">
-                                    <a class="articleModal btn btn-default" href="<?=BASE_URL?>/wiki/articleDialog/<?=$currentArticle->id; ?>"><?=$tpl->__('links.edit_article');?></a>
-                                    <div class="dropdownWrapper pull-right" style="margin-left:10px;">
-                                        <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>"><i class="fa fa-link"></i></a>
-                                        <div class="dropdown-menu padding-md">
-                                            <input type="text" id="wikiURL" value="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>" />
-                                            <button class="btn btn-primary" onclick="leantime.generalController.copyUrl('wikiURL');"><?=$tpl->__('links.copy_url') ?></button>
+                                <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                    <div class="right">
+                                        <a class="btn btn-default" href="#/wiki/articleDialog/<?=$currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
+                                        <div class="dropdownWrapper pull-right" style="margin-left:10px;">
+                                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>"><i class="fa fa-link"></i></a>
+                                            <div class="dropdown-menu padding-md">
+                                                <input type="text" id="wikiURL" value="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>" />
+                                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('wikiURL');"><?=$tpl->__('links.copy_url') ?></button>
+                                            </div>
                                         </div>
+
                                     </div>
+                                <?php } ?>
+
+
+                                <h1 class="articleHeadline">
+                                    <i class="<?=$currentArticle->data ?>"></i>
+                                    <?=$tpl->escape($currentArticle->title)?>
+                                </h1>
+                                <div class="articleMeta">
+                                    <div class="metaContent">
+                                    <?=sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), $tpl->getFormattedDateString($currentArticle->created), $tpl->getFormattedDateString($currentArticle->modified)); ?>
+                                    <br />
+                                    </div>
+                                    <div class="tagsinput readonly">
+
+                                        <?php
+                                        $tagsArray = explode(",", $currentArticle->tags);
+                                        if (count($tagsArray) > 0) {
+                                            echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
+                                        }
+
+                                        foreach ($tagsArray as $tag) {
+                                            echo"<span class='tag'><span>" . $tpl->escape($tag) . "</span></span>";
+                                        }
+
+                                        ?>
+                                    </div><br />
+
+
 
                                 </div>
-                            <?php } ?>
-
-
-                            <h1 class="articleHeadline">
-                                <i class="<?=$currentArticle->data ?>"></i>
-                                <?=$tpl->escape($currentArticle->title)?>
-                            </h1>
-                            <div class="articleMeta">
-                                <div class="metaContent">
-                                <?=sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), $tpl->getFormattedDateString($currentArticle->created), $tpl->getFormattedDateString($currentArticle->modified)); ?>
-                                <br />
+                                <div class="articleBody mce-content-body">
+                                    <?=$tpl->escapeMinimal($currentArticle->description); ?>
                                 </div>
-                                <div class="tagsinput readonly">
 
-                                    <?php
-                                    $tagsArray = explode(",", $currentArticle->tags);
-                                    if (count($tagsArray) > 0) {
-                                        echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
-                                    }
+                                <?php if ($currentArticle->milestoneHeadline != '') { ?>
+                                    <div class="milestonContainer border">
+                                        <div class="row">
 
-                                    foreach ($tagsArray as $tag) {
-                                        echo"<span class='tag'><span>" . $tpl->escape($tag) . "</span></span>";
-                                    }
-
-                                    ?>
-                                </div><br />
-
-
-
-                            </div>
-                            <div class="articleBody mce-content-body">
-                                <?=$tpl->escapeMinimal($currentArticle->description); ?>
-                            </div>
-
-                            <?php if ($currentArticle->milestoneHeadline != '') { ?>
-                                <div class="milestonContainer border">
-                                    <div class="row">
-
-                                        <div class="col-md-5">
-                                            <?php $tpl->e($currentArticle->milestoneHeadline); ?>
+                                            <div class="col-md-5">
+                                                <?php $tpl->e($currentArticle->milestoneHeadline); ?>
+                                            </div>
+                                            <div class="col-md-7" style="text-align:right">
+                                                <?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?>
+                                            </div>
                                         </div>
-                                        <div class="col-md-7" style="text-align:right">
-                                            <?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="progress">
-                                                <div class="progress-bar progress-bar-success" role="progressbar"
-                                                     aria-valuenow="<?php echo $currentArticle->percentDone; ?>" aria-valuemin="0"
-                                                     aria-valuemax="100" style="width: <?php echo $currentArticle->percentDone; ?>%">
-                                                    <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?></span>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-success" role="progressbar"
+                                                         aria-valuenow="<?php echo $currentArticle->percentDone; ?>" aria-valuemin="0"
+                                                         aria-valuemax="100" style="width: <?php echo $currentArticle->percentDone; ?>%">
+                                                        <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
 
-                            </div><br /><br />
-                            <?php } ?>
+                                </div><br /><br />
+                                <?php } ?>
 
-                            <div id="comments">
-                                <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
+                                <div id="comments">
+                                    <h4 class="widgettitle title-light"><span class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
 
-                                <form method="post" action="<?=BASE_URL ?>/wiki/show/<?php echo $currentArticle->id; ?>#comment">
-                                    <input type="hidden" name="comment" value="1" />
-                                    <?php
-                                    $tpl->assign('formUrl', BASE_URL . "/wiki/show/" . $currentArticle->id . "");
-                                    $tpl->displaySubmodule('comments-generalComment') ;
-                                    ?>
-                                </form>
+                                    <form method="post" action="<?=BASE_URL ?>/wiki/show/<?php echo $currentArticle->id; ?>#comment">
+                                        <input type="hidden" name="comment" value="1" />
+                                        <?php
+                                        $tpl->assign('formUrl', BASE_URL . "/wiki/show/" . $currentArticle->id . "");
+                                        $tpl->displaySubmodule('comments-generalComment') ;
+                                        ?>
+                                    </form>
+                                </div>
+
+                            </div>
                             </div>
 
                         </div>
@@ -259,7 +266,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                         echo"<br /><h3>" . $tpl->__("headlines.no_articles_yet") . "</h3>";
 
                                             echo "" . $tpl->__("text.create_new_content") . "<br /><br />
-                                            <a href='" . BASE_URL . "/wiki/articleDialog/' class='articleModal inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $tpl->__("link.create_article") . "</a><br/><br/>";
+                                            <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $tpl->__("link.create_article") . "</a><br/><br/>";
 
 
                                         echo"</div>";
@@ -267,7 +274,6 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                     </div>
                             </div>
                     <?php } ?>
-                </div>
                 </div>
 
 
@@ -291,10 +297,9 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
        <?php } ?>
 
        leantime.wikiController.wikiModal();
-       leantime.wikiController.articleModal();
 
        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-        leantime.generalController.enableCommenterForms();
+        leantime.commentsController.enableCommenterForms();
        <?php }?>
 
     });

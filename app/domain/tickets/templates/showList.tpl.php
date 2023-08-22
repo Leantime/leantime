@@ -5,9 +5,10 @@
     $sprints        = $tpl->get("sprints");
     $searchCriteria = $tpl->get("searchCriteria");
     $currentSprint  = $tpl->get("currentSprint");
-    $allTickets     = $tpl->get('allTickets');
 
-    $todoTypeIcons  = $tpl->get("ticketTypeIcons");
+    $allTicketGroups     = $tpl->get('allTickets');
+
+    echo $tpl->displayNotification();
 
     $efforts        = $tpl->get('efforts');
     $priorities     = $tpl->get('priorities');
@@ -21,241 +22,35 @@
 
 ?>
 
-<?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
-<div class="pageheader">
-    <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
-    <div class="pageicon"><span class="fa fa-fw fa-thumb-tack"></span></div>
-    <div class="pagetitle">
-       <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
-        <h1><?php echo $tpl->__("headlines.todos"); ?></h1>
-    </div>
-    <?php $tpl->dispatchTplEvent('beforePageHeaderClose'); ?>
-</div><!--pageheader-->
-<?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
+
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
+        <div class="row">
+            <div class="col-md-4">
+                <?php
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
 
-        <form action="" method="get" id="ticketSearch">
+                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                $tpl->displaySubmodule('tickets-ticketFilter');
 
-            <?php $tpl->dispatchTplEvent('filters.afterFormOpen'); ?>
-
-            <input type="hidden" value="1" name="search"/>
-
-
-            <div class="simpleButtons">
-
-                    <?php
-                    $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
-                    if ($login::userIsAtLeast($roles::$editor) && !empty($newField)) {
-                        ?>
-                    <div class="btn-group pull-left">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><?=$tpl->__("links.new_with_icon") ?> <span class="caret"></span></button>
-                        <ul class="dropdown-menu">
-                            <?php foreach ($newField as $option) { ?>
-                                <li>
-                                    <a
-                                        href="<?= !empty($option['url']) ? $option['url'] : '' ?>"
-                                        class="<?= !empty($option['class']) ? $option['class'] : '' ?>"
-                                    > <?= !empty($option['text']) ? $tpl->__($option['text']) : '' ?></a>
-                                </li>
-                            <?php } ?>
-                        </ul>
-                    </div>
-                        <?php
-                    }
-                    $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
-                    ?>
-
-
-
-                    <?php $tpl->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
-
-                    <div class="right">
-
-                        <a onclick="leantime.ticketsController.toggleFilterBar();" class="btn btn-default" data-tippy-content="<?=$tpl->__("popover.filter") ?>"><i class="fas fa-filter"></i><?=$tpl->get('numOfFilters') > 0 ? " (" . $tpl->get('numOfFilters') . ")" : "" ?></a>
-                        <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.group_by") ?>"><span class="fa fa-object-group"></span></button>
-                            <ul class="dropdown-menu">
-                                <?php foreach ($groupBy as $input) : ?>
-                                    <li>
-                                        <span class="radio">
-                                            <input
-                                                type="radio"
-                                                name="groupBy"
-                                                <?php if ($searchCriteria["groupBy"] == $input['status']) {
-                                                    echo "checked='checked'";
-                                                }?>
-                                                value="<?php echo $input['status']; ?>"
-                                                id="<?php echo $input['id']; ?>"
-                                                onclick="jQuery('#ticketSearch').submit();"
-                                            />
-                                            <label for="<?php echo $input['id'] ?>"><?=$tpl->__("label.{$input['label']}") ?></label>
-                                        </span>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-
-                        </div>
-
-                        <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.view") ?>"><i class="fa fa-list"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a
-                                    <?php if (isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") { ?>
-                                        href="<?=$_SESSION['lastFilterdTicketKanbanView'] ?>"
-                                    <?php } else { ?>
-                                        href="<?=BASE_URL ?>/tickets/showKanban"
-                                    <?php } ?>
-                                ><?=$tpl->__("links.kanban") ?></a></li>
-                                <li><a
-                                    <?php if (isset($_SESSION['lastFilterdTicketTableView']) && $_SESSION['lastFilterdTicketTableView'] != "") { ?>
-                                        href="<?=$_SESSION['lastFilterdTicketTableView'] ?>"
-                                    <?php } else { ?>
-                                        href="<?=BASE_URL ?>/tickets/showAll"
-                                    <?php } ?>
-                                ><?=$tpl->__("links.table") ?></a></li>
-                                <li><a
-                                    <?php if (isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") { ?>
-                                        href="<?=$_SESSION['lastFilterdTicketListView'] ?>"
-                                    <?php } else { ?>
-                                        href="<?=BASE_URL ?>/tickets/showList"
-                                    <?php } ?>
-                                    class="active"
-                                ><?=$tpl->__("links.list_view") ?></a></li>
-                            </ul>
-                        </div>
-
-                        <?php $tpl->dispatchTplEvent('filters.beforeRighthandSectionClose'); ?>
-                    </div>
-
-
-
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
             </div>
 
-            <div class="clearfix"></div>
-
-            <?php $tpl->dispatchTplEvent('filters.beforeBar'); ?>
-
-            <div class="filterBar hideOnLoad">
-
-                <div class="row-fluid">
-
-                    <?php $tpl->dispatchTplEvent('filters.beforeFirstBarField'); ?>
-
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$tpl->__("label.user") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_user") ?>"  style="width:130px;" title="<?=$tpl->__("input.placeholders.filter_by_user") ?>" name="users" multiple="multiple" class="user-select" id="userSelect">
-                                <option value=""></option>
-                                <?php foreach ($tpl->get('users') as $userRow) {     ?>
-                                    <?php echo"<option value='" . $userRow["id"] . "'";
-
-                                    if ($searchCriteria['users'] !== false && $searchCriteria['users'] !== null && array_search($userRow["id"], explode(",", $searchCriteria['users'])) !== false) {
-                                        echo" selected='selected' ";
-                                    }
-
-                                    echo">" . sprintf($tpl->__('text.full_name'), $tpl->escape($userRow['firstname']), $tpl->escape($userRow['lastname'])) . "</option>"; ?>
-
-                                <?php }     ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$tpl->__("label.milestone") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" title="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="milestone" id="milestoneSelect">
-                                <option value=""><?=$tpl->__("label.all_milestones") ?></option>
-                                <?php foreach ($tpl->get('milestones') as $milestoneRow) {   ?>
-                                    <?php echo"<option value='" . $milestoneRow->id . "'";
-
-                                    if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                        echo" selected='selected' ";
-                                    }
-
-                                    echo">" . $tpl->escape($milestoneRow->headline) . "</option>"; ?>
-
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$tpl->__("label.todo_type") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_type") ?>" title="<?=$tpl->__("input.placeholders.filter_by_type") ?>" name="type" id="typeSelect">
-                                <option value=""><?=$tpl->__("label.all_types") ?></option>
-                                <?php foreach ($tpl->get('types') as $type) {    ?>
-                                    <?php echo"<option value='" . $type . "'";
-
-                                    if (isset($searchCriteria['type']) && ($searchCriteria['type'] == $type)) {
-                                        echo" selected='selected' ";
-                                    }
-
-                                    echo">$type</option>"; ?>
-
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$tpl->__("label.todo_priority") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_priority") ?>" title="<?=$tpl->__("input.placeholders.filter_by_priority") ?>" name="type" id="prioritySelect">
-                                <option value=""><?=$tpl->__("label.all_priorities") ?></option>
-                                <?php foreach ($tpl->get('priorities') as $priorityKey => $priorityValue) {    ?>
-                                    <?php echo"<option value='" . $priorityKey . "'";
-
-                                    if (isset($searchCriteria['priority']) && ($searchCriteria['priority'] == $priorityKey)) {
-                                        echo" selected='selected' ";
-                                    }
-
-                                    echo">$priorityValue</option>"; ?>
-
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$tpl->__("label.todo_status") ?></label>
-                        <div class="form-group">
-                            <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_status")?>" name="searchStatus"  multiple="multiple" class="status-select" id="statusSelect">
-                                <option value=""></option>
-                                <option value="not_done" <?php if ($searchCriteria['status'] !== false && strpos($searchCriteria['status'], 'not_done') !== false) {
-                                    echo" selected='selected' ";
-                                                         }?>><?=$tpl->__("label.not_done")?></option>
-                                <?php foreach ($statusLabels as $key => $label) {?>
-                                    <?php echo"<option value='" . $key . "'";
-
-                                    if ($searchCriteria['status'] !== false && array_search((string) $key, explode(",", $searchCriteria['status'])) !== false) {
-                                        echo" selected='selected' ";
-                                    }
-                                    echo">" . $tpl->escape($label["name"]) . "</option>"; ?>
-
-                                <?php } ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="filterBoxLeft">
-                        <label class="inline"><?=$tpl->__("label.search_term") ?></label><br />
-                        <input type="text" class="form-control input-default" id="termInput" name="term" placeholder="<?=$tpl->__("input.placeholders.search") ?>" value="<?php $tpl->e($searchCriteria['term']); ?>">
-                        <input type="submit" value="<?=$tpl->__("buttons.search") ?>" name="search" class="form-control btn btn-primary" />
-                    </div>
-
-
-                </div>
+            <div class="col-md-4 center">
 
             </div>
+            <div class="col-md-4">
 
-            <?php $tpl->dispatchTplEvent('filters.beforeFormClose'); ?>
+            </div>
+        </div>
 
-        </form>
+        <div class="clearfix"></div>
 
         <?php $tpl->dispatchTplEvent('allTicketsTable.before', ['tickets' => $allTickets]); ?>
 
@@ -268,7 +63,23 @@
                         <input type="hidden" name="quickadd" value="1"/>
                         <input type="submit" class="btn btn-default" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; margin-top:3px;  width:100px;"/>
                     </form>
-                    <table id="allTicketsTable" class="table display listStyleTable" style="width:100%">
+
+
+                    <?php foreach($allTicketGroups as $group) {?>
+
+                        <?php if($group['label'] != 'all') { ?>
+                            <h5 class="accordionTitle <?=$group['class']?>" id="accordion_link_<?=$group['id'] ?>">
+                                <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?=$group['id'] ?>');">
+                                    <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
+                                </a>
+                            </h5>
+                            <div class="simpleAccordionContainer" id="accordion_<?=$group['id'] ?>">
+                        <?php } ?>
+
+                        <?php $allTickets = $group['items']; ?>
+
+
+                        <table class="table display listStyleTable" style="width:100%">
 
                         <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
                         <thead>
@@ -277,12 +88,6 @@
 
                             <th style="width:20px" class="status-col"><?= $tpl->__("label.todo_status"); ?></th>
                             <th><?= $tpl->__("label.title"); ?></th>
-
-                            <th class="milestone-col"><?= $tpl->__("label.milestone"); ?></th>
-                            <th class="priority-col"><?= $tpl->__("label.priority"); ?></th>
-                            <th class="user-col"><?= $tpl->__("label.editor"); ?>.</th>
-                            <th class="sprint-col"><?= $tpl->__("label.sprint"); ?></th>
-                            <th class="tags-col"><?= $tpl->__("label.tags"); ?></th>
                         </tr>
 
                         <?php $tpl->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
@@ -311,25 +116,6 @@
 
                                 <td data-search="<?=$statusLabels[$row['status']]["name"]; ?>" data-order="<?=$tpl->e($row['headline']); ?>" >
                                     <a href="javascript:void(0);"><strong><?=$tpl->e($row['headline']); ?></strong></a></td>
-                                <td data-search="<?=$tpl->escape($row['milestoneHeadline']) ?>" data-order="<?=$tpl->escape($row['milestoneHeadline']) ?>"><?=$tpl->escape($row['milestoneHeadline']) ?></td>
-                                <td data-search="<?=$row['priority'] ? $priorities[$row['priority']] : $tpl->__("label.priority_unkown"); ?>" data-order="<?=$row['priority'] ? $priorities[$row['priority']] : $tpl->__("label.priority_unkown"); ?>"><?=$row['priority'] ? $priorities[$row['priority']] : $tpl->__("label.priority_unkown"); ?></td>
-                                <td data-search="<?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?>" data-order="<?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?>"><?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?></td>
-                                <td data-search="<?=$tpl->escape($row['sprintName']); ?>"><?=$tpl->escape($row['sprintName']); ?></td>
-                                <td data-search="<?=$row['tags'] ?>">
-                                    <?php if ($row['tags'] != '') {?>
-                                        <?php  $tagsArray = explode(",", $row['tags']); ?>
-                                        <div class='tagsinput readonly'>
-                                            <?php
-
-                                            foreach ($tagsArray as $tag) {
-                                                echo"<span class='tag'><span>" . $tag . "</span></span>";
-                                            }
-
-                                            ?>
-                                        </div>
-                                    <?php } ?>
-                                </td>
-
 
                                 <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
                             </tr>
@@ -338,6 +124,12 @@
                         </tbody>
                         <?php $tpl->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
                     </table>
+
+                        <?php if($group['label'] != 'all') { ?>
+                            </div>
+                        <?php } ?>
+                    <?php } ?>
+
                 </div>
             </div>
             <div class="col-md-8 hidden-sm"  >
@@ -364,19 +156,13 @@
         <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
 
-        leantime.ticketsController.initModals();
+        leantime.timesheetsController.initTicketTimers();
 
-
-        leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showList");
-
-
-        leantime.ticketsController.initUserSelectBox();
-        leantime.ticketsController.initStatusSelectBox();
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initStatusDropdown();
         <?php } else { ?>
-        leantime.generalController.makeInputReadonly(".maincontentinner");
+        leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>
 
 

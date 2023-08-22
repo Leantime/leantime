@@ -8,7 +8,7 @@
 
 ?>
 
-
+<div style="min-width:90%">
         <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
 
         <?php echo $tpl->displayNotification(); ?>
@@ -20,13 +20,13 @@
             </ul>
 
             <div id="ticketdetails">
-                <form class="ticketModal" action="<?=BASE_URL ?>/tickets/newTicket" method="post">
+                <form class="formModal" action="<?=BASE_URL ?>/tickets/newTicket" method="post">
                     <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
                 </form>
             </div>
 
         </div>
-
+</div>
         <br />
 
 
@@ -36,7 +36,7 @@
 
         leantime.ticketsController.initTicketTabs();
         leantime.ticketsController.initTagsInput();
-        leantime.generalController.initComplexEditor();
+        leantime.editorController.initComplexEditor();
 
         leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initDates();

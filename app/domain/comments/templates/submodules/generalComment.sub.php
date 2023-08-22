@@ -157,7 +157,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
 <script type='text/javascript'>
 
-    leantime.generalController.initSimpleEditor();
+    leantime.editorController.initSimpleEditor();
 
     function toggleCommentBoxes(id) {
 
@@ -172,7 +172,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
             jQuery('.commentBox').hide();
 
             jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-            leantime.generalController.initSimpleEditor();
+            leantime.editorController.initSimpleEditor();
 
             jQuery('#comment' + id + '').show();
             jQuery('#father').val(id);

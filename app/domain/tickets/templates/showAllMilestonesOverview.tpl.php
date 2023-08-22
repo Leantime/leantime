@@ -276,7 +276,6 @@
     <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
     jQuery(document).ready(function(){
-        leantime.ticketsController.initModals();
     });
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
@@ -293,7 +292,7 @@
     leantime.ticketsController.initMilestoneDatesAsyncUpdate();
 
     <?php } else { ?>
-        leantime.generalController.makeInputReadonly(".maincontentinner");
+        leantime.authController.makeInputReadonly(".maincontentinner");
     <?php } ?>
 
     leantime.ticketsController.initMilestoneTable("<?=$searchCriteria["groupBy"] ?>");

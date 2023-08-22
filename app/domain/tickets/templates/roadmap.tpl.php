@@ -3,36 +3,36 @@ defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 $milestones = $tpl->get('milestones');
 
-?>
+echo $tpl->displayNotification();
 
-<?php
 if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
 } else {
     $roadmapView = "Month";
 }
 ?>
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
-    <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$tpl->__("headline.milestones"); ?></h1>
-    </div>
-</div><!--pageheader-->
-
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
+
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+
     <div class="maincontentinner">
 
-        <?php echo $tpl->displayNotification(); ?>
-
         <div class="row">
-            <div class="col-md-6">
-                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$tpl->__("links.add_milestone"); ?></a>
-                <?php } ?>
+            <div class="col-md-4">
+                <?php
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+
+                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                $tpl->displaySubmodule('tickets-ticketFilter');
+
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
                 <div class="pull-right">
 
                     <div class="btn-group dropRight">
@@ -61,15 +61,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                         </ul>
                     </div>
 
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.gantt_view") ?> <?=$tpl->__("links.view") ?></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmap" class="active"><?=$tpl->__("links.gantt_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$tpl->__("links.table") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar"><?=$tpl->__("links.calendar_view") ?></a></li>
-                        </ul>
-                    </div>
-
                     <div class="pull-left btn-group" style="margin-right:10px;">
                         <form action="" method="get" id="searchForm">
                             <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
@@ -92,10 +83,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>" . $tpl->__("headlines.no_milestones") . "<br/>
-
-            <br />
-            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $tpl->__("links.add_milestone") . "</a></h4></div>";
+            <h4>" . $tpl->__("headlines.no_tickets") . "<br /></h4></div>";
         }
         ?>
         <div class="gantt-wrapper">
@@ -109,7 +97,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
     jQuery(document).ready(function(){
 
-    leantime.ticketsController.initModals();
 
     <?php if (isset($_GET['showMilestoneModal'])) {
         if ($_GET['showMilestoneModal'] == "") {
@@ -132,12 +119,17 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
             <?php
             $lastMilestoneSortIndex = array();
-            //Set sort index first
+
+            //Set sort index first format: 0.0
+            //Sort is milestone sorting first with the milestone sort id as first index
+            //Then sort by task as second index
+
             foreach ($milestones as $mlst) {
                 if ($mlst->type == "milestone") {
-                    $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex;
+                    $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex != '' ? $mlst->sortIndex : 999;
                 }
             }
+
             foreach ($milestones as $mlst) {
                 $headline = $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
                 if ($mlst->type == "milestone") {
@@ -151,17 +143,22 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
                 $sortIndex = 0;
 
-                if ($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)) {
-                    if ($mlst->type == "milestone") {
-                        $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
+
+
+                //Item is milestone itself, set first index + .0
+                if ($mlst->type == "milestone") {
+                    $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
+                }else {
+                    //If it has a milestone dependency, add milestone index
+                    if ($mlst->milestoneid > 0) {
+                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ). "." . ($mlst->sortIndex ?? 999);
                     } else {
-                        if ($mlst->milestoneid != 0) {
-                            $sortIndex = $lastMilestoneSortIndex[$mlst->milestoneid] . "." . $mlst->sortIndex;
-                        } else {
-                            $sortIndex = "0" . "." . $mlst->sortIndex;
-                        }
+                        $sortIndex = "999" . "." . ($mlst->sortIndex ?? 999);
                     }
                 }
+
+
+
 
                 $dependencyList = array();
                 if ($mlst->milestoneid != 0) {

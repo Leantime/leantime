@@ -76,7 +76,7 @@ $statusLabels = $tpl->get('statusLabels');
         </select>
 
         <label><?=$tpl->__("label.color"); ?></label>
-        <input type="text" name="tags" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$tpl->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
+        <input type="text" name="tags" autocomplete="off" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$tpl->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
 
         <label><?=$tpl->__("label.planned_start_date"); ?></label>
         <input type="text" name="editFrom" autocomplete="off" value="<?php echo $tpl->getFormattedDateString($currentMilestone->editFrom) ?>" placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
@@ -92,7 +92,7 @@ $statusLabels = $tpl->get('statusLabels');
                 <?php if (
                 isset($currentMilestone->id) && $currentMilestone->id != ''
 ) { ?>
-                    <a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete formModal milestoneModal"><i class="fa fa-trash"></i> <?=$tpl->__("buttons.delete"); ?></a>
+                    <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__("buttons.delete"); ?></a>
                 <?php } ?>
             </div>
         </div>
@@ -113,16 +113,15 @@ $statusLabels = $tpl->get('statusLabels');
     <script type="text/javascript">
         jQuery(document).ready(function(){
 
-            leantime.ticketsController.initModals();
             leantime.ticketsController.initMilestoneDates();
 
             <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
-                leantime.generalController.makeInputReadonly(".nyroModalCont");
+                leantime.authController.makeInputReadonly(".nyroModalCont");
 
             <?php } ?>
 
             <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-                leantime.generalController.enableCommenterForms();
+                leantime.commentsController.enableCommenterForms();
             <?php }?>
 
 

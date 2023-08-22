@@ -61,7 +61,7 @@ foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
             leantime.canvasController.initStatusDropdown();
             leantime.canvasController.initRelatesDropdown();
         <?php } else { ?>
-            leantime.generalController.makeInputReadonly(".maincontentinner");
+            leantime.authController.makeInputReadonly(".maincontentinner");
 
         <?php } ?>
 
