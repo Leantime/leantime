@@ -252,22 +252,6 @@ $bootstrapper = get_class(new class {
                 'cwd' => DEV_ROOT,
             ]
         );
-
-        //Set file permissions
-        $this->executeCommand(
-            array_filter(
-                [
-                    'sudo',
-                    'usermod   ',
-                    '-aG',
-                    'docker',
-                    'www-data',
-                ]
-            ),
-            [
-                'cwd' => DEV_ROOT,
-            ]
-        );
     }
 
     /**
