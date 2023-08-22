@@ -5,26 +5,20 @@ namespace leantime\core;
 use leantime\core\template;
 use leantime\core\events;
 use leantime\core\language;
+use Illuminate\Support\Str;
 
 /**
- * Controller Class - Base class for all controllers
+ * HtmxController Class - Base class for all htmx controllers
  *
  * @package    leantime
  * @subpackage core
  */
-abstract class controller
+abstract class HtmxController
 {
     use eventhelpers;
 
-    /**
-     * @var template
-     */
+    protected IncomingRequest $incomingRequest;
     protected template $tpl;
-
-    /**
-     * @var language
-     */
-    protected language $language;
 
     /**
      * constructor - initialize private variables
@@ -38,20 +32,15 @@ abstract class controller
      */
     public function __construct(
         IncomingRequest $incomingRequest,
-        template $tpl,
-        language $language
+        template $tpl
     ) {
         self::dispatch_event('begin');
 
         $this->incomingRequest = $incomingRequest;
         $this->tpl = $tpl;
-        $this->language = $language;
 
         // initialize
-        $this->executeActions(
-            $incomingRequest->getMethod(),
-            $incomingRequest->getRequestParams()
-        );
+        $this->executeActions();
 
         self::dispatch_event('end', $this);
     }
@@ -66,31 +55,27 @@ abstract class controller
      *
      * @return void
      */
-    private function executeActions($method, $params): void
+    private function executeActions(): void
     {
-        $available_params = [
-            'controller' => $this,
-            'method' => $method,
-            'params' => $params,
-        ];
-
-        self::dispatch_event('before_init', $available_params);
+        self::dispatch_event('before_init', ['controller' => $this]);
         if (method_exists($this, 'init')) {
             app()->call([$this, 'init']);
         }
 
-        self::dispatch_event('before_action', $available_params);
-        if (method_exists($this, $method)) {
-            /**
-             * @todo non GET requests should only be accessible from HTMX and API requests
-             * if ($method !== 'get') && ! $incomingRequest instanceof HtmxRequest|ApiRequest) {
-             *    self::redirect(BASE_URL . "/errors/error400", 400);
-             * }
-             */
+        self::dispatch_event('before_action', ['controller' => $this]);
 
-            $this->$method($params);
-        } else {
-            $this->run();
+        if (! property_exists($this, 'view')) {
+            throw new \LogicException('HTMX Controllers must include the "$view" static property');
         }
+
+        $action = Str::camel($this->incomingRequest->query->get('id', 'run'));
+
+        if (! method_exists($this, $action)) {
+            throw new \Error("Method $action doesn't exist.");
+        }
+
+        $fragment = $this->$action();
+
+        $this->tpl->displayFragment($this::$view, $fragment ?? '');
     }
 }

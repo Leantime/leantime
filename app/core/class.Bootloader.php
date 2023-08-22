@@ -3,6 +3,7 @@
 namespace leantime\core;
 
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
+use Illumiante\Contracts\Foundation\Application as IlluminateApplicationContract;
 use Psr\Container\ContainerInterface as PsrContainerContract;
 use leantime\domain\services;
 use leantime\domain\repositories;
@@ -113,18 +114,22 @@ class Bootloader
             return;
         }
 
+        $config = $app->make(environment::class);
+
+        $this->setErrorHandler($config->debug ?? 0);
+
         $app->make(appSettings::class)->loadSettings();
 
         $request = $app->make(IncomingRequest::class);
 
         if (! defined('BASE_URL')) {
-            define('BASE_URL', $config->appUrl ?? $request->getBaseUrl());
+            define('BASE_URL', $config->appUrl ?? $request->getSchemeAndHttpHost());
         }
 
         if (! defined('CURRENT_URL')) {
             define('CURRENT_URL', !empty($config->appUrl)
-            ? $config->appUrl . $request->getRequestURI($config->appUrl)
-            : $request->getFullURL());
+            ? $config->appUrl . $request->getRequestUri()
+            : $request->getFullUrl());
         }
 
         $this->loadHeaders();
@@ -165,20 +170,22 @@ class Bootloader
     {
         $this->app ??= application::getInstance();
 
-        // specify singletons
-        $this->app->instance(PsrContainerContract::class, $this->app);
-        $this->app->instance(environment::class, $this->app->make(environment::class));
-        $this->app->instance(db::class, $this->app->make(db::class));
-        $this->app->instance(frontcontroller::class, $this->app->make(frontcontroller::class));
-        $this->app->instance(session::class, $this->app->make(session::class));
-        $this->app->instance(language::class, $this->app->make(language::class));
-        $this->app->instance(services\auth::class, $this->app->make(services\auth::class));
-        $this->app->instance(services\oidc::class, $this->app->make(services\oidc::class));
-        $this->app->instance(services\modulemanager::class, $this->app->make(services\modulemanager::class));
+        // attach container to container
+        $this->app->bind(application::class, fn () => application::getInstance());
+        $this->app->alias(application::class, IlluminateContainerContract::class);
+        $this->app->alias(application::class, PsrContainerContract::class);
 
-        // app aliases
-        $this->app->alias(PsrContainerContract::class, application::class);
-        $this->app->alias(PsrContainerContract::class, IlluminateContainerContract::class);
+        $this->bindRequest();
+
+        // specify singletons/instances
+        $this->app->singleton(environment::class, environment::class);
+        $this->app->singleton(db::class, db::class);
+        $this->app->singleton(frontcontroller::class, frontcontroller::class);
+        $this->app->instance(session::class, $this->app->make(session::class));
+        $this->app->singleton(language::class, language::class);
+        $this->app->singleton(services\auth::class, services\auth::class);
+        $this->app->singleton(services\oidc::class, services\oidc::class);
+        $this->app->singleton(services\modulemanager::class, services\modulemanager::class);
 
         /**
          * Filter on container right after initial bindings.
@@ -187,6 +194,8 @@ class Bootloader
          * @return \Illuminate\Contracts\Container\Container $container The container object.
          */
         $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
+
+        application::setInstance($this->app);
 
         return $this->app;
     }
@@ -313,13 +322,13 @@ class Bootloader
         $incomingRequest = $this->app->make(IncomingRequest::class);
 
         // handle public request
-        if (in_array($frontController->getCurrentRoute(), $this->publicActions)) {
+        if (in_array($frontController::getCurrentRoute(), $this->publicActions)) {
             $frontController::dispatch();
             return;
         }
 
         // handle API request
-        if ($incomingRequest->hasAPIKey()) {
+        if ($incomingRequest instanceof ApiRequest) {
             $apiKey = $incomingRequest->getAPIKey();
             $apiUser = $this->app->make(services\api::class)->getAPIKeyUser($apiKey);
 
@@ -342,7 +351,7 @@ class Bootloader
 
         // handle unathorized requests
         if (! $this->app->make(services\auth::class)->logged_in()) {
-            $this->redirectWithOrigin('auth.login', $incomingRequest->getRequestURI(BASE_URL));
+            $this->redirectWithOrigin('auth.login', $incomingRequest->getRequestUri());
             return;
         }
 
@@ -374,16 +383,15 @@ class Bootloader
      */
     public function redirectWithOrigin(string $route, string $origin): void
     {
-        $redirectURL = '';
-        if (strlen($origin) > 1) {
-            $redirectURL = "?redirect=" . urlencode($origin);
-        }
-
+        $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
+        $queryParams = !empty($origin) ? '?' . http_build_query(['redirect' => $origin]) : '';
         $frontController = $this->app->make(frontcontroller::class);
 
-        if ($frontController::getCurrentRoute() !== $route) {
-            $frontController::redirect(BASE_URL . "/" . str_replace(".", "/", $route) . "" . $redirectURL);
+        if ($frontController::getCurrentRoute() == $route) {
+            return;
         }
+
+        $frontController::redirect($destination . $queryParams);
     }
 
     /**
@@ -432,5 +440,37 @@ class Bootloader
         } catch (\Exception $e) {
             error_log($e);
         }
+    }
+
+    private function setErrorHandler(int $debug): void
+    {
+        if ($debug == 0) {
+            return;
+        }
+
+        \Symfony\Component\ErrorHandler\Debug::enable();
+    }
+
+    /**
+     * Bind request
+     *
+     * @return void
+     */
+    private function bindRequest(): void
+    {
+        $headers = array_map(
+            fn ($val) => in_array($val, ['false', 'true'])
+                ? filter_var($val, FILTER_VALIDATE_BOOLEAN)
+                : $val,
+            getallheaders()
+        );
+
+        $incomingRequest = $this->app->instance(IncomingRequest::class, match (true) {
+            $headers['Hx-Request'] ?? false => HtmxRequest::createFromGlobals(),
+            $headers['X_API_KEY'] ?? false => ApiRequest::createFromGlobals(),
+            default => IncomingRequest::createFromGlobals(),
+        });
+
+        $incomingRequest->overrideGlobals();
     }
 }

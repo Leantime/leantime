@@ -95,16 +95,14 @@ class Menu extends Composer
             $currentClient = '';
         }
 
-        [$module, $action] = explode(".", core\frontcontroller::getCurrentRoute());
-
-        if (str_contains($redirectUrl = $this->incomingRequest->getRequestURI(BASE_URL), 'showProject')) {
+        if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
             $redirectUrl = '/dashboard/show';
         }
 
         return [
             'currentClient' => $currentClient,
-            'module' => $module ?? '',
-            'action' => $action ?? '',
+            'module' => core\frontcontroller::getModuleName(),
+            'action' => core\frontcontroller::getActionName(),
             'currentProjectType' => $projectType,
             'allAssignedProjects' => $allAssignedprojects,
             'allAvailableProjects' => $allAvailableProjects,
