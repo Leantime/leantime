@@ -9,6 +9,7 @@ volumes:
 
 services:
   leantime-dev:
+    privileged: true
     build: .
     ports:
       - "8090:8080"
