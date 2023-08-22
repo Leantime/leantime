@@ -24,6 +24,12 @@ class i18n extends controller
 
         $result = $decodedString ? $decodedString : '{}';
 
-        echo "window.leantime.i18n.dictionary = $result";
+        echo "var leantime = leantime || {};
+            var leantime = {
+                i18n: {
+                    dictionary: " . $result . ",
+                    __: function(index){ return leantime.i18n.dictionary[index];  }
+                }
+            };";
     }
 }
