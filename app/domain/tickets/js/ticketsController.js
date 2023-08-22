@@ -242,7 +242,7 @@ leantime.ticketsController = (function () {
 
 
 
-    var _initSprintDates = function () {
+    var initSprintDates = function () {
 
         Date.prototype.addDays = function (days) {
             this.setDate(this.getDate() + days);
@@ -767,7 +767,7 @@ leantime.ticketsController = (function () {
         });
     };
 
-    var cinitSimpleColorPicker = function () {
+    var initSimpleColorPicker = function () {
 
             var colors = ['#821219',
                 '#BB1B25',
@@ -1141,11 +1141,6 @@ leantime.ticketsController = (function () {
             });
 
         });
-
-
-
-
-
 
         function tilt_direction(item)
         {
@@ -1777,6 +1772,7 @@ leantime.ticketsController = (function () {
         initTicketsList:initTicketsList,
         loadTicketToContainer:loadTicketToContainer,
         initTicketSearchUrlBuilder:initTicketSearchUrlBuilder,
-
+        initSprintDates:initSprintDates,
+        initSimpleColorPicker:initSimpleColorPicker
     };
 })();

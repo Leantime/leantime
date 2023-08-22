@@ -58,7 +58,7 @@ $tpl->assign('canvasTitle', $canvasTitle);
             <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $tpl->get('currentCanvas');?>"><?=$tpl->__("links.icon.export") ?></a></li>
             <li><a href="javascript:window.print();"><?=$tpl->__("links.icon.print") ?></a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li><a href="#/<?=$canvasName ?>canvas/delCanvas/<?php echo $tpl->get('currentCanvas');?>" class="delete"><?php echo $this->__("links.icon.delete") ?></a></li>
+                <li><a href="#/<?=$canvasName ?>canvas/delCanvas/<?php echo $tpl->get('currentCanvas');?>" class="delete"><?php echo $tpl->__("links.icon.delete") ?></a></li>
             <?php } ?>
         </ul>
         </span>

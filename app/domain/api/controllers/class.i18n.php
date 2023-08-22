@@ -33,16 +33,6 @@ namespace leantime\domain\controllers {
                         __: function(index){ return leantime.i18n.dictionary[index];  }
                     }
                 };";
-/*
-            echo "var leantime = leantime || {};
-                var leantime = {
-                    i18n: {
-                        dictionary: " . $decodedString ? $decodedString : '{}' .",
-                        __: function(index){ return leantime.i18n.dictionary[index];  }
-                    }
-                };
-            ";
-*/
         }
     }
 

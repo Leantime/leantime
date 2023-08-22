@@ -60,17 +60,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                                                                                         }?>"><?=$tpl->__("buttons.month"); ?></a></li>
                         </ul>
                     </div>
-
-                    <div class="pull-left btn-group" style="margin-right:10px;">
-                        <form action="" method="get" id="searchForm">
-                            <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
-                            <input type="hidden" name="submitIncludeTasks" value="1" />
-                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
-                                echo "checked='checked'";
-                                                                                                                                          } ?>/>
-                        </form>
-                    </div>
-
                 </div>
 
             </div>
