@@ -17,7 +17,7 @@ build: install-deps
 	npx mix --production
 
 build-dev: install-deps-dev
-	npx mix
+	npx mix --production
 
 package: build
 	mkdir -p $(TARGET_DIR)
