@@ -9,10 +9,10 @@ require('laravel-mix-eslint');
 require('dotenv').config({ path: 'config/.env' });
 
 mix
-    .sourceMaps()
+    .sourceMaps(true)
     .setPublicPath('public/dist') // this is the URL to place assets referenced in the CSS/JS
     .setResourceRoot(`../`) // this is what to prefix the URL with
-    .js('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
+    .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .combine([
         "./public/assets/js/app/app.js",
         "./public/assets/js/app/core/editors.js",
@@ -27,20 +27,20 @@ mix
         ].map(f => `./${f}`)
     ], `public/dist/js/compiled-app.${version}.min.js`)
     .combine([
-        "./node_modules/jquery/dist/jquery.min.js",
+        "./node_modules/jquery/dist/jquery.js",
+        "./public/assets/js/libs/bootstrap.min.js",
+
+    ], `public/dist/js/compiled-frameworks.${version}.min.js`)
+    .combine([
+
         "./node_modules/jquery-ui-dist/jquery-ui.js",
         "./node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
         "./node_modules/chosen-js/chosen.jquery.js",
         "./public/assets/js/libs/jquery.growl.js",
         "./public/assets/js/libs/jquery.form.js",
         "./public/assets/js/libs/jquery.tagsinput.min.js",
-
-        "./public/assets/js/libs/bootstrap.min.js",
-        //"./public/assets/js/libs/bootstrap-timepicker.min.js",
         "./public/assets/js/libs/bootstrap-fileupload.min.js",
-
-
-    ], `public/dist/js/compiled-frameworks.${version}.min.js`)
+    ], `public/dist/js/compiled-framework-plugins.${version}.min.js`)
     .combine([
         "./node_modules/moment/moment.js",
         "./node_modules/js-cookie/dist/js.cookie.js",
@@ -117,7 +117,6 @@ mix
     .combine([
         "./node_modules/chart.js/dist/chart.js",
         "./node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",
-
     ], `public/dist/js/compiled-chart-component.${version}.min.js`)
 
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
@@ -136,15 +135,17 @@ mix
             'public/assets/js/libs',
         ],
     })
-
     .webpackConfig({
-        devtool: 'inline-source-map',
         resolve: {
             alias: {
                 'images': path.resolve(__dirname, 'public/assets/images'),
                 'js': path.resolve(__dirname, 'public/assets/js'),
                 'css': path.resolve(__dirname, 'public/assets/css'),
-                'fonts': path.resolve(__dirname, 'public/assets/fonts'),
+                'fonts': path.resolve(__dirname, 'public/assets/fonts')
             }
-        },
+        }
     });
+
+
+
+

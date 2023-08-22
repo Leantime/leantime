@@ -23,6 +23,7 @@
 
 <!-- libs -->
 <script src="{!! BASE_URL !!}/dist/js/compiled-frameworks.{!! $version !!}.min.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-framework-plugins.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-global-component.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-calendar-component.{!! $version !!}.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-table-component.{!! $version !!}.min.js"></script>
