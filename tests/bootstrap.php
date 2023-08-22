@@ -60,6 +60,7 @@ $bootstrapper = get_class(new class {
     public function start(): void
     {
         $this->startDevEnvironment();
+        $this->setFolderPermissions();
         $this->createDatabase();
         $this->startSelenium();
         $this->createStep('Starting Codeception Testing Framework');
@@ -180,28 +181,6 @@ $bootstrapper = get_class(new class {
 
             $this->commandOutputHandler($type, $buffer);
 
-            $this->createStep('Setting folder permissions on cache folder');
-            //Set file permissions
-            $this->executeCommand(
-                array_filter(
-                    [
-                        'docker',
-                        'compose',
-                        'exec',
-                        '-T',
-                        'leantime-dev',
-                        'chmod',
-                        '-R',
-                        'www-data:www-data',
-                        '/var/www/html/cache/'
-                    ]
-                ),
-                [
-                    'cwd' => DEV_ROOT,
-                    'background' => true,
-                    'timeout' => 0,
-                ]
-            );
 
             return ! in_array(false, $started, true);
         });
@@ -248,6 +227,31 @@ $bootstrapper = get_class(new class {
             ],
             ['cwd' => DEV_ROOT]
         );
+    }
+
+    protected function setFolderPermissions(): void
+    {
+
+         $this->createStep('Setting folder permissions on cache folder');
+            //Set file permissions
+            $this->executeCommand(
+                array_filter(
+                    [
+                        'docker',
+                        'compose',
+                        'exec',
+                        '-T',
+                        'leantime-dev',
+                        'chmod',
+                        '-R',
+                        'www-data:www-data',
+                        '/var/www/html/cache/',
+                    ]
+                ),
+                [
+                    'cwd' => DEV_ROOT,
+                ]
+            );
     }
 
     /**
@@ -297,8 +301,8 @@ $bootstrapper = get_class(new class {
      *
      * @access protected
      * @param  string|array $command
-     * @param  array $args
-     * @param  bool $required
+     * @param  array        $args
+     * @param  boolean      $required
      * @return Process|string
      */
     protected function executeCommand(
