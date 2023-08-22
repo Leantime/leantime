@@ -158,6 +158,30 @@ $bootstrapper = get_class(new class {
                 'timeout' => 0,
             ]
         );
+
+        $this->createStep('Setting folder permissions on cache folder');
+        //Set file permissions
+        $this->executeCommand(
+            array_filter(
+                [
+                    'docker',
+                    'compose',
+                    'exec',
+                    '-T',
+                    'leantime-dev',
+                    'chmod',
+                    '-R',
+                    'www-data:www-data',
+                    '/var/www/html/cache/'
+                ]
+            ),
+            [
+                'cwd' => DEV_ROOT,
+                'background' => true,
+                'timeout' => 0,
+            ]
+        );
+
         $this->dockerProcess->waitUntil(function ($type, $buffer) {
             if (! isset($started)) {
                 static $started = [
