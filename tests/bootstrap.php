@@ -233,25 +233,41 @@ $bootstrapper = get_class(new class {
     {
 
          $this->createStep('Setting folder permissions on cache folder');
-            //Set file permissions
-            $this->executeCommand(
-                array_filter(
-                    [
-                        'docker',
-                        'compose',
-                        'exec',
-                        '-T',
-                        'leantime-dev',
-                        'chmod',
-                        '-R',
-                        'www-data:www-data',
-                        '/var/www/html/cache/',
-                    ]
-                ),
+        //Set file permissions
+        $this->executeCommand(
+            array_filter(
                 [
-                    'cwd' => DEV_ROOT,
+                    'docker',
+                    'compose',
+                    'exec',
+                    '-T',
+                    'leantime-dev',
+                    'chown',
+                    '-R',
+                    'www-data:www-data',
+                    '/var/www/html/cache/',
                 ]
-            );
+            ),
+            [
+                'cwd' => DEV_ROOT,
+            ]
+        );
+
+        //Set file permissions
+        $this->executeCommand(
+            array_filter(
+                [
+                    'sudo',
+                    'usermod   ',
+                    '-aG',
+                    'docker',
+                    'www-data',
+                ]
+            ),
+            [
+                'cwd' => DEV_ROOT,
+            ]
+        );
     }
 
     /**
