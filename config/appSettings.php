@@ -67,26 +67,4 @@ class appSettings
             ini_set('error_log', APP_ROOT . "/logs/error.log");
         }
     }
-
-    public function getRequestURI($baseURL = "")
-    {
-        //$_SERVER['REQUEST_URI'] will include the subfolder if one is set. Let's make sure to take it out
-        if ($baseURL != "") {
-            $trimmedBaseURL = rtrim($baseURL, "/");
-            $baseURLParts = explode("/", $trimmedBaseURL);
-
-            //We only need to update Request URI if we have a subfolder install
-            if (is_array($baseURLParts) && count($baseURLParts) == 4) {
-                //0: http, 1: "", 2: domain.com 3: subfolder
-                $subfolderName = $baseURLParts[3];
-
-                //Remove subfoldername from Request URI
-                $requestURI = preg_replace('/^\/' . $subfolderName . '/', '', $_SERVER['REQUEST_URI']);
-
-                return $requestURI;
-            }
-        }
-
-        return $_SERVER['REQUEST_URI'];
-    }
 }
