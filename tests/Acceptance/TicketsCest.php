@@ -23,6 +23,7 @@ class TicketsCest
         $I->click('.tagsinput');
         $I->type('test-tag,');
         $I->click('.mce-content-body');
+        $I->waitForElementClickable('#ticketDescription_ifr', 60);
         $I->switchToIFrame('#ticketDescription_ifr');
         $I->waitForElementVisible("#tinymce", 60);
         $I->wait(5);
