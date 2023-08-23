@@ -32,13 +32,13 @@ $project = $tpl->get('project');
             </ul>
 
             <div id="projectdetails">
-                <form action="" method="post" class="stdform">
+                <form action="" method="post" class="">
 
-                    <div class="row-fluid">
+                    <div class="row">
 
-                        <div class="span8">
-                            <div class="row-fluid">
-                                <div class="span12">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-12">
 
                                     <div class="form-group">
 
@@ -52,8 +52,9 @@ $project = $tpl->get('project');
 
                                 </div>
                             </div>
-                            <div class="row-fluid">
-                                <div class="span12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <br />
                                     <p>
                                         <?php echo $tpl->__('label.accomplish'); ?>
                                     </p>
@@ -61,7 +62,7 @@ $project = $tpl->get('project');
 
                                 </div>
                             </div>
-                            <div class="row-fluid padding-top">
+                            <div class="padding-top">
                                 <?php if ($project['id'] != '') : ?>
                                     <div class="pull-right padding-top">
                                         <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
@@ -72,7 +73,7 @@ $project = $tpl->get('project');
                             </div>
                         </div>
 
-                        <div class="span4">
+                        <div class="col-md-4">
 
                             <?php if ($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1) {?>
                                 <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
@@ -91,28 +92,29 @@ $project = $tpl->get('project');
 
                             <?php $tpl->dispatchTplEvent("beforeClientPicker", $project) ?>
 
-                            <div class="row-fluid marginBottom">
-                                <h4 class="widgettitle title-light"><span
+                            <div style="margin-bottom: 30px;">
+                                <h4 class="widgettitle title-light tw-block"><span
                                         class="fa fa-calendar"></span><?php echo $tpl->__('label.project_dates'); ?></h4>
+                                <div>
+                                    <label><?php echo $tpl->__('label.project_start'); ?></label>
+                                    <div class="">
+                                        <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
+                                               value="<?php echo $project['start']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
-                                <label class="span4 control-label"><?php echo $tpl->__('label.project_start'); ?></label>
-                                <div class="span6">
-                                    <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
-                                           value="<?php echo $project['start']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                    </div>
+                                    <label ><?php echo $tpl->__('label.project_end'); ?></label>
+                                    <div class="">
+                                        <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
+                                               value="<?php echo $project['end']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
-                                </div>
-                                <label class="span4 control-label"><?php echo $tpl->__('label.project_end'); ?></label>
-                                <div class="span6">
-                                    <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
-                                           value="<?php echo $project['end']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
-
+                                    </div>
                                 </div>
 
                             </div>
 
-                            <div class="row-fluid marginBottom">
+                            <div style="margin-bottom: 30px;">
 
-                                <div class="span12 ">
+                                <div class="">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-building"></span><?php echo $tpl->__('label.client_product'); ?></h4>
                                     <select name="clientId" id="clientId">
@@ -133,8 +135,8 @@ $project = $tpl->get('project');
                                 </div>
                             </div>
 
-                            <div class="row-fluid marginBottom">
-                                <div class="span12">
+                            <div style="margin-bottom: 30px;">
+                                <div class="">
                                     <h4 class="widgettitle title-light"><span
                                             class="fa fa-lock-open"></span><?php echo $tpl->__('labels.defaultaccess'); ?></h4>
                                     <?php echo $tpl->__('text.who_can_access'); ?>
@@ -180,9 +182,8 @@ $project = $tpl->get('project');
             }
         );
 
-
-            leantime.projectsController.initProjectTabs();
-            leantime.projectsController.initProjectsEditor();
+        leantime.projectsController.initProjectTabs();
+        leantime.editorController.initComplexEditor();
 
         }
     );

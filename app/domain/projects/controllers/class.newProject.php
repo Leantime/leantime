@@ -66,7 +66,7 @@ namespace leantime\domain\controllers {
                 'state' => '',
                 'menuType' => repositories\menu::DEFAULT_MENU,
                 'type' => 'project',
-                'parent' => (int)$_GET['parent'] ?? '',
+                'parent' => $_GET['parent'] ?? '',
                 'psettings' => '',
                 'start' => '',
                 'end' => '',

@@ -340,7 +340,6 @@ namespace leantime\domain\services {
                     if ($projectHierarchy['program']["enabled"] === true) {
                         $project['parent'] = "noProgramParent";
                     }
-
                 }
 
                 //IF the pgm module is not active, add all items
@@ -365,7 +364,7 @@ namespace leantime\domain\services {
                 }
             }
 
-            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));
+            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
 
             if ($projectHierarchy) {
                 return $projectHierarchy;
@@ -1017,7 +1016,8 @@ namespace leantime\domain\services {
 
                 // otherwise, set the step as completed
                 $progressSteps[$name]['status'] = 'done';
-                if (! in_array($previousValue['stepType'] ?? null, ['current', ''])
+                if (
+                    ! in_array($previousValue['stepType'] ?? null, ['current', ''])
                     || $name == array_key_first($progressSteps)
                 ) {
                     $progressSteps[$name]['stepType'] = 'complete';
@@ -1120,6 +1120,37 @@ namespace leantime\domain\services {
 
 
             return true;
+        }
+
+        /**
+         * Gets all the projects a company manager has access to.
+         * Includes all projects within a client + all assigned projects
+         *
+         * @param int $userId
+         * @param int $clientId
+         * @return array
+         */
+        public function getClientManagerProjects(int $userId, int $clientId): array
+        {
+
+            $clientProjects = $this->projectRepository->getClientProjects($clientId);
+            $userProjects = $this->projectRepository->getUserProjects($userId);
+
+            $allProjects = [];
+
+            foreach ($clientProjects as $project) {
+                if (isset($allProjects[$project['id']]) === false) {
+                    $allProjects[$project['id']] = $project;
+                }
+            }
+
+            foreach ($userProjects as $project) {
+                if (isset($allProjects[$project['id']]) === false) {
+                    $allProjects[$project['id']] = $project;
+                }
+            }
+
+            return $userProjects;
         }
     }
 

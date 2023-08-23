@@ -70,11 +70,6 @@ leantime.projectsController = (function () {
 
     };
 
-    var initProjectsEditor = function () {
-
-
-
-    };
 
     var initProjectTable = function () {
 
@@ -579,7 +574,6 @@ leantime.projectsController = (function () {
         initProjectTabs:initProjectTabs,
         initProgressBar:initProgressBar,
         initProjectTable:initProjectTable,
-        initProjectsEditor:initProjectsEditor,
         initDuplicateProjectModal:initDuplicateProjectModal,
         initTodoStatusSortable:initTodoStatusSortable,
         initSelectFields:initSelectFields,
