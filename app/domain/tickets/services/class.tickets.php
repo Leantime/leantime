@@ -582,8 +582,7 @@ namespace leantime\domain\services {
         public function getAllMilestonesOverview($includeArchived = false, $sortBy = "duedate", $includeTasks = false, $clientId = false)
         {
 
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type" => "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone"]);
 
 
             return $allProjectMilestones;
@@ -597,15 +596,13 @@ namespace leantime\domain\services {
             $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
             if ($userProjects) {
                 foreach ($userProjects as $project) {
-                    $prepareTicketSearchArray = $this->prepareTicketSearchArray(["sprint" => '', "type" => "milestone", "currentProject" => $project['id']]);
-                    $allProjectMilestones = $this->getAllMilestones($prepareTicketSearchArray);
+                    $allProjectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
                     $milestones[$project['id']] = $allProjectMilestones;
                 }
             }
 
             if (isset($_SESSION['currentProject'])) {
-                $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type" => "milestone"]);
-                $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+                $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
                 $milestones[$_SESSION['currentProject']] = $allProjectMilestones;
             }
 
@@ -616,8 +613,7 @@ namespace leantime\domain\services {
 
             foreach ($allTickets as $row) {
                 if (!isset($milestones[$row['projectId']])) {
-                    $prepareTicketSearchArray = $this->prepareTicketSearchArray(["sprint" => '', "type" => "milestone", "currentProject" => $row['projectId']]);
-                    $allProjectMilestones = $this->getAllMilestones($prepareTicketSearchArray);
+                    $allProjectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
 
                     $milestones[$row['projectId']] = $allProjectMilestones;
                 }

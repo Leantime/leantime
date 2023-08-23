@@ -65,8 +65,7 @@ namespace leantime\domain\controllers {
                         $projectResults[$i] = $project;
                         $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
 
-                        $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone", "currentProject" => $project['id']]);
-                        $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+                        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
 
                         $projectResults[$i]['milestones'] = $allProjectMilestones;
                         $projectComment = $this->commentService->getComments("project", $project['id']);

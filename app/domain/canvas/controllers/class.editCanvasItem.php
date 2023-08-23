@@ -124,8 +124,7 @@ class editCanvasItem extends controller
 
         $this->tpl->assign('comments', $comments);
 
-        $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-        $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasItem', $canvasItem);
         $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
@@ -319,8 +318,7 @@ class editCanvasItem extends controller
             $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $_GET['id']);
         }
 
-        $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-        $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());

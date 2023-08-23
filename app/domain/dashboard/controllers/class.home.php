@@ -109,8 +109,6 @@ namespace leantime\domain\controllers {
                     if ($clientId == "" || $project["clientId"] == $clientId) {
                         $projectResults[$i] = $project;
                         $projectResults[$i]['progress'] = $this->projectsService->getProjectProgress($project['id']);
-                        //$projectResults[$i]['milestones'] = $this->ticketsService->getAllMilestones($project['id']);
-
 
                         $fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
 
@@ -135,8 +133,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('priorities', $this->ticketsService->getPriorityLabels());
             $this->tpl->assign("types", $this->ticketsService->getTicketTypes());
             $this->tpl->assign("statusLabels", $this->ticketsService->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]));
-            $prepareTicketSearchArray = $this->ticketsService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketsService->getAllMilestones($prepareTicketSearchArray);
+            $allProjectMilestones = $this->ticketsService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
 

@@ -111,7 +111,7 @@ mix
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
     .combine([
         "./public/assets/js/libs/simpleGantt/snap.svg-min.js",
-        "./public/assets/js/libs/simpleGantt/frappe-gantt.min.js",
+        "./public/assets/js/libs/simpleGantt/frappe-gantt.js",
     ], `public/dist/js/compiled-gantt-component.${version}.min.js`)
     .combine([
         "./node_modules/chart.js/dist/chart.js",
