@@ -386,11 +386,6 @@
 
         //Set accordion states
         //All accordions start open
-
-        <?php
-            if(isset($_SESSION['']))
-        ?>
-
     });
 
 

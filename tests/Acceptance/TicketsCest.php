@@ -20,7 +20,7 @@ class TicketsCest
         $I->amOnPage('/tickets/showKanban#/tickets/newTicket');
         $I->waitForElementVisible(".main-title-input", 30);
         $I->fillField(["class" => "main-title-input"], 'Test Ticket');
-        $I->click('#tags_tagsinput');
+        $I->click('.tagsinput');
         $I->type('test-tag,');
         $I->click('.mce-content-body');
         $I->switchToIFrame('#ticketDescription_ifr');
