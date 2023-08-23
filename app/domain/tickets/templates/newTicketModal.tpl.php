@@ -36,7 +36,6 @@
 
         leantime.ticketsController.initTicketTabs();
         leantime.ticketsController.initTagsInput();
-        leantime.editorController.initComplexEditor();
 
         leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initDates();

@@ -22,16 +22,11 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = "Month";
 }
 ?>
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-briefcase"></span></div>
-    <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$tpl->__("label.all_milestones_portfolio"); ?></h1>
-    </div>
-</div><!--pageheader-->
-
+<?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
 
 <div class="maincontent">
+    <?php $tpl->displaySubmodule('tickets-portfolioTabs') ?>
+
     <div class="maincontentinner">
 
         <?php echo $tpl->displayNotification(); ?>
@@ -74,25 +69,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                                 echo "active";
                                                                                         }?>"><?=$tpl->__("buttons.month"); ?></a></li>
                         </ul>
-                    </div>
-
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
-                        <ul class="dropdown-menu">
-                            <li class="active"><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$tpl->__("menu.milestone_gantt") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/projects/showMy"><?=$tpl->__("menu.card_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$tpl->__("menu.table_view") ?></a></li>
-                        </ul>
-                    </div>
-
-                    <div class="pull-left btn-group" style="margin-right:10px;">
-                        <form action="" method="get" id="searchForm">
-                            <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
-                            <input type="hidden" name="submitIncludeTasks" value="1" />
-                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
-                                echo "checked='checked'";
-                                                                                                                                          } ?>/>
-                        </form>
                     </div>
 
                 </div>

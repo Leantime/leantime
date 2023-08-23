@@ -582,7 +582,7 @@ namespace leantime\domain\services {
         public function getAllMilestonesOverview($includeArchived = false, $sortBy = "duedate", $includeTasks = false, $clientId = false)
         {
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone"]);
+            $allProjectMilestones = $this->ticketRepository->getAllMilestones(["sprint" => '', "type" => "milestone", "currentClient" => $clientId]);
 
 
             return $allProjectMilestones;
@@ -1274,21 +1274,19 @@ namespace leantime\domain\services {
                 return [];
             }
 
-            $baseUrl = CURRENT_URL;
-
             return [
                 [
-                    'url' => "$baseUrl#/tickets/newTicket",
+                    'url' => "#/tickets/newTicket",
                     'text' => 'links.add_todo',
                     'class' => 'ticketModal',
                 ],
                 [
-                    'url' => "$baseUrl#/tickets/editMilestone",
+                    'url' => "#/tickets/editMilestone",
                     'text' => 'links.add_milestone',
                     'class' => 'milestoneModal',
                 ],
                 [
-                    'url' => "$baseUrl#/sprints/editSprint",
+                    'url' => "#/sprints/editSprint",
                     'text' => 'links.create_sprint',
                     'class' => 'sprintModal',
                 ],

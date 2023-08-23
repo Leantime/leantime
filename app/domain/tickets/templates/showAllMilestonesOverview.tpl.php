@@ -18,16 +18,12 @@
 
 ?>
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-briefcase"></span></div>
-    <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$tpl->__("headline.milestonesAll"); ?></h1>
-    </div>
-</div><!--pageheader-->
+    <?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
 
-<div class="maincontent">
-    <div class="maincontentinner">
+    <div class="maincontent">
+        <?php $tpl->displaySubmodule('tickets-portfolioTabs') ?>
+
+        <div class="maincontentinner">
 
         <?php echo $tpl->displayNotification(); ?>
 
@@ -279,9 +275,6 @@
     });
 
     leantime.ticketsController.initTicketSearchSubmit("<?=BASE_URL ?>/tickets/showAll");
-
-    leantime.ticketsController.initUserSelectBox();
-    leantime.ticketsController.initStatusSelectBox();
 
     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
     leantime.ticketsController.initUserDropdown();

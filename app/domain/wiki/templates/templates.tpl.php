@@ -463,6 +463,6 @@ $labelGray->content = '<span class="label label-default">Gray</span>';
 $templates[] = $labelGray;
 
 
-$templates = static::dispatch_filter("documentTemplates", $templates);
+$templates = $tpl->dispatch_filter("documentTemplates", $templates);
 
 echo json_encode($templates);

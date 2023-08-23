@@ -58,7 +58,7 @@ namespace leantime\domain\controllers {
             if (is_array($allprojects)) {
                 foreach ($allprojects as $project) {
                     if (!array_key_exists($project["clientId"], $clients)) {
-                        $clients[$project["clientId"]] = $project['clientName'];
+                        $clients[$project["clientId"]] = array("name" => $project['clientName'], "id"=> $project["clientId"]);
                     }
 
                     if ($clientId == "" || $project["clientId"] == $clientId) {

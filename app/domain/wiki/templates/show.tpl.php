@@ -206,7 +206,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
 
 
                                 </div>
-                                <div class="articleBody mce-content-body">
+                                <div class="articleBody mce-content-body centered">
                                     <?=$tpl->escapeMinimal($currentArticle->description); ?>
                                 </div>
 
@@ -258,6 +258,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                     <?php } else {?>
                             <div class="row">
                                 <div class="col-md-12">
+                                    <div class="maincontentinner">
                                     <?php
                                     echo"<div class='center'>";
                                         echo"<div  style='width:30%' class='svgContainer'>";
@@ -272,6 +273,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                         echo"</div>";
                                     ?>
                                     </div>
+                                </div>
                             </div>
                     <?php } ?>
                 </div>
