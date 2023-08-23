@@ -89,8 +89,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('comments', $comments);
 
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject($_SESSION['currentProject']));
             $this->tpl->assign('milestone', $milestone);

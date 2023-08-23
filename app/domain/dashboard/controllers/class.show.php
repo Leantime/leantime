@@ -81,8 +81,8 @@ namespace leantime\domain\controllers {
             $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
 
             //Milestones
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $comments = app()->make(repositories\comments::class);

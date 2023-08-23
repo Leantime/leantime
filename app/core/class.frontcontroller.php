@@ -94,9 +94,9 @@ class frontcontroller
         $controllerType = $incomingRequest instanceof HtmxRequest ? 'hxcontrollers' : 'controllers';
 
         // initialize plugin service to check
-        if ($ltInstalledandUpdated) {
-            $pluginService = app()->make(\leantime\domain\services\plugins::class);
-        }
+        $pluginService = $ltInstalledandUpdated
+            ? app()->make(\leantime\domain\services\plugins::class)
+            : null;
 
         // Check If Route Exists And Fetch Right Route Based On Priority
         $paths = collect(['custom/domain', 'app/plugins', 'app/domain'])
@@ -118,7 +118,7 @@ class frontcontroller
             }
 
             if ($path == 'app/plugins') {
-                if (!$ltInstalledandUpdated || !$pluginService->isPluginEnabled($moduleName)) {
+                if (!$ltInstalledandUpdated || !$pluginService?->isPluginEnabled($moduleName)) {
                     return false;
                 }
 

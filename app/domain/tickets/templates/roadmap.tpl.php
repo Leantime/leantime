@@ -49,7 +49,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                         ?>
                         <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
                         <ul class="dropdown-menu" id="ganttTimeControl">
-                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
+                           <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
                                 echo "active";
                                                                                       }?>"> <?=$tpl->__("buttons.day"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Week" class="<?php if ($roadmapView == 'Week') {
@@ -60,17 +60,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                                                                                         }?>"><?=$tpl->__("buttons.month"); ?></a></li>
                         </ul>
                     </div>
-
-                    <div class="pull-left btn-group" style="margin-right:10px;">
-                        <form action="" method="get" id="searchForm">
-                            <label class="pull-right" for="includeTasks">&nbsp;<?=$tpl->__('label.showTasks'); ?></label>
-                            <input type="hidden" name="submitIncludeTasks" value="1" />
-                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($tpl->get('includeTasks') === true) {
-                                echo "checked='checked'";
-                                                                                                                                          } ?>/>
-                        </form>
-                    </div>
-
                 </div>
 
             </div>

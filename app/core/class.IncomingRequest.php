@@ -73,7 +73,7 @@ class IncomingRequest extends Request
      */
     public function getFullUrl()
     {
-        return $request->getSchemeAndHttpHost() . $request->getBaseUrl() . $request->getPathInfo();
+        return  $this->getSchemeAndHttpHost() .  $this->getBaseUrl() .  $this->getPathInfo();
     }
 
     /**

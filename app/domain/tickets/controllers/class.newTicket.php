@@ -65,8 +65,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
 
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
@@ -108,7 +107,7 @@ namespace leantime\domain\controllers {
                     $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                     $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
                     $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-                    $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+                    $this->tpl->assign('milestones', $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]));
                     $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
                     $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());

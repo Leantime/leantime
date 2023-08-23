@@ -78,7 +78,7 @@ namespace leantime\domain\controllers {
 
             if (empty($row) === false && auth::userIsAtLeast(roles::$admin)) {
                 $file = app()->make(repositories\files::class);
-                $project = app()->maike(repositories\projects::class);
+                $project = app()->make(repositories\projects::class);
 
                 if ($_SESSION['userdata']['role'] == 'admin') {
                     $this->tpl->assign('admin', true);

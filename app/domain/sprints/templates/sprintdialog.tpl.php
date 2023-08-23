@@ -39,3 +39,7 @@ if (isset($currentSprint->id)) {
 
 </form>
 
+<script>
+    leantime.ticketsController.initSprintDates();
+</script>
+

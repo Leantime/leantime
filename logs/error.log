@@ -1,0 +1,417 @@
+[23-Aug-2023 08:07:01 America/Los_Angeles] ErrorException: Warning: Undefined property: leantime\domain\services\tickets::$ticketService in /Users/marcel/Sites/leantime-oss/app/domain/tickets/services/class.tickets.php:585
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.roadmapAll.php(68): leantime\domain\services\tickets->getAllMilestonesOverview(false, 'date', false, false)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\roadmapAll->get(Array)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#3 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.roadmap...', Array, 200)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#11 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#12 {main}
+[23-Aug-2023 08:09:07 America/Los_Angeles] ErrorException: Warning: Undefined property: leantime\domain\services\tickets::$ticketService in /Users/marcel/Sites/leantime-oss/app/domain/tickets/services/class.tickets.php:585
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.roadmapAll.php(68): leantime\domain\services\tickets->getAllMilestonesOverview(Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\roadmapAll->get(Array)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#3 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.roadmap...', Array, 200)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#11 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#12 {main}
+[23-Aug-2023 08:11:15 America/Los_Angeles] ErrorException: Warning: Undefined array key "currentProject" in /Users/marcel/Sites/leantime-oss/app/domain/tickets/repositories/class.tickets.php:840
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/tickets/services/class.tickets.php(585): leantime\domain\repositories\tickets->getAllMilestones(Array)
+#1 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.roadmapAll.php(68): leantime\domain\services\tickets->getAllMilestonesOverview(false, 'date', false, false)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\roadmapAll->get(Array)
+#3 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#4 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#7 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.roadmap...', Array, 200)
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#11 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#12 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#13 {main}
+[23-Aug-2023 08:18:37 America/Los_Angeles] cron start
+[23-Aug-2023 08:18:37 America/Los_Angeles] cron end
+[23-Aug-2023 08:26:08 America/Los_Angeles] cron start
+[23-Aug-2023 08:26:08 America/Los_Angeles] cron end
+[23-Aug-2023 08:31:08 America/Los_Angeles] cron start
+[23-Aug-2023 08:31:08 America/Los_Angeles] cron end
+[23-Aug-2023 08:31:59 America/Los_Angeles] TypeError: leantime\core\template::escape(): Argument #1 ($content) must be of type ?string, array given, called in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/portfolioHeader.sub.php on line 39 and defined in /Users/marcel/Sites/leantime-oss/app/core/class.template.php:687
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/portfolioHeader.sub.php(39): leantime\core\template->escape(Array)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#7 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(544): Illuminate\View\View->render()
+#9 /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/roadmapAll.tpl.php(25): leantime\core\template->displaySubmodule('tickets-portfol...')
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#15 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#16 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#17 /Users/marcel/Sites/leantime-oss/cache/views/2a7682ca7c75cdefa6d24370c2feedbb1a840cba.php(40): Illuminate\View\View->render()
+#18 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#19 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#20 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#21 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#22 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#23 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#24 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#25 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#26 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.roadmapAll.php(64): leantime\core\template->display('tickets.roadmap...')
+#27 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\roadmapAll->get(Array)
+#28 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#29 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#30 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#31 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#32 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#33 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#34 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.roadmap...', Array, 200)
+#35 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#36 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#37 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#38 {main}
+
+Next Illuminate\View\ViewException: leantime\core\template::escape(): Argument #1 ($content) must be of type ?string, array given, called in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/portfolioHeader.sub.php on line 39 (View: /Users/marcel/Sites/leantime-oss/app/views/templates/layouts/app.blade.php) in /Users/marcel/Sites/leantime-oss/app/core/class.template.php:687
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(TypeError), 1)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.roadmapAll.php(64): leantime\core\template->display('tickets.roadmap...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\roadmapAll->get(Array)
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#9 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#13 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#14 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.roadmap...', Array, 200)
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#17 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#18 {main}
+[23-Aug-2023 08:44:39 America/Los_Angeles] 2023-08-23T08:44:39-07:00 [critical] Uncaught Error: Call to undefined method leantime\domain\repositories\clients::getUserClients()
+[23-Aug-2023 08:46:42 America/Los_Angeles] TypeError: Cannot access offset of type string on string in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/portfolioHeader.sub.php:39
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require()
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(544): Illuminate\View\View->render()
+#8 /Users/marcel/Sites/leantime-oss/app/domain/projects/templates/showMy.tpl.php(9): leantime\core\template->displaySubmodule('tickets-portfol...')
+#9 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#15 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#16 /Users/marcel/Sites/leantime-oss/cache/views/2a7682ca7c75cdefa6d24370c2feedbb1a840cba.php(40): Illuminate\View\View->render()
+#17 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#18 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#19 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#20 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#21 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#22 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#23 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#24 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#25 /Users/marcel/Sites/leantime-oss/app/domain/projects/controllers/class.showMy.php(92): leantime\core\template->display('projects.showMy')
+#26 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\showMy->get(Array)
+#27 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#28 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#29 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#30 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#31 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#32 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#33 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('projects.showMy', Array, 200)
+#34 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#35 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#36 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#37 {main}
+
+Next Illuminate\View\ViewException: Cannot access offset of type string on string (View: /Users/marcel/Sites/leantime-oss/app/views/templates/layouts/app.blade.php) in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/portfolioHeader.sub.php:39
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(TypeError), 1)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/projects/controllers/class.showMy.php(92): leantime\core\template->display('projects.showMy')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\showMy->get(Array)
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#9 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#13 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#14 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('projects.showMy', Array, 200)
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#17 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#18 {main}
+[23-Aug-2023 08:54:02 America/Los_Angeles] cron start
+[23-Aug-2023 08:54:02 America/Los_Angeles] cron end
+[23-Aug-2023 08:56:38 America/Los_Angeles] ErrorException: Warning: Undefined property: leantime\domain\controllers\showAllMilestonesOverview::$clientService in /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.showAllMilestonesOverview.php:65
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\showAllMilestonesOverview->get(Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#2 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.showAll...', Array, 200)
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#10 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#11 {main}
+[23-Aug-2023 08:57:30 America/Los_Angeles] TypeError: count(): Argument #1 ($value) must be of type Countable|array, null given in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/portfolioHeader.sub.php:22
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require()
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(544): Illuminate\View\View->render()
+#8 /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/showAllMilestonesOverview.tpl.php(21): leantime\core\template->displaySubmodule('tickets-portfol...')
+#9 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#15 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#16 /Users/marcel/Sites/leantime-oss/cache/views/2a7682ca7c75cdefa6d24370c2feedbb1a840cba.php(40): Illuminate\View\View->render()
+#17 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#18 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#19 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#20 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#21 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#22 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#23 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#24 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#25 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.showAllMilestonesOverview.php(77): leantime\core\template->display('tickets.showAll...')
+#26 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\showAllMilestonesOverview->get(Array)
+#27 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#28 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#29 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#30 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#31 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#32 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#33 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.showAll...', Array, 200)
+#34 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#35 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#36 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#37 {main}
+
+Next Illuminate\View\ViewException: count(): Argument #1 ($value) must be of type Countable|array, null given (View: /Users/marcel/Sites/leantime-oss/app/views/templates/layouts/app.blade.php) in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/portfolioHeader.sub.php:22
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(TypeError), 1)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#6 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.showAllMilestonesOverview.php(77): leantime\core\template->display('tickets.showAll...')
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\showAllMilestonesOverview->get(Array)
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#9 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#13 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#14 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.showAll...', Array, 200)
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#17 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#18 {main}
+[23-Aug-2023 09:00:09 America/Los_Angeles] cron start
+[23-Aug-2023 09:00:09 America/Los_Angeles] cron end
+[23-Aug-2023 09:05:24 America/Los_Angeles] cron start
+[23-Aug-2023 09:05:24 America/Los_Angeles] cron end
+[23-Aug-2023 09:10:13 America/Los_Angeles] 2023-08-23T09:10:13-07:00 [critical] Uncaught Error: Cannot assign leantime\domain\repositories\canvas to property leantime\domain\services\tags::$canvasRepository of type leantime\domain\repositories\tickets
+[23-Aug-2023 09:10:15 America/Los_Angeles] 2023-08-23T09:10:15-07:00 [critical] Uncaught Error: Cannot assign leantime\domain\repositories\canvas to property leantime\domain\services\tags::$canvasRepository of type leantime\domain\repositories\tickets
+[23-Aug-2023 09:10:15 America/Los_Angeles] 2023-08-23T09:10:15-07:00 [critical] Uncaught Error: Cannot assign leantime\domain\repositories\canvas to property leantime\domain\services\tags::$canvasRepository of type leantime\domain\repositories\tickets
+[23-Aug-2023 09:10:17 America/Los_Angeles] 2023-08-23T09:10:17-07:00 [critical] Uncaught Error: Cannot assign leantime\domain\repositories\canvas to property leantime\domain\services\tags::$canvasRepository of type leantime\domain\repositories\tickets
+[23-Aug-2023 09:10:58 America/Los_Angeles] 2023-08-23T09:10:58-07:00 [critical] Uncaught Error: Cannot assign leantime\domain\repositories\canvas to property leantime\domain\services\tags::$canvasRepository of type leantime\domain\repositories\tickets
+[23-Aug-2023 09:12:28 America/Los_Angeles] ErrorException: Warning: foreach() argument must be of type array|object, null given in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/ticketDetails.sub.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(544): Illuminate\View\View->render()
+#8 /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/newTicketModal.tpl.php(24): leantime\core\template->displaySubmodule('tickets-ticketD...')
+#9 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#15 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#16 /Users/marcel/Sites/leantime-oss/cache/views/b357ccfc5c32d1465552ed9a2671442c4c9a8fc8.php(2): Illuminate\View\View->render()
+#17 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#18 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#19 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#20 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#21 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#22 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#23 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#24 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#25 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('tickets.newTick...', 'global::layouts...')
+#26 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.newTicket.php(123): leantime\core\template->displayPartial('tickets.newTick...')
+#27 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\newTicket->post(Array)
+#28 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#29 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#30 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#31 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#32 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#33 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#34 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.newTick...', Array, 200)
+#35 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#36 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#37 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#38 {main}
+
+Next Illuminate\View\ViewException: Warning: foreach() argument must be of type array|object, null given (View: /Users/marcel/Sites/leantime-oss/app/views/templates/layouts/blank.blade.php) in /Users/marcel/Sites/leantime-oss/app/domain/tickets/templates/submodules/ticketDetails.sub.php:74
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(ErrorException), 1)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('tickets.newTick...', 'global::layouts...')
+#7 /Users/marcel/Sites/leantime-oss/app/domain/tickets/controllers/class.newTicket.php(123): leantime\core\template->displayPartial('tickets.newTick...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\newTicket->post(Array)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#10 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#14 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('tickets.newTick...', Array, 200)
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#17 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#18 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#19 {main}
+[23-Aug-2023 09:22:02 America/Los_Angeles] cron start
+[23-Aug-2023 09:22:02 America/Los_Angeles] cron end
+[23-Aug-2023 09:28:15 America/Los_Angeles] cron start
+[23-Aug-2023 09:28:15 America/Los_Angeles] cron end
+[23-Aug-2023 09:33:15 America/Los_Angeles] cron start
+[23-Aug-2023 09:33:15 America/Los_Angeles] cron end
+[23-Aug-2023 09:38:50 America/Los_Angeles] cron start
+[23-Aug-2023 09:38:50 America/Los_Angeles] cron end
+[23-Aug-2023 09:44:26 America/Los_Angeles] cron start
+[23-Aug-2023 09:44:26 America/Los_Angeles] cron end
+[23-Aug-2023 09:49:26 America/Los_Angeles] cron start
+[23-Aug-2023 09:49:26 America/Los_Angeles] cron end
+[23-Aug-2023 09:54:26 America/Los_Angeles] cron start
+[23-Aug-2023 09:54:26 America/Los_Angeles] cron end
+[23-Aug-2023 09:59:26 America/Los_Angeles] cron start
+[23-Aug-2023 09:59:26 America/Los_Angeles] cron end
+[23-Aug-2023 10:05:24 America/Los_Angeles] cron start
+[23-Aug-2023 10:05:24 America/Los_Angeles] cron end
+[23-Aug-2023 10:10:24 America/Los_Angeles] cron start
+[23-Aug-2023 10:10:24 America/Los_Angeles] cron end
+[23-Aug-2023 10:15:24 America/Los_Angeles] cron start
+[23-Aug-2023 10:15:24 America/Los_Angeles] cron end
+[23-Aug-2023 10:19:06 America/Los_Angeles] 2023-08-23T10:19:06-07:00 [critical] Uncaught Error: Cannot assign leantime\domain\repositories\canvas to property leantime\domain\services\tags::$canvasRepository of type leantime\domain\repositories\tickets
+[23-Aug-2023 10:19:19 America/Los_Angeles] 2023-08-23T10:19:19-07:00 [critical] Uncaught Error: Cannot assign leantime\domain\repositories\canvas to property leantime\domain\services\tags::$canvasRepository of type leantime\domain\repositories\tickets
+[23-Aug-2023 10:20:26 America/Los_Angeles] cron start
+[23-Aug-2023 10:20:26 America/Los_Angeles] cron end
+[23-Aug-2023 10:27:23 America/Los_Angeles] cron start
+[23-Aug-2023 10:27:23 America/Los_Angeles] cron end
+[23-Aug-2023 10:30:11 America/Los_Angeles] BadMethodCallException: Method Illuminate\Filesystem\Filesystem::dispatch_filter does not exist. in /Users/marcel/Sites/leantime-oss/vendor/illuminate/macroable/Traits/Macroable.php:87
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/wiki/templates/templates.tpl.php(466): Illuminate\Filesystem\Filesystem::__callStatic('dispatch_filter', Array)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#7 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#8 /Users/marcel/Sites/leantime-oss/cache/views/b357ccfc5c32d1465552ed9a2671442c4c9a8fc8.php(2): Illuminate\View\View->render()
+#9 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#15 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#17 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('wiki.templates', 'global::layouts...')
+#18 /Users/marcel/Sites/leantime-oss/app/domain/wiki/controllers/class.templates.php(24): leantime\core\template->displayPartial('wiki.templates')
+#19 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\templates->get(Array)
+#20 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#21 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#22 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#23 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#24 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#25 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#26 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('wiki.templates', Array, 200)
+#27 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#28 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#29 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#30 {main}
+
+Next Illuminate\View\ViewException: Method Illuminate\Filesystem\Filesystem::dispatch_filter does not exist. (View: /Users/marcel/Sites/leantime-oss/app/views/templates/layouts/blank.blade.php) in /Users/marcel/Sites/leantime-oss/vendor/illuminate/macroable/Traits/Macroable.php:87
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(BadMethodCallException), 1)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('wiki.templates', 'global::layouts...')
+#7 /Users/marcel/Sites/leantime-oss/app/domain/wiki/controllers/class.templates.php(24): leantime\core\template->displayPartial('wiki.templates')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\templates->get(Array)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#10 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#14 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('wiki.templates', Array, 200)
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#17 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#18 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#19 {main}
+[23-Aug-2023 10:33:24 America/Los_Angeles] cron start
+[23-Aug-2023 10:33:24 America/Los_Angeles] cron end
+[23-Aug-2023 10:39:13 America/Los_Angeles] cron start
+[23-Aug-2023 10:39:13 America/Los_Angeles] cron end

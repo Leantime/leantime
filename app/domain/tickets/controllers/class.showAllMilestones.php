@@ -39,8 +39,7 @@ namespace leantime\domain\controllers {
                 $searchCriteria["status"] = "not_done";
             }
 
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('allTickets', $allProjectMilestones);
 
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
@@ -53,8 +52,7 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
 
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $this->tpl->display('tickets.showAllMilestones');

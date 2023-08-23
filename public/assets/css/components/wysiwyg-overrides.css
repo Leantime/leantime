@@ -3,8 +3,11 @@
     font-size:var(--base-font-size);
     background:var(--secondary-background);
     max-width:760px;
-    margin:auto;
     text-align:left;
+}
+
+.mce-content-body.centered {
+    margin:auto;
 }
 
 .viewDescription.mce-content-body {

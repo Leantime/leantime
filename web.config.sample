@@ -1,16 +1,4 @@
-<rule name="rule 1B">
-	<match url="^/?$"  />
-	<action type="Rewrite" url="/index.php?act=dashboard.show"  />
-</rule>
-<rule name="rule 2B">
-	<match url="^([^/\.]+)/?$"  />
-	<action type="Rewrite" url="/index.php?act={R:1}"  appendQueryString="true" />
-</rule>
-<rule name="rule 3B">
-	<match url="^([^/\.]+)/([^/\.]+)/?$"  />
-	<action type="Rewrite" url="/index.php?act={R:1}.{R:2}"  appendQueryString="true" />
-</rule>
-<rule name="rule 4B">
-	<match url="^([^/\.]+)/([^/\.]+)/([^/\.]+)/?$"  />
-	<action type="Rewrite" url="/index.php?act={R:1}.{R:2}&amp;id={R:3}"  appendQueryString="true" />
+<rule name="rule 1Q" stopProcessing="true">
+	<match url="^"  />
+	<action type="Rewrite" url="/index.php"  />
 </rule>

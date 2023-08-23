@@ -1,7 +1,7 @@
 @extends($layout)
 
 @section('content')
-<x-global::pageheader :icon="'fa fa-home'">
+<x-global::pageheader :icon="'fa fa-gauge-high'">
     @if (count($allUsers) == 1)
         <a href="{{ BASE_URL }}/dashboard/show/#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
@@ -320,7 +320,7 @@
                     @if ($login::userIsAtLeast($roles::$editor))
                         <a
                             href="javascript:void(0);"
-                            onclick="toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
+                            onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
                         ><span class="fa fa-plus-square"></span> {{ __('links.add_new_report') }}</a>
                     @endif
@@ -330,7 +330,6 @@
 
                 <form method="post" action="{{ BASE_URL }}/dashboard/show">
                     <input type="hidden" name="comment" value="1" />
-                    <form method="post" accept-charset="utf-8" action="{!! CURRENT_URL !!}" id="commentForm">
                         @if ($login::userIsAtLeast($roles::$editor))
                             <div id="comment0" class="commentBox tw-hidden">
                                 <label for="projectStatus tw-inline">{{ __('label.project_status_is') }}</label>
@@ -351,9 +350,11 @@
                                     />
                                     <a
                                         href="javascript:void(0);"
-                                        onclick="toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
+                                        onclick="leantime.commentsController.toggleCommentBoxes(-1);jQuery('.noCommentsMessage').toggle();"
                                         class="tw-leading-[50px]"
                                     >{{ __('links.cancel') }}</a>
+                                    <input type="hidden" name="comment" value="1"/>
+                                    <input type="hidden" name="father" id="father" value="0"/>
                                 </div>
                             </div>
                         @endif
@@ -421,17 +422,16 @@
                                             @if ($login::userIsAtLeast($roles::$commenter))
                                                 <a
                                                     href="javascript:void(0);"
-                                                    onclick="toggleCommentboxes({!! $row['id'] !!});"
+                                                    onclick="leantime.commentsController.toggleCommentBoxes({!! $row['id'] !!});"
                                                 ><span class="fa fa-reply"></span> {{ __('links.reply') }}
+                                                </a>
                                             @endif
                                         </div>
 
                                         <div class="replies">
                                             @if ($row['replies'])
                                                 @foreach ($row['replies'] as $comment)
-                                                    @fragment("comments.reply.{$loop->iterator}")
-                                                        <x-comments::reply :comment="$comment" :iteration="$loop->iterator" />
-                                                    @endfragment
+                                                    <x-comments::reply :comment="$comment" :iteration="$loop->iteration" />
                                                 @endforeach
                                             @endif
                                             <x-comments::input :commentId="$row['id']" :userId="$_SESSION['userdata']['id']" />
@@ -444,8 +444,15 @@
                                 </div>
                             @endif
                         </div>
-                    </form>
+
+                    @if (count($comments) == 0)
+                        <div style="padding-left:0px; clear:both;" class="noCommentsMessage">
+                                {{ __('text.no_updates') }}
+                        </div>
+                    @endif
+                    <div class="clearall"></div>
                 </form>
+                <div class="clearall"></div>
             </div>
 
             <div class="maincontentinner">
@@ -540,28 +547,6 @@
 @once @push('scripts')
 <script type='text/javascript'>
     leantime.editorController.initSimpleEditor();
-
-    function toggleCommentBoxes(id) {
-
-        @if ($login::userIsAtLeast($roles::$commenter))
-
-        if (id == 0) {
-            jQuery('#mainToggler').hide();
-        } else {
-            jQuery('#mainToggler').show();
-        }
-        jQuery('.commentBox textarea').remove();
-
-        jQuery('.commentBox').hide('fast', function () {});
-
-        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-        leantime.editorController.initSimpleEditor();
-
-        jQuery('#comment' + id + '').show('fast');
-        jQuery('#father').val(id);
-
-        @endif
-    }
 </script>
 @endpush @endonce
 

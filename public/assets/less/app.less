@@ -2,3 +2,12 @@
 //@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.htmx-indicator{
+@apply tw-hidden;
+}
+
+.htmx-request .my-indicator,
+.htmx-request.my-indicator{
+@apply tw-inline;
+}

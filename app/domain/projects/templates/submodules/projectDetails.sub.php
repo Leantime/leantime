@@ -10,11 +10,11 @@ $menuTypes = $tpl->get('menuTypes');
 
 <form action="" method="post" class="stdform">
 
-    <div class="row-fluid">
+    <div class="row">
 
-        <div class="span8">
-            <div class="row-fluid">
-                <div class="span12">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-12">
 
                     <div class="form-group">
 
@@ -26,8 +26,8 @@ $menuTypes = $tpl->get('menuTypes');
 
                 </div>
             </div>
-            <div class="row-fluid">
-                <div class="span12">
+            <div class="row">
+                <div class="col-md-12">
                     <p>
                         <?php echo $tpl->__('label.accomplish'); ?><br />
                     </p>
@@ -35,10 +35,21 @@ $menuTypes = $tpl->get('menuTypes');
 
                 </div>
             </div>
-        </div>
-        <div class="span4">
+            <div class="row padding-top">
+                <div class="col-md-12">
+                    <?php if ($project['id'] != '') : ?>
+                        <div class="pull-right padding-top">
+                            <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
+                        </div>
+                    <?php endif; ?>
+                    <input type="submit" name="save" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
+                </div>
 
-            <div class="row-fluid marginBottom">
+            </div>
+        </div>
+        <div class="col-md-4">
+
+            <div class="row marginBottom">
 
                 <?php if ($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1) {?>
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
@@ -58,7 +69,7 @@ $menuTypes = $tpl->get('menuTypes');
 
                 <h4 class="widgettitle title-light"><span
                         class="fa fa-picture-o"></span><?php echo $tpl->__('label.project_avatar'); ?></h4>
-                <div class="span12 center">
+                <div class="col-md-12 center">
 
 
 
@@ -96,31 +107,36 @@ $menuTypes = $tpl->get('menuTypes');
                     </div>
                 </div>
 
+            </div>
 
                 <?php $tpl->dispatchTplEvent("afterProjectAvatar", $project) ?>
 
-                <div class="row-fluid marginBottom">
-                    <h4 class="widgettitle title-light"><span
-                            class="fa fa-calendar"></span><?php echo $tpl->__('label.project_dates'); ?></h4>
+                <div class="row marginBottom" style="margin-bottom: 30px;">
+                    <div class="col-md-12">
+                        <h4 class="widgettitle title-light"><span
+                                class="fa fa-calendar"></span><?php echo $tpl->__('label.project_dates'); ?></h4>
 
-                    <label class="span4 control-label"><?php echo $tpl->__('label.project_start'); ?></label>
-                    <div class="span6">
-                        <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
-                               value="<?php echo $tpl->getFormattedDateString($project['start']); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
-                    </div>
-                    <label class="span4 control-label"><?php echo $tpl->__('label.project_end'); ?></label>
-                    <div class="span6">
-                        <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
-                               value="<?php echo $tpl->getFormattedDateString($project['end']); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                        <label class="control-label"><?php echo $tpl->__('label.project_start'); ?></label>
+                        <div class="">
+                            <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
+                                   value="<?php echo $tpl->getFormattedDateString($project['start']); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
+                        </div>
+                        <label class="control-label"><?php echo $tpl->__('label.project_end'); ?></label>
+                        <div class="">
+                            <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
+                                   value="<?php echo $tpl->getFormattedDateString($project['end']); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+
+                        </div>
                     </div>
 
                 </div>
 
 
+                <div class="row" style="margin-bottom: 30px;">
 
-                <div class="span12 ">
+                    <div class="col-md-12 " style="margin-bottom: 30px;">
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-building"></span><?php echo $tpl->__('label.client_product'); ?></h4>
                     <select name="clientId" id="clientId">
@@ -139,11 +155,12 @@ $menuTypes = $tpl->get('menuTypes');
 
 
                 </div>
-            </div>
+                </div>
 
 
-            <div class="row-fluid marginBottom">
-                <div class="span12">
+
+            <div class="row marginBottom" style="margin-bottom: 30px;">
+                <div class="col-md-12">
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-wrench"></span><?php echo $tpl->__('label.settings'); ?></h4>
 
@@ -152,8 +169,8 @@ $menuTypes = $tpl->get('menuTypes');
 
                     <div class="form-group">
 
-                <label class="span4 control-label" for="projectState"><?php echo $tpl->__('label.project_state'); ?></label>
-                <div class="span6">
+                <label class="col-md-4 control-label" for="projectState"><?php echo $tpl->__('label.project_state'); ?></label>
+                <div class="col-md-6">
                     <select name="projectState" id="projectState">
                         <option value="0" <?php if ($project['state'] == 0) {
                             ?> selected=selected
@@ -170,8 +187,8 @@ $menuTypes = $tpl->get('menuTypes');
                 </div>
             </div>
 
-            <div class="row-fluid marginBottom">
-                <div class="span12 ">
+            <div class="row marginBottom" style="margin-bottom: 30px;">
+                <div class="col-md-12 ">
                     <h4 class="widgettitle title-light"><span
                                 class="fa fa-lock-open"></span><?php echo $tpl->__('labels.defaultaccess'); ?></h4>
                     <?php echo $tpl->__('text.who_can_access'); ?>
@@ -186,21 +203,21 @@ $menuTypes = $tpl->get('menuTypes');
                 </div>
             </div>
 
-            <div class="row-fluid">
-                <div class="span12 ">
+            <div class="row" style="margin-bottom: 30px;">
+                <div class="col-md-12 ">
                     <h4 class="widgettitle title-light"><span
                                 class="fa fa-money-bill-alt"></span><?php echo $tpl->__('label.budgets'); ?></h4>
                     <div class="form-group">
-                        <label class="span4 control-label"for="hourBudget"><?php echo $tpl->__('label.hourly_budget'); ?></label>
-                        <div class="span6">
+                        <label class="col-md-4 control-label"for="hourBudget"><?php echo $tpl->__('label.hourly_budget'); ?></label>
+                        <div class="col-md-6">
                             <input type="text" name="hourBudget" class="input-large" id="hourBudget" value="<?php $tpl->e($project['hourBudget']) ?>" />
 
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="span4 control-label" for="dollarBudget"><?php echo $tpl->__('label.budget_cost'); ?></label>
-                        <div class="span6">
+                        <label class="col-md-4 control-label" for="dollarBudget"><?php echo $tpl->__('label.budget_cost'); ?></label>
+                        <div class="col-md-6">
                             <input type="text" name="dollarBudget" class="input-large" id="dollarBudget" value="<?php $tpl->e($project['dollarBudget']) ?>" />
 
                         </div>
@@ -213,13 +230,5 @@ $menuTypes = $tpl->get('menuTypes');
 
     </div>
 
-    <div class="row-fluid padding-top">
-        <?php if ($project['id'] != '') : ?>
-            <div class="pull-right padding-top">
-                <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
-            </div>
-        <?php endif; ?>
-        <input type="submit" name="save" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
 
-    </div>
 </form>

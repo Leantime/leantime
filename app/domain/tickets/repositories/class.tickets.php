@@ -837,7 +837,7 @@ namespace leantime\domain\repositories {
         public function getAllMilestones(array $searchCriteria, string $sort = 'standard')
         {
 
-            $statusGroups = $this->getStatusListGroupedByType($searchCriteria["currentProject"]);
+            $statusGroups = $this->getStatusListGroupedByType($searchCriteria["currentProject"] ?? $_SESSION['currentProject']);
 
 
             $query = "SELECT
