@@ -18,9 +18,29 @@ leantime.commentsController = (function () {
 
     };
 
+    var toggleCommentBoxes = function (id) {
+
+        if (id == 0) {
+            jQuery('#mainToggler').hide();
+        } else {
+            jQuery('#mainToggler').show();
+        }
+        jQuery('.commentBox textarea').remove();
+
+        jQuery('.commentBox').hide('fast', function () {});
+
+        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+        leantime.editorController.initSimpleEditor();
+
+        jQuery('#comment' + id + '').show('fast');
+        jQuery('#father').val(id);
+
+    };
+
     // Make public what you want to have public, everything else is private
     return {
         enableCommenterForms:enableCommenterForms,
+        toggleCommentBoxes:toggleCommentBoxes
     };
 
 })();

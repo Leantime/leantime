@@ -61,7 +61,7 @@
 
             <li class="dropdown scrollableMenu">
 
-                <ul style="display:block;">
+                <ul style="display:block;" >
                     @foreach ($menuStructure as $key => $menuItem)
                         @switch ($menuItem['type'])
                             @case('header')

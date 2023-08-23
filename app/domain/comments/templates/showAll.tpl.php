@@ -87,7 +87,8 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                         $tpl->__('text.written_on'),
                                         $tpl->getFormattedDateString($comment['date']),
                                         $tpl->getFormattedTimeString($comment['date'])
-                                    ); ?></div>
+                                    ); ?>
+                                </div>
                                 <strong>
                                 <?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?>
                                 </strong><br/>

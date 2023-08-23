@@ -66,7 +66,7 @@ class Bootloader
     /**
      * Get the Bootloader instance
      *
-     * @param ?\Psr\Container\ContainerInterface $app
+     * @param \Psr\Container\ContainerInterface $app
      * @return \leantime\core\Bootloader
      */
     public static function getInstance(?PsrContainerContract $app = null): self
@@ -77,7 +77,7 @@ class Bootloader
     /**
      * Constructor
      *
-     * @param ?\Psr\Container\ContainerInterface $app
+     * @param \Psr\Container\ContainerInterface $app
      * @return self
      */
     public function __construct(?PsrContainerContract $app = null)
@@ -123,7 +123,11 @@ class Bootloader
         $request = $app->make(IncomingRequest::class);
 
         if (! defined('BASE_URL')) {
-            define('BASE_URL', $config->appUrl ?? $request->getSchemeAndHttpHost());
+            if (isset($config->appUrl) && !empty($config->appUrl)) {
+                define('BASE_URL', $config->appUrl);
+            } else {
+                define('BASE_URL', $request->getSchemeAndHttpHost());
+            }
         }
 
         if (! defined('CURRENT_URL')) {

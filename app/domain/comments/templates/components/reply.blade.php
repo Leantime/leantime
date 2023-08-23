@@ -4,32 +4,38 @@
     </div>
     <div class="commentMain">
         <div class="commentContent">
-            @fragment('content')
-                {!! sprintf(
-                    __('text.written_on'),
-                    $tpl->getFormattedDateString($comment['date']),
-                    $tpl->getFormattedTimeString($comment['date'])
-                ) !!}
-            @endfragment
+            <div class="right commendDate">
+            {!! sprintf(
+                __('text.written_on'),
+                $tpl->getFormattedDateString($comment['date']),
+                $tpl->getFormattedTimeString($comment['date'])
+            ) !!}
+            </div>
+            <span class="name">{!! sprintf(
+                __('text.full_name'),
+                $tpl->escape($comment['firstname']),
+                $tpl->escape($comment['lastname'])
+            ) !!}</span>
+
+            <div class="text">
+                {!! $tpl->escapeMinimal($comment['text']) !!}
+            </div>
+
         </div>
-
-        <span class="name">{!! sprintf(
-            __('text.full_name'),
-            $tpl->escape($comment['firstname']),
-            $tpl->escape($comment['lastname'])
-        ) !!}</span>
-
-        <div class="text">
-            {!! $tpl->escapeMinimal($comment['text']) !!}
+        <div class="commentLinks">
+            @if ($login::userIsAtLeast(\leantime\domain\models\auth\roles::$commenter))
+                <a href="javascript:void(0);"
+                   onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})">
+                    <span class="fa fa-reply"></span> {{ __('links.reply') }}
+                </a>
+                @if($comment['userId'] == $_SESSION['userdata']['id'])
+                    <a href="{{ CURRENT_URL }}?delComment={{ $comment['id'] }}"
+                       class="deleteComment">
+                        <span class="fa fa-trash"></span> {{ __('links.delete') }}
+                    </a>
+                @endif
+            @endif
         </div>
-
-        @if($isthecurrentuser)
-            <button
-                hx-post="/hx/comment/delete-comment/{{ $comment['id'] }}"
-                hx-swap="innerHTML"
-                hx-target="#{{ $comment['id'] }} .commentContent"
-            >Update Comment</button>
-        @endif
     </div>
     <div class="clearall"></div>
 </div>
