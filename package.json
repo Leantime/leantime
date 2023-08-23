@@ -34,7 +34,8 @@
     "tinymce": "^5.10.7",
     "tinymce-mention": "^4.0.2",
     "tippy.js": "^6.3.7",
-    "uppy": "^2.13.3"
+    "uppy": "^2.13.3",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.10",
@@ -53,7 +54,9 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -68,5 +71,6 @@
   ],
   "author": "Marcel Folaron",
   "license": "AGPL-3.0",
-  "homepage": "https://github.com/Leantime/leantime/blob/master/README.md"
+  "homepage": "https://github.com/Leantime/leantime/blob/master/README.md",
+  "snyk": true
 }
