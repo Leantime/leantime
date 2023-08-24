@@ -9,7 +9,7 @@ $statusLabels = $tpl->get('statusLabels');
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/tickets/roadmap&showMilestoneModal=<?php echo $currentMilestone->id; ?>";
+            location.href="<?=BASE_URL ?>/tickets/roadmap?showMilestoneModal=<?php echo $currentMilestone->id; ?>";
         }
     }
 </script>
