@@ -9,7 +9,7 @@
     echo $tpl->displayNotification();
 ?>
 
-<form class="editLabelModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php $tpl->e($_GET['module']) ?>&label=<?php  $tpl->e($_GET['label']) ?>">
+<form class="formModal" method="post" action="<?=BASE_URL ?>/setting/editBoxLabel?module=<?php $tpl->e($_GET['module']) ?>&label=<?php  $tpl->e($_GET['label']) ?>">
 
     <label><?=$tpl->__("label.label")?></label>
     <input type="text" name="newLabel" value="<?php echo $currentLabel; ?>" /><br />

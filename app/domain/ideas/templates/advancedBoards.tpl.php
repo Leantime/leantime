@@ -107,8 +107,8 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
 
                         <h4 class="widgettitle title-primary">
                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                <a href="<?=BASE_URL ?>/setting/editBoxLabel?module=idealabels&label=<?=$key?>"
-                                   class="editLabelModal editHeadline"><i class="fas fa-edit"></i></a>
+                                <a href="#/setting/editBoxLabel?module=idealabels&label=<?=$key?>"
+                                   class="editHeadline"><i class="fas fa-edit"></i></a>
                             <?php } ?>
                             <?php $tpl->e($statusRow["name"]); ?>
                         </h4>
