@@ -3,6 +3,9 @@
 namespace leantime\domain\controllers\canvas;
 
 use leantime\core\controller;
+use leantime\core\IncomingRequest;
+use leantime\core\language;
+use leantime\core\template;
 use leantime\domain\repositories;
 use leantime\domain\services;
 use leantime\domain\models;
@@ -48,15 +51,18 @@ class editCanvasItem extends controller
      * @access public
      *
      */
-    public function __construct($method, $params)
-    {
+    public function __construct(
+        IncomingRequest $incomingRequest,
+        template $tpl,
+        language $language
+    ) {
         $this->ticketService = app()->make(services\tickets::class);
         $this->projectService = app()->make(services\projects::class);
         $this->commentsRepo = app()->make(repositories\comments::class);
         $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
         $this->canvasRepo = app()->make($canvasRepoName);
 
-        parent::__construct($method, $params);
+        parent::__construct($incomingRequest, $tpl, $language);
     }
 
     /**
