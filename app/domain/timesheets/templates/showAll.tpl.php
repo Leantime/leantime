@@ -97,6 +97,18 @@ foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 
         <tr>
             <td>
+                <label for="clients"><?php echo $tpl->__('label.client'); ?></label>
+                <select name="clientId">
+                    <option value="-1"><?php echo strip_tags($tpl->__("menu.all_clients")) ?></option>
+                    <?php foreach ($tpl->get('allClients') as $client) {?>
+                        <option value="<?=$client['id'] ?>"
+                            <?php if ($tpl->get('clientFilter') == $client['id']) {
+                                echo "selected='selected'";
+                            } ?>><?=$tpl->escape($client['name'])?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td>
                 <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
                 <select name="project">
                     <option value="-1"><?php echo strip_tags($tpl->__("menu.all_projects")) ?></option>

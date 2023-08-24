@@ -80,10 +80,10 @@ jQuery(document).ready(function(){
     setDates('.week-picker');
 
     var $calendarTR = jQuery('.ui-weekpicker .ui-datepicker-calendar tr');
-    $calendarTR.live('mousemove', function () {
+    $calendarTR.on('mousemove', function () {
         jQuery(this).find('td a').addClass('ui-state-hover');
     });
-    $calendarTR.live('mouseleave', function () {
+    $calendarTR.on('mouseleave', function () {
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
@@ -165,7 +165,7 @@ jQuery(document).ready(function(){
 
             jQuery(this).find("input.hourCell").each(function(){
                 var currentValue = parseFloat(jQuery(this).val());
-                rowSum = rowSum + currentValue;
+                rowSum = Math.round((rowSum + currentValue)*100)/100;
 
                 var currentClass = jQuery(this).parent().attr('class');
 
@@ -193,7 +193,9 @@ jQuery(document).ready(function(){
 
         var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
 
-        jQuery("#finalSum").text(finalSum);
+        var roundedSum = Math.round((finalSum)*100)/100;
+
+        jQuery("#finalSum").text(roundedSum);
 
     });
 

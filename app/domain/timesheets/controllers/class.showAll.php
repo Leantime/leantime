@@ -6,12 +6,15 @@ namespace leantime\domain\controllers {
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
     use leantime\domain\repositories;
+    use leantime\domain\services;
     use leantime\domain\services\auth;
 
     class showAll extends controller
     {
-        private repositories\projects $projects;
-        private repositories\timesheets $timesheetsRepo;
+        private services\projects $projectService;
+        private services\clients $clientService;
+
+        private services\timesheets $timesheetsService;
 
         /**
          * init - initialize private variables
@@ -19,11 +22,13 @@ namespace leantime\domain\controllers {
          * @access public
          */
         public function init(
-            repositories\projects $projects,
-            repositories\timesheets $timesheetsRepo
+            services\projects $projectService,
+            services\timesheets $timesheetsService,
+            services\clients $clientService,
         ) {
-            $this->projects = $projects;
-            $this->timesheetsRepo = $timesheetsRepo;
+            $this->timesheetsService = $timesheetsService;
+            $this->projectService = $projectService;
+            $this->clientService = $clientService;
         }
 
         /**
@@ -34,12 +39,10 @@ namespace leantime\domain\controllers {
         public function run()
         {
 
+            //Only admins and employees
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
             $_SESSION['lastPage'] = BASE_URL . "/timesheets/showAll";
-
-            //Only admins and employees
-
 
             if (isset($_POST['saveInvoice']) === true) {
                 $invEmpl = '';
@@ -58,7 +61,7 @@ namespace leantime\domain\controllers {
                     $paid = $_POST['paid'];
                 }
 
-                $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
+                $this->timesheetsService->updateInvoices($invEmpl, $invComp, $paid);
             }
 
 
@@ -111,8 +114,6 @@ namespace leantime\domain\controllers {
                 } else {
                     $invCompCheck = '0';
                 }
-            } else {
-                $invCompCheck = '0';
             }
 
             if (isset($_POST['paid']) === true) {
@@ -132,9 +133,15 @@ namespace leantime\domain\controllers {
                 $projectFilter = strip_tags($_POST['project']);
             }
 
+            $clientId = -1;
+            if (isset($_POST['clientId']) && $_POST['clientId'] != '') {
+                $clientId = strip_tags($_POST['clientId']);
+            }
+
             if (isset($_POST['export'])) {
                 $values = array(
                     'project' => $projectFilter,
+                    'clientId' => $clientId,
                     'kind' => $kind,
                     'userId' => $userId,
                     'dateFrom' => $dateFrom,
@@ -142,7 +149,7 @@ namespace leantime\domain\controllers {
                     'invEmplCheck' => $invEmplCheck,
                     'invCompCheck' => $invCompCheck,
                 );
-                $this->timesheetsRepo->export($values);
+                $this->timesheetsService->export($values);
             }
 
             $user = app()->make(repositories\users::class);
@@ -154,13 +161,15 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('dateTo', $dateTo);
 
             $this->tpl->assign('actKind', $kind);
-            $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+            $this->tpl->assign('kind', $this->timesheetsService->getBookedHourTypes());
             $this->tpl->assign('invComp', $invCompCheck);
             $this->tpl->assign('invEmpl', $invEmplCheck);
             $this->tpl->assign('paid', $paidCheck);
-            $this->tpl->assign('allProjects', $this->projects->getAll());
+            $this->tpl->assign('allProjects', $this->projectService->getAll());
             $this->tpl->assign('projectFilter', $projectFilter);
-            $this->tpl->assign('allTimesheets', $this->timesheetsRepo->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck));
+            $this->tpl->assign('clientFilter', $clientId);
+            $this->tpl->assign('allClients', $this->clientService->getAll());
+            $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck, $clientId));
 
             $this->tpl->display('timesheets.showAll');
         }
