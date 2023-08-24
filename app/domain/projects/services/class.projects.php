@@ -1126,8 +1126,8 @@ namespace leantime\domain\services {
          * Gets all the projects a company manager has access to.
          * Includes all projects within a client + all assigned projects
          *
-         * @param int $userId
-         * @param int $clientId
+         * @param integer $userId
+         * @param integer $clientId
          * @return array
          */
         public function getClientManagerProjects(int $userId, int $clientId): array
@@ -1151,6 +1151,15 @@ namespace leantime\domain\services {
             }
 
             return $userProjects;
+        }
+
+        /**
+         * @param bool $showClosedProjects
+         * @return array
+         */
+        public function getAll(bool $showClosedProjects = false): array
+        {
+            return $this->projectRepository->getAll($showClosedProjects);
         }
     }
 

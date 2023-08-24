@@ -12,6 +12,7 @@ class clients
 {
     private core\template $tpl;
     private repositories\projects $projectRepository;
+    private repositories\clients $clientRepository;
 
     /**
      * @param core\template         $tpl
@@ -20,9 +21,11 @@ class clients
     public function __construct(
         core\template $tpl,
         repositories\projects $projectRepository,
+        repositories\clients $clientRepository,
     ) {
         $this->tpl = $tpl;
         $this->projectRepository = $projectRepository;
+        $this->clientRepository = $clientRepository;
     }
 
     /**
@@ -45,4 +48,13 @@ class clients
 
         return $clients;
     }
+
+    /**
+     * @return array
+     */
+    public function getAll(): array
+    {
+        return $this->clientRepository->getAll();
+    }
+
 }
