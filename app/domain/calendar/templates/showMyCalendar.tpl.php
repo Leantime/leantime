@@ -23,7 +23,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
         <div class="row">
             <div class="col-md-4">
-                <a href="<?=BASE_URL ?>/calendar/showMyCalendar/#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_event')?></a>
+                <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_event')?></a>
             </div>
             <div class="col-md-4">
                 <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
@@ -31,7 +31,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
                 </div>
             </div>
             <div class="col-md-4">
-                <a href="<?=BASE_URL?>/calendar/export" class="btn btn-default right exportModal">Export</a>
+                <a href="#/calendar/export" class="btn btn-default right">Export</a>
                 <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
                     <span class="fc-icon fc-icon-chevron-right"></span>
                 </button>
@@ -48,13 +48,8 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
                     <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'dayGridMonth' ? "selected" : '' ?>>Month</option>
                     <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
                 </select>
-
             </div>
-
         </div>
-
-
-
         <div id="calendar"></div>
 
     </div>
@@ -72,8 +67,6 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
         leantime.calendarController.initExportModal();
 
     });
-
-
 
     var events = [
         <?php foreach ($tpl->get('calendar') as $calendar) : ?>

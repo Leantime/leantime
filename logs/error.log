@@ -1,0 +1,228 @@
+[25-Aug-2023 11:46:24 America/Los_Angeles] cron start
+[25-Aug-2023 11:46:24 America/Los_Angeles] cron end
+[25-Aug-2023 11:49:05 America/Los_Angeles] ErrorException: Warning: Undefined array key "allDay" in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/addEvent.tpl.php:42
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#7 /Users/marcel/Sites/leantime-oss/cache/views/b357ccfc5c32d1465552ed9a2671442c4c9a8fc8.php(2): Illuminate\View\View->render()
+#8 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#9 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('calendar.addEve...', 'global::layouts...')
+#17 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.addEvent.php(52): leantime\core\template->displayPartial('calendar.addEve...')
+#18 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\addEvent->post(Array)
+#19 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#20 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#21 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#22 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#23 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#24 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#25 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.addEve...', Array, 200)
+#26 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#27 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#28 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#29 {main}
+
+Next Illuminate\View\ViewException: Warning: Undefined array key "allDay" (View: /Users/marcel/Sites/leantime-oss/app/views/templates/layouts/blank.blade.php) in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/addEvent.tpl.php:42
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(ErrorException), 1)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('calendar.addEve...', 'global::layouts...')
+#7 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.addEvent.php(52): leantime\core\template->displayPartial('calendar.addEve...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\addEvent->post(Array)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#10 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#14 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.addEve...', Array, 200)
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#17 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#18 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#19 {main}
+[25-Aug-2023 11:52:12 America/Los_Angeles] cron start
+[25-Aug-2023 11:52:12 America/Los_Angeles] cron end
+[25-Aug-2023 11:53:21 America/Los_Angeles] 2023-08-25T11:53:21-07:00 [critical] Uncaught Error: Too few arguments to function leantime\domain\services\calendar::__construct(), 0 passed in /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php on line 25 and exactly 2 expected
+[25-Aug-2023 11:56:29 America/Los_Angeles] ErrorException: Warning: Undefined property: leantime\domain\services\calendar::$tpl in /Users/marcel/Sites/leantime-oss/app/domain/calendar/services/class.calendar.php:157
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php(64): leantime\domain\services\calendar->editEvent(Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\editEvent->post(Array)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#3 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.editEv...', Array, 200)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#11 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#12 {main}
+[25-Aug-2023 11:57:45 America/Los_Angeles] ErrorException: Warning: Undefined property: leantime\domain\services\calendar::$tpl in /Users/marcel/Sites/leantime-oss/app/domain/calendar/services/class.calendar.php:157
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php(64): leantime\domain\services\calendar->editEvent(Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\editEvent->post(Array)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#3 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.editEv...', Array, 200)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#11 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#12 {main}
+[25-Aug-2023 11:58:36 America/Los_Angeles] ErrorException: Warning: Undefined property: leantime\domain\services\calendar::$tpl in /Users/marcel/Sites/leantime-oss/app/domain/calendar/services/class.calendar.php:157
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php(64): leantime\domain\services\calendar->editEvent(Array)
+#1 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\editEvent->post(Array)
+#2 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#3 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#7 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.editEv...', Array, 200)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#11 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#12 {main}
+[25-Aug-2023 12:04:17 America/Los_Angeles] ErrorException: Warning: Trying to access array offset on value of type null in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/editEvent.tpl.php:11
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(38): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\PhpEngine->get('/Users/marcel/S...', Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#7 /Users/marcel/Sites/leantime-oss/cache/views/b357ccfc5c32d1465552ed9a2671442c4c9a8fc8.php(2): Illuminate\View\View->render()
+#8 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/marcel/S...')
+#9 /Users/marcel/Sites/leantime-oss/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#10 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/marcel/S...', Array)
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('calendar.editEv...', 'global::layouts...')
+#17 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php(74): leantime\core\template->displayPartial('calendar.editEv...')
+#18 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\editEvent->post(Array)
+#19 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#20 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#21 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#22 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#23 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#24 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#25 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.editEv...', Array, 200)
+#26 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#27 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#28 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#29 {main}
+
+Next Illuminate\View\ViewException: Warning: Trying to access array offset on value of type null (View: /Users/marcel/Sites/leantime-oss/app/views/templates/layouts/blank.blade.php) in /Users/marcel/Sites/leantime-oss/app/domain/calendar/templates/editEvent.tpl.php:11
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(ErrorException), 1)
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/marcel/S...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/marcel/S...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(444): Illuminate\View\View->render()
+#6 /Users/marcel/Sites/leantime-oss/app/core/class.template.php(488): leantime\core\template->display('calendar.editEv...', 'global::layouts...')
+#7 /Users/marcel/Sites/leantime-oss/app/domain/calendar/controllers/class.editEvent.php(74): leantime\core\template->displayPartial('calendar.editEv...')
+#8 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(91): leantime\domain\controllers\editEvent->post(Array)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('POST', Array)
+#10 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#11 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#14 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.editEv...', Array, 200)
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#17 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#18 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#19 {main}
+[25-Aug-2023 12:11:37 America/Los_Angeles] cron start
+[25-Aug-2023 12:11:37 America/Los_Angeles] cron end
+[25-Aug-2023 12:17:53 America/Los_Angeles] cron start
+[25-Aug-2023 12:17:53 America/Los_Angeles] cron end
+[25-Aug-2023 12:24:25 America/Los_Angeles] cron start
+[25-Aug-2023 12:24:25 America/Los_Angeles] cron end
+[25-Aug-2023 12:29:51 America/Los_Angeles] cron start
+[25-Aug-2023 12:29:51 America/Los_Angeles] cron end
+[25-Aug-2023 12:35:32 America/Los_Angeles] cron start
+[25-Aug-2023 12:35:32 America/Los_Angeles] cron end
+[25-Aug-2023 12:50:51 America/Los_Angeles] cron start
+[25-Aug-2023 12:50:51 America/Los_Angeles] cron end
+[25-Aug-2023 12:52:16 America/Los_Angeles] Last cron execution was on 2023-08-25 12:50:51 plz come back later
+[25-Aug-2023 12:59:57 America/Los_Angeles] cron start
+[25-Aug-2023 12:59:57 America/Los_Angeles] cron end
+[25-Aug-2023 13:09:25 America/Los_Angeles] cron start
+[25-Aug-2023 13:09:25 America/Los_Angeles] cron end
+[25-Aug-2023 13:13:40 America/Los_Angeles] Last cron execution was on 2023-08-25 13:09:25 plz come back later
+[25-Aug-2023 13:20:17 America/Los_Angeles] cron start
+[25-Aug-2023 13:20:17 America/Los_Angeles] cron end
+[25-Aug-2023 13:25:53 America/Los_Angeles] ReflectionException: Class "leantime\domain\controllers\services\calendar" does not exist in /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php:889
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(889): ReflectionClass->__construct('leantime\\domain...')
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(181): Illuminate\Container\Container->make('leantime\\domain...')
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(124): Illuminate\Container\BoundMethod::addDependencyForCallParameter(Object(leantime\core\application), Object(ReflectionParameter), Array, Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(36): Illuminate\Container\BoundMethod::getMethodDependencies(Object(leantime\core\application), Array, Array)
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#7 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+#8 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod(Object(leantime\core\application), Array, Object(Closure))
+#9 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(661): Illuminate\Container\BoundMethod::call(Object(leantime\core\application), Array, Array, NULL)
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(79): Illuminate\Container\Container->call(Array)
+#11 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#12 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#15 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#17 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.delEve...', Array, 200)
+#18 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#19 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#20 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#21 {main}
+
+Next Illuminate\Contracts\Container\BindingResolutionException: Target class [leantime\domain\controllers\services\calendar] does not exist. in /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php:891
+Stack trace:
+#0 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#1 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#2 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(181): Illuminate\Container\Container->make('leantime\\domain...')
+#3 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(124): Illuminate\Container\BoundMethod::addDependencyForCallParameter(Object(leantime\core\application), Object(ReflectionParameter), Array, Array)
+#4 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(36): Illuminate\Container\BoundMethod::getMethodDependencies(Object(leantime\core\application), Array, Array)
+#5 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Util.php(41): Illuminate\Container\BoundMethod::Illuminate\Container\{closure}()
+#6 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(93): Illuminate\Container\Util::unwrapIfClosure(Object(Closure))
+#7 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/BoundMethod.php(37): Illuminate\Container\BoundMethod::callBoundMethod(Object(leantime\core\application), Array, Object(Closure))
+#8 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(661): Illuminate\Container\BoundMethod::call(Object(leantime\core\application), Array, Array, NULL)
+#9 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(79): Illuminate\Container\Container->call(Array)
+#10 /Users/marcel/Sites/leantime-oss/app/core/class.controller.php(53): leantime\core\controller->executeActions('GET', Array)
+#11 [internal function]: leantime\core\controller->__construct(Object(leantime\core\IncomingRequest), Object(leantime\core\template), Object(leantime\core\language))
+#12 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#13 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('leantime\\domain...')
+#14 /Users/marcel/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('leantime\\domain...', Array)
+#15 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(151): Illuminate\Container\Container->make('leantime\\domain...')
+#16 /Users/marcel/Sites/leantime-oss/app/core/class.frontcontroller.php(73): leantime\core\frontcontroller::executeAction('calendar.delEve...', Array, 200)
+#17 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(378): leantime\core\frontcontroller::dispatch()
+#18 /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php(154): leantime\core\Bootloader->handleRequest()
+#19 /Users/marcel/Sites/leantime-oss/public/index.php(11): leantime\core\Bootloader->boot()
+#20 {main}

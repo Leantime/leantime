@@ -73,6 +73,7 @@ leantime.calendarController = (function () {
     var initEventDatepickers = function () {
 
         jQuery(document).ready(function () {
+
             Date.prototype.addDays = function (days) {
                 this.setDate(this.getDate() + days);
                 return this;
@@ -82,9 +83,6 @@ leantime.calendarController = (function () {
                     if (jQuery(i).attr('readonly')) {
                         return false; } } }
             );
-
-
-
 
             var dateFormat = leantime.i18n.__("language.jsdateformat"),
 
@@ -109,8 +107,13 @@ leantime.calendarController = (function () {
                 )
                 .on(
                     "change",
-                    function () {
+                    function (date) {
                         to.datepicker("option", "minDate", getDate(this));
+
+                        console.log(date);
+                        if(jQuery("#event_date_to").val() == ''){
+                            jQuery("#event_date_to").val(jQuery("#event_date_from").val());
+                        }
                     }
                 ),
 
@@ -135,9 +138,7 @@ leantime.calendarController = (function () {
                 .on(
                     "change",
                     function () {
-                        from.
-
-                        datepicker("option", "maxDate", getDate(this));
+                        from.datepicker("option", "maxDate", getDate(this));
                     }
                 );
 
