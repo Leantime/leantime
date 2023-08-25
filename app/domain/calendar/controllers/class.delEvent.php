@@ -10,12 +10,12 @@ namespace leantime\domain\controllers {
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
-    use leantime\domain\repositories;
+    use leantime\domain\services;
     use leantime\domain\services\auth;
 
     class delEvent extends controller
     {
-        private \leantime\domain\services\calendar $calendarService;
+        private services\calendar $calendarService;
 
         /**
          * init - initialize private variables
@@ -43,13 +43,18 @@ namespace leantime\domain\controllers {
          *
          */
         public function post($params) {
-            var_dump($params);
-            exit();
-            $result = $this->calendarService->delEvent($params['id']);
+
+            if(isset($_GET['id']) === false){
+                $this->tpl->redirect(BASE_URL."/calendar/showMyCalendar/");
+            }
+
+            $id = (int)$_GET['id'];
+
+            $result = $this->calendarService->delEvent($id);
 
             if(is_numeric($result)=== true){
                 $this->tpl->setNotification('notification.event_removed_successfully', 'success');
-                $this->tpl->redirect(BASE_URL."/calendar/showMyCalendar/".$result);
+                $this->tpl->redirect(BASE_URL."/calendar/showMyCalendar/");
             }else{
                 $this->tpl->setNotification('notification.could_not_delete_event', 'error');
                 $this->tpl->displayPartial('calendar.delEvent');

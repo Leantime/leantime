@@ -74,12 +74,8 @@ namespace leantime\domain\services {
         public function addEvent(array $values): int|false
         {
 
-            if (isset($values['allDay']) === true) {
-                $allDay = 'true';
-            } else {
-                $allDay = 'false';
-            }
-            $values['allDay'] = $allDay;
+
+            $values['allDay'] = $values['allDay'] ?? false;
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
@@ -103,7 +99,8 @@ namespace leantime\domain\services {
         }
 
 
-        public function getEvent($eventId) {
+        public function getEvent($eventId)
+        {
             return $this->calendarRepo->getEvent($eventId);
         }
 
@@ -113,19 +110,18 @@ namespace leantime\domain\services {
          * @access public
          * @params array $values array of event values
          *
-         * @return int|false returns the id on success, false on failure
+         * @return bool returns true on success, false on failure
          */
-        public function editEvent(array $values): int|false
+        public function editEvent(array $values): bool
         {
             $id = null;
             if (isset($values['id']) === true) {
-                $values['id'] = $id;
+                $id = $values['id'];
 
                 $row = $this->calendarRepo->getEvent($id);
 
                 if ($row === false) {
-                    $this->tpl->displayPartial('errors.error404');
-                    exit();
+                    return false;
                 }
 
                 if (isset($values['allDay']) === true) {
@@ -133,6 +129,7 @@ namespace leantime\domain\services {
                 } else {
                     $allDay = 'false';
                 }
+
                 $values['allDay'] = $allDay;
 
                 $dateFrom = null;
@@ -148,19 +145,12 @@ namespace leantime\domain\services {
                 $values['dateTo'] = $dateTo;
 
                 if ($values['description'] !== '') {
-                    $result = $this->calendarRepo->editEvent($values, $id);
+                    $this->calendarRepo->editEvent($values, $id);
 
-                    $row = $this->calendarRepo->getEvent($id);
-
-                    return $result;
-
-                } else {
-                    return false;
+                    return true;
                 }
-            } else {
-                $this->tpl->displayPartial('errors.error403');
-                exit();
             }
+            return false;
         }
 
         /**
@@ -169,7 +159,7 @@ namespace leantime\domain\services {
          * @access public
          * @params array $values array of event values
          *
-         * @return int|false returns the id on success, false on failure
+         * @return integer|false returns the id on success, false on failure
          */
         public function delEvent($id): int|false
         {

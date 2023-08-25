@@ -10,20 +10,22 @@ namespace leantime\domain\controllers {
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
-    use leantime\domain\repositories;
+    use leantime\domain\services;
     use leantime\domain\services\auth;
+    use leantime\domain\services\calendar;
 
     class editEvent extends controller
     {
-        private \leantime\domain\services\calendar $calendarService;
+        private services\calendar $calendarService;
 
         /**
          * init - initialize private variables
          */
-        public function init(repositories\calendar $calendarRepo)
+        public function init(services\calendar $calendarService)
         {
-            $this->calendarService = new \leantime\domain\services\calendar();
+
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+            $this->calendarService = $calendarService;
         }
 
 
@@ -33,21 +35,21 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function get($params) {
+        public function get($params)
+        {
 
             $values = array(
                 'description' => '',
                 'dateFrom' => '',
                 'dateTo' => '',
                 'allDay' => '',
-                'id' => ''
+                'id' => '',
             );
 
             $values = $this->calendarService->getEvent($params['id']);
 
             $this->tpl->assign('values', $values);
             $this->tpl->displayPartial('calendar.editEvent');
-
         }
 
         /**
@@ -56,18 +58,19 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function post($params) {
+        public function post($params)
+        {
 
+            $params['id'] = $_GET['id'] ?? null;
             $result = $this->calendarService->editEvent($params);
 
-            if (is_numeric($result) === true) {
+            if ($result === true) {
                 $this->tpl->setNotification('notification.event_edited_successfully', 'success');
-                $this->tpl->redirect(BASE_URL . "/calendar/showMyCalendar/".$result);
             } else {
                 $this->tpl->setNotification('notification.please_enter_title', 'error');
-                $this->tpl->assign('values', $params);
-                $this->tpl->displayPartial('calendar.editEvent');
             }
+
+            $this->tpl->redirect(BASE_URL . '/calendar/editEvent/' . $params['id']);
         }
     }
 }

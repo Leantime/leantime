@@ -509,7 +509,7 @@ class language
 
             //Time is coming in as 24hour format with :
             $timeparts = explode(":", $time);
-            if (is_array($timeparts) && count($timeparts) == 2) {
+            if (is_array($timeparts) && count($timeparts) >= 2) {
                 $timestamp->setTime($timeparts[0], $timeparts[1]);
             }
 

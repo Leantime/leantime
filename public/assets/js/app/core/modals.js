@@ -14,8 +14,11 @@ function openModal() {
                 jQuery(".showDialogOnLoad").show();
                 console.log(tinymce.editors);
                 if(tinymce.editors.length>0) {
-                    jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().save();
-                    jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().remove();
+
+                    if(jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce()) {
+                        jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().save();
+                        jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().remove();
+                    }
                 }
             },
             beforeShowCont: function () {
@@ -51,10 +54,14 @@ function openModal() {
 }
 
 jQuery(document).ready(function() {
+    console.log( window.location);
+    console.log( window.location.hash);
+    console.log("document Ready Modal");
     openModal();
 });
 
 window.addEventListener("hashchange", function () {
+    console.log("Hash Modal");
     openModal();
 });
 
