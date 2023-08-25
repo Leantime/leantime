@@ -22,7 +22,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas&showModal=<?php echo $canvasItem['id']; ?>";
+            location.href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/showCanvas?showModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>

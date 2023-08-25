@@ -11,7 +11,7 @@
     window.onload = function() {
         if (!window.jQuery) {
             //It's not a modal
-            location.href="<?=BASE_URL ?>/tickets/showKanban&showTicketModal=<?php echo $ticket->id; ?>";
+            location.href="<?=BASE_URL ?>/tickets/showKanban?showTicketModal=<?php echo $ticket->id; ?>";
         }
     }
 </script>

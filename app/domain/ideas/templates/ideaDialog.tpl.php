@@ -13,7 +13,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     window.onload = function () {
         if (!window.jQuery) {
             //It's not a modal
-            location.href = "<?=BASE_URL ?>/ideas/showBoards&showIdeaModal=<?php echo $canvasItem['id']; ?>";
+            location.href = "<?=BASE_URL ?>/ideas/showBoards?showIdeaModal=<?php echo $canvasItem['id']; ?>";
         }
     }
 </script>
@@ -141,7 +141,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                             <div class="row">
                                 <div class="col-md-8">
-                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $canvasItem['milestoneId']; ?>"><?php $tpl->e($canvasItem['milestoneHeadline']); ?></a></strong>
+                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone=<?php echo $canvasItem['milestoneId']; ?>"><?php $tpl->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
                                     <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
