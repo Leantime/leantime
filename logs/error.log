@@ -415,3 +415,35 @@ Stack trace:
 [23-Aug-2023 10:33:24 America/Los_Angeles] cron end
 [23-Aug-2023 10:39:13 America/Los_Angeles] cron start
 [23-Aug-2023 10:39:13 America/Los_Angeles] cron end
+[25-Aug-2023 09:34:23 America/Los_Angeles] cron start
+[25-Aug-2023 09:34:23 America/Los_Angeles] cron end
+[25-Aug-2023 09:39:25 America/Los_Angeles] cron start
+[25-Aug-2023 09:39:25 America/Los_Angeles] cron end
+[25-Aug-2023 09:45:16 America/Los_Angeles] cron start
+[25-Aug-2023 09:45:16 America/Los_Angeles] cron end
+[25-Aug-2023 09:50:17 America/Los_Angeles] cron start
+[25-Aug-2023 09:50:17 America/Los_Angeles] cron end
+[25-Aug-2023 09:58:29 America/Los_Angeles] cron start
+[25-Aug-2023 09:58:29 America/Los_Angeles] cron end
+[25-Aug-2023 09:58:31 America/Los_Angeles] Last cron execution was on 2023-08-25 09:58:29 plz come back later
+[25-Aug-2023 10:07:23 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token ")" in /Users/marcel/Sites/leantime-oss/vendor/symfony/error-handler/ErrorRenderer/HtmlErrorRenderer.php on line 53
+[25-Aug-2023 10:07:23 America/Los_Angeles] 2023-08-25T10:07:23-07:00 [critical] Uncaught Exception: Cannot access non-public property Exception::$trace
+[25-Aug-2023 10:07:23 America/Los_Angeles] 2023-08-25T10:07:23-07:00 [critical] Uncaught Error: syntax error, unexpected token ")"
+[25-Aug-2023 10:07:34 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token ")" in /Users/marcel/Sites/leantime-oss/vendor/symfony/error-handler/ErrorRenderer/HtmlErrorRenderer.php on line 53
+[25-Aug-2023 10:07:34 America/Los_Angeles] 2023-08-25T10:07:34-07:00 [critical] Uncaught Exception: Cannot access non-public property Exception::$trace
+[25-Aug-2023 10:07:34 America/Los_Angeles] 2023-08-25T10:07:34-07:00 [critical] Uncaught Error: syntax error, unexpected token ")"
+[25-Aug-2023 10:07:56 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token ")" in /Users/marcel/Sites/leantime-oss/vendor/symfony/error-handler/ErrorRenderer/HtmlErrorRenderer.php on line 53
+[25-Aug-2023 10:07:56 America/Los_Angeles] 2023-08-25T10:07:56-07:00 [critical] Uncaught Exception: Cannot access non-public property Exception::$trace
+[25-Aug-2023 10:07:56 America/Los_Angeles] 2023-08-25T10:07:56-07:00 [critical] Uncaught Error: syntax error, unexpected token ")"
+[25-Aug-2023 10:08:02 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token ")" in /Users/marcel/Sites/leantime-oss/vendor/symfony/error-handler/ErrorRenderer/HtmlErrorRenderer.php on line 53
+[25-Aug-2023 10:08:02 America/Los_Angeles] 2023-08-25T10:08:02-07:00 [critical] Uncaught Exception: Cannot access non-public property Exception::$trace
+[25-Aug-2023 10:08:02 America/Los_Angeles] 2023-08-25T10:08:02-07:00 [critical] Uncaught Error: syntax error, unexpected token ")"
+[25-Aug-2023 10:08:05 America/Los_Angeles] PHP Parse error:  syntax error, unexpected token ")" in /Users/marcel/Sites/leantime-oss/vendor/symfony/error-handler/ErrorRenderer/HtmlErrorRenderer.php on line 53
+[25-Aug-2023 10:08:05 America/Los_Angeles] 2023-08-25T10:08:05-07:00 [critical] Uncaught Exception: Cannot access non-public property Exception::$trace
+[25-Aug-2023 10:08:05 America/Los_Angeles] 2023-08-25T10:08:05-07:00 [critical] Uncaught Error: syntax error, unexpected token ")"
+[25-Aug-2023 10:09:23 America/Los_Angeles] 2023-08-25T10:09:23-07:00 [warning] Uncaught Warning: Undefined property: leantime\core\IncomingRequest::$requstURI
+[25-Aug-2023 10:12:13 America/Los_Angeles] 2023-08-25T10:12:13-07:00 [critical] Uncaught Error: Call to private method Symfony\Component\HttpFoundation\Request::getBaseUrlReal() from scope leantime\core\Bootloader
+[25-Aug-2023 10:13:10 America/Los_Angeles] 2023-08-25T10:13:10-07:00 [critical] Uncaught Error: Call to private method Symfony\Component\HttpFoundation\Request::getBaseUrlReal() from scope leantime\core\Bootloader
+[25-Aug-2023 10:21:51 America/Los_Angeles] 2023-08-25T10:21:51-07:00 [critical] Uncaught Error: Too few arguments to function Symfony\Component\HttpFoundation\Request::getRelativeUriForPath(), 0 passed in /Users/marcel/Sites/leantime-oss/app/core/class.Bootloader.php on line 147 and exactly 1 expected
+[25-Aug-2023 10:26:54 America/Los_Angeles] cron start
+[25-Aug-2023 10:26:54 America/Los_Angeles] cron end

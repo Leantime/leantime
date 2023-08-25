@@ -39,7 +39,7 @@ class config
     /**
      * @var string Base of application withotu trailing slash (used for cookies), e.g, /leantime
      */
-    public $appUrlRoot = '';
+    public $appDir = '';
 
     /**
      * @var string Default theme
