@@ -91,7 +91,7 @@ class environment
     /**
      * @var string App URL Root
      */
-    public string $appUrlRoot;
+    public string $appDir;
 
 
     # Database =====================================================================================
@@ -404,7 +404,7 @@ class environment
 
 
         //TODO this variables needs to be removed and generated programmatically.
-        $this->appUrlRoot = $this->environmentHelper("LEAN_APP_URL_ROOT", $defaultConfiguration->appUrlRoot ?? '');
+        $this->appDir = $this->environmentHelper("LEAN_APP_DIR", $defaultConfiguration->appDir ?? '');
 
         /* Database */
         $this->dbHost = $this->environmentHelper("LEAN_DB_HOST", $defaultConfiguration->dbHost);

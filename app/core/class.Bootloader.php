@@ -132,7 +132,7 @@ class Bootloader
 
         if (! defined('CURRENT_URL')) {
             define('CURRENT_URL', !empty($config->appUrl)
-            ? $config->appUrl . $request->getRequestUri()
+            ? $config->appUrl . $request->getPathInfo()
             : $request->getFullUrl());
         }
 
