@@ -24,10 +24,9 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
                 <br />
                 <label><?=$tpl->__('label.name_your_first_project') ?></label>
                 <input type="text" id="projectName" name="projectname" value="" placeholder=""/><br />
-
                 <input type="submit" value="<?=$tpl->__('buttons.next') ?>"/>
                 <a href="javascript:void(0);"  onclick="skipOnboarding();"><?=$tpl->__('links.skip_for_now') ?></a>
-tpl            </div>
+           </div>
             <div class="col-md-6">
                 <div class='svgContainer' style="width:300px">
                     <?= file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg"); ?>
@@ -54,7 +53,7 @@ tpl            </div>
                     $themeAll = $themeCore->getAll();
                     foreach ($themeAll as $key => $name) {
                         ?>
-                        <option value="<?=$key ?>"><?=$tpl->__($name) ?></option>
+                        <option value="<?=$key ?>" <?php if($key == 'default') echo "selected='selected'"; ?>><?=$tpl->__($name) ?></option>
                     <?php } ?>
                 </select>
                 <br /><br />

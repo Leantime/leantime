@@ -5,6 +5,7 @@ const version = pjson.version;
 
 let mix = require('laravel-mix');
 require('laravel-mix-eslint');
+require('mix-tailwindcss');
 
 require('dotenv').config({ path: 'config/.env' });
 
@@ -13,6 +14,7 @@ mix
     .setPublicPath('public/dist') // this is the URL to place assets referenced in the CSS/JS
     .setResourceRoot(`../`) // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
+    .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
     .combine([
         "./public/assets/js/app/app.js",
         "./public/assets/js/app/core/editors.js",
@@ -29,10 +31,8 @@ mix
     .combine([
         "./node_modules/jquery/dist/jquery.js",
         "./public/assets/js/libs/bootstrap.min.js",
-
     ], `public/dist/js/compiled-frameworks.${version}.min.js`)
     .combine([
-
         "./node_modules/jquery-ui-dist/jquery-ui.js",
         "./node_modules/jquery-ui-touch-punch/jquery.ui.touch-punch.js",
         "./node_modules/chosen-js/chosen.jquery.js",
@@ -111,20 +111,22 @@ mix
     ], `public/dist/js/compiled-editor-component.${version}.min.js`)
     .combine([
         "./public/assets/js/libs/simpleGantt/snap.svg-min.js",
-        "./public/assets/js/libs/simpleGantt/frappe-gantt.min.js",
-
+        "./public/assets/js/libs/simpleGantt/frappe-gantt.js",
     ], `public/dist/js/compiled-gantt-component.${version}.min.js`)
     .combine([
         "./node_modules/chart.js/dist/chart.js",
         "./node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",
     ], `public/dist/js/compiled-chart-component.${version}.min.js`)
-
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
         sourceMap: true,
     })
     .less('./public/assets/less/editor.less', `public/dist/css/editor.${version}.min.css`, {
         sourceMap: true,
     })
+    .less('./public/assets/less/app.less', `public/dist/css/app.${version}.min.css`, {
+        sourceMap: true,
+    })
+    .tailwind()
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
     .eslint({
@@ -134,6 +136,9 @@ mix
             'node_modules',
             'public/assets/js/libs',
         ],
+        overrideConfig: {
+            parser: '@babel/eslint-parser',
+        }
     })
     .webpackConfig({
         resolve: {

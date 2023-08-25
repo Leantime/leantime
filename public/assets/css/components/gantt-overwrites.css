@@ -93,7 +93,7 @@ body .gantt #details .details-container {
 
 .today-highlight-label-bg {
     fill:var(--main-action-bg);
-    opacity: 0.5;
+    opacity: 1;
 }
 
 .today-highlight-label {

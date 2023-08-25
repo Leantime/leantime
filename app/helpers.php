@@ -8,9 +8,9 @@ if (! function_exists('app')) {
      * Returns the application instance.
      *
      * @param string $abstract
-     * @return \leantime\core\application
+     * @return mixed|\leantime\core\application
      */
-    function app(string $abstract = '', array $parameters = []): application
+    function app(string $abstract = '', array $parameters = []): mixed
     {
         $app = application::getInstance();
         return !empty($abstract) ? $app->make($abstract, $parameters) : $app;
@@ -22,12 +22,12 @@ if (! function_exists('dd')) {
      * Dump the passed variables and end the script.
      *
      * @param mixed $args
-     * @return void
+     * @return never
      */
-    function dd(...$args): void
+    function dd(...$args): never
     {
         echo sprintf('<pre>%s</pre>', var_export($args, true));
-        die(1);
+        exit;
     }
 }
 

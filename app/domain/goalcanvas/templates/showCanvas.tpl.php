@@ -13,8 +13,8 @@ $elementName = 'goal';
 ?>
 
 <?php echo $tpl->viewFactory->make(
-    $tpl->getTemplatePath('canvas', 'delCanvasItem'),
-    array_merge($__data, ['canvasName' => 'goal'])
+    $tpl->getTemplatePath('canvas', 'showCanvasTop'),
+    array_merge($__data, ['canvasName' => 'goal', 'elementName' => 'goal'])
 )->render(); ?>
 
     <?php if (count($tpl->get('allCanvas')) > 0) { ?>

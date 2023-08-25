@@ -2,6 +2,7 @@
 
 namespace leantime\core;
 
+use Illuminate\Support\Str;
 use Exception;
 
 /**
@@ -61,25 +62,17 @@ class frontcontroller
      */
     public static function dispatch($action = '', $httpResponseCode = 200): void
     {
-        //Set action-name from request
-        if (isset($_REQUEST['act'])) {
-            self::$fullAction = htmlspecialchars($_REQUEST['act']);
-        }
+        self::$fullAction = empty($action) ? self::getCurrentRoute() : $action;
 
-        //action parameter overrides Request['act']
-        if ($action !== '') {
-            self::$fullAction = $action;
-        }
-
-        if (self::$fullAction != '') {
-            //execute action
-            try {
-                self::executeAction(self::$fullAction, array(), $httpResponseCode);
-            } catch (Exception $e) {
-                echo $e->getMessage();
-            }
-        } else {
+        if (self::$fullAction == '') {
             self::dispatch("errors.error404", 404);
+        }
+
+        //execute action
+        try {
+            self::executeAction(self::$fullAction, array(), $httpResponseCode);
+        } catch (Exception $e) {
+            echo $e->getMessage();
         }
     }
 
@@ -93,78 +86,71 @@ class frontcontroller
      */
     private static function executeAction($completeName, $params = array()): void
     {
+        $ltInstalledandUpdated = $_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true;
         $actionName = self::getActionName($completeName); //actionName is foldername
         $moduleName = self::getModuleName($completeName); //moduleName is filename
         $controllerNs = "domain";
+        $incomingRequest = app()->make(IncomingRequest::class);
+        $controllerType = $incomingRequest instanceof HtmxRequest ? 'hxcontrollers' : 'controllers';
 
         // initialize plugin service to check
-        if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
-            $pluginService = app()->make(\leantime\domain\services\plugins::class);
-        }
+        $pluginService = $ltInstalledandUpdated
+            ? app()->make(\leantime\domain\services\plugins::class)
+            : null;
 
         // Check If Route Exists And Fetch Right Route Based On Priority
-        $routeExists = false;
-        foreach (
-            [
-            'custom/plugins',
-            'custom/domain',
-            'plugins',
-            'domain',
-            ] as $path
-        ) {
-            $fullpath = ROOT . "/../app/$path/$moduleName/controllers/class.$actionName.php";
+        $paths = collect(['custom/domain', 'app/plugins', 'app/domain'])
+            ->crossJoin(['class.', '']);
+
+        $goodPath = '';
+
+        $dumper = [];
+
+        $paths->first(function ($combination) use ($moduleName, $controllerType, $actionName, $ltInstalledandUpdated, $pluginService, &$controllerNs, &$goodPath, &$dumper) {
+            [$path, $prefix] = $combination;
+
+            $fullpath = APP_ROOT . "/$path/$moduleName/$controllerType/{$prefix}$actionName.php";
+
+            $dumper[] = $fullpath;
 
             if (!file_exists($fullpath)) {
-                continue;
+                return false;
             }
 
-            $routeExists = true;
-
-            if ($path == 'plugins') {
-                if (
-                    !$_SESSION['isInstalled']
-                    || !$_SESSION['isUpdated']
-                    || !$pluginService->isPluginEnabled($moduleName)
-                ) {
-                    self::dispatch("errors.error404", 404);
-                    return;
+            if ($path == 'app/plugins') {
+                if (!$ltInstalledandUpdated || !$pluginService?->isPluginEnabled($moduleName)) {
+                    return false;
                 }
 
                 $controllerNs = 'plugins';
             }
 
-            require $fullpath;
-            break;
-        }
+            $goodPath = $fullpath;
+            return true;
+        });
 
-        if (!$routeExists) {
+        if (empty($goodPath)) {
             self::redirect(BASE_URL . "/errors/error404", 404);
             return;
         }
 
+        require $goodPath;
+
         // Execute The Route
         try {
-            $classname = "leantime\\" . $controllerNs . "\\controllers\\" . $actionName;
-            $method = self::getRequestMethod();
-            $params = self::getRequestParams($method);
-
             //Setting default response code to 200, can be changed in controller
             self::setResponseCode(200);
 
-            if (is_subclass_of($classname, "leantime\\core\\controller")) {
-                new $classname($method, $params);
-            // TODO: Remove else after all controllers utilze base class
-            } else {
-                $action = app()->make($classname);
+            $classname = "leantime\\$controllerNs\\$controllerType\\"
+                . ($controllerType == 'hxcontrollers'
+                    ? Str::studly($actionName)
+                    : $actionName
+                );
 
-                if (method_exists($action, $method)) {
-                    $action->$method($params);
-                //Use run for all other request types.
-                } else if (method_exists($action, "run")) {
-                    $action->run();
-                }else {
-                    self::redirect(BASE_URL."/errors/error404", 404);
-                }
+            if (class_exists($classname)) {
+                app()->make($classname);
+            } else {
+                self::redirect(BASE_URL . "/errors/error404", 404);
             }
         } catch (Exception $e) {
             error_log($e, 0);
@@ -174,44 +160,6 @@ class frontcontroller
         }
 
         self::$lastAction = $completeName;
-    }
-
-    /**
-     * getRequestMethod - gets the current request method
-     *
-     * @access private
-     * @return string|false
-     */
-    private static function getRequestMethod(): string|false
-    {
-        if (isset($_SERVER['REQUEST_METHOD'])) {
-            return strtolower($_SERVER['REQUEST_METHOD']);
-        }
-
-        return false;
-    }
-
-    /**
-     * getRequestParams - gets the current request params
-     *
-     * @access private
-     * @param  string $method
-     * @return array
-     */
-    private static function getRequestParams($method)
-    {
-        if ($method == 'patch') {
-            parse_str(file_get_contents("php://input"), $patch_vars);
-        } elseif (! in_array($method, ['patch', 'post', 'delete', 'get'])) {
-            error_log("Unexpected HTTP Method: " . $method);
-        }
-
-        return match ($method) {
-            'patch' => $patch_vars,
-            'post' => $_POST,
-            'delete', 'get' => $_GET,
-            default => $_REQUEST,
-        };
     }
 
     /**
@@ -235,9 +183,10 @@ class frontcontroller
      * @param  string $completeName
      * @return string
      */
-    public static function getActionName(string $completeName): string
+    public static function getActionName(string $completeName = null): string
     {
-        $actionParts = explode(".", $completeName);
+        $completeName ??= self::getCurrentRoute();
+        $actionParts = explode(".", empty($completeName) ? self::getCurrentRoute() : $completeName);
 
         //If not action name was given, call index controller
         if (is_array($actionParts) && count($actionParts) == 1) {
@@ -256,13 +205,10 @@ class frontcontroller
      * @param  string $completeName
      * @return string
      */
-    public static function getModuleName(string $completeName): string
+    public static function getModuleName(string $completeName = null): string
     {
-        if ($completeName == '') {
-            $completeName = self::getCurrentRoute();
-        }
-
-        $actionParts = explode(".", $completeName);
+        $completeName ??= self::getCurrentRoute();
+        $actionParts = explode(".", empty($completeName) ? self::getCurrentRoute() : $completeName);
 
         if (is_array($actionParts)) {
             return $actionParts[0];
@@ -280,11 +226,15 @@ class frontcontroller
      */
     public static function getCurrentRoute(): string
     {
-        if (isset($_REQUEST['act'])) {
-            return htmlspecialchars($_REQUEST['act']);
+        static $route;
+
+        if (isset($route)) {
+            return $route;
         }
 
-        return '';
+        $route = app()->make(IncomingRequest::class)->query->get('act', '');
+
+        return $route;
     }
 
     /**
@@ -292,9 +242,9 @@ class frontcontroller
      *
      * @param string $url
      * @param int $http_response_code
-     * @return void
+     * @return never
      */
-    public static function redirect(string $url, int $http_response_code = 303): void
+    public static function redirect(string $url, int $http_response_code = 303): never
     {
         header("Location:" . trim(preg_replace('/\s\s+/', '', strip_tags($url))), true, $http_response_code);
         exit();

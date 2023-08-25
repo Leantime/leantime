@@ -3,7 +3,7 @@ defined('RESTRICTED') or die('Restricted access');
 
 foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 $milestones = $tpl->get('milestones');
-if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
+if (!isset($_SESSION['submenuToggle']["myProjectCalendarView"])) {
     $_SESSION['submenuToggle']["myProjectCalendarView"] = "dayGridMonth";
 }
 

@@ -178,7 +178,7 @@ leantime.editorController = (function () {
                     + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands",
-                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate",
+                toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media embed emoticons | checklist bullist numlist | table  | codesample | advancedTemplate | restoredraft",
                 autosave_prefix: 'leantime-complexEditor-autosave-{path}{query}-{id}-'+entityId,
                 autosave_restore_when_empty: true,
                 autosave_retention: '120m',

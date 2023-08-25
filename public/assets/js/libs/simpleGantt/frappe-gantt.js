@@ -1611,7 +1611,7 @@ var Gantt = (function () {
 
             createSVG('rect', {
                 x: 0,
-                y: header_height/2,
+                y: (header_height/2)-8,
                 width: header_width,
                 height: 1,
                 class: 'grid-header-line',
@@ -1717,11 +1717,10 @@ var Gantt = (function () {
                     append_to: this.layers.grid,
                 });
 
-                createSVG('rect', {
-                    x: x-7,
-                    y: y-16,
-                    width: 16,
-                    height: 16,
+                createSVG('circle', {
+                    cx: x+1,
+                    cy: y-8,
+                    r: 10,
                     class: 'today-highlight-label-bg',
                     append_to: this.layers.grid,
                 });
@@ -1859,9 +1858,9 @@ var Gantt = (function () {
                 upper_text: date_text[`${this.options.view_mode}_upper`],
                 lower_text: date_text[`${this.options.view_mode}_lower`],
                 upper_x: base_pos.x + x_pos[`${this.options.view_mode}_upper`],
-                upper_y: base_pos.upper_y,
+                upper_y: base_pos.upper_y-2,
                 lower_x: base_pos.x + x_pos[`${this.options.view_mode}_lower`],
-                lower_y: base_pos.lower_y,
+                lower_y: base_pos.lower_y-10,
             };
         }
 

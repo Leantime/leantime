@@ -340,7 +340,6 @@ namespace leantime\domain\services {
                     if ($projectHierarchy['program']["enabled"] === true) {
                         $project['parent'] = "noProgramParent";
                     }
-
                 }
 
                 //IF the pgm module is not active, add all items
@@ -365,7 +364,7 @@ namespace leantime\domain\services {
                 }
             }
 
-            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));
+            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
 
             if ($projectHierarchy) {
                 return $projectHierarchy;
@@ -896,7 +895,6 @@ namespace leantime\domain\services {
 
         public function getProjectSetupChecklist($projectId)
         {
-
             $progressSteps = array(
                 "define" => array(
                     "title" => "label.define",
@@ -973,47 +971,90 @@ namespace leantime\domain\services {
             }
 
             //Add overrides
-            $stepsCompleted = $this->settingsRepo->getSetting("projectsettings." . $projectId . ".stepsComplete");
-
-            if ($stepsCompleted !== false) {
+            if (! $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete")) {
+                $stepsCompleted = [];
+            } else {
                 $stepsCompleted = unserialize($stepsCompleted);
-                foreach ($progressSteps as $key => $step) {
-                    $progressSteps[$key]["tasks"] = $step['tasks'];
-
-                    $stepCompleted = true;
-                    foreach ($progressSteps[$key]["tasks"] as $taskKey => $task) {
-                        if (isset($stepsCompleted[$taskKey])) {
-                            $progressSteps[$key]["tasks"][$taskKey]['status'] = "done";
-                        } elseif ($progressSteps[$key]["tasks"][$taskKey]['status'] == 'done') {
-                        } else {
-                            $stepCompleted = false;
-                        }
-                    }
-
-                    if ($stepCompleted) {
-                        $progressSteps[$key]['status'] = 'done';
-                    }
-                }
             }
 
-            return $progressSteps;
+            $stepsCompleted = array_map(fn ($status) => 'done', $stepsCompleted);
+
+            $halfStep = (1 / count($progressSteps)) / 2 * 100;
+            $position = 0;
+            $debug = [];
+            foreach ($progressSteps as $name => $step) {
+                // set the "left" css position for the step on the progress bar
+                $progressSteps[$name]['positionLeft'] = ($position++ / count($progressSteps) * 100) + $halfStep;
+
+                // set the status based on the stepsCompleted setting
+                data_set(
+                    $progressSteps,
+                    "$name.tasks",
+                    collect(data_get($progressSteps, "$name.tasks"))
+                        ->map(function ($task, $key) use ($stepsCompleted) {
+                            $task['status'] = $stepsCompleted[$key] ?? '';
+                            return $task;
+                        })
+                        ->toArray()
+                );
+
+                // check for any open tasks
+                if (in_array('', data_get($progressSteps, "$name.tasks.*.status"))) {
+                    if (
+                        $name == array_key_first($progressSteps)
+                        || ($previousValue['stepType'] ?? '') == 'complete'
+                    ) {
+                        $progressSteps[$name]['stepType'] = 'current';
+                    } else {
+                        $progressSteps[$name]['stepType'] = '';
+                    }
+
+                    $progressSteps[$name]['status'] = '';
+                    $previousValue = $progressSteps[$name];
+                    continue;
+                }
+
+                // otherwise, set the step as completed
+                $progressSteps[$name]['status'] = 'done';
+                if (
+                    ! in_array($previousValue['stepType'] ?? null, ['current', ''])
+                    || $name == array_key_first($progressSteps)
+                ) {
+                    $progressSteps[$name]['stepType'] = 'complete';
+                } else {
+                    $progressSteps[$name]['stepType'] = '';
+                }
+                $previousValue = $progressSteps[$name];
+            }
+
+            // Set the Percentage done of the progress Bar
+            $numberDone = count(array_filter(data_get($progressSteps, '*.stepType'), fn ($status) => $status == 'complete'));
+            $stepsTotal = count($progressSteps);
+            $percentDone = $numberDone == $stepsTotal ? 100 : $numberDone / $stepsTotal * 100 + $halfStep;
+
+            return [
+                $progressSteps,
+                $percentDone,
+            ];
         }
 
         public function updateProjectProgress($stepsComplete, $projectId)
         {
-
-            $stepsDoneArray = array();
-
-            if ($stepsComplete != '') {
-                //Steps complete comes in as serialized js string: key=on&key2=on etc. Only on keys will be submitted
-                parse_str($stepsComplete, $stepsDoneArray);
-                $this->settingsRepo->saveSetting(
-                    "projectsettings." . $projectId . ".stepsComplete",
-                    serialize($stepsDoneArray)
-                );
-            } else {
+            if (empty($stepsComplete)) {
                 return;
             }
+
+            $stepsDoneArray = [];
+            if (is_string($stepsComplete)) {
+                parse_str($stepsComplete, $stepsDoneArray);
+            } else {
+                $stepsDoneArray = $stepsComplete;
+            }
+
+            $this->settingsRepo->saveSetting(
+                "projectsettings.$projectId.stepsComplete",
+                serialize($stepsDoneArray)
+            );
         }
 
         public function updateProjectSorting($params)
@@ -1079,6 +1120,46 @@ namespace leantime\domain\services {
 
 
             return true;
+        }
+
+        /**
+         * Gets all the projects a company manager has access to.
+         * Includes all projects within a client + all assigned projects
+         *
+         * @param integer $userId
+         * @param integer $clientId
+         * @return array
+         */
+        public function getClientManagerProjects(int $userId, int $clientId): array
+        {
+
+            $clientProjects = $this->projectRepository->getClientProjects($clientId);
+            $userProjects = $this->projectRepository->getUserProjects($userId);
+
+            $allProjects = [];
+
+            foreach ($clientProjects as $project) {
+                if (isset($allProjects[$project['id']]) === false) {
+                    $allProjects[$project['id']] = $project;
+                }
+            }
+
+            foreach ($userProjects as $project) {
+                if (isset($allProjects[$project['id']]) === false) {
+                    $allProjects[$project['id']] = $project;
+                }
+            }
+
+            return $userProjects;
+        }
+
+        /**
+         * @param bool $showClosedProjects
+         * @return array
+         */
+        public function getAll(bool $showClosedProjects = false): array
+        {
+            return $this->projectRepository->getAll($showClosedProjects);
         }
     }
 

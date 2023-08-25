@@ -6,44 +6,11 @@
     $currentClientName = $tpl->get("currentClientName");
 ?>
 
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-briefcase"></span></div>
-    <div class="pagetitle">
-
-        <h5><?php $tpl->__("headlines.projects"); ?></h5>
-        <h1><?php echo $tpl->__("headlines.my_portfolio"); ?>
-
-            <?php if (count($clients) > 0) {?>
-                //
-                <span class="dropdown dropdownWrapper">
-                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
-                    <?php
-                    if ($currentClientName != '') {
-                        $tpl->e($currentClientName);
-                    } else {
-                        echo $tpl->__("headline.all_clients");
-                    }
-                    ?>
-                    <i class="fa fa-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a href="<?=BASE_URL . "/projects/showMy" ?>"><?=$tpl->__("headline.all_clients"); ?></a></li>
-                    <?php foreach ($clients as $key => $value) {
-                        echo "<li><a href='" . BASE_URL . "/projects/showMy?client=" . $key . "'>" . $tpl->escape($value) . "</a></li>";
-                    }
-                    ?>
-                </ul>
-            </span>
-            <?php } ?>
-
-        </h1>
-
-
-    </div>
-</div>
+<?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
 
 <div class="maincontent">
+    <?php $tpl->displaySubmodule('tickets-portfolioTabs') ?>
+
     <div class="maincontentinner">
 
         <?php echo $tpl->displayNotification(); ?>

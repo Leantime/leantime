@@ -158,9 +158,7 @@ $canvasItems = $tpl->get('canvasItems');
                     </div>
                     <div class="pull-right" style="margin-right:10px;">
                         <a href="#/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
-                           class="commentCountLink" data="item_<?=$row['id'] ?>"
-
-                            ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
+                           class="commentCountLink" data="item_<?=$row['id'] ?>"> <span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
                     </div>
                 </div>
             </div>

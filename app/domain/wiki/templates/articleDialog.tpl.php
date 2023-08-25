@@ -118,7 +118,7 @@ if (isset($currentArticle->id)) {
 
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <strong><a href="<?=BASE_URL ?>/tickets/showKanban&milestone=<?php echo $currentArticle->milestoneId;?>" ><?php echo $currentArticle->milestoneHeadline; ?></a></strong>
+                                        <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone=<?php echo $currentArticle->milestoneId;?>" ><?php echo $currentArticle->milestoneHeadline; ?></a></strong>
                                     </div>
                                     <div class="col-md-4 align-right">
                                         <a href="#/wiki/articleDialog/<?php echo $id;?>&removeMilestone=<?php echo $currentArticle->milestoneId;?>" class="delete"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>

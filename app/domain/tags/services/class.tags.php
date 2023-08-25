@@ -11,8 +11,8 @@ namespace leantime\domain\services {
     class tags
     {
         private repositories\projects $projectRepository;
-        private repositories\canvas $ticketRepository;
-        private repositories\tickets $canvasRepository;
+        private repositories\canvas $canvasRepository;
+        private repositories\tickets $ticketRepository;
 
         public function __construct(
             repositories\projects $projectRepository,

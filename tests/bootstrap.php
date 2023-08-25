@@ -160,8 +160,6 @@ $bootstrapper = get_class(new class {
             ]
         );
 
-
-
         $this->dockerProcess->waitUntil(function ($type, $buffer) {
             if (! isset($started)) {
                 static $started = [
@@ -180,7 +178,6 @@ $bootstrapper = get_class(new class {
             }
 
             $this->commandOutputHandler($type, $buffer);
-
 
             return ! in_array(false, $started, true);
         });
@@ -231,8 +228,8 @@ $bootstrapper = get_class(new class {
 
     protected function setFolderPermissions(): void
     {
+        $this->createStep('Setting folder permissions on cache folder');
 
-         $this->createStep('Setting folder permissions on cache folder');
         //Set file permissions
         $this->executeCommand(
             array_filter(

@@ -43,7 +43,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1')
+        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1', $clientId = '-1')
         {
             $query = "SELECT
                         zp_timesheets.id,
@@ -73,6 +73,10 @@ namespace leantime\domain\repositories {
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
                     WHERE
                         ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
+
+            if ($clientId > 0) {
+                $query .= " AND (zp_projects.clientId = :clientId)";
+            }
 
             if ($projectId > 0) {
                 $query .= " AND (zp_tickets.projectId = :projectId)";
@@ -117,6 +121,10 @@ namespace leantime\domain\repositories {
 
             $call->bindValue(':dateFrom', $dateFrom);
             $call->bindValue(':dateTo', $dateTo);
+
+            if ($clientId > 0) {
+                $call->bindValue(':clientId', $clientId);
+            }
 
             if ($projectId > 0) {
                 $call->bindValue(':projectId', $projectId);

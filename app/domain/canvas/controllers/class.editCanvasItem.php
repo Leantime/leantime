@@ -3,6 +3,9 @@
 namespace leantime\domain\controllers\canvas;
 
 use leantime\core\controller;
+use leantime\core\IncomingRequest;
+use leantime\core\language;
+use leantime\core\template;
 use leantime\domain\repositories;
 use leantime\domain\services;
 use leantime\domain\models;
@@ -48,15 +51,18 @@ class editCanvasItem extends controller
      * @access public
      *
      */
-    public function __construct($method, $params)
-    {
+    public function __construct(
+        IncomingRequest $incomingRequest,
+        template $tpl,
+        language $language
+    ) {
         $this->ticketService = app()->make(services\tickets::class);
         $this->projectService = app()->make(services\projects::class);
         $this->commentsRepo = app()->make(repositories\comments::class);
         $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
         $this->canvasRepo = app()->make($canvasRepoName);
 
-        parent::__construct($method, $params);
+        parent::__construct($incomingRequest, $tpl, $language);
     }
 
     /**
@@ -124,8 +130,7 @@ class editCanvasItem extends controller
 
         $this->tpl->assign('comments', $comments);
 
-        $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-        $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasItem', $canvasItem);
         $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
@@ -319,8 +324,7 @@ class editCanvasItem extends controller
             $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $_GET['id']);
         }
 
-        $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-        $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());

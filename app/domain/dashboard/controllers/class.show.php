@@ -59,8 +59,9 @@ namespace leantime\domain\controllers {
                 core\frontcontroller::redirect(BASE_URL . $projectRedirectFilter);
             }
 
-            $progressSteps = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
+            [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
             $this->tpl->assign("progressSteps", $progressSteps);
+            $this->tpl->assign("percentDone", $percentDone);
 
             $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
             $this->tpl->assign('project', $project);
@@ -80,8 +81,8 @@ namespace leantime\domain\controllers {
             $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
 
             //Milestones
-            $prepareTicketSearchArray = $this->ticketService->prepareTicketSearchArray(["sprint" => '', "type"=> "milestone"]);
-            $allProjectMilestones = $this->ticketService->getAllMilestones($prepareTicketSearchArray);
+
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $comments = app()->make(repositories\comments::class);
@@ -95,7 +96,16 @@ namespace leantime\domain\controllers {
                 $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
             }
 
-            $comment = $comments->getComments('project', $_SESSION['currentProject'], "");
+            // add replies to comments
+            $comment = array_map(function ($comment) use ($comments) {
+                $comment['replies'] = $comments->getReplies($comment['id']);
+                return $comment;
+            }, $comments->getComments('project', $_SESSION['currentProject'], ""));
+
+
+            $url = parse_url(CURRENT_URL);
+            $this->tpl->assign('delUrlBase', $url['scheme'] . '://' . $url['host'] . $url['path'] . '?delComment='); // for delete comment
+
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
 

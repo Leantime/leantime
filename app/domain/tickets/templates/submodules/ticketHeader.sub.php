@@ -52,7 +52,8 @@ if(is_array($tpl->get('sprints'))) {
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <li><a href="#/sprints/editSprint/<?=$tpl->get("v")?>"><?=$tpl->__("link.edit_sprint") ?></a></li>
+                        <li><a href="#/sprints/editSprint/<?=$tpl->get("currentSprint")?>"><?=$tpl->__("link.edit_sprint") ?></a></li>
+                        <li><a href="#/sprints/delSprint/<?=$tpl->get("currentSprint")?>" class="delete"><?=$tpl->__("links.delete_sprint") ?></a></li>
                     <?php } ?>
                 </ul>
             </span>
