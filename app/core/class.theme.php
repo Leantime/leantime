@@ -169,7 +169,7 @@ class theme
             $id,
             [
                 'expires' => time() + 60 * 60 * 24 * 30,
-                'path' => $this->config->appUrlRoot . '/',
+                'path' => $this->config->appDir . '/',
                 'samesite' => 'Strict',
             ]
         );

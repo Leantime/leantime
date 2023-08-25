@@ -84,6 +84,8 @@ class IncomingRequest extends Request
      */
     public function getRequestUri()
     {
+
+
         $requestUri = parent::getRequestUri();
 
         static $subfolderFixApplied;
@@ -106,6 +108,7 @@ class IncomingRequest extends Request
 
         $subfolderName = $baseUrlParts[3];
         $requestUri = preg_replace('/^\/' . $subfolderName . '/', '', $requestUri);
+
 
         $subfolderFixApplied = true;
 

@@ -186,7 +186,7 @@ class language
             if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
                 setcookie('language', $lang, [
                 'expires' => time() + 60 * 60 * 24 * 30,
-                    'path' => $this->config->appUrlRoot . '/',
+                    'path' => $this->config->appDir . '/',
                     'samesite' => 'Strict',
                 ]);
             }
@@ -201,7 +201,7 @@ class language
             if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
                 setcookie('language', $lang, [
                 'expires' => time() + 60 * 60 * 24 * 30,
-                    'path' => $this->config->appUrlRoot . '/',
+                    'path' => $this->config->appDir . '/',
                     'samesite' => 'Strict',
                 ]);
             }
