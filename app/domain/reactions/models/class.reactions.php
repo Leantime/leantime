@@ -1,12 +1,11 @@
 <?php
 
-
 namespace leantime\domain\models;
 
 use leantime\core\eventhelpers;
 
-class reactions {
-
+class reactions
+{
     use eventhelpers;
 
     /**
@@ -22,7 +21,7 @@ class reactions {
             "celebrate" => "🎉",
             "interesting" => "💡",
             "sad" => "😥",
-            "funny" => "😂"
+            "funny" => "😂",
         ),
         "contentReactions" => array(
             "upvote" => "<i class='fa-solid fa-up'></i>",
@@ -30,7 +29,7 @@ class reactions {
         ),
         "entityReactions" => array(
             "favorite" => "<i class='fa fa-star'></i>",
-            "watch" => "<i class='fa fa-eye'></i>"
+            "watch" => "<i class='fa fa-eye'></i>",
         ),
 
     );
@@ -60,5 +59,4 @@ class reactions {
 
         return $reactions[$type] ?? false;
     }
-
 }

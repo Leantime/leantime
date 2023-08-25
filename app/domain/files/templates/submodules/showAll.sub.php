@@ -1,4 +1,5 @@
 <?php
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 /** @var leantime\services\auth $login */
 /** @var leantime\core\language $language */
 $module = \leantime\core\frontcontroller::getModuleName('');
@@ -8,17 +9,17 @@ $moduleId = $_GET['id'] ?? '';
 ?>
 <div id="fileManager">
 
-    <?php echo $this->displayNotification() ?>
+    <?php echo $tpl->displayNotification() ?>
 
     <div class="uploadWrapper">
 
-        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;"><?php echo $this->__("links.cancel"); ?></a>
+        <a href="javascript:void(0);" id="cancelLink" class="btn btn-default" style="display:none;"><?php echo $tpl->__("links.cancel"); ?></a>
         <div class="extra" style="margin-top:5px;"></div>
         <div class="fileUploadDrop">
-            <p><i><?=$this->__("text.drop_files"); ?></i></p>
+            <p><i><?=$tpl->__("text.drop_files"); ?></i></p>
             <div class="file-upload-input" style="margin:auto;  display:inline-block"></div>
-            <a href="javascript:void(0);" id="webcamClick"><?=$this->__("label.webcam"); ?></a>
-            <a href="javascript:void(0);" id="screencaptureLink"><?=$this->__("label.screen_recording"); ?></a>
+            <a href="javascript:void(0);" id="webcamClick"><?=$tpl->__("label.webcam"); ?></a>
+            <a href="javascript:void(0);" id="screencaptureLink"><?=$tpl->__("label.screen_recording"); ?></a>
         </div>
 
         <!-- Progress bar #1 -->
@@ -35,7 +36,7 @@ $moduleId = $_GET['id'] ?? '';
         <div class="mediamgr_content">
 
             <ul id='medialist' class='listfile'>
-                <?php foreach ($this->get('files') as $file) {?>
+                <?php foreach ($tpl->get('files') as $file) {?>
                     <li class="file-module-<?php echo $file['moduleId'] ?>">
                         <div class="inlineDropDownContainer dropright" style="float:right;">
 
@@ -43,22 +44,22 @@ $moduleId = $_GET['id'] ?? '';
                                 <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu">
-                                <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
-                                <li><a target="_blank" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
+                                <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
+                                <li><a target="_blank" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
 
                                 <?php
 
                                 if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                    <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
+                                    <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
                                 <?php  } ?>
 
                             </ul>
                         </div>
                         <a class="imageLink" data-ext="<?php echo $file['extension'] ?>" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                            <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
+                            <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
                                 <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                             <?php else : ?>
-                                <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/doc.png' />
+                                <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/doc.png' />
                             <?php endif; ?>
                             <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
                         </a>
@@ -234,11 +235,11 @@ $moduleId = $_GET['id'] ?? '';
                                     '<i class="fa fa-ellipsis-v" aria-hidden="true"></i>' +
                                 '</a>' +
                                 '<ul class="dropdown-menu">' +
-                                    '<li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>' +
-                                    '<li><a target="_blank" href="<?=BASE_URL ?>/download.php?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'"><?php echo str_replace("'", '"', $this->__("links.download")); ?></a></li>'+
+                                    '<li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>' +
+                                    '<li><a target="_blank" href="<?=BASE_URL ?>/download.php?module='+ response.module +'&encName='+ response.encName +'&ext='+ response.extension +'&realName='+ response.realName +'"><?php echo str_replace("'", '"', $tpl->__("links.download")); ?></a></li>'+
                                     <?php
                                     if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                        '<li><a href="<?=BASE_URL ?>/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $this->__("links.delete")); ?></a></li>'+
+                                        '<li><a href="<?=BASE_URL ?>/files/showAll?delFile='+ response.fileId +'" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo str_replace("'", '"', $tpl->__("links.delete")); ?></a></li>'+
                                     <?php  } ?>
                                 '</ul>'+
                             '</div>'+

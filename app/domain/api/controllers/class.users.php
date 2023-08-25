@@ -19,13 +19,13 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-
-            $this->usersService = new services\users();
-            $this->filesRepository = new repositories\files();
+        public function init(
+            services\users $usersService,
+            repositories\files $filesRepository
+        ) {
+            $this->usersService = $usersService;
+            $this->filesRepository = $filesRepository;
         }
-
 
         /**
          * get - handle get requests
@@ -54,22 +54,17 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($params["profileImage"])) {
-                //var_dump("asdf");
-
                 $return = $this->usersService->getProfilePicture($params["profileImage"]);
 
                 if (is_array($return)) {
-
-                    $file = new core\fileupload();
-                    if($return["type"] == "uploaded"){
+                    $file = app()->make(core\fileupload::class);
+                    if ($return["type"] == "uploaded") {
                         $file->displayImageFile($return["filename"]);
-                    }else if($return["type"] == "generated"){
+                    } elseif ($return["type"] == "generated") {
                         $file->displayImageFile("avatar", $return["filename"]);
                     }
-
-                } else if(is_object($return)){
-
-                  header('Content-type: image/svg+xml');
+                } elseif (is_object($return)) {
+                    header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
                 }
             }

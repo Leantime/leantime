@@ -7,54 +7,39 @@ namespace leantime\domain\services {
     use leantime\core;
     use leantime\domain\repositories;
     use Ramsey\Uuid\Uuid;
+    use leantime\core\eventhelpers;
 
     class reports
     {
-        private $projectRepository;
-        private $sprintRepository;
-        private $ticketRepository;
-        private $reportRepository;
+        use eventhelpers;
+
         private core\template $tpl;
-        private repositories\setting $settings;
         private core\appSettings $appSettings;
+        private core\environment $config;
+        private repositories\projects $projectRepository;
+        private repositories\sprints $sprintRepository;
+        private repositories\reports $reportRepository;
+        private repositories\setting $settings;
+        private repositories\tickets $ticketRepository;
 
-        private repositories\ideas $ideaRepository;
-        private repositories\users $userRepository;
-        private repositories\clients $clientRepository;
-        private repositories\comments $commentsRepository;
-        private repositories\timesheets $timesheetRepo;
-        private \leantime\core\environment $config;
-
-        private repositories\cpcanvas $cpCanvasRepo;
-        private repositories\dbmcanvas $dbmCanvasRepo;
-        private repositories\eacanvas $eaCanvasRepo;
-        private repositories\emcanvas $emCanvasRepo;
-        private repositories\insightscanvas $insightsCanvasRepo;
-        private repositories\lbmcanvas $lbmCanvasRepo;
-        private repositories\leancanvas $leanCanvasRepo;
-        private repositories\obmcanvas $obmCanvasRepo;
-        private repositories\retroscanvas $retrosCanvasRepo;
-        private repositories\riskscanvas $risksCanvasRepo;
-        private repositories\sbcanvas $sbCanvasRepo;
-        private repositories\smcanvas $smCanvasRepo;
-        private repositories\sqcanvas $sqCanvasRepo;
-        private repositories\swotcanvas $swotCanvasRepo;
-        private repositories\goalcanvas $goalCanvasRepo;
-        private repositories\valuecanvas $valueCanvasRepo;
-        private repositories\minempathycanvas $minEmpathyCanvasRepo;
-        private repositories\wiki $wikiRepo;
-
-        public function __construct()
-        {
-
-            $this->tpl = new core\template();
-            $this->projectRepository = new repositories\projects();
-            $this->sprintRepository = new repositories\sprints();
-            $this->reportRepository = new repositories\reports();
-            $this->settings = new repositories\setting();
-            $this->appSettings = new core\appSettings();
-            $this->ticketRepository = new repositories\tickets();
-            $this->config = core\environment::getInstance();
+        public function __construct(
+            core\template $tpl,
+            core\appSettings $appSettings,
+            core\environment $config,
+            repositories\projects $projectRepository,
+            repositories\sprints $sprintRepository,
+            repositories\reports $reportRepository,
+            repositories\setting $settings,
+            repositories\tickets $ticketRepository
+        ) {
+            $this->tpl = $tpl;
+            $this->appSettings = $appSettings;
+            $this->config = $config;
+            $this->projectRepository = $projectRepository;
+            $this->sprintRepository = $sprintRepository;
+            $this->reportRepository = $reportRepository;
+            $this->settings = $settings;
+            $this->ticketRepository = $ticketRepository;
         }
 
         public function dailyIngestion()
@@ -103,8 +88,25 @@ namespace leantime\domain\services {
             return $this->reportRepository->runTicketReport($projectId, $sprintId);
         }
 
-        public function getAnonymousTelemetry()
-        {
+        public function getAnonymousTelemetry(
+            repositories\ideas $ideaRepository,
+            repositories\users $userRepository,
+            repositories\clients $clientRepository,
+            repositories\comments $commentsRepository,
+            repositories\timesheets $timesheetRepo,
+            repositories\eacanvas $eaCanvasRepo,
+            repositories\insightscanvas $insightsCanvasRepo,
+            repositories\leancanvas $leanCanvasRepo,
+            repositories\obmcanvas $obmCanvasRepo,
+            repositories\retroscanvas $retrosCanvasRepo,
+            repositories\goalcanvas $goalCanvasRepo,
+            repositories\valuecanvas $valueCanvasRepo,
+            repositories\minempathycanvas $minEmpathyCanvasRepo,
+            repositories\riskscanvas $risksCanvasRepo,
+            repositories\sbcanvas $sbCanvasRepo,
+            repositories\swotcanvas $swotCanvasRepo,
+            repositories\wiki $wikiRepo
+        ) {
 
             //Get anonymous company guid
             $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");
@@ -115,32 +117,7 @@ namespace leantime\domain\services {
                 $this->settings->saveSetting("companysettings.telemetry.anonymousId", $companyId);
             }
 
-            $this->ideaRepository = new repositories\ideas();
-            $this->userRepository = new repositories\users();
-            $this->clientRepository = new repositories\clients();
-            $this->commentsRepository = new repositories\comments();
-            $this->timesheetRepo = new repositories\timesheets();
-
-            $this->cpCanvasRepo = new repositories\cpcanvas();
-            $this->dbmCanvasRepo = new repositories\dbmcanvas();
-            $this->eaCanvasRepo = new repositories\eacanvas();
-            $this->emCanvasRepo = new repositories\emcanvas();
-            $this->insightsCanvasRepo = new repositories\insightscanvas();
-            $this->lbmCanvasRepo = new repositories\lbmcanvas();
-            $this->leanCanvasRepo = new repositories\leancanvas();
-            $this->obmCanvasRepo = new repositories\obmcanvas();
-            $this->retrosCanvasRepo = new repositories\retroscanvas();
-            $this->goalCanvasRepo = new repositories\goalcanvas();
-            $this->valueCanvasRepo = new repositories\valuecanvas();
-            $this->minEmpathyCanvasRepo = new repositories\minempathycanvas();
-
-            $this->risksCanvasRepo = new repositories\riskscanvas();
-            $this->sbCanvasRepo = new repositories\sbcanvas();
-            $this->smCanvasRepo = new repositories\smcanvas();
-            $this->sqCanvasRepo = new repositories\sqcanvas();
-            $this->swotCanvasRepo = new repositories\swotcanvas();
-
-            $this->wikiRepo = new repositories\wiki();
+            self::dispatch_event("beforeTelemetrySend", $companyId);
 
             $companyLang = $this->settings->getSetting("companysettings.language");
             if ($companyLang != "" && $companyLang !== false) {
@@ -152,82 +129,59 @@ namespace leantime\domain\services {
             $telemetry = array(
                 'date' => '',
                 'companyId' => $companyId,
+                'env' => 'prod',
                 'version' => $this->appSettings->appVersion,
                 'language' => $currentLanguage,
-                'numUsers' => $this->userRepository->getNumberOfUsers(),
-                'lastUserLogin' => $this->userRepository->getLastLogin(),
-                'numProjects' => $this->projectRepository->getNumberOfProjects(),
-                'numClients' => $this->clientRepository->getNumberOfClients(),
-                'numComments' => $this->commentsRepository->countComments(),
+                'numUsers' => $userRepository->getNumberOfUsers(),
+                'lastUserLogin' => $userRepository->getLastLogin(),
+                'numProjects' => $this->projectRepository->getNumberOfProjects(null, "project"),
+                'numStrategies' => $this->projectRepository->getNumberOfProjects(null, "strategy"),
+                'numPrograms' => $this->projectRepository->getNumberOfProjects(null, "program"),
+                'numClients' => $clientRepository->getNumberOfClients(),
+                'numComments' => $commentsRepository->countComments(),
                 'numMilestones' => $this->ticketRepository->getNumberOfMilestones(),
                 'numTickets' => $this->ticketRepository->getNumberOfAllTickets(),
 
-                'numBoards' => $this->ideaRepository->getNumberOfBoards(),
+                'numBoards' => $ideaRepository->getNumberOfBoards(),
 
-                'numIdeaItems' => $this->ideaRepository->getNumberOfIdeas(),
-                'numHoursBooked' => $this->timesheetRepo->getHoursBooked(),
+                'numIdeaItems' => $ideaRepository->getNumberOfIdeas(),
+                'numHoursBooked' => $timesheetRepo->getHoursBooked(),
 
-                'numResearchBoards' => $this->leanCanvasRepo->getNumberOfBoards(),
-                'numResearchItems' => $this->leanCanvasRepo->getNumberOfCanvasItems(),
+                'numResearchBoards' => $leanCanvasRepo->getNumberOfBoards(),
+                'numResearchItems' => $leanCanvasRepo->getNumberOfCanvasItems(),
 
-                'numRetroBoards' => $this->retrosCanvasRepo->getNumberOfBoards(),
-                'numRetroItems' => $this->retrosCanvasRepo->getNumberOfCanvasItems(),
+                'numRetroBoards' => $retrosCanvasRepo->getNumberOfBoards(),
+                'numRetroItems' => $retrosCanvasRepo->getNumberOfCanvasItems(),
 
-                'numGoalBoards' => $this->goalCanvasRepo->getNumberOfBoards(),
-                'numGoalItems' => $this->goalCanvasRepo->getNumberOfCanvasItems(),
+                'numGoalBoards' => $goalCanvasRepo->getNumberOfBoards(),
+                'numGoalItems' => $goalCanvasRepo->getNumberOfCanvasItems(),
 
-                'numValueCanvasBoards' => $this->valueCanvasRepo->getNumberOfBoards(),
-                'numValueCanvasItems' => $this->valueCanvasRepo->getNumberOfCanvasItems(),
+                'numValueCanvasBoards' => $valueCanvasRepo->getNumberOfBoards(),
+                'numValueCanvasItems' => $valueCanvasRepo->getNumberOfCanvasItems(),
 
-                'numMinEmpathyBoards' => $this->minEmpathyCanvasRepo->getNumberOfBoards(),
-                'numMinEmpathyItems' => $this->minEmpathyCanvasRepo->getNumberOfCanvasItems(),
+                'numMinEmpathyBoards' => $minEmpathyCanvasRepo->getNumberOfBoards(),
+                'numMinEmpathyItems' => $minEmpathyCanvasRepo->getNumberOfCanvasItems(),
 
-                'numOBMBoards' => $this->obmCanvasRepo->getNumberOfBoards(),
-                'numOBMItems' => $this->obmCanvasRepo->getNumberOfCanvasItems(),
+                'numOBMBoards' => $obmCanvasRepo->getNumberOfBoards(),
+                'numOBMItems' => $obmCanvasRepo->getNumberOfCanvasItems(),
 
-                'numSWOTBoards' => $this->swotCanvasRepo->getNumberOfBoards(),
-                'numSWOTItems' => $this->swotCanvasRepo->getNumberOfCanvasItems(),
+                'numSWOTBoards' => $swotCanvasRepo->getNumberOfBoards(),
+                'numSWOTItems' => $swotCanvasRepo->getNumberOfCanvasItems(),
 
-                'numSBBoards' => $this->sbCanvasRepo->getNumberOfBoards(),
-                'numSBItems' => $this->sbCanvasRepo->getNumberOfCanvasItems(),
+                'numSBBoards' => $sbCanvasRepo->getNumberOfBoards(),
+                'numSBItems' => $sbCanvasRepo->getNumberOfCanvasItems(),
 
-                'numRISKSBoards' => $this->risksCanvasRepo->getNumberOfBoards(),
-                'numRISKSItems' => $this->risksCanvasRepo->getNumberOfCanvasItems(),
+                'numRISKSBoards' => $risksCanvasRepo->getNumberOfBoards(),
+                'numRISKSItems' => $risksCanvasRepo->getNumberOfCanvasItems(),
 
-                'numEABoards' => $this->eaCanvasRepo->getNumberOfBoards(),
-                'numEAItems' => $this->eaCanvasRepo->getNumberOfCanvasItems(),
+                'numEABoards' => $eaCanvasRepo->getNumberOfBoards(),
+                'numEAItems' => $eaCanvasRepo->getNumberOfCanvasItems(),
 
-                'numINSIGHTSBoards' => $this->insightsCanvasRepo->getNumberOfBoards(),
-                'numINSIGHTSItems' => $this->insightsCanvasRepo->getNumberOfCanvasItems(),
+                'numINSIGHTSBoards' => $insightsCanvasRepo->getNumberOfBoards(),
+                'numINSIGHTSItems' => $insightsCanvasRepo->getNumberOfCanvasItems(),
 
-                'numWikiBoards' => $this->wikiRepo->getNumberOfBoards(),
-                'numWikiItems' => $this->wikiRepo->getNumberOfCanvasItems(),
-
-
-                /*
-
-                'numCPBoards' => $this->cpCanvasRepo->getNumberOfBoards(),
-                'numCPItems' => $this->cpCanvasRepo->getNumberOfCanvasItems(),
-
-                'numDBMBoards' => $this->dbmCanvasRepo->getNumberOfBoards(),
-                'numDBMItems' => $this->dbmCanvasRepo->getNumberOfCanvasItems(),
-
-                'numEMBoards' => $this->emCanvasRepo->getNumberOfBoards(),
-                'numEMItems' => $this->emCanvasRepo->getNumberOfCanvasItems(),
-
-                'numLBMBoards' => $this->lbmCanvasRepo->getNumberOfBoards(),
-                'numLBMItems' => $this->lbmCanvasRepo->getNumberOfCanvasItems(),
-
-                'numSMBoards' => $this->smCanvasRepo->getNumberOfBoards(),
-                'numSMItems' => $this->smCanvasRepo->getNumberOfCanvasItems(),
-
-                'numSQBoards' => $this->sqCanvasRepo->getNumberOfBoards(),
-                'numSQItems' => $this->sqCanvasRepo->getNumberOfCanvasItems(),
-
-
-                */
-
-
+                'numWikiBoards' => $wikiRepo->getNumberOfBoards(),
+                'numWikiItems' => $wikiRepo->getNumberOfCanvasItems(),
 
             );
 
@@ -243,6 +197,7 @@ namespace leantime\domain\services {
 
             //Only send once a day
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
+            $allowTelemetry = true;
 
             if ($allowTelemetry === true) {
                 $date_utc = new \DateTime("now", new \DateTimeZone("UTC"));
@@ -250,7 +205,7 @@ namespace leantime\domain\services {
                 $lastUpdate = $this->settings->getSetting("companysettings.telemetry.lastUpdate");
 
                 if ($lastUpdate != $today) {
-                    $telemetry = $this->getAnonymousTelemetry();
+                    $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
                     $telemetry['date'] = $today;
 
                     //Do the curl
@@ -261,9 +216,9 @@ namespace leantime\domain\services {
 
                         $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
                                     'form_params' => [
-                                        'telemetry' => $data_string
+                                        'telemetry' => $data_string,
                                     ],
-                                    'timeout' => 5
+                                    'timeout' => 5,
                                 ])->then(function ($response) use ($today) {
 
                                     $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
@@ -344,7 +299,7 @@ namespace leantime\domain\services {
                 'numEABoards' => 0,
                 'numEAItems' => 0,
 
-                'numINSIGHTSBoards' => 0
+                'numINSIGHTSBoards' => 0,
             );
 
             $telemetry['date'] = $today;
@@ -357,15 +312,14 @@ namespace leantime\domain\services {
 
                 $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
                     'form_params' => [
-                        'telemetry' => $data_string
+                        'telemetry' => $data_string,
                     ],
-                    'timeout' => 5
+                    'timeout' => 5,
                 ])->then(function ($response) use ($today) {
 
                     $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
                     $_SESSION['skipTelemetry'] = true;
                 });
-
             } catch (\Exception $e) {
                 error_log($e);
 
@@ -374,9 +328,6 @@ namespace leantime\domain\services {
             }
 
             $this->settings->saveSetting("companysettings.telemetry.active", false);
-            $this->settings->deleteSetting("companysettings.telemetry.active");
-            $this->settings->deleteSetting("companysettings.telemetry.lastUpdate");
-            $this->settings->deleteSetting("companysettings.telemetry.anonymousId");
 
             $_SESSION['skipTelemetry'] = true;
 
@@ -387,7 +338,6 @@ namespace leantime\domain\services {
             }
 
             return;
-
         }
     }
 

@@ -10,21 +10,23 @@ namespace leantime\domain\controllers {
 
     class apiKey extends controller
     {
-        private $projectsRepo;
+        private repositories\projects $projectsRepo;
         private repositories\users $userRepo;
-        private $clientsRepo;
+        private repositories\clients $clientsRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projectsRepo = new repositories\projects();
-            $this->userRepo = new repositories\users();
-            $this->clientsRepo = new repositories\clients();
+        public function init(
+            repositories\projects $projectsRepo,
+            repositories\users $userRepo,
+            repositories\clients $clientsRepo
+        ) {
+            $this->projectsRepo = $projectsRepo;
+            $this->userRepo = $userRepo;
+            $this->clientsRepo = $clientsRepo;
         }
 
         /**
@@ -40,7 +42,6 @@ namespace leantime\domain\controllers {
             //Only admins
 
             if (isset($_GET['id']) === true) {
-
                 $id = (int)($_GET['id']);
                 $row = $this->userRepo->getUser($id);
                 $edit = false;
@@ -57,13 +58,11 @@ namespace leantime\domain\controllers {
                     'wage' => $row['wage'],
                     'clientId' => $row['clientId'],
                     'source' =>  $row['source'],
-                    'pwReset' => $row['pwReset']
+                    'pwReset' => $row['pwReset'],
                 );
 
                 if (isset($_POST['save'])) {
-
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-
                         $values = array(
                             'firstname' => ($_POST['firstname'] ?? $row['firstname']),
                             'lastname' => '',
@@ -76,11 +75,10 @@ namespace leantime\domain\controllers {
                             'clientId' => '',
                             'password' => '',
                             'source' =>  'api',
-                            'pwReset' => ''
+                            'pwReset' => '',
                         );
 
                         $edit = true;
-
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                     }

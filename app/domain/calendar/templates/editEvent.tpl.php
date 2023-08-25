@@ -1,57 +1,58 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-$values = $this->get('values');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$values = $tpl->get('values');
 ?>
 
-<?php echo $this->displayNotification() ?>
+<?php echo $tpl->displayNotification() ?>
 
-<h4 class="widgettitle title-light"><?php echo $this->__('subtitles.event'); ?></h4>
+<h4 class="widgettitle title-light"><?php echo $tpl->__('subtitles.event'); ?></h4>
 
 <form action="<?=BASE_URL?>/calendar/editEvent/<?=$values['id'] ?>" method="post" class="formModal">
 
-    <?php $this->dispatchTplEvent('afterFormOpen'); ?>
+    <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
-    <label for="description"><?php echo $this->__('label.title') ?></label>
+    <label for="description"><?php echo $tpl->__('label.title') ?></label>
     <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
 
-    <label for="dateFrom"><?php echo $this->__('label.start_date') ?></label>
-    <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="<?php echo $this->getFormattedDateString($values['dateFrom']); ?>" />
+    <label for="dateFrom"><?php echo $tpl->__('label.start_date') ?></label>
+    <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="<?php echo $tpl->getFormattedDateString($values['dateFrom']); ?>" />
 
     <div class="par">
-        <label> <?php echo $this->__('label.start_time') ?></label>
+        <label> <?php echo $tpl->__('label.start_time') ?></label>
         <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_from" name="timeFrom" value="<?php echo $this->get24HourTimestring($values['dateFrom']); ?>" />
+                <input type="time" id="event_time_from" name="timeFrom" value="<?php echo $tpl->get24HourTimestring($values['dateFrom']); ?>" />
            </div>
     </div>
 
-    <label for="dateTo"><?php echo $this->__('label.end_date') ?></label>
-    <input type="text" id="event_date_to" autocomplete="off" name="dateTo" value="<?php echo $this->getFormattedDateString($values['dateTo']); ?>" />
+    <label for="dateTo"><?php echo $tpl->__('label.end_date') ?></label>
+    <input type="text" id="event_date_to" autocomplete="off" name="dateTo" value="<?php echo $tpl->getFormattedDateString($values['dateTo']); ?>" />
 
     <div class="par">
-        <label for=""><?php echo $this->__('label.end_time') ?> </label>
+        <label for=""><?php echo $tpl->__('label.end_time') ?> </label>
         <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_to" name="timeTo" value="<?php echo $this->get24HourTimestring($values['dateTo']); ?>" />
+                <input type="time" id="event_time_to" name="timeTo" value="<?php echo $tpl->get24HourTimestring($values['dateTo']); ?>" />
            </div>
     </div>
 
-    <label for="allDay"><?php echo $this->__('label.all_day') ?></label>
+    <label for="allDay"><?php echo $tpl->__('label.all_day') ?></label>
     <input type="checkbox" id="allDay" name="allDay"
     <?php if ($values['allDay'] === 'true') {
         echo 'checked="checked" ';
     }?>
     />
 
-    <?php $this->dispatchTplEvent('beforeSubmitButton'); ?>
+    <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
 
     <div class="clear"></div>
     <br />
-    <a href="<?=BASE_URL?>/calendar/delEvent/<?=(int)$_GET['id'] ?>" class="formModal delete right"><i class="fa fa-trash"></i> <?=$this->__('links.delete')?></a>
+    <a href="<?=BASE_URL?>/calendar/delEvent/<?=(int)$_GET['id'] ?>" class="formModal delete right"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete')?></a>
     <input type="hidden" value="1" name="save" />
-    <input type="submit" name="saveEvent" id="save" value="<?php echo $this->__('buttons.save') ?>" class="button" />
+    <input type="submit" name="saveEvent" id="save" value="<?php echo $tpl->__('buttons.save') ?>" class="button" />
 
     <div class="clear"></div>
 
-    <?php $this->dispatchTplEvent('beforeFormClose'); ?>
+    <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
 </form>
 

@@ -1,16 +1,34 @@
 <?php
 
-namespace leantime\plugins\models\motivationalQuotes {
+namespace leantime\plugins\models\motivationalQuotes;
 
-    class quote
+/**
+ * quote model
+ *
+ * @package leantime\plugins\models\motivationalQuotes
+ */
+class quote
+{
+    /**
+     * @var string
+     */
+    public string $author;
+
+    /**
+     * @var string
+     */
+    public string $quote;
+
+    /**
+     * __construct
+     *
+     * @param string $quote
+     * @param string $author
+     * @return self
+     */
+    public function __construct(string $quote = "", string $author = "")
     {
-        public $author;
-        public $quote;
-
-        public function __construct($quote = "", $author = "")
-        {
-            $this->author = $author;
-            $this->quote = $quote;
-        }
+        $this->author = $author;
+        $this->quote = $quote;
     }
 }

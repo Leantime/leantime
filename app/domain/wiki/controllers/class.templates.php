@@ -12,7 +12,6 @@ namespace leantime\domain\controllers {
 
     class templates extends controller
     {
-
         private services\wiki $wikiService;
         private services\comments $commentService;
 
@@ -24,7 +23,5 @@ namespace leantime\domain\controllers {
         {
             $this->tpl->displayPartial("wiki.templates");
         }
-
-
     }
 }

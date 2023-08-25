@@ -11,28 +11,35 @@ namespace leantime\domain\controllers {
 
     class show extends controller
     {
-        private $dashboardRepo;
-        private $projectService;
-        private $sprintService;
-        private $ticketService;
-        private $userService;
-        private $timesheetService;
-        private $reportService;
+        private repositories\dashboard $dashboardRepo;
+        private services\projects $projectService;
+        private services\sprints $sprintService;
+        private services\tickets $ticketService;
+        private services\users $userService;
+        private services\timesheets $timesheetService;
+        private services\reports $reportService;
 
-        public function init()
-        {
+        public function init(
+            repositories\dashboard $dashboardRepo,
+            services\projects $projectService,
+            services\sprints $sprintService,
+            services\tickets $ticketService,
+            services\users $userService,
+            services\timesheets $timesheetService,
+            services\reports $reportService
+        ) {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
 
-            $this->dashboardRepo = new repositories\dashboard();
-            $this->projectService = new services\projects();
-            $this->sprintService = new services\sprints();
-            $this->ticketService = new services\tickets();
-            $this->userService = new services\users();
-            $this->timesheetService = new services\timesheets();
+            $this->dashboardRepo = $dashboardRepo;
+            $this->projectService = $projectService;
+            $this->sprintService = $sprintService;
+            $this->ticketService = $ticketService;
+            $this->userService = $userService;
+            $this->timesheetService = $timesheetService;
 
             $_SESSION['lastPage'] = BASE_URL . "/reports/show";
 
-            $this->reportService = new services\reports();
+            $this->reportService = $reportService;
             $this->reportService->dailyIngestion();
         }
 
@@ -89,8 +96,9 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('states', $this->ticketService->getStatusLabels());
 
             //Milestones
-            $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], true, "headline");
-            $this->tpl->assign('milestones', $milestones);
+
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $this->tpl->assign('milestones', $allProjectMilestones);
 
             $this->tpl->display('reports.show');
         }

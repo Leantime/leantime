@@ -10,7 +10,6 @@ namespace leantime\domain\controllers {
 
     class show extends controller
     {
-
         private services\projects $projectService;
         private services\tickets $ticketService;
         private services\users $userService;
@@ -18,20 +17,25 @@ namespace leantime\domain\controllers {
         private services\comments $commentService;
         private services\reactions $reactionsService;
 
-        public function init()
-        {
-
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->userService = new services\users();
-            $this->timesheetService = new services\timesheets();
-            $this->commentService = new services\comments();
-            $this->reactionsService = new services\reactions();
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\users $userService,
+            services\timesheets $timesheetService,
+            services\comments $commentService,
+            services\reactions $reactionsService,
+            services\reports $reportsService
+        ) {
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->userService = $userService;
+            $this->timesheetService = $timesheetService;
+            $this->commentService = $commentService;
+            $this->reactionsService = $reactionsService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
 
-            (new services\reports())->dailyIngestion();
+            $reportsService->dailyIngestion();
         }
 
         /**
@@ -50,23 +54,22 @@ namespace leantime\domain\controllers {
                 core\frontcontroller::redirect(BASE_URL . "/dashboard/home");
             }
 
-
-
-            $projectRedirectFilter = core\eventhelpers::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
-            if($projectRedirectFilter != "/dashboard/show") {
+            $projectRedirectFilter = static::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
+            if ($projectRedirectFilter != "/dashboard/show") {
                 core\frontcontroller::redirect(BASE_URL . $projectRedirectFilter);
             }
 
-            $progressSteps = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
+            [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
             $this->tpl->assign("progressSteps", $progressSteps);
+            $this->tpl->assign("percentDone", $percentDone);
 
             $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
             $this->tpl->assign('project', $project);
 
             $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $_SESSION['currentProject'], \leantime\domain\models\reactions::$favorite);
-            if($userReaction && is_array($userReaction) && count($userReaction) >0) {
+            if ($userReaction && is_array($userReaction) && count($userReaction) > 0) {
                 $this->tpl->assign("isFavorite", true);
-            }else{
+            } else {
                 $this->tpl->assign("isFavorite", false);
             }
 
@@ -78,10 +81,11 @@ namespace leantime\domain\controllers {
             $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
 
             //Milestones
-            $milestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date");
-            $this->tpl->assign('milestones', $milestones);
 
-            $comments = new repositories\comments();
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $this->tpl->assign('milestones', $allProjectMilestones);
+
+            $comments = app()->make(repositories\comments::class);
 
             //Delete comment
             if (isset($_GET['delComment']) === true) {
@@ -92,7 +96,16 @@ namespace leantime\domain\controllers {
                 $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
             }
 
-            $comment = $comments->getComments('project', $_SESSION['currentProject'], "");
+            // add replies to comments
+            $comment = array_map(function ($comment) use ($comments) {
+                $comment['replies'] = $comments->getReplies($comment['id']);
+                return $comment;
+            }, $comments->getComments('project', $_SESSION['currentProject'], ""));
+
+
+            $url = parse_url(CURRENT_URL);
+            $this->tpl->assign('delUrlBase', $url['scheme'] . '://' . $url['host'] . $url['path'] . '?delComment='); // for delete comment
+
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
 
@@ -125,7 +138,7 @@ namespace leantime\domain\controllers {
             }
 
             // Manage Post comment
-            $comments = new repositories\comments();
+            $comments = app()->make(repositories\comments::class);
             if (isset($_POST['comment']) === true) {
                 $project = $this->projectService->getProject($_SESSION['currentProject']);
 

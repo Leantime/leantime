@@ -1,10 +1,9 @@
 <?php
-$menuRepo = new \leantime\domain\repositories\menu();
+$menuRepo = app()->make(\leantime\domain\repositories\menu::class);
 $_SESSION['menuState'] = $menuRepo->getSubmenuState("mainMenu");
-if(!$_SESSION['menuState']) {
+if (!$_SESSION['menuState']) {
     $_SESSION['menuState'] = "open";
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -14,6 +13,7 @@ if(!$_SESSION['menuState']) {
 </head>
 
 <body>
+
 <div class="mainwrapper menu<?=$_SESSION['menuState']; ?> ">
 
     <div class="leftpanel">
@@ -24,7 +24,7 @@ if(!$_SESSION['menuState']) {
 
         <div class="logo">
 
-            <a href="<?=BASE_URL ?>" style="background-image:url('<?php echo str_replace('http:','',htmlentities($_SESSION["companysettings.logoPath"])); ?>')">&nbsp;</a>
+            <a href="<?=BASE_URL ?>" style="background-image:url('<?php echo str_replace('http:', '', htmlentities($_SESSION["companysettings.logoPath"])); ?>')">&nbsp;</a>
         </div>
 
         <div class="leftmenu">
@@ -52,6 +52,4 @@ if(!$_SESSION['menuState']) {
     </div><!--rightpanel-->
 
 </div><!--mainwrapper-->
-
 <?php echo $this->frontcontroller->includeAction('pageparts.pageBottom'); ?>
-

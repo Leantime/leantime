@@ -5,71 +5,98 @@
  */
 
 defined('RESTRICTED') or die('Restricted access');
-
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 $canvasName = 'lean';
 ?>
 
-<?php require($this->getTemplatePath('canvas', 'showCanvasTop.inc.php')); ?>
+<?php echo $tpl->viewFactory->make(
+    $tpl->getTemplatePath('canvas', 'showCanvasTop'),
+    array_merge($__data, ['canvasName' => 'lean'])
+)->render(); ?>
 
-    <?php if (count($this->get('allCanvas')) > 0) { ?>
+    <?php if (count($tpl->get('allCanvas')) > 0) { ?>
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">
             <div class="row-fluid">
                 <div class="column" style="width: 100%; min-width: calc(5 * 250px);">
 
                     <div class="row canvas-row" id="firstRow">
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'problem';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'problem'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'solution';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'solution'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'uniquevalue';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'uniquevalue'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'unfairadvantage';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'unfairadvantage'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'customersegment';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'customersegment'])
+                            )->render(); ?>
                         </div>
                     </div>
 
                     <div class="row canvas-row" id="firstRow">
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'alternatives';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'alternatives'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'keymetrics';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'keymetrics'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'highlevelconcept';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'highlevelconcept'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'channels';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'channels'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 20%">
-                            <?php $elementName = 'earlyadopters';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'earlyadopters'])
+                            )->render(); ?>
                         </div>
                     </div>
 
                     <div class="row canvas-row" id="thirdRow">
                         <div class="column" style="width: 50%">
-                            <?php $elementName = 'cost';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'cost'])
+                            )->render(); ?>
                         </div>
                         <div class="column" style="width: 50%">
-                            <?php $elementName = 'revenue';
-                            require($this->getTemplatePath('canvas', 'element.inc.php')); ?>
+                            <?php echo $tpl->viewFactory->make(
+                                $tpl->getTemplatePath('canvas', 'element'),
+                                array_merge($__data, ['canvasName' => 'lean', 'elementName' => 'revenue'])
+                            )->render(); ?>
                         </div>
                     </div>
 
@@ -79,4 +106,7 @@ $canvasName = 'lean';
         <div class="clearfix"></div>
     <?php } ?>
 
-<?php require($this->getTemplatePath('canvas', 'showCanvasBottom.inc.php')); ?>
+<?php echo $tpl->viewFactory->make(
+    $tpl->getTemplatePath('canvas', 'showCanvasBottom'),
+    array_merge($__data, ['canvasName' => 'lean'])
+)->render(); ?>

@@ -114,3 +114,6 @@ config/.env
 
 # Documentor
 .phpdoc/cache
+
+# Local Dev Files
+.dev/docker-compose.local.yaml

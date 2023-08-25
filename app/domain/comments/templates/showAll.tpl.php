@@ -1,5 +1,6 @@
 <?php
-$comments = new leantime\domain\repositories\comments();
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$comments = app()->make(leantime\domain\repositories\comments::class);
 $formUrl = CURRENT_URL;
 
 //Controller may not redirect. Make sure delComment is only added once
@@ -12,21 +13,21 @@ if (strpos($formUrl, '?delComment=') !== false) {
 ?>
 
 <h4 class="widgettitle title-light"><span
-            class="fa fa-comments"></span><?php echo $this->__('subtitles.discussion'); ?>
+            class="fa fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?>
 </h4>
 
 <form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>"
       id="commentForm">
     <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)"
        style="display:none;" id="mainToggler"><span
-                class="fa fa-plus-square"></span> <?php echo $this->__('links.add_new_comment') ?>
+                class="fa fa-plus-square"></span> <?php echo $tpl->__('links.add_new_comment') ?>
     </a>
 
     <div id="comment0" class="commentBox">
         <!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
         <textarea rows="5" cols="50" class="tinymceSimple"
                   name="text"></textarea><br/>
-        <input type="submit" value="<?php echo $this->__('buttons.save') ?>"
+        <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>"
                name="comment" class="btn btn-default btn-success"
                style="margin-left: 0px;"/>
         <input type="hidden" name="comment" value="1"/>
@@ -37,38 +38,38 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
     <div id="comments">
         <div>
-            <?php foreach ($this->get('comments') as $row) : ?>
+            <?php foreach ($tpl->get('comments') as $row) : ?>
                 <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>"
                          style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                     <div class="right"><?php printf(
-                        $this->__('text.written_on'),
-                        $this->getFormattedDateString($row['date']),
-                        $this->getFormattedTimeString($row['date'])
+                        $tpl->__('text.written_on'),
+                        $tpl->getFormattedDateString($row['date']),
+                        $tpl->getFormattedTimeString($row['date'])
                                        ); ?></div>
                     <strong>
-                    <?php printf($this->__('text.full_name'), $this->escape($row['firstname']), $this->escape($row['lastname'])); ?>
+                    <?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
                     </strong><br/>
                     <div style="margin-left:60px;"><?php echo ($row['text']); ?></div>
                     <div class="clear"></div>
                     <div style="padding-left:60px">
                         <a href="javascript:void(0);" class="replyButton"
                            onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
-                            <span class="fa fa-reply"></span> <?php echo $this->__('links.reply') ?>
+                            <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                         </a>
 
                         <?php if ($row['userId'] == $_SESSION['userdata']['id']) { ?>
                             |
                             <a href="<?php echo $deleteUrlBase . $row['id'] ?>"
                                class="deleteComment">
-                                <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                             </a>
                         <?php } ?>
                         <div style="display:none;"
                              id="comment<?php echo $row['id']; ?>"
                              class="commentBox">
                             <br/><input type="submit"
-                                        value="<?php echo $this->__('links.reply') ?>"
+                                        value="<?php echo $tpl->__('links.reply') ?>"
                                         name="comment" class="btn btn-default"/>
                         </div>
                     </div>
@@ -83,12 +84,13 @@ if (strpos($formUrl, '?delComment=') !== false) {
                             <div>
                                 <div class="right">
                                     <?php printf(
-                                        $this->__('text.written_on'),
-                                        $this->getFormattedDateString($comment['date']),
-                                        $this->getFormattedTimeString($comment['date'])
-                                    ); ?></div>
+                                        $tpl->__('text.written_on'),
+                                        $tpl->getFormattedDateString($comment['date']),
+                                        $tpl->getFormattedTimeString($comment['date'])
+                                    ); ?>
+                                </div>
                                 <strong>
-                                <?php printf($this->__('text.full_name'), $this->escape($comment['firstname']), $this->escape($comment['lastname'])); ?>
+                                <?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?>
                                 </strong><br/>
                                 <p style="margin-left:60px;"><?php echo nl2br($comment['text']); ?></p>
                                 <div class="clear"></div>
@@ -97,7 +99,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                     <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
                                         <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
                                            class="deleteComment">
-                                            <span class="fa fa-trash"></span> <?php echo $this->__('links.delete') ?>
+                                            <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                         </a>
                                     <?php } ?>
                                 </div>
@@ -108,11 +110,11 @@ if (strpos($formUrl, '?delComment=') !== false) {
             <?php endforeach; ?>
         </div>
 
-        <?php if (count($this->get('comments')) == 0) { ?>
+        <?php if (count($tpl->get('comments')) == 0) { ?>
             <div class="text-center">
                 <div style='width:33%' class='svgContainer'>
-                    <?php echo file_get_contents(ROOT . "/images/svg/undraw_real_time_collaboration_c62i.svg"); ?>
-                    <?php $this->e($language->__('text.no_comments')) ?>
+                    <?php echo file_get_contents(ROOT . "/dist/images/svg/undraw_real_time_collaboration_c62i.svg"); ?>
+                    <?php $tpl->e($language->__('text.no_comments')) ?>
                 </div>
             </div>
         <?php } ?>
@@ -122,7 +124,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 <script type='text/javascript'>
 
 
-    leantime.generalController.initSimpleEditor();
+    leantime.editorController.initSimpleEditor();
 
     function toggleCommentBoxes(id) {
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
@@ -134,7 +136,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
             jQuery('.commentBox').hide('fast', function () {
                 jQuery('.commentBox textarea').remove();
                 jQuery('#comment' + id + '').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
-                leantime.generalController.initSimpleEditor();
+                leantime.editorController.initSimpleEditor();
             });
 
             jQuery('#comment' + id + '').show('fast');

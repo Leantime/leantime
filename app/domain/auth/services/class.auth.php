@@ -15,13 +15,13 @@ namespace leantime\domain\services {
 
         /**
          * @access private
-         * @var    int user id from DB
+         * @var    integer user id from DB
          */
         private $userId = null;
 
         /**
          * @access private
-         * @var    int user id from DB
+         * @var    integer user id from DB
          */
         private $clientId = null;
 
@@ -63,7 +63,7 @@ namespace leantime\domain\services {
 
         /**
          * @access private
-         * @var    bool $twoFAEnabled
+         * @var    boolean $twoFAEnabled
          */
         private $twoFAEnabled;
 
@@ -88,7 +88,7 @@ namespace leantime\domain\services {
 
         /**
          * @access public
-         * @var    int time for cookie
+         * @var    integer time for cookie
          */
         public $cookieTime;
 
@@ -116,14 +116,12 @@ namespace leantime\domain\services {
          */
         public $hasher;
 
-        private static $instance = null;
-
         /*
          * How often can a user reset a password before it has to be changed
          */
         public $pwResetLimit = 5;
 
-        private $config;
+        private core\environment $config;
         public core\language $language;
         public repositories\setting $settingsRepo;
         public repositories\auth $authRepo;
@@ -135,31 +133,27 @@ namespace leantime\domain\services {
          * @param  $sessionid
          * @throws Exception
          */
-        protected function __construct($sessionid)
-        {
-            $this->config = \leantime\core\environment::getInstance();
+        public function __construct(
+            core\environment $config,
+            core\session $session,
+            core\language $language,
+            repositories\setting $settingsRepo,
+            repositories\auth $authRepo,
+            repositories\users $userRepo
+        ) {
+            $this->config = $config;
+            $this->session = $session->getSID();
+            $this->language = $language;
+            $this->settingsRepo = $settingsRepo;
+            $this->authRepo = $authRepo;
+            $this->userRepo = $userRepo;
+
             $this->cookieTime = $this->config->sessionExpiration;
-            $this->language = core\language::getInstance();
-            $this->settingsRepo = new repositories\setting();
-            $this->authRepo = new repositories\auth();
-            $this->userRepo = new repositories\users();
-
-            $this->session = $sessionid;
-        }
-
-        public static function getInstance($sessionid = "")
-        {
-
-            if (self::$instance === null) {
-                self::$instance = new self($sessionid);
-            }
-
-            return self::$instance;
         }
 
         /**
-         * @param bool $forceGlobalRoleCheck
-         * @return string|bool returns role as string or false on failure
+         * @param boolean $forceGlobalRoleCheck
+         * @return string|boolean returns role as string or false on failure
          */
         public static function getRoleToCheck(bool $forceGlobalRoleCheck): string|bool
         {
@@ -193,7 +187,7 @@ namespace leantime\domain\services {
          * login - Validate POST-data with DB
          *
          * @access private
-         * @return bool
+         * @return boolean
          */
         public function login($username, $password)
         {
@@ -207,7 +201,7 @@ namespace leantime\domain\services {
             ////C: update users from the identity provider
             //Try Ldap
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
-                $ldap = new ldap();
+                $ldap = app()->make(ldap::class);
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
                     //Update username to include domain
@@ -226,13 +220,16 @@ namespace leantime\domain\services {
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
                             'lastname' => $ldapUser['lastname'],
-                            'phone' => $ldapUser['phonenumber'],
+                            'phone' => $ldapUser['phone'],
                             'user' => $ldapUser['user'],
                             'role' => $ldapUser['role'],
+                            'department' => $ldapUser['department'],
+                            'jobTitle'  => $ldapUser['jobTitle'],
+                            'jobLevel'  => $ldapUser['jobLevel'],
                             'password' => '',
                             'clientId' => '',
                             'source' => 'ldap',
-                            'status' => 'a'
+                            'status' => 'a',
                         );
 
                         $userId = $this->userRepo->addUser($userArray);
@@ -248,8 +245,11 @@ namespace leantime\domain\services {
                     } else {
                         $user['firstname'] = $ldapUser['firstname'];
                         $user['lastname'] = $ldapUser['lastname'];
-                        $user['phone'] = $ldapUser['phonenumber'];
+                        $user['phone'] = $ldapUser['phone'];
                         $user['user'] = $user['username'];
+                        $user['department'] = $ldapUser['department'];
+                        $user['jobTitle'] = $ldapUser['jobTitle'];
+                        $user['jobLevel']  = $ldapUser['jobLevel'];
 
                         $this->userRepo->editUser($user, $user['id']);
                     }
@@ -278,15 +278,12 @@ namespace leantime\domain\services {
             if ($user !== false && is_array($user)) {
                 $this->setUserSession($user);
 
-                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return true;
-
             } else {
-
-                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => self::getInstance()]);
+                self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return false;
             }
-
         }
 
         public function setUserSession($user, $isLdap = false)
@@ -317,13 +314,15 @@ namespace leantime\domain\services {
                         'twoFAEnabled' => $this->twoFAEnabled,
                         'twoFAVerified' => false,
                         'twoFASecret' => $this->twoFASecret,
-                        'isLdap' => $isLdap
+                        'isLdap' => $isLdap,
+                        'createdOn' => $user['createdOn'] ?? ''
             ]);
 
             $this->updateUserSessionDB($this->userId, $this->session);
         }
 
-        public function updateUserSessionDB($userId, $sessionID) {
+        public function updateUserSessionDB($userId, $sessionID)
+        {
             return $this->authRepo->updateUserSession($userId, $sessionID, time());
         }
 
@@ -331,7 +330,7 @@ namespace leantime\domain\services {
          * logged_in - Check if logged in and Update sessions
          *
          * @access public
-         * @return bool
+         * @return boolean
          */
         public function logged_in()
         {
@@ -346,7 +345,8 @@ namespace leantime\domain\services {
             }
         }
 
-        public function getSessionId() {
+        public function getSessionId()
+        {
             return $this->session;
         }
 
@@ -372,12 +372,15 @@ namespace leantime\domain\services {
                             'projectsettings',
                             'currentSubscriptions',
                             'lastTicketView',
-                            'lastFilterdTicketTableView'
+                            'lastFilterdTicketTableView',
                 ]);
 
                 foreach ($sessionsToDestroy as $key) {
                     unset($_SESSION[$key]);
                 }
+
+                self::dispatch_event("afterSessionDestroy", ['authService' => app()->make(self::class)]);
+
             }
         }
 
@@ -386,7 +389,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param string $hash invite link hash
-         * @return bool
+         * @return boolean
          */
         public function validateResetLink(string $hash)
         {
@@ -399,7 +402,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param string $hash invite link hash
-         * @return array|bool
+         * @return array|boolean
          */
         public function getUserByInviteLink($hash)
         {
@@ -411,7 +414,7 @@ namespace leantime\domain\services {
          *
          * @access public
          * @param string $username new user to be invited (email)
-         * @return bool returns true on success, false on failure
+         * @return boolean returns true on success, false on failure
          */
         public function generateLinkAndSendEmail(string $username): bool
         {
@@ -427,7 +430,7 @@ namespace leantime\domain\services {
 
                     if ($result) {
                         //Don't queue, send right away
-                        $mailer = new core\mailer();
+                        $mailer = app()->make(core\mailer::class);
                         $mailer->setContext('password_reset');
                         $mailer->setSubject($this->language->__('email_notifications.password_reset_subject'));
                         $actual_link = "" . BASE_URL . "/auth/resetPw/" . $resetLink;

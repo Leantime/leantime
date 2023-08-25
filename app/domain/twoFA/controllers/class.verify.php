@@ -12,19 +12,16 @@ namespace leantime\domain\controllers {
     {
         private services\auth $authService;
 
-
         /**
          * init - initialize private variables
          *
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\auth $authService)
         {
-
-            $this->authService = services\auth::getInstance();
+            $this->authService = $authService;
         }
-
 
         /**
          * get - handle get requests

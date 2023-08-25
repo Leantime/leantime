@@ -10,10 +10,11 @@ namespace leantime\domain\controllers {
 
     class roadmapAll extends controller
     {
-        private $projectsRepo;
-        private $sprintService;
+        private repositories\projects $projectsRepo;
+        private repositories\clients $clientRepo;
+        private services\sprints $sprintService;
         private services\tickets $ticketService;
-        private $clientRepo;
+        private services\clients $clientService;
 
         /**
          * init - initialize private variables
@@ -21,13 +22,18 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
-            $this->projectsRepo = new repositories\projects();
-            $this->sprintService = new services\sprints();
-            $this->ticketService = new services\tickets();
-            $this->clientRepo = new repositories\clients();
+        public function init(
+            repositories\projects $projectsRepo,
+            repositories\clients $clientRepo,
+            services\clients $clientService,
+            services\sprints $sprintService,
+            services\tickets $ticketService
+        ) {
+            $this->projectsRepo = $projectsRepo;
+            $this->clientRepo = $clientRepo;
+            $this->clientService = $clientService;
+            $this->sprintService = $sprintService;
+            $this->ticketService = $ticketService;
         }
 
         /**
@@ -39,35 +45,23 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if (isset($_SESSION["usersettings.showMilestoneTasks"]) && $_SESSION["usersettings.showMilestoneTasks"] === true) {
-                $includeTasks = true;
-            } else {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
+            $clientId = "";
+            $currentClientName = "";
+            if (isset($_GET['client']) === true && $_GET['client'] != '') {
+                $clientId = (int)$_GET['client'];
+                $currentClient = $this->clientRepo->getClient($clientId);
+                if (is_array($currentClient) && count($currentClient) > 0) {
+                    $currentClientName = $currentClient['name'];
+                }
             }
 
-            if (isset($_GET['includeTasks']) && $_GET['includeTasks'] == "on") {
-                $includeTasks = true;
-                $_SESSION["usersettings.showMilestoneTasks"] = true;
-            } elseif (isset($_GET['submitIncludeTasks']) && !isset($_GET['includeTasks'])) {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
-            }
+            $allProjectMilestones = $this->ticketService->getAllMilestonesOverview(false, "date", false, $clientId);
 
+            $allClients = $this->clientService->getUserClients($_SESSION['userdata']['id']);
 
-            if (isset($_GET['clientId']) && $_GET['clientId'] !== '') {
-                $clientId = $_GET['clientId'];
-            }
-            else{
-                $clientId = false;
-            }
+            $this->tpl->assign("currentClientName", $currentClientName);
+            $this->tpl->assign("currentClient", $clientId);
 
-
-            $allProjectMilestones = $this->ticketService->getAllMilestonesOverview(false, "date", $includeTasks, $clientId);
-
-            $allClients = $this->clientRepo->getAll();
-
-            $this->tpl->assign("includeTasks", $includeTasks);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('clients', $allClients);
             $this->tpl->display('tickets.roadmapAll');

@@ -11,19 +11,24 @@ namespace leantime\domain\controllers {
 
     class showAll extends controller
     {
-        private $projectRepo;
-        private $menuRepo;
+        private repositories\projects $projectRepo;
+        private repositories\menu $menuRepo;
+        private services\projects $projectService;
+
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projectRepo = new repositories\projects();
-            $this->menuRepo = new repositories\menu();
+        public function init(
+            repositories\projects $projectRepo,
+            repositories\menu $menuRepo,
+            services\projects $projectService
+        ) {
+            $this->projectRepo = $projectRepo;
+            $this->projectService = $projectService;
+            $this->menuRepo = $menuRepo;
         }
 
         /**
@@ -51,7 +56,12 @@ namespace leantime\domain\controllers {
                 }
 
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);
-                $this->tpl->assign('allProjects', $this->projectRepo->getAll($_SESSION['showClosedProjects']));
+
+                if(auth::userIsAtLeast(roles::$admin)) {
+                    $this->tpl->assign('allProjects', $this->projectRepo->getAll($_SESSION['showClosedProjects']));
+                }else{
+                    $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects($_SESSION['userdata']['id'], $_SESSION['userdata']['clientId']));
+                }
                 $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
 
                 $this->tpl->assign('showClosedProjects', $_SESSION['showClosedProjects']);

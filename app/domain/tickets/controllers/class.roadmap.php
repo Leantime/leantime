@@ -10,8 +10,8 @@ namespace leantime\domain\controllers {
 
     class roadmap extends controller
     {
-        private $projectsRepo;
-        private $sprintService;
+        private repositories\projects $projectsRepo;
+        private services\sprints $sprintService;
         private services\tickets $ticketService;
 
         /**
@@ -20,12 +20,14 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
-            $this->projectsRepo = new repositories\projects();
-            $this->sprintService = new services\sprints();
-            $this->ticketService = new services\tickets();
+        public function init(
+            repositories\projects $projectsRepo,
+            services\sprints $sprintService,
+            services\tickets $ticketService
+        ) {
+            $this->projectsRepo = $projectsRepo;
+            $this->sprintService = $sprintService;
+            $this->ticketService = $ticketService;
         }
 
         /**
@@ -37,25 +39,12 @@ namespace leantime\domain\controllers {
         public function get($params)
         {
 
-            if (isset($_SESSION["usersettings.showMilestoneTasks"]) && $_SESSION["usersettings.showMilestoneTasks"] === true) {
-                $includeTasks = true;
-            } else {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
-            }
+            $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+            array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            if (isset($_GET['includeTasks']) && $_GET['includeTasks'] == "on") {
-                $includeTasks = true;
-                $_SESSION["usersettings.showMilestoneTasks"] = true;
-            } elseif (isset($_GET['submitIncludeTasks']) && !isset($_GET['includeTasks'])) {
-                $includeTasks = false;
-                $_SESSION["usersettings.showMilestoneTasks"] = false;
-            }
-
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject'], false, "date", $includeTasks);
-
-            $this->tpl->assign("includeTasks", $includeTasks);
+            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
             $this->tpl->display('tickets.roadmap');
         }
 
@@ -68,9 +57,9 @@ namespace leantime\domain\controllers {
         public function post($params)
         {
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($_SESSION['currentProject']);
-
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
+
             $this->tpl->display('tickets.roadmap');
         }
 

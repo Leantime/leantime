@@ -10,13 +10,15 @@ namespace leantime\domain\services {
 
     class plugins
     {
-        private $pluginRepository;
-        private $pluginDirectory =  ROOT . "/../app/plugins/";
+        private repositories\plugins $pluginRepository;
+        private string $pluginDirectory =  ROOT . "/../app/plugins/";
+        private core\environment $config;
 
 
-        public function __construct()
+        public function __construct(repositories\plugins $pluginRepository, core\environment $config)
         {
-            $this->pluginRepository = new repositories\plugins();
+            $this->pluginRepository = $pluginRepository;
+            $this->config = $config;
         }
 
         public function getAllPlugins()
@@ -40,12 +42,31 @@ namespace leantime\domain\services {
 
         public function getEnabledPlugins()
         {
+            if (isset($_SESSION['enabledPlugins'])) {
+                return $_SESSION['enabledPlugins'];
+            }
 
-            if (!isset($_SESSION['enabledPlugins'])) {
-                $_SESSION['enabledPlugins'] = $this->pluginRepository->getAllPlugins(true);
+            $_SESSION['enabledPlugins'] = $this->pluginRepository->getAllPlugins(true);
+
+            // Gets plugins from the config, which are automatically enabled
+            if (
+                isset($this->config->plugins)
+                && $configplugins = explode(',', $this->config->plugins)
+            ) {
+                $configplugins = array_map(function ($pluginStr) {
+                    $pluginModel = app()->make(\leantime\domain\models\plugins::class);
+                    $pluginModel->foldername = $pluginStr;
+                    $pluginModel->name = $pluginStr;
+                    $pluginModel->enabled = true;
+
+                    return $pluginModel;
+                }, $configplugins);
+
+                $_SESSION['enabledPlugins'] = array_merge($_SESSION['enabledPlugins'], $configplugins);
             }
 
             return $_SESSION['enabledPlugins'];
+
         }
 
         public function discoverNewPlugins()
@@ -71,7 +92,7 @@ namespace leantime\domain\services {
                         $json = file_get_contents($pluginJsonFile);
 
                         $pluginFile = json_decode($json, true);
-                        $plugin = new \leantime\domain\models\plugins();
+                        $plugin = app()->make(\leantime\domain\models\plugins::class);
                         $plugin->name = $pluginFile['name'];
                         $plugin->enabled = 0;
                         $plugin->description = $pluginFile['description'];
@@ -99,7 +120,7 @@ namespace leantime\domain\services {
                 $json = file_get_contents($pluginJsonFile);
 
                 $pluginFile = json_decode($json, true);
-                $plugin = new \leantime\domain\models\plugins();
+                $plugin = app()->make(\leantime\domain\models\plugins::class);
                 $plugin->name = $pluginFile['name'];
                 $plugin->enabled = 0;
                 $plugin->description = $pluginFile['description'];
@@ -110,13 +131,13 @@ namespace leantime\domain\services {
                 $plugin->authors = json_encode($pluginFile['authors']);
 
                 //Any installation calls should happen right here.
-                $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
-                $newPluginSvc = new $pluginClassName;
+                $pluginClassName = '\leantime\plugins\services\\' . htmlspecialchars($plugin->foldername);
+                $newPluginSvc = app()->make($pluginClassName);
 
-                if(method_exists($newPluginSvc, "install")) {
+                if (method_exists($newPluginSvc, "install")) {
                     try {
                         $newPluginSvc->install();
-                    }catch(\Exception $e){
+                    } catch (\Exception $e) {
                         error_log($e);
                         return false;
                     }
@@ -143,16 +164,16 @@ namespace leantime\domain\services {
         public function removePlugin(int $id)
         {
             unset($_SESSION['enabledPlugins']);
-            $plugin = $this->pluginRepository->getRepository($id);
+            $plugin = $this->pluginRepository->getPlugin($id);
 
             //Any installation calls should happen right here.
-            $pluginClassName = '\leantime\plugins\services\\'.htmlspecialchars($plugin->foldername);
-            $newPluginSvc = new $pluginClassName;
+            $pluginClassName = '\leantime\plugins\services\\' . htmlspecialchars($plugin->foldername);
+            $newPluginSvc = app()->make($pluginClassName);
 
-            if(method_exists($newPluginSvc, "uninstall")) {
+            if (method_exists($newPluginSvc, "uninstall")) {
                 try {
                     $newPluginSvc->install();
-                }catch(\Exception $e){
+                } catch (\Exception $e) {
                     error_log($e);
                     return false;
                 }

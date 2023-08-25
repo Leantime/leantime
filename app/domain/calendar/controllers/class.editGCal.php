@@ -15,15 +15,14 @@ namespace leantime\domain\controllers {
 
     class editGCal extends controller
     {
-        private $calendarRepo;
+        private repositories\calendar $calendarRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(repositories\calendar $calendarRepo)
         {
-
-            $this->calendarRepo = new repositories\calendar();
+            $this->calendarRepo = $calendarRepo;
         }
 
         /**
@@ -45,14 +44,14 @@ namespace leantime\domain\controllers {
                 $values = array(
                     'url' => $row['url'],
                     'name' => $row['name'],
-                    'colorClass' => $row['colorClass']
+                    'colorClass' => $row['colorClass'],
                 );
 
                 if (isset($_POST['save']) === true) {
                     $values = array(
                         'url' => ($_POST['url']),
                         'name' => ($_POST['name']),
-                        'colorClass' => ($_POST['color'])
+                        'colorClass' => ($_POST['color']),
                     );
 
                     $this->calendarRepo->editGUrl($values, $id);

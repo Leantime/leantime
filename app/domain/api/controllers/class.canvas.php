@@ -27,12 +27,11 @@ namespace leantime\domain\controllers\api {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(repositories\projects $projects)
         {
-
-            $this->projects = new repositories\projects();
+            $this->projects = $projects;
             $canvasRepoName = "leantime\\domain\\repositories\\" . static::CANVAS_NAME . 'canvas';
-            $this->canvasRepo = new $canvasRepoName();
+            $this->canvasRepo = app()->make($canvasRepoName);
         }
 
 

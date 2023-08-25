@@ -1,8 +1,9 @@
 <?php
-    $providerFields = $this->get("providerFields");
-    $provider = $this->get("provider");
-    $leantimeFields = $this->get("leantimeFields");
-    $numberOfFields = $this->get("maxFields");
+    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+    $providerFields = $tpl->get("providerFields");
+    $provider = $tpl->get("provider");
+    $leantimeFields = $tpl->get("leantimeFields");
+    $numberOfFields = $tpl->get("maxFields");
 ?>
 
 <div class="pageheader">
@@ -10,7 +11,7 @@
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $this->__("headlines.integrations"); ?></h1>
+                <h1><?php echo $tpl->__("headlines.integrations"); ?></h1>
             </div>
         </div>
     </div>
@@ -19,7 +20,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <h3>Map and Convert Fields Entity Here</h3>
         <?=$provider->name ?><br />
@@ -34,15 +35,17 @@
             </tr>
             </thead>
             <tbody>
-                <?php foreach($providerFields as $key => $entity){?>
+                <?php foreach ($providerFields as $key => $entity) {?>
                     <tr>
                         <td><?=$entity ?> </td>
                         <td>
                             <select name="field_<?=md5($entity)?>">
-                                <?php foreach($leantimeFields as $key => $fields){?>
+                                <?php foreach ($leantimeFields as $key => $fields) {?>
                                     <option value="<?=$key ?>"
                                         <?php
-                                        if($entity == $fields['name']) echo" selected='selected' ";
+                                        if ($entity == $fields['name']) {
+                                            echo" selected='selected' ";
+                                        }
                                         ?>
                                     ><?=$fields['name'] ?></option>
                                 <?php } ?>

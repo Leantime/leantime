@@ -10,15 +10,13 @@ namespace leantime\domain\services {
 
     class timesheets
     {
-        private $timesheetsRepo;
+        private repositories\timesheets $timesheetsRepo;
         private core\language $language;
 
-
-        public function __construct()
+        public function __construct(repositories\timesheets $timesheetsRepo, core\language $language)
         {
-
-            $this->timesheetsRepo = new repositories\timesheets();
-            $this->language = core\language::getInstance();
+            $this->timesheetsRepo = $timesheetsRepo;
+            $this->language = $language;
         }
 
         /*
@@ -57,7 +55,7 @@ namespace leantime\domain\services {
                 'invoicedEmplDate' => '',
                 'invoicedCompDate' => '',
                 'paid' => '',
-                'paidDate' => ''
+                'paidDate' => '',
             );
 
             if (isset($params['kind']) && $params['kind'] != '') {
@@ -138,9 +136,22 @@ namespace leantime\domain\services {
             return $this->timesheetsRepo->kind;
         }
 
-        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1')
+        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1', $clientId = '-1')
         {
-            return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid);
+            return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid, $clientId);
+        }
+
+        public function export($values)
+        {
+            return $this->timesheetsRepo->export($values);
+        }
+
+        public function updateInvoices($invEmpl, $invComp = '', $paid = '') {
+            return $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
+        }
+
+        public function getBookedHourTypes() {
+            return $this->timesheetsRepo->kind;
         }
     }
 }

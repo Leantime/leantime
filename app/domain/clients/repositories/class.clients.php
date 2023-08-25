@@ -20,7 +20,7 @@ namespace leantime\domain\repositories {
 
         /**
          * @access public
-         * @var    int
+         * @var    integer
          */
         public $id;
 
@@ -35,10 +35,10 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
-        {
-
-            $this->db = core\db::getInstance();
+        public function __construct(
+            core\db $db
+        ) {
+            $this->db = $db;
         }
 
         /**
@@ -285,7 +285,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return bool
+         * @return boolean
          */
         public function hasTickets($id)
         {

@@ -14,9 +14,8 @@ namespace leantime\domain\controllers {
     class ideaDialog extends controller
     {
         private repositories\ideas $ideaRepo;
-
-        private services\tickets $ticketService;
         private repositories\comments $commentsRepo;
+        private services\tickets $ticketService;
         private services\projects $projectService;
 
         /**
@@ -25,14 +24,16 @@ namespace leantime\domain\controllers {
          * @access public
          *
          */
-        public function init()
-        {
-
-            $this->ideaRepo = new repositories\ideas();
-
-            $this->ticketService = new services\tickets();
-            $this->commentsRepo = new repositories\comments();
-            $this->projectService = new services\projects();
+        public function init(
+            repositories\ideas $ideaRepo,
+            repositories\comments $commentsRepo,
+            services\tickets $ticketService,
+            services\projects $projectService
+        ) {
+            $this->ideaRepo = $ideaRepo;
+            $this->commentsRepo = $commentsRepo;
+            $this->ticketService = $ticketService;
+            $this->projectService = $projectService;
         }
 
         /**
@@ -81,14 +82,16 @@ namespace leantime\domain\controllers {
                     "data" => "",
                     "conclusion" => "",
                     "milestoneHeadline" => "",
-                    "milestoneId" => ""
+                    "milestoneId" => "",
                 );
 
                 $comments = [];
             }
 
             $this->tpl->assign('comments', $comments);
-            $this->tpl->assign("milestones", $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
             $this->tpl->displayPartial('ideas.ideaDialog');
@@ -104,13 +107,13 @@ namespace leantime\domain\controllers {
         {
 
             if (isset($params['comment']) === true) {
-                if($params['text'] != '') {
+                if ($params['text'] != '') {
                     $values = array(
                         'text' => $params['text'],
                         'date' => date("Y-m-d H:i:s"),
                         'userId' => ($_SESSION['userdata']['id']),
                         'moduleId' => (int)$_GET['id'],
-                        'commentParent' => ($params['father'])
+                        'commentParent' => ($params['father']),
                     );
 
                     $message = $this->commentsRepo->addComment($values, 'idea');
@@ -125,10 +128,10 @@ namespace leantime\domain\controllers {
                     );
 
 
-                    $notification = new models\notifications\notification();
+                    $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
-                        "text" => $this->language->__('email_notifications.new_comment_idea_cta')
+                        "text" => $this->language->__('email_notifications.new_comment_idea_cta'),
                     );
                     $notification->entity = $values;
                     $notification->module = "comments";
@@ -161,7 +164,7 @@ namespace leantime\domain\controllers {
                             "itemId" => $params['itemId'],
                             "canvasId" => $currentCanvasId,
                             "milestoneId" => $params['milestoneId'],
-                            "id" => $params['itemId']
+                            "id" => $params['itemId'],
                         );
 
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
@@ -200,10 +203,10 @@ namespace leantime\domain\controllers {
                         );
 
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.idea_edited_cta')
+                            "text" => $this->language->__('email_notifications.idea_edited_cta'),
                         );
 
                         $notification->entity = $canvasItem;
@@ -232,7 +235,7 @@ namespace leantime\domain\controllers {
                             "assumptions" => "",
                             "data" => $params['data'],
                             "conclusion" => "",
-                            "canvasId" => $currentCanvasId
+                            "canvasId" => $currentCanvasId,
                         );
 
                         $id = $this->ideaRepo->addCanvasItem($canvasItem);
@@ -243,10 +246,10 @@ namespace leantime\domain\controllers {
                         $message = sprintf($this->language->__('email_notifications.idea_created_message'), $_SESSION["userdata"]["name"], $params['description']);
 
 
-                        $notification = new models\notifications\notification();
+                        $notification = app()->make(models\notifications\notification::class);
                         $notification->url = array(
                             "url" => $actual_link,
-                            "text" => $this->language->__('email_notifications.idea_created_subject')
+                            "text" => $this->language->__('email_notifications.idea_created_subject'),
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = "ideas";
@@ -257,7 +260,7 @@ namespace leantime\domain\controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success');
+                        $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success', 'idea_created');
 
                         $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$id);
                     } else {

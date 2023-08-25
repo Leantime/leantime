@@ -2,16 +2,6 @@ leantime.calendarController = (function () {
 
     var closeModal = false;
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-
-            }
-        );
-
-    })();
-
     //Functions
     var initCalendar = function (userEvents) {
 
@@ -82,21 +72,21 @@ leantime.calendarController = (function () {
 
     var initEventDatepickers = function () {
 
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             Date.prototype.addDays = function (days) {
                 this.setDate(this.getDate() + days);
                 return this;
             };
             jQuery.datepicker.setDefaults(
                 { beforeShow: function (i) {
-                        if (jQuery(i).attr('readonly')) {
-                            return false; } } }
+                    if (jQuery(i).attr('readonly')) {
+                        return false; } } }
             );
 
 
 
 
-        var dateFormat = leantime.i18n.__("language.jsdateformat"),
+            var dateFormat = leantime.i18n.__("language.jsdateformat"),
 
             from = jQuery("#event_date_from")
                 .datepicker(

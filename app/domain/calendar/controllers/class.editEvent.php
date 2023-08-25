@@ -20,11 +20,12 @@ namespace leantime\domain\controllers {
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(repositories\calendar $calendarRepo)
         {
             $this->calendarService = new \leantime\domain\services\calendar();
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
         }
+
 
         /**
          * retrieves edit calendar event page data
@@ -33,6 +34,7 @@ namespace leantime\domain\controllers {
          *
          */
         public function get($params) {
+
             $values = array(
                 'description' => '',
                 'dateFrom' => '',
@@ -45,6 +47,7 @@ namespace leantime\domain\controllers {
 
             $this->tpl->assign('values', $values);
             $this->tpl->displayPartial('calendar.editEvent');
+
         }
 
         /**

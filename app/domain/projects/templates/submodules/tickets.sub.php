@@ -1,9 +1,11 @@
+<?php foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor ?>
+
 <script type="text/javascript">
 var ganttData = [
-    
+
     <?php
     $jsContent = array();
-    foreach ($this->get('projectTickets') as $ticket) {
+    foreach ($tpl->get('projectTickets') as $ticket) {
         if ($ticket["editFrom"] != "0000-00-00 00:00:00" && $ticket["editFrom"] != "1969-12-31 00:00:00") {
             $plannedFromDate = new DateTime($ticket["editFrom"]);
             $plannedToDate = new DateTime($ticket["editTo"]);
@@ -27,29 +29,29 @@ var ganttData = [
     echo implode(",", $jsContent);
 
     ?>
-    
+
 ];
 
 
         jQuery(function () {
-            
+
             var width = jQuery(".maincontentinner").width() - 500;
 
-            jQuery("#ganttChart").ganttView({ 
+            jQuery("#ganttChart").ganttView({
                 data: ganttData,
                 slideWidth: width,
                 behavior: {
-                    onClick: function (data) { 
-                        
+                    onClick: function (data) {
+
                     },
-                    onResize: function (data) { 
+                    onResize: function (data) {
                         var msg = "You edited the To-Do to start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " }";
                         jQuery("#eventMessage").text(msg);
-                        
+
                         jQuery.ajax({
                             type: 'POST',
-                            url: leantime.appUrl+'/tickets/editTicket&raw=true&changeDate=true',
-                            data: 
+                            url: leantime.appUrl+'/tickets/editTicket?raw=true&changeDate=true',
+                            data:
                             {
                                 id : data.id,
                                 dateFrom:data.start.toString("yyyy-M-d"),
@@ -58,14 +60,14 @@ var ganttData = [
                         });
                         jQuery("#eventMessage").show();
                     },
-                    onDrag: function (data) { 
+                    onDrag: function (data) {
                         var msg = "You dragged the To-Do to start: " + data.start.toString("M/d/yyyy") + ", end: " + data.end.toString("M/d/yyyy") + " ";
                         jQuery("#eventMessage").text(msg);
-                        
+
                         jQuery.ajax({
                             type: 'POST',
-                            url: leantime.appUrl+'/tickets/editTicket&raw=true&changeDate=true',
-                            data: 
+                            url: leantime.appUrl+'/tickets/editTicket?raw=true&changeDate=true',
+                            data:
                             {
                                 id : data.id,
                                 dateFrom:data.start.toString("yyyy-M-d"),
@@ -76,13 +78,13 @@ var ganttData = [
                     }
                 }
             });
-            
+
             // $("#ganttChart").ganttView("setSlideWidth", 600);
         });
     </script>
 
-    <?php echo $this->displayLink('tickets.newTicket', "<i class='fa fa-plus'></i> " . $this->__('NEW_TICKET'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+    <?php echo $tpl->displayLink('tickets.newTicket', "<i class='fa fa-plus'></i> " . $tpl->__('NEW_TICKET'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
     <div id="eventMessage" class="alert alert-success" style="display:none;"></div>
     <div id="ganttChart"></div>
-    
+
 

@@ -10,6 +10,6 @@ namespace leantime\domain\events {
         }
     }
 
-    \leantime\core\events::add_event_listener("core.application.start.beginning", new dashboardTest());
+    \leantime\core\events::add_event_listener("core.application.start.beginning", app()->make(dashboardTest::class));
 
 }

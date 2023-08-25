@@ -10,6 +10,8 @@ class ldap
     private $ldapConnection;
     private $host;
     private $port;
+    private $ldapDomain;
+    private $ldapUri;
     private $ldapDn; //DN where users are located (including baseDn)
     private $ldapKeys = array(
         "username" => "uid",
@@ -17,7 +19,7 @@ class ldap
         "email" => "mail",
         "firstname" => "displayname",
         "lastname" => '',
-        "phonenumber" => 'telephonenumber'
+        "phonenumber" => 'telephonenumber',
     );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
@@ -30,22 +32,22 @@ class ldap
     private environment $config;
 
     /**
-     * @var array|bool|int|mixed|string
+     * @var array|boolean|integer|mixed|string
      */
     public $useLdap;
 
     /**
-     * @var array|bool|int|mixed|string
+     * @var array|boolean|integer|mixed|string
      */
     public $autoCreateUser;
 
     public function __construct($differentConfig = false)
     {
 
-        $this->settingsRepo = new repositories\setting();
+        $this->settingsRepo = app()->make(repositories\setting::class);
 
         if (!$differentConfig) {
-            $this->config = \leantime\core\environment::getInstance();
+            $this->config = app()->make(\leantime\core\environment::class);
             //Map config vars
             $this->useLdap = $this->config->useLdap;
 
@@ -62,6 +64,9 @@ class ldap
             $this->ldapLtGroupAssignments = json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapLtGroupAssignments)));
             $this->ldapKeys = $this->settingsRepo->getSetting('companysettings.ldap.ldapKeys') ? json_decode($this->settingsRepo->getSetting('companysettings.ldap.ldapKeys')) : json_decode(trim(preg_replace('/\s+/', '', $this->config->ldapKeys)));
             $this->directoryType = $this->config->ldapType;
+
+            $this->ldapDomain = $this->config->ldapDomain;
+            $this->ldapUri = $this->config->ldapUri;
 
             if (!is_object($this->ldapLtGroupAssignments)) {
                 error_log("LDAP: Group Assignment array failed to parse. Please check for valid json");
@@ -85,7 +90,11 @@ class ldap
         }
 
         if (function_exists("ldap_connect")) {
-            $this->ldapConnection = ldap_connect($this->host, $this->port);
+            if ($this->ldapUri != '' && str_starts_with($this->ldapUri, "ldap")) {
+                $this->ldapConnection = ldap_connect($this->uri);
+            } else {
+                $this->ldapConnection = ldap_connect($this->host, $this->port);
+            }
 
             ldap_set_option($this->ldapConnection, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
             ldap_set_option($this->ldapConnection, LDAP_OPT_REFERRALS, 0); // We need this for doing an LDAP search.
@@ -105,28 +114,41 @@ class ldap
     {
 
         if ($username != '' && $password != '') {
-            if ($this->directoryType == 'AD') {
-                $usernameDN = $username;
-            } else {
-                $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
-            }
             $passwordBind = $password;
 
-            $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+            //AD allows usenrame login
+            if ($this->directoryType == 'AD') {
+                $usernameDN = $username;
 
-            if ($bind) {
-                return true;
-            } else {
-                if ($this->config->debug == 1) {
-                    error_log(ldap_error($this->ldapConnection));
-                    ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
-                    if ($err) {
-                        error_log($err);
-                    }
+                $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                if ($bind) {
+                    return true;
                 }
 
-                return false;
+                $bind = ldap_bind($this->ldapConnection, $usernameDN . "@" . $this->ldapDomain, $passwordBind);
+                if ($bind) {
+                    return true;
+                }
+
+            //OL requires distinguished name login
+            } else {
+                $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
+
+                $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
+                if ($bind) {
+                    return true;
+                }
             }
+
+            if ($this->config->debug == 1) {
+                error_log(ldap_error($this->ldapConnection));
+                ldap_get_option($this->ldapConnection, LDAP_OPT_DIAGNOSTIC_MESSAGE, $err);
+                if ($err) {
+                    error_log($err);
+                }
+            }
+
+            return false;
         } else {
             return false;
         }
@@ -162,7 +184,8 @@ class ldap
 
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
 
-        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phonenumber);
+        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone, $this->ldapKeys->jobTitle, $this->ldapKeys->jobLevel, $this->ldapKeys->department);
+//        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phonenumber);
 
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
         $entries = ldap_get_entries($this->ldapConnection, $result);
@@ -188,12 +211,14 @@ class ldap
                 }
             }
         }
-
         //Find Firstname & Lastname
         $firstname = isset($entries[0][$this->ldapKeys->firstname]) ? $entries[0][$this->ldapKeys->firstname][0] : '';
         $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
-        $phonenumber = isset($entries[0][$this->ldapKeys->phonenumber]) ? $entries[0][$this->ldapKeys->phonenumber][0] : '';
+        $phonenumber = isset($entries[0][$this->ldapKeys->phone]) ? $entries[0][$this->ldapKeys->phone][0] : '';
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
+        $jobTitle = isset($entries[0][$this->ldapKeys->jobTitle]) ? $entries[0][$this->ldapKeys->jobTitle][0] : '';
+        $jobLevel = isset($entries[0][$this->ldapKeys->jobLevel]) ? $entries[0][$this->ldapKeys->jobLevel][0] : '';
+        $department = isset($entries[0][$this->ldapKeys->department]) ? $entries[0][$this->ldapKeys->department][0] : '';
 
         if ($this->config->debug) {
             error_log("LEANTIME: Testing the logging\n");
@@ -204,6 +229,9 @@ class ldap
             error_log("LEANTIME: phone $phonenumber", 0);
             error_log("LEANTIME: role $role", 0);
             error_log("LEANTIME: username $uname ", 0);
+            error_log("LEANTIME: jobTitle $jobTitle ", 0);
+            error_log("LEANTIME: jobLevel $jobLevel ", 0);
+            error_log("LEANTIME: department $department ", 0);
             error_log("LEANTIME: >>>Attributes End>>>>>>\n", 0);
         }
 
@@ -212,7 +240,10 @@ class ldap
             "firstname" => $firstname,
             "lastname" => $lastname,
             "role" => $role,
-            "phonenumber" => $phonenumber
+            "phone" => $phonenumber,
+            "jobTitle" => $jobTitle,
+            "jobLevel" => $jobLevel,
+            "department" => $department,
         );
     }
 
@@ -261,7 +292,7 @@ class ldap
     public function upsertUsers($ldapUsers)
     {
 
-        $userRepo = new repositories\users();
+        $userRepo = app()->make(repositories\users::class);
 
         foreach ($ldapUsers as $user) {
             //Update
@@ -274,13 +305,17 @@ class ldap
                 $userArray = array(
                     'firstname' => $user['firstname'],
                     'lastname' => $user['lastname'],
-                    'phone' => '',
+                    'phone' => $user['phone'],
                     'user' => $user['user'],
                     'role' => $user['role'],
                     'password' => '',
                     'clientId' => '',
-                    'source' => 'ldap'
+                    'jobTitle' => $user['jobTitle'],
+                    'jobLevel' => $user['jobLevel'],
+                    'department' => $user['department'],
+                    'source' => 'ldap',
                 );
+
 
                 $userRepo->addUser($userArray);
             }

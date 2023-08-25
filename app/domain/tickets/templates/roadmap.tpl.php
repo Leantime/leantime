@@ -1,38 +1,38 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$milestones = $tpl->get('milestones');
 
-$milestones = $this->get('milestones');
+echo $tpl->displayNotification();
 
-?>
-
-<?php
 if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
 } else {
     $roadmapView = "Month";
 }
 ?>
-<div class="pageheader">
-    <div class="pageicon"><span class="fa fa-sliders"></span></div>
-    <div class="pagetitle">
-        <h5><?php $this->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
-        <h1><?=$this->__("headline.milestones"); ?></h1>
-    </div>
-</div><!--pageheader-->
-
+<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
+
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
-
         <div class="row">
-            <div class="col-md-6">
-                <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <a href="<?=BASE_URL ?>/tickets/editMilestone" class="milestoneModal btn btn-primary"><?=$this->__("links.add_milestone"); ?></a>
-                <?php } ?>
+            <div class="col-md-4">
+                <?php
+                $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
+
+                $tpl->displaySubmodule('tickets-ticketNewBtn');
+                $tpl->displaySubmodule('tickets-ticketFilter');
+
+                $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
+                ?>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
                 <div class="pull-right">
 
                     <div class="btn-group dropRight">
@@ -40,46 +40,26 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                         <?php
                             $currentView = "";
                         if ($roadmapView == 'Day') {
-                            $currentView = $this->__("buttons.day");
+                            $currentView = $tpl->__("buttons.day");
                         } elseif ($roadmapView == 'Week') {
-                            $currentView = $this->__("buttons.week");
+                            $currentView = $tpl->__("buttons.week");
                         } elseif ($roadmapView == 'Month') {
-                            $currentView = $this->__("buttons.month");
+                            $currentView = $tpl->__("buttons.month");
                         }
                         ?>
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("buttons.timeframe"); ?>: <span class="viewText"><?=$currentView; ?></span><span class="caret"></span></button>
                         <ul class="dropdown-menu" id="ganttTimeControl">
-                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
+                           <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
                                 echo "active";
-                                                                                      }?>"> <?=$this->__("buttons.day"); ?></a></li>
+                                                                                      }?>"> <?=$tpl->__("buttons.day"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Week" class="<?php if ($roadmapView == 'Week') {
                                 echo "active";
-                                                                                       }?>"><?=$this->__("buttons.week"); ?></a></li>
+                                                                                       }?>"><?=$tpl->__("buttons.week"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Month" class="<?php if ($roadmapView == 'Month') {
                                 echo "active";
-                                                                                        }?>"><?=$this->__("buttons.month"); ?></a></li>
+                                                                                        }?>"><?=$tpl->__("buttons.month"); ?></a></li>
                         </ul>
                     </div>
-
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.gantt_view") ?> <?=$this->__("links.view") ?></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmap" class="active"><?=$this->__("links.gantt_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestones" ><?=$this->__("links.table") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showProjectCalendar"><?=$this->__("links.calendar_view") ?></a></li>
-                        </ul>
-                    </div>
-
-                    <div class="pull-left btn-group" style="margin-right:10px;">
-                        <form action="" method="get" id="searchForm">
-                            <label class="pull-right" for="includeTasks">&nbsp;<?=$this->__('label.showTasks'); ?></label>
-                            <input type="hidden" name="submitIncludeTasks" value="1" />
-                            <input type="checkbox" class="js-switch" id="includeTasks" name="includeTasks" onChange="this.form.submit();" <?php if ($this->get('includeTasks') === true) {
-                                echo "checked='checked'";
-                                                                                                                                          } ?>/>
-                        </form>
-                    </div>
-
                 </div>
 
             </div>
@@ -89,13 +69,10 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
         if (count($milestones) == 0) {
             echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
             echo"<div style='width:30%' class='svgContainer'>";
-            echo file_get_contents(ROOT . "/images/svg/undraw_adjustments_p22m.svg");
+            echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
             echo"</div>";
             echo"
-            <h4>" . $this->__("headlines.no_milestones") . "<br/>
-
-            <br />
-            <a href=\"" . BASE_URL . "/tickets/editMilestone\" class=\"milestoneModal addCanvasLink btn btn-primary\">" . $this->__("links.add_milestone") . "</a></h4></div>";
+            <h4>" . $tpl->__("headlines.no_tickets") . "<br /></h4></div>";
         }
         ?>
         <div class="gantt-wrapper">
@@ -109,7 +86,6 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
     jQuery(document).ready(function(){
 
-    leantime.ticketsController.initModals();
 
     <?php if (isset($_GET['showMilestoneModal'])) {
         if ($_GET['showMilestoneModal'] == "") {
@@ -130,35 +106,61 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
     <?php if (count($milestones) > 0) {?>
         var tasks = [
 
-            <?php foreach ($milestones as $mlst) {
+            <?php
+            $lastMilestoneSortIndex = array();
 
-                $headline = $this->__('label.' . strtolower($mlst->type)) .": ".$mlst->headline;
-                if($mlst->type == "milestone"){
+            //Set sort index first format: 0.0
+            //Sort is milestone sorting first with the milestone sort id as first index
+            //Then sort by task as second index
+
+            foreach ($milestones as $mlst) {
+                if ($mlst->type == "milestone") {
+                    $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex != '' ? $mlst->sortIndex : 999;
+                }
+            }
+
+            foreach ($milestones as $mlst) {
+                $headline = $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
+                if ($mlst->type == "milestone") {
                     $headline .= " (" . $mlst->percentDone . "% Done)";
                 }
 
                 $color = "#8D99A6";
-                if($mlst->type == "milestone"){
+                if ($mlst->type == "milestone") {
                     $color = $mlst->tags;
                 }
 
                 $sortIndex = 0;
-                if($mlst->sortIndex != '' && is_numeric($mlst->sortIndex)){
-                    $sortIndex = $mlst->sortIndex;
+
+
+
+                //Item is milestone itself, set first index + .0
+                if ($mlst->type == "milestone") {
+                    $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
+                }else {
+                    //If it has a milestone dependency, add milestone index
+                    if ($mlst->milestoneid > 0) {
+                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ). "." . ($mlst->sortIndex ?? 999);
+                    } else {
+                        $sortIndex = "999" . "." . ($mlst->sortIndex ?? 999);
+                    }
                 }
 
+
+
+
                 $dependencyList = array();
-                if($mlst->milestoneid != 0){
+                if ($mlst->milestoneid != 0) {
                     $dependencyList[] = $mlst->milestoneid;
                 }
 
-                if($mlst->dependingTicketId != 0) {
+                if ($mlst->dependingTicketId != 0) {
                     $dependencyList[] = $mlst->dependingTicketId;
                 }
 
                 echo"{
                     id :'" . $mlst->id . "',
-                    name :" . json_encode($headline) .",
+                    name :" . json_encode($headline) . ",
                     start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',
                     end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time()))) . "',
                     progress :'" . $mlst->percentDone . "',
@@ -167,7 +169,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     type: '" . strtolower($mlst->type) . "',
                     bg_color: '" . $color . "',
                     thumbnail: '" . BASE_URL . "/api/users?profileImage=" . $mlst->editorId . "',
-                    sortIndex: ".$sortIndex."
+                    sortIndex: " . $sortIndex . "
 
                 },";
             }

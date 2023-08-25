@@ -7,6 +7,8 @@ namespace leantime\domain\repositories {
 
     class tickets
     {
+        use core\eventhelpers;
+
         /**
          * @access public
          * @var    object
@@ -37,47 +39,47 @@ namespace leantime\domain\repositories {
          */
         public $statusListSeed = array(
             3 => array(
-                    "name" => 'status.new',
-                    "class" => 'label-info',
-                    "statusType" => "NEW",
-                    "kanbanCol" => true,
-                    "sortKey" => 1
+                "name" => 'status.new',
+                "class" => 'label-info',
+                "statusType" => "NEW",
+                "kanbanCol" => true,
+                "sortKey" => 1,
             ),
             1 => array(
                 "name" => 'status.blocked',
                 "class" => 'label-important',
                 "statusType" => "INPROGRESS",
                 "kanbanCol" => true,
-                "sortKey" => 2
+                "sortKey" => 2,
             ),
             4 => array(
                 "name" => 'status.in_progress',
                 "class" => 'label-warning',
                 "statusType" => "INPROGRESS",
                 "kanbanCol" => true,
-                "sortKey" => 3
+                "sortKey" => 3,
             ),
             2 => array(
                 "name" => 'status.waiting_for_approval',
                 "class" => 'label-warning',
                 "statusType" => "INPROGRESS",
                 "kanbanCol" => true,
-                "sortKey" => 4
+                "sortKey" => 4,
             ),
             0 => array(
                 "name" => 'status.done',
                 "class" => 'label-success',
                 "statusType" => "DONE",
                 "kanbanCol" => true,
-                "sortKey" => 5
+                "sortKey" => 5,
             ),
             -1 => array(
                 "name" => 'status.archived',
                 "class" => 'label-default',
                 "statusType" => "DONE",
                 "kanbanCol" => false,
-                "sortKey" => 6
-            )
+                "sortKey" => 6,
+            ),
         );
 
         /**
@@ -90,7 +92,7 @@ namespace leantime\domain\repositories {
          * @access public
          * @var    array
          */
-        public $efforts = array(1 => 'XS', 2 => 'S', 3 => "M", 5 => "L", 8 => "XL", 13 => "XXL");
+        public $efforts = array('0.5' => '< 2min', '1' => 'XS', '2' => 'S', '3' => "M", '5' => "L", '8' => "XL", '13' => "XXL");
 
         /**
          * @access public
@@ -106,13 +108,13 @@ namespace leantime\domain\repositories {
 
         /**
          * @access private
-         * @var    int
+         * @var    integer
          */
         private $page = 0;
 
         /**
          * @access public
-         * @var    int
+         * @var    integer
          */
         public $rowsPerPage = 10;
 
@@ -142,11 +144,10 @@ namespace leantime\domain\repositories {
          * @access public
          * @return unknown_type
          */
-        public function __construct()
+        public function __construct(core\db $db, core\language $language)
         {
-
-            $this->db = core\db::getInstance();
-            $this->language = core\language::getInstance();
+            $this->db = $db;
+            $this->language = $language;
         }
 
         public function getStateLabels($projectId = null)
@@ -221,7 +222,7 @@ namespace leantime\domain\repositories {
             $statusByType = array(
                 "DONE" => array(),
                 "INPROGRESS" => array(),
-                "NEW" => array()
+                "NEW" => array(),
             );
             $states = $this->getStateLabels($projectId);
 
@@ -234,16 +235,24 @@ namespace leantime\domain\repositories {
             $newQuery = "IN(" . implode(",", $statusByType["NEW"]) . ")";
             $openTodos = "IN(" . implode(",", array_merge($statusByType["NEW"], $statusByType["INPROGRESS"])) . ")";
 
-            if($doneQuery == "IN()") $doneQuery="IN(FALSE)";
-            if($inProgressQuery == "IN()") $inProgressQuery="IN(FALSE)";
-            if($newQuery == "IN()") $newQuery="IN(FALSE)";
-            if($openTodos == "IN()") $openTodos="IN(FALSE)";
+            if ($doneQuery == "IN()") {
+                $doneQuery = "IN(FALSE)";
+            }
+            if ($inProgressQuery == "IN()") {
+                $inProgressQuery = "IN(FALSE)";
+            }
+            if ($newQuery == "IN()") {
+                $newQuery = "IN(FALSE)";
+            }
+            if ($openTodos == "IN()") {
+                $openTodos = "IN(FALSE)";
+            }
 
             $statusByTypeQuery = array(
                 "DONE" => $doneQuery,
                 "INPROGRESS" => $inProgressQuery,
                 "NEW" => $newQuery,
-                "ALLOPEN" => $openTodos
+                "ALLOPEN" => $openTodos,
             );
             return $statusByTypeQuery;
         }
@@ -266,8 +275,7 @@ namespace leantime\domain\repositories {
 
         public function getUsersTickets($id, $limit)
         {
-
-            $users = new users();
+            $users = app()->make(users::class);
             $user = $users->getUser($id);
 
             $sql = "SELECT
@@ -337,8 +345,6 @@ namespace leantime\domain\repositories {
         public function getAllBySearchCriteria($searchCriteria, $sort = 'standard', $limit = null)
         {
 
-
-
             $query = "SELECT
 							zp_tickets.id,
 							zp_tickets.headline,
@@ -396,9 +402,10 @@ namespace leantime\domain\repositories {
 						    (zp_relationuserproject.userId = :userId
 						        OR zp_projects.psettings = 'all'
 				                OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
-						        )
+						        )";
 
-						 AND zp_tickets.type <> 'milestone'";
+            $query .= " AND zp_tickets.type <> 'milestone'";
+
 
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"]  != "") {
                 $query .= " AND zp_tickets.projectId = :projectId";
@@ -411,13 +418,13 @@ namespace leantime\domain\repositories {
             }
 
             if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
-                $query .= " AND zp_tickets.milestoneid = :milestoneid";
+                $milestoneIn = core\db::arrayToPdoBindingString("milestone", count(explode(",", $searchCriteria["milestone"])));
+                $query .= " AND zp_tickets.milestoneid IN(" . $milestoneIn . ")";
             }
 
             if (isset($searchCriteria["status"]) && $searchCriteria["status"]  == "all") {
                 $query .= " ";
-
-            }else if (isset($searchCriteria["status"]) && $searchCriteria["status"]  != "") {
+            } elseif (isset($searchCriteria["status"]) && $searchCriteria["status"]  != "") {
                 $statusArray = explode(",", $searchCriteria['status']);
 
                 if (array_search("not_done", $statusArray) !== false) {
@@ -446,11 +453,13 @@ namespace leantime\domain\repositories {
             }
 
             if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
-                $query .= " AND LOWER(zp_tickets.type) = LOWER(:searchType) ";
+                $typeIn = core\db::arrayToPdoBindingString("type", count(explode(",", strtolower($searchCriteria["type"]))));
+                $query .= " AND LOWER(zp_tickets.type) IN(" . $typeIn . ")";
             }
 
             if (isset($searchCriteria["priority"]) && $searchCriteria["priority"]  != "") {
-                $query .= " AND LOWER(zp_tickets.priority) = LOWER(:searchPriority) ";
+                $priorityIn = core\db::arrayToPdoBindingString("priority", count(explode(",", strtolower($searchCriteria["priority"]))));
+                $query .= " AND LOWER(zp_tickets.priority) IN(" . $priorityIn . ")";
             }
 
             if (isset($searchCriteria["term"]) && $searchCriteria["term"]  != "") {
@@ -484,33 +493,40 @@ namespace leantime\domain\repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            if(isset($searchCriteria["currentUser"])){
+            if (isset($searchCriteria["currentUser"])) {
                 $stmn->bindValue(':userId', $searchCriteria["currentUser"], PDO::PARAM_INT);
-            }else{
+            } else {
                 $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
             }
 
-            if(isset($searchCriteria["currentClient"])){
+            if (isset($searchCriteria["currentClient"])) {
                 $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
-            }else{
+            } else {
                 $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'], PDO::PARAM_INT);
             }
-
 
 
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"] != "") {
                 $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
             }
 
+
             if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
-                $stmn->bindValue(':milestoneid', $searchCriteria["milestone"], PDO::PARAM_INT);
+                foreach (explode(",", $searchCriteria["milestone"]) as $key => $milestone) {
+                    $stmn->bindValue(":milestone" . $key, $milestone, PDO::PARAM_STR);
+                }
             }
 
             if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
-                $stmn->bindValue(':searchType', $searchCriteria["type"], PDO::PARAM_STR);
+                foreach (explode(",", $searchCriteria["type"]) as $key => $type) {
+                    $stmn->bindValue(":type" . $key, $type, PDO::PARAM_STR);
+                }
             }
+
             if (isset($searchCriteria["priority"]) && $searchCriteria["priority"]  != "") {
-                $stmn->bindValue(':searchPriority', $searchCriteria["priority"], PDO::PARAM_STR);
+                foreach (explode(",", $searchCriteria["priority"]) as $key => $priority) {
+                    $stmn->bindValue(":priority" . $key, $priority, PDO::PARAM_STR);
+                }
             }
 
             if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
@@ -519,8 +535,7 @@ namespace leantime\domain\repositories {
                 }
             }
 
-            if(isset($searchCriteria['status']) && $searchCriteria["status"]  != "all") {
-
+            if (isset($searchCriteria['status']) && $searchCriteria["status"]  != "all") {
                 $statusArray = explode(",", $searchCriteria['status']);
                 if ($searchCriteria["status"] != "" && array_search("not_done", $statusArray) === false) {
                     foreach (explode(",", $searchCriteria["status"]) as $key => $status) {
@@ -547,11 +562,8 @@ namespace leantime\domain\repositories {
 
             $stmn->execute();
 
-
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
-
-
 
             return $values;
         }
@@ -635,7 +647,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  $id
-         * @return \leantime\domain\models\tickets|bool
+         * @return \leantime\domain\models\tickets|boolean
          */
         public function getTicket($id)
         {
@@ -747,7 +759,8 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllPossibleParents(\leantime\domain\models\tickets $ticket, $projectId) {
+        public function getAllPossibleParents(\leantime\domain\models\tickets $ticket, $projectId)
+        {
 
             $query = "SELECT
 						zp_tickets.id,
@@ -791,9 +804,9 @@ namespace leantime\domain\repositories {
 					    AND (zp_tickets.dependingTicketId <> :ticketId OR zp_tickets.dependingTicketId IS NULL)
                     ";
 
-                    if($projectId !== 0){
-                        $query .= " AND zp_tickets.projectId = :projectId";
-                    }
+            if ($projectId !== 0) {
+                $query .= " AND zp_tickets.projectId = :projectId";
+            }
 
                     $query .= " GROUP BY
 						zp_tickets.id ORDER BY zp_tickets.date DESC";
@@ -803,7 +816,7 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':ticketId', $ticket->id, PDO::PARAM_INT);
             $stmn->bindValue(':dependingId', $ticket->dependingTicketId, PDO::PARAM_INT);
 
-            if($projectId !== 0){
+            if ($projectId !== 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
             }
 
@@ -814,10 +827,17 @@ namespace leantime\domain\repositories {
             return $values;
         }
 
-        public function getAllMilestones($projectId, $includeArchived = false, $sortBy = "headline", $includeTasks = false, $clientId = false)
+        /**
+         * Gets all tasks grouped around milestones for timeline views
+         *
+         * @param $searchCriteria
+         * @param $sort
+         * @return array|false
+         */
+        public function getAllMilestones(array $searchCriteria, string $sort = 'standard')
         {
 
-            $statusGroups = $this->getStatusListGroupedByType($projectId);
+            $statusGroups = $this->getStatusListGroupedByType($searchCriteria["currentProject"] ?? $_SESSION['currentProject']);
 
 
             $query = "SELECT
@@ -886,43 +906,144 @@ namespace leantime\domain\repositories {
 						LEFT JOIN zp_timesheets AS timesheets ON progressTickets.id = timesheets.ticketId
 						WHERE (zp_projects.state <> -1 OR zp_projects.state IS NULL)";
 
-            if($projectId !== 0){
+
+            if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"]  != "") {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
-            if ($includeTasks === true) {
-                $query .= "";
+
+            if (isset($searchCriteria["currentClient"]) && $searchCriteria["currentClient"]  != "" && $searchCriteria["currentClient"]  != 0) {
+                $query .= " AND zp_projects.clientId = :clientId";
+            }
+
+            if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
+                $editorIdIn = core\db::arrayToPdoBindingString("users", count(explode(",", $searchCriteria["users"])));
+                $query .= " AND zp_tickets.editorId IN(" . $editorIdIn . ")";
+            }
+
+            if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
+                $milestoneIn = core\db::arrayToPdoBindingString("milestone", count(explode(",", $searchCriteria["milestone"])));
+                $query .= " AND zp_tickets.milestoneid IN(" . $milestoneIn . ")";
+            }
+
+            if (isset($searchCriteria["status"]) && $searchCriteria["status"]  == "all") {
+                $query .= " ";
+            } elseif (isset($searchCriteria["status"]) && $searchCriteria["status"]  != "") {
+                $statusArray = explode(",", $searchCriteria['status']);
+
+                if (array_search("not_done", $statusArray) !== false) {
+                    //Project Id needs to be set to search for not_done due to custom done states across projects
+                    if ($searchCriteria["currentProject"] != "") {
+                        $statusLabels = $this->getStateLabels($searchCriteria["currentProject"]);
+
+                        $statusList = array();
+                        foreach ($statusLabels as $key => $status) {
+                            if ($status['statusType'] !== "DONE") {
+                                $statusList[] = $key;
+                            }
+                        }
+
+                        $query .= " AND zp_tickets.status IN(" . implode(",", $statusList) . ")";
+                    }
+                } else {
+                    $statusIn = core\db::arrayToPdoBindingString(
+                        "status",
+                        count(explode(",", $searchCriteria["status"]))
+                    );
+                    $query .= " AND zp_tickets.status IN(" . $statusIn . ")";
+                }
             } else {
-                $query .= " AND zp_tickets.type = 'milestone' ";
+                $query .= " AND zp_tickets.status <> -1";
             }
 
-            if ($includeArchived === false) {
-                $query .= " AND zp_tickets.status > -1 ";
+            if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
+                $typeIn = core\db::arrayToPdoBindingString("type", count(explode(",", strtolower($searchCriteria["type"]))));
+                $query .= " AND LOWER(zp_tickets.type) IN(" . $typeIn . ")";
             }
 
-            if($clientId !== false && $clientId !== 0){
-                $query .= "AND zp_clients.id = :clientId";
+            if (isset($searchCriteria["priority"]) && $searchCriteria["priority"]  != "") {
+                $priorityIn = core\db::arrayToPdoBindingString("priority", count(explode(",", strtolower($searchCriteria["priority"]))));
+                $query .= " AND LOWER(zp_tickets.priority) IN(" . $priorityIn . ")";
             }
 
-                $query .= "	GROUP BY
+            if (isset($searchCriteria["term"]) && $searchCriteria["term"]  != "") {
+                $query .= " AND (FIND_IN_SET(:termStandard, zp_tickets.tags) OR zp_tickets.headline LIKE :termWild OR zp_tickets.description LIKE :termWild OR zp_tickets.id LIKE :termWild)";
+            }
+
+            if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
+                $sprintIn = core\db::arrayToPdoBindingString("sprint", count(explode(",", $searchCriteria["sprint"])));
+                $query .= " AND zp_tickets.sprint IN(" . $sprintIn . ")";
+            }
+
+            if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  == "backlog") {
+                $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1)";
+            }
+
+            $query .= "	GROUP BY
 						zp_tickets.id, progressTickets.milestoneid";
 
-            if ($sortBy == "date") {
-                $query .= "	ORDER BY TO_DAYS(IF(zp_tickets.editFrom <> '0000-00-00 00:00:00', zp_tickets.editFrom, NOW())) ASC, zp_tickets.milestoneid ASC";
-            } elseif ($sortBy == "duedate") {
-                $query .= "	ORDER BY TO_DAYS(zp_tickets.editTo) ASC";
-            } elseif ($sortBy == "headline") {
-                $query .= "	ORDER BY zp_tickets.headline ASC";
+            if ($sort == "standard") {
+                $query .= " ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            } elseif ($sort == "kanbansort") {
+                $query .= " ORDER BY zp_tickets.kanbanSortIndex ASC, zp_tickets.id DESC";
+            } elseif ($sort == "duedate") {
+                $query .= " ORDER BY (zp_tickets.dateToFinish = '0000-00-00 00:00:00'), zp_tickets.dateToFinish ASC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            } elseif ($sort == "date") {
+                $query .= " ORDER BY zp_tickets.date DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
             }
-
-
 
             $stmn = $this->db->database->prepare($query);
-            if($projectId !== 0){
-                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"] != "") {
+                $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
             }
 
-            if($clientId !== false && $clientId !== 0){
-                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
+            if (isset($searchCriteria["currentClient"]) && $searchCriteria["currentClient"]  != "" && $searchCriteria["currentClient"]  != 0) {
+                $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
+            }
+
+            if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
+                foreach (explode(",", $searchCriteria["users"]) as $key => $user) {
+                    $stmn->bindValue(":users" . $key, $user, PDO::PARAM_STR);
+                }
+            }
+
+            if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
+                foreach (explode(",", $searchCriteria["milestone"]) as $key => $milestone) {
+                    $stmn->bindValue(":milestone" . $key, $milestone, PDO::PARAM_STR);
+                }
+            }
+
+            if (isset($searchCriteria['status']) && $searchCriteria["status"]  != "all") {
+                $statusArray = explode(",", $searchCriteria['status']);
+                if ($searchCriteria["status"] != "" && array_search("not_done", $statusArray) === false) {
+                    foreach (explode(",", $searchCriteria["status"]) as $key => $status) {
+                        $stmn->bindValue(":status" . $key, $status, PDO::PARAM_STR);
+                    }
+                }
+            }
+
+            if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
+                foreach (explode(",", $searchCriteria["type"]) as $key => $type) {
+                    $stmn->bindValue(":type" . $key, $type, PDO::PARAM_STR);
+                }
+            }
+
+            if (isset($searchCriteria["priority"]) && $searchCriteria["priority"]  != "") {
+                foreach (explode(",", $searchCriteria["priority"]) as $key => $priority) {
+                    $stmn->bindValue(":priority" . $key, $priority, PDO::PARAM_STR);
+                }
+            }
+
+            if (isset($searchCriteria["term"]) && $searchCriteria["term"]  != "") {
+                $termWild = "%" . $searchCriteria["term"] . "%";
+                $stmn->bindValue(':termWild', $termWild, PDO::PARAM_STR);
+                $stmn->bindValue(':termStandard', $searchCriteria["term"], PDO::PARAM_STR);
+            }
+
+            if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
+                foreach (explode(",", $searchCriteria["sprint"]) as $key => $sprint) {
+                    $stmn->bindValue(":sprint" . $key, $sprint, PDO::PARAM_STR);
+                }
             }
 
             $stmn->execute();
@@ -1175,7 +1296,7 @@ namespace leantime\domain\repositories {
          *
          * @access public
          * @param  array $values
-         * @return bool|int
+         * @return boolean|integer
          */
         public function addTicket(array $values)
         {
@@ -1286,8 +1407,8 @@ namespace leantime\domain\repositories {
             foreach ($params as $key => $value) {
                 $sql .= "" . core\db::sanitizeToColumnString($key) . "=:" . core\db::sanitizeToColumnString($key) . ", ";
                 //send status update event
-                if($key == 'status'){
-                    core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$id, "status"=>$value, "action"=>"ticketStatusUpdate"));
+                if ($key == 'status') {
+                    static::dispatch_event("ticketStatusUpdate", array("ticketId" => $id, "status" => $value, "action" => "ticketStatusUpdate"));
                 }
             }
 
@@ -1389,7 +1510,6 @@ namespace leantime\domain\repositories {
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':sortIndex', $ticketSorting, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-
             } else {
                 $query = "UPDATE zp_tickets
 					SET
@@ -1401,10 +1521,9 @@ namespace leantime\domain\repositories {
                 $stmn = $this->db->database->prepare($query);
                 $stmn->bindValue(':status', $status, PDO::PARAM_INT);
                 $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-
             }
 
-            core\eventhelpers::dispatch_event("ticketStatusUpdate", array("ticketId"=>$ticketId, "status"=>$status, "action"=>"ticketStatusUpdate", "handler"=>$handler));
+            static::dispatch_event("ticketStatusUpdate", array("ticketId" => $ticketId, "status" => $status, "action" => "ticketStatusUpdate", "handler" => $handler));
             return $stmn->execute();
 
 
@@ -1431,7 +1550,8 @@ namespace leantime\domain\repositories {
                 'staging' => 'staging',
                 'production' => 'production',
                 'planHours'    => 'planHours',
-                'status' => 'status');
+                'status' => 'status',
+            );
 
             $changedFields = array();
 

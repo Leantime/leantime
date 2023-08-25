@@ -8,7 +8,6 @@ namespace leantime\domain\repositories {
 
     class wiki
     {
-
         private core\db $db;
 
         /**
@@ -16,11 +15,10 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(core\db $db)
         {
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
-
 
         public function getArticle($id, $projectId)
         {
@@ -406,7 +404,5 @@ namespace leantime\domain\repositories {
 
             return 0;
         }
-
-
     }
 }

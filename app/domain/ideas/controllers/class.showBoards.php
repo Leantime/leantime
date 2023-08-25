@@ -11,19 +11,18 @@ namespace leantime\domain\controllers {
 
     class showBoards extends controller
     {
-        private $ideaRepo;
-        private $projectService;
+        private repositories\ideas $ideaRepo;
+        private services\projects $projectService;
 
         /**
          * init - initialize private variables
          *
          * @access private
          */
-        public function init()
+        public function init(repositories\ideas $ideaRepo, services\projects $projectService)
         {
-
-            $this->ideaRepo = new repositories\ideas();
-            $this->projectService = new services\projects();
+            $this->ideaRepo = $ideaRepo;
+            $this->projectService = $projectService;
 
             $_SESSION['lastPage'] = CURRENT_URL;
             $_SESSION['lastIdeaView'] = "board";
@@ -38,17 +37,14 @@ namespace leantime\domain\controllers {
         {
 
             $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
-            if($allCanvas == false || count($allCanvas) == 0){
-
+            if ($allCanvas == false || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__("label.board"),
                     'author' => $_SESSION['userdata']['id'],
-                    'projectId' => $_SESSION['currentProject']
+                    'projectId' => $_SESSION['currentProject'],
                 ];
                 $currentCanvasId = $this->ideaRepo->addCanvas($values);
                 $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
-
-
             }
 
             if (isset($_SESSION['currentIdeaCanvas'])) {
@@ -80,9 +76,9 @@ namespace leantime\domain\controllers {
                     $currentCanvasId = $this->ideaRepo->addCanvas($values);
                     $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success');
+                    $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', 'idea_board_created');
 
-                    $mailer = new core\mailer();
+                    $mailer = app()->make(core\mailer::class);
                     $mailer->setContext('idea_board_created');
                     $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
@@ -93,7 +89,7 @@ namespace leantime\domain\controllers {
                     //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
 
                     // NEW Queuing messaging system
-                    $queue = new repositories\queue();
+                    $queue = app()->make(repositories\queue::class);
                     $queue->queueMessageToUsers($users, $message, $this->language->__('email_notifications.idea_board_created_subject'), $_SESSION["currentProject"]);
 
 

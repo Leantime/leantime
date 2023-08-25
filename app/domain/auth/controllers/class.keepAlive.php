@@ -18,9 +18,9 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(services\auth $authService)
         {
-            $this->authService = services\auth::getInstance();
+            $this->authService = $authService;
         }
 
 
@@ -38,10 +38,9 @@ namespace leantime\domain\controllers {
 
             $return = $this->authService->updateUserSessionDB($userId, $sessionId);
 
-            if($return){
-
+            if ($return) {
                 $this->tpl->displayJson("{'status':'ok'}");
-            }else{
+            } else {
                 $this->tpl->displayJson("{'status':'logout'}");
             }
         }

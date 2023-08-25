@@ -1,11 +1,17 @@
 <?php
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 /** @var leantime\services\auth $login */
 /** @var leantime\core\language $language */
 ?>
-<div id="fileManager">
-    <div >
 
-        <?php echo $this->displayNotification() ?>
+
+
+
+
+<div id="fileManager">
+    <div>
+
+        <?php echo $tpl->displayNotification() ?>
 
         <div class='mediamgr'>
             <div class='mediamgr_left'>
@@ -33,7 +39,7 @@
                             </div>
                         </div>
 
-                        <input type="submit" name="upload" class="button" value="<?php echo $this->__('UPLOAD'); ?>" />
+                        <input type="submit" name="upload" class="button" value="<?php echo $tpl->__('UPLOAD'); ?>" />
 
                     </form>
 
@@ -42,7 +48,7 @@
                 <div class="mediamgr_content">
 
                     <ul id='medialist' class='listfile'>
-                        <?php foreach ($this->get('files') as $file) : ?>
+                        <?php foreach ($tpl->get('files') as $file) : ?>
                             <li class="<?php echo $file['moduleId'] ?>">
                                 <div class="inlineDropDownContainer dropright" style="float:right;">
 
@@ -50,22 +56,22 @@
                                         <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <li class="nav-header"><?php echo $this->__("subtitles.file"); ?></li>
-                                        <li><a target="_blank" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $this->__("links.download"); ?></a></li>
+                                        <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
+                                        <li><a target="_blank" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
 
                                         <?php
 
                                         if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                            <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $this->__("links.delete"); ?></a></li>
+                                            <li><a href="<?=BASE_URL ?>/files/showAll?delFile=<?php echo $file['id'] ?>" class="delete deleteFile"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
                                         <?php  } ?>
 
                                     </ul>
                                 </div>
                                 <a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                                    <?php if (in_array(strtolower($file['extension']), $this->get('imgExtensions'))) :  ?>
+                                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
                                         <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                     <?php else : ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/thumbs/doc.png' />
+                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
                                     <?php endif; ?>
                                     <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
                                 </a>

@@ -9,28 +9,26 @@ namespace leantime\domain\repositories {
     {
         /**
          * @access public
-         * @var    object
+         * @var    core\db
          */
-        private $db = '';
+        private ?core\db $db;
 
-        private $language;
+        private core\language $language;
 
         /**
          * __construct - get database connection
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(core\db $db, core\language $language)
         {
-
-            $this->db = core\db::getInstance();
-            $this->language = core\language::getInstance();
+            $this->db = $db;
+            $this->language = $language;
             $this->entity = "calendar";
         }
 
         public function getAllDates($dateFrom, $dateTo)
         {
-
             $query = "SELECT * FROM zp_calendar WHERE
 					userId = :userId ORDER BY zp_calendar.dateFrom";
 
@@ -65,7 +63,7 @@ namespace leantime\domain\repositories {
             $stmn->closeCursor();
             */
 
-            $ticketService = new \leantime\domain\services\tickets();
+            $ticketService = app()->make(\leantime\domain\services\tickets::class);
             $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
 
             if (!empty($ticketArray)) {
@@ -106,20 +104,20 @@ namespace leantime\domain\repositories {
                         'd' => date('d', $dateFrom),
                         'h' => $allDay == true ? "00" : date('H', $dateFrom),
                         'i' => $allDay == true ? "00" : date('i', $dateFrom),
-                    'ical' => date('Ymd\THis', $dateFrom)
+                    'ical' => date('Ymd\THis', $dateFrom),
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
                         'm' => date('m', $dateTo),
-                        'd' => $allDay == true ? date('d', ($dateFrom+(60*60*24))) : date('d', $dateTo),
+                        'd' => $allDay == true ? date('d', ($dateFrom + (60 * 60 * 24))) : date('d', $dateTo),
                         'h' => $allDay == true ? "00" : date('H', $dateTo),
                         'i' => $allDay == true ? "00" : date('i', $dateTo),
-                        'ical' => date('Ymd\THis', $dateTo)
+                        'ical' => date('Ymd\THis', $dateTo),
                     ),
                     'id' => $value['id'],
                     'projectId' => '',
                     'eventType' => "calendar",
-                    'dateContext' => 'plan'
+                    'dateContext' => 'plan',
                 );
             }
 
@@ -131,22 +129,22 @@ namespace leantime\domain\repositories {
                     if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
-                        $context = '❕ '.$this->language->__("label.due_todo");
+                        $context = '❕ ' . $this->language->__("label.due_todo");
 
-                        if(!isset($statusLabelsArray[$ticket['projectId']])) {
+                        if (!isset($statusLabelsArray[$ticket['projectId']])) {
                             $statusLabelsArray[$ticket['projectId']] = $ticketService->getStatusLabels(
                                 $ticket['projectId']
                             );
                         }
 
-                        if(isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
+                        if (isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
                             $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]["name"];
-                        }else{
+                        } else {
                             $statusName = "";
                         }
 
                         $newValues[] = array(
-                            'title'  => $context . $ticket['headline'] . " (".$statusName.")",
+                            'title'  => $context . $ticket['headline'] . " (" . $statusName . ")",
                             'allDay' => false,
                             'dateFrom' => array(
                                 'y' => date('Y', $dateFrom),
@@ -154,7 +152,7 @@ namespace leantime\domain\repositories {
                                 'd' => date('d', $dateFrom),
                                 'h' => date('H', $dateFrom),
                                 'i' => date('i', $dateFrom),
-                                'ical' => date('Ymd\THis', $dateFrom)
+                                'ical' => date('Ymd\THis', $dateFrom),
                             ),
                             'dateTo' => array(
                                 'y' => date('Y', $dateTo),
@@ -162,18 +160,16 @@ namespace leantime\domain\repositories {
                                 'd' => date('d', $dateTo),
                                 'h' => date('H', $dateTo),
                                 'i' => date('i', $dateTo),
-                                'ical' => date('Ymd\THis', $dateTo)
+                                'ical' => date('Ymd\THis', $dateTo),
                             ),
                             'id' => $ticket['id'],
                             'projectId' => $ticket['projectId'],
                             'eventType' => "ticket",
-                            'dateContext' => 'due'
+                            'dateContext' => 'due',
                         );
-
                     }
 
                     if ($ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00") {
-
                         $dateFrom = strtotime($ticket['editFrom']);
                         $dateTo     = strtotime($ticket['editTo']);
                         $context =  $this->language->__("label.planned_edit");
@@ -187,7 +183,7 @@ namespace leantime\domain\repositories {
                                 'd' => date('d', $dateFrom),
                                 'h' => date('H', $dateFrom),
                                 'i' => date('i', $dateFrom),
-                                'ical' => date('Ymd\THis', $dateFrom)
+                                'ical' => date('Ymd\THis', $dateFrom),
                             ),
                             'dateTo' => array(
                                 'y' => date('Y', $dateTo),
@@ -195,15 +191,14 @@ namespace leantime\domain\repositories {
                                 'd' => date('d', $dateTo),
                                 'h' => date('H', $dateTo),
                                 'i' => date('i', $dateTo),
-                                'ical' => date('Ymd\THis', $dateTo)
+                                'ical' => date('Ymd\THis', $dateTo),
                             ),
                             'id' => $ticket['id'],
                             'projectId' => $ticket['projectId'],
                             'eventType' => "ticket",
-                            'dateContext' => 'plan'
+                            'dateContext' => 'plan',
                         );
                     }
-
                 }
             }
 
@@ -213,9 +208,8 @@ namespace leantime\domain\repositories {
 
         public function getCalendarBySecretHash($userHash, $calHash)
         {
-
             //get user
-            $userRepo = new \leantime\domain\repositories\users();
+            $userRepo = app()->make(\leantime\domain\repositories\users::class);
             $user = $userRepo->getUserBySha($userHash);
 
 
@@ -224,7 +218,7 @@ namespace leantime\domain\repositories {
             }
 
             //Check if setting exists
-            $settingService = new \leantime\domain\repositories\setting();
+            $settingService = app()->make(\leantime\domain\repositories\setting::class);
             $hash = $settingService->getSetting("usersettings." . $user['id'] . ".icalSecret");
 
             if ($hash !== false && $calHash == $hash) {
@@ -282,17 +276,17 @@ namespace leantime\domain\repositories {
                         'm' => date('m', $dateFrom),
                         'd' => date('d', $dateFrom),
                         'h' => date('H', $dateFrom),
-                        'i' => date('i', $dateFrom)
+                        'i' => date('i', $dateFrom),
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
                         'm' => date('m', $dateTo),
                         'd' => date('d', $dateTo),
                         'h' => date('H', $dateTo),
-                        'i' => date('i', $dateTo)
+                        'i' => date('i', $dateTo),
                     ),
                     'id' => $value['id'],
-                    'eventType' => "calendar"
+                    'eventType' => "calendar",
                 );
             }
 
@@ -324,17 +318,17 @@ namespace leantime\domain\repositories {
                             'm' => date('m', $dateFrom),
                             'd' => date('d', $dateFrom),
                             'h' => date('H', $dateFrom),
-                            'i' => date('i', $dateFrom)
+                            'i' => date('i', $dateFrom),
                         ),
                         'dateTo' => array(
                             'y' => date('Y', $dateTo),
                             'm' => date('m', $dateTo),
                             'd' => date('d', $dateTo),
                             'h' => date('H', $dateTo),
-                            'i' => date('i', $dateTo)
+                            'i' => date('i', $dateTo),
                         ),
                         'id' => $ticket['id'],
-                        'eventType' => "ticket"
+                        'eventType' => "ticket",
                     );
                 }
             }
@@ -388,8 +382,14 @@ namespace leantime\domain\repositories {
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
             $stmn->bindValue(':allDay', $values['allDay'], PDO::PARAM_STR);
 
-            $stmn->execute();
-            $stmn->closeCursor();
+            if ($stmn->execute()) {
+                $id = $this->db->database->lastInsertId();
+                $stmn->closeCursor();
+                return $id;
+            } else {
+                $stmn->closeCursor();
+                return false;
+            }
         }
 
         public function getEvent($id)
@@ -528,6 +528,5 @@ namespace leantime\domain\repositories {
             $stmn->execute();
             $stmn->closeCursor();
         }
-
     }
 }

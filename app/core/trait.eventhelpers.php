@@ -15,13 +15,13 @@ namespace leantime\core {
          * @access protected
          *
          * @param string $hook
-         * @param mixed $available_params
+         * @param mixed  $available_params
          *
          * @return void
          */
         public static function dispatch_event(string $hook, mixed $available_params = [], string|int $function = null): void
         {
-            events::dispatch_event($hook, $available_params, self::get_event_context($function));
+            events::dispatch_event($hook, $available_params, static::get_event_context($function));
         }
 
         /**
@@ -30,14 +30,14 @@ namespace leantime\core {
          * @access protected
          *
          * @param string $hook
-         * @param mixed $payload
-         * @param mixed $available_params
+         * @param mixed  $payload
+         * @param mixed  $available_params
          *
          * @return mixed
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
         {
-            return events::dispatch_filter($hook, $payload, $available_params, self::get_event_context($function));
+            return events::dispatch_filter($hook, $payload, $available_params, static::get_event_context($function));
         }
 
         /**
@@ -50,12 +50,12 @@ namespace leantime\core {
         private static function get_event_context($function): string
         {
             if (empty(self::$event_context)) {
-                self::$event_context = self::set_class_context();
+                self::$event_context = static::set_class_context();
             }
 
             $function = !empty($function) && is_string($function) && !is_numeric($function)
                 ? $function
-                : self::get_function_context(is_numeric($function) ? (int) $function : null);
+                : static::get_function_context(is_numeric($function) ? (int) $function : null);
 
             return self::$event_context . '.' . $function;
         }

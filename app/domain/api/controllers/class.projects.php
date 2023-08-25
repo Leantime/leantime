@@ -10,6 +10,7 @@ namespace leantime\domain\controllers {
 
     class projects extends controller
     {
+        private core\fileupload $fileUpload;
         private services\projects $projectService;
         private repositories\files $filesRepository;
 
@@ -19,11 +20,14 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->filesRepository = new repositories\files();
+        public function init(
+            core\fileupload $fileUpload,
+            services\projects $projectService,
+            repositories\files $filesRepository
+        ) {
+            $this->fileUpload = $fileUpload;
+            $this->projectService = $projectService;
+            $this->filesRepository = $filesRepository;
         }
 
 
@@ -37,23 +41,18 @@ namespace leantime\domain\controllers {
         {
 
             if (isset($params["projectAvatar"])) {
-
                 $return = $this->projectService->getProjectAvatar($params["projectAvatar"]);
 
                 if (is_array($return)) {
-
-                    $file = new core\fileupload();
-                    if($return["type"] == "uploaded"){
+                    $file = $this->fileUpload;
+                    if ($return["type"] == "uploaded") {
                         $file->displayImageFile($return["filename"]);
-                    }else if($return["type"] == "generated"){
+                    } elseif ($return["type"] == "generated") {
                         $file->displayImageFile("avatar", $return["filename"]);
                     }
-
-                } else if(is_object($return)){
-
+                } elseif (is_object($return)) {
                     header('Content-type: image/svg+xml');
                     echo $return->toXMLString();
-
                 }
             }
         }
@@ -69,7 +68,7 @@ namespace leantime\domain\controllers {
 
             //Updatind User Image
             if (isset($_FILES['file'])) {
-                $_FILES['file']['name'] = "profileImage-". $_SESSION['currentProject'] .".png";
+                $_FILES['file']['name'] = "profileImage-" . $_SESSION['currentProject'] . ".png";
 
                 $this->projectService->setProjectAvatar($_FILES, $_SESSION['currentProject']);
 
@@ -95,7 +94,6 @@ namespace leantime\domain\controllers {
             }
 
             if (isset($params['action']) && $params['action'] == "ganttSort") {
-
                 $results = $this->projectService->updateProjectSorting($params["payload"]);
 
                 if ($results === true) {
@@ -103,9 +101,7 @@ namespace leantime\domain\controllers {
                 } else {
                     echo "{status:failure}";
                 }
-
             }
-
         }
 
         /**
@@ -120,8 +116,6 @@ namespace leantime\domain\controllers {
 
             if (isset($params['id'])) {
                 $results = $this->projectService->patch($params['id'], $params);
-            } else {
-                echo "{status:failure, message: 'ID not set'}";
             }
 
             if (isset($params['patchModalSettings'])) {
@@ -147,10 +141,6 @@ namespace leantime\domain\controllers {
                     echo "{status:ok}";
                 }
             }
-
-
-
-
         }
 
 

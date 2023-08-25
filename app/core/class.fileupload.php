@@ -2,6 +2,7 @@
 
 namespace leantime\core;
 
+use GuzzleHttp\Exception\RequestException;
 use leantime\core\eventhelpers;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
@@ -11,68 +12,60 @@ use Exception;
 /**
  * Fileupload class - Data filuploads
  *
+ * @package    leantime
+ * @subpackage core
  */
 class fileupload
 {
     use eventhelpers;
 
     /**
-     * @access private
      * @var    string path on the server
      */
     private $path;
 
     /**
-     * @access public
-     * @var    int max filesize in kb
+     * @var integer max filesize in kb
      */
     public $max_size = 10000;
 
     /**
-     * @access private
-     * @var    string filename in a temporary variable
+     * @var string filename in a temporary variable
      */
     private $file_tmp_name;
 
     /**
-     * @access public
-     * @var    int
+     * @var integer
      */
     public $file_size;
 
     /**
-     * @access public
-     * @var    string give the file-type (not extension)
+     * @var string give the file-type (not extension)
      */
     public $file_type;
 
     /**
-     * @access public
-     * @var    string - Name of file after renaming and on server
+     * @var string - Name of file after renaming and on server
      */
     public $file_name;
 
     /**
-     * @access public
-     * @var    string
+     * @var string
      */
     public $error = '';
 
     /**
-     * @access public
-     * @var    string name of file after by upload
+     * @var string name of file after by upload
      */
     public $real_name = '';
 
     /**
-     * @access public
-     * @var    array parts of the path
+     * @var array parts of the path
      */
     public $path_parts = array();
 
     /**
-     * @access public
-     * @var    object configuration object
+     * @var \leantime\core\environment configuration object
      */
     public \leantime\core\environment $config;
 
@@ -83,11 +76,13 @@ class fileupload
 
     /**
      * fileupload constructor.
+     *
+     * @param \leantime\core\environment $config
+     * @return self
      */
-    public function __construct()
+    public function __construct(\leantime\core\environment $config)
     {
-
-        $this->config = \leantime\core\environment::getInstance();
+        $this->config = $config;
         $this->path = $this->config->userFilePath;
 
         if ($this->config->useS3 == true) {
@@ -96,28 +91,23 @@ class fileupload
                 [
                     'version' => 'latest',
                     'region' => $this->config->s3Region,
-                    'endpoint' => $this->config->s3EndPoint,
-                    'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
+                    'endpoint' => $this->config->s3EndPoint == "" ? null : $this->config->s3EndPoint,
+                    'use_path_style_endpoint' => !($this->config->s3UsePathStyleEndpoint == "false"),
                     'credentials' => [
                         'key' => $this->config->s3Key,
-                        'secret' => $this->config->s3Secret
-                    ]
+                        'secret' => $this->config->s3Secret,
+                    ],
                 ]
             );
-        } else {
-            //Can discuss whether we want to allow local uploads again at some point...
-            return false;
         }
-
-        return false;
     }
 
     /**
-     * This function returns the maximum files size that can be uploaded
-     * in PHP
-     * @returns int File size in bytes
-     **/
-    public static function getMaximumFileUploadSize()
+     * This function returns the maximum files size that can be uploaded in PHP
+     *
+     * @return int File size in bytes
+     */
+    public static function getMaximumFileUploadSize(): int
     {
         return min(self::convertPHPSizeToBytes(ini_get('post_max_size')), self::convertPHPSizeToBytes(ini_get('upload_max_filesize')));
     }
@@ -130,9 +120,8 @@ class fileupload
      */
     private static function convertPHPSizeToBytes($sSize)
     {
-        //
         $sSuffix = strtoupper(substr($sSize, -1));
-        if (!in_array($sSuffix,array('P','T','G','M','K'))){
+        if (!in_array($sSuffix, array('P','T','G','M','K'))) {
             return (int)$sSize;
         }
         $iValue = substr($sSize, 0, -1);
@@ -195,7 +184,6 @@ class fileupload
      */
     public function initFile($file)
     {
-
         $this->file_tmp_name = $file['tmp_name'];
         $this->file_size = $file['size'];
         $this->file_type = $file['type'];
@@ -207,63 +195,65 @@ class fileupload
      * checkFileSize - Checks if filesize is ok
      *
      * @access public
-     * @return bool
+     * @return boolean
      */
     public function checkFileSize()
     {
-
         if ($this->file_size <= $this->max_size * 1024) {
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
      * renameFile
      *
      * @param  $name
-     * @return string
+     * @return bool
      */
-    public function renameFile($name)
+    public function renameFile($name): bool
     {
-
         $this->real_name = $this->file_name;
 
-        if ($name != '') {
-            if (isset($this->path_parts['extension'])) {
-                $this->file_name = $name . '.' . $this->path_parts['extension'];
-            } else {
-                $this->file_name = $name;
-            }
-
-            return true;
-        } else {
+        if ($name == '') {
             return false;
         }
+
+        $this->file_name = $name;
+
+        if (isset($this->path_parts['extension'])) {
+            $this->file_name .= '.' . $this->path_parts['extension'];
+        }
+
+        return true;
     }
 
     /**
      * upload - move file from tmp-folder to S3
      *
      * @access public
-     * @return bool
+     * @return boolean
      */
     public function upload()
     {
-
+        //S3 upload
         if ($this->config->useS3 == true) {
-            //S3 upload
-            return $this->uplodToS3();
-        } else {
-            //Local upload
-            return $this->uploadLocal();
+            return $this->uploadToS3();
         }
+
+        //Local upload
+        return $this->uploadLocal();
     }
 
+    /**
+     * uploadPublic - move file from tmp-folder to public folder
+     *
+     * @access public
+     * @return string|false
+     */
     public function uploadPublic()
     {
-
         if ($this->config->useS3 == true) {
             try {
                 // Upload data.
@@ -281,6 +271,7 @@ class fileupload
                 $url = $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
 
                 return $url;
+
             } catch (S3Exception $e) {
                 error_log($e, 0);
                 return false;
@@ -299,9 +290,14 @@ class fileupload
         return false;
     }
 
-    private function uplodToS3()
+    /**
+     * uploadToS3 - move file from tmp-folder to S3
+     *
+     * @access private
+     * @return boolean
+     */
+    private function uploadToS3()
     {
-
         try {
             // Upload data.
             $file = fopen($this->file_tmp_name, "rb");
@@ -312,7 +308,14 @@ class fileupload
             $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
 
             return true;
+
         } catch (S3Exception $e) {
+
+            error_log($e, 0);
+            return false;
+
+        } catch (RequestException $e) {
+
             error_log($e, 0);
             return false;
         }
@@ -333,24 +336,64 @@ class fileupload
         return false;
     }
 
-    public function displayImageFile($imageName, $fullPath) {
-
-        $mimes = array
-        (
+    /**
+     * displayImageFile - display image file
+     *
+     * @param  string $imageName
+     * @param  string $fullPath
+     * @return void
+     */
+    public function displayImageFile($imageName, $fullPath = '')
+    {
+        $mimes = array(
             'jpg' => 'image/jpg',
             'jpeg' => 'image/jpg',
             'gif' => 'image/gif',
-            'png' => 'image/png'
+            'png' => 'image/png',
         );
 
+        if ($this->config->useS3 == true && $fullPath == '') {
+            $s3Client = new S3Client([
+                'version'     => 'latest',
+                'region'      => $this->config->s3Region,
+                'endpoint' => $this->config->s3EndPoint,
+                'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
+                'credentials' => [
+                    'key'    => $this->config->s3Key,
+                    'secret' => $this->config->s3Secret,
+                ],
+            ]);
 
-        if($fullPath == '') {
-            $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
-            $fullPath = $path . "/" . $imageName;
-        }
+            try {
+                // implode all non-empty elements to allow s3FolderName to be empty.
+                // otherwise you will get an error as the key starts with a slash
+                $fileName = implode('/', array_filter(array($this->config->s3FolderName, $imageName)));
+                $result = $s3Client->getObject([
+                    'Bucket' => $this->config->s3Bucket,
+                    'Key' => $fileName,
+                    'Body'   => 'this is the body!',
+                ]);
 
-        if (file_exists(realpath($fullPath))) {
-            if ($fd = fopen(realpath($fullPath), 'rb')) {
+                header('Content-Type: ' . $result['ContentType']);
+                header('Pragma: public');
+                header('Cache-Control: max-age=86400');
+                header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+                header('Content-disposition: inline; filename="' . $imageName . '";');
+
+                $body = $result->get('Body');
+
+                echo $body->getContents();
+            } catch (Aws\S3\Exception\S3Exception $e) {
+                echo $e->getMessage() . "\n";
+            }
+        } else {
+            if ($fullPath == '') {
+                $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
+                $fullPath = $path . "/" . $imageName;
+            }
+
+            if (file_exists(realpath($fullPath))) {
+
                 $path_parts = pathinfo($fullPath);
                 $ext = $path_parts["extension"];
 
@@ -358,16 +401,9 @@ class fileupload
                     header('Content-type: ' . $mimes[$ext]);
                     header('Content-disposition: inline; filename="' . $imageName . '";');
 
-                    $chunkSize = 1024 * 1024;
-
-                    while (!feof($fd)) {
-                        $buffer = fread($fd, $chunkSize);
-                        echo $buffer;
-                    }
-                    fclose($fd);
+                    readfile($fullPath);
                 }
             }
         }
-
     }
 }

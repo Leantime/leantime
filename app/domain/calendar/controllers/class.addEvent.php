@@ -15,71 +15,42 @@ namespace leantime\domain\controllers {
 
     class addEvent extends controller
     {
-        private $calendarRepo;
+        private \leantime\domain\services\calendar $calendarService;
 
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(\leantime\domain\services\calendar $calendarService)
         {
-
-            $this->calendarRepo = new repositories\calendar();
+            $this->calendarService = $calendarService;
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
         }
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
+        public function get()
         {
-
-            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
-
             $values = array(
                 'description' => '',
                 'dateFrom' => '',
                 'dateTo' => '',
-                'allDay' => ''
+                'allDay' => '',
             );
-
-            if (isset($_POST['save']) === true) {
-                if (isset($_POST['allDay']) === true) {
-                    $allDay = 'true';
-                } else {
-                    $allDay = 'false';
-                }
-
-                $dateFrom = null;
-                if (isset($_POST['dateFrom']) === true && isset($_POST['timeFrom']) === true) {
-                    $dateFrom = $this->language->getISODateTimeString($_POST['dateFrom'], $_POST['timeFrom']);
-                }
-
-                $dateTo = null;
-                if (isset($_POST['dateTo']) === true && isset($_POST['timeTo']) === true) {
-                    $dateTo =  $this->language->getISODateTimeString($_POST['dateTo'], $_POST['timeTo']);
-                }
-
-                $values = array(
-                    'description' => ($_POST['description']),
-                    'dateFrom' => $dateFrom,
-                    'dateTo' => $dateTo,
-                    'allDay' => $allDay
-                );
-
-                if ($values['description'] !== '') {
-                    $this->calendarRepo->addEvent($values);
-
-                    $this->tpl->setNotification('notification.event_created_successfully', 'success');
-                } else {
-                    $this->tpl->setNotification('notification.please_enter_title', 'error');
-                }
-
-                $this->tpl->assign('values', $values);
-            }
 
             $this->tpl->assign('values', $values);
             $this->tpl->displayPartial('calendar.addEvent');
+        }
+
+        public function post($params)
+        {
+            $result = $this->calendarService->addEvent($params);
+
+            if (is_numeric($result) === true) {
+                $this->tpl->setNotification('notification.event_created_successfully', 'success');
+                $this->tpl->redirect(BASE_URL . "/calendar/editEvent/" . $result);
+            } else {
+                $this->tpl->setNotification('notification.please_enter_title', 'error');
+                $this->tpl->assign('values', $params);
+                $this->tpl->displayPartial('calendar.addEvent');
+            }
         }
     }
 }

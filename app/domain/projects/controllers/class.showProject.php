@@ -32,25 +32,36 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
-        {
+        public function init(
+            services\projects $projectService,
+            services\comments $commentService,
+            services\files $fileService,
+            services\tickets $ticketService,
+            repositories\setting $settingsRepo,
+            repositories\projects $projectRepo,
+            repositories\users $userRepo,
+            repositories\clients $clientsRepo,
+            repositories\files $fileRepo,
+            repositories\comments $commentsRepo,
+            repositories\menu $menuRepo
+        ) {
 
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager]);
 
             //services
-            $this->projectService = new services\projects();
-            $this->commentService = new services\comments();
-            $this->fileService = new services\files();
-            $this->ticketService = new services\tickets();
+            $this->projectService = $projectService;
+            $this->commentService = $commentService;
+            $this->fileService = $fileService;
+            $this->ticketService = $ticketService;
 
             // repositories
-            $this->settingsRepo = new repositories\setting();
-            $this->projectRepo = new repositories\projects();
-            $this->userRepo = new repositories\users();
-            $this->clientsRepo = new repositories\clients();
-            $this->fileRepo = new repositories\files();
-            $this->commentsRepo = new repositories\comments();
-            $this->menuRepo = new repositories\menu();
+            $this->settingsRepo = $settingsRepo;
+            $this->projectRepo = $projectRepo;
+            $this->userRepo = $userRepo;
+            $this->clientsRepo = $clientsRepo;
+            $this->fileRepo = $fileRepo;
+            $this->commentsRepo = $commentsRepo;
+            $this->menuRepo = $menuRepo;
 
             if (!isset($_SESSION['lastPage'])) {
                 $_SESSION['lastPage'] = CURRENT_URL;
@@ -65,6 +76,8 @@ namespace leantime\domain\controllers {
         {
 
             if (isset($_GET['id']) === true) {
+                $projectTypes = $this->projectService->getProjectTypes();
+
                 $id = (int)($_GET['id']);
 
                 //Mattermost integration
@@ -175,7 +188,7 @@ namespace leantime\domain\controllers {
 
                     $values = array(
                         "assignedUsers" => $assignedUsers,
-                        "projectRoles" => $_POST
+                        "projectRoles" => $_POST,
                     );
 
                     $this->projectRepo->editProjectRelations($values, $id);
@@ -201,7 +214,7 @@ namespace leantime\domain\controllers {
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
                         'start' => $this->language->getISODateString($_POST['start']),
-                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : ''
+                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
                     );
 
                     if ($values['name'] !== '') {
@@ -226,10 +239,10 @@ namespace leantime\domain\controllers {
 
                             $actual_link = CURRENT_URL;
 
-                            $notification = new notification();
+                            $notification = app()->make(notification::class);
                             $notification->url = array(
                                 "url" => $actual_link,
-                                "text" => $linkLabel
+                                "text" => $linkLabel,
                             );
                             $notification->entity = $project;
                             $notification->module = "projects";
@@ -330,6 +343,7 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('project', $_GET['id']));
 
                 $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
+                $this->tpl->assign('projectTypes', $projectTypes);
 
                 $this->tpl->assign('state', $this->projectRepo->state);
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);

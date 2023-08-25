@@ -11,7 +11,7 @@ namespace leantime\domain\controllers {
 
     class submenu extends controller
     {
-        private $menu;
+        private repositories\menu $menu;
 
         /**
          * constructor - initialize private variables
@@ -19,12 +19,10 @@ namespace leantime\domain\controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init()
+        public function init(repositories\menu $menu)
         {
-
-            $this->menu = new repositories\menu();
+            $this->menu = $menu;
         }
-
 
         /**
          * get - handle get requests
@@ -55,10 +53,10 @@ namespace leantime\domain\controllers {
         public function patch($params)
         {
 
-            if(isset($params['submenu']) && isset($params['state'])) {
+            if (isset($params['submenu']) && isset($params['state'])) {
                 $this->menu->setSubmenuState($params['submenu'], $params['state']);
                 echo "{status:ok}";
-            }else{
+            } else {
                 echo "{'status':false}";
             }
         }

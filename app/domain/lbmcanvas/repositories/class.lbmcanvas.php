@@ -36,10 +36,10 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            'lbm_customers'    => [ 'icon' => 'fa-users',      'color' => '#ccffcc', 'title' => 'box.lbm.customers' ],
-            'lbm_offerings'    => [ 'icon' => 'fa-barcode',    'color' => '#ffcccc', 'title' => 'box.lbm.offerings' ],
-            'lbm_capabilities' => [ 'icon' => 'fa-pen-ruler',  'color' => '#ccecff', 'title' => 'box.lbm.capabilities' ],
-            'lbm_financials'   => [ 'icon' => 'fa-money-bill', 'color' => '#ffffaa', 'title' => 'box.lbm.financials' ]
+            'lbm_customers'    => ['icon' => 'fa-users',      'color' => '#ccffcc', 'title' => 'box.lbm.customers'],
+            'lbm_offerings'    => ['icon' => 'fa-barcode',    'color' => '#ffcccc', 'title' => 'box.lbm.offerings'],
+            'lbm_capabilities' => ['icon' => 'fa-pen-ruler',  'color' => '#ccecff', 'title' => 'box.lbm.capabilities'],
+            'lbm_financials'   => ['icon' => 'fa-money-bill', 'color' => '#ffffaa', 'title' => 'box.lbm.financials'],
         ];
 
         /**
@@ -48,6 +48,6 @@ namespace leantime\domain\repositories {
          * @acces public
          * @var   array
          */
-        protected array $relatesLabels = [ ];
+        protected array $relatesLabels = [];
     }
 }

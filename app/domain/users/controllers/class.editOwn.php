@@ -3,34 +3,40 @@
 namespace leantime\domain\controllers {
 
     use leantime\domain\repositories;
+    use leantime\domain\services;
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\services\auth;
 
     class editOwn extends controller
     {
-        private int $userId;
-        private \leantime\domain\services\users $userService;
-        private \leantime\core\theme $themeCore;
-        private \leantime\domain\repositories\setting $settingsRepo;
-        private repositories\users $userRepo;
-        private \leantime\domain\services\setting $settingsService;
         protected core\language $language;
+        private core\theme $themeCore;
+        private repositories\users $userRepo;
+        private repositories\setting $settingsRepo;
+        private services\setting $settingsService;
+        private services\users $userService;
+        private int $userId;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->language = core\language::getInstance();
-            $this->settingsService = new \leantime\domain\services\setting();
-            $this->userRepo = new repositories\users();
-            $this->settingsRepo = new \leantime\domain\repositories\setting();
-            $this->themeCore = new \leantime\core\theme();
-            $this->userService = new \leantime\domain\services\users();
+        public function init(
+            core\language $language,
+            core\theme $themeCore,
+            repositories\users $userRepo,
+            repositories\setting $settingsRepo,
+            services\setting $settingsService,
+            services\users $userService
+        ) {
+            $this->language = $language;
+            $this->themeCore = $themeCore;
+            $this->userRepo = $userRepo;
+            $this->settingsRepo = $settingsRepo;
+            $this->settingsService = $settingsService;
+            $this->userService = $userService;
 
             $this->userId = $_SESSION['userdata']['id'];
         }
@@ -100,7 +106,7 @@ namespace leantime\domain\controllers {
                         'user' => ($_POST['user']) ?? $row['username'],
                         'phone' => ($_POST['phone']) ?? $row['phone'],
                         'notifications' => $row['notifications'],
-                        'twoFAEnabled' => $row['twoFAEnabled']
+                        'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
                     $changedEmail = 0;
@@ -141,7 +147,7 @@ namespace leantime\domain\controllers {
                         'phone' => $row['phone'],
                         'password' => $row['password'],
                         'notifications' => $row['notifications'],
-                        'twoFAEnabled' => $row['twoFAEnabled']
+                        'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
                     if (password_verify($_POST['currentPassword'], $values['password'])) {
@@ -210,7 +216,7 @@ namespace leantime\domain\controllers {
                         'phone' => $row['phone'],
                         'password' => $row['password'],
                         'notifications' => $row['notifications'],
-                        'twoFAEnabled' => $row['twoFAEnabled']
+                        'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
                     if (isset($_POST['notifications']) == true) {

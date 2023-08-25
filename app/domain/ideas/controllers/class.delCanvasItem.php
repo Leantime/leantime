@@ -10,16 +10,16 @@ namespace leantime\domain\controllers {
 
     class delCanvasItem extends controller
     {
-        private $ideasRepo;
+        private repositories\ideas $ideasRepo;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(repositories\ideas $ideasRepo)
         {
-            $this->ideasRepo = new repositories\ideas();
+            $this->ideasRepo = $ideasRepo;
         }
 
         /**

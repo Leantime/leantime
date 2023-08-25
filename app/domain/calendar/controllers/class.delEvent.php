@@ -20,9 +20,9 @@ namespace leantime\domain\controllers {
         /**
          * init - initialize private variables
          */
-        public function init()
+        public function init(services\calendar $calendarService)
         {
-            $this->calendarService = new \leantime\domain\services\calendar();
+            $this->calendarService = $calendarService;
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
         }
 

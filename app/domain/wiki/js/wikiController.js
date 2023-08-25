@@ -1,9 +1,5 @@
 leantime.wikiController = (function () {
 
-    //Constructor
-    (function () {
-
-    })();
 
     //Functions
     var initTree = function (id, selectedId) {
@@ -69,43 +65,11 @@ leantime.wikiController = (function () {
 
     }
 
-    var articleModal = function () {
-
-        var articleModalConfig = {
-            sizes: {
-                minW: 2000,
-                minH: 700
-            },
-            resizable: true,
-            autoSizable: true,
-            callbacks: {
-                beforePostSubmit: function () {
-                    jQuery('textarea.complexEditor').tinymce().save();
-                    jQuery('textarea.complexEditor').tinymce().remove();
-                },
-                afterShowCont: function () {
-
-                    leantime.generalController.initComplexEditor();
-                    jQuery(".formModal, .delete").nyroModal(articleModalConfig);
-
-                },
-                beforeClose: function () {
-                    location.reload();
-                }
-
-
-            },
-            titleFromIframe: true
-        };
-        jQuery(".articleModal, .delete, .formModal").nyroModal(articleModalConfig);
-
-    }
-
 
     // Make public what you want to have public, everything else is private
     return {
         initTree: initTree,
         wikiModal:wikiModal,
-        articleModal:articleModal
+
     };
 })();

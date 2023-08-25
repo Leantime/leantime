@@ -1,6 +1,6 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 ?>
 <script type="text/javascript">
 
@@ -80,17 +80,17 @@ jQuery(document).ready(function(){
     setDates('.week-picker');
 
     var $calendarTR = jQuery('.ui-weekpicker .ui-datepicker-calendar tr');
-    $calendarTR.live('mousemove', function () {
+    $calendarTR.on('mousemove', function () {
         jQuery(this).find('td a').addClass('ui-state-hover');
     });
-    $calendarTR.live('mouseleave', function () {
+    $calendarTR.on('mouseleave', function () {
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
-    jQuery("#startDate").datepicker("setDate", new Date(<?php echo $this->get("dateFrom")->format('Y, m-1, d'); ?>));
-    jQuery("#endDate").datepicker("setDate", new Date(<?php echo $this->get("dateFrom")->add(new DateInterval('P6D'))->format('Y, m-1, d'); ?>));
+    jQuery("#startDate").datepicker("setDate", new Date(<?php echo $tpl->get("dateFrom")->format('Y, m-1, d'); ?>));
+    jQuery("#endDate").datepicker("setDate", new Date(<?php echo $tpl->get("dateFrom")->add(new DateInterval('P6D'))->format('Y, m-1, d'); ?>));
 
-    <?php $this->get("dateFrom")->sub(new DateInterval('P6D')); ?>
+    <?php $tpl->get("dateFrom")->sub(new DateInterval('P6D')); ?>
 
     jQuery(".project-select").chosen();
     jQuery(".ticket-select").chosen();
@@ -165,7 +165,7 @@ jQuery(document).ready(function(){
 
             jQuery(this).find("input.hourCell").each(function(){
                 var currentValue = parseFloat(jQuery(this).val());
-                rowSum = rowSum + currentValue;
+                rowSum = Math.round((rowSum + currentValue)*100)/100;
 
                 var currentClass = jQuery(this).parent().attr('class');
 
@@ -193,7 +193,9 @@ jQuery(document).ready(function(){
 
         var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
 
-        jQuery("#finalSum").text(finalSum);
+        var roundedSum = Math.round((finalSum)*100)/100;
+
+        jQuery("#finalSum").text(roundedSum);
 
     });
 
@@ -206,34 +208,34 @@ jQuery(document).ready(function(){
 
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('headline.overview'); ?></h5>
-        <h1><?php echo $this->__('headline.my_timesheets'); ?></h1>
+        <h5><?php echo $tpl->__('headline.overview'); ?></h5>
+        <h1><?php echo $tpl->__('headline.my_timesheets'); ?></h1>
     </div>
 </div><!--pageheader-->
 
 <div class="maincontent">
     <div class="maincontentinner">
         <?php
-        echo $this->displayNotification();
+        echo $tpl->displayNotification();
         ?>
 
 
 
         <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
-                <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$this->__("links.week_view") ?> <?=$this->__("links.view") ?></button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.week_view") ?> <?=$tpl->__("links.view") ?></button>
                 <ul class="dropdown-menu">
-                    <li><a href="<?=BASE_URL?>/timesheets/showMy" class="active"><?=$this->__("links.week_view") ?></a></li>
-                    <li><a href="<?=BASE_URL?>/timesheets/showMyList" ><?=$this->__("links.list_view") ?></a></li>
+                    <li><a href="<?=BASE_URL?>/timesheets/showMy" class="active"><?=$tpl->__("links.week_view") ?></a></li>
+                    <li><a href="<?=BASE_URL?>/timesheets/showMyList" ><?=$tpl->__("links.list_view") ?></a></li>
                 </ul>
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
 
                 <div class="padding-top-sm">
-                    <span><?php echo $this->__('label.week_from')?></span>
+                    <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $this->__('label.until'); ?>
-                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $this->__('language.jsdateformat')?>" style="margin-top:6px;"/>
+                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $tpl->__('label.until'); ?>
+                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.jsdateformat')?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
 
@@ -258,47 +260,47 @@ jQuery(document).ready(function(){
                 <thead>
                 <?php
 
-                $dateFromHeader = clone $this->get("dateFrom");
-                $currentDate = $dateFromHeader->format($this->__('language.dateformat'));
-                $days = explode(',', $this->__('language.dayNamesShort'));
-                $today = date($this->__('language.dateformat'));
+                $dateFromHeader = clone $tpl->get("dateFrom");
+                $currentDate = $dateFromHeader->format($tpl->__('language.dateformat'));
+                $days = explode(',', $tpl->__('language.dayNamesShort'));
+                $today = date($tpl->__('language.dateformat'));
 
                 ?>
                 <tr>
-                    <th><?php echo $this->__('label.client_product')?></th>
-                    <th><?php echo $this->__('subtitles.todo')?></th>
-                    <th><?php echo $this->__('label.type')?></th>
+                    <th><?php echo $tpl->__('label.client_product')?></th>
+                    <th><?php echo $tpl->__('subtitles.todo')?></th>
+                    <th><?php echo $tpl->__('label.type')?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
                                } ?>"><?php echo $days[1]?><br /><?php echo $currentDate;
-                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($tpl->__('language.dateformat')); ?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
                                } ?>"><?php echo $days[2]?><br /><?php echo $currentDate;
-                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($tpl->__('language.dateformat')); ?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
                                } ?>"><?php echo $days[3]?><br /><?php echo $currentDate;
-                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($tpl->__('language.dateformat')); ?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
                                } ?>"><?php echo $days[4]?><br /><?php echo $currentDate;
-                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($tpl->__('language.dateformat')); ?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
                                } ?>"><?php echo $days[5]?><br /><?php echo $currentDate;
-                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($tpl->__('language.dateformat')); ?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
                                } ?>"><?php echo $days[6]?><br /><?php echo $currentDate;
-                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($tpl->__('language.dateformat')); ?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
                                } ?>"><?php echo $days[0]?><br /><?php echo $currentDate;
-                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($this->__('language.dateformat')); ?></th>
+                    $currentDate = $dateFromHeader->add(new DateInterval('P1D'))->format($tpl->__('language.dateformat')); ?></th>
                     <th class="<?php if ($today == $currentDate) {
                         echo "active";
-                               } ?>"><?php echo $this->__('label.total')?></th>
+                               } ?>"><?php echo $tpl->__('label.total')?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -311,8 +313,8 @@ jQuery(document).ready(function(){
                         $sumSa = 0;
                         $sumSu = 0;
 
-                    $today = date($this->__('Y-m-d'));
-                    foreach ($this->get('allTimesheets') as $timeRow) {
+                    $today = date($tpl->__('Y-m-d'));
+                    foreach ($tpl->get('allTimesheets') as $timeRow) {
                         $sumMon = $timeRow["hoursMonday"] + $sumMon;
                         $sumTu = $timeRow["hoursTuesday"] + $sumTu;
                         $sumWe = $timeRow["hoursWednesday"] + $sumWe;
@@ -321,7 +323,7 @@ jQuery(document).ready(function(){
                         $sumSa = $timeRow["hoursSaturday"] + $sumSa;
                         $sumSu = $timeRow["hoursSunday"] + $sumSu;
 
-                        $dateFrom = clone $this->get("dateFrom");
+                        $dateFrom = clone $tpl->get("dateFrom");
 
                         $timesheetId = "new";
 
@@ -334,9 +336,9 @@ jQuery(document).ready(function(){
                         ?>
 
                         <tr class="gradeA timesheetRow">
-                            <td width="14%"><?php $this->e($timeRow["name"]); ?></td>
-                            <td width="14%"><?php $this->e($timeRow["headline"]); ?></td>
-                            <td width="10%"><?php echo $this->__($this->get('kind')[$timeRow['kind']]); ?></td>
+                            <td width="14%"><?php $tpl->e($timeRow["name"]); ?></td>
+                            <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
+                            <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
                             <?php $currentDate = $dateFrom->format('Y-m-d'); ?>
                             <td width="7%" class="rowMo <?php if ($today == $currentDate) {
                                 echo"active";
@@ -402,25 +404,25 @@ jQuery(document).ready(function(){
 
                     <?php } ?>
                     <?php
-                        $dateFrom = clone $this->get("dateFrom");
+                        $dateFrom = clone $tpl->get("dateFrom");
                     ?>
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group">
-                                    <select data-placeholder="<?php echo $this->__('input.placeholders.choose_project')?>" style="" class="project-select" >
+                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
                                         <option value=""></option>
-                                        <?php foreach ($this->get('allProjects') as $projectRow) { ?>
+                                        <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
                                             <?php echo sprintf(
-                                                $this->dispatchTplFilter(
+                                                $tpl->dispatchTplFilter(
                                                     'client_product_format',
                                                     '<option value="%s">%s / %s</option>'
                                                 ),
-                                                ...$this->dispatchTplFilter(
+                                                ...$tpl->dispatchTplFilter(
                                                     'client_product_values',
                                                     [
                                                         $projectRow['id'],
-                                                        $this->escape($projectRow['clientName']),
-                                                        $this->escape($projectRow['name'])
+                                                        $tpl->escape($projectRow['clientName']),
+                                                        $tpl->escape($projectRow['name']),
                                                     ]
                                                 )
                                             ); ?>
@@ -430,20 +432,20 @@ jQuery(document).ready(function(){
                             </td>
                             <td width="14%">
                                 <div class="form-group" id="ticketSelect">
-                                    <select data-placeholder="<?php echo $this->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
+                                    <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_todo')?>" style="" class="ticket-select" name="ticketId">
                                         <option value=""></option>
-                                        <?php foreach ($this->get('allTickets') as $ticketRow) { ?>
+                                        <?php foreach ($tpl->get('allTickets') as $ticketRow) { ?>
                                             <?php echo sprintf(
-                                                $this->dispatchTplFilter(
+                                                $tpl->dispatchTplFilter(
                                                     'todo_format',
                                                     '<option value="%1$s" data-value="%2$s" class="project_%2$s">%1$s / %3$s</option>'
                                                 ),
-                                                ...$this->dispatchTplFilter(
+                                                ...$tpl->dispatchTplFilter(
                                                     'todo_values',
                                                     [
                                                         $ticketRow['id'],
                                                         $ticketRow['projectId'],
-                                                        $this->escape($ticketRow['headline'])
+                                                        $tpl->escape($ticketRow['headline']),
                                                     ]
                                                 )
                                             ); ?>
@@ -453,8 +455,8 @@ jQuery(document).ready(function(){
                             </td>
                             <td width="14%">
                                 <select class="kind-select" name="kindId">
-                                        <?php foreach ($this->get('kind') as $key => $kindRow) { ?>
-                                            <?php echo"<option value=" . $key . ">" . $this->__($kindRow) . "</option>"; ?>
+                                        <?php foreach ($tpl->get('kind') as $key => $kindRow) { ?>
+                                            <?php echo"<option value=" . $key . ">" . $tpl->__($kindRow) . "</option>"; ?>
                                         <?php }?>
                                     </select>
                             </td>
@@ -492,7 +494,7 @@ jQuery(document).ready(function(){
 
                 <tfoot>
                     <tr style="font-weight:bold;">
-                        <td colspan="3"><?php echo $this->__('label.total')?></td>
+                        <td colspan="3"><?php echo $tpl->__('label.total')?></td>
                         <td id="sumMo"><?php echo $sumMon; ?></td>
                         <td id="sumTu"><?php echo $sumTu; ?></td>
                         <td id="sumWe"><?php echo $sumWe; ?></td>

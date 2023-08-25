@@ -16,16 +16,22 @@ namespace leantime\domain\controllers {
         private services\timesheets $timesheetService;
         private services\users $userService;
 
-        public function init()
-        {
-
-            $this->projectService = new services\projects();
-            $this->ticketService = new services\tickets();
-            $this->sprintService = new services\sprints();
-            $this->fileService = new services\files();
-            $this->commentService = new services\comments();
-            $this->timesheetService = new services\timesheets();
-            $this->userService = new services\users();
+        public function init(
+            services\projects $projectService,
+            services\tickets $ticketService,
+            services\sprints $sprintService,
+            services\files $fileService,
+            services\comments $commentService,
+            services\timesheets $timesheetService,
+            services\users $userService
+        ) {
+            $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
+            $this->sprintService = $sprintService;
+            $this->fileService = $fileService;
+            $this->commentService = $commentService;
+            $this->timesheetService = $timesheetService;
+            $this->userService = $userService;
 
             if (isset($_SESSION['lastPage']) === false) {
                 $_SESSION['lastPage'] = BASE_URL . "/tickets/showKanban";
@@ -91,7 +97,12 @@ namespace leantime\domain\controllers {
                 $this->tpl->assign('ticketTypeIcons', $this->ticketService->getTypeIcons());
                 $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
                 $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-                $this->tpl->assign('milestones', $this->ticketService->getAllMilestones($_SESSION["currentProject"]));
+
+                 $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '',
+                 "type" => "milestone",
+                 "currentProject" => $_SESSION["currentProject"]
+                ]);
+                $this->tpl->assign('milestones', $allProjectMilestones);
                 $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 
                 $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());

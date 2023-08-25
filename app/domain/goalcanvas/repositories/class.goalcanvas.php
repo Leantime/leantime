@@ -28,7 +28,7 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $canvasTypes = [
-            'goal' =>     [ 'icon' => 'fa-trophy', 'title' => 'box.goal' ],
+            'goal' =>     ['icon' => 'fa-bullseye', 'title' => 'box.goal'],
         ];
 
         /**
@@ -38,9 +38,9 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $statusLabels = [
-            'status_ontrack' => [ 'icon' => 'fa-circle-check', 'color' => 'green',       'title' => 'status.goal.ontrack', 'dropdown' => 'success',    'active' => true],
-            'status_atrisk' => [ 'icon' => 'fa-triangle-exclamation', 'color' => 'yellow',       'title' => 'status.goal.atrisk', 'dropdown' => 'warning',    'active' => true],
-            'status_miss' => [ 'icon' => 'fa-circle-xmark', 'color' => 'red',       'title' => 'status.goal.miss', 'dropdown' => 'danger',    'active' => true],
+            'status_ontrack' => ['icon' => 'fa-circle-check', 'color' => 'green',       'title' => 'status.goal.ontrack', 'dropdown' => 'success',    'active' => true],
+            'status_atrisk' => ['icon' => 'fa-triangle-exclamation', 'color' => 'yellow',       'title' => 'status.goal.atrisk', 'dropdown' => 'warning',    'active' => true],
+            'status_miss' => ['icon' => 'fa-circle-xmark', 'color' => 'red',       'title' => 'status.goal.miss', 'dropdown' => 'danger',    'active' => true],
 
         ];
 
@@ -55,9 +55,9 @@ namespace leantime\domain\repositories {
          * @var   array
          */
         protected array $dataLabels = [
-                                        1 => [ 'title' => 'label.what_are_you_measuring', 'field' => 'assumptions',  'type' => 'string', 'active' => true ],
-                                        2 => [ 'title' => 'label.current_value', 'field' => 'data', 'type' => 'int', 'active' => true ],
-                                        3 => [ 'title' => 'label.goal_value', 'field' => 'conclusion', 'type' => 'int', 'active' => true ],
+                                        1 => ['title' => 'label.what_are_you_measuring', 'field' => 'assumptions',  'type' => 'string', 'active' => true],
+                                        2 => ['title' => 'label.current_value', 'field' => 'data', 'type' => 'int', 'active' => true],
+                                        3 => ['title' => 'label.goal_value', 'field' => 'conclusion', 'type' => 'int', 'active' => true],
 
                                         ];
     }

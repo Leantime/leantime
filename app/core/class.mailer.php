@@ -1,293 +1,338 @@
 <?php
 
+namespace leantime\core;
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use phpmailerException;
+use leantime\core\eventhelpers;
+
 /**
  * Mail class - mails with php mail()
  *
  * @author  Marcel Folaron <marcel.folaron@gmail.com>
  * @version 1.0
- * @license GNU/GPL, see license.txt
+ * @license GNU/AGPL-3.0, see license.txt
+ * @package leantime
+ * @subpackage core
  */
+class mailer
+{
+    use eventhelpers;
 
-namespace leantime\core {
+    /**
+     * @var string
+     */
+    public $cc;
 
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
-    use phpmailerException;
-    use leantime\core\eventhelpers;
+    /**
+     * @var string
+     */
+    public $bcc;
 
-    class mailer
+    /**
+     * @var string
+     */
+    public $text = '';
+
+    /**
+     * @var string
+     */
+    public $subject;
+
+    /**
+     * @var string
+     */
+    public $context;
+
+    /**
+     * @var PHPMailer
+     */
+    private PHPMailer $mailAgent;
+
+    /**
+     * @var string
+     */
+    private $emailDomain;
+
+    /**
+     * @var language
+     */
+    private $language;
+
+    /**
+     * @var string
+     */
+    private string $logo;
+
+    /**
+     * @var string
+     */
+    private string $companyColor;
+
+    /**
+     * @var string
+     */
+    private string $html;
+
+    /**
+     * @var bool
+     */
+    private bool $hideWrapper = false;
+
+    /**
+     * @var bool
+     */
+    public bool $nl2br = true;
+
+    /**
+     * __construct - get configurations
+     *
+     * @access public
+     * @return void
+     */
+    public function __construct(\leantime\core\environment $config, language $language)
     {
-        use eventhelpers;
+        if ($config->email != '') {
+            $this->emailDomain = $config->email;
+        } else {
+            $host = $_SERVER['HTTP_HOST'] ?? "leantime";
+            $this->emailDomain = "no-reply@" . $host;
+        }
+        //PHPMailer
+        $this->mailAgent = new PHPMailer(false);
 
-        /**
-         * @access public
-         * @var    string
-         */
-        public $cc;
+        $this->mailAgent->CharSet = 'UTF-8';                    // Ensure UTF-8 is used for emails
+        //Use SMTP or php mail().
+        if ($config->useSMTP === true) {
+            if ($config->debug) {
+                $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
+                $this->mailAgent->Debugoutput = function ($str, $level) {
 
-        /**
-         * @access public
-         * @var    string
-         */
-        public $bcc;
-
-        /**
-         * @access public
-         * @var    string
-         */
-        public $text = '';
-
-        /**
-         * @access public
-         * @var    string
-         */
-        public $subject;
-
-        /**
-         * @access public
-         * @var    string
-         */
-        public $context;
-        private $mailAgent;
-        private $emailDomain;
-        private $language;
-
-        private string $logo;
-        private string $companyColor;
-        private string $html;
-
-        private bool $hideWrapper = false;
-
-        /**
-         * __construct - get configurations
-         *
-         * @access public
-         * @return void
-         */
-        public function __construct()
-        {
-
-            $config = \leantime\core\environment::getInstance();
-
-            if ($config->email != '') {
-                $this->emailDomain = $config->email;
+                    error_log($level . ' ' . $str);
+                };
             } else {
-                $host = $_SERVER['HTTP_HOST'] ?? "leantime";
-                $this->emailDomain = "no-reply@" . $host;
+                $this->mailAgent->SMTPDebug = 0;
             }
-            //PHPMailer
-            $this->mailAgent = new PHPMailer(false);
 
-            $this->mailAgent->CharSet = 'UTF-8';                    // Ensure UTF-8 is used for emails
-            //Use SMTP or php mail().
-            if ($config->useSMTP === true) {
-                if ($config->debug) {
-                    $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
-                    $this->mailAgent->Debugoutput = function ($str, $level) {
+            $this->mailAgent->Timeout = 20;
 
-                        error_log($level . ' ' . $str);
-                    };
-                } else {
-                    $this->mailAgent->SMTPDebug = 0;
-                }
+            $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
+            $this->mailAgent->Host = $config->smtpHosts;          // Specify main and backup SMTP servers
 
-                $this->mailAgent->Timeout = 20;
-
-                $this->mailAgent->isSMTP();                                      // Set mailer to use SMTP
-                $this->mailAgent->Host = $config->smtpHosts;          // Specify main and backup SMTP servers
-
-                if (isset($config->smtpAuth) && ($config->smtpAuth === true || $config->smtpAuth === false)) {
-                    $this->mailAgent->SMTPAuth = $config->smtpAuth;             // Enable SMTP user/password authentication
-                } else {
-                    $this->mailAgent->SMTPAuth = true;
-                }
-
-                $this->mailAgent->Username = $config->smtpUsername;                 // SMTP username
-                $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
-                $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
-                $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
-                $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
-                if (isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     //If enabled, don't verify certifcates: accept self-signed or expired certs.
-                    $this->mailAgent->SMTPOptions = [
-                        'ssl' => [
-                            'verify_peer' => false,
-                            'verify_peer_name' => false,
-                            'allow_self_signed' => true
-                        ]
-                    ];
-                }
+            if (isset($config->smtpAuth) && ($config->smtpAuth === true || $config->smtpAuth === false)) {
+                $this->mailAgent->SMTPAuth = $config->smtpAuth;             // Enable SMTP user/password authentication
             } else {
-                $this->mailAgent->isMail();
+                $this->mailAgent->SMTPAuth = true;
             }
 
-            $this->logo = $_SESSION["companysettings.logoPath"] ?? "/images/logo.png";
-            $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
-
-            $this->language = language::getInstance();
-        }
-
-        /**
-         *
-         * setContext - sets the context for the mailing
-         * (used for filters & events)
-         *
-         * @access public
-         * @param $context
-         * @return void
-         */
-        public function setContext($context)
-        {
-
-            $this->context = $context;
-        }
-
-        /**
-         *
-         * setText - sets the mailtext
-         *
-         * @access public
-         * @param  $text
-         * @return void
-         */
-        public function setText($text)
-        {
-
-            $this->text = $text;
-        }
-
-        /**
-         *
-         * setHTML - set Mail html (no function yet)
-         *
-         * @access public
-         * @param  $html
-         * @return void
-         */
-        public function setHtml($html, $hideWrapper = false)
-        {
-
-            $this->hideWrapper = $hideWrapper;
-            $this->html = $html;
-        }
-
-        /**
-         * setSubject - set mail subject
-         *
-         * @access public
-         * @param  $subject
-         * @return void
-         */
-        public function setSubject($subject)
-        {
-
-            $this->subject = $subject;
-        }
-
-        private function dispatchMailerEvent($hookname, $payload, $additional_params = [])
-        {
-            $this->dispatchMailerHook('event', $hookname, $payload, $additional_params);
-        }
-
-        private function dispatchMailerFilter($hookname, $payload, $additional_params = [])
-        {
-            return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
-        }
-
-        private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
-        {
-
-            if ($type !== 'filter' && $type !== 'event') {
-                return false;
+            $this->mailAgent->Username = $config->smtpUsername;                 // SMTP username
+            $this->mailAgent->Password = $config->smtpPassword;                           // SMTP password
+            $this->mailAgent->SMTPAutoTLS = $config->smtpAutoTLS ?? true;                 // Enable TLS encryption automatically if a server supports it
+            $this->mailAgent->SMTPSecure = $config->smtpSecure;                            // Enable TLS encryption, `ssl` also accepted
+            $this->mailAgent->Port = $config->smtpPort;                                    // TCP port to connect to
+            if (isset($config->smtpSSLNoverify) && $config->smtpSSLNoverify === true) {     //If enabled, don't verify certifcates: accept self-signed or expired certs.
+                $this->mailAgent->SMTPOptions = [
+                    'ssl' => [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true,
+                    ],
+                ];
             }
+        } else {
+            $this->mailAgent->isMail();
+        }
 
-            $hooks = [$hookname];
+        $this->logo = $_SESSION["companysettings.logoPath"] ?? "/dist/images/logo.png";
+        $this->companyColor = $_SESSION["companysettings.primarycolor"] ?? "#1b75bb";
 
-            if (!empty($this->context)) {
-                $hooks[] = "$hookname.{$this->context}";
-            }
+        $this->language = $language;
+    }
 
-            $filteredValue = null;
-            foreach ($hooks as $hook) {
-                if ($type == 'filter') {
-                    $filteredValue = self::dispatch_filter($hook, $payload, $additional_params);
-                } elseif ($type == 'event') {
-                    self::dispatch_event($hook, $payload);
-                }
-            }
+    /**
+     * setContext - sets the context for the mailing
+     * (used for filters & events)
+     *
+     * @access public
+     * @param  $context
+     * @return void
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
+    }
 
+    /**
+     * setText - sets the mailtext
+     *
+     * @access public
+     * @param  $text
+     * @return void
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+    }
+
+    /**
+     * setHTML - set Mail html (no function yet)
+     *
+     * @access public
+     * @param  $html
+     * @param  $hideWrapper
+     * @return void
+     */
+    public function setHtml($html, $hideWrapper = false)
+    {
+        $this->hideWrapper = $hideWrapper;
+        $this->html = $html;
+    }
+
+    /**
+     * setSubject - set mail subject
+     *
+     * @access public
+     * @param  $subject
+     * @return void
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
+    }
+
+    /**
+     * dispatchMailerEvent - dispatches a mailer event
+     *
+     * @param  $hookname
+     * @param  $payload
+     * @param  $additional_params
+     * @return void
+     */
+    private function dispatchMailerEvent($hookname, $payload, $additional_params = [])
+    {
+        $this->dispatchMailerHook('event', $hookname, $payload, $additional_params);
+    }
+
+    /**
+     * dispatchMailerFilter - dispatches a mailer filter
+     *
+     * @param  $hookname
+     * @param  $payload
+     * @param  $additional_params
+     * @return void
+     */
+    private function dispatchMailerFilter($hookname, $payload, $additional_params = [])
+    {
+        return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
+    }
+
+    /**
+     * dispatchMailerHook - dispatches a mailer hook
+     *
+     * @param  $type
+     * @param  $hookname
+     * @param  $payload
+     * @param  $additional_params
+     * @return void|mixed
+     */
+    private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
+    {
+        if ($type !== 'filter' && $type !== 'event') {
+            return false;
+        }
+
+        $hooks = [$hookname];
+
+        if (!empty($this->context)) {
+            $hooks[] = "$hookname.{$this->context}";
+        }
+
+        $filteredValue = null;
+        foreach ($hooks as $hook) {
             if ($type == 'filter') {
-                return $filteredValue;
+                $filteredValue = self::dispatch_filter($hook, $payload, $additional_params);
+            } elseif ($type == 'event') {
+                self::dispatch_event($hook, $payload);
             }
         }
 
-        /**
-         * sendMail - send the mail with mail()
-         *
-         * @access public
-         * @param  array $to
-         * @param  $from
-         * @return void
-         * @throws phpmailerException
-         */
-        public function sendMail(array $to, $from)
-        {
+        if ($type == 'filter') {
+            return $filteredValue;
+        }
+    }
 
-            $this->dispatchMailerEvent('beforeSendMail', []);
+    /**
+     * sendMail - send the mail with mail()
+     *
+     * @access public
+     * @param  array $to
+     * @param  $from
+     * @return void
+     * @throws phpmailerException
+     */
+    public function sendMail(array $to, $from)
+    {
 
-            $to = $this->dispatchMailerFilter('sendMailTo', $to, []);
-            $from = $this->dispatchMailerFilter('sendMailFrom', $from, []);
+        $this->dispatchMailerEvent('beforeSendMail', []);
 
-            $this->mailAgent->isHTML(true); // Set email format to HTML
+        $to = $this->dispatchMailerFilter('sendMailTo', $to, []);
+        $from = $this->dispatchMailerFilter('sendMailFrom', $from, []);
 
-            $this->mailAgent->setFrom($this->emailDomain, $from . " (Leantime)");
+        $this->mailAgent->isHTML(true); // Set email format to HTML
 
-            $this->mailAgent->Subject = $this->subject;
+        $this->mailAgent->setFrom($this->emailDomain, $from . " (Leantime)");
+
+        $this->mailAgent->Subject = $this->subject;
+
+            if(str_contains($this->logo, 'images/logo.svg')) {
+                $this->logo = "/dist/images/logo.png";
+            }
 
             $logoParts = parse_url($this->logo);
 
-            if (isset($logoParts['scheme'])) {
-                //Logo is URL
-                $inlineLogoContent = $this->logo;
-            } else {
-                //Logo comes from local file system
-                $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
-                $inlineLogoContent = "cid:companylogo";
-            }
+        if (isset($logoParts['scheme'])) {
+            //Logo is URL
+            $inlineLogoContent = $this->logo;
+        } else {
+            //Logo comes from local file system
+            $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
+            $inlineLogoContent = "cid:companylogo";
+        }
 
             if($this->hideWrapper === true) {
 
-                $bodyTemplate = nl2br($this->html);
+                $bodyTemplate = $this->html;
 
             }else{
 
                 $bodyTemplate = '
-                    <table width="100%" style="background:#eeeeee; padding:15px; ">
+                    <table width="100%" style="background:#fefefe; padding:15px; ">
                     <tr>
                         <td align="center" valign="top">
-                            <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc;">
+                            <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc; border-radius:5px;">
                                 <tr>
-                                    <td style="padding:3px 10px;">
-                                        <table>
-                                            <tr>
-                                            <td width="150"><img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;"></td>
-                                            <td></td>
-                                        </tr>
-                                        </table>
+                                    <td style="padding:20px 10px; text-align:center;">
+                                       <img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;">
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding:10px; font-family:Arial; color:#666; font-size:14px; line-height:1.7;">
+                                    <td style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:16px; line-height:1.7;\'>
                                         ' . $this->language->__('email_notifications.hi') . '
-                                        <br /><br />
-                                        ' . nl2br($this->html) . '
-                                        <br /><br />
+                                        <br />';
+                                    if($this->nl2br === true){
+                                        $bodyTemplate .= nl2br($this->html);
+                                    }else{
+                                        $bodyTemplate .= $this->html;
+                                    }
+                                        $bodyTemplate .= '<br /><br />
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
                     <tr>
-                        <td align="center">
+                        <td align="center" style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:14px; line-height:1.7;\'>
                         ' . sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/') . '
                         </td>
                     </tr>
@@ -295,48 +340,46 @@ namespace leantime\core {
 
             }
 
-            $bodyTemplate = $this->dispatchMailerFilter(
-                'bodyTemplate',
-                $bodyTemplate,
-                [
-                        [
-                            'companyColor' => $this->companyColor,
-                            'logoUrl' => $inlineLogoContent,
-                            'languageHiText' => $this->language->__('email_notifications.hi'),
-                            'emailContentsHtml' => nl2br($this->html),
-                            'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/')
-                        ]
-                    ]
-            );
+        $bodyTemplate = $this->dispatchMailerFilter(
+            'bodyTemplate',
+            $bodyTemplate,
+            [
+                    [
+                        'companyColor' => $this->companyColor,
+                        'logoUrl' => $inlineLogoContent,
+                        'languageHiText' => $this->language->__('email_notifications.hi'),
+                        'emailContentsHtml' => nl2br($this->html),
+                        'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/'),
+                    ],
+                ]
+        );
 
-            $this->mailAgent->Body = $bodyTemplate;
+        $this->mailAgent->Body = $bodyTemplate;
 
-            $altBody = $this->dispatchMailerFilter(
-                'altBody',
-                $this->text,
-                []
-            );
+        $altBody = $this->dispatchMailerFilter(
+            'altBody',
+            $this->text,
+            []
+        );
 
-            $this->mailAgent->AltBody = $altBody;
+        $this->mailAgent->AltBody = $altBody;
 
-            if (is_array($to)) {
-                $to = array_unique($to);
+        if (is_array($to)) {
+            $to = array_unique($to);
 
-                foreach ($to as $recip) {
-                    try {
-                        $this->mailAgent->addAddress($recip);
-                        $this->mailAgent->send();
-                    } catch (Exception $e) {
-                        error_log($this->mailAgent->ErrorInfo);
-                        error_log($e);
-                    }
-
-                    $this->mailAgent->clearAllRecipients();
+            foreach ($to as $recip) {
+                try {
+                    $this->mailAgent->addAddress($recip);
+                    $this->mailAgent->send();
+                } catch (Exception $e) {
+                    error_log($this->mailAgent->ErrorInfo);
+                    error_log($e);
                 }
+
+                $this->mailAgent->clearAllRecipients();
             }
-
-            $this->dispatchMailerEvent('afterSendMail', $to);
         }
-    }
 
+        $this->dispatchMailerEvent('afterSendMail', $to);
+    }
 }

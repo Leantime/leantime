@@ -10,12 +10,12 @@ define('APP_ROOT', dirname(__FILE__, 2));
 require_once APP_ROOT . '/app/core/class.autoload.php';
 require_once APP_ROOT . '/config/appSettings.php';
 
-$config = \leantime\core\environment::getInstance();
-$settings = new leantime\core\appSettings();
+$app = bootstrap_minimal_app();
+$config = $app->make(\leantime\core\environment::class);
+$settings = $app->make(leantime\core\appSettings::class);
 $settings->loadSettings($config);
 
-$login = \leantime\domain\services\auth::getInstance(leantime\core\session::getSID());
-
+$login = $app->make(\leantime\domain\services\auth::class);
 
 if ($login->logged_in()!==true) {
 
@@ -28,7 +28,7 @@ if ($login->logged_in()!==true) {
 
     ob_end_clean();
     clearstatcache();
-    readfile(__DIR__.'/images/leantime-no-access.jpg');
+    readfile(__DIR__.'/dist/images/leantime-no-access.jpg');
 
     exit();
 
@@ -46,9 +46,9 @@ if ($login->logged_in()!==true) {
 
 }
 
-function getFileLocally(){
-
-	$config = \leantime\core\environment::getInstance();
+function getFileLocally()
+{
+	$config = app()->make(\leantime\core\environment::class);
 
 	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
@@ -122,7 +122,7 @@ function getFileFromS3(){
     $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
     $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-    $config = \leantime\core\environment::getInstance();
+    $config = app()->make(\leantime\core\environment::class);
 
     $mimes = array
     (
@@ -137,8 +137,8 @@ function getFileFromS3(){
     $s3Client = new Aws\S3\S3Client([
         'version'     => 'latest',
         'region'      => $config->s3Region,
-        'endpoint' => $config->s3EndPoint,
-        'use_path_style_endpoint' => $config->s3UsePathStyleEndpoint,
+        'endpoint' => $config->s3EndPoint == "" ? null : $config->s3EndPoint,
+        'use_path_style_endpoint' => !($config->s3UsePathStyleEndpoint == "false"),
         'credentials' => [
             'key'    => $config->s3Key,
             'secret' => $config->s3Secret
@@ -155,16 +155,23 @@ function getFileFromS3(){
             'Body'   => 'this is the body!'
         ]);
 
-        if($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+        if($ext == 'pdf'){
+            header('Content-type: application/pdf');
+            header("Content-Disposition: inline; filename=\"".$realName.".".$ext."\"");
+
+        }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png'){
+
             header('Content-Type: ' . $result['ContentType']);
             header("Content-Disposition: inline; filename=\"".$fileName."\"");
         }elseif($ext == 'svg') {
             header('Content-type: image/svg+xml');
             header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
+        }else {
+            header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
         }
 
-
-        echo($result['Body']);
+        $body = $result->get('Body');
+        echo $body->getContents();
 
 
 

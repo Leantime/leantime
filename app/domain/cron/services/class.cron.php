@@ -7,24 +7,25 @@ namespace leantime\domain\services {
 
     class cron
     {
-
-
         private audit $auditRepo;
         private queue $queueSvc;
+        private environment $environment;
 
-        public function __construct() {
-            $this->auditRepo = new audit();
-            $this->queueSvc = new queue();
+        public function __construct(audit $auditRepo, queue $queueSvc, environment $environment)
+        {
+            $this->auditRepo = $auditRepo;
+            $this->queueSvc = $queueSvc;
+            $this->environment = $environment;
         }
 
-
-        public function runCron() {
+        public function runCron()
+        {
 
             $lastEvent = $this->auditRepo->getLastEvent('cron');
 
-            if(isset($lastEvent['date'])) {
+            if (isset($lastEvent['date'])) {
                 $lastCronEvent = strtotime($lastEvent['date']);
-            }else{
+            } else {
                 $lastCronEvent = 0;
             }
 
@@ -32,9 +33,8 @@ namespace leantime\domain\services {
             $nowDate = time();
             $timeSince = abs($nowDate - $lastCronEvent);
 
-            if ($timeSince < 300)
-            {
-                if(environment::getInstance()->debug == true) {
+            if ($timeSince < 300) {
+                if ($this->environment->debug == true) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
                 }
 
@@ -43,22 +43,19 @@ namespace leantime\domain\services {
 
             $this->auditRepo->storeEvent("cron", "Cron started");
 
-            if(environment::getInstance()->debug == true) {
+            if ($this->environment->debug == true) {
                 error_log("cron start");
             }
 
             $this->queueSvc->processQueue();
 
-            if(environment::getInstance()->debug == true) {
-                error_log( "cron end");
+            if ($this->environment->debug == true) {
+                error_log("cron end");
             }
+
             $this->auditRepo->pruneEvents();
 
             return true;
-
-
         }
-
-
     }
 }

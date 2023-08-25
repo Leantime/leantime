@@ -16,10 +16,9 @@ namespace leantime\domain\repositories {
          *
          * @access public
          */
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
 
@@ -44,6 +43,8 @@ namespace leantime\domain\repositories {
             if ($enabledOnly) {
                 $query .= " WHERE enabled = true";
             }
+
+            $query .= " GROUP BY name ";
 
             $stmn = $this->db->database->prepare($query);
 

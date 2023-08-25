@@ -1,6 +1,5 @@
 <?php
 
-
 namespace leantime\core;
 
 /***
@@ -18,10 +17,10 @@ class config
 
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
     public $language = 'en-US';                           //Default language
-    public $logoPath = '/images/logo.svg';                //Default logo path, can be changed later
-    public $printLogoURL = '/images/logo.jpg';            //Default logo URL use for printing (must be jpg or png format)
+    public $logoPath = '/dist/images/logo.svg';                //Default logo path, can be changed later
+    public $printLogoURL = '/dist/images/logo.png';            //Default logo URL use for printing (must be jpg or png format)
     public $appUrl = '';                                  //Base URL, trailing slash not needed
-    public $appUrlRoot = '';                              //Base of application withotu trailing slash (used for cookies), e.g, /leantime
+    public $appDir = '';                              //Base of application withotu trailing slash (used for cookies), e.g, /leantime
     public $defaultTheme = 'default';                     //Default theme
     public $primarycolor = '#1b75bb';                     //Primary Theme color
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color

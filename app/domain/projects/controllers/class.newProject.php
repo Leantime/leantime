@@ -8,6 +8,7 @@ namespace leantime\domain\controllers {
     use leantime\domain\repositories;
     use leantime\domain\services;
     use leantime\domain\services\auth;
+    use leantime\plugins\services\billing;
 
     class newProject extends controller
     {
@@ -23,15 +24,20 @@ namespace leantime\domain\controllers {
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->projectRepo = new repositories\projects();
-            $this->menuRepo = new repositories\menu();
-            $this->userRepo = new repositories\users();
-            $this->clientsRepo = new repositories\clients();
-            $this->queueRepo = new repositories\queue();
-            $this->projectService = new services\projects();
+        public function init(
+            repositories\projects $projectRepo,
+            repositories\menu $menuRepo,
+            repositories\users $userRepo,
+            repositories\clients $clientsRepo,
+            repositories\queue $queueRepo,
+            services\projects $projectService
+        ) {
+            $this->projectRepo = $projectRepo;
+            $this->menuRepo = $menuRepo;
+            $this->userRepo = $userRepo;
+            $this->clientsRepo = $clientsRepo;
+            $this->queueRepo = $queueRepo;
+            $this->projectService = $projectService;
         }
 
         /**
@@ -60,10 +66,10 @@ namespace leantime\domain\controllers {
                 'state' => '',
                 'menuType' => repositories\menu::DEFAULT_MENU,
                 'type' => 'project',
-                'parent' => '',
+                'parent' => $_GET['parent'] ?? '',
                 'psettings' => '',
                 'start' => '',
-                'end' => ''
+                'end' => '',
             );
 
             if (isset($_POST['save']) === true) {
@@ -81,8 +87,7 @@ namespace leantime\domain\controllers {
                 }
 
 
-                $mailer = new core\mailer();
-
+                $mailer = app()->make(core\mailer::class);
 
                 $values = array(
                     'name' => $_POST['name'],
@@ -94,10 +99,10 @@ namespace leantime\domain\controllers {
                     'state' => $_POST['projectState'],
                     'psettings' => $_POST['globalProjectUserAccess'],
                     'menuType' => $_POST['menuType'] ?? 'default',
-                    'type' => 'project',
+                    'type' => $_POST['type']  ?? 'project',
                     'parent' => $_POST['parent'] ?? '',
                     'start' => $this->language->getISODateString($_POST['start']),
-                    'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : ''
+                    'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
                 );
 
                 if ($values['name'] === '') {
@@ -133,11 +138,7 @@ namespace leantime\domain\controllers {
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
-                    if ($values['menuType'] == 'dts') {
-                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/lbmcanvas/showCanvas/'), 'success');
-                    } else {
-                        $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success');
-                    }
+                    $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', "project_created");
 
                     $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id);
                 }
@@ -150,6 +151,8 @@ namespace leantime\domain\controllers {
             $this->tpl->assign('project', $values);
             $this->tpl->assign('availableUsers', $this->userRepo->getAll());
             $this->tpl->assign('clients', $this->clientsRepo->getAll());
+            $this->tpl->assign('projectTypes', $this->projectService->getProjectTypes());
+
             $this->tpl->assign('info', $msgKey);
 
             $this->tpl->display('projects.newProject');

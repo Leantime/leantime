@@ -4,5 +4,8 @@
  * Delete Canvas
  */
 
-$canvasName = 'sq';
-require($this->getTemplatePath('canvas', 'delCanvas.inc.php'));
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+echo $tpl->viewFactory->make(
+    $tpl->getTemplatePath('canvas', 'delCanvas'),
+    array_merge($__data, ['canvasName' => 'sq'])
+)->render();

@@ -15,7 +15,7 @@ leantime.reactionsController = (function () {
                 'reaction': reaction
             }
 
-        }).done(function() {
+        }).done(function () {
             clb();
         });
 
@@ -32,7 +32,7 @@ leantime.reactionsController = (function () {
                 'moduleId': moduleId,
                 'reaction': reaction
             }
-        }).done(function() {
+        }).done(function () {
             clb();
         });
 

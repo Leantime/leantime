@@ -11,14 +11,16 @@ namespace leantime\domain\controllers {
 
     class duplicateProject extends controller
     {
-        public function init()
-        {
-
+        public function init(
+            repositories\projects $projectRepo,
+            repositories\clients $clientRepo,
+            services\projects $projectService
+        ) {
             auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager], true);
 
-            $this->projectRepo = new repositories\projects();
-            $this->projectService = new services\projects();
-            $this->clientRepo = new repositories\clients();
+            $this->projectRepo = $projectRepo;
+            $this->clientRepo = $clientRepo;
+            $this->projectService = $projectService;
         }
 
         public function get()

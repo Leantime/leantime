@@ -28,17 +28,43 @@ namespace leantime\domain\services {
         private notifications $notificationService;
         private repositories\files $filesRepository;
 
-        public function __construct()
+        public function __construct(
+            core\template $tpl,
+            repositories\projects $projectRepository,
+            repositories\tickets $ticketRepository,
+            repositories\setting $settingsRepo,
+            repositories\files $filesRepository,
+            core\language $language,
+            messengers $messengerService,
+            notifications $notificationService
+        ) {
+            $this->tpl = $tpl;
+            $this->projectRepository = $projectRepository;
+            $this->ticketRepository = $ticketRepository;
+            $this->settingsRepo = $settingsRepo;
+            $this->filesRepository = $filesRepository;
+            $this->language = $language;
+            $this->messengerService = $messengerService;
+            $this->notificationService = $notificationService;
+        }
+
+        public function getProjectTypes()
         {
 
-            $this->tpl = new core\template();
-            $this->projectRepository = new repositories\projects();
-            $this->ticketRepository = new repositories\tickets();
-            $this->settingsRepo = new repositories\setting();
-            $this->filesRepository = new repositories\files();
-            $this->language = core\language::getInstance();
-            $this->messengerService = new messengers();
-            $this->notificationService = new notifications();
+            $types = array("project" => "label.project");
+
+            $filtered = static::dispatch_filter("filterProjectType", $types);
+
+            //Strategy & Program are protected types
+            if (isset($filtered["strategy"])) {
+                unset($filtered["strategy"]);
+            }
+
+            if (isset($filtered["program"])) {
+                unset($filtered["program"]);
+            }
+
+            return $filtered;
         }
 
         public function getProject($id)
@@ -172,7 +198,7 @@ namespace leantime\domain\services {
             }, ARRAY_FILTER_USE_BOTH);
 
             /*
-            $mailer = new core\mailer();
+            $mailer = app()->make(core\mailer::class);
             $mailer->setContext('notify_project_users');
             $mailer->setSubject($notification->subject);
 
@@ -187,7 +213,7 @@ namespace leantime\domain\services {
             }
 
             // NEW Queuing messaging system
-            $queue = new repositories\queue();
+            $queue = app()->make(repositories\queue::class);
             $queue->queueMessageToUsers($users, $emailMessage, $notification->subject, $notification->projectId);
 
             //Send to messengers
@@ -199,7 +225,7 @@ namespace leantime\domain\services {
                 "comments" => array("text"),
                 "projects" => array("details"),
                 "tickets" => array("description"),
-                "canvas" => array("description", "data", "conclusion", "assumptions")
+                "canvas" => array("description", "data", "conclusion", "assumptions"),
             );
 
             $contentToCheck = '';
@@ -287,44 +313,46 @@ namespace leantime\domain\services {
 
             //Build 3 level project selector
             $projectHierarchy = array(
-                "strategy"=> array("enabled"=>false, "parents"=> array("noStrategyParent"), "items" => array()), //Only one type allowed
-                "program" => array("enabled"=>false, "parents"=> array("noProgramParent"), "items" => array()), //Multiple types possible (projects/programs)
-                "project" => array("enabled"=>true, "items" => array()) //Multiple types possible (projects/other)
+                "strategy" => array("enabled" => false, "parents" => array("noStrategyParent"), "items" => array()), //Only one type allowed
+                "program" => array("enabled" => false, "parents" => array("noProgramParent"), "items" => array()), //Multiple types possible (projects/programs)
+                "project" => array("enabled" => true, "items" => array()), //Multiple types possible (projects/other)
             );
 
             $projectHierarchy = self::dispatch_filter('beforeLoadingProjects', $projectHierarchy);
 
+
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId, $projectHierarchy);
 
-            $projectHierarchy = self::dispatch_filter('beforePopulatingProjectHierarchy', $projectHierarchy, array("projects"=>$projects));
+            $projectHierarchy = self::dispatch_filter('beforePopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
 
             //Fill projectColumns
-            foreach($projects as $project) {
-
+            foreach ($projects as $project) {
                 //Add all items that have strategy as parent.
-                if($project['type'] == '' || $project['type'] == null || $project['type'] == 0){
+                if ($project['type'] == '' || $project['type'] == null || $project['type'] == 0) {
                     $project['type'] = 'project';
                 }
 
                 //Get project items with parent id but user does not have access to parent
-                if(!in_array($project['parent'], $projectHierarchy["strategy"]["parents"]) && !in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project["type"] != "program" && $project["type"] != "strategy"){
-                    if($projectHierarchy['strategy']["enabled"] === true) {
+                if (!in_array($project['parent'], $projectHierarchy["strategy"]["parents"]) && !in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project["type"] != "program" && $project["type"] != "strategy") {
+                    if ($projectHierarchy['strategy']["enabled"] === true) {
                         $project['parent'] = "noStrategyParent";
                     }
-                    if($projectHierarchy['program']["enabled"] === true) {
+                    if ($projectHierarchy['program']["enabled"] === true) {
                         $project['parent'] = "noProgramParent";
                     }
                 }
 
                 //IF the pgm module is not active, add all items
-                if($projectHierarchy['program']["enabled"] === false) {
+                if ($projectHierarchy['program']["enabled"] === false) {
                     if ($project['type'] != "program" && $project['type'] != "strategy") {
+                        if ($project['parent'] == 0 || $project['parent'] == '' || $project['parent'] == null) {
+                            $project['parent'] = "noparent";
+                        }
                         $projectHierarchy["project"]["items"]['project'][$project['id']] = $project;
                     }
                 } else {
-
                     //Get items with program parents
-                    if(in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project['type'] != "program" && $project['type'] != "strategy"){
+                    if (in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project['type'] != "program" && $project['type'] != "strategy") {
                         $projectHierarchy["project"]["items"][$project['type']][$project['id']] = $project;
                     }
 
@@ -335,6 +363,8 @@ namespace leantime\domain\services {
                     }
                 }
             }
+
+            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
 
             if ($projectHierarchy) {
                 return $projectHierarchy;
@@ -413,7 +443,7 @@ namespace leantime\domain\services {
         public function changeCurrentSessionProject($projectId)
         {
 
-            if(isset($_SESSION["currentProjectName"]) === false){
+            if (isset($_SESSION["currentProjectName"]) === false) {
                 $_SESSION["currentProjectName"] = '';
             }
 
@@ -469,7 +499,7 @@ namespace leantime\domain\services {
                     $recentProjects =  $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
                     $recent = unserialize($recentProjects);
 
-                    if(is_array($recent) === false) {
+                    if (is_array($recent) === false) {
                         $recent = array();
                     }
                     $key = array_search($_SESSION["currentProject"], $recent);
@@ -484,7 +514,7 @@ namespace leantime\domain\services {
 
                     unset($_SESSION["projectsettings"]);
 
-                    self::dispatch_event("projects.setCurrentProject");
+                    self::dispatch_event("projects.setCurrentProject", $project);
 
                     return true;
                 } else {
@@ -537,11 +567,35 @@ namespace leantime\domain\services {
             return array();
         }
 
-        public function isUserAssignedToProject($userId, $projectId)
+        /*
+         * Checks if a user has access to a project. Either via direct assignment. Via client assignment or in case projects are available to all
+         *
+         * @param int $userId
+         * @param int $projectId
+         * @return bool
+         *
+         */
+        public function isUserAssignedToProject(int $userId, int $projectId)
         {
 
             return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
         }
+
+        /**
+         * Checks if a user is directly assigned to a project.
+         * Client assignments or projects available to entire organization are not considered true.
+         *
+         * @param $userId
+         * @param $projectId
+         * @return boolean
+         */
+        public function isUserMemberOfProject(int $userId, int $projectId)
+        {
+
+            return $this->projectRepository->isUserMemberOfProject($userId, $projectId);
+        }
+
+
 
         public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers)
         {
@@ -660,7 +714,7 @@ namespace leantime\domain\services {
                         'editFrom' => $editFromValue,
                         'editTo' => $editToValue,
                         'dependingTicketId' => "",
-                        'milestoneid' => ''
+                        'milestoneid' => '',
                     );
 
                     $newTicketId = $this->ticketRepository->addTicket($ticketValues);
@@ -728,13 +782,13 @@ namespace leantime\domain\services {
 
 
             //LeanCanvas
-            $leancanvasRepo = new repositories\leancanvas();
+            $leancanvasRepo = app()->make(repositories\leancanvas::class);
             $canvasBoards = $leancanvasRepo->getAllCanvas($projectId);
             foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
                     "title" => $canvas['title'],
                     "author" => $_SESSION['userdata']['id'],
-                    "projectId" => $newProjectId
+                    "projectId" => $newProjectId,
 
                 );
 
@@ -763,7 +817,7 @@ namespace leantime\domain\services {
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],
-                            "milestoneId" => $milestoneid
+                            "milestoneId" => $milestoneid,
                         );
 
                         $leancanvasRepo->addCanvasItem($canvasItemValues);
@@ -773,13 +827,13 @@ namespace leantime\domain\services {
 
 
             //Ideas
-            $ideaRepo = new repositories\ideas();
+            $ideaRepo = app()->make(repositories\ideas::class);
             $canvasBoards = $ideaRepo->getAllCanvas($projectId);
             foreach ($canvasBoards as $canvas) {
                 $canvasValues = array(
                     "title" => $canvas['title'],
                     "author" => $_SESSION['userdata']['id'],
-                    "projectId" => $newProjectId
+                    "projectId" => $newProjectId,
 
                 );
 
@@ -806,7 +860,7 @@ namespace leantime\domain\services {
                             "canvasId" => $newCanvasId,
                             "sortindex" => $item['sortindex'],
                             "status" => $item['status'],
-                            "milestoneId" => $milestoneId
+                            "milestoneId" => $milestoneId,
                         );
 
                         $ideaRepo->addCanvasItem($canvasItemValues);
@@ -830,152 +884,187 @@ namespace leantime\domain\services {
         public function getProjectAvatar($id)
         {
             $avatar = $this->projectRepository->getProjectAvatar($id);
-            $avatar = eventhelpers::dispatch_filter("afterGettingAvatar", $avatar, array("projectId"=>$id));
+            $avatar = static::dispatch_filter("afterGettingAvatar", $avatar, array("projectId" => $id));
             return $avatar;
         }
 
-        public function setProjectAvatar($file, $project) {
+        public function setProjectAvatar($file, $project)
+        {
             return $this->projectRepository->setPicture($file, $project);
         }
 
-        public function getProjectSetupChecklist($projectId) {
-
+        public function getProjectSetupChecklist($projectId)
+        {
             $progressSteps = array(
                 "define" => array(
-                    "title"=>"label.define",
+                    "title" => "label.define",
                     "tasks" => array(
-                        "description"=> array("title"=>"label.projectDescription", "status"=>""),
-                        "defineTeam"=> array("title"=>"label.defineTeam", "status"=>""),
-                        "createBlueprint"=> array("title"=>"label.createBlueprint", "status"=>""),
+                        "description" => array("title" => "label.projectDescription", "status" => ""),
+                        "defineTeam" => array("title" => "label.defineTeam", "status" => ""),
+                        "createBlueprint" => array("title" => "label.createBlueprint", "status" => ""),
                     ),
                     "status" => '',
                 ),
                 "goals" => array(
-                    "title"=>"label.setGoals",
+                    "title" => "label.setGoals",
                     "tasks" => array(
-                        "setGoals"=> array("title"=>"label.setGoals", "status"=>""),
+                        "setGoals" => array("title" => "label.setGoals", "status" => ""),
                     ),
-                    "status" => ''
+                    "status" => '',
                 ),
                 "timeline" => array(
-                    "title"=>"label.setTimeline",
+                    "title" => "label.setTimeline",
                     "tasks" => array(
-                        "createMilestones"=> array("title"=>"label.createMilestones", "status"=>""),
+                        "createMilestones" => array("title" => "label.createMilestones", "status" => ""),
 
                     ),
                     "status" => '',
                 ),
                 "implementation" => array(
-                    "title"=>"label.implementation",
+                    "title" => "label.implementation",
                     "tasks" => array(
-                        "createTasks"=>  array("title"=>"label.createTasks", "status"=>""),
+                        "createTasks" =>  array("title" => "label.createTasks", "status" => ""),
 
-                        "finish80percent"=>  array("title"=>"label.finish80percent", "status"=>""),
+                        "finish80percent" =>  array("title" => "label.finish80percent", "status" => ""),
                     ),
                     "status" => '',
-                )
+                ),
             );
 
             //Todo determine tasks that are done.
             $project = $this->getProject($projectId);
             //Project Description
-            if($project['details'] != ''){
+            if ($project['details'] != '') {
                 $progressSteps["define"]["tasks"]["description"]["status"] = "done";
             }
 
-            if($project['numUsers'] > 1){
+            if ($project['numUsers'] > 1) {
                 $progressSteps["define"]["tasks"]["defineTeam"]["status"] = "done";
             }
 
-            if($project['numDefinitionCanvas'] >= 1){
+            if ($project['numDefinitionCanvas'] >= 1) {
                 $progressSteps["define"]["tasks"]["createBlueprint"]["status"] = "done";
             }
 
-            $goals = new repositories\goalcanvas();
+            $goals = app()->make(repositories\goalcanvas::class);
             $allCanvas = $goals->getAllCanvas($projectId);
 
             $totalGoals = 0;
-            foreach($allCanvas as $goalsCanvas){
-
+            foreach ($allCanvas as $goalsCanvas) {
                 $totalGoals = $totalGoals + $goalsCanvas['boxItems'];
             }
-            if($totalGoals > 0){
+            if ($totalGoals > 0) {
                 $progressSteps["define"]["goals"]["setGoals"]["status"] = "done";
             }
 
-            if($project['numberMilestones'] >= 1){
+            if ($project['numberMilestones'] >= 1) {
                 $progressSteps["timeline"]["tasks"]["createMilestones"]["status"] = "done";
             }
 
-            if($project['numberOfTickets'] >= 1){
+            if ($project['numberOfTickets'] >= 1) {
                 $progressSteps["implementation"]["tasks"]["createTasks"]["status"] = "done";
             }
 
             $percentDone = $this->getProjectProgress($projectId);
-            if($percentDone['percent'] >= 80){
+            if ($percentDone['percent'] >= 80) {
                 $progressSteps["implementation"]["tasks"]["finish80percent"]["status"] = "done";
             }
 
             //Add overrides
-            $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.".$projectId.".stepsComplete");
-
-            if($stepsCompleted !== false) {
+            if (! $stepsCompleted = $this->settingsRepo->getSetting("projectsettings.$projectId.stepsComplete")) {
+                $stepsCompleted = [];
+            } else {
                 $stepsCompleted = unserialize($stepsCompleted);
-                foreach ($progressSteps as $key => $step) {
-
-                    $progressSteps[$key]["tasks"] = $step['tasks'];
-
-                    $stepCompleted = true;
-                    foreach($progressSteps[$key]["tasks"] as $taskKey => $task) {
-
-                        if (isset($stepsCompleted[$taskKey])) {
-                            $progressSteps[$key]["tasks"][$taskKey]['status'] = "done";
-                        }else if($progressSteps[$key]["tasks"][$taskKey]['status'] == 'done'){
-
-                        }else{
-                            $stepCompleted = false;
-                        }
-
-                    }
-
-                    if($stepCompleted) {
-                        $progressSteps[$key]['status'] = 'done';
-                    }
-
-                }
             }
 
-            return $progressSteps;
+            $stepsCompleted = array_map(fn ($status) => 'done', $stepsCompleted);
 
+            $halfStep = (1 / count($progressSteps)) / 2 * 100;
+            $position = 0;
+            $debug = [];
+            foreach ($progressSteps as $name => $step) {
+                // set the "left" css position for the step on the progress bar
+                $progressSteps[$name]['positionLeft'] = ($position++ / count($progressSteps) * 100) + $halfStep;
 
+                // set the status based on the stepsCompleted setting
+                data_set(
+                    $progressSteps,
+                    "$name.tasks",
+                    collect(data_get($progressSteps, "$name.tasks"))
+                        ->map(function ($task, $key) use ($stepsCompleted) {
+                            $task['status'] = $stepsCompleted[$key] ?? '';
+                            return $task;
+                        })
+                        ->toArray()
+                );
+
+                // check for any open tasks
+                if (in_array('', data_get($progressSteps, "$name.tasks.*.status"))) {
+                    if (
+                        $name == array_key_first($progressSteps)
+                        || ($previousValue['stepType'] ?? '') == 'complete'
+                    ) {
+                        $progressSteps[$name]['stepType'] = 'current';
+                    } else {
+                        $progressSteps[$name]['stepType'] = '';
+                    }
+
+                    $progressSteps[$name]['status'] = '';
+                    $previousValue = $progressSteps[$name];
+                    continue;
+                }
+
+                // otherwise, set the step as completed
+                $progressSteps[$name]['status'] = 'done';
+                if (
+                    ! in_array($previousValue['stepType'] ?? null, ['current', ''])
+                    || $name == array_key_first($progressSteps)
+                ) {
+                    $progressSteps[$name]['stepType'] = 'complete';
+                } else {
+                    $progressSteps[$name]['stepType'] = '';
+                }
+                $previousValue = $progressSteps[$name];
+            }
+
+            // Set the Percentage done of the progress Bar
+            $numberDone = count(array_filter(data_get($progressSteps, '*.stepType'), fn ($status) => $status == 'complete'));
+            $stepsTotal = count($progressSteps);
+            $percentDone = $numberDone == $stepsTotal ? 100 : $numberDone / $stepsTotal * 100 + $halfStep;
+
+            return [
+                $progressSteps,
+                $percentDone,
+            ];
         }
 
-        public function updateProjectProgress($stepsComplete, $projectId) {
-
-            $stepsDoneArray = array();
-
-            if($stepsComplete != '') {
-                //Steps complete comes in as serialized js string: key=on&key2=on etc. Only on keys will be submitted
-                parse_str($stepsComplete, $stepsDoneArray);
-                $this->settingsRepo->saveSetting(
-                    "projectsettings." . $projectId . ".stepsComplete",
-                    serialize($stepsDoneArray)
-                );
-            }else{
+        public function updateProjectProgress($stepsComplete, $projectId)
+        {
+            if (empty($stepsComplete)) {
                 return;
             }
 
+            $stepsDoneArray = [];
+            if (is_string($stepsComplete)) {
+                parse_str($stepsComplete, $stepsDoneArray);
+            } else {
+                $stepsDoneArray = $stepsComplete;
+            }
+
+            $this->settingsRepo->saveSetting(
+                "projectsettings.$projectId.stepsComplete",
+                serialize($stepsDoneArray)
+            );
         }
 
-        public function updateProjectSorting($params) {
+        public function updateProjectSorting($params)
+        {
 
             //ticketId: sortIndex
             foreach ($params as $id => $sortKey) {
-
-                if ($this->projectRepository->patch($id, ["sortIndex"=>$sortKey*100]) === false) {
+                if ($this->projectRepository->patch($id, ["sortIndex" => $sortKey * 100]) === false) {
                     return false;
                 }
-
             }
         }
 
@@ -994,8 +1083,7 @@ namespace leantime\domain\services {
                         foreach ($projects as $key => $projectString) {
                             $id = substr($projectString, 7);
 
-                            $this->projectRepository->patch($id, ["sortIndex"=>$key*100, "state"=>$status]);
-
+                            $this->projectRepository->patch($id, ["sortIndex" => $key * 100, "state" => $status]);
                         }
                     }
                 }
@@ -1013,7 +1101,7 @@ namespace leantime\domain\services {
                     $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
 
-                    $notification = new models\notifications\notification();
+                    $notification = app()->make(models\notifications\notification::class);
                     $notification->url = array(
                         "url" => $actual_link,
                         "text" => $this->language->__("email_notifications.todo_update_cta")
@@ -1034,6 +1122,45 @@ namespace leantime\domain\services {
             return true;
         }
 
+        /**
+         * Gets all the projects a company manager has access to.
+         * Includes all projects within a client + all assigned projects
+         *
+         * @param integer $userId
+         * @param integer $clientId
+         * @return array
+         */
+        public function getClientManagerProjects(int $userId, int $clientId): array
+        {
+
+            $clientProjects = $this->projectRepository->getClientProjects($clientId);
+            $userProjects = $this->projectRepository->getUserProjects($userId);
+
+            $allProjects = [];
+
+            foreach ($clientProjects as $project) {
+                if (isset($allProjects[$project['id']]) === false) {
+                    $allProjects[$project['id']] = $project;
+                }
+            }
+
+            foreach ($userProjects as $project) {
+                if (isset($allProjects[$project['id']]) === false) {
+                    $allProjects[$project['id']] = $project;
+                }
+            }
+
+            return $userProjects;
+        }
+
+        /**
+         * @param bool $showClosedProjects
+         * @return array
+         */
+        public function getAll(bool $showClosedProjects = false): array
+        {
+            return $this->projectRepository->getAll($showClosedProjects);
+        }
     }
 
 }

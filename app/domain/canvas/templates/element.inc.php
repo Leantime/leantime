@@ -8,7 +8,9 @@
  * - $elementName Name of the current element
  * - $filter      Array on which to filter
  */
-
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$canvasTypes = $tpl->get('canvasTypes');
+$canvasItems = $tpl->get('canvasItems');
 ?>
 <h4 class="widgettitle title-primary">
     <?php if (isset($canvasTypes[$elementName]['icon'])) {
@@ -28,7 +30,7 @@
                                             $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                                                                  $filterRelates == $row['relates'])
         ) {
-            $comments = new \leantime\domain\repositories\comments();
+            $comments = app()->make(\leantime\domain\repositories\comments::class);
             $nbcomments = $comments->countComments(moduleId: $row['id']);
             ?>
 
@@ -48,23 +50,23 @@
                         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                             &nbsp;&nbsp;&nbsp;
                             <ul class="dropdown-menu">
-                                <li class="nav-header"><?=$this->__("subtitles.edit"); ?></li>
-                                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
-                                       class="<?=$canvasName ?>CanvasModal"
-                                       data="item_<?php echo $row["id"];?>"> <?=$this->__("links.edit_canvas_item"); ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
-                                       class="delete <?=$canvasName ?>CanvasModal"
-                                       data="item_<?php echo $row["id"];?>"> <?=$this->__("links.delete_canvas_item"); ?></a></li>
+                                <li class="nav-header"><?=$tpl->__("subtitles.edit"); ?></li>
+                                <li><a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
+
+                                       data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.edit_canvas_item"); ?></a></li>
+                                <li><a href="#/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
+                                       class="delete"
+                                       data="item_<?php echo $row["id"];?>"> <?=$tpl->__("links.delete_canvas_item"); ?></a></li>
                             </ul>
                         <?php } ?>
                     </div>
 
-                    <h4><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
-                           class="<?=$canvasName ?>CanvasModal"
-                           data="item_<?=$row['id'] ?>"><?php $this->e($row["description"]);?></a></h4>
+                    <h4><a href="#/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
+
+                           data="item_<?=$row['id'] ?>"><?php $tpl->e($row["description"]);?></a></h4>
 
                     <?php if ($row["conclusion"] != "") {
-                        echo '<small>' . $this->convertRelativePaths($row["conclusion"]) . '</small>';
+                        echo '<small>' . $tpl->convertRelativePaths($row["conclusion"]) . '</small>';
                     } ?>
 
                     <div class="clearfix" style="padding-bottom: 8px;"></div>
@@ -78,7 +80,7 @@
                                                                                                           aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
-                                <li class="nav-header border"><?=$this->__("dropdown.choose_status")?></li>
+                                <li class="nav-header border"><?=$tpl->__("dropdown.choose_status")?></li>
                                 <?php foreach ($statusLabels as $key => $data) { ?>
                                     <?php if ($data['active'] || true) { ?>
                                         <li class='dropdown-item'>
@@ -102,7 +104,7 @@
                                                                                                                    aria-hidden="true"></i>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink<?=$row['id']?>">
-                                <li class="nav-header border"><?=$this->__("dropdown.choose_relates")?></li>
+                                <li class="nav-header border"><?=$tpl->__("dropdown.choose_relates")?></li>
                                 <?php foreach ($relatesLabels as $key => $data) { ?>
                                     <?php if ($data['active'] || true) { ?>
                                         <li class='dropdown-item'>
@@ -133,32 +135,30 @@
                             </span>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="userDropdownMenuLink<?=$row['id']?>">
-                            <li class="nav-header border"><?=$this->__("dropdown.choose_user")?></li>
-                            <?php foreach ($this->get('users') as $user) {
+                            <li class="nav-header border"><?=$tpl->__("dropdown.choose_user")?></li>
+                            <?php foreach ($tpl->get('users') as $user) {
                                 echo "<li class='dropdown-item'>" .
                                      "<a href='javascript:void(0);' data-label='" .
                                      sprintf(
-                                         $this->__("text.full_name"),
-                                         $this->escape($user["firstname"]),
-                                         $this->escape($user['lastname'])
+                                         $tpl->__("text.full_name"),
+                                         $tpl->escape($user["firstname"]),
+                                         $tpl->escape($user['lastname'])
                                      ) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" .
                                      $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" .
                                      BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' " .
                                      "style='vertical-align: middle; margin-right:5px;'/>" .
                                      sprintf(
-                                         $this->__("text.full_name"),
-                                         $this->escape($user["firstname"]),
-                                         $this->escape($user['lastname'])
+                                         $tpl->__("text.full_name"),
+                                         $tpl->escape($user["firstname"]),
+                                         $tpl->escape($user['lastname'])
                                      ) . "</a>";
                                 echo"</li>";
                             }?>
                         </ul>
                     </div>
                     <div class="pull-right" style="margin-right:10px;">
-                        <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
-                           class="<?=$canvasName ?>CanvasModal" data="item_<?=$row['id'] ?>"
-                            <?php echo $nbcomments == 0 ? 'style="color: grey;"' : ''
-                            ?>><span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
+                        <a href="#/<?=$canvasName ?>canvas/editCanvasComment/<?=$row['id'] ?>"
+                           class="commentCountLink" data="item_<?=$row['id'] ?>"> <span class="fas fa-comments"></span></a> <small><?=$nbcomments ?></small>
                     </div>
                 </div>
             </div>
@@ -168,10 +168,10 @@
                     <div class="row">
                         <div class="col-md-5" >
                             <?php strlen($row['milestoneHeadline']) > 60 ?
-                            $this->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") :  $this->e($row['milestoneHeadline']); ?>
+                            $tpl->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") :  $tpl->e($row['milestoneHeadline']); ?>
                         </div>
                         <div class="col-md-7" style="text-align:right">
-                            <?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?>
+                            <?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?>
                         </div>
                     </div>
                     <div class="row">
@@ -180,7 +180,7 @@
                                 <div class="progress-bar progress-bar-success" role="progressbar"
                                      aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100"
                                      style="width: <?php echo $row['percentDone']; ?>%">
-                                    <span class="sr-only"><?=sprintf($this->__("text.percent_complete"), $row['percentDone'])?></span>
+                                    <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?></span>
                                 </div>
                             </div>
                         </div>
@@ -191,8 +191,8 @@
     <?php } ?>
   <br />
   <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-      <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
-         class="<?=$canvasName ?>CanvasModal" id="<?php echo $elementName; ?>"
-         style="padding-bottom: 10px;"><?=$this->__('links.add_new_canvas_item') ?></a>
+      <a href="#/<?=$canvasName ?>canvas/editCanvasItem?type=<?php echo $elementName; ?>"
+         class="" id="<?php echo $elementName; ?>"
+         style="padding-bottom: 10px;"><?=$tpl->__('links.add_new_canvas_item') ?></a>
   <?php } ?>
 </div>

@@ -10,21 +10,23 @@ namespace leantime\domain\controllers {
 
     class editTime extends controller
     {
-        private $timesheetsRepo;
-        private $projects;
-        private $tickets;
+        private repositories\timesheets $timesheetsRepo;
+        private repositories\projects $projects;
+        private repositories\tickets $tickets;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-
-            $this->timesheetsRepo = new repositories\timesheets();
-            $this->projects = new repositories\projects();
-            $this->tickets = new repositories\tickets();
+        public function init(
+            repositories\timesheets $timesheetsRepo,
+            repositories\projects $projects,
+            repositories\tickets $tickets
+        ) {
+            $this->timesheetsRepo = $timesheetsRepo;
+            $this->projects = $projects;
+            $this->tickets = $tickets;
         }
 
         /**
@@ -59,7 +61,7 @@ namespace leantime\domain\controllers {
                         'invoicedEmplDate' => $timesheet['invoicedEmplDate'],
                         'invoicedCompDate' => $timesheet['invoicedCompDate'],
                         'paid' => $timesheet['paid'],
-                        'paidDate' => $timesheet['paidDate']
+                        'paidDate' => $timesheet['paidDate'],
                     );
 
                     if (auth::userIsAtLeast(roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
@@ -158,7 +160,7 @@ namespace leantime\domain\controllers {
                                                 'invoicedEmplDate' => $timesheetUpdated['invoicedEmplDate'],
                                                 'invoicedCompDate' => $timesheetUpdated['invoicedCompDate'],
                                                 'paid' => $timesheetUpdated['paid'],
-                                                'paidDate' => $timesheetUpdated['paidDate']
+                                                'paidDate' => $timesheetUpdated['paidDate'],
                                             );
                                         } else {
                                             $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');

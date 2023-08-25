@@ -1,34 +1,33 @@
 <?php
 
-
 use leantime\core\eventhelpers;
-
-$today = date($this->__('language.dateformat'));
-$author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$today = date($tpl->__('language.dateformat'));
+$author = $_SESSION['userdata']['name'] . ' (' . $_SESSION['userdata']['mail'] . ')';
 
     //Templates for tinymce templates
     //All Templates require title, description, content
 
     $templates = array();
 
-    $prdTpl = new \leantime\domain\models\wiki\template();
+    $prdTpl = app()->make(\leantime\domain\models\wiki\template::class);
 
-    $prdTpl->title = $this->__("templates.prd.title");
-    $prdTpl->description = $this->__("templates.prd.description");
-    $prdTpl->category = $this->__("templates.documents");
+    $prdTpl->title = $tpl->__("templates.prd.title");
+    $prdTpl->description = $tpl->__("templates.prd.description");
+    $prdTpl->category = $tpl->__("templates.documents");
     $prdTpl->content = '
-<h1><strong>'.$this->__("templates.prd.title_for_prd").'<br /></strong></h1>
-<p>'.$this->__("templates.author").' '.$author.'<br />
-'.$this->__("templates.dates").' '.$today.'<br />
-'.$this->__("templates.status").' <span class="label label-default">'.$this->__("templates.status.draft").'</span><br />
+<h1><strong>' . $tpl->__("templates.prd.title_for_prd") . '<br /></strong></h1>
+<p>' . $tpl->__("templates.author") . ' ' . $author . '<br />
+' . $tpl->__("templates.dates") . ' ' . $today . '<br />
+' . $tpl->__("templates.status") . ' <span class="label label-default">' . $tpl->__("templates.status.draft") . '</span><br />
 
 <table style="border-collapse: collapse; width: 100%;" border="1">
 <thead>
 <tr>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.responsible").'</td>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.approve").'</td>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.consulted").'</td>
-<td style="width: 23.3025%;">'.$this->__("templates.prd.informed").'</td>
+<td style="width: 23.3025%;">' . $tpl->__("templates.prd.responsible") . '</td>
+<td style="width: 23.3025%;">' . $tpl->__("templates.prd.approve") . '</td>
+<td style="width: 23.3025%;">' . $tpl->__("templates.prd.consulted") . '</td>
+<td style="width: 23.3025%;">' . $tpl->__("templates.prd.informed") . '</td>
 </tr>
 </thead>
 <tbody>
@@ -40,12 +39,12 @@ $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
 </tr>
 </tbody>
 </table>
-<h1>'.$this->__("templates.summary").'</h1>
-<h2>'.$this->__("templates.overview").'</h2>
-<p>'.$this->__("templates.prd.overview_description").'</p>
+<h1>' . $tpl->__("templates.summary") . '</h1>
+<h2>' . $tpl->__("templates.overview") . '</h2>
+<p>' . $tpl->__("templates.prd.overview_description") . '</p>
 
-<h2>'.$this->__("templates.problem").'</h2>
-<p>'.$this->__("templates.prd.problem_description").'</p>
+<h2>' . $tpl->__("templates.problem") . '</h2>
+<p>' . $tpl->__("templates.prd.problem_description") . '</p>
 
 <h2 >Goals (What are we working towards?</h2>
 <p>1. Goal</p>
@@ -155,14 +154,14 @@ $author = $_SESSION['userdata']['name'].' ('.$_SESSION['userdata']['mail'].')';
 $templates[] = $prdTpl;
 
 //Project Outline
-$projectOutline = new \leantime\domain\models\wiki\template();
+$projectOutline = app()->make(\leantime\domain\models\wiki\template::class);
 $projectOutline->title = "Project Outline";
-$projectOutline->category = $this->__("templates.documents");
+$projectOutline->category = $tpl->__("templates.documents");
 $projectOutline->description = "";
 $projectOutline->content = '
 <h1><strong>Project Outline<br /></strong></h1>
-<p>Author: '.$author.'<br />
-Date: '.$today.'<br />
+<p>Author: ' . $author . '<br />
+Date: ' . $today . '<br />
 Status: <span class="label label-default">Draft</span><br />
 <table style="border-collapse: collapse; width: 100.146%; background-color: #ffffff; height: 182px;" border="1">
 <tbody>
@@ -257,9 +256,9 @@ $templates[] = $projectOutline;
 
 
 //User Story
-$userStoryTpl = new \leantime\domain\models\wiki\template();
+$userStoryTpl = app()->make(\leantime\domain\models\wiki\template::class);
 $userStoryTpl->title = "User Story";
-$userStoryTpl->category = $this->__("templates.todos");
+$userStoryTpl->category = $tpl->__("templates.todos");
 $userStoryTpl->description = "A template for an agile user story";
 $userStoryTpl->content = '
 <table style="border-collapse: collapse; width: 100.049%;" border="1">
@@ -290,9 +289,9 @@ $userStoryTpl->content = '
 $templates[] = $userStoryTpl;
 
 
-$bugTpl = new \leantime\domain\models\wiki\template();
+$bugTpl = app()->make(\leantime\domain\models\wiki\template::class);
 $bugTpl->title = "Bug";
-$bugTpl->category = $this->__("templates.todos");
+$bugTpl->category = $tpl->__("templates.todos");
 $bugTpl->description = "A template for a bug report";
 $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
  <tbody>
@@ -335,9 +334,9 @@ $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" b
 $templates[] = $bugTpl;
 
 
-$featureTpl = new \leantime\domain\models\wiki\template();
+$featureTpl = app()->make(\leantime\domain\models\wiki\template::class);
 $featureTpl->title = "Feature Request";
-$featureTpl->category = $this->__("templates.todos");
+$featureTpl->category = $tpl->__("templates.todos");
 $featureTpl->description = "A template for a feature request";
 $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" border="1">
 <tbody>
@@ -363,33 +362,33 @@ $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%
 $templates[] = $featureTpl;
 
 
-$layout48 = new \leantime\domain\models\wiki\template();
-$layout48->title = $this->__("templates.side_left");
-$layout48->category = $this->__("templates.layouts");
-$layout48->description = $this->__("templates.titles.side_left_description");
+$layout48 = app()->make(\leantime\domain\models\wiki\template::class);
+$layout48->title = $tpl->__("templates.side_left");
+$layout48->category = $tpl->__("templates.layouts");
+$layout48->description = $tpl->__("templates.titles.side_left_description");
 
 $layout48->content = '
 <div class="row">
 <div class="col-md-4"><p>Sidebar Left</p></div>
 <div class="col-md-8"><p>Content Right</p></div>
 </div>';
-$templates[] =$layout48;
+$templates[] = $layout48;
 
-$layout84 = new \leantime\domain\models\wiki\template();
-$layout84->title = $this->__("templates.side_right");
-$layout84->category = $this->__("templates.layouts");
-$layout84->description = $this->__("templates.titles.side_right_description");
+$layout84 = app()->make(\leantime\domain\models\wiki\template::class);
+$layout84->title = $tpl->__("templates.side_right");
+$layout84->category = $tpl->__("templates.layouts");
+$layout84->description = $tpl->__("templates.titles.side_right_description");
 $layout84->content = '
 <div class="row">
 <div class="col-md-8"><p>Content Left</p></div>
 <div class="col-md-4"><p>Sidebar Right</p></div>
 </div>';
-$templates[] =$layout84;
+$templates[] = $layout84;
 
-$layout363 = new \leantime\domain\models\wiki\template();
-$layout363->title = $this->__("templates.side_m_side");
-$layout363->category = $this->__("templates.layouts");
-$layout363->description = $this->__("templates.titles.side_m_side_description");
+$layout363 = app()->make(\leantime\domain\models\wiki\template::class);
+$layout363->title = $tpl->__("templates.side_m_side");
+$layout363->category = $tpl->__("templates.layouts");
+$layout363->description = $tpl->__("templates.titles.side_m_side_description");
 $layout363->content = '
 <div class="row">
 <div class="col-md-3"><p>Sidebar Left</p></div>
@@ -399,21 +398,21 @@ $layout363->content = '
 $templates[] = $layout363;
 
 
-$layout66 = new \leantime\domain\models\wiki\template();
-$layout66->title = $this->__("templates.titles.2_col");
-$layout66->category = $this->__("templates.layouts");
-$layout66->description = $this->__("templates.titles.2_col_description");
+$layout66 = app()->make(\leantime\domain\models\wiki\template::class);
+$layout66->title = $tpl->__("templates.titles.2_col");
+$layout66->category = $tpl->__("templates.layouts");
+$layout66->description = $tpl->__("templates.titles.2_col_description");
 $layout66->content = '
 <div class="row">
 <div class="col-md-6"><p>Column 1</div>
 <div class="col-md-6"><p>Column 2</div>
 </div>';
-$templates[] =$layout66;
+$templates[] = $layout66;
 
-$layout444 = new \leantime\domain\models\wiki\template();
-$layout444->title = $this->__("templates.titles.3_col");
-$layout444->category = $this->__("templates.layouts");
-$layout444->description = $this->__("templates.titles.3_col_description");
+$layout444 = app()->make(\leantime\domain\models\wiki\template::class);
+$layout444->title = $tpl->__("templates.titles.3_col");
+$layout444->category = $tpl->__("templates.layouts");
+$layout444->description = $tpl->__("templates.titles.3_col_description");
 $layout444->content = '
 <div class="row">
 <div class="col-md-4"><p>Column 1</p></div>
@@ -422,10 +421,10 @@ $layout444->content = '
 </div>';
 $templates[] = $layout444;
 
-$layout3333 = new \leantime\domain\models\wiki\template();
-$layout3333->title = $this->__("templates.titles.4_col");
-$layout3333->category = $this->__("templates.layouts");
-$layout3333->description = $this->__("templates.titles.4_col_description");
+$layout3333 = app()->make(\leantime\domain\models\wiki\template::class);
+$layout3333->title = $tpl->__("templates.titles.4_col");
+$layout3333->category = $tpl->__("templates.layouts");
+$layout3333->description = $tpl->__("templates.titles.4_col_description");
 $layout3333->content = '
 <div class="row">
 <div class="col-md-3"><p>Column 1</p></div>
@@ -435,38 +434,35 @@ $layout3333->content = '
 </div>';
 $templates[] = $layout3333;
 
-$labelGreen = new \leantime\domain\models\wiki\template();
-$labelGreen->title = $this->__("templates.titles.green_status");
-$labelGreen->category = $this->__("templates.elements");
-$labelGreen->description = $this->__("templates.titles.green_status_description");
+$labelGreen = app()->make(\leantime\domain\models\wiki\template::class);
+$labelGreen->title = $tpl->__("templates.titles.green_status");
+$labelGreen->category = $tpl->__("templates.elements");
+$labelGreen->description = $tpl->__("templates.titles.green_status_description");
 $labelGreen->content = '<span class="label label-success">Green</span>';
 $templates[] = $labelGreen;
 
-$labelYellow = new \leantime\domain\models\wiki\template();
-$labelYellow->title = $this->__("templates.titles.yellow_status");
-$labelYellow->category = $this->__("templates.elements");
-$labelYellow->description = $this->__("templates.titles.yellow_status_description");
+$labelYellow = app()->make(\leantime\domain\models\wiki\template::class);
+$labelYellow->title = $tpl->__("templates.titles.yellow_status");
+$labelYellow->category = $tpl->__("templates.elements");
+$labelYellow->description = $tpl->__("templates.titles.yellow_status_description");
 $labelYellow->content = '<span class="label label-warning">Yellow</span>';
 $templates[] = $labelYellow;
 
-$labelRed = new \leantime\domain\models\wiki\template();
-$labelRed->title = $this->__("templates.titles.red_status");
-$labelRed->category = $this->__("templates.elements");
-$labelRed->description = $this->__("templates.titles.red_status_description");
+$labelRed = app()->make(\leantime\domain\models\wiki\template::class);
+$labelRed->title = $tpl->__("templates.titles.red_status");
+$labelRed->category = $tpl->__("templates.elements");
+$labelRed->description = $tpl->__("templates.titles.red_status_description");
 $labelRed->content = '<span class="label label-danger">Red</span>';
 $templates[] = $labelRed;
 
-$labelGray = new \leantime\domain\models\wiki\template();
-$labelGray->title = $this->__("templates.titles.gray_status");
-$labelGray->category = $this->__("templates.elements");
-$labelGray->description = $this->__("templates.titles.gray_status_description");
+$labelGray = app()->make(\leantime\domain\models\wiki\template::class);
+$labelGray->title = $tpl->__("templates.titles.gray_status");
+$labelGray->category = $tpl->__("templates.elements");
+$labelGray->description = $tpl->__("templates.titles.gray_status_description");
 $labelGray->content = '<span class="label label-default">Gray</span>';
 $templates[] = $labelGray;
 
 
-$templates = eventhelpers::dispatch_filter("documentTemplates", $templates);
+$templates = $tpl->dispatch_filter("documentTemplates", $templates);
 
 echo json_encode($templates);
-
-
-

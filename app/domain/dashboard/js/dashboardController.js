@@ -28,16 +28,6 @@ leantime.dashboardController = (function () {
 
     var _progressChart = '';
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-                _initDueDateTimePickers();
-
-            }
-        );
-    })();
-
     //Functions
 
     var prepareHiddenDueDate = function () {
@@ -320,44 +310,44 @@ leantime.dashboardController = (function () {
 
     };
 
-    var _initDueDateTimePickers = function () {
-        jQuery(document).ready(function() {
+    var initDueDateTimePickers = function () {
+        jQuery(document).ready(function () {
 
 
-        jQuery(".duedates").datepicker(
-            {
-                dateFormat: leantime.i18n.__("language.jsdateformat"),
-                dayNames: leantime.i18n.__("language.dayNames").split(","),
-                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-                monthNames: leantime.i18n.__("language.monthNames").split(","),
-                currentText: leantime.i18n.__("language.currentText"),
-                closeText: leantime.i18n.__("language.closeText"),
-                buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
-                nextText: leantime.i18n.__("language.nextText"),
-                prevText: leantime.i18n.__("language.prevText"),
-                weekHeader: leantime.i18n.__("language.weekHeader"),
-                onClose: function (date) {
+            jQuery(".duedates").datepicker(
+                {
+                    dateFormat: leantime.i18n.__("language.jsdateformat"),
+                    dayNames: leantime.i18n.__("language.dayNames").split(","),
+                    dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+                    dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+                    monthNames: leantime.i18n.__("language.monthNames").split(","),
+                    currentText: leantime.i18n.__("language.currentText"),
+                    closeText: leantime.i18n.__("language.closeText"),
+                    buttonText: leantime.i18n.__("language.buttonText"),
+                    isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                    nextText: leantime.i18n.__("language.nextText"),
+                    prevText: leantime.i18n.__("language.prevText"),
+                    weekHeader: leantime.i18n.__("language.weekHeader"),
+                    onClose: function (date) {
 
-                    var newDate = "";
+                        var newDate = "";
 
-                    if (date == "") {
-                        jQuery(this).val(leantime.i18n.__("text.anytime"));
+                        if (date == "") {
+                            jQuery(this).val(leantime.i18n.__("text.anytime"));
+                        }
+
+                        var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
+
+                        var id = jQuery(this).attr("data-id");
+                        newDate = dateTime;
+
+                        leantime.ticketsRepository.updateDueDates(id, newDate, function () {
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated")});
+                        });
+
                     }
-
-                    var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
-
-                    var id = jQuery(this).attr("data-id");
-                    newDate = dateTime;
-
-                    leantime.ticketsRepository.updateDueDates(id, newDate, function () {
-                        jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated")});
-                    });
-
                 }
-            }
-        );
+            );
         });
     };
 
@@ -370,6 +360,6 @@ leantime.dashboardController = (function () {
         initBacklogChartButtonClick:initBacklogChartButtonClick,
         initProgressChart:initProgressChart,
         prepareHiddenDueDate:prepareHiddenDueDate,
-        _initDueDateTimePickers:_initDueDateTimePickers
+        initDueDateTimePickers:initDueDateTimePickers
     };
 })();

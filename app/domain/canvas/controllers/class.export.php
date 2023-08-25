@@ -35,13 +35,15 @@ namespace leantime\domain\controllers\canvas {
         /***
          * Constructor
          */
-        public function init()
-        {
+        public function init(
+            \leantime\core\environment $config,
+            core\language $language,
+        ) {
 
-            $this->config = \leantime\core\environment::getInstance();
-            $this->language = core\language::getInstance();
+            $this->config = $config;
+            $this->language = $language;
             $canvasRepoName = "\\leantime\\domain\\repositories\\" . static::CANVAS_NAME . static::CANVAS_TYPE;
-            $this->canvasRepo = new $canvasRepoName();
+            $this->canvasRepo = app()->make($canvasRepoName);
 
             $this->canvasTypes = $this->canvasRepo->getCanvasTypes();
             $this->statusLabels = $this->canvasRepo->getStatusLabels();
@@ -79,7 +81,7 @@ namespace leantime\domain\controllers\canvas {
          * export - Generate XML file
          *
          * @access protected
-         * @param  int    $id Canvas identifier
+         * @param  integer $id Canvas identifier
          * @return string XML data
          */
         protected function export(int $id): string
@@ -90,7 +92,7 @@ namespace leantime\domain\controllers\canvas {
             !empty($canvasAry) || throw new \Exception("Cannot find canvas with id '$id'");
             $projectId = $canvasAry[0]['projectId'];
             $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
-            $projectsRepo = new repositories\projects();
+            $projectsRepo = app()->make(repositories\projects::class);
             $projectAry = $projectsRepo->getProject($projectId);
             !empty($projectAry) || throw new \Exception("Cannot retrieve project id '$projectId'");
 
@@ -104,10 +106,10 @@ namespace leantime\domain\controllers\canvas {
          * xmlExport - Generate XML for specific data
          *
          * @access protected
-         * @param  string $canvasKey    Encoded canvas name
-         * @param  string $canvcasTitle Canvas title
-         * @param  array  $recordsAry   Array of canvas entry records
-         * @param  int    $indent       Indent level to use;
+         * @param  string  $canvasKey    Encoded canvas name
+         * @param  string  $canvcasTitle Canvas title
+         * @param  array   $recordsAry   Array of canvas entry records
+         * @param  integer $indent       Indent level to use;
          * @return string XML data
          */
         protected function xmlExport(string $canvasKey, string $canvasTitle, array $recordsAry, int $indent = 0): string

@@ -27,7 +27,7 @@ class runCronCommand extends Command
      *
      * @param  InputInterface  $input
      * @param  OutputInterface $output
-     * @return int 0 if everything went fine, or an exit code.
+     * @return integer 0 if everything went fine, or an exit code.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -35,15 +35,13 @@ class runCronCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         try {
-
-            $cron = new cron();
+            $cron = app()->make(cron::class);
             $result = $cron->runCron();
 
             if (!$result) {
                 $io->error("Cron not executed. Not enough time elapsed");
                 return Command::FAILURE;
             }
-
         } catch (Exception $ex) {
             $io->error($ex);
             return Command::FAILURE;

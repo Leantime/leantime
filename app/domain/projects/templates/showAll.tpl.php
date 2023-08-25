@@ -1,8 +1,12 @@
 <?php
-    defined('RESTRICTED') or die('Restricted access');
-    $project = $this->get('project');
-    $menuTypes = $this->get('menuTypes');
-    $showClosedProjects = $this->get('showClosedProjects');
+
+use leantime\plugins\services\billing;
+
+defined( 'RESTRICTED' ) or die( 'Restricted access' );
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$project = $tpl->get('project');
+$menuTypes = $tpl->get('menuTypes');
+$showClosedProjects = $tpl->get('showClosedProjects');
 
 ?>
 
@@ -10,8 +14,8 @@
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('label.administration');  $this->__("") ?></h5>
-        <h1><?php echo $this->__('headline.all_projects') ?></h1>
+        <h5><?php echo $tpl->__('label.administration');  $tpl->__("") ?></h5>
+        <h1><?php echo $tpl->__('headline.all_projects') ?></h1>
     </div>
 
 </div><!--pageheader-->
@@ -19,7 +23,7 @@
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <div class="pull-right">
             <form action="" method="post">
@@ -30,7 +34,7 @@
             </form>
         </div>
 
-        <?php echo $this->displayLink('projects.newProject', "<i class='fa fa-plus'></i> " . $this->__('link.new_project'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
+        <?php echo $tpl->displayLink('projects.newProject', "<i class='fa fa-plus'></i> " . $tpl->__('link.new_project'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
         <div class="clearall"></div>
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
             <?php if ($config->enableMenuType) { ?>
@@ -45,13 +49,13 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th class="head0"><?php echo $this->__('label.project_name'); ?></th>
-                    <th class="head1"><?php echo $this->__('label.client_product'); ?></th>
-                    <th class="head0"><?php echo $this->__('label.menu_type'); ?></th>
-                    <th class="head1"><?php echo $this->__('label.project_state'); ?></th>
-                    <th class="head0"><?php echo $this->__('label.num_tickets'); ?></th>
-                    <th class="head1"><?php echo $this->__('label.hourly_budget'); ?></th>
-                    <th class="head0"><?php echo $this->__('label.budget_cost'); ?></th>
+                    <th class="head0"><?php echo $tpl->__('label.project_name'); ?></th>
+                    <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
+                    <th class="head0"><?php echo $tpl->__('label.menu_type'); ?></th>
+                    <th class="head1"><?php echo $tpl->__('label.project_state'); ?></th>
+                    <th class="head0"><?php echo $tpl->__('label.num_tickets'); ?></th>
+                    <th class="head1"><?php echo $tpl->__('label.hourly_budget'); ?></th>
+                    <th class="head0"><?php echo $tpl->__('label.budget_cost'); ?></th>
                 </tr>
             </thead>
             <?php } else { ?>
@@ -65,36 +69,36 @@
             </colgroup>
             <thead>
                 <tr>
-                    <th class="head0"><?php echo $this->__('label.project_name'); ?></th>
-                    <th class="head1"><?php echo $this->__('label.client_product'); ?></th>
-                    <th class="head0"><?php echo $this->__('label.project_state'); ?></th>
-                    <th class="head1"><?php echo $this->__('label.num_tickets'); ?></th>
-                    <th class="head0"><?php echo $this->__('label.hourly_budget'); ?></th>
-                    <th class="head1"><?php echo $this->__('label.budget_cost'); ?></th>
+                    <th class="head0"><?php echo $tpl->__('label.project_name'); ?></th>
+                    <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
+                    <th class="head0"><?php echo $tpl->__('label.project_state'); ?></th>
+                    <th class="head1"><?php echo $tpl->__('label.num_tickets'); ?></th>
+                    <th class="head0"><?php echo $tpl->__('label.hourly_budget'); ?></th>
+                    <th class="head1"><?php echo $tpl->__('label.budget_cost'); ?></th>
                 </tr>
             </thead>
             <?php } ?>
             <tbody>
 
-             <?php foreach ($this->get('allProjects') as $row) : ?>
+             <?php foreach ($tpl->get('allProjects') as $row) : ?>
                 <tr class='gradeA'>
 
                     <td style="padding:6px;">
-                        <?php echo $this->displayLink('projects.changeCurrentProject', $this->escape($row['name']), array('id' => $row['id'])) ?>
+                        <?php echo $tpl->displayLink('projects.showProject', $tpl->escape($row['name']), array('id' => $row['id'])) ?>
                     <td>
-                        <?php echo $this->displayLink('clients.showClient', $this->escape($row['clientName']), array('id' => $row['clientId']), null, true) ?>
+                        <?php echo $tpl->displayLink('clients.showClient', $tpl->escape($row['clientName']), array('id' => $row['clientId']), null, true) ?>
                     </td>
                     <?php if ($config->enableMenuType) {
                         ?><td><?php echo $menuTypes[$row['menuType']] ?? \leantime\domain\repositories\menu::DEFAULT_MENU ?><?php
                     } ?>
                     <td><?php if ($row['state'] == -1) {
-                        echo $this->__('label.closed');
+                        echo $tpl->__('label.closed');
                         } else {
-                            echo $this->__('label.open');
+                            echo $tpl->__('label.open');
                         } ?></td>
                     <td class="center"><?php echo $row['numberOfTickets']; ?></td>
-                    <td class="center"><?php $this->e($row['hourBudget']); ?></td>
-                    <td class="center"><?php $this->e($row['dollarBudget']); ?></td>
+                    <td class="center"><?php $tpl->e($row['hourBudget']); ?></td>
+                    <td class="center"><?php $tpl->e($row['dollarBudget']); ?></td>
                 </tr>
              <?php endforeach; ?>
 

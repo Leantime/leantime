@@ -10,20 +10,26 @@ namespace leantime\domain\controllers {
 
     class newApiKey extends controller
     {
-        private $userRepo;
-        private $projectsRepo;
+        private repositories\users $userRepo;
+        private repositories\projects $projectsRepo;
+        private services\users $userService;
+        private services\api $APIService;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
-        {
-            $this->userRepo = new repositories\users();
-            $this->projectsRepo = new repositories\projects();
-            $this->userService = new services\users();
-            $this->APIService = new services\api();
+        public function init(
+            repositories\users $userRepo,
+            repositories\projects $projectsRepo,
+            services\users $userService,
+            services\api $APIService
+        ) {
+            $this->userRepo = $userRepo;
+            $this->projectsRepo = $projectsRepo;
+            $this->userService = $userService;
+            $this->APIService = $APIService;
         }
 
         /**
@@ -42,12 +48,11 @@ namespace leantime\domain\controllers {
                 'role' => "",
                 'password' => "",
                 'status' => 'a',
-                'source' => 'api'
+                'source' => 'api',
             );
 
             //only Admins
             if (auth::userIsAtLeast(roles::$admin)) {
-
                 $projectrelation = array();
 
                 if (isset($_POST['save'])) {
@@ -58,7 +63,7 @@ namespace leantime\domain\controllers {
                         'password' => '',
                         'pwReset' => '',
                         'status' => '',
-                        'source' => 'api'
+                        'source' => 'api',
                     );
 
                     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
@@ -81,7 +86,6 @@ namespace leantime\domain\controllers {
                     $this->tpl->setNotification("notification.api_key_created", 'success');
 
                     $this->tpl->assign('apiKeyValues', $apiKeyValues);
-
                 }
 
                 $this->tpl->assign('values', $values);

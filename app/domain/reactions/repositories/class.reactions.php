@@ -13,26 +13,23 @@ namespace leantime\domain\repositories {
          */
         private core\db $db;
 
-
-
-        public function __construct()
+        public function __construct(core\db $db)
         {
-
-            $this->db = core\db::getInstance();
+            $this->db = $db;
         }
 
         /**
          * addReaction - adds a reaction to an entity
          * @access public
          *
-         * @param string $module
-         * @param int $moduleId
-         * @param int $userId
-         * @param string $reaction
+         * @param string  $module
+         * @param integer $moduleId
+         * @param integer $userId
+         * @param string  $reaction
          *
-         * @return bool
+         * @return boolean
          */
-        public function addReaction(int $userId, string $module, int $moduleId,  string $reaction): bool
+        public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {
 
             $sql = 'INSERT INTO zp_reactions
@@ -57,10 +54,10 @@ namespace leantime\domain\repositories {
          * getGroupedEntityReactions - gets all reactions for a given entity grouped and counted by reactions
          * @access public
          *
-         * @param string $module
-         * @param int $moduleId
+         * @param string  $module
+         * @param integer $moduleId
          *
-         * @return array|bool returns the array on success or false on failure
+         * @return array|boolean returns the array on success or false on failure
          */
         public function getGroupedEntityReactions($module, $moduleId): array|false
         {
@@ -87,10 +84,10 @@ namespace leantime\domain\repositories {
          * getMyReactions - gets user reactions. Can be very broad or very targeted
          * @access public
          *
-         * @param int $userId
-         * @param string $module
-         * @param ?int $moduleId
-         * @param string $reaction
+         * @param integer $userId
+         * @param string  $module
+         * @param integer $moduleId
+         * @param string  $reaction
          *
          * @return array|false
          */
@@ -144,9 +141,9 @@ namespace leantime\domain\repositories {
          * removeReactionById - removes a reaction by reaction id
          * @access public
          *
-         * @param int $id
+         * @param integer $id
          *
-         * @return bool
+         * @return boolean
          */
         public function removeReactionById(int $id): bool
         {
@@ -166,9 +163,9 @@ namespace leantime\domain\repositories {
          * removeUserReaction - removes a users reaction to an entity
          * @access public
          *
-         * @param int $id
+         * @param integer $id
          *
-         * @return bool
+         * @return boolean
          */
         public function removeUserReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {

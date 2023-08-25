@@ -16,7 +16,7 @@ namespace leantime\domain\controllers {
          * htmlCanvas -  Layout canvas (must be implemented)
          *
          * @access public
-         * @param  array  $recordsAry Array of canvas data records
+         * @param  array $recordsAry Array of canvas data records
          * @return string HTML code
          */
         protected function htmlCanvas(array $recordsAry): string
@@ -89,14 +89,14 @@ namespace leantime\domain\controllers {
          * reportGenerate - Generate report for module
          *
          * @access public
-         * @param  int    $id     Canvas identifier
-         * @param  string $filter Filter value
+         * @param  integer $id     Canvas identifier
+         * @param  string  $filter Filter value
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string
         {
 
-            $options = [ 'disclaimer' => $this->canvasRepo->getDisclaimer() ];
+            $options = ['disclaimer' => $this->canvasRepo->getDisclaimer()];
             return parent::reportGenerate($id, $filter, $options);
         }
     }

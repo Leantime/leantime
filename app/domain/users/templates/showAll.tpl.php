@@ -1,25 +1,26 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-$roles = $this->get('roles');
+foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+$roles = $tpl->get('roles');
 ?>
 
 <div class="pageheader">
 
-    <div class="pageicon"><span class="fa <?php echo $this->getModulePicture() ?>"></span></div>
+    <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $this->__('label.administration') ?></h5>
-        <h1><?php echo $this->__('headlines.users'); ?></h1>
+        <h5><?php echo $tpl->__('label.administration') ?></h5>
+        <h1><?php echo $tpl->__('headlines.users'); ?></h1>
     </div>
 </div><!--pageheader-->
 
 <div class="maincontent">
     <div class="maincontentinner">
 
-        <?php echo $this->displayNotification() ?>
+        <?php echo $tpl->displayNotification() ?>
 
         <div class="row">
             <div class="col-md-6">
-                <a href="<?=BASE_URL ?>/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> <?=$this->__('buttons.add_user') ?> </a>
+                <a href="<?=BASE_URL ?>/users/newUser" class="btn btn-primary userEditModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
             </div>
             <div class="col-md-6 align-right">
 
@@ -38,37 +39,37 @@ $roles = $this->get('roles');
             </colgroup>
             <thead>
                 <tr>
-                    <th class='head1'><?php echo $this->__('label.name'); ?></th>
-                    <th class='head0'><?php echo $this->__('label.email'); ?></th>
-                    <th class='head1'><?php echo $this->__('label.client'); ?></th>
-                    <th class='head1'><?php echo $this->__('label.role'); ?></th>
-                    <th class='head1'><?php echo $this->__('label.status'); ?></th>
-                    <th class='head1'><?php echo $this->__('headlines.twoFA'); ?></th>
+                    <th class='head1'><?php echo $tpl->__('label.name'); ?></th>
+                    <th class='head0'><?php echo $tpl->__('label.email'); ?></th>
+                    <th class='head1'><?php echo $tpl->__('label.client'); ?></th>
+                    <th class='head1'><?php echo $tpl->__('label.role'); ?></th>
+                    <th class='head1'><?php echo $tpl->__('label.status'); ?></th>
+                    <th class='head1'><?php echo $tpl->__('headlines.twoFA'); ?></th>
                     <th class='head0 no-sort'></th>
                 </tr>
             </thead>
             <tbody>
-            <?php foreach ($this->get('allUsers') as $row) { ?>
+            <?php foreach ($tpl->get('allUsers') as $row) { ?>
                     <tr>
                         <td style="padding:6px 10px;">
-                        <?php echo $this->displayLink('users.editUser', sprintf($this->__("text.full_name"), $this->escape($row["firstname"]), $this->escape($row["lastname"])), array('id' => $row['id'])); ?>
+                        <?php echo $tpl->displayLink('users.editUser', sprintf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row["lastname"])), array('id' => $row['id'])); ?>
                         </td>
-                        <td><a href="<?=BASE_URL ?>/users/editUser/<?=$row['id']?>"><?=$this->escape($row['username']); ?></a></td>
-                        <td><?=$this->escape($row['clientName']); ?></td>
-                        <td><?=$this->__("label.roles." . $roles[$row['role']]); ?></td>
+                        <td><a href="<?=BASE_URL ?>/users/editUser/<?=$row['id']?>"><?=$tpl->escape($row['username']); ?></a></td>
+                        <td><?=$tpl->escape($row['clientName']); ?></td>
+                        <td><?=$tpl->__("label.roles." . $roles[$row['role']]); ?></td>
                         <td><?php if (strtolower($row['status']) == 'a') {
-                            echo $this->__('label.active');
+                            echo $tpl->__('label.active');
                             } elseif (strtolower($row['status']) == 'i') {
-                                echo $this->__('label.invited');
+                                echo $tpl->__('label.invited');
                             } else {
-                                echo $this->__('label.deactivated');
+                                echo $tpl->__('label.deactivated');
                             } ?></td>
                         <td><?php if ($row['twoFAEnabled']) {
-                            echo $this->__('label.yes');
+                            echo $tpl->__('label.yes');
                             } else {
-                                echo $this->__('label.no');
+                                echo $tpl->__('label.no');
                             } ?></td>
-                        <td><a href="<?=BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$this->__('links.delete');?></a></td>
+                        <td><a href="<?=BASE_URL ?>/users/delUser/<?php echo $row['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete');?></a></td>
                     </tr>
             <?php } ?>
             </tbody>

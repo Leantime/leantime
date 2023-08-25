@@ -15,11 +15,10 @@ namespace leantime\domain\controllers {
         private services\wiki $wikiService;
         private services\comments $commentService;
 
-        public function init()
+        public function init(services\wiki $wikiService, services\comments $commentService)
         {
-
-            $this->wikiService = new services\wiki();
-            $this->commentService = new services\comments();
+            $this->wikiService = $wikiService;
+            $this->commentService = $commentService;
         }
 
         public function get($params)
@@ -31,7 +30,7 @@ namespace leantime\domain\controllers {
 
             $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
             if ($wikis == false || count($wikis) == 0) {
-                $wiki = new wiki();
+                $wiki = app()->make(wiki::class);
                 $wiki->title = $this->language->__("label.default");
                 $wiki->projectId = $_SESSION['currentProject'];
                 $wiki->author = $_SESSION['userdata']['id'];
@@ -66,9 +65,7 @@ namespace leantime\domain\controllers {
                         $currentArticle = false;
                     }
                 }
-
             } elseif (isset($params['id'])) {
-
                 $currentArticle = $this->wikiService->getArticle($params['id'], $_SESSION['currentProject']);
 
                 if ($currentArticle && $currentArticle->id != null) {
@@ -82,7 +79,6 @@ namespace leantime\domain\controllers {
                 } else {
                     $this->tpl->redirect(BASE_URL . "/wiki/show");
                 }
-
             } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
                 $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
 

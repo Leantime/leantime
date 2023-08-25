@@ -55,8 +55,8 @@
 
     --dropdown-link-bg:var(--secondary-background);
     --dropdown-link-color: var(--primary-font-color);
-    --dropdown-link-hover-bg: var(--primary-background);
-    --dropdown-link-hover-color: var(--primary-font-color);
+    --dropdown-link-hover-bg: var(--primary-font-color);
+    --dropdown-link-hover-color: var(--primary-background);
 
     --header-action-hover-color:var(--neutral);
     --header-bg-color:var(--accent1);
@@ -65,13 +65,15 @@
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
     --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
-    --base-font-size: 14px;
+
     --font-size-xs: 10px;
-    --font-size-s:12px;
+    --font-size-s: 12px;
+    --base-font-size: 14px;
+    --font-size-m: var(--base-font-size);
     --font-size-l: 16px;
     --font-size-xl: 18px;
-    --font-size-xxl: 22px;
-    --font-size-xxxl: 26px;
+    --font-size-xxl: 20px;
+    --font-size-xxxl: 24px;
 
     --main-border-color:var(--neutral);
     --min-shadow: 0px 1px 3px rgba(0 0 0 / 10%), 0px 0px 1px rgba(0 0 0 / 5%);
@@ -81,6 +83,7 @@
     --box-radius: 5px;
     --box-radius-small:3px;
     --element-radius: 5px;
+    --input-radius: 8px;
 
     --kanban-col-bg: transparent;
     --kanban-col-title-bg: var(--col-title-bg);
@@ -89,20 +92,20 @@
     --kanban-card-hover: var(--col-title-bg);
 
 
-    --dark-red:#D61B0A;
+    --dark-red:#821219;
     --dark-red-text-color:#fff;
 
-    --red: #F76C5E;
-    --red-text-color: #000;
+    --red: #BB1B25;
+    --red-text-color: #fff;
 
-    --green: #32965D;
+    --green: #75BB1B;
     --green-text-color: #fff;
 
-    --dark-green: #1F5C39;
+    --dark-green: #4B7811;
     --dark-green-text-color:#fff;
 
-    --yellow: #FDB833;
-    --yellow-text-color: #000;
+    --yellow: #fdab3d;
+    --yellow-text-color: #fff;
 
     --blue: #1B75BB;
     --blue-text-color: #fff;
@@ -116,17 +119,33 @@
     --purple:#5F0F40;
     --purple-text-color:#fff;
 
-    --pink: #F26CA7;
-    --pink-text-color:#000;
+    --magenta:#bb1b75;
+    --purple-text-color:#fff;
 
-    --brown: #4C212A;
+    --pink: #F26CA7;
+    --pink-text-color:#fff;
+
+    --brown: #BB611B;
     --brown-text-color: #fff;
 
-    --grey: #b0b0b0;
-    --grey-text-color:#000;
+    --grey: #aaaaaa;
+    --grey-text-color:#fff;
 
-    --dark-grey: #707070;
+    --dark-grey: #4c4c4c;
     --dark-grey-text-color: #fff;
+
+    --teal: #1bbbb1;
+    --teal-text-color: #fff;
+
+    --zlayer-1: 1; /*Background*/
+    --zlayer-2: 5; /* Maincontentinnnter */
+    --zlayer-3: 10; /* Element contentinner */
+    --zlayer-4: 15; /* over element contentinnter (headlines, status) */
+    --zlayer-5: 20; /* Highest layer on content inner (Filters) */
+    --zlayer-6: 25; /* modal */
+    --zlayer-7: 30; /* modal dropdowns*/
+    --zlayer-8: 35; /* modal dialogs */
+    --zlayer-9: 40; /* modal modals*/
 
 
 
@@ -134,6 +153,6 @@
 }
 
 .ss-option:hover {
-	color: white;
-	background-color: var(--accent1) !important;
+    color: white;
+    background-color: var(--accent1) !important;
 }
