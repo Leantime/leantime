@@ -39,7 +39,7 @@
 
     <label for="allDay"><?php echo $tpl->__('label.all_day') ?></label>
     <input type="checkbox" id="allDay" name="allDay"
-    <?php if ($values['allDay'] === 'true') {
+    <?php if (isset($values['allDay']) === true && $values['allDay'] === true) {
         echo 'checked="checked" ';
     }?>
     /><br /><br />

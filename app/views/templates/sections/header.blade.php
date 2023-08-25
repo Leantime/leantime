@@ -37,7 +37,6 @@
 @dispatchEvent('afterScriptLibTags')
 
 <!-- app -->
-<script src="<?=BASE_URL?>/dist/js/compiled-app.<?php echo $settings->appVersion; ?>.min.js"></script>
 <script src="{!! BASE_URL !!}/dist/js/compiled-app.{!! $version !!}.min.js"></script>
 @dispatchEvent('afterMainScriptTag')
 

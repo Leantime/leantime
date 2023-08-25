@@ -10,48 +10,57 @@ namespace leantime\domain\controllers {
     use leantime\core;
     use leantime\core\controller;
     use leantime\domain\models\auth\roles;
-    use leantime\domain\repositories;
+    use leantime\domain\services;
     use leantime\domain\services\auth;
 
     class delEvent extends controller
     {
-        private repositories\calendar $calendarRepo;
+        private services\calendar $calendarService;
 
         /**
          * init - initialize private variables
          */
-        public function init(repositories\calendar $calendarRepo)
+        public function init(services\calendar $calendarService)
         {
-            $this->calendarRepo = $calendarRepo;
+            $this->calendarService = $calendarService;
+            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
         }
 
         /**
-         * run - display template and edit data
+         * retrieves delete calendar event page data
          *
          * @access public
+         *
          */
-        public function run()
-        {
-            auth::authOrRedirect([roles::$owner, roles::$admin, roles::$manager, roles::$editor]);
+        public function get() {
+            $this->tpl->displayPartial('calendar.delEvent');
+        }
 
-            if (isset($_GET['id']) === true) {
-                $id = (int)($_GET['id']);
+        /**
+         * sets, creates, and updates edit calendar event page data
+         *
+         * @access public
+         *
+         */
+        public function post($params) {
 
-                $msgKey = '';
+            if(isset($_GET['id']) === false){
+                $this->tpl->redirect(BASE_URL."/calendar/showMyCalendar/");
+            }
 
-                if (isset($_POST['del']) === true) {
-                    if ($this->calendarRepo->delPersonalEvent($id) == true) {
-                        $this->tpl->setNotification('notification.event_removed_successfully', 'success');
-                    } else {
-                        $this->tpl->setNotification('notification.could_not_delete_event', 'success');
-                    }
-                }
+            $id = (int)$_GET['id'];
 
+            $result = $this->calendarService->delEvent($id);
+
+            if(is_numeric($result)=== true){
+                $this->tpl->setNotification('notification.event_removed_successfully', 'success');
+                $this->tpl->redirect(BASE_URL."/calendar/showMyCalendar/");
+            }else{
+                $this->tpl->setNotification('notification.could_not_delete_event', 'error');
                 $this->tpl->displayPartial('calendar.delEvent');
-            } else {
-                $this->tpl->displayPartial('errors.error403');
             }
         }
+
     }
 
 }

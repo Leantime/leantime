@@ -74,12 +74,8 @@ namespace leantime\domain\services {
         public function addEvent(array $values): int|false
         {
 
-            if (isset($values['allDay']) === true) {
-                $allDay = 'true';
-            } else {
-                $allDay = 'false';
-            }
-            $values['allDay'] = $allDay;
+
+            $values['allDay'] = $values['allDay'] ?? false;
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
@@ -101,6 +97,74 @@ namespace leantime\domain\services {
                 return false;
             }
         }
-    }
 
+
+        public function getEvent($eventId)
+        {
+            return $this->calendarRepo->getEvent($eventId);
+        }
+
+        /**
+         * edits an event on the users calendar
+         *
+         * @access public
+         * @params array $values array of event values
+         *
+         * @return bool returns true on success, false on failure
+         */
+        public function editEvent(array $values): bool
+        {
+            $id = null;
+            if (isset($values['id']) === true) {
+                $id = $values['id'];
+
+                $row = $this->calendarRepo->getEvent($id);
+
+                if ($row === false) {
+                    return false;
+                }
+
+                if (isset($values['allDay']) === true) {
+                    $allDay = 'true';
+                } else {
+                    $allDay = 'false';
+                }
+
+                $values['allDay'] = $allDay;
+
+                $dateFrom = null;
+                if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
+                    $dateFrom = $this->language->getISODateTimeString($values['dateFrom'], $values['timeFrom']);
+                }
+                $values['dateFrom'] = $dateFrom;
+
+                $dateTo = null;
+                if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
+                    $dateTo = $this->language->getISODateTimeString($values['dateTo'], $values['timeTo']);
+                }
+                $values['dateTo'] = $dateTo;
+
+                if ($values['description'] !== '') {
+                    $this->calendarRepo->editEvent($values, $id);
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * deletes an event on the users calendar
+         *
+         * @access public
+         * @params array $values array of event values
+         *
+         * @return integer|false returns the id on success, false on failure
+         */
+        public function delEvent($id): int|false
+        {
+            $result = $this->calendarRepo->delPersonalEvent($id);
+            return $result;
+        }
+    }
 }
