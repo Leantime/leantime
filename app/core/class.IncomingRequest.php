@@ -46,7 +46,7 @@ class IncomingRequest extends Request
 
         switch (count($uriParts)) {
             case 0:
-                $act = 'dashboard.show';
+                $act = 'dashboard.home';
                 break;
 
             case 1:
