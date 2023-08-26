@@ -5,9 +5,7 @@ namespace leantime\core;
 /***
  *
  * Config class
- *
- * @deprecated 2.3.15 Please do not use this configuration file anymore. It is only here for backwards compatibility.
- * All configurations should be written into a .env file. Please use the sample.env file as an example.
+ * This class is included for backwards compatibility and to be used with subfolder installations
  *
  * @see config/sample.env
  */

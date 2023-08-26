@@ -54,14 +54,10 @@ function openModal() {
 }
 
 jQuery(document).ready(function() {
-    console.log( window.location);
-    console.log( window.location.hash);
-    console.log("document Ready Modal");
     openModal();
 });
 
 window.addEventListener("hashchange", function () {
-    console.log("Hash Modal");
     openModal();
 });
 

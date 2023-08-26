@@ -971,11 +971,11 @@ namespace leantime\domain\repositories {
 
             if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  > 0 && $searchCriteria["sprint"]  != "all") {
                 $sprintIn = core\db::arrayToPdoBindingString("sprint", count(explode(",", $searchCriteria["sprint"])));
-                $query .= " AND zp_tickets.sprint IN(" . $sprintIn . ")";
+                $query .= " AND (zp_tickets.sprint IN(" . $sprintIn . ") OR zp_tickets.type = 'milestone')";
             }
 
             if (isset($searchCriteria["sprint"]) && $searchCriteria["sprint"]  == "backlog") {
-                $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1)";
+                $query .= " AND (zp_tickets.sprint IS NULL OR zp_tickets.sprint = '' OR zp_tickets.sprint = -1 OR zp_tickets.type = 'milestone')";
             }
 
             $query .= "	GROUP BY

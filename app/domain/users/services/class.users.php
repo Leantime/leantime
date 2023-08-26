@@ -248,7 +248,7 @@ namespace leantime\domain\services {
 
             $user = $this->getUser($id);
 
-            $authService->setUserSession($user);
+            $this->authService->setUserSession($user);
         }
     }
 }
