@@ -1180,96 +1180,8 @@ leantime.ticketsController = (function () {
             var size = 100;
             var columnIndex = false;
 
-            /*
-            if (groupBy != "") {
-                columnIndex = jQuery("#allTicketsTable thead").find("." + groupBy + "-col").index();
-            }*/
 
-            var plannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
-            var remainingHoursIndex =  jQuery("#allTicketsTable thead").find(".remaining-hours-col").index();
-            var loggedHoursIndex =  jQuery("#allTicketsTable thead").find(".booked-hours-col").index();
-            var dueDateCol = jQuery("#allTicketsTable thead").find(".duedate-col").index();
-
-            var rowGroupOption = false;
-            var orderFixedOption = false;
             var defaultOrder = [];
-
-            /*
-            if (columnIndex !== false) {
-                rowGroupOption = {
-                    startRender: function (rows, group) {
-
-                        var sumPlanned = rows
-                            .data()
-                            .pluck(plannedHoursIndex)
-                            .reduce(function (a, b) {
-                                return parseFloat(a) + parseFloat(b["@data-order"]);
-                            }, "0");
-
-                        var sumRemaining = rows
-                            .data()
-                            .pluck(remainingHoursIndex)
-                            .reduce(function (a, b) {
-
-                                return parseFloat(a) + parseFloat(b["@data-order"]);
-                            }, "0");
-
-                        var sumLogged = rows
-                            .data()
-                            .pluck(loggedHoursIndex)
-                            .reduce(function (a, b) {
-
-                                return parseFloat(a) + parseFloat(b["@data-order"]);
-                            }, "0");
-
-                        var visiblePlannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
-                        var visibleRemainingHoursIndex =  jQuery("#allTicketsTable thead").find(".remaining-hours-col").index();
-                        var visibleLoggedHoursIndex =  jQuery("#allTicketsTable thead").find(".booked-hours-col").index();
-
-
-                        //Remove one column count for action column at the end
-                        var totalColumns = jQuery("#allTicketsTable thead th").length - 1;
-
-                        if (visiblePlannedHoursIndex > -1) {
-                            totalColumns--;
-                        }
-
-                        if (visibleRemainingHoursIndex > -1) {
-                            totalColumns--;
-                        }
-
-                        if (visibleLoggedHoursIndex > -1) {
-                            totalColumns--;
-                        }
-
-                        var groupOutput = jQuery('<tr/>').append('<td colspan="' + totalColumns + '"><h5 class="accordionTitle"><a href="">' + group + ' (' + rows.count() + ')</a></h5></td>');
-
-                        if (visiblePlannedHoursIndex > -1) {
-                            groupOutput.append('<td>' + sumPlanned + '</td>');
-                        }
-
-                        if (visibleRemainingHoursIndex > -1) {
-                            groupOutput.append('<td>' + sumRemaining + '</td>');
-                        }
-
-                        if (visibleLoggedHoursIndex > -1) {
-                            groupOutput.append('<td>' + sumLogged + '</td>');
-                        }
-
-                        return groupOutput;
-
-
-                    },
-                    dataSrc: function (row) {
-                        return row[columnIndex]["@data-order"];
-                    }
-                };
-
-                orderFixedOption = {"pre":[[columnIndex, 'asc']]};
-                defaultOrder = [[columnIndex, 'asc'], [dueDateCol, 'asc']];
-            }
-
-             */
 
             var allTickets = jQuery(".ticketTable").DataTable({
                 "language": {
@@ -1302,31 +1214,10 @@ leantime.ticketsController = (function () {
 
                 },
                 "dom": '<"top">rt<"bottom"ip><"clear">',
-               /*'ajax': {
-                    url: leantime.appUrl+'/api/tickets?search=1',
-                    dataSrc: 'result'
-                },*/
                 "searching": false,
                 "stateSave": true,
                 "displayLength":100,
-                "orderFixed": orderFixedOption,
                 "order": defaultOrder,
-                //"rowGroup": rowGroupOption,
-                /*columns: [
-                    { data: 'id' },
-                    { data: 'headline' },
-                    { data: 'status' },
-                    { data: 'milestoneHeadline' },
-                    { data: 'storypoints' },
-                    { data: 'priority' },
-                    { data: 'editorId' },
-                    { data: 'sprint' },
-                    { data: 'tags' },
-                    { data: 'dateToFinish' },
-                    { data: 'planHours' },
-                    { data: 'hourRemaining' },
-                    { data: 'bookedHours' },
-                ],*/
                 "columnDefs": [
                         { "visible": false, "targets": 6 },
                         { "visible": false, "targets": 7 },
@@ -1376,20 +1267,6 @@ leantime.ticketsController = (function () {
                 allTickets.draw();
 
             });
-
-            /*
-            var asc = true;
-            if (groupBy != "") {
-                jQuery("#allTicketsTable thead").find("." + groupBy + "-col").on('click', function (e, settings, column, state) {
-                    asc = !asc;
-                    var orderFixed = {"pre":[[columnIndex, asc === true ? 'asc' : 'desc']]};
-                    allTickets.order.fixed(orderFixed).draw();
-                });
-            }
-
-             */
-
-
         });
     };
 
@@ -1438,15 +1315,7 @@ leantime.ticketsController = (function () {
                 "searching": false,
                 "stateSave": true,
                 "displayLength":25,
-                "orderFixed": orderFixedOption,
                 "order": defaultOrder,
-                "columnDefs": [
-                    { "visible": false, "targets": 2, "orderable": true },
-                    { "visible": false, "targets": 3, "orderable": true },
-                    { "visible": false, "targets": 4, "orderable": true },
-                    { "visible": false, "targets": 5, "orderable": true },
-                    { "visible": false, "targets": 6, "orderable": true }
-                ],
                 "fnDrawCallback": function (oSettings) {
 
                     if (oSettings._iDisplayLength > oSettings.fnRecordsDisplay()) {
@@ -1466,19 +1335,7 @@ leantime.ticketsController = (function () {
 
         jQuery(document).ready(function () {
 
-            var size = 100;
-            var columnIndex = false;
-
-            var plannedHoursIndex = jQuery("#allTicketsTable thead").find(".planned-hours-col").index();
-            var remainingHoursIndex =  jQuery("#allTicketsTable thead").find(".remaining-hours-col").index();
-            var loggedHoursIndex =  jQuery("#allTicketsTable thead").find(".booked-hours-col").index();
-            var dueDateCol = jQuery("#allTicketsTable thead").find(".duedate-col").index();
-
-            var rowGroupOption = false;
-            var orderFixedOption = false;
             var defaultOrder = [];
-
-
 
             var allTickets = jQuery(".ticketsTable").DataTable({
                 "language": {
@@ -1510,7 +1367,6 @@ leantime.ticketsController = (function () {
                 "searching": false,
                 "stateSave": true,
                 "displayLength":100,
-                "orderFixed": orderFixedOption,
                 "order": defaultOrder,
 
                 "columnDefs": [

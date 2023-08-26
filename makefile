@@ -19,7 +19,7 @@ build: install-deps
 build-dev: install-deps-dev
 	npx mix --production
 
-package: build
+package: clean build
 	mkdir -p $(TARGET_DIR)
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
@@ -33,12 +33,14 @@ package: build
 	mkdir -p $(TARGET_DIR)/cache/views
 	touch $(TARGET_DIR)/logs/.gitkeep
 	cp -R ./public $(TARGET_DIR)
+	rm -rf $(TARGET_DIR)/public/assets
 	mkdir -p $(TARGET_DIR)/userfiles
 	touch   $(TARGET_DIR)/userfiles/.gitkeep
 	cp -R ./vendor $(TARGET_DIR)
 	cp  ./.htaccess $(TARGET_DIR)
 	cp  ./LICENSE $(TARGET_DIR)
 	cp  ./nginx*.conf $(TARGET_DIR)
+	cp  ./web.config.sample $(TARGET_DIR)
 	cp  ./updateLeantime.sh $(TARGET_DIR)
 
 	rm -f $(TARGET_DIR)/config/configuration.php
@@ -59,13 +61,13 @@ package: build
 	rm -rf $(TARGET_DIR)/public/userfiles/*
 
 	#Removing unneeded items for release
-	rm -rf $(TARGET_DIR)/public/images/Screenshots
+	rm -rf $(TARGET_DIR)/public/dist/images/Screenshots
 
 	#removing js directories
 	find  $(TARGET_DIR)/app/domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
 	#removing uncompiled js files
-	find $(TARGET_DIR)/public/assets/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
+	find $(TARGET_DIR)/public/dist/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
 	#create zip files
 	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime

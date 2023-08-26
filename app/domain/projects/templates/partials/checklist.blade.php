@@ -40,7 +40,7 @@
                                     type="checkbox"
                                     name="{{ $key }}"
                                     id="progress_{{ $key }}"
-                                    hx-patch="/hx/projects/checklist/update-subtask/"
+                                    hx-patch="{{ BASE_URL }}/hx/projects/checklist/update-subtask/"
                                     hx-target="#progressForm"
                                     hx-swap="outerHTML"
                                     @if ($task['status'] == 'done') checked @endif
