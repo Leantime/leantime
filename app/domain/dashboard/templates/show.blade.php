@@ -478,7 +478,7 @@
                                     <h4>{{ __('headlines.no_milestones') }}</h4>
                                     {{ __('text.milestones_help_organize_projects') }}
                                     <br/><br/>
-                                    <a href="{{ BASE_URL }}/tickets/roadmap">{{ __('links.goto_milestones') }}</a>
+                                    <a href="{{ BASE_URL }}/tickets/roadmap">{!! __('links.goto_milestones') !!}</a>
                                 </div>
                             @endif
 
