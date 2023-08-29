@@ -12,6 +12,7 @@ Leantime is a strategic open source project management system for innovative com
 ![Github Downloads](https://img.shields.io/github/downloads/leantime/leantime/total)
 [![Discord Badge](https://img.shields.io/discord/990001288026677318?label=Discord&style=flat-square)](https://discord.gg/4zMzJtAq9z)
 [![Crowdin](https://badges.crowdin.net/leantime/localized.svg)](https://crowdin.com/project/leantime)
+![GitHub Sponsors](https://img.shields.io/github/sponsors/leantime)
 <br />
 
   ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Dashboard")
