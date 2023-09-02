@@ -2,6 +2,7 @@
 
 namespace leantime\core;
 
+use Illuminate\Support\Str;
 use PDO;
 use PDOException;
 use leantime\core\plugins;
@@ -82,22 +83,40 @@ class events
      * @return mixed
      */
     public static function findEventListeners($eventName, $registry) {
-
         $matches = [];
 
         foreach ($registry as $key => $value) {
-            $pattern = strtr($key, array(
-                '*' => '.*?', // 0 or more (lazy) - asterisk (*)
-                '?' => '.', // 1 character - question mark (?)
-            ));
+            if (Str::contains($key, '*')) {
+                $key = str_replace('*', 'RANDOM_STRING', $key);
+            }
 
-            if(preg_match("/$pattern/", $eventName)){
+            if (Str::contains($key, '?')) {
+                $key = str_replace('?', 'RANDOM_CHARACTER', $key);
+            }
+
+            preg_match_all('/\{.*?\}/', $key, $regexMatches);
+
+            for ($i = 0; $i < count($regexMatches[0]); $i++) {
+                $key = str_replace($regexMatches[0][$i], "REGEX_MATCH_$i", $key);
+            }
+
+            $pattern = preg_quote($key, '/');
+
+            $pattern = strtr($pattern, [
+                'RANDOM_STRING' => '.*?', // 0 or more (lazy) - asterisk (*)
+                'RANDOM_CHARACTER' => '.', // 1 character - question mark (?)
+                ...collect($regexMatches[0])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
+            ]);
+
+            if (preg_match("/^$pattern$/", $eventName)) {
                 $matches = array_merge($matches, $value);
             }
         }
 
         return $matches;
     }
+
+
 
     /**
      * Dispatches a filter to manipulate a variable somewhere
