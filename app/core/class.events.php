@@ -79,33 +79,30 @@ class events
      * @access public
      *
      * @param string $eventName
+     * @param array $registry
      *
-     * @return mixed
+     * @return array
      */
-    public static function findEventListeners($eventName, $registry) {
+    public static function findEventListeners(string $eventName, array $registry): array
+    {
         $matches = [];
 
         foreach ($registry as $key => $value) {
-            if (Str::contains($key, '*')) {
-                $key = str_replace('*', 'RANDOM_STRING', $key);
-            }
+            preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
 
-            if (Str::contains($key, '?')) {
-                $key = str_replace('?', 'RANDOM_CHARACTER', $key);
-            }
+            $key = strtr($key, [
+                ...collect($regexMatches[0] ?? [])->mapWithKeys(fn ($match, $i) => [$match => "REGEX_MATCH_$i"])->toArray(),
+                '*' => 'RANDOM_STRING',
+                '?' => 'RANDOM_CHARACTER',
+            ]);
 
-            preg_match_all('/\{.*?\}/', $key, $regexMatches);
-
-            for ($i = 0; $i < count($regexMatches[0]); $i++) {
-                $key = str_replace($regexMatches[0][$i], "REGEX_MATCH_$i", $key);
-            }
-
+            // escape the non regex characters
             $pattern = preg_quote($key, '/');
 
             $pattern = strtr($pattern, [
                 'RANDOM_STRING' => '.*?', // 0 or more (lazy) - asterisk (*)
                 'RANDOM_CHARACTER' => '.', // 1 character - question mark (?)
-                ...collect($regexMatches[0])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
+                ...collect($regexMatches[1] ?? [])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
             ]);
 
             if (preg_match("/^$pattern$/", $eventName)) {
