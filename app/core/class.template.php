@@ -165,7 +165,11 @@ class template
             });
 
             $pluginPaths = glob(APP_ROOT . '/app/plugins/*');
-            array_walk($pluginPaths, function ($path, $key) use (&$pluginPaths) {
+            array_walk($pluginPaths, function ($path, $key) use (&$domainPaths) {
+                if (in_array(basename($path), array_keys($domainPaths))) {
+                    throw new \Exception("Plugin " . basename($path) . " conflicts with domain");
+                }
+
                 $domainPaths[basename($path)] = "$path/templates";
             });
 

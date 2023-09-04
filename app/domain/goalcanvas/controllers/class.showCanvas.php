@@ -7,6 +7,8 @@
 namespace leantime\domain\controllers {
 
     use leantime\core\controller;
+    use leantime\core\mailer;
+    use leantime\domain\repositories\queue;
 
     class showCanvas extends controller
     {
@@ -100,7 +102,7 @@ namespace leantime\domain\controllers {
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
                         $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
-                        $mailer = app()->make(core\mailer::class);
+                        $mailer = app()->make(mailer::class);
                         $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
                         $mailer->setSubject($this->language->__('notification.board_created'));
@@ -114,7 +116,7 @@ namespace leantime\domain\controllers {
                         $mailer->setHtml($message);
 
                         // New queuing messaging system
-                        $queue = app()->make(repositories\queue::class);
+                        $queue = app()->make(queue::class);
                         $queue->queueMessageToUsers(
                             $users,
                             $message,

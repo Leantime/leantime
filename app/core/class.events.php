@@ -2,6 +2,7 @@
 
 namespace leantime\core;
 
+use Illuminate\Support\Str;
 use PDO;
 use PDOException;
 use leantime\core\plugins;
@@ -60,17 +61,59 @@ class events
             self::$available_hooks['events'][] = $eventName;
         }
 
-        if (!key_exists($eventName, self::$eventRegistry)) {
+        $matchedEvents = self::findEventListeners($eventName, self::$eventRegistry);
+        if (count($matchedEvents) == 0) {
             return;
         }
 
         $payload = self::defineParams($payload);
 
-        //Sort registered listeners by priority
-        self::sortByPriority('events', $eventName);
-
-        self::executeHandlers(self::$eventRegistry, $eventName, $payload);
+        self::executeHandlers($matchedEvents, "events", $eventName, $payload);
     }
+
+
+    /**
+     * Finds event listeners by event names,
+     * Allows listeners with wildcards
+     *
+     * @access public
+     *
+     * @param string $eventName
+     * @param array $registry
+     *
+     * @return array
+     */
+    public static function findEventListeners(string $eventName, array $registry): array
+    {
+        $matches = [];
+
+        foreach ($registry as $key => $value) {
+            preg_match_all('/\{RGX:(.*?):RGX\}/', $key, $regexMatches);
+
+            $key = strtr($key, [
+                ...collect($regexMatches[0] ?? [])->mapWithKeys(fn ($match, $i) => [$match => "REGEX_MATCH_$i"])->toArray(),
+                '*' => 'RANDOM_STRING',
+                '?' => 'RANDOM_CHARACTER',
+            ]);
+
+            // escape the non regex characters
+            $pattern = preg_quote($key, '/');
+
+            $pattern = strtr($pattern, [
+                'RANDOM_STRING' => '.*?', // 0 or more (lazy) - asterisk (*)
+                'RANDOM_CHARACTER' => '.', // 1 character - question mark (?)
+                ...collect($regexMatches[1] ?? [])->mapWithKeys(fn ($match, $i) => ["REGEX_MATCH_$i" => $match])->toArray(),
+            ]);
+
+            if (preg_match("/^$pattern$/", $eventName)) {
+                $matches = array_merge($matches, $value);
+            }
+        }
+
+        return $matches;
+    }
+
+
 
     /**
      * Dispatches a filter to manipulate a variable somewhere
@@ -96,16 +139,14 @@ class events
             self::$available_hooks['filters'][] = $filtername;
         }
 
-        if (!key_exists($filtername, self::$filterRegistry)) {
+        $matchedEvents = self::findEventListeners($filtername, self::$filterRegistry);
+        if (count($matchedEvents) == 0) {
             return $payload;
         }
 
         $available_params = self::defineParams($available_params);
 
-        //Sort registered listeners by priority
-        self::sortByPriority('filters', $filtername);
-
-        return self::executeHandlers(self::$filterRegistry, $filtername, $payload, $available_params);
+        return self::executeHandlers($matchedEvents, "filters", $filtername, $payload, $available_params);
     }
 
     /**
@@ -239,6 +280,8 @@ class events
             }
         };
 
+
+
         if ($type == 'filters') {
             usort(self::$filterRegistry[$hookName], $sorter);
         } elseif ($type == 'events') {
@@ -298,14 +341,27 @@ class events
      */
     private static function executeHandlers(
         array $registry,
+        string $registryType,
         string $hookName,
         mixed $payload,
         array|object $available_params = []
-    ): array|object|null {
-        $isEvent = $registry == self::$eventRegistry ? true : false;
+    ): mixed {
+
+        $isEvent = $registryType == "events" ? true : false;
         $filteredPayload = null;
 
-        foreach ($registry[$hookName] as $index => $listener) {
+        //sort matches by priority
+       usort($registry, function ($a, $b) {
+           if ($a['priority'] > $b['priority']) {
+               return 1;
+           } elseif ($a['priority'] == $b['priority']) {
+               return 0;
+           } else {
+               return -1;
+           }
+       });
+
+        foreach ($registry as $index => $listener) {
             $handler = $listener['handler'];
 
             // class with handle function
