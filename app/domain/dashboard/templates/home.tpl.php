@@ -271,11 +271,10 @@
 
                                                                     <?php
                                                                     if(isset($milestones[$row['projectId']])){
-                                                                        foreach ($milestones[$row['projectId']] as $milestone) {
-                                                                            echo"<li class='dropdown-item'>
-                                                                                <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
-                                                                            echo"</li>";
-                                                                        }
+                                                                        $milestone = $milestones[$row['projectId']];
+                                                                        echo"<li class='dropdown-item'>
+                                                                            <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
+                                                                        echo"</li>"; 
                                                                     }
                                                                     ?>
                                                                 </ul>
