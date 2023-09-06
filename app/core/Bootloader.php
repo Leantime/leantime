@@ -13,6 +13,7 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Audit\Repositories\Audit as AuditRepository;
+
 /**
  * Bootloader
  *

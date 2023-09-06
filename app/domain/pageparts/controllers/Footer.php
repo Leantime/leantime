@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Pageparts\Controllers {
 
     use Leantime\Core\AppSettings as AppSettingCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
 
     class Footer extends Controller
     {

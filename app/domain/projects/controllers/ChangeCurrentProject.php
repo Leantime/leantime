@@ -4,8 +4,8 @@ namespace Leantime\Domain\Projects\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
-class ChangeCurrentProject extends Controller
+    use Leantime\Domain\Setting\Services\Setting as SettingService;
+    class ChangeCurrentProject extends Controller
     {
         private ProjectService $projectService;
         private SettingService $settingService;

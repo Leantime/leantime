@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Wiki\Services {
 
     use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
-class Wiki
+    class Wiki
     {
         private $wikiRepository;
 

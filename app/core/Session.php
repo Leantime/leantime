@@ -84,7 +84,7 @@ class Session
             'expires' => time() + $config->sessionExpiration,
             'path' => '/',
             'samesite' => 'lax',
-            'secure' => true
+            'secure' => true,
         ]);
     }
 
@@ -132,7 +132,7 @@ class Session
         'expires' => time() - 42000,
         'path' => '/',
         'secure' => true,
-        'samesite' => 'Strict'
+        'samesite' => 'Strict',
         ]);
     }
 }

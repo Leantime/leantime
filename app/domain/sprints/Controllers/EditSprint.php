@@ -5,8 +5,8 @@ namespace Leantime\Domain\Sprints\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
-use DateTime;
+    use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
+    use DateTime;
     use DateInterval;
     use Leantime\Domain\Auth\Services\Auth;
 

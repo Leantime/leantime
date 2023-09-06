@@ -4,11 +4,11 @@ namespace Leantime\Domain\Projects\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Reports\Services\Reports as ReportService;
-use Leantime\Domain\Comments\Services\Comments as CommentService;
-class ShowMy extends Controller
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Reports\Services\Reports as ReportService;
+    use Leantime\Domain\Comments\Services\Comments as CommentService;
+    class ShowMy extends Controller
     {
         private ProjectService $projectService;
         private TicketService $ticketService;
@@ -59,7 +59,7 @@ class ShowMy extends Controller
             if (is_array($allprojects)) {
                 foreach ($allprojects as $project) {
                     if (!array_key_exists($project["clientId"], $clients)) {
-                        $clients[$project["clientId"]] = array("name" => $project['clientName'], "id"=> $project["clientId"]);
+                        $clients[$project["clientId"]] = array("name" => $project['clientName'], "id" => $project["clientId"]);
                     }
 
                     if ($clientId == "" || $project["clientId"] == $clientId) {

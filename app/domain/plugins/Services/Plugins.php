@@ -65,7 +65,6 @@ namespace Leantime\Domain\Plugins\Services {
             }
 
             return $_SESSION['enabledPlugins'];
-
         }
 
         public function discoverNewPlugins()

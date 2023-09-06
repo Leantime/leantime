@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Setting\Repositories {
 
     use Leantime\Core\Db as DbCore;
-use PDO;
+    use PDO;
 
     class Setting
     {

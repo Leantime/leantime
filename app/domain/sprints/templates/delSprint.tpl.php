@@ -1,6 +1,8 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 ?>
 
 <h4 class="widgettitle title-light"><?=$tpl->__("headlines.delete_sprint") ?></h4>

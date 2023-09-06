@@ -5,6 +5,7 @@ namespace Leantime\Domain\Oidc\Controllers;
 use Exception;
 use Leantime\Core\Controller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
+
 class Callback extends Controller
 {
     private OidcService $oidc;

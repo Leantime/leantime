@@ -11,7 +11,7 @@
 namespace Leantime\Domain\Dashboard\Repositories {
 
     use Leantime\Core\Db as DbCore;
-class Dashboard
+    class Dashboard
     {
         /**
          * @access public

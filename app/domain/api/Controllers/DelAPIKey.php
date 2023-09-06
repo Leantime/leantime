@@ -5,7 +5,7 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Api\Services\Api;
+    use Leantime\Domain\Api\Services\Api;
     use Leantime\Domain\Auth\Services\Auth;
 
     class DelAPIKey extends Controller

@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Comments\Services {
 
     use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Notifications\Models\Notification;
+    use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-class Comments
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    class Comments
     {
         private CommentRepository $commentRepository;
         private ProjectService $projectService;

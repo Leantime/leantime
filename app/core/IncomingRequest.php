@@ -31,7 +31,7 @@ class IncomingRequest extends Request
     /**
      * Sets the request destination from the path
      *
-     * @param ?string $requestUri
+     * @param string $requestUri
      * @return void
      */
     protected function setRequestDest(?string $requestUri = null): void

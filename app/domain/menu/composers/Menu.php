@@ -9,6 +9,7 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+
 class Menu extends Composer
 {
     public static $views = [

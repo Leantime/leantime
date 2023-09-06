@@ -1,5 +1,7 @@
 <?php
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $states = $tpl->get('states');
     $projectProgress = $tpl->get('projectProgress');
     $projectProgress = $tpl->get('projectProgress');
@@ -236,7 +238,7 @@
                                                                 <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                    echo $efforts["".$row['storypoints']];
+                                                                    echo $efforts["" . $row['storypoints']];
                                                                 } else {
                                                                     echo $tpl->__("label.story_points_unkown");
                                                                 }?>
@@ -270,7 +272,7 @@
                                                                     <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$tpl->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
 
                                                                     <?php
-                                                                    if(isset($milestones[$row['projectId']])){
+                                                                    if (isset($milestones[$row['projectId']])) {
                                                                         foreach ($milestones[$row['projectId']] as $milestone) {
                                                                             echo"<li class='dropdown-item'>
                                                                                 <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";

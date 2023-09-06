@@ -1,7 +1,9 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $sprints        = $tpl->get("sprints");
     $searchCriteria = $tpl->get("searchCriteria");
     $currentSprint  = $tpl->get("currentSprint");
@@ -69,14 +71,13 @@
 
 
 
-        <?php if(isset($allTicketGroups['all'])){
+        <?php if (isset($allTicketGroups['all'])) {
             $allTickets = $allTicketGroups['all']['items'];
         }
         ?>
 
-        <?php foreach($allTicketGroups as $group) {?>
-
-            <?php if($group['label'] != 'all') { ?>
+        <?php foreach ($allTicketGroups as $group) {?>
+            <?php if ($group['label'] != 'all') { ?>
                 <h5 class="accordionTitle <?=$group['class']?>" id="accordion_link_<?=$group['id'] ?>">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?=$group['id'] ?>');">
                         <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
@@ -215,7 +216,7 @@
                                     <a class="dropdown-toggle label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                    echo $efforts["".$row['storypoints']];
+                                                                    echo $efforts["" . $row['storypoints']];
                                                                 } else {
                                                                     echo $tpl->__("label.story_points_unkown");
                                                                 }?>
@@ -420,7 +421,7 @@
             </table>
                 <?php $tpl->dispatchTplEvent('allTicketsTable.afterClose', ['tickets' => $allTickets]); ?>
 
-            <?php if($group['label'] != 'all') { ?>
+            <?php if ($group['label'] != 'all') { ?>
                 </div>
             <?php } ?>
         <?php } ?>

@@ -4,10 +4,10 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Api\Services\Api as ApiService;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Api\Services\Api as ApiService;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Leantime\Domain\Auth\Models\Roles;
 
     class Tickets extends Controller
     {
@@ -40,7 +40,6 @@ use Leantime\Domain\Auth\Models\Roles;
         public function get($params)
         {
             if (isset($params['search'])) {
-
                 $searchCriteria = $this->ticketsApiService->prepareTicketSearchArray($params);
 
                 $results = $this->ticketsApiService->getAll($searchCriteria);
@@ -60,8 +59,7 @@ use Leantime\Domain\Auth\Models\Roles;
 
             ob_start();
 
-                if (AuthService::userIsAtLeast(Roles::$editor)) {
-
+            if (AuthService::userIsAtLeast(Roles::$editor)) {
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
                     if (isset($params["handler"]) == true) {

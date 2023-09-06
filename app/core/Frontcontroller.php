@@ -56,8 +56,8 @@ class Frontcontroller
      * run - executes the action depending on Request or firstAction
      *
      * @access public
-     * @param  string $action
-     * @param  int $httpResponseCode
+     * @param  string  $action
+     * @param  integer $httpResponseCode
      * @return void
      */
     public static function dispatch($action = '', $httpResponseCode = 200): void
@@ -81,7 +81,7 @@ class Frontcontroller
      *
      * @access private
      * @param  string $completeName actionname.filename
-     * @param  array $params
+     * @param  array  $params
      * @return void
      */
     private static function executeAction($completeName, $params = array()): void
@@ -123,7 +123,7 @@ class Frontcontroller
      *
      * @access public
      * @param  string $completeName
-     * @param  array $params
+     * @param  array  $params
      * @return void
      */
     public static function includeAction($completeName, $params = array()): void
@@ -196,8 +196,8 @@ class Frontcontroller
     /**
      * redirect - redirects to a given url
      *
-     * @param string $url
-     * @param int $http_response_code
+     * @param string  $url
+     * @param integer $http_response_code
      * @return never
      */
     public static function redirect(string $url, int $http_response_code = 303): never
@@ -209,7 +209,7 @@ class Frontcontroller
     /**
      * setResponseCode - sets the response code
      *
-     * @param int $responseCode
+     * @param integer $responseCode
      * @return void
      */
     public static function setResponseCode(int $responseCode): void

@@ -6,8 +6,8 @@ namespace Leantime\Domain\Comments\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Comments\Services\Comments as CommentService;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class ShowAll extends Controller
     {

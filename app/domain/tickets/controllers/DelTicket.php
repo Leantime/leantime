@@ -5,7 +5,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class DelTicket extends Controller
     {

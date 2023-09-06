@@ -10,14 +10,14 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Files\Services\Files as FileService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Files\Repositories\Files as FileRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Comments\Services\Comments as CommentService;
+    use Leantime\Domain\Files\Services\Files as FileService;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class ShowClient extends Controller
     {

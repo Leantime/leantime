@@ -5,7 +5,7 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class DelWiki extends Controller
     {

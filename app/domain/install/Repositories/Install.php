@@ -6,12 +6,11 @@ namespace Leantime\Domain\Install\Repositories {
     use Leantime\Core\AppSettings;
     use PDO;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-use PDOException;
+    use PDOException;
     use Leantime\Core\Eventhelpers as EventhelperCore;
-use Leantime\Core\AppSettings as AppSettingCore;
-class Install
+    use Leantime\Core\AppSettings as AppSettingCore;
+    class Install
     {
-
         use EventhelperCore;
 
         /**
@@ -204,9 +203,9 @@ class Install
             $sql = $this->sqlPrep();
 
             try {
-                if($db == null) {
+                if ($db == null) {
                     $this->database->query("Use `" . $this->config->dbDatabase . "`;");
-                }else{
+                } else {
                     $this->database->query("Use `" . $db . "`;");
                 }
 

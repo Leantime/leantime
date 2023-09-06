@@ -5,6 +5,7 @@ namespace Leantime\Domain\Ldap\Services;
 use Leantime\Core\Environment;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
+
 class Ldap
 {
     private $ldapConnection;

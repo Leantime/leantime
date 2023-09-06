@@ -62,17 +62,17 @@ class DefaultConfig
     public $defaultTimezone = 'America/Los_Angeles';
 
     /**
-     * @var bool Enable to specifiy menu on a project by project basis
+     * @var boolean Enable to specifiy menu on a project by project basis
      */
     public $enableMenuType = false;
 
     /**
-     * @var bool Keep theme and language from previous user for login screen
+     * @var boolean Keep theme and language from previous user for login screen
      */
     public $keepTheme = true;
 
     /**
-     * @var bool|int Debug flag
+     * @var boolean|integer Debug flag
      */
     public $debug = 0;
 
@@ -118,7 +118,7 @@ class DefaultConfig
 
     # S3 configuration ==============================================================================
     /**
-     * @var bool Set to true if you want to use S3 instead of local files
+     * @var boolean Set to true if you want to use S3 instead of local files
      */
     public $useS3 = false;
 
@@ -138,7 +138,7 @@ class DefaultConfig
     public $s3Bucket = '';
 
     /**
-     * @var bool false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
+     * @var boolean false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
      */
     public $s3UsePathStyleEndpoint = false;
 
@@ -166,7 +166,7 @@ class DefaultConfig
     public $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**
-     * @var int How many seconds after inactivity should we logout?  28800seconds = 8hours
+     * @var integer How many seconds after inactivity should we logout?  28800seconds = 8hours
      */
     public $sessionExpiration = 28800;
 
@@ -178,7 +178,7 @@ class DefaultConfig
     public $email = '';
 
     /**
-     * @var bool Use SMTP? If set to false, the default php mail() function will be used
+     * @var boolean Use SMTP? If set to false, the default php mail() function will be used
      */
     public $useSMTP = false;
 
@@ -188,7 +188,7 @@ class DefaultConfig
     public $smtpHosts = '';
 
     /**
-     * @var bool SMTP use user/password authentication
+     * @var boolean SMTP use user/password authentication
      */
     public $smtpAuth = true;
 
@@ -203,7 +203,7 @@ class DefaultConfig
     public $smtpPassword = '';
 
     /**
-     * @var bool SMTP Enable TLS encryption automatically if a server supports it
+     * @var boolean SMTP Enable TLS encryption automatically if a server supports it
      */
     public $smtpAutoTLS = true;
 
@@ -213,19 +213,19 @@ class DefaultConfig
     public $smtpSecure = '';
 
     /**
-     * @var bool SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
+     * @var boolean SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
      */
     public $smtpSSLNoverify = false;
 
     /**
-     * @var int SMTP Port (usually one of 25, 465, 587, 2526)
+     * @var integer SMTP Port (usually one of 25, 465, 587, 2526)
      */
     public $smtpPort = '';
 
 
     # ldap default settings (can be changed in company settings) ==================================
     /**
-     * @var bool Set to true if you want to use LDAP
+     * @var boolean Set to true if you want to use LDAP
      */
     public $useLdap = false;
 
@@ -318,7 +318,7 @@ class DefaultConfig
     public ?string $plugins = '';
 
     /**
-     * @var int Default Leantime Role on creation. (set to editor)
+     * @var integer Default Leantime Role on creation. (set to editor)
      */
     public $ldapDefaultRoleKey = 20;
 }

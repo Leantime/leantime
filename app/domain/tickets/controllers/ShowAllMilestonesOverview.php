@@ -4,12 +4,12 @@ namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Clients\Services\Clients as ClientService;
-class ShowAllMilestonesOverview extends Controller
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Users\Services\Users as UserService;
+    use Leantime\Domain\Clients\Services\Clients as ClientService;
+    class ShowAllMilestonesOverview extends Controller
     {
         private ProjectService $projectService;
         private TicketService $ticketService;
@@ -58,7 +58,7 @@ class ShowAllMilestonesOverview extends Controller
                 $searchCriteria["status"] = "not_done";
             }
 
-            $this->tpl->assign('allTickets', $this->ticketService->getAllMilestonesOverview(false, "duedate",  false, $clientId));
+            $this->tpl->assign('allTickets', $this->ticketService->getAllMilestonesOverview(false, "duedate", false, $clientId));
             $this->tpl->assign('allTicketStates', $this->ticketService->getStatusLabels());
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());

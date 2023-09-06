@@ -96,8 +96,8 @@ class Db
      * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
      *
-     * @param string $name
-     * @param int $count
+     * @param string  $name
+     * @param integer $count
      * @return string
      */
     public static function arrayToPdoBindingString($name, $count)

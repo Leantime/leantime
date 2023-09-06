@@ -10,7 +10,7 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class DelEvent extends Controller
     {
@@ -31,7 +31,8 @@ use Leantime\Domain\Auth\Services\Auth;
          * @access public
          *
          */
-        public function get() {
+        public function get()
+        {
             $this->tpl->displayPartial('calendar.delEvent');
         }
 
@@ -41,25 +42,25 @@ use Leantime\Domain\Auth\Services\Auth;
          * @access public
          *
          */
-        public function post($params) {
+        public function post($params)
+        {
 
-            if(isset($_GET['id']) === false){
-                $this->tpl->redirect(BASE_URL."/calendar/showMyCalendar/");
+            if (isset($_GET['id']) === false) {
+                $this->tpl->redirect(BASE_URL . "/calendar/showMyCalendar/");
             }
 
             $id = (int)$_GET['id'];
 
             $result = $this->calendarService->delEvent($id);
 
-            if(is_numeric($result)=== true){
+            if (is_numeric($result) === true) {
                 $this->tpl->setNotification('notification.event_removed_successfully', 'success');
-                $this->tpl->redirect(BASE_URL."/calendar/showMyCalendar/");
-            }else{
+                $this->tpl->redirect(BASE_URL . "/calendar/showMyCalendar/");
+            } else {
                 $this->tpl->setNotification('notification.could_not_delete_event', 'error');
                 $this->tpl->displayPartial('calendar.delEvent');
             }
         }
-
     }
 
 }

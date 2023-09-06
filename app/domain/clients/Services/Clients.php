@@ -16,7 +16,7 @@ class Clients
     private ClientRepository $clientRepository;
 
     /**
-     * @param TemplateCore         $tpl
+     * @param TemplateCore      $tpl
      * @param ProjectRepository $projectRepository
      */
     public function __construct(
@@ -57,5 +57,4 @@ class Clients
     {
         return $this->clientRepository->getAll();
     }
-
 }

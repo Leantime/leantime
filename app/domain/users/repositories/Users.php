@@ -253,11 +253,11 @@ namespace Leantime\Domain\Users\Repositories {
                     LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
                     WHERE !(source <=> 'api')";
 
-                if($activeOnly == true) {
-                        $query .= " AND status LIKE 'a' ";
-                    }
+            if ($activeOnly == true) {
+                    $query .= " AND status LIKE 'a' ";
+            }
 
-            $query .=" ORDER BY lastname";
+            $query .= " ORDER BY lastname";
 
             $stmn = $this->db->database->prepare($query);
 
@@ -686,7 +686,6 @@ namespace Leantime\Domain\Users\Repositories {
 
                 return $image;
             }
-
         }
 
         public function patchUser($id, $params)
@@ -744,4 +743,4 @@ namespace Leantime\Domain\Users\Repositories {
         }
     }
 
-    }
+}

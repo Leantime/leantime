@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Auth\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Users\Services\Users as UserService;
-class ResetPw extends Controller
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Leantime\Domain\Users\Services\Users as UserService;
+    class ResetPw extends Controller
     {
         private FileRepository $fileRepo;
         private AuthService $authService;

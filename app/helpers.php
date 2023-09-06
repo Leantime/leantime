@@ -62,7 +62,7 @@ if (! function_exists('view')) {
      * Get the view factory instance.
      *
      * @param string $view
-     * @param array $data
+     * @param array  $data
      * @return \Illuminate\View\Factory
      */
     function view(): \Illuminate\View\Factory
@@ -75,7 +75,7 @@ if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param array $array
+     * @param array  $array
      * @param string $sortyBy
      * @return array
      */
@@ -86,8 +86,5 @@ if (! function_exists('array_sort')) {
         $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
 
         return $sorted->values()->all();
-
     }
 }
-
-

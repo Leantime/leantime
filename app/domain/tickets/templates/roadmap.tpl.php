@@ -1,6 +1,8 @@
 <?php
 defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 $milestones = $tpl->get('milestones');
 
 echo $tpl->displayNotification();
@@ -51,7 +53,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                         <ul class="dropdown-menu" id="ganttTimeControl">
                            <li><a href="javascript:void(0);" data-value="Day" class="<?php if ($roadmapView == 'Day') {
                                 echo "active";
-                                                                                      }?>"> <?=$tpl->__("buttons.day"); ?></a></li>
+                                                                                     }?>"> <?=$tpl->__("buttons.day"); ?></a></li>
                             <li><a href="javascript:void(0);" data-value="Week" class="<?php if ($roadmapView == 'Week') {
                                 echo "active";
                                                                                        }?>"><?=$tpl->__("buttons.week"); ?></a></li>
@@ -137,10 +139,10 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                 //Item is milestone itself, set first index + .0
                 if ($mlst->type == "milestone") {
                     $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
-                }else {
+                } else {
                     //If it has a milestone dependency, add milestone index
                     if ($mlst->milestoneid > 0) {
-                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ). "." . ($mlst->sortIndex ?? 999);
+                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ) . "." . ($mlst->sortIndex ?? 999);
                     } else {
                         $sortIndex = "999" . "." . ($mlst->sortIndex ?? 999);
                     }

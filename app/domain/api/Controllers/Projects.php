@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Fileupload as FileuploadCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-class Projects extends Controller
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    class Projects extends Controller
     {
         private FileuploadCore $fileUpload;
         private ProjectService $projectService;

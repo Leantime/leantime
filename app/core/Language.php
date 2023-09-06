@@ -295,9 +295,9 @@ class Language
      * includeOverrides - include overrides from ini file
      *
      * @access public
-     * @param  array  $language
-     * @param  string $filepath
-     * @param  bool   $foreignLanguage
+     * @param  array   $language
+     * @param  string  $filepath
+     * @param  boolean $foreignLanguage
      * @return array
      */
     protected function includeOverrides(array $language, string $filepath, bool $foreignLanguage = false)

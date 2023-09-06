@@ -8,7 +8,9 @@
  */
 
 defined('RESTRICTED') or die('Restricted access');
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 $canvasItem = $tpl->get('canvasItem');
 $canvasTypes = $tpl->get('canvasTypes');
 

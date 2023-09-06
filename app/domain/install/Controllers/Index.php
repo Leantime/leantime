@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Install\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Install\Repositories\Install as InstallRepository;
-class Index extends Controller
+    class Index extends Controller
     {
         private InstallRepository $installRepo;
 

@@ -76,7 +76,7 @@ class Events
      * @access public
      *
      * @param string $eventName
-     * @param array $registry
+     * @param array  $registry
      *
      * @return array
      */
@@ -348,15 +348,15 @@ class Events
         $filteredPayload = null;
 
         //sort matches by priority
-       usort($registry, function ($a, $b) {
-           if ($a['priority'] > $b['priority']) {
-               return 1;
-           } elseif ($a['priority'] == $b['priority']) {
-               return 0;
-           } else {
-               return -1;
-           }
-       });
+        usort($registry, function ($a, $b) {
+            if ($a['priority'] > $b['priority']) {
+                return 1;
+            } elseif ($a['priority'] == $b['priority']) {
+                return 0;
+            } else {
+                return -1;
+            }
+        });
 
         foreach ($registry as $index => $listener) {
             $handler = $listener['handler'];

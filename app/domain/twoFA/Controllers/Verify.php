@@ -3,9 +3,9 @@
 namespace Leantime\Domain\TwoFA\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
-class Verify extends Controller
+    class Verify extends Controller
     {
         private AuthService $authService;
 

@@ -5,6 +5,7 @@ namespace Leantime\Domain\Files\Controllers;
 use Leantime\Core\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
+
 class Browse extends Controller
 {
     public function init(

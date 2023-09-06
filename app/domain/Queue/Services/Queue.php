@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Queue\Services {
 
     use Leantime\Core\Mailer as MailerCore;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-class Queue
+    use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    class Queue
     {
         private QueueRepository $queue;
         private UserRepository $userRepo;

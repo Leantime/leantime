@@ -1,5 +1,7 @@
 <?php
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $wikis = $tpl->get('wikis');
     $wikiHeadlines = $tpl->get('wikiHeadlines');
 
@@ -153,7 +155,7 @@ function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1,
                                             <div class="creationLinks">
                                                 <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
                                             </div>
-                                        <?php } ?>
+                                            <?php } ?>
 
                                         </div>
 

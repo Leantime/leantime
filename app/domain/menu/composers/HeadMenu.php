@@ -8,6 +8,7 @@ use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+
 class HeadMenu extends Composer
 {
     public static $views = [

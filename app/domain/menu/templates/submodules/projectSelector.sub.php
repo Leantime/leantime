@@ -1,5 +1,7 @@
 <?php
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 $redirectUrl = $tpl->incomingRequest->getRequestUri();
 //Don't redirect if redirect goes to showProject.
 if (str_contains($redirectUrl, "showProject")) {
@@ -63,7 +65,6 @@ use Leantime\Core\Eventhelpers;
                                 echo '<li class="nav-header" style="border-bottom:1px solid var(--main-border-color);">' . $tpl->__("selectorLabel." . $key) . '</li>';
 
                                 foreach ($typeRow as $projectRow) {
-
                                     if ($lastClient != $projectRow['clientName'] . $projectRow['parent']) {
                                         $lastClient = $projectRow['clientName'] . $projectRow['parent'];
 
@@ -109,7 +110,7 @@ use Leantime\Core\Eventhelpers;
                         </ul>
                     </div>
 
-                <?php
+                        <?php
                     }
                 }
                 ?>

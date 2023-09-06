@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Goalcanvas\Services {
 
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
-use Mpdf\Tag\P;
+    use Mpdf\Tag\P;
     use Ramsey\Uuid\Uuid;
 
     class Goalcanvas
@@ -129,7 +129,6 @@ use Mpdf\Tag\P;
 
             //Checks if first level is also link+report or just link
             foreach ($kpis as $kpi) {
-
                 $goals[$kpi['id']] = array(
                     "id" => $kpi['id'],
                     "description" => $kpi['description'],

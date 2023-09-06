@@ -1,7 +1,9 @@
 <?php
 
     defined('RESTRICTED') or die('Restricted access');
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $sprints        = $tpl->get("sprints");
     $searchCriteria = $tpl->get("searchCriteria");
     $currentSprint  = $tpl->get("currentSprint");
@@ -65,9 +67,8 @@
                     </form>
 
 
-                    <?php foreach($allTicketGroups as $group) {?>
-
-                        <?php if($group['label'] != 'all') { ?>
+                    <?php foreach ($allTicketGroups as $group) {?>
+                        <?php if ($group['label'] != 'all') { ?>
                             <h5 class="accordionTitle <?=$group['class']?>" id="accordion_link_<?=$group['id'] ?>">
                                 <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?=$group['id'] ?>');">
                                     <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
@@ -125,7 +126,7 @@
                         <?php $tpl->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
                     </table>
 
-                        <?php if($group['label'] != 'all') { ?>
+                        <?php if ($group['label'] != 'all') { ?>
                             </div>
                         <?php } ?>
                     <?php } ?>

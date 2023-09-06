@@ -6,8 +6,8 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Models\Wiki;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class ArticleDialog extends Controller
     {

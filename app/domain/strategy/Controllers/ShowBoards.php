@@ -4,7 +4,7 @@ namespace Leantime\Domain\Strategy\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
-class ShowBoards extends Controller
+    class ShowBoards extends Controller
     {
         private CanvaService $canvasService;
 

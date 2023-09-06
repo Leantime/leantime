@@ -1,8 +1,9 @@
 
 <?php
 
-function findActive($route) {
-    if(str_contains(\Leantime\Core\Frontcontroller::getCurrentRoute(), $route)) {
+function findActive($route)
+{
+    if (str_contains(\Leantime\Core\Frontcontroller::getCurrentRoute(), $route)) {
         return "active";
     }
     return "";

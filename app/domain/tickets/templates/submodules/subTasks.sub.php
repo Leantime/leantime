@@ -1,6 +1,8 @@
 
 <?php
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $ticket = $tpl->get('ticket');
     $statusLabels  = $tpl->get('statusLabels');
     $efforts = $tpl->get('efforts');
@@ -88,7 +90,7 @@ foreach ($tpl->get('allSubTasks') as $subticket) {
                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$subticket['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($subticket['storypoints'] != '' && $subticket['storypoints'] > 0) {
-                                                                    echo $efforts["".$subticket['storypoints']];
+                                                                    echo $efforts["" . $subticket['storypoints']];
                                                                 } else {
                                                                     echo $tpl->__("label.story_points_unkown");
                                                                 }?>

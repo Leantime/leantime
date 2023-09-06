@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class MoveTicket extends Controller
     {

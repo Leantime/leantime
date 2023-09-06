@@ -23,7 +23,8 @@ class Checklist extends HtmxController
      * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
      * @return void
      */
-    public function init(Projects $projectService) {
+    public function init(Projects $projectService)
+    {
         $this->projectService = $projectService;
     }
 

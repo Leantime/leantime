@@ -186,9 +186,9 @@ abstract class Repository
     /**
      * patch - updates a record in the database
      *
-     * @param int   $id     - the id of the record to update
-     * @param array $params - the parameters to update
-     * @return bool
+     * @param integer $id     - the id of the record to update
+     * @param array   $params - the parameters to update
+     * @return boolean
      */
     public function patch(int $id, array $params): bool
     {
@@ -266,7 +266,7 @@ abstract class Repository
     /**
      * delete - deletes a record from the database
      *
-     * @param int $id - the id of the record to delete
+     * @param integer $id - the id of the record to delete
      */
     public function delete($id)
     {
@@ -275,7 +275,7 @@ abstract class Repository
     /**
      * get - gets a record from the database
      *
-     * @param int $id - the id of the record to get
+     * @param integer $id - the id of the record to get
      */
     public function get($id)
     {
@@ -309,7 +309,7 @@ abstract class Repository
     /**
      * getAll - gets all records from the database
      *
-     * @param int $id - the id of the record to get
+     * @param integer $id - the id of the record to get
      * @todo - implement
      */
     public function getAll($id)
@@ -319,9 +319,9 @@ abstract class Repository
     /**
      * getFieldAttribute - gets the field attribute for a given property
      *
-     * @param string $class - the class to get the attribute from
-     * @param string $property - the property to get the attribute from
-     * @param bool $includeId - whether or not to include the id attribute
+     * @param string  $class     - the class to get the attribute from
+     * @param string  $property  - the property to get the attribute from
+     * @param boolean $includeId - whether or not to include the id attribute
      * @return array|false
      */
     protected function getFieldAttribute($class, $property, $includeId = false): array|false

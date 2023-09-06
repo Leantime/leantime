@@ -1,44 +1,35 @@
 <?php
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+
+foreach ($__data as $var => $val) {
+    $$var = $val;
+} // necessary for blade refactor
 $calendars = $tpl->get('calendar');
 $eol = "\r\n";
 $env = app()->make(\Leantime\Core\Environment::class);
 $timezone = $env->defaultTimezone;
-
 $timezoneObject = new DateTimeZone($timezone);
-
-
 $tpl->dispatchTplEvent('beforeOutput', $calendars, ['eol' => $eol]);
-
 echo "BEGIN:VCALENDAR" . $eol;
 echo "CALSCALE:GREGORIAN" . $eol;
 echo "METHOD:PUBLISH" . $eol;
 echo "PRODID:-//Leantime Cal//EN" . $eol;
 echo "VERSION:2.0" . $eol;
-
-
 if ($calendars) {
     $from = strtotime($calendars[0]['dateFrom']['ical']);
     $to = strtotime($calendars[(count($calendars) - 1)]['dateFrom']['ical']);
-
     echo "BEGIN:VTIMEZONE" . $eol;
     echo "TZID:" . $timezone . $eol;
-
     $year = 86400 * 360;
     $transitions = $timezoneObject->getTransitions($from - $year, $to + $year);
-
-
     $std = null;
     $dst = null;
     foreach ($transitions as $i => $trans) {
         $cmp = null;
-
-        // skip the first entry...
+    // skip the first entry...
         if ($i == 0) {
-            // ... but remember the offset for the next TZOFFSETFROM value
+// ... but remember the offset for the next TZOFFSETFROM value
             $tzfrom = $trans['offset'] / 3600;
-
-            //Offsets need to be 4 characters long. Pad with 0
+//Offsets need to be 4 characters long. Pad with 0
             if ($tzfrom < 0) {
                 $tzfrom = floor($tzfrom) * -1;
                 $tzfrom = "-" . str_pad($tzfrom, 2, "0", STR_PAD_LEFT);
@@ -61,7 +52,6 @@ if ($calendars) {
 
         $dt = new DateTime($trans['time']);
         $offset = $trans['offset'] / 3600;
-
         if ($offset < 0) {
             $offset = floor($offset) * -1;
             $offset = "-" . str_pad($offset, 2, "0", STR_PAD_LEFT);
@@ -72,8 +62,7 @@ if ($calendars) {
         echo "DTSTART:" . $dt->format('Ymd\THis') . $eol;
         echo "TZOFFSETFROM:" . sprintf('%s%s%02d', $tzfrom >= 0 ? '+' : '', $tzfrom, ($tzfrom - $tzfrom) * 60) . $eol;
         echo "TZOFFSETTO:" . sprintf('%s%s%02d', $offset >= 0 ? '+' : '', $offset, ($offset - $offset) * 60) . $eol;
-
-        // add abbreviated timezone name if available
+    // add abbreviated timezone name if available
         if (!empty($trans['abbr'])) {
             echo "TZNAME:" . $trans['abbr'] . $eol;
         }
@@ -96,10 +85,6 @@ if ($calendars) {
         }
     }
     echo "END:VTIMEZONE" . $eol;
-
-
-
-
     foreach ($calendars as $calendar) {
         if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') {
             $url = BASE_URL . "/calendar/editEvent/" . $calendar['id'] . "";
@@ -108,10 +93,9 @@ if ($calendars) {
         }
 
         $tpl->dispatchTplEvent('calendarOutputBeginning', $calendar, [
-            'url' => $url,
+        'url' => $url,
             'eol' => $eol,
         ]);
-
         if (str_contains($calendar['dateFrom']['ical'], '-00011130T000000') === false &&  str_contains($calendar['dateTo']['ical'], '-00011130T000000') === false) {
             echo "BEGIN:VEVENT" . $eol;
             echo "DTSTAMP;TZID=" . $timezone . ":" . date('Ymd\THis\Z') . "" . $eol;
@@ -124,12 +108,11 @@ if ($calendars) {
         }
 
         $tpl->dispatchTplEvent('calendarOutputEnd', $calendar, [
-            'url' => $url,
+        'url' => $url,
             'eol' => $eol,
         ]);
     }
 }
 
 echo "END:VCALENDAR" . $eol;
-
 $tpl->dispatchTplEvent('afterOutput', $calendars, ['eol' => $eol]);

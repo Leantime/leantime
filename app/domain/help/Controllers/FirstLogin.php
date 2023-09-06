@@ -41,7 +41,6 @@ namespace Leantime\Domain\Help\Controllers {
             $settingsRepo = app()->make(\Leantime\Domain\Setting\Repositories\Setting::class);
 
             if (isset($_POST['step']) && $_POST['step'] == 1) {
-
                 if (isset($_POST['projectname'])) {
                     $projectService = app()->make(Projects::class);
                     $projectService->patch($_SESSION['currentProject'], array("name" => $_POST['projectname']));

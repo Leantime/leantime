@@ -5,14 +5,14 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Files\Services\Files as FileService;
-use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Files\Services\Files as FileService;
+    use Leantime\Domain\Comments\Services\Comments as CommentService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Users\Services\Users as UserService;
+    use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class NewTicket extends Controller
     {

@@ -10,7 +10,7 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Calendar\Services\Calendar;
 
     class EditEvent extends Controller

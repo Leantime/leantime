@@ -1,5 +1,7 @@
 <?php
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $step = $tpl->get("currentStep");
 ?>
 
@@ -53,7 +55,9 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
                     $themeAll = $themeCore->getAll();
                     foreach ($themeAll as $key => $name) {
                         ?>
-                        <option value="<?=$key ?>" <?php if($key == 'default') echo "selected='selected'"; ?>><?=$tpl->__($name) ?></option>
+                        <option value="<?=$key ?>" <?php if ($key == 'default') {
+                            echo "selected='selected'";
+                                       } ?>><?=$tpl->__($name) ?></option>
                     <?php } ?>
                 </select>
                 <br /><br />

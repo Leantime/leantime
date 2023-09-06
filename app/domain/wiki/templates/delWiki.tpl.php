@@ -1,6 +1,8 @@
 <?php
     defined('RESTRICTED') or die('Restricted access');
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 ?>
 
 <h4 class="widgettitle title-light"><i class="fa fa-trash"></i> <?php echo $tpl->__("buttons.delete") ?></h4>

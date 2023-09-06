@@ -4,13 +4,13 @@ namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Files\Services\Files as FileService;
-use Leantime\Domain\Comments\Services\Comments as CommentService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Users\Services\Users as UserService;
-class ShowTicket extends Controller
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Files\Services\Files as FileService;
+    use Leantime\Domain\Comments\Services\Comments as CommentService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Users\Services\Users as UserService;
+    class ShowTicket extends Controller
     {
         private ProjectService $projectService;
         private TicketService $ticketService;
@@ -102,10 +102,11 @@ class ShowTicket extends Controller
                 $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
                 $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
 
-                 $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '',
+                 $allProjectMilestones = $this->ticketService->getAllMilestones([
+                "sprint" => '',
                  "type" => "milestone",
-                 "currentProject" => $_SESSION["currentProject"]
-                ]);
+                 "currentProject" => $_SESSION["currentProject"],
+                 ]);
                 $this->tpl->assign('milestones', $allProjectMilestones);
                 $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
 

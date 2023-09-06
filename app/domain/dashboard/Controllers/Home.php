@@ -4,14 +4,14 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Reports\Services\Reports as ReportService;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-use Leantime\Core\Controller;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Users\Services\Users as UserService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Reports\Services\Reports as ReportService;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+    use Leantime\Core\Controller;
 
     class Home extends Controller
     {

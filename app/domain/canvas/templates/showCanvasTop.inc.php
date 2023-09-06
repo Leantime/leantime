@@ -6,7 +6,10 @@
  * Required variables:
  * - $canvasName       Name of current canvas
  */
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 
 $canvasTitle = '';
 $allCanvas = $tpl->get('allCanvas');

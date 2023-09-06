@@ -1,5 +1,7 @@
 <?php
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $allProjects = $tpl->get('allProjects');
     $clients = $tpl->get('clients');
     $currentClient = $tpl->get("currentClient");

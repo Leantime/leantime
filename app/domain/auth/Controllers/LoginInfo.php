@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Auth\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-class LoginInfo extends Controller
+    use Leantime\Domain\Users\Services\Users as UserService;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
+    class LoginInfo extends Controller
     {
         private UserRepository $userRepo;
         private UserService $userService;

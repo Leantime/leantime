@@ -8,7 +8,10 @@
  * - $elementName Name of the current element
  * - $filter      Array on which to filter
  */
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 $canvasTypes = $tpl->get('canvasTypes');
 $canvasItems = $tpl->get('canvasItems');
 ?>

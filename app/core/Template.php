@@ -97,14 +97,14 @@ class Template
     /**
      * __construct - get instance of frontcontroller
      *
-     * @param  Theme $theme
-     * @param  Language $language
+     * @param  Theme           $theme
+     * @param  Language        $language
      * @param  Frontcontroller $frontcontroller
      * @param  IncomingRequest $incomingRequest
-     * @param  Environment $config
-     * @param  AppSettings $settings
-     * @param  AuthService $login
-     * @param  Roles $roles
+     * @param  Environment     $config
+     * @param  AppSettings     $settings
+     * @param  AuthService     $login
+     * @param  Roles           $roles
      * @access public
      * @return self
      */
@@ -143,7 +143,7 @@ class Template
     /**
      * Create View Factory capable of rendering PHP and Blade templates
      *
-     * @param \Leantime\Core\Application $app
+     * @param \Leantime\Core\Application              $app
      * @param \Illuminate\View\Engines\EngineResolver $viewResolver
      *
      * @return void
@@ -227,7 +227,7 @@ class Template
             \Illuminate\Contracts\View\Factory::class,
             function ($app) {
                 $viewFactory = $app->make(\Illuminate\View\Factory::class);
-                array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php',]);
+                array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
                 // reprioritize blade
                 $viewFactory->addExtension('blade.php', 'blade');
                 $viewFactory->setContainer($app);
@@ -511,10 +511,10 @@ class Template
     public function getNotification(): array
     {
         if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
-            if(isset($_SESSION['event_id'])) {
+            if (isset($_SESSION['event_id'])) {
                 $event_id = $_SESSION['event_id'];
-            }else{
-                $event_id='';
+            } else {
+                $event_id = '';
             }
             return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
         } else {
@@ -665,7 +665,7 @@ class Template
     /**
      * e - echos and escapes content
      *
-     * @param  ?string $content
+     * @param  string $content
      * @return void
      */
     public function e(?string $content): void
@@ -679,7 +679,7 @@ class Template
     /**
      * escape - escapes content
      *
-     * @param  ?string $content
+     * @param  string $content
      * @return string
      */
     public function escape(?string $content): string
@@ -695,7 +695,7 @@ class Template
     /**
      * escapeMinimal - escapes content
      *
-     * @param  ?string $content
+     * @param  string $content
      * @return string
      */
     public function escapeMinimal(?string $content): string
@@ -765,11 +765,11 @@ class Template
      * @see https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
      * @author Søren Løvborg <https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg>
      * @access public
-     * @param  string $html
-     * @param  int $maxLength
-     * @param  string $ending
-     * @param  bool $exact
-     * @param  bool $considerHtml
+     * @param  string  $html
+     * @param  integer $maxLength
+     * @param  string  $ending
+     * @param  boolean $exact
+     * @param  boolean $considerHtml
      * @return string
      */
     public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false)
@@ -849,7 +849,7 @@ class Template
      * convertRelativePaths - convert relative paths to absolute paths
      *
      * @access public
-     * @param  ?string $text
+     * @param  string $text
      * @return string
      */
     public function convertRelativePaths(?string $text)
@@ -905,8 +905,8 @@ class Template
      * @access public
      * @param  string $module
      * @param  string $name
-     * @param  ?array $params
-     * @param  ?array $attribute
+     * @param  array  $params
+     * @param  array  $attribute
      * @return string
      */
     public function displayLink($module, $name, $params = null, $attribute = null)
@@ -955,7 +955,7 @@ class Template
     * authenticated
     *
     * @access public
-    * @param  string  $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
+    * @param  string $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
     * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
     *                 local filenames or AWS URLs
     */

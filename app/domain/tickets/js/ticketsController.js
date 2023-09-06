@@ -790,7 +790,7 @@ leantime.ticketsController = (function () {
                     onChangeColor: function (color) {
                         jQuery(this).css('background', color);
                         jQuery(this).css('color', "#fff");
-                }
+                    }
                 }
             );
 
@@ -1027,26 +1027,26 @@ leantime.ticketsController = (function () {
             var groupBy = jQuery("input[name='groupBy']:checked").val();
 
             var query = "?search=true";
-            if (project != "" && project != undefined) {
-                query = query + "&projectId=" + project}
-            if (users != "" && users != undefined) {
-                query = query + "&users=" + users}
-            if (milestones != ""  && milestones != undefined) {
-                query = query + "&milestone=" + milestones}
-            if (term != ""  && term != undefined) {
-                query = query + "&term=" + term;}
-            if (sprints != ""  && sprints != undefined) {
-                query = query + "&sprint=" + sprints;}
-            if (types != "" && types != undefined) {
-                query = query + "&type=" + types;}
-            if (priority != "" && priority != undefined) {
-                query = query + "&priority=" + priority;}
-            if (status != "" && status != undefined) {
-                query = query + "&status=" + status;}
-            if (sort != "" && sort != undefined) {
-                query = query + "&sort=" + sort;}
-            if (groupBy != "" && groupBy != undefined) {
-                query = query + "&groupBy=" + groupBy;}
+        if (project != "" && project != undefined) {
+            query = query + "&projectId=" + project}
+        if (users != "" && users != undefined) {
+            query = query + "&users=" + users}
+        if (milestones != ""  && milestones != undefined) {
+            query = query + "&milestone=" + milestones}
+        if (term != ""  && term != undefined) {
+            query = query + "&term=" + term;}
+        if (sprints != ""  && sprints != undefined) {
+            query = query + "&sprint=" + sprints;}
+        if (types != "" && types != undefined) {
+            query = query + "&type=" + types;}
+        if (priority != "" && priority != undefined) {
+            query = query + "&priority=" + priority;}
+        if (status != "" && status != undefined) {
+            query = query + "&status=" + status;}
+        if (sort != "" && sort != undefined) {
+            query = query + "&sort=" + sort;}
+        if (groupBy != "" && groupBy != undefined) {
+            query = query + "&groupBy=" + groupBy;}
 
             var rediredirectUrl = url + query;
 
@@ -1087,7 +1087,7 @@ leantime.ticketsController = (function () {
 
         var position_updated = false;
 
-        jQuery(".sortableTicketList").each(function() {
+        jQuery(".sortableTicketList").each(function () {
             console.log(this);
 
             var currentElement = this;
@@ -1120,8 +1120,6 @@ leantime.ticketsController = (function () {
 
 
                     for (var i = 0; i < ticketStatusList.length; i++) {
-
-
                         if (jQuery(currentElement).find(".contentInner.status_" + ticketStatusList[i]).length) {
                             statusPostData.payload[ticketStatusList[i]] = jQuery(currentElement).find(".contentInner.status_" + ticketStatusList[i]).sortable('serialize');
                         }
@@ -1255,11 +1253,13 @@ leantime.ticketsController = (function () {
             }).container().appendTo(jQuery('#tableButtons'));
 
             // When the column visibility changes on the firs table, also change it on // the others tables.
-            allTickets.table(0).on('column-visibility',
+            allTickets.table(0).on(
+                'column-visibility',
                 function ( e, settings, colIdx, visibility ) {
-                    allTickets.tables(':gt(0)').column( colIdx ).visible( visibility );
+                    allTickets.tables(':gt(0)').column(colIdx).visible(visibility);
                     allTickets.draw(false);
-            });
+                }
+            );
 
             jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
 

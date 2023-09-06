@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Ideas\Controllers {
 
     use Leantime\Core\Mailer as MailerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-class AdvancedBoards extends Controller
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    class AdvancedBoards extends Controller
     {
         /**
          * init - initialize private variables

@@ -106,7 +106,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        public function getNumberOfProjects($clientId = null, $type=null)
+        public function getNumberOfProjects($clientId = null, $type = null)
         {
 
             $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0";

@@ -5,7 +5,7 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Wiki\Models\Wiki;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
-class WikiModal extends Controller
+    class WikiModal extends Controller
     {
         private WikiService $wikiService;
 

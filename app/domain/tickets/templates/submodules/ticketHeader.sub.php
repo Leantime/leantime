@@ -1,6 +1,6 @@
 <?php
 
-$currentUrlPath = BASE_URL . "/". str_replace(".", "/", \Leantime\Core\Frontcontroller::getCurrentRoute());
+$currentUrlPath = BASE_URL . "/" . str_replace(".", "/", \Leantime\Core\Frontcontroller::getCurrentRoute());
 
 $currentSprintId = $tpl->get("currentSprint");
 $searchCriteria = $tpl->get("searchCriteria");
@@ -10,19 +10,19 @@ $sprints        = $tpl->get("sprints");
 $sprint = false;
 
 $currentSprintId = $currentSprintId == '' ? "all" : $currentSprintId;
-if($currentSprintId == 'all') {
+if ($currentSprintId == 'all') {
     $sprint = new \Leantime\Domain\Sprints\Models\Sprints();
     $sprint->id = 'all';
     $sprint->name = $tpl->__("links.all_todos");
 }
 
-if($currentSprintId == 'backlog') {
+if ($currentSprintId == 'backlog') {
     $sprint = new \Leantime\Domain\Sprints\Models\Sprints();
     $sprint->id = 'backlog';
     $sprint->name = $tpl->__("links.backlog");
 }
 
-if(is_array($tpl->get('sprints'))) {
+if (is_array($tpl->get('sprints'))) {
     foreach ($tpl->get('sprints') as $sprintRow) {
         if ($sprintRow->id == $currentSprintId) {
             $sprint = $sprintRow;
@@ -42,12 +42,13 @@ if(is_array($tpl->get('sprints'))) {
     <div class="pagetitle">
         <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
 
-        <?php  if (($tpl->get('currentSprint') !== false)
+        <?php  if (
+        ($tpl->get('currentSprint') !== false)
             && ($tpl->get('currentSprint') !== null)
             && count($tpl->get('sprints'))  > 0
             && $sprint->id != 'all'
             && $sprint->id != 'backlog'
-        ) {?>
+) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
@@ -62,7 +63,6 @@ if(is_array($tpl->get('sprints'))) {
         <h1>
             <?=$tpl->__("headlines.todos"); ?>
             <?php  if (($tpl->get('sprints') !== false) && ($tpl->get('sprints') !== null) && count($tpl->get('sprints'))  > 0) {?>
-
             //
             <span class="dropdown dropdownWrapper">
                 <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">

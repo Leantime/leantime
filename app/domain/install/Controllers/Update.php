@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Install\Controllers {
 
     use Leantime\Core\AppSettings as AppSettingCore;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Install\Repositories\Install as InstallRepository;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-class Update extends Controller
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    class Update extends Controller
     {
         private InstallRepository $installRepo;
         private SettingRepository $settingsRepo;

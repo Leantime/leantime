@@ -74,12 +74,12 @@ class Environment
     public string $defaultTimezone;
 
     /**
-     * @var bool Enable to specifiy menu on a project by project basis
+     * @var boolean Enable to specifiy menu on a project by project basis
      */
     public bool $enableMenuType;
 
     /**
-     * @var bool Keep theme on login
+     * @var boolean Keep theme on login
      */
     public bool $keepTheme;
 
@@ -128,7 +128,7 @@ class Environment
     public string $userFilePath;
 
     /**
-     * @var bool Use S3
+     * @var boolean Use S3
      */
     public bool $useS3;
 
@@ -175,7 +175,7 @@ class Environment
     public string $sessionpassword;
 
     /**
-     * @var int Session expiration
+     * @var integer Session expiration
      */
     public int $sessionExpiration;
 
@@ -187,7 +187,7 @@ class Environment
     public string $email;
 
     /**
-     * @var bool Use SMTP
+     * @var boolean Use SMTP
      */
     public bool $useSMTP;
 
@@ -197,7 +197,7 @@ class Environment
     public string $smtpHosts;
 
     /**
-     * @var bool SMTP Auth
+     * @var boolean SMTP Auth
      */
     public bool $smtpAuth;
 
@@ -212,7 +212,7 @@ class Environment
     public string $smtpPassword;
 
     /**
-     * @var bool SMTP Auto TLS
+     * @var boolean SMTP Auto TLS
      */
     public bool $smtpAutoTLS;
 
@@ -222,19 +222,19 @@ class Environment
     public string $smtpSecure;
 
     /**
-     * @var int SMTP Port
+     * @var integer SMTP Port
      */
     public int $smtpPort;
 
     /**
-     * @var bool SMTP SSL No Verify
+     * @var boolean SMTP SSL No Verify
      */
     public bool $smtpSSLNoverify;
 
 
     # LDAP =====================================================================================
     /**
-     * @var bool Use LDAP
+     * @var boolean Use LDAP
      */
     public bool $useLdap;
 
@@ -249,7 +249,7 @@ class Environment
     public string $ldapHost;
 
     /**
-     * @var int LDAP Port
+     * @var integer LDAP Port
      */
     public int $ldapPort;
 
@@ -286,7 +286,7 @@ class Environment
 
     # OIDC =====================================================================================
     /**
-     * @var bool OIDC Enable
+     * @var boolean OIDC Enable
      */
     public bool $oidcEnable;
 
@@ -358,7 +358,7 @@ class Environment
 
     # Redis =====================================================================================
     /**
-     * @var bool Use Redis
+     * @var boolean Use Redis
      */
     public bool $useRedis;
 
@@ -495,9 +495,9 @@ class Environment
     /**
      * getBool - get a boolean value from the environment
      *
-     * @param string $envVar
-     * @param bool $default
-     * @return bool
+     * @param string  $envVar
+     * @param boolean $default
+     * @return boolean
      */
     private function getBool(string $envVar, bool $default): bool
     {
@@ -520,7 +520,7 @@ class Environment
      * environmentHelper - helper function to get a value from the environment
      *
      * @param string $envVar
-     * @param mixed $default
+     * @param mixed  $default
      * @param string $dataType
      * @return mixed
      */
@@ -561,7 +561,7 @@ class Environment
      * tryGetFromEnvironment - try to get a value from the environment
      *
      * @param string $envVar
-     * @param mixed $currentValue
+     * @param mixed  $currentValue
      * @return mixed
      */
     private function tryGetFromEnvironment(string $envVar, mixed $currentValue): mixed
@@ -576,7 +576,7 @@ class Environment
      * tryGetFromYaml - try to get a value from the yaml file
      *
      * @param string $envVar
-     * @param mixed $currentValue
+     * @param mixed  $currentValue
      * @return mixed
      */
     private function tryGetFromYaml(string $envVar, mixed $currentValue): mixed

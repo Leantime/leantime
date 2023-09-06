@@ -76,12 +76,12 @@ class Mailer
     private string $html;
 
     /**
-     * @var bool
+     * @var boolean
      */
     private bool $hideWrapper = false;
 
     /**
-     * @var bool
+     * @var boolean
      */
     public bool $nl2br = true;
 
@@ -285,9 +285,9 @@ class Mailer
 
         $this->mailAgent->Subject = $this->subject;
 
-            if(str_contains($this->logo, 'images/logo.svg')) {
-                $this->logo = "/dist/images/logo.png";
-            }
+        if (str_contains($this->logo, 'images/logo.svg')) {
+            $this->logo = "/dist/images/logo.png";
+        }
 
             $logoParts = parse_url($this->logo);
 
@@ -300,13 +300,10 @@ class Mailer
             $inlineLogoContent = "cid:companylogo";
         }
 
-            if($this->hideWrapper === true) {
-
-                $bodyTemplate = $this->html;
-
-            }else{
-
-                $bodyTemplate = '
+        if ($this->hideWrapper === true) {
+            $bodyTemplate = $this->html;
+        } else {
+            $bodyTemplate = '
                     <table width="100%" style="background:#fefefe; padding:15px; ">
                     <tr>
                         <td align="center" valign="top">
@@ -320,12 +317,12 @@ class Mailer
                                     <td style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:16px; line-height:1.7;\'>
                                         ' . $this->language->__('email_notifications.hi') . '
                                         <br />';
-                                    if($this->nl2br === true){
-                                        $bodyTemplate .= nl2br($this->html);
-                                    }else{
-                                        $bodyTemplate .= $this->html;
-                                    }
-                                        $bodyTemplate .= '<br /><br />
+            if ($this->nl2br === true) {
+                $bodyTemplate .= nl2br($this->html);
+            } else {
+                $bodyTemplate .= $this->html;
+            }
+                                    $bodyTemplate .= '<br /><br />
                                     </td>
                                 </tr>
                             </table>
@@ -337,8 +334,7 @@ class Mailer
                         </td>
                     </tr>
                     </table>';
-
-            }
+        }
 
         $bodyTemplate = $this->dispatchMailerFilter(
             'bodyTemplate',

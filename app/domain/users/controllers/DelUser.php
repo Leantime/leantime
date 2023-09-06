@@ -5,7 +5,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class DelUser extends Controller
     {

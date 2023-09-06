@@ -4,9 +4,9 @@ namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-class Roadmap extends Controller
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    class Roadmap extends Controller
     {
         private ProjectRepository $projectsRepo;
         private SprintService $sprintService;

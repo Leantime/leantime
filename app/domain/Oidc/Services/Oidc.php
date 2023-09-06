@@ -11,6 +11,7 @@ use Leantime\Core\Language;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
+
 class Oidc
 {
     private Environment $config;

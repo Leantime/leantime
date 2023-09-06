@@ -105,7 +105,7 @@ class Fileupload
     /**
      * This function returns the maximum files size that can be uploaded in PHP
      *
-     * @return int File size in bytes
+     * @return integer File size in bytes
      */
     public static function getMaximumFileUploadSize(): int
     {
@@ -210,7 +210,7 @@ class Fileupload
      * renameFile
      *
      * @param  $name
-     * @return bool
+     * @return boolean
      */
     public function renameFile($name): bool
     {
@@ -271,7 +271,6 @@ class Fileupload
                 $url = $this->s3Client->getObjectUrl($this->config->s3Bucket, $fileName);
 
                 return $url;
-
             } catch (S3Exception $e) {
                 error_log($e, 0);
                 return false;
@@ -308,14 +307,10 @@ class Fileupload
             $this->s3Client->upload($this->config->s3Bucket, $fileName, $file, "authenticated-read");
 
             return true;
-
         } catch (S3Exception $e) {
-
             error_log($e, 0);
             return false;
-
         } catch (RequestException $e) {
-
             error_log($e, 0);
             return false;
         }
@@ -393,7 +388,6 @@ class Fileupload
             }
 
             if (file_exists(realpath($fullPath))) {
-
                 $path_parts = pathinfo($fullPath);
                 $ext = $path_parts["extension"];
 

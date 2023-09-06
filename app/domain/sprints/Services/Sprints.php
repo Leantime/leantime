@@ -3,12 +3,12 @@
 namespace Leantime\Domain\Sprints\Services {
 
     use Leantime\Core\Template as TemplateCore;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
-use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
-use DatePeriod;
+    use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
+    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+    use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
+    use DatePeriod;
     use DateTime;
     use DateInterval;
 

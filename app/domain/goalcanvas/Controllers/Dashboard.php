@@ -91,9 +91,9 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     $total = $item['endValue'] - $item['startValue'];
                     $progressValue = $item['currentValue'] - $item['startValue'];
 
-                    if($total > 0) {
+                    if ($total > 0) {
                         $percentDone = round($progressValue / $total * 100, 2);
-                    }else{
+                    } else {
                         $percentDone = 0;
                     }
 

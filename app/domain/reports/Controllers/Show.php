@@ -4,13 +4,13 @@ namespace Leantime\Domain\Reports\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Dashboard\Repositories\Dashboard as DashboardRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-use Leantime\Domain\Reports\Services\Reports as ReportService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Users\Services\Users as UserService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Domain\Reports\Services\Reports as ReportService;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
 
     class Show extends Controller

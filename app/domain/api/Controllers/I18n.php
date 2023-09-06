@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller;
+
 class I18n extends Controller
 {
     /**

@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Calendar\Services {
 
     use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-class Calendar
+    class Calendar
     {
         private CalendarRepository $calendarRepo;
         private LanguageCore $language;
@@ -109,7 +109,7 @@ class Calendar
          * @access public
          * @params array $values array of event values
          *
-         * @return bool returns true on success, false on failure
+         * @return boolean returns true on success, false on failure
          */
         public function editEvent(array $values): bool
         {

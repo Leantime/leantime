@@ -1,7 +1,10 @@
 <?php
 
 use Leantime\Core\Eventhelpers;
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 $today = date($tpl->__('language.dateformat'));
 $author = $_SESSION['userdata']['name'] . ' (' . $_SESSION['userdata']['mail'] . ')';
 

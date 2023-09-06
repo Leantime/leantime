@@ -1,5 +1,7 @@
 <?php
-foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
 $currentMilestone = $tpl->get('milestone');
 $milestones = $tpl->get('milestones');
 $statusLabels = $tpl->get('statusLabels');
@@ -102,7 +104,7 @@ $statusLabels = $tpl->get('statusLabels');
     <br />
     <input type="hidden" name="comment" value="1" />
 
-    <?php
+        <?php
         $tpl->assign("formUrl", "/tickets/editMilestone/" . $currentMilestone->id . "");
         $tpl->displaySubmodule('comments-generalComment');?>
     <?php } ?>

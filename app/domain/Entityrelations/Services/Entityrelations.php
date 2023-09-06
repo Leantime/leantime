@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Entityrelations\Services {
 
     use Leantime\Domain\Entityrelations\Repositories\Entityrelations as EntityrelationRepository;
-class Entityrelations
+    class Entityrelations
     {
         private EntityrelationRepository $entityRelationshipsRepo;
 

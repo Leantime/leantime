@@ -3,8 +3,8 @@
 namespace Leantime\Domain\Timesheets\Services {
 
     use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-class Timesheets
+    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+    class Timesheets
     {
         private TimesheetRepository $timesheetsRepo;
         private LanguageCore $language;
@@ -142,11 +142,13 @@ class Timesheets
             return $this->timesheetsRepo->export($values);
         }
 
-        public function updateInvoices($invEmpl, $invComp = '', $paid = '') {
+        public function updateInvoices($invEmpl, $invComp = '', $paid = '')
+        {
             return $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
         }
 
-        public function getBookedHourTypes() {
+        public function getBookedHourTypes()
+        {
             return $this->timesheetsRepo->kind;
         }
     }

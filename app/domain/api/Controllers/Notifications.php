@@ -4,7 +4,7 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
-class Notifications extends Controller
+    class Notifications extends Controller
     {
         public NotificationService $notificationsService;
 

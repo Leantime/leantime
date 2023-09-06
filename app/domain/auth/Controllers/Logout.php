@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Auth\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-class Logout extends Controller
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
+    class Logout extends Controller
     {
         private $fileRepo;
         private $authService;

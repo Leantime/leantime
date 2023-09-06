@@ -3,12 +3,12 @@
 namespace Leantime\Domain\Ideas\Controllers {
 
     use Leantime\Core\Mailer as MailerCore;
-use Leantime\Core\Controller;
+    use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Auth\Services\Auth;
 
     class ShowBoards extends Controller
     {

@@ -4,8 +4,8 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Users\Services\Users as UserService;
-class Files extends Controller
+    use Leantime\Domain\Users\Services\Users as UserService;
+    class Files extends Controller
     {
         private UserService $usersService;
         private FileRepository $fileRepo;

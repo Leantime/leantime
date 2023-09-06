@@ -3,7 +3,9 @@
     defined('RESTRICTED') or die('Restricted access');
 
     echo $tpl->displayNotification();
-    foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
     $tickets        = $tpl->get("tickets");
     $sprints        = $tpl->get("sprints");
     $searchCriteria = $tpl->get("searchCriteria");
@@ -60,7 +62,7 @@ if ($numberofColumns > 0) {
         <div class="clearfix"></div>
 
 
-        <?php if(isset($allTicketGroups['all'])){
+        <?php if (isset($allTicketGroups['all'])) {
             $allTickets = $allTicketGroups['all']['items'];
         }
         ?>
@@ -114,13 +116,12 @@ if ($numberofColumns > 0) {
         <?php } ?>
         </div>
 
-        <?php foreach($allTicketGroups as $group) {?>
-
+        <?php foreach ($allTicketGroups as $group) {?>
              <?php
-             $allTickets= $group['items'];
-             ?>
+                $allTickets = $group['items'];
+                ?>
 
-            <?php if($group['label'] != 'all') { ?>
+            <?php if ($group['label'] != 'all') { ?>
                 <h5 class="accordionTitle kanbanLane <?=$group['class']?>" id="accordion_link_<?=$group['id'] ?>">
                     <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?=$group['id'] ?>');">
                         <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
@@ -234,7 +235,7 @@ if ($numberofColumns > 0) {
                                                     <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text"><?php
                                                         if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                            echo $efforts["".$row['storypoints']];
+                                                            echo $efforts["" . $row['storypoints']];
                                                         } else {
                                                             echo $tpl->__("label.story_points_unkown");
                                                         }?>
@@ -294,13 +295,13 @@ if ($numberofColumns > 0) {
                                                             foreach ($tpl->get('users') as $user) {
                                                                 echo "<li class='dropdown-item'>
                                                                     <a href='javascript:void(0);' data-label='" . sprintf(
-                                                                        $tpl->__("text.full_name"),
-                                                                        $tpl->escape($user["firstname"]),
-                                                                        $tpl->escape($user['lastname'])
+                                                                    $tpl->__("text.full_name"),
+                                                                    $tpl->escape($user["firstname"]),
+                                                                    $tpl->escape($user['lastname'])
                                                                 ) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" . $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" . BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' style='vertical-align: middle; margin-right:5px;'/>" . sprintf(
-                                                                        $tpl->__("text.full_name"),
-                                                                        $tpl->escape($user["firstname"]),
-                                                                        $tpl->escape($user['lastname'])
+                                                                    $tpl->__("text.full_name"),
+                                                                    $tpl->escape($user["firstname"]),
+                                                                    $tpl->escape($user['lastname'])
                                                                 ) . "</a>";
                                                                 echo "</li>";
                                                             }
@@ -365,7 +366,7 @@ if ($numberofColumns > 0) {
                         </div>
                     </div>
 
-            <?php if($group['label'] != 'all') { ?>
+            <?php if ($group['label'] != 'all') { ?>
                 </div>
             <?php } ?>
 
@@ -414,10 +415,9 @@ if ($numberofColumns > 0) {
 
 
         <?php foreach ($allTicketGroups as $group) {
-
-            foreach($group['items'] as $ticket) {
-            if ($ticket['dependingTicketId'] > 0) {
-                ?>
+            foreach ($group['items'] as $ticket) {
+                if ($ticket['dependingTicketId'] > 0) {
+                    ?>
             var startElement = jQuery('#subtaskLink_<?=$ticket['dependingTicketId']; ?>')[0];
             var endElement =  document.getElementById('ticket_<?=$ticket['id']; ?>');
 
@@ -465,7 +465,7 @@ if ($numberofColumns > 0) {
 
             }
 
-            <?php }
+                <?php }
             }
         } ?>
 

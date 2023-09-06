@@ -374,12 +374,12 @@ namespace Leantime\Domain\Tickets\Services {
                                 }
                                 break;
                             case "milestoneid":
-                                if($ticket["milestoneid"] > 0) {
+                                if ($ticket["milestoneid"] > 0) {
                                     $milestone = $this->getTicket($ticket["milestoneid"]);
                                     $color = $milestone->tags;
-                                    $class = '" style="color:'.$color.'"';
+                                    $class = '" style="color:' . $color . '"';
 
-                                    $label = $ticket["milestoneHeadline"]. " <a href='#/tickets/editMilestone/".$ticket["milestoneid"]."' style='float:right;'><i class='fa fa-edit'></i></a><a>";
+                                    $label = $ticket["milestoneHeadline"] . " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 
 

@@ -3,7 +3,7 @@
 
 $currentRoute = \Leantime\Core\Frontcontroller::getCurrentRoute();
 
-$currentUrlPath = BASE_URL . "/". str_replace(".", "/", $currentRoute);
+$currentUrlPath = BASE_URL . "/" . str_replace(".", "/", $currentRoute);
 $groupBy        = $tpl->get('groupByOptions');
 $sortBy        = $tpl->get('sortOptions');
 $searchCriteria = $tpl->get("searchCriteria");
@@ -20,10 +20,11 @@ $statusLabels = $tpl->get("allTicketStates");
            class="btn btn-link" data-tippy-content="<?=$tpl->__("popover.filter") ?>">
             <i class="fas fa-filter"></i> Filter<?=$tpl->get('numOfFilters') > 0 ? "  <span class='badge badge-primary'>" . $tpl->get('numOfFilters') . "</span> " : "" ?>
             <?php /*Please don't change the code formatting below, if not right next to each other it somehow adds a space between the two buttons and increases the distance */ ?>
-        </a><?php if($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar"){?><div class="btn-group viewDropDown">
+        </a><?php if ($currentRoute !== 'tickets.roadmap' && $currentRoute != "tickets.showProjectCalendar") {
+            ?><div class="btn-group viewDropDown">
 <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.group_by") ?>">
                 <span class="fa-solid fa-diagram-project"></span> Group By
-                <?php if($searchCriteria["groupBy"] != 'all' && $searchCriteria["groupBy"] != '') { ?>
+                <?php if ($searchCriteria["groupBy"] != 'all' && $searchCriteria["groupBy"] != '') { ?>
                     <span class="badge badge-primary">1</span>
                 <?php } ?>
             </button>
@@ -47,7 +48,7 @@ $statusLabels = $tpl->get("allTicketStates");
                 <?php }; ?>
             </ul>
         </div>
-        <?php } ?>
+            <?php } ?>
         <div class="filterBar hideOnLoad" style="width:250px;">
 
             <div class="row-fluid">
@@ -137,7 +138,7 @@ $statusLabels = $tpl->get("allTicketStates");
                             <option value="" data-placeholder="true">All Statuses</option>
                             <option value="not_done" <?php if ($searchCriteria['status'] !== false && strpos($searchCriteria['status'], 'not_done') !== false) {
                                 echo" selected='selected' ";
-                            }?>><?=$tpl->__("label.not_done")?></option>
+                                                     }?>><?=$tpl->__("label.not_done")?></option>
                             <?php foreach ($statusLabels as $key => $label) {?>
                                 <?php echo"<option value='" . $key . "'";
 

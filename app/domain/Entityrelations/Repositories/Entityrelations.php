@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Entityrelations\Repositories {
 
     use Leantime\Core\Db as DbCore;
-use PDO;
+    use PDO;
 
     class Entityrelations
     {

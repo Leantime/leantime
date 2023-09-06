@@ -4,10 +4,10 @@ namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-class ShowKanban extends Controller
+    use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
+    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    class ShowKanban extends Controller
     {
         private ProjectService $projectService;
         private TicketService $ticketService;

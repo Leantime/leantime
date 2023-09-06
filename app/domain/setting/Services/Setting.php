@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Setting\Services {
 
     use Leantime\Core\Template as TemplateCore;
-use Leantime\Core\Fileupload as FileuploadCore;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-class Setting
+    use Leantime\Core\Fileupload as FileuploadCore;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    class Setting
     {
         private TemplateCore $tpl;
         public SettingRepository $settingsRepo;

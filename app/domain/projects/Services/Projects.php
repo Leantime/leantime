@@ -1161,7 +1161,7 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
-         * @param bool $showClosedProjects
+         * @param boolean $showClosedProjects
          * @return array
          */
         public function getAll(bool $showClosedProjects = false): array
