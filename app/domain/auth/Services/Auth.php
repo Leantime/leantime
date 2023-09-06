@@ -5,14 +5,14 @@ namespace Leantime\Domain\Auth\Services {
     use Exception;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
-use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Core\Environment as EnvironmentCore;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Session as SessionCore;
-use Leantime\Core\Mailer as MailerCore;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\Eventhelpers;
+    use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Core\Environment as EnvironmentCore;
+    use Leantime\Core\Language as LanguageCore;
+    use Leantime\Core\Session as SessionCore;
+    use Leantime\Core\Mailer as MailerCore;
+    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+    use Leantime\Core\Eventhelpers;
     use RobThree\Auth\TwoFactorAuth;
 
     class Auth
@@ -207,7 +207,7 @@ use Leantime\Core\Eventhelpers;
             ////C: update users from the identity provider
             //Try Ldap
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
-                $ldap = app()->make(ldap::class);
+                $ldap = app()->make(\Leantime\Domain\Ldap\Services\Ldap::class);
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
                     //Update username to include domain
