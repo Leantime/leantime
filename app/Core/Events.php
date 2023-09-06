@@ -156,14 +156,25 @@ class Events
      */
     public static function discover_listeners(): void
     {
-        $modules = glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR);
+        if (empty($_SESSION['domainEvents']) || app()->make(Enviornment::class)->debug) {
+            $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
+            $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
+
+            $testers = $customModules->map(fn ($path) => str_replace('/custom/', '/app/', $path));
+
+            $filteredModules = $domainModules->filter(fn ($path) => ! $testers->contains($path));
+
+            $_SESSION['domainEvents'] = $customModules->concat($filteredModules)->all();
+        }
+
+        $modules = $_SESSION['domainEvents'];
         foreach ($modules as $module) {
             if (file_exists($module . "/Events/register.php")) {
                 include $module . "/Events/register.php";
             }
         }
 
-        $pluginPath = APP_ROOT . "/App/Plugins/";
+        $pluginPath = APP_ROOT . "/app/Plugins/";
 
         $enabledPlugins = [];
         if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {

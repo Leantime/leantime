@@ -9,6 +9,7 @@ namespace Leantime\Core;
 
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Illuminate\Support\Str;
 
 /**
  * Template class - Template routing
@@ -160,7 +161,7 @@ class Template
             $domainPaths = collect(glob(APP_ROOT . '/app/Domain/*'))
             ->mapWithKeys(fn ($path) => [
                 $basename = strtolower(basename($path)) => [
-                    APP_ROOT . '/app/Custom/Domain/' . $basename . '/Templates',
+                    APP_ROOT . '/custom/Domain/' . $basename . '/Templates',
                     "$path/Templates",
                 ],
             ]);
@@ -249,22 +250,23 @@ class Template
     public function attachComposers()
     {
         if (empty($_SESSION['composers']) || $this->config->debug) {
-            $getClassName = fn ($filepath) => app()->getNamespace()
-            . str_replace('/', '\\', str_replace([APP_ROOT . '/app/', '.php'], ['', ''], $filepath));
-
-            $customComposerClasses = collect(glob(APP_ROOT . '/app/Custom/Views/Composers/*.php'))
-                ->concat(glob(APP_ROOT . '/app/Custom/Domain/*/Composers/*.php'))
-                ->map($getClassName);
+            $customComposerClasses = collect(glob(APP_ROOT . '/custom/Views/Composers/*.php'))
+                ->concat(glob(APP_ROOT . '/custom/Domain/*/Composers/*.php'));
 
             $appComposerClasses = collect(glob(APP_ROOT . '/app/Views/Composers/*.php'))
-                ->concat(glob(APP_ROOT . '/app/Domain/*/Composers/*.php'))
-                ->map($getClassName);
+                ->concat(glob(APP_ROOT . '/app/Domain/*/Composers/*.php'));
 
-            $testers = $customComposerClasses->map(fn ($path) => str_replace('/Custom/', '/', $path));
+            $testers = $customComposerClasses->map(fn ($path) => str_replace('/custom/', '/app/', $path));
 
             $filteredAppComposerClasses = $appComposerClasses->filter(fn ($composerClass) => ! $testers->contains($composerClass));
 
-            $_SESSION['composers'] = $customComposerClasses->concat($filteredAppComposerClasses)->all();
+            $_SESSION['composers'] = $customComposerClasses
+                ->concat($filteredAppComposerClasses)
+                ->map(fn ($filepath) => Str::of($filepath)
+                    ->replace([APP_ROOT . '/app/', APP_ROOT . '/custom/', '.php'], ['', '', ''])
+                    ->replace('/', '\\')
+                    ->toString())
+                ->all();
         }
 
         foreach ($_SESSION['composers'] as $composerClass) {
