@@ -156,27 +156,27 @@ class Template
         $app->instance(\Illuminate\Contracts\Foundation\Application::class, $app::getInstance());
 
         // Find Template Paths
-        unset($_SESSION['template_paths']);
         if (empty($_SESSION['template_paths']) || $this->config->debug) {
-            $domainPaths = $customPaths = [];
-            $domainModules = glob(APP_ROOT . '/app/Domain/*');
-            array_walk($domainModules, function ($path, $key) use (&$domainPaths, &$customPaths) {
-                $domainPaths[strtolower(basename($path))] = [
-                    APP_ROOT . '/app/Custom/Domain/' . basename($path) . '/Templates',
+            $domainPaths = collect(glob(APP_ROOT . '/app/Domain/*'))
+            ->mapWithKeys(fn ($path) => [
+                $basename = strtolower(basename($path)) => [
+                    APP_ROOT . '/app/Custom/Domain/' . $basename . '/Templates',
                     "$path/Templates",
-                ];
-            });
+                ],
+            ]);
 
-            $pluginPaths = glob(APP_ROOT . '/app/Plugins/*');
-            array_walk($pluginPaths, function ($path, $key) use (&$domainPaths) {
-                if (in_array(strtolower(basename($path)), array_keys($domainPaths))) {
-                    throw new \Exception("Plugin " . strtolower(basename($path)) . " conflicts with domain");
-                }
+            $pluginPaths = collect(glob(APP_ROOT . '/app/Plugins/*'))
+                ->mapWithKeys(function ($path) use ($domainPaths) {
+                    if ($domainPaths->has($basename = strtolower(basename($path)))) {
+                        throw new \Exception("Plugin $basename conflicts with domain");
+                    }
+                    return [$basename => "$path/Templates"];
+                });
 
-                $domainPaths[strtolower(basename($path))] = "$path/Templates";
-            });
-
-            $_SESSION['template_paths'] = array_merge($domainPaths, $customPaths, ['global' => APP_ROOT . '/app/Views/Templates']);
+            $_SESSION['template_paths'] = $domainPaths
+                ->merge($pluginPaths)
+                ->merge(['global' => APP_ROOT . '/app/Views/Templates'])
+                ->all();
         }
 
         // Setup Blade Compiler
@@ -249,37 +249,22 @@ class Template
     public function attachComposers()
     {
         if (empty($_SESSION['composers']) || $this->config->debug) {
-            $getClassName = fn ($filepath) => app()->getNamespace() . str_replace('/', '\\', str_replace(APP_ROOT . '/app/', '', str_replace('.php', '', $filepath)));
-            $allComposerClasses = [];
+            $getClassName = fn ($filepath) => app()->getNamespace()
+            . str_replace('/', '\\', str_replace([APP_ROOT . '/app/', '.php'], ['', ''], $filepath));
 
-            $customComposerClasses = array_merge(
-                array_map($getClassName, glob(APP_ROOT . '/app/Custom/Views/Composers/*.php')),
-                array_map($getClassName, glob(APP_ROOT . '/app/Custom/Domain/*/Composers/*.php')),
-            );
+            $customComposerClasses = collect(glob(APP_ROOT . '/app/Custom/Views/Composers/*.php'))
+                ->concat(glob(APP_ROOT . '/app/Custom/Domain/*/Composers/*.php'))
+                ->map($getClassName);
 
-            $allComposerClasses = array_merge(
-                $allComposerClasses,
-                $customComposerClasses
-            );
+            $appComposerClasses = collect(glob(APP_ROOT . '/app/Views/Composers/*.php'))
+                ->concat(glob(APP_ROOT . '/app/Domain/*/Composers/*.php'))
+                ->map($getClassName);
 
-            $appComposerClasses = array_merge(
-                array_map($getClassName, glob(APP_ROOT . '/app/Views/Composers/*.php')),
-                array_map($getClassName, glob(APP_ROOT . '/app/Domain/*/Composers/*.php'))
-            );
+            $testers = $customComposerClasses->map(fn ($path) => str_replace('/Custom/', '/', $path));
 
-            $testers = array_map(fn ($path) => str_replace('/Custom/', '/', $path), $allComposerClasses);
-            array_walk(
-                $appComposerClasses,
-                function ($composerClass) use (&$allComposerClasses, $testers) {
-                    if (in_array($composerClass, $testers)) {
-                        return;
-                    }
+            $filteredAppComposerClasses = $appComposerClasses->filter(fn ($composerClass) => ! $testers->contains($composerClass));
 
-                    $allComposerClasses[] = $composerClass;
-                }
-            );
-
-            $_SESSION['composers'] = $allComposerClasses;
+            $_SESSION['composers'] = $customComposerClasses->concat($filteredAppComposerClasses)->all();
         }
 
         foreach ($_SESSION['composers'] as $composerClass) {
