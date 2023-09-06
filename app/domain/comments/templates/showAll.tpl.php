@@ -1,6 +1,6 @@
 <?php
 foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
-$comments = app()->make(leantime\domain\repositories\comments::class);
+$comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
 $formUrl = CURRENT_URL;
 
 //Controller may not redirect. Make sure delComment is only added once

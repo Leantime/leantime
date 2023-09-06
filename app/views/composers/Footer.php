@@ -1,8 +1,8 @@
 <?php
 
-namespace leantime\views\composers;
+namespace Leantime\Views\Composers;
 
-use leantime\core\Composer;
+use Leantime\Core\Composer;
 
 class Footer extends Composer
 {
@@ -12,7 +12,7 @@ class Footer extends Composer
 
     protected $settings;
 
-    public function init(\leantime\core\appSettings $settings)
+    public function init(\Leantime\Core\AppSettings $settings)
     {
         $this->settings = $settings;
     }

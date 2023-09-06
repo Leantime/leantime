@@ -1,5 +1,5 @@
 <?php
-$menuRepo = app()->make(\leantime\domain\repositories\menu::class);
+$menuRepo = app()->make(\Leantime\Domain\Menu\Repositories\Menu::class);
 $_SESSION['menuState'] = $menuRepo->getSubmenuState("mainMenu");
 if (!$_SESSION['menuState']) {
     $_SESSION['menuState'] = "open";

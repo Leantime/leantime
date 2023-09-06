@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
 $calendars = $tpl->get('calendar');
 $eol = "\r\n";
-$env = app()->make(\leantime\core\environment::class);
+$env = app()->make(\Leantime\Core\Environment::class);
 $timezone = $env->defaultTimezone;
 
 $timezoneObject = new DateTimeZone($timezone);

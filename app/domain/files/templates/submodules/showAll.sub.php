@@ -1,10 +1,10 @@
 <?php
 foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
-/** @var leantime\services\auth $login */
-/** @var leantime\core\language $language */
-$module = \leantime\core\frontcontroller::getModuleName('');
-$action = \leantime\core\frontcontroller::getActionName('');
-$maxSize = \leantime\core\fileupload::getMaximumFileUploadSize();
+/** @var Leantime\Auth\Services\Auth $login */
+/** @var Leantime\Core\Language $language */
+$module = \Leantime\Core\Frontcontroller::getModuleName('');
+$action = \Leantime\Core\Frontcontroller::getActionName('');
+$maxSize = \Leantime\Core\Fileupload::getMaximumFileUploadSize();
 $moduleId = $_GET['id'] ?? '';
 ?>
 <div id="fileManager">

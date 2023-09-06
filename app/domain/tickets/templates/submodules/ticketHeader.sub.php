@@ -1,6 +1,6 @@
 <?php
 
-$currentUrlPath = BASE_URL . "/". str_replace(".", "/", \leantime\core\frontcontroller::getCurrentRoute());
+$currentUrlPath = BASE_URL . "/". str_replace(".", "/", \Leantime\Core\Frontcontroller::getCurrentRoute());
 
 $currentSprintId = $tpl->get("currentSprint");
 $searchCriteria = $tpl->get("searchCriteria");
@@ -11,13 +11,13 @@ $sprint = false;
 
 $currentSprintId = $currentSprintId == '' ? "all" : $currentSprintId;
 if($currentSprintId == 'all') {
-    $sprint = new \leantime\domain\models\sprints();
+    $sprint = new \Leantime\Domain\Sprints\Models\Sprints();
     $sprint->id = 'all';
     $sprint->name = $tpl->__("links.all_todos");
 }
 
 if($currentSprintId == 'backlog') {
-    $sprint = new \leantime\domain\models\sprints();
+    $sprint = new \Leantime\Domain\Sprints\Models\Sprints();
     $sprint->id = 'backlog';
     $sprint->name = $tpl->__("links.backlog");
 }

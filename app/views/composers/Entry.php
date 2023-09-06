@@ -1,8 +1,8 @@
 <?php
 
-namespace leantime\views\composers;
+namespace Leantime\Views\Composers;
 
-use leantime\core\Composer;
+use Leantime\Core\Composer;
 
 class Entry extends Composer
 {

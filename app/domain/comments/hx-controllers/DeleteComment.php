@@ -1,13 +1,13 @@
 <?php
 
-use leantime\domain\services\tickets;
+use Leantime\Domain\Tickets\Services\Tickets;
 
 class DeleteComment extends HtmxController
 {
-    public static $view = 'comments::components.reply';
+    public static $view = 'Comments::components.reply';
 
     public function init(
-        private tickets $tickets,
+        private Tickets $Tickets,
     ) {
     }
 

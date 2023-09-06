@@ -1,4 +1,4 @@
-@php use leantime\domain\models\auth\roles; @endphp
+@php use Leantime\Domain\Auth\Models\Roles; @endphp
 @dispatchEvent('beforeHeadMenu')
 
 <ul class="headmenu">
@@ -25,7 +25,7 @@
         >{!! __("menu.my_portfolio") !!}</a>
     </li>
 
-    @if ($login::userIsAtLeast(roles::$editor, true))
+    @if ($login::userIsAtLeast(Roles::$editor, true))
 
         @if ($onTheClock !== false|null)
 
@@ -176,7 +176,7 @@
 
     </li>
 
-    @if ($login::userIsAtLeast(roles::$manager))
+    @if ($login::userIsAtLeast(Roles::$manager))
 
         <li class="appsDropdown">
 
@@ -202,7 +202,7 @@
                     <a href="{{ BASE_URL }}/projects/showAll">{!! __('menu.all_projects') !!}</a>
                 </li>
 
-                @if ($login::userIsAtLeast(roles::$admin))
+                @if ($login::userIsAtLeast(Roles::$admin))
                     <li
                         @if (str_starts_with($activePath, 'clients'))
                             class="active"
@@ -219,7 +219,7 @@
                         <a href="{{ BASE_URL }}/users/showAll">{!! __('menu.all_users') !!}</a>
                     </li>
 
-                    @if ($login::userIsAtLeast(roles::$owner))
+                    @if ($login::userIsAtLeast(Roles::$owner))
                         <li class="nav-header border">{!! __('label.administration') !!}</li>
 
                         <li

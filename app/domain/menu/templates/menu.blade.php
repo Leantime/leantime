@@ -3,7 +3,7 @@
      * @todo Move this to Composer, or find a better
      *       way to add filters for all passed variables
      */
-    use leantime\domain\models\auth\roles;
+    use Leantime\Domain\Auth\Models\Roles;
     $settingsLink = $tpl->dispatchTplFilter(
         'settingsLink',
         $settingsLink,
@@ -128,7 +128,7 @@
                         @endswitch
                     @endforeach
 
-                    @if ($login::userIsAtLeast(roles::$manager))
+                    @if ($login::userIsAtLeast(Roles::$manager))
                         <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
                             <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ $_SESSION['currentProject'] }}">
                                 {!! $settingsLink['label']  !!}

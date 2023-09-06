@@ -1,27 +1,29 @@
 <?php
 
-namespace leantime\domain\composers\menu;
+namespace Leantime\Domain\Menu\Composers;
 
-use leantime\core;
-use leantime\core\Composer;
-use leantime\domain\services;
-
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Composer;
+use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+use Leantime\Domain\Users\Services\Users as UserService;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
 class HeadMenu extends Composer
 {
     public static $views = [
         'menu::headMenu',
     ];
 
-    private services\notifications $notificationService;
-    private services\timesheets $timesheets;
-    private services\users $userService;
-    private services\auth $authService;
+    private NotificationService $notificationService;
+    private TimesheetService $timesheets;
+    private UserService $userService;
+    private AuthService $authService;
 
     public function init(
-        services\notifications $notificationService,
-        services\timesheets $timesheets,
-        services\users $userService,
-        services\auth $authService
+        NotificationService $notificationService,
+        TimesheetService $timesheets,
+        UserService $userService,
+        AuthService $authService
     ) {
         $this->notificationService = $notificationService;
         $this->timesheets = $timesheets;
@@ -66,7 +68,7 @@ class HeadMenu extends Composer
 
         if ($user == false) {
             $this->authService->logout();
-            core\frontcontroller::redirect(BASE_URL . '/auth/login');
+            FrontcontrollerCore::redirect(BASE_URL . '/auth/login');
         }
 
         $modal = 'dashboard';
@@ -105,9 +107,9 @@ class HeadMenu extends Composer
             'totalNewNotifications' => $totalNewNotifications,
             'notifications' => $notifications ?? [],
             'onTheClock' => isset($_SESSION['userdata']) ? $this->timesheets->isClocked($_SESSION["userdata"]["id"]) : false,
-            'activePath' => core\frontcontroller::getCurrentRoute(),
-            'action' => core\frontcontroller::getActionName(),
-            'module' => core\frontcontroller::getModuleName(),
+            'activePath' => FrontcontrollerCore::getCurrentRoute(),
+            'action' => FrontcontrollerCore::getActionName(),
+            'module' => FrontcontrollerCore::getModuleName(),
             'user' => $user ?? [],
             'modal' => $modal,
         ];

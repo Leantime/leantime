@@ -128,7 +128,7 @@ $goalStats = $tpl->get("goalStats");
                 </div>
                 <div class="row" style="border-bottom:1px solid var(--main-border-color); margin-bottom:20px">
                     <?php
-                    $canvasSvc = app()->make(\leantime\domain\services\goalcanvas::class);
+                    $canvasSvc = app()->make(\Leantime\Domain\Goalcanvas\Services\Goalcanvas::class);
                     $canvasItems = $canvasSvc->getCanvasItemsById($canvasRow["id"]);
                     ?>
                         <div id="sortableCanvasKanban-<?=$canvasRow["id"]?>" class="sortableTicketList disabled col-md-12" style="padding-top:15px;">
@@ -149,7 +149,7 @@ $goalStats = $tpl->get("goalStats");
                                             || $filterStatus == $row['status']) && ($filterRelates == 'all'
                                             || $filterRelates == $row['relates'])
                                         ) {
-                                            $comments = app()->make(\leantime\domain\repositories\comments::class);
+                                            $comments = app()->make(\Leantime\Domain\Comments\Repositories\Comments::class);
                                             $nbcomments = $comments->countComments(moduleId: $row['id']);
                                             ?>
                                             <div class="col-md-4">
@@ -486,7 +486,7 @@ $goalStats = $tpl->get("goalStats");
                                 $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                 $filterRelates == $row['relates'])
                             ) {
-                                $comments = app()->make(\leantime\domain\repositories\comments::class);
+                                $comments = app()->make(\Leantime\Domain\Comments\Repositories\Comments::class);
                                 $nbcomments = $comments->countComments(moduleId: $row['id']);
                                 ?>
                             <div class="col-md-4">

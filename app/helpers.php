@@ -1,18 +1,18 @@
 <?php
 
-use leantime\core\application;
-use leantime\core\Bootloader;
+use Leantime\Core\Application;
+use Leantime\Core\Bootloader;
 
 if (! function_exists('app')) {
     /**
      * Returns the application instance.
      *
      * @param string $abstract
-     * @return mixed|\leantime\core\application
+     * @return mixed|\Leantime\Core\Application
      */
     function app(string $abstract = '', array $parameters = []): mixed
     {
-        $app = application::getInstance();
+        $app = Application::getInstance();
         return !empty($abstract) ? $app->make($abstract, $parameters) : $app;
     }
 }
@@ -35,11 +35,11 @@ if (! function_exists('bootstrap_minimal_app')) {
     /**
      * Bootstrap a new IoC container instance.
      *
-     * @return \leantime\core\application
+     * @return \Leantime\Core\Application
      */
-    function bootstrap_minimal_app(): application
+    function bootstrap_minimal_app(): Application
     {
-        $app = app()->setInstance(new application())->setHasBeenBootstrapped();
+        $app = app()->setInstance(new Application())->setHasBeenBootstrapped();
         return Bootloader::getInstance($app)->getApplication();
     }
 }
@@ -53,7 +53,7 @@ if (! function_exists('__')) {
      */
     function __(string $index): string
     {
-        return app()->make(\leantime\core\language::class)->__($index);
+        return app()->make(\Leantime\Core\Language::class)->__($index);
     }
 }
 

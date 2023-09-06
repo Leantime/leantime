@@ -1,15 +1,15 @@
 <?php
 
-namespace leantime\domain\events;
+namespace Leantime\Domain\Notifications\Events;
 
-use leantime\domain\services\notifications;
+use Leantime\Domain\Notifications\Services\Notifications;
 
-class addNotification
+class AddNotification
 {
     public function handle($payload)
     {
 
-        $notificationService = app()->make(notifications::class);
+        $notificationService = app()->make(Notifications::class);
 
         $notifications = array();
 
@@ -30,4 +30,4 @@ class addNotification
     }
 }
 
-\leantime\core\events::add_event_listener("domain.services.projects.notifyProjectUsers", new addNotification());
+\Leantime\Core\Events::add_event_listener("domain.services.projects.notifyProjectUsers", new addNotification());

@@ -1,6 +1,6 @@
 <?php
 
-namespace leantime\domain\events {
+namespace Leantime\Domain\Dashboard\Events {
 
     class DashboardTest
     {
@@ -10,6 +10,6 @@ namespace leantime\domain\events {
         }
     }
 
-    \leantime\core\events::add_event_listener("core.application.start.beginning", app()->make(dashboardTest::class));
+    \Leantime\Core\Events::add_event_listener("core.application.start.beginning", app()->make(dashboardTest::class));
 
 }

@@ -2,7 +2,7 @@
 <?php
 
 function findActive($route) {
-    if(str_contains(\leantime\core\frontcontroller::getCurrentRoute(), $route)) {
+    if(str_contains(\Leantime\Core\Frontcontroller::getCurrentRoute(), $route)) {
         return "active";
     }
     return "";

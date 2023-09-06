@@ -165,7 +165,7 @@ $menuTypes = $tpl->get('menuTypes');
                             class="fa fa-wrench"></span><?php echo $tpl->__('label.settings'); ?></h4>
 
             <input type="hidden" name="menuType" id="menuType"
-                           value="<?php echo \leantime\domain\repositories\menu::DEFAULT_MENU; ?>">
+                           value="<?php echo \Leantime\Domain\Menu\Repositories\Menu::DEFAULT_MENU; ?>">
 
                     <div class="form-group">
 

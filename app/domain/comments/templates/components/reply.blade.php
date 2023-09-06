@@ -1,6 +1,6 @@
 <div id="#{{ $comment['id'] }}">
     <div class="commentImage">
-        <x-users::profile-image :userId="$comment['userId']" />
+        <x-Users::profile-image :userId="$comment['userId']" />
     </div>
     <div class="commentMain">
         <div class="commentContent">
@@ -23,7 +23,7 @@
 
         </div>
         <div class="commentLinks">
-            @if ($login::userIsAtLeast(\leantime\domain\models\auth\roles::$commenter))
+            @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$commenter))
                 <a href="javascript:void(0);"
                    onclick="leantime.commentsController.toggleCommentBoxes({{ $comment['commentParent'] }})">
                     <span class="fa fa-reply"></span> {{ __('links.reply') }}

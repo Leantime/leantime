@@ -4,7 +4,7 @@
 
     $appSettings = $tpl->get('appSettings');
     $debugRenderer = $tpl->get('debugRenderer');
-    $themeCore = app()->make(\leantime\core\theme::class);
+    $themeCore = app()->make(\Leantime\Core\Theme::class);
     $theme = $tpl->get('theme');
 ?>
 

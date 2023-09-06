@@ -2,7 +2,7 @@
 
 class UpdateAssignee extends HtmxController
 {
-    public static $view = 'tickets::components.card';
+    public static $view = 'Tickets::components.card';
 
     public function post(IncomingRequest $incomingRequest)
     {

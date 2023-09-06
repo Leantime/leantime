@@ -1,29 +1,29 @@
 <?php
 
-namespace leantime\domain\hxcontrollers;
+namespace Leantime\Domain\Projects\Hxcontrollers;
 
-use leantime\core\HtmxController;
-use leantime\domain\services\projects;
+use Leantime\Core\HtmxController;
+use Leantime\Domain\Projects\Services\Projects;
 
 class Checklist extends HtmxController
 {
     /**
      * @var string
      */
-    protected static $view = 'projects::partials.checklist';
+    protected static $view = 'Projects::partials.checklist';
 
     /**
-     * @var \leantime\domain\services\projects
+     * @var \Leantime\Domain\Projects\Services\Projects
      */
-    private projects $projectService;
+    private Projects $projectService;
 
     /**
      * Controller constructor
      *
-     * @param \leantime\domain\services\projects $projectService The projects domain service.
+     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
      * @return void
      */
-    public function init(projects $projectService) {
+    public function init(Projects $projectService) {
         $this->projectService = $projectService;
     }
 

@@ -6,7 +6,7 @@ if (str_contains($redirectUrl, "showProject")) {
     $redirectUrl = "/dashboard/show";
 }
 
-use leantime\core\eventhelpers;
+use Leantime\Core\Eventhelpers;
 
 ?>
 
@@ -98,12 +98,12 @@ use leantime\core\eventhelpers;
                                 }
                             }
                             ?>
-                            <?php if ($login::userIsAtLeast(\leantime\domain\models\auth\roles::$manager)) { ?>
+                            <?php if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$manager)) { ?>
                                 <li class='nav-header border alwaysVisible'></li>
                                 <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/newProject/"><?=$tpl->__("menu.create_project") ?></a></li>
                                 <li class="alwaysVisible"><a href="<?=BASE_URL ?>/projects/showAll"><?=$tpl->__("menu.view_all_projects") ?></a></li>
                             <?php } ?>
-                            <?php if ($login::userIsAtLeast(\leantime\domain\models\auth\roles::$admin)) { ?>
+                            <?php if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$admin)) { ?>
                                 <li class="alwaysVisible"><a href="<?=BASE_URL ?>/clients/showAll"><?=$tpl->__("menu.view_all_clients") ?></a></li>
                             <?php } ?>
                         </ul>

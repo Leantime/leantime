@@ -1,7 +1,7 @@
 
 <?php
 
-$currentRoute = \leantime\core\frontcontroller::getCurrentRoute();
+$currentRoute = \Leantime\Core\Frontcontroller::getCurrentRoute();
 
 $currentUrlPath = BASE_URL . "/". str_replace(".", "/", $currentRoute);
 $groupBy        = $tpl->get('groupByOptions');

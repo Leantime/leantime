@@ -156,7 +156,7 @@ $user = $tpl->get('user');
                                     <span class='field span6'>
                                         <select name="theme" id="theme" style="width: 220px">
                                             <?php
-                                            $themeCore = app()->make(\leantime\core\theme::class);
+                                            $themeCore = app()->make(\Leantime\Core\Theme::class);
                                             $themeAll = $themeCore->getAll();
                                             foreach ($themeAll as $key => $name) {
                                                 ?>

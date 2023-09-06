@@ -1,7 +1,7 @@
 <?php
 foreach ($__data as $var => $val) $$var = $val; // necessary for blade refactor
-/** @var leantime\services\auth $login */
-/** @var leantime\core\language $language */
+/** @var Leantime\Auth\Services\Auth $login */
+/** @var Leantime\Core\Language $language */
 ?>
 
 

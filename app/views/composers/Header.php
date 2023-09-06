@@ -1,12 +1,12 @@
 <?php
 
-namespace leantime\views\composers;
+namespace Leantime\Views\Composers;
 
-use leantime\core\Composer;
-use leantime\domain\repositories\setting;
-use leantime\core\environment;
-use leantime\core\appSettings;
-use leantime\core\theme;
+use Leantime\Core\Composer;
+use Leantime\Domain\Setting\Repositories\Setting;
+use Leantime\Core\Environment;
+use Leantime\Core\AppSettings;
+use Leantime\Core\Theme;
 
 class Header extends Composer
 {
@@ -14,16 +14,16 @@ class Header extends Composer
         'global::sections.header',
     ];
 
-    private setting $settingsRepo;
-    private environment $config;
-    private appSettings $appSettings;
-    private theme $themeCore;
+    private Setting $SettingsRepo;
+    private Environment $config;
+    private AppSettings $AppSettings;
+    private Theme $ThemeCore;
 
     public function init(
-        setting $settingsRepo,
-        environment $config,
-        appSettings $appSettings,
-        theme $themeCore
+        Setting $settingsRepo,
+        Environment $config,
+        AppSettings $appSettings,
+        Theme $themeCore
     ) {
         $this->settingsRepo = $settingsRepo;
         $this->config = $config;

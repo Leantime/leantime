@@ -1,6 +1,7 @@
 <?php
 
-use leantime\domain\models\connector\provider;
+use Leantime\Domain\Connector\Models\Provider;
+use Leantime\Plugins\CsvImport\Services\CsvImport as CsvImportService;
 
 /**
  * MotivationalQuotes
@@ -10,12 +11,12 @@ use leantime\domain\models\connector\provider;
  */
 
 //Create function for the event
-class addCSVImportProvider
+class AddCSVImportProvider
 {
     public function handle($payload)
     {
 
-        $provider = app()->make(\leantime\plugins\services\csvImport::class);
+        $provider = app()->make(CsvImportService::class);
         $payload[$provider->id] = $provider;
 
         return $payload;
@@ -23,4 +24,4 @@ class addCSVImportProvider
 }
 
 //Register event listener
-\leantime\core\events::add_filter_listener("domain.connector.services.providers.loadProviders.providerList", new addCSVImportProvider());
+\Leantime\Core\Events::add_filter_listener("domain.connector.services.providers.loadProviders.providerList", new addCSVImportProvider());

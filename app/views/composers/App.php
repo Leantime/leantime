@@ -1,12 +1,12 @@
 <?php
 
-namespace leantime\views\composers;
+namespace Leantime\Views\Composers;
 
-use leantime\core\Composer;
-use leantime\core\appSettings;
-use leantime\core\environment;
-use leantime\core\controller;
-use leantime\core\theme;
+use Leantime\Core\Composer;
+use Leantime\Core\AppSettings;
+use Leantime\Core\Environment;
+use Leantime\Core\Controller;
+use Leantime\Core\Theme;
 use Exception;
 
 class App extends Composer
@@ -17,10 +17,10 @@ class App extends Composer
     ];
 
     public function init(
-        \leantime\domain\repositories\menu $menuRepo,
-        \leantime\domain\repositories\setting $settingsRepo,
-        theme $themeCore,
-        environment $config
+        \Leantime\Domain\Menu\Repositories\Menu $menuRepo,
+        \Leantime\Domain\Setting\Repositories\Setting $settingsRepo,
+        \Leantime\Core\Theme $themeCore,
+        \Leantime\Core\Environment $config
     ) {
         $this->menuRepo = $menuRepo;
         $this->settingsRepo = $settingsRepo;

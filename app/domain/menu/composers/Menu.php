@@ -1,30 +1,32 @@
 <?php
 
-namespace leantime\domain\composers\menu;
+namespace Leantime\Domain\Menu\Composers;
 
-use leantime\core;
-use leantime\core\Composer;
-use leantime\domain\services;
-use leantime\domain\repositories;
-
+use Leantime\Core\IncomingRequest as IncomingRequestCore;
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Composer;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 class Menu extends Composer
 {
     public static $views = [
         'menu::menu',
     ];
 
-    private services\projects $projectService;
-    private services\tickets $ticketService;
-    private services\setting $settingSvc;
-    private repositories\menu $menuRepo;
-    private core\IncomingRequest $incomingRequest;
+    private ProjectService $projectService;
+    private TicketService $ticketService;
+    private SettingService $settingSvc;
+    private MenuRepository $menuRepo;
+    private IncomingRequestCore $incomingRequest;
 
     public function init(
-        services\projects $projectService,
-        services\tickets $ticketService,
-        services\setting $settingSvc,
-        repositories\menu $menuRepo,
-        core\IncomingRequest $request
+        ProjectService $projectService,
+        TicketService $ticketService,
+        SettingService $settingSvc,
+        MenuRepository $menuRepo,
+        IncomingRequestCore $request
     ) {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
@@ -82,7 +84,7 @@ class Menu extends Composer
             if ($projectType != '' && $projectType != 'project') {
                 $menuType = $projectType;
             } else {
-                $menuType = repositories\menu::DEFAULT_MENU;
+                $menuType = MenuRepository::DEFAULT_MENU;
             }
 
             if ($project !== false && isset($project["clientId"])) {
@@ -91,7 +93,7 @@ class Menu extends Composer
                 $currentClient = '';
             }
         } else {
-            $menuType = repositories\menu::DEFAULT_MENU;
+            $menuType = MenuRepository::DEFAULT_MENU;
             $currentClient = '';
         }
 
@@ -101,8 +103,8 @@ class Menu extends Composer
 
         return [
             'currentClient' => $currentClient,
-            'module' => core\frontcontroller::getModuleName(),
-            'action' => core\frontcontroller::getActionName(),
+            'module' => FrontcontrollerCore::getModuleName(),
+            'action' => FrontcontrollerCore::getActionName(),
             'currentProjectType' => $projectType,
             'allAssignedProjects' => $allAssignedprojects,
             'allAvailableProjects' => $allAvailableProjects,

@@ -49,7 +49,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
                 <br />
                 <select name="theme" id="theme" style="width: 220px">
                     <?php
-                    $themeCore = app()->make(\leantime\core\theme::class);
+                    $themeCore = app()->make(\Leantime\Core\Theme::class);
                     $themeAll = $themeCore->getAll();
                     foreach ($themeAll as $key => $name) {
                         ?>

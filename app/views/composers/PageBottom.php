@@ -1,8 +1,8 @@
 <?php
 
-namespace leantime\views\composers;
+namespace Leantime\Views\Composers;
 
-use leantime\core\Composer;
+use Leantime\Core\Composer;
 
 class PageBottom extends Composer
 {
@@ -10,9 +10,9 @@ class PageBottom extends Composer
         'global::sections.pageBottom',
     ];
 
-    protected \leantime\core\appSettings $settings;
+    protected \Leantime\Core\AppSettings $settings;
 
-    public function init(\leantime\core\appSettings $settings)
+    public function init(\Leantime\Core\AppSettings $settings)
     {
         $this->settings = $settings;
     }
