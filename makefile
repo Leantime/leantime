@@ -1,4 +1,4 @@
-VERSION := $(shell grep "appVersion" ./config/appSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')
+VERSION := $(shell grep "appVersion" ./app/Core/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')
 TARGET_DIR:= ./target/leantime
 DOCS_DIR:= ./builddocs
 DOCS_REPO:= git@github.com:Leantime/docs.git
