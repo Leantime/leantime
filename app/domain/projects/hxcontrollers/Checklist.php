@@ -10,7 +10,7 @@ class Checklist extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'Projects::partials.checklist';
+    protected static $view = 'projects::partials.checklist';
 
     /**
      * @var \Leantime\Domain\Projects\Services\Projects

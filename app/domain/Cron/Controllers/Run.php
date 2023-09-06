@@ -8,14 +8,14 @@ namespace Leantime\Domain\Cron\Controllers {
 
     class Run extends Controller
     {
-        private Cron $CronSvc;
+        private Cron $cronSvc;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init(Cron $CronSvc)
+        public function init(Cron $cronSvc)
         {
             $this->cronSvc = $cronSvc;
         }
