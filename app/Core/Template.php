@@ -1,10 +1,5 @@
 <?php
 
-/**
- * Template class - Template routing
- *
- */
-
 namespace Leantime\Core;
 
 use Leantime\Domain\Auth\Models\Roles;
