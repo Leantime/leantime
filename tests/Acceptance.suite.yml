@@ -9,18 +9,13 @@ modules:
   enabled:
     - WebDriver:
         url: 'https://127.0.0.1:8090'
-        browser: chrome
+        browser: firefox
         wait: 20
         log_js_errors: true
         capabilities:
           acceptInsecureCerts: true
-          chromeOptions:
-            args: [
-              "--allow-insecure-localhost",
-              "--headless",
-              "--disable-gpu",
-              "--ignore-certificate-errors",
-            ]
+          moz:firefoxOptions:
+            args: ["-headless"]
     - Db:
         dsn: "mysql:host=127.0.0.1;port=3307;dbname=leantime_test"
         user: leantime
