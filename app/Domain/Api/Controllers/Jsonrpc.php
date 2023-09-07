@@ -155,20 +155,19 @@ class Jsonrpc extends Controller
      */
     private function executeApiRequest($params): void
     {
-
         $methodparts = $this->parseMethodString(isset($params['method']) ? $params['method'] : '');
         $jsonRpcVer = isset($params['jsonrpc']) ? $params['jsonrpc'] : null;
         $serviceName = Str::studly($methodparts['service']);
         $serviceName = app()->getNamespace() . "Domain\\$serviceName\\Services\\$serviceName";
-        $methodName = $methodparts['method'];
+        $methodName = Str::camel($methodparts['method']);
         $paramsFromRequest = isset($params['params']) ? $params['params'] : [];
         $id = isset($params['id']) ? $params['id'] : null;
 
-        if (!class_exists($serviceName)) {
+        if (! class_exists($serviceName)) {
             $this->returnMethodNotFound("Service doesn't exist: $serviceName");
         }
 
-        if (!method_exists($serviceName, $methodName)) {
+        if (! method_exists($serviceName, $methodName)) {
             $this->returnMethodNotFound("Method doesn't exist: $methodName");
         }
 

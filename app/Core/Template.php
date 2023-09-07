@@ -288,30 +288,22 @@ class Template
     {
         $this->bladeCompiler->directive(
             'dispatchEvent',
-            function ($args) {
-                return "<?php \$tpl->dispatchTplEvent($args); ?>";
-            }
+            fn ($args) => "<?php \$tpl->dispatchTplEvent($args); ?>",
         );
 
         $this->bladeCompiler->directive(
             'dispatchFilter',
-            function ($args) {
-                return "<?php echo \$tpl->dispatchTplFilter($args); ?>";
-            }
+            fn ($args) => "<?php echo \$tpl->dispatchTplFilter($args); ?>",
         );
 
         $this->bladeCompiler->directive(
             'spaceless',
-            function ($args) {
-                return "<?php ob_start(); ?>";
-            },
+            fn ($args) => "<?php ob_start(); ?>",
         );
 
         $this->bladeCompiler->directive(
             'endspaceless',
-            function ($args) {
-                return "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>";
-            },
+            fn ($args) => "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>",
         );
     }
 

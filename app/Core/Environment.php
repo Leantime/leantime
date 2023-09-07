@@ -21,6 +21,10 @@ class Environment
      */
     public ?object $yaml;
 
+    /**
+     * @var \Leantime\Config\Config
+     */
+    public \Leantime\Config\Config $phpConfig;
 
     # General =====================================================================================
     /**
@@ -90,6 +94,7 @@ class Environment
 
     /**
      * @var string App URL Root
+     * @todo this variables needs to be removed and generated programmatically.
      */
     public string $appDir;
 
@@ -377,16 +382,20 @@ class Environment
      * @param \Leantime\Core\DefaultConfig $defaultConfiguration
      * @return self
      */
-    public function __construct(\Leantime\Core\DefaultConfig $defaultConfiguration)
+    public function __construct(DefaultConfig $defaultConfiguration)
     {
+        /* PHP */
+        $this->phpConfig = null;
         if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
             require_once $phpConfigFile;
-            $defaultConfiguration = new \Leantime\Config\Config();
+            $this->phpConfig = new \Leantime\Config\Config();
         }
 
+        /* Dotenv */
         $this->dotenv = \Dotenv\Dotenv::createImmutable(APP_ROOT . "/config");
         $this->dotenv->safeLoad();
 
+        /* YAML */
         $this->yaml = null;
         if (file_exists(APP_ROOT . "/config/config.yaml")) {
             $this->yaml = \Symfony\Component\Yaml\Yaml::parseFile(APP_ROOT . "/config/config.yaml");
@@ -407,8 +416,7 @@ class Environment
         $this->keepTheme = $this->environmentHelper("LEAN_KEEP_THEME", $defaultConfiguration->keepTheme ?? true);
         $this->logPath = $this->environmentHelper("LEAN_LOG_PATH", APP_ROOT . '/logs/error.log');
 
-
-        //TODO this variables needs to be removed and generated programmatically.
+        /** @todo this variables needs to be removed and generated programmatically. */
         $this->appDir = $this->environmentHelper("LEAN_APP_DIR", $defaultConfiguration->appDir ?? '');
 
         /* Database */
@@ -463,7 +471,6 @@ class Environment
             $this->ldapUri = $this->environmentHelper("LEAN_LDAP_URI", $defaultConfiguration->ldapUri ?? '');
         }
 
-
         /* OIDC */
         $this->oidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);
         if ($this->oidcEnable) {
@@ -484,11 +491,13 @@ class Environment
             $this->oidcFieldLastName = $this->getString('LEAN_OIDC_FIELD_LASTNAME', 'family_name');
         }
 
+        /* Redis */
         $this->useRedis = $this->getBool('LEAN_USE_REDIS', false);
         if ($this->useRedis) {
             $this->redisURL = $this->getString('LEAN_REDIS_URL', '');
         }
 
+        /* Plugins */
         $this->plugins = $this->getString('LEAN_PLUGINS', '');
     }
 
@@ -528,33 +537,46 @@ class Environment
     {
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
-        } else {
-            /*
-             * Basically, here, we are doing the fetch order of
-             * environment -> .env file -> yaml file -> user default -> leantime default
-             * This allows us to use any one or a combination of those methods to configure leantime.
-             */
-            $found = null;
-            $found = $this->tryGetFromYaml($envVar, $found);
-            $found = $this->tryGetFromEnvironment($envVar, $found);
-
-            if (!$found || $found == "") {
-                $_SESSION['mainconfig'][$envVar] = $default;
-                return $default;
-            }
-
-            // we need to check to see if we need to conver the found data
-            if ($dataType == "string") {
-                $_SESSION['mainconfig'][$envVar] = $found;
-            } elseif ($dataType == "boolean") {
-                // if the string is true, then it is true, simple enough
-                $_SESSION['mainconfig'][$envVar] = $found == "true" ? true : false;
-            } elseif ($dataType == "number") {
-                $_SESSION['mainconfig'][$envVar] = intval($found);
-            }
-
-            return $_SESSION['mainconfig'][$envVar];
         }
+
+        /**
+         * Basically, here, we are doing the fetch order of
+         * environment -> .env file -> yaml file -> user default -> leantime default
+         * This allows us to use any one or a combination of those methods to configure leantime.
+         */
+        $found = null;
+        $found = $this->tryGetFromPhp($envVar, $found);
+        $found = $this->tryGetFromYaml($envVar, $found);
+        $found = $this->tryGetFromEnvironment($envVar, $found);
+
+        if (!$found || $found == "") {
+            $_SESSION['mainconfig'][$envVar] = $default;
+            return $default;
+        }
+
+        // we need to check to see if we need to convert the found data
+        $_SESSION['mainconfig'][$envVar] = match ($dataType) {
+            "string" => $found,
+            "boolean" => $found == "true" ? true : false,
+            "number" => intval($found),
+            default => $found,
+        };
+
+        return $_SESSION['mainconfig'][$envVar];
+    }
+
+    private function tryGetFromPhp(string $envVar, mixed $currentValue): mixed
+    {
+        if ($currentValue != null && $currentValue != "") {
+            return $currentValue;
+        }
+
+        if ($this->phpConfig) {
+            $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
+            return isset($this->phpConfig->$key) ? $this->phpConfig->$key : null;
+        }
+
+        return null;
     }
 
     /**
@@ -569,6 +591,7 @@ class Environment
         if ($currentValue != null && $currentValue != "") {
             return $currentValue;
         }
+
         return $_ENV[$envVar] ?? null;
     }
 
@@ -584,12 +607,13 @@ class Environment
         if ($currentValue != null && $currentValue != "") {
             return $currentValue;
         }
+
         if ($this->yaml) {
             $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
             return isset($this->yaml[$key]) ? $this->yaml[$key] : null;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
