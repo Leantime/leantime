@@ -156,7 +156,7 @@ class Events
      */
     public static function discover_listeners(): void
     {
-        if (empty($_SESSION['domainEvents']) || app()->make(Enviornment::class)->debug) {
+        if (empty($_SESSION['domainEvents']) || app()->make(Environment::class)->debug) {
             $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
             $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
 

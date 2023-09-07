@@ -265,6 +265,7 @@ class Template
                 ->map(fn ($filepath) => Str::of($filepath)
                     ->replace([APP_ROOT . '/app/', APP_ROOT . '/custom/', '.php'], ['', '', ''])
                     ->replace('/', '\\')
+                    ->start(app()->getNamespace())
                     ->toString())
                 ->all();
         }

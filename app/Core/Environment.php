@@ -24,7 +24,7 @@ class Environment
     /**
      * @var \Leantime\Config\Config
      */
-    public \Leantime\Config\Config $phpConfig;
+    public ?\Leantime\Config\Config $phpConfig;
 
     # General =====================================================================================
     /**
