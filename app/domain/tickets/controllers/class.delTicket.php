@@ -29,7 +29,7 @@ namespace leantime\domain\controllers {
                 }
 
                 $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                $this->tpl->display('tickets.delTicket');
+                $this->tpl->displayPartial('tickets.delTicket');
             } else {
                 $this->tpl->display('errors.error403');
             }
@@ -53,7 +53,7 @@ namespace leantime\domain\controllers {
                     } else {
                         $this->tpl->setNotification($this->language->__($result['msg']), "error");
                         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                        $this->tpl->display('tickets.delTicket');
+                        $this->tpl->displayPartial('tickets.delTicket');
                     }
                 } else {
                     $this->tpl->display('errors.error403');
