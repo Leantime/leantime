@@ -2048,3 +2048,9 @@
 [08-Sep-2023 11:57:05 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 192.168.128.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
 [08-Sep-2023 11:57:06 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 192.168.128.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
 [08-Sep-2023 11:57:06 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: 192.168.128.1:9003 (from REMOTE_ADDR HTTP header), host.docker.internal:9003 (fallback through xdebug.client_host/xdebug.client_port).
+[08-Sep-2023 11:58:31 America/Los_Angeles] cron start
+[08-Sep-2023 11:58:31 America/Los_Angeles] cron end
+[08-Sep-2023 11:58:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[08-Sep-2023 11:58:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[08-Sep-2023 11:58:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
+[08-Sep-2023 11:58:31 America/Los_Angeles] Xdebug: [Step Debug] Could not connect to debugging client. Tried: localhost:9000 (through xdebug.client_host/xdebug.client_port) :-(
