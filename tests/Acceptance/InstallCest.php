@@ -17,6 +17,7 @@ class InstallCest
         $I->amOnPage('/install');
         $I->wait(10);
 
+        echo $I->grabPageSource(); // debug
         $I->see('Install');
     }
 
