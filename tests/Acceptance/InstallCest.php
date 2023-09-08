@@ -15,7 +15,7 @@ class InstallCest
     public function installPageWorks(AcceptanceTester $I)
     {
         $I->amOnPage('/install');
-        $I->wait(10);
+        $I->waitForElementVisible('.registrationForm', 30);
 
         $I->see('Install');
     }

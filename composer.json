@@ -66,6 +66,9 @@
         "phpcsstandards/phpcsextra": "^1.1"
     },
     "autoload": {
+        "psr-4": {
+            "Leantime\\": ["custom/", "app/"]
+        },
         "files": [
             "app/helpers.php"
         ]
