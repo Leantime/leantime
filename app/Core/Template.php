@@ -151,6 +151,9 @@ class Template
         // ComponentTagCompiler Expects the Foundation\Application Implmentation, let's trick it and give it the container.
         $app->instance(\Illuminate\Contracts\Foundation\Application::class, $app::getInstance());
 
+        // View/Component createBladeViewFromString method needs to access the view compiled path, expects it to be attached to config
+        $this->config->set('view.compiled', APP_ROOT . '/cache/views');
+
         // Find Template Paths
         if (empty($_SESSION['template_paths']) || $this->config->debug) {
             $domainPaths = collect(glob(APP_ROOT . '/app/Domain/*'))
@@ -181,7 +184,7 @@ class Template
             function ($app) {
                 $bladeCompiler = new \Illuminate\View\Compilers\BladeCompiler(
                     $app->make(\Illuminate\Filesystem\Filesystem::class),
-                    APP_ROOT . '/cache/views'
+                    $this->config->get('view.compiled'),
                 );
 
                 $namespaces = array_keys($_SESSION['template_paths']);
@@ -194,6 +197,7 @@ class Template
                 return $bladeCompiler;
             }
         );
+        $app->alias(\Illuminate\View\Compilers\CompilerInterface::class, 'blade.compiler');
 
         // Register Blade Engines
         $app->singleton(
@@ -205,6 +209,7 @@ class Template
                 return $viewResolver;
             }
         );
+        $app->alias(\Illuminate\View\Engines\EngineResolver::class, 'view.engine.resolver');
 
         // Setup View Finder
         $app->singleton(
@@ -215,6 +220,7 @@ class Template
                 return $viewFinder;
             }
         );
+        $app->alias(\Illuminate\View\ViewFinderInterface::class, 'view.finder');
 
         // Setup Events Dispatcher
         $app->bind(\Illuminate\Contracts\Events\Dispatcher::class, \Illuminate\Events\Dispatcher::class);
@@ -566,8 +572,14 @@ class Template
         );
 
         if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification = '<script type="text/javascript">jQuery.growl({message: "'
-                . $message . '", style: "' . $note['type'] . '"});</script>';
+            $notification = app('blade.compiler')::render(
+                '<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
+                [
+                    'message' => $message,
+                    'style' => $note['type'],
+                ],
+                deleteCachedView: true
+            );
 
             self::dispatch_event("notification_displayed", $note);
 
@@ -587,7 +599,6 @@ class Template
      */
     public function displayInlineNotification()
     {
-
         $notification = '';
         $note = $this->getNotification();
         $language = $this->language;
@@ -605,12 +616,18 @@ class Template
         );
 
         if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification = "<div class='inputwrapper login-alert login-" . $note['type'] . "' style='position: relative;'>
-                                <div class='alert alert-" . $note['type'] . "' style='padding:15px;' >
-                                    <strong>" . $message . "</strong>
-                                </div>
-                            </div>
-                            ";
+            $notification = app('blade.compiler')::render(
+                '<div class="inputwrapper login-alert login-{{ $type }}" style="position: relative;">
+                    <div class="alert alert-{{ $type }}" style="padding:15px;" >
+                        <strong>{{ $message }}</strong>
+                    </div>
+                </div>',
+                [
+                    'type' => $note['type'],
+                    'message' => $message,
+                ],
+                deleteCachedView: true
+            );
 
             self::dispatch_event("notification_displayed", $note);
 

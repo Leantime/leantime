@@ -187,8 +187,12 @@ class Bootloader
 
         $this->bindRequest();
 
-        // specify singletons/instances
+        // Setup Configuration
         $this->app->singleton(Environment::class, Environment::class);
+        $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
+        $this->app->alias(Environment::class, 'config');
+
+        // specify singletons/instances
         $this->app->singleton(Db::class, Db::class);
         $this->app->singleton(Frontcontroller::class, Frontcontroller::class);
         $this->app->instance(Session::class, $this->app->make(Session::class));

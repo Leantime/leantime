@@ -14,8 +14,9 @@ modules:
         log_js_errors: true
         capabilities:
           acceptInsecureCerts: true
-          moz:firefoxOptions:
+          "moz:firefoxOptions": {
             args: ["-headless"]
+          }
     - Db:
         dsn: "mysql:host=127.0.0.1;port=3307;dbname=leantime_test"
         user: leantime
