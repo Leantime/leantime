@@ -389,3 +389,24 @@ body .maincontent .priority-text-5 a:link {
 .kanbanLane a {
     font-size: var(--base-font-size);
 }
+
+.kanbanBoard .ticketDropdown.show {
+    width: 100%;
+}
+
+.maincontentinner .kanbanBoard .ticketDropdown > a,
+.maincontentinner .kanbanBoard .ticketDropdown > a:link
+{
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+
+.maincontentinner .kanbanBoard .ticketDropdown > a > span,
+.maincontentinner .kanbanBoard .ticketDropdown > a:link > span
+{
+    display: inline-block;
+    overflow: hidden;
+    width: calc(100% - 10px);
+    text-overflow: ellipsis;
+}
