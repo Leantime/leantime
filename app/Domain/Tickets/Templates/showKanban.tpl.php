@@ -208,7 +208,7 @@ if ($numberofColumns > 0) {
 
                                                     <div class="dropdown ticketDropdown milestoneDropdown colorized show firstDropdown" >
                                                         <a style="background-color:<?=$tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <span class="text" title="<?php $row['milestoneid'] != "" && $row['milestoneid'] != 0 && $tpl->e($row['milestoneHeadline']) ?>"><?php
+                                                            <span class="text"><?php
                                                             if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
                                                                 $tpl->e($row['milestoneHeadline']);
                                                             } else {
