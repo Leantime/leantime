@@ -354,6 +354,7 @@ namespace Leantime\Domain\Tickets\Services {
                             case "status":
                                 $status = $this->getStatusLabels();
                                 $label = $status[$groupedFieldValue]["name"];
+                                $class = $status[$groupedFieldValue]["class"];
 
                                 break;
                             case "priority":
@@ -374,6 +375,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 }
                                 break;
                             case "milestoneid":
+                                $label = "No Milestone Set";
                                 if ($ticket["milestoneid"] > 0) {
                                     $milestone = $this->getTicket($ticket["milestoneid"]);
                                     $color = $milestone->tags;
@@ -382,10 +384,6 @@ namespace Leantime\Domain\Tickets\Services {
                                     $label = $ticket["milestoneHeadline"] . " <a href='#/tickets/editMilestone/" . $ticket["milestoneid"] . "' style='float:right;'><i class='fa fa-edit'></i></a><a>";
                                 }
 
-
-                                if ($label == '') {
-                                    $label = "No Milestone Set";
-                                }
                                 break;
                             case "editorId":
                                 $label = "<div class='profileImage'><img src='" . BASE_URL . "/api/users?profileImage=" . $ticket["editorId"] . "' /></div> " . $ticket["editorFirstname"] . " " . $ticket["editorLastname"];

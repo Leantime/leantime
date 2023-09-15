@@ -162,19 +162,7 @@ if ($numberofColumns > 0) {
                                                                 <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
                                                                 <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
                                                                 <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
-                                                                    <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
-                                                                        echo"style='display:none;'";
-                                                                                                                              }?>><span class="fa-regular fa-clock"></span> <?php echo $tpl->__("links.start_work"); ?></a>
-                                                                    <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
-                                                                        echo"style='display:none;'";
-                                                                                                                               }?>><span class="fa fa-stop"></span> <?php if (is_array($clockedIn) == true) {
-                                                                                                                               echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
-                                                                                                                               } else {
-                                                                                                                                   echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
-                                                                                                                               }?></a>
-                                                                    <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
-                                                                        echo"style='display:none;'";
-                                                                                          }?>><?php echo $tpl->__("text.timer_set_other_todo"); ?></span>
+                                                                    <?php echo app("blade.compiler")::render('<x-tickets::timerbutton :ticket=$ticket :clockedIn=$clockedIn></x-tickets::timerbutton>', ['ticket'=>$row, 'clockedIn'=> $clockedIn]); ?>
                                                                 </li>
                                                             </ul>
                                                         </div>

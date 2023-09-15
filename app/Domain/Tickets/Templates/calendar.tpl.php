@@ -16,7 +16,7 @@ echo $tpl->displayNotification();
 <?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
 
 <div class="maincontent">
-    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-timelineTabs') ?>
     <div class="maincontentinner">
 
         <div class="row">
