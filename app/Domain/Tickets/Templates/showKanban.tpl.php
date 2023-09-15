@@ -146,27 +146,12 @@ if ($numberofColumns > 0) {
                                                 <div class="col-md-12">
 
 
-                                                    <?php if ($login::userIsAtLeast($roles::$editor)) {
-                                                        $clockedIn = $tpl->get("onTheClock");
+                                                    <?php echo app("blade.compiler")::render('@include("tickets::partials.ticketsubmenu", [
+                                                                                        "ticket" => $ticket,
+                                                                                        "onTheClock" => $onTheClock
+                                                                                    ])', ['ticket'=>$row, 'onTheClock'=> $tpl->get("onTheClock")]); ?>
 
-                                                        ?>
-                                                        <div class="inlineDropDownContainer" style="float:right;">
 
-                                                            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                                                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu">
-                                                                <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                                                <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>" class=''><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
-                                                                <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>" class=""><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
-                                                                <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
-                                                                <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
-                                                                <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
-                                                                    <?php echo app("blade.compiler")::render('<x-tickets::timerbutton :ticket=$ticket :clockedIn=$clockedIn></x-tickets::timerbutton>', ['ticket'=>$row, 'clockedIn'=> $clockedIn]); ?>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    <?php } ?>
                                                     <?php if ($row['dependingTicketId'] > 0) { ?>
                                                         <small><a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>" class="form-modal"><?=$tpl->escape($row['parentHeadline']) ?></a></small> //
                                                     <?php } ?>

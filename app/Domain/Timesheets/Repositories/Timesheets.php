@@ -821,7 +821,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
                      zp_punch_clock.minutes,
                      zp_punch_clock.hours,
                      zp_punch_clock.punchIn,
-                     zp_tickets.headline
+                     zp_tickets.headline,
+                     zp_tickets.id as ticketId
                   FROM `zp_punch_clock`
                   LEFT JOIN zp_tickets ON zp_punch_clock.id = zp_tickets.id WHERE zp_punch_clock.userId=:sessionId LIMIT 1";
 

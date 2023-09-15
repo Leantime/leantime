@@ -87,54 +87,7 @@
                                             {!! $row['dependingTicketId'] > 0 ? $row['parentHeadline'] : sprintf("<strong>%s</strong>", $row['headline']) !!}
                                         </a>
 
-                                        @if ($login::userIsAtLeast($roles::$editor))
-                                            <div class="inlineDropDownContainer">
-                                                <a
-                                                    href="javascript:void(0)"
-                                                    class="dropdown-toggle ticketDropDown"
-                                                    data-toggle="dropdown"
-                                                ><i class="fa fa-ellipsis-v" aria-hidden="true"></i></a>
-
-                                                <ul class="dropdown-menu">
-                                                    <li class="nav-header">{{ __('subtitles.todo') }}</li>
-                                                    <li>
-                                                        <a href="{{ BASE_URL }}/dashboard/show#/tickets/showTicket/{{ $row['id'] }}">
-                                                            <i class="fa fa-edit"></i> {{ __('links.edit_todo') }}
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{{ BASE_URL }}/dashboard/show#/tickets/moveTicket/{{ $row['id'] }}">
-                                                            <i class="fa-solid fa-arrow-right-arrow-left"></i> {{ __('links.move_todo') }}
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="{{ BASE_URL }}/dashboard/show#/tickets/delTicket/{{ $row['id'] }}">
-                                                            <i class="fa fa-trash"></i> {{ __('links.delete_todo') }}
-                                                        </a>
-                                                    </li>
-                                                    <li class="nav-header border">{{ __('subtitles.tracktime') }}</li>
-                                                    <li id="timerContainer-{{ $row['id'] }}" class="timerContainer">
-                                                        <a
-                                                            class="punchIn {{ $onTheClock !== false ? 'tw-hidden' : '' }}"
-                                                            href="javascript:void(0);"
-                                                            data-value="{{ $row['id'] }}"
-                                                        ><span class="fa-regular fa-clock"></span> {{ __('links.start_work') }}</a>
-                                                        <a
-                                                            class="punchOut {{ ! $onTheClock || $onTheClock != $row['id'] ? 'tw-hidden' : '' }}"
-                                                            href="javascript:void(0);"
-                                                            data-value="{{ $row['id'] }}"
-                                                        ><span class="fa-stop"></span> {{ sprintf(
-                                                            __('links.stop_work_started_at'),
-                                                            date(__('language.timeformat')),
-                                                            is_array($onTheClock) ? $onTheClock['since'] : time()
-                                                        ) }}</a>
-                                                        <span class="working {{ ! $onTheClock || $onTheClock['id'] == $row['id'] ? 'tw-hidden' : '' }}">
-                                                            {{ __('text.timer_set_other_todo') }}
-                                                        </span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        @endif
+                                        @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
                                     </div>
                                 </div>
 

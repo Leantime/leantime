@@ -190,7 +190,7 @@ namespace Leantime\Domain\Tickets\Services {
                 "milestone" => "",
                 "orderBy" => "sortIndex",
                 "orderDirection" => "DESC",
-                "groupBy" => "",
+                "groupBy" => "status",
                 "priority" => "",
                 "currentUser" => $_SESSION['userdata']["id"] ?? '',
                 "currentClient" => $_SESSION['userdata']["clientId"] ?? '',

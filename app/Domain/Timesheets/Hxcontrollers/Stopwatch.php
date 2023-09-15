@@ -51,21 +51,16 @@ class Stopwatch extends HtmxController
             throw new \Error('This endpoint only supports PATCH requests');
         }
 
-        header("HX-Trigger:timerUpdate");
+
+
+        $params =  $this->incomingRequest->request->all();
 
         if (isset($params["action"]) === true && $params["action"] == "stop") {
             $ticketId = filter_var($params["ticketId"], FILTER_SANITIZE_NUMBER_INT);
             $hoursBooked = $this->timesheetService->punchOut($ticketId);
-
-            if ($hoursBooked) {
-                echo $hoursBooked;
-                return;
-            } else {
-                return "{status:failure}";
-            }
-            return;
         }
 
+        header("HX-Trigger:timerUpdate");
 
         $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
 
@@ -78,6 +73,8 @@ class Stopwatch extends HtmxController
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
             throw new \Error('This endpoint only supports PATCH requests');
         }
+
+        header("HX-Trigger:timerUpdate");
 
         $params =  $this->incomingRequest->request->all();
 

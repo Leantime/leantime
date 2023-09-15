@@ -7,19 +7,21 @@
     'name' => ''
 ])
 
+@php
+    $uniqueId = uniqid();
+@endphp
 
-
-<div class="emojiInput" id="{{ $id }}">
-    <input type="text" name="{{ $name }}" {{ $attributes->merge(['class' => 'emojifield emojiFieldId'.$id.' '.$class]) }} value="{{ $value }}" placeholder="{{ $placeholder }}" id="{{ $id  }}" />
-    <a class="emojibtn emojibtnId{{ $id }} fa-regular fa-face-smile" href="javascript:void(0);">&nbsp;</a>
+<div class="emojiInput">
+    <input type="text" name="{{ $name }}" {{ $attributes->merge(['class' => 'emojifield emojiFieldId'.$uniqueId.' '.$class]) }} value="{{ $value }}" placeholder="{{ $placeholder }}" id="{{ $id  }}" />
+    <a class="emojibtn emojibtnId{{ $uniqueId }} fa-regular fa-face-smile" href="javascript:void(0);">&nbsp;</a>
 </div>
 <script>
     jQuery(document).ready(function(){
-        let emojiObject{{ $id }} = new EmojiPicker({
+        new EmojiPicker({
             trigger: [
                 {
-                    selector: '.emojibtnId{{ $id }}',
-                    insertInto: '.emojiFieldId{{ $id }}'
+                    selector: '.emojibtnId{{ $uniqueId }}',
+                    insertInto: '.emojiFieldId{{ $uniqueId }}'
 
                 }
             ],
