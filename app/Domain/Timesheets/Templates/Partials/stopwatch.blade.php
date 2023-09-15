@@ -27,10 +27,10 @@
                     <a
                         href="javascript:void(0);"
                         class="punchOut"
-                        data-value="{{ $onTheClock['id'] }}"
+                        hx-patch="{{ BASE_URL }}/hx/timesheets/stopwatch/stop-timer/"
                         hx-target="#timerHeadMenu"
+                        hx-vals='{"ticketId": "{{ $onTheClock['id']  }}", "action":"stop"}'
                         hx-swap="outerHTML"
-                        hx-vals='{"myVal": "{{ $onTheClock["id"] }}", "action":"stop"}'
                     >{!! __('links.stop_timer') !!}</a>
                 </li>
             </ul>

@@ -157,9 +157,6 @@ foreach ($__data as $var => $val) {
         <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
 
 
-        leantime.timesheetsController.initTicketTimers();
-
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initStatusDropdown();
         <?php } else { ?>

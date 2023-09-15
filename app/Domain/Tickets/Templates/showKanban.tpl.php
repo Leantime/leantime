@@ -356,7 +356,7 @@ if ($numberofColumns > 0) {
         leantime.ticketsController.initMilestoneDropdown();
         leantime.ticketsController.initEffortDropdown();
         leantime.ticketsController.initPriorityDropdown();
-        leantime.timesheetsController.initTicketTimers();
+
 
         var ticketStatusList = [<?php foreach ($tpl->get('allTicketStates') as $key => $statusRow) {
             echo "'" . $key . "',";

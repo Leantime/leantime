@@ -403,7 +403,7 @@ foreach ($__data as $var => $val) {
             leantime.ticketsController.initPriorityDropdown();
             leantime.ticketsController.initSprintDropdown();
             leantime.ticketsController.initStatusDropdown();
-            leantime.timesheetsController.initTicketTimers();
+
         <?php } else { ?>
         leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>

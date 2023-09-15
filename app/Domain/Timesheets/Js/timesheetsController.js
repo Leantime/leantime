@@ -1,82 +1,6 @@
 leantime.timesheetsController = (function () {
     var closeModal = false;
 
-    //Functions
-
-    var initTicketTimers = function () {
-
-        jQuery(".punchIn").on(
-            "click",
-            function () {
-
-                var ticketId = jQuery(this).attr("data-value");
-
-                jQuery.ajax(
-                    {
-                        data:
-                        {
-                            ticketId : ticketId,
-                            action:"start"
-                        },
-                        type: 'POST',
-                        url: leantime.appUrl + '/api/timer'
-                    }
-                ).done(function (msg) {
-
-                    jQuery.growl({message: leantime.i18n.__("short_notifications.timer_started")});
-
-                });
-
-                var currentdate = moment().format(leantime.i18n.__("language.jstimeformat"));
-
-                jQuery(".timerContainer .punchIn").hide();
-                jQuery("#timerContainer-" + ticketId + " .punchOut").show();
-                jQuery(".timerContainer .working").show();
-                jQuery("#timerContainer-" + ticketId + " .working").hide();
-                jQuery("#timerContainer-" + ticketId + " span.time").text(currentdate);
-
-            }
-        );
-
-        jQuery(".punchOut").on(
-            "click",
-            function () {
-
-                var ticketId = jQuery(this).attr("data-value");
-
-                // POST to server using $.post or $.ajax
-                jQuery.ajax(
-                    {
-                        data:
-                            {
-                                ticketId : ticketId,
-                                action:"stop"
-                        },
-                        type: 'POST',
-                        url: leantime.appUrl + '/api/timer'
-                    }
-                ).done(
-                    function (hoursLogged) {
-
-                        if (hoursLogged == 0) {
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.not_enough_time_logged")});
-                        } else {
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.logged_x_hours").replace("%1$s", hoursLogged), fixed: false});
-                        }
-
-                    }
-                );
-
-
-                jQuery(".timerContainer .punchIn").show();
-                jQuery(".timerContainer .punchOut").hide();
-                jQuery(".timerContainer .working").hide();
-                jQuery(".timerHeadMenu").hide("slow");
-
-            }
-        );
-    };
-
     var initTimesheetsTable = function (groupBy) {
 
         jQuery(document).ready(function () {
@@ -199,7 +123,6 @@ leantime.timesheetsController = (function () {
     return {
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
-        initTicketTimers:initTicketTimers
 
     };
 })();
