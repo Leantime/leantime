@@ -28,7 +28,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                $this->tpl->display('tickets.delTicket');
+                $this->tpl->displayPartial('tickets.delTicket');
             } else {
                 $this->tpl->display('errors.error403');
             }
