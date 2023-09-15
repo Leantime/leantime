@@ -37,9 +37,6 @@ namespace Leantime\Domain\Tickets\Controllers {
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
-            $this->tpl->assign('milestones', $allProjectMilestones);
-
             $this->tpl->display('tickets.showAll');
         }
     }
