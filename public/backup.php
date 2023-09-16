@@ -12,12 +12,15 @@ define('APP_ROOT', dirname(__FILE__, 2));
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 
-require_once APP_ROOT . '/app/core/class.autoload.php';
-require_once APP_ROOT . '/config/appSettings.php';
+if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
+    throw new RuntimeException('Please run "composer install".');
+}
+
+require $composer;
 
 $app = bootstrap_minimal_app();
-$config = $app->make(\leantime\core\environment::class);
-$settings = $app->make(\leantime\core\appSettings::class);
+$config = $app->make(\Leantime\Core\Environment::class);
+$settings = $app->make(\Leantime\Core\AppSettings::class);
 $settings->loadSettings($config);
 
 function runBackup($backupFile, $config)

@@ -1,6 +1,6 @@
 <?php
 
-namespace leantime\core;
+namespace Leantime\Config;
 
 /***
  *
@@ -9,7 +9,7 @@ namespace leantime\core;
  *
  * @see config/sample.env
  */
-class config
+class Config
 {
     /* General */
 

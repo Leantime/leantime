@@ -7,15 +7,18 @@ define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 define('APP_ROOT', dirname(__FILE__, 2));
 
-require_once APP_ROOT . '/app/core/class.autoload.php';
-require_once APP_ROOT . '/config/appSettings.php';
+if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
+    throw new RuntimeException('Please run "composer install".');
+}
+
+require $composer;
 
 $app = bootstrap_minimal_app();
-$config = $app->make(\leantime\core\environment::class);
-$settings = $app->make(leantime\core\appSettings::class);
+$config = $app->make(\Leantime\Core\Environment::class);
+$settings = $app->make(\Leantime\Core\AppSettings::class);
 $settings->loadSettings($config);
 
-$login = $app->make(\leantime\domain\services\auth::class);
+$login = $app->make(\Leantime\Domain\Auth\Services\Auth::class);
 
 if ($login->logged_in()!==true) {
 
@@ -48,7 +51,7 @@ if ($login->logged_in()!==true) {
 
 function getFileLocally()
 {
-	$config = app()->make(\leantime\core\environment::class);
+	$config = app()->make(\Leantime\Core\Environment::class);
 
 	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
@@ -122,7 +125,7 @@ function getFileFromS3(){
     $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
     $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-    $config = app()->make(\leantime\core\environment::class);
+    $config = app()->make(\Leantime\Core\Environment::class);
 
     $mimes = array
     (

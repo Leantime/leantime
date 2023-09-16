@@ -41,7 +41,7 @@ class Login
         $this->I->fillField(['name' => 'username'], $username);
         $this->I->fillField(['name' => 'password'], $password);
         $this->I->click('Login');
-
+        $this->I->waitForElementVisible('.articleHeadline');
         $this->I->see('Welcome John');
 
         $this->saveSessionSnapshot('sid');

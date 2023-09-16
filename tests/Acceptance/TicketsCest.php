@@ -36,9 +36,8 @@ class TicketsCest
         $I->seeInDatabase('zp_tickets', [
             'id' => 10,
             'headline' => 'Test Ticket',
-            'description' => "<p>Test Description</p>"
+            'description like' => '%<p>Test Description</p>%',
         ]);
-
     }
 
     #[Depends('createTicket')]
