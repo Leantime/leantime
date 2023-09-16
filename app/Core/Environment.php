@@ -388,6 +388,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function __construct(DefaultConfig $defaultConfiguration)
     {
+
         /* PHP */
         $this->phpConfig = null;
         if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {

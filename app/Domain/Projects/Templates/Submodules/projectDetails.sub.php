@@ -17,15 +17,9 @@ $menuTypes = $tpl->get('menuTypes');
         <div class="col-md-8">
             <div class="row">
                 <div class="col-md-12">
-
                     <div class="form-group">
-
                         <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_project')?>"/>
-
                     </div>
-
-
-
                 </div>
             </div>
             <div class="row">
@@ -34,7 +28,6 @@ $menuTypes = $tpl->get('menuTypes');
                         <?php echo $tpl->__('label.accomplish'); ?><br />
                     </p>
                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
-
                 </div>
             </div>
             <div class="row padding-top">
@@ -53,7 +46,10 @@ $menuTypes = $tpl->get('menuTypes');
 
             <div class="row marginBottom">
 
+
+
                 <?php if ($tpl->get('projectTypes') && count($tpl->get('projectTypes')) > 1) {?>
+                <div class="col-md-12 center">
                     <h4 class="widgettitle title-light"><i class="fa-regular fa-rectangle-list"></i> Project Type</h4>
                     <p>The type of the project. This will determine which features are available.</p>
                     <select name="type">
@@ -66,18 +62,21 @@ $menuTypes = $tpl->get('menuTypes');
                         <?php } ?>
                     </select>
                     <br /><br />
+                </div>
                 <?php } ?>
 
 
-                <h4 class="widgettitle title-light"><span
-                        class="fa fa-picture-o"></span><?php echo $tpl->__('label.project_avatar'); ?></h4>
+            </div>
+            <div class="row marginBottom">
+
                 <div class="col-md-12 center">
 
-
+                    <h4 class="widgettitle title-light"><span
+                            class="fa fa-picture-o"></span><?php echo $tpl->__('label.project_avatar'); ?></h4>
 
                     <img src='<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']; ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
-                        <div id="projectAvatar">
-                        </div>
+                    <div id="projectAvatar">
+                    </div>
 
                     <div class="par">
 
