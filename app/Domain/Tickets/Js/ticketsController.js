@@ -1088,7 +1088,6 @@ leantime.ticketsController = (function () {
         var position_updated = false;
 
         jQuery(".sortableTicketList").each(function () {
-            console.log(this);
 
             var currentElement = this;
 
@@ -1299,15 +1298,10 @@ leantime.ticketsController = (function () {
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 
-            console.log(allTickets);
             // When the column visibility changes on the firs table, also change it on // the others tables.
             allTickets.table(0).on(
                 'column-visibility',
                 function ( e, settings, colIdx, visibility ) {
-                    console.log("fire");
-                    console.log(colIdx);
-                    console.log(visibility);
-
 
                     // Toggle the visibility
                     for (var i = 1; i < allTickets.tables().context.length; i++) {

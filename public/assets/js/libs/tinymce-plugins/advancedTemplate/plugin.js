@@ -519,7 +519,7 @@
         };
         var updateDialog = function (dialogApi, template, previewHtml) {
           var content = getPreviewContent(editor, previewHtml);
-          console.log(template);
+
           var bodyItems = [
               {
                 type: 'panel',

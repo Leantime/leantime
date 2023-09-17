@@ -7715,12 +7715,11 @@ const EmojiPicker = function(options) {
 
             emojiList = undefined;
 
-            console.log(attr);
+
 
             const index = this.options.trigger.findIndex(item => item.selector === attr);
 
-            console.log(index);
-            console.log(this.options.trigger);
+
 
             this.insertInto = this.options.trigger[index].insertInto;
 

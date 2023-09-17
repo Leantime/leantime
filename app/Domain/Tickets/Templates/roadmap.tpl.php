@@ -17,7 +17,7 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-timelineTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
 
     <div class="maincontentinner">
 

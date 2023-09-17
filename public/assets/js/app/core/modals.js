@@ -12,7 +12,6 @@ function openModal() {
         callbacks: {
             beforePostSubmit: function () {
                 jQuery(".showDialogOnLoad").show();
-                console.log(tinymce.editors);
                 if(tinymce.editors.length>0) {
 
                     if(jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce()) {
