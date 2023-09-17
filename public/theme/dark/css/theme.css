@@ -204,7 +204,12 @@ body .maincontentinner .tab-primary.ui-tabs .ui-tabs-nav li a:hover {
 }
 
 body .tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary {
-    background:var(--secondary-background) !important;
+    background:var(--primary-background) !important;
+}
+
+body .tox .tox-edit-area__iframe,
+body .tox .tox-toolbar-overlord {
+
 }
 
 .tox .tox-tbtn svg {
@@ -215,7 +220,7 @@ body .tox .tox-toolbar, .tox .tox-toolbar__overflow, .tox .tox-toolbar__primary 
 .tox .tox-tbtn:hover,
 .tox .tox-tbtn--enabled, .tox .tox-tbtn--enabled:hover,
 .tox .tox-menu{
-    background: var(--primary-background) !important;
+    background: var(--secondary-background) !important;
 }
 
 .tox-tinymce,
