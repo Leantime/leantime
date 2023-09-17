@@ -88,12 +88,6 @@ class IncomingRequest extends Request
 
         $requestUri = parent::getRequestUri();
 
-        static $subfolderFixApplied;
-
-        if ($subfolderFixApplied) {
-            return $requestUri;
-        }
-
         $config = app()->make(Environment::class);
 
         if (empty($config->appUrl)) {
@@ -109,6 +103,7 @@ class IncomingRequest extends Request
         $subfolderName = $baseUrlParts[3];
         $requestUri = preg_replace('/^\/' . $subfolderName . '/', '', $requestUri);
 
+        $this->requestUri = $requestUri;
 
         $subfolderFixApplied = true;
 
