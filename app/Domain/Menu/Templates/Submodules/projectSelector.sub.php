@@ -74,7 +74,7 @@ use Leantime\Core\Eventhelpers;
                                             echo " hideGroup ";
                                         }
 
-                                        echo "'><a href='#' onclick='leantime.menuController.toggleClientList(\"" . $projectRow['clientId'] . "\", this)' class='open'><i class=\"fas fa-angle-down\"></i>" . $tpl->escape($projectRow['clientName']) . " </li>";
+                                        echo "'><a href='#' onclick='leantime.menuController.toggleClientList(\"" . $projectRow['clientId'] . "\", this)' class='closed'><i class=\"fas fa-angle-right\"></i>" . $tpl->escape($projectRow['clientName']) . " </li>";
                                     }
 
                                     echo"<li class='projectGroup-" . $projectRow['parent'] . " hideGroup clientId-" . $projectRow['parent'] . "-" . $projectRow['clientId'] . "";
