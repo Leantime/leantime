@@ -3,22 +3,19 @@
 namespace Leantime\Domain\Wiki\Repositories {
 
     use Leantime\Core\Db as DbCore;
+    use leantime\domain\repositories\canvas;
     use Leantime\Domain\Wiki\Models\Article;
     use PDO;
 
-    class Wiki
+    class Wiki extends \Leantime\Domain\Canvas\Repositories\Canvas
     {
-        private DbCore $db;
 
         /**
-         * __construct - get database connection
-         *
-         * @access public
+         * Constant that must be redefined
          */
-        public function __construct(DbCore $db)
-        {
-            $this->db = $db;
-        }
+        protected const CANVAS_NAME = 'wiki';
+
+
 
         public function getArticle($id, $projectId)
         {
@@ -205,6 +202,7 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $this->db->database->lastInsertId();
         }
 
+
         public function updateWiki($wiki, $wikiId)
         {
 
@@ -226,7 +224,7 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $execution;
         }
 
-        public function createArticle(Article $Article)
+        public function createArticle(Article $article)
         {
 
             $query = "INSERT INTO zp_canvas_items

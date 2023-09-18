@@ -1088,7 +1088,6 @@ leantime.ticketsController = (function () {
         var position_updated = false;
 
         jQuery(".sortableTicketList").each(function () {
-            console.log(this);
 
             var currentElement = this;
 
@@ -1211,7 +1210,7 @@ leantime.ticketsController = (function () {
                     }
 
                 },
-                "dom": '<"top">rt<"bottom"ip><"clear">',
+                "dom": '<"top">rt<"bottom"><"clear">',
                 "searching": false,
                 "stateSave": true,
                 "displayLength":100,
@@ -1222,7 +1221,54 @@ leantime.ticketsController = (function () {
                         { "visible": false, "targets": 10 },
                         { "visible": false, "targets": 11 },
                         { "target": "no-sort", "orderable": false},
-                    ]
+                    ],
+                "footerCallback": function ( row, data, start, end, display ) {
+                    var api = this.api(), data;
+
+                    // converting to interger to find total
+                    var intVal = function ( i ) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '')*1 :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // computing column Total of the complete result
+
+
+                    var plannedHours = api
+                        .column( 10 )
+                        .data()
+                        .reduce( function (a, b) {
+                            let contentA = jQuery(a).val();
+                            let contentB = jQuery(b).val();
+                            return intVal(contentA) + intVal(contentB);
+                        }, 0 );
+
+                    var hoursLeft = api
+                        .column( 11 )
+                        .data()
+                        .reduce( function (a, b) {
+                            let contentA = jQuery(a).val();
+                            let contentB = jQuery(b).val();
+                            return intVal(contentA) + intVal(contentB);
+                        }, 0 );
+
+                    var loggedHours = api
+                        .column( 12 )
+                        .data()
+                        .reduce( function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0 );
+
+
+                    // Update footer by showing the total with the reference of the column index
+                    jQuery( api.column( 9 ).footer() ).html('Total');
+                    jQuery( api.column( 10 ).footer() ).html(plannedHours);
+                    jQuery( api.column( 11 ).footer() ).html(hoursLeft);
+                    jQuery( api.column( 12 ).footer() ).html(loggedHours);
+
+                },
 
             });
 
@@ -1256,8 +1302,14 @@ leantime.ticketsController = (function () {
             allTickets.table(0).on(
                 'column-visibility',
                 function ( e, settings, colIdx, visibility ) {
-                    allTickets.tables(':gt(0)').column(colIdx).visible(visibility);
-                    allTickets.draw(false);
+
+                    // Toggle the visibility
+                    for (var i = 1; i < allTickets.tables().context.length; i++) {
+                        allTickets.tables(i).column(colIdx).visible( visibility );
+                    }
+
+                    allTickets.draw();
+
                 }
             );
 

@@ -60,6 +60,7 @@ mix
         "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
         "./node_modules/leader-line/leader-line.min.js",
         "./public/assets/js/libs/simple-color-picker-master/jquery.simple-color-picker.js",
+        "./public/assets/js/libs/emojipicker/vanillaEmojiPicker.js",
     ], `public/dist/js/compiled-global-component.${version}.min.js`)
     .combine([
         "./node_modules/fullcalendar/index.global.min.js",

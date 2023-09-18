@@ -45,7 +45,7 @@ $canvasName = 'sb';
 
 
 
-            <?php $varsToPass = array_merge($__data, ['statusLabels' = $stakeholderStatusLabels]) ?>
+            <?php $varsToPass = array_merge($__data, ['statusLabels' => $stakeholderStatusLabels]) ?>
             <div class="row canvas-row" id="stakeholderRow">
                 <div class="column" style="width:25%">
                     <?php echo $tpl->viewFactory->make(

@@ -149,7 +149,7 @@ leantime.editorController = (function () {
 
                         if (placeholder.length > 0) {
                             while (placeholder[0]) {
-                                console.log(placeholder[0]);
+
                                 placeholder[0].remove();
                             }
                             editor.save();

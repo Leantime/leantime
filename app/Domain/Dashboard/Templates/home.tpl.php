@@ -186,39 +186,11 @@ foreach ($__data as $var => $val) {
                                                 <div class="row">
                                                     <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-<?php echo $row['id'];?>">
 
-                                                        <?php if ($login::userIsAtLeast($roles::$editor)) {
-                                                            $clockedIn = $tpl->get("onTheClock");
-                                                            ?>
+                                                        <?php echo app("blade.compiler")::render('@include("tickets::partials.ticketsubmenu", [
+                                                                                        "ticket" => $ticket,
+                                                                                        "onTheClock" => $onTheClock
+                                                                                    ])', ['ticket'=>$row, 'onTheClock'=> $tpl->get("onTheClock")]); ?>
 
-                                                            <div class="inlineDropDownContainer">
-                                                                <a href="javascript:void(0)" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                                                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                                </a>
-                                                                <ul class="dropdown-menu">
-                                                                    <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
-                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/moveTicket/<?php echo $row["id"]; ?>" ><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
-                                                                    <li><a href="<?=BASE_URL ?>/dashboard/home#/tickets/delTicket/<?php echo $row["id"]; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
-                                                                    <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
-                                                                    <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
-                                                                        <a class="punchIn" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn !== false) {
-                                                                            echo"style='display:none;'";
-                                                                                                                                  }?>><span class="fa-regular fa-clock"></span> <?php echo $tpl->__("links.start_work"); ?></a>
-                                                                        <a class="punchOut" href="javascript:void(0);" data-value="<?php echo $row["id"]; ?>" <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
-                                                                            echo"style='display:none;'";
-                                                                                                                                   }?>><span class="fa-stop"></span> <?php if (is_array($clockedIn) == true) {
-                                                                                                                                   echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
-                                                                                                                                   } else {
-                                                                                                                                       echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
-                                                                                                                                   }?></a>
-                                                                        <span class='working' <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
-                                                                            echo"style='display:none;'";
-                                                                                              }?>><?php echo $tpl->__("text.timer_set_other_todo"); ?></span>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-
-                                                        <?php } ?>
                                                         <small><?=$tpl->e($row['projectName']) ?></small><br />
                                                         <?php if ($row['dependingTicketId'] > 0) { ?>
                                                             <a href="<?=BASE_URL?>/dashboard/home/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //

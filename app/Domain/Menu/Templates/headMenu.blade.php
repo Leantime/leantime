@@ -5,6 +5,9 @@
 
     @dispatchEvent('afterHeadMenuOpen')
 
+    @include('timesheets::partials.stopwatch', [
+                   'progressSteps' => $onTheClock
+               ])
     <li>
         <a
             href="{{ BASE_URL }}/dashboard/home"
@@ -25,63 +28,7 @@
         >{!! __("menu.my_portfolio") !!}</a>
     </li>
 
-    @if ($login::userIsAtLeast(Roles::$editor, true))
-
-        @if ($onTheClock !== false|null)
-
-            <li class='timerHeadMenu' id='timerHeadMenu'>
-
-                <a
-                    href='javascript:void(0);'
-                    class='dropdown-toggle'
-                    data-toggle='dropdown'
-                >{!! sprintf(
-                    __('text.timer_on_todo'),
-                    $onTheClock['totalTime'],
-                    substr($onTheClock['headline'], 0, 10)
-                ) !!}</a>
-
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#/tickets/showTicket/{{ $onTheClock['id'] }}">
-                            {!! __('links.view_todo') !!}
-                        </a>
-                    </li>
-                    <li>
-                        <a
-                            href="javascript:void(0);"
-                            class="punchOut"
-                            data-value="{{ $onTheClock['id'] }}"
-                        >{!! __('links.stop_timer') !!}</a>
-                    </li>
-                </ul>
-
-            </li>
-
-        @endif
-
-        <li>
-            <a
-                href="{{ BASE_URL }}/timesheets/showMy"
-                @if ($activePath == 'timesheets.showMy')
-                    class="active"
-                @endif
-                data-tippy-content="{{ __('popover.my_timesheets') }}"
-            >{!! __('menu.my_timesheets') !!}</a>
-        </li>
-
-        <li>
-            <a
-                href="{{ BASE_URL}}/calendar/showMyCalendar"
-                @if ($activePath == 'calendar.showMyCalendar')
-                    class="active"
-                @endif
-                data-tippy-content="{{ __('popover.my_calendar') }}"
-            >{!! __('menu.my_calendar') !!}</a>
-        </li>
-
-    @endif
-
+    </li>
     <li class="notificationDropdown">
 
         <a

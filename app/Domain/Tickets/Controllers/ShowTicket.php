@@ -45,6 +45,8 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function get($params)
         {
 
+            header("HX-Trigger:ticketUpdate");
+
             if (isset($params['id']) === true) {
                 $id = (int)($params['id']);
                 $ticket = $this->ticketService->getTicket($id);
@@ -153,6 +155,8 @@ namespace Leantime\Domain\Tickets\Controllers {
         {
 
             $tab = "";
+
+            header("HX-Trigger:ticketUpdate");
 
             if (isset($_GET['id']) === true) {
                 $id = (int)($_GET['id']);

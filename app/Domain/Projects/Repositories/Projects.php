@@ -5,6 +5,7 @@ namespace Leantime\Domain\Projects\Repositories {
     use Leantime\Core\Eventhelpers as EventhelperCore;
     use Leantime\Core\Db as DbCore;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use DateInterval;
     use DatePeriod;
