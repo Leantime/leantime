@@ -221,9 +221,9 @@ foreach ($__data as $var => $val) {
                                                         <?php } ?>
                                                         <small><?=$tpl->e($row['projectName']) ?></small><br />
                                                         <?php if ($row['dependingTicketId'] > 0) { ?>
-                                                            <a href="<?=BASE_URL?>/dashboard/home/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
+                                                            <a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
                                                         <?php } ?>
-                                                        <strong><a href="<?=BASE_URL ?>/dashboard/home/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
+                                                        <strong><a href="#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
 
                                                     </div>
                                                 </div>
