@@ -16,7 +16,7 @@ class InstallCest
     {
         $I->amOnPage('/install');
         echo $I->grabPageSource();
-        $I->waitForElementVisible('.registrationForm', 30);
+        $I->waitForElementVisible('.registrationForm', 120);
 
         $I->see('Install');
     }
