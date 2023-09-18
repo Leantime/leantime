@@ -4,6 +4,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Wiki\Models\Article;
     use Leantime\Domain\Wiki\Models\Wiki;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -23,7 +24,7 @@ namespace Leantime\Domain\Wiki\Controllers {
         public function get($params)
         {
 
-            $article = app()->make(wiki\article::class);
+            $article = app()->make(Article::class);
             $article->data = "far fa-file-alt";
 
             if (isset($params['id'])) {
@@ -57,7 +58,7 @@ namespace Leantime\Domain\Wiki\Controllers {
         public function post($params)
         {
 
-            $article = app()->make(wiki\article::class);
+            $article = app()->make(Article::class);
 
             if (isset($_GET["id"])) {
                 $id = $_GET["id"];

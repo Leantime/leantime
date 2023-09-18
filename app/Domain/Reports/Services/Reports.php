@@ -220,7 +220,6 @@ namespace Leantime\Domain\Reports\Services {
 
             //Only send once a day
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
-            $allowTelemetry = true;
 
             if ($allowTelemetry === true) {
                 $date_utc = new \DateTime("now", new \DateTimeZone("UTC"));

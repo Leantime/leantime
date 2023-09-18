@@ -121,7 +121,6 @@ foreach ($__data as $var => $val) {
         <?php } ?>
 
         leantime.ticketsController.initTicketTabs();
-        leantime.timesheetsController.initTicketTimers();
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();

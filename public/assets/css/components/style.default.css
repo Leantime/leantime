@@ -4205,6 +4205,54 @@ h3.todaysDate {
 
 
 
+.uppy-StatusBar-progress {
+    background-color: var(--primary-color);
+}
+
+.uppy-StatusBar.is-error .uppy-StatusBar-statusIndicator {
+    color:var(--red);
+}
+
+.uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator {
+    color:var(--green);
+}
+
+.uppy-StatusBar.is-error .uppy-StatusBar-progress,
+.uppy-StatusBar-actionBtn--retry,
+.uppy-StatusBar-actionBtn--retry:hover{
+    background-color: var(--red);
+}
+
+.uppy-StatusBar.is-complete .uppy-StatusBar-progress {
+    background-color: var(--green);
+}
+
+.uppy-StatusBar.is-preprocessing .uppy-StatusBar-progress,
+.uppy-StatusBar.is-postprocessing .uppy-StatusBar-progress {
+    background-color:var(--yellow);
+}
+
+.uppy-StatusBar-actionBtn,
+.uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload{
+    color:var(--primary-color);
+}
+
+.uppy-StatusBar-actionBtn--done:hover {
+    color:var(--dark-blue);
+}
+
+[data-uppy-theme=dark] .uppy-StatusBar-actionBtn--done {
+    color:var(--primary-color);
+}
+
+.uppy-StatusBar-spinner {
+    fill:var(--primary-color);
+}
+
+.uppy-Webcam-button svg{
+    fill:currentColor
+}
+
 
 
 

@@ -284,7 +284,7 @@
     position:relative;
     border: 0px solid var(--main-border-color);
     border-top:0px;
-    height:60px;
+    height:30px;
 }
 
 .maincontentinner .dataTables_wrapper  .dataTables_info {
@@ -553,3 +553,14 @@ table td{
 .maincontentinner .table.listStyleTable .dtrg-start:first-child td{
     padding-top:0px
 }
+
+.maincontentinner .table tfoot td,
+.maincontentinner table tfoot td {
+    font-weight: bold;
+    border-top: 1px solid var(--neutral);
+    /* text-align: center; */
+    /* min-height: 41px; */
+    padding: 8px 5px 8px 20px;
+}
+
+

@@ -234,7 +234,7 @@ $companySettings = $tpl->get('companySettings');
                                 </form>
                                 <hr />
                                 <?=$tpl->__("text.logo_reset")?><br /><br />
-                                <a href="<?=CURRENT_URL ?>&resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a>
+                                <a href="<?=BASE_URL ?>/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a>
                             </div>
                         </div>
 

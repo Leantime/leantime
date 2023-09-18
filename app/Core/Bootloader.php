@@ -190,7 +190,7 @@ class Bootloader
         // Setup Configuration
         $this->app->singleton(Environment::class, Environment::class);
         $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
-        $this->app->alias(Environment::class, 'config');
+        $this->app->alias(Environment::class, alias: "config");
 
         // specify singletons/instances
         $this->app->singleton(Db::class, Db::class);

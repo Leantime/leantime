@@ -1436,9 +1436,7 @@ jQuery(function($, undefined) {
                 nm.loadFilter = 'form';
                 nm.opener.unbind('submit.nyroModal').bind('submit.nyroModal', function(e) {
 
-
                     e.preventDefault();
-                    console.log(e);
                     let submitAction = "";
                     if(e && e.originalEvent &&
                         e.originalEvent.submitter && e.originalEvent.submitter.value) {
@@ -1462,7 +1460,6 @@ jQuery(function($, undefined) {
                     nm.callbacks.beforePostSubmit();
                 }
 
-                console.log(action);
                 $.ajax({
                     url: nm.store.form.url,
                     data: data,

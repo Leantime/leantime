@@ -110,7 +110,6 @@ leantime.calendarController = (function () {
                     function (date) {
                         to.datepicker("option", "minDate", getDate(this));
 
-                        console.log(date);
                         if (jQuery("#event_date_to").val() == '') {
                             jQuery("#event_date_to").val(jQuery("#event_date_from").val());
                         }

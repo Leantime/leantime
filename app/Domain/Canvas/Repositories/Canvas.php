@@ -102,7 +102,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @access private
          * @var    object
          */
-        private $db = '';
+        protected $db = '';
 
 
         private LanguageCore $language;
@@ -224,8 +224,14 @@ namespace Leantime\Domain\Canvas\Repositories {
         }
 
 
-        public function getAllCanvas($projectId)
+        public function getAllCanvas($projectId, $type = null)
         {
+
+            if($type == null || $type == ''){
+                $canvasType = static::CANVAS_NAME . 'canvas';
+            }else{
+                $canvasType = $type;
+            }
 
             $sql = "SELECT
                         zp_canvas.id,
@@ -240,13 +246,14 @@ namespace Leantime\Domain\Canvas\Repositories {
                     zp_canvas
                     LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
                     LEFT JOIN zp_canvas_items ON zp_canvas.id = zp_canvas_items.canvasId
-                WHERE type = '" . static::CANVAS_NAME . "canvas' AND projectId = :projectId
+                WHERE type = :type AND projectId = :projectId
                 GROUP BY
 					zp_canvas.id
                 ORDER BY zp_canvas.title, zp_canvas.created";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':projectId', $projectId, PDO::PARAM_STR);
+            $stmn->bindValue(':type', $canvasType, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -300,8 +307,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             $stmn->closeCursor();
         }
 
-        public function addCanvas($values)
+        public function addCanvas($values, $type = null)
         {
+
+            if($type == null || $type == ''){
+                $canvasType = static::CANVAS_NAME . 'canvas';
+            }else{
+                $canvasType = $type;
+            }
 
             $query = "INSERT INTO zp_canvas (
                         title,
@@ -315,7 +328,7 @@ namespace Leantime\Domain\Canvas\Repositories {
                           :description,
                         :author,
                         NOW(),
-                        '" . static::CANVAS_NAME . "canvas',
+                        :type,
                         :projectId
                 )";
 
@@ -325,7 +338,7 @@ namespace Leantime\Domain\Canvas\Repositories {
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_STR);
             $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':projectId', $values['projectId'], PDO::PARAM_STR);
-
+            $stmn->bindValue(':type', $canvasType, PDO::PARAM_STR);
 
             $stmn->execute();
 
