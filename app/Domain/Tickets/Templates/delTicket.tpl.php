@@ -14,4 +14,3 @@ foreach ($__data as $var => $val) {
     <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
     <a class="btn btn-primary" href="#/tickets/showTicket/<?php echo $ticket->id ?>"><?php echo $tpl->__('buttons.back'); ?></a>
 </form>
-

@@ -59,7 +59,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 }
             }
 
-            $this->tpl->display(static::CANVAS_NAME . 'canvas.delCanvas');
+            $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.delCanvas');
         }
     }
 }
