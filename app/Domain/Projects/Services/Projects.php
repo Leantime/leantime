@@ -7,6 +7,7 @@ namespace Leantime\Domain\Projects\Services {
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Core\Events as EventCore;
     use Leantime\Core\Eventhelpers;
+    use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -21,6 +22,7 @@ namespace Leantime\Domain\Projects\Services {
     use Leantime\Domain\Notifications\Services\Messengers;
     use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Wiki\Repositories\Wiki;
 
     class Projects
     {
@@ -782,100 +784,121 @@ namespace Leantime\Domain\Projects\Services {
                 }
             }
 
-
-
-            //Duplicate Canvas boards
-            $canvasIdList = array();
-
-
-            //LeanCanvas
-            $leancanvasRepo = app()->make(LeancanvaRepository::class);
-            $canvasBoards = $leancanvasRepo->getAllCanvas($projectId);
-            foreach ($canvasBoards as $canvas) {
-                $canvasValues = array(
-                    "title" => $canvas['title'],
-                    "author" => $_SESSION['userdata']['id'],
-                    "projectId" => $newProjectId,
-
-                );
-
-                $newCanvasId = $leancanvasRepo->addCanvas($canvasValues);
-                $canvasIdList[$canvas['id']] = $newCanvasId;
-
-                $canvasItems = $leancanvasRepo->getCanvasItemsById($canvas['id']);
-
-                if ($canvasItems != false && count($canvasItems) > 0) {
-                    foreach ($canvasItems as $item) {
-                        $milestoneid = "";
-                        if (isset($ticketIdList[$item['milestoneid']])) {
-                            $milestoneid = $ticketIdList[$item['milestoneid']];
-                        }
-
-                        $canvasItemValues = array(
-                            "description" => $item['description'],
-                            "assumptions" => $item['assumptions'],
-                            "data" => $item['data'],
-                            "conclusion" => $item['conclusion'],
-                            "box" => $item['box'],
-                            "author" => $item['author'],
-                            "parent" => $item['parent'],
-                            "title" => $item['title'],
-                            "tags" => $item['tags'],
-                            "canvasId" => $newCanvasId,
-                            "sortindex" => $item['sortindex'],
-                            "status" => $item['status'],
-                            "milestoneId" => $milestoneid,
-                        );
-
-                        $leancanvasRepo->addCanvasItem($canvasItemValues);
-                    }
-                }
-            }
-
-
             //Ideas
-            $ideaRepo = app()->make(IdeaRepository::class);
-            $canvasBoards = $ideaRepo->getAllCanvas($projectId);
-            foreach ($canvasBoards as $canvas) {
-                $canvasValues = array(
-                    "title" => $canvas['title'],
-                    "author" => $_SESSION['userdata']['id'],
-                    "projectId" => $newProjectId,
+            $this->duplicateCanvas(
+                repository:IdeaRepository::class,
+                originalProjectId: $projectId,
+                newProjectId: $newProjectId
+            );
 
-                );
+            $this->duplicateCanvas(
+                repository:GoalcanvaRepository::class,
+                originalProjectId: $projectId,
+                newProjectId: $newProjectId
+            );
 
-                $newCanvasId = $ideaRepo->addCanvas($canvasValues);
-                $canvasIdList[$canvas['id']] = $newCanvasId;
+            $this->duplicateCanvas(
+                repository:Wiki::class,
+                originalProjectId: $projectId,
+                newProjectId: $newProjectId,
+                canvasTypeName: "wiki"
+            );
 
-                $canvasItems = $ideaRepo->getCanvasItemsById($canvas['id']);
-
-                if ($canvasItems != false && count($canvasItems) > 0) {
-                    foreach ($canvasItems as $item) {
-                        $milestoneId = "";
-                        if (isset($ticketIdList[$item['milestoneid']])) {
-                            $milestoneId = $ticketIdList[$item['milestoneid']];
-                        }
-
-                        $canvasItemValues = array(
-                            "description" => $item['description'],
-                            "assumptions" => $item['assumptions'],
-                            "data" => $item['data'],
-                            "conclusion" => $item['conclusion'],
-                            "box" => $item['box'],
-                            "author" => $item['author'],
-
-                            "canvasId" => $newCanvasId,
-                            "sortindex" => $item['sortindex'],
-                            "status" => $item['status'],
-                            "milestoneId" => $milestoneId,
-                        );
-
-                        $ideaRepo->addCanvasItem($canvasItemValues);
-                    }
-                }
-            }
+            $this->duplicateCanvas(
+                repository:LeancanvaRepository::class,
+                originalProjectId: $projectId,
+                newProjectId: $newProjectId
+            );
 
             return $newProjectId;
+        }
+
+        private function duplicateCanvas(string $repository, int $originalProjectId, int $newProjectId, string $canvasTypeName = ''): bool
+        {
+
+            $canvasIdList = [];
+            $canvasRepo = app()->make($repository);
+            $canvasBoards = $canvasRepo->getAllCanvas($originalProjectId, $canvasTypeName);
+
+            foreach ($canvasBoards as $canvas) {
+                $canvasValues = array(
+                    "title" => $canvas['title'],
+                    "author" => $_SESSION['userdata']['id'],
+                    "projectId" => $newProjectId,
+                    "description" => $canvas['description'] ?? '',
+                );
+
+                $newCanvasId = $canvasRepo->addCanvas($canvasValues, $canvasTypeName);
+                $canvasIdList[$canvas['id']] = $newCanvasId;
+
+                $canvasItems = $canvasRepo->getCanvasItemsById($canvas['id']);
+
+                if ($canvasItems != false && count($canvasItems) > 0) {
+                    //Build parent Array
+                    //oldId => newId
+                    $idMap = array();
+
+                    foreach ($canvasItems as $item) {
+                        $milestoneId = "";
+                        if (isset($ticketIdList[$item['milestoneId']])) {
+                            $milestoneId = $ticketIdList[$item['milestoneId']];
+                        }
+
+                        $canvasItemValues = array(
+                            "description" => $item['description'] ?? '',
+                            "assumptions" => $item['assumptions'] ?? '',
+                            "data" => $item['data'] ?? '',
+                            "conclusion" => $item['conclusion'] ?? '',
+                            "box" => $item['box'] ?? '',
+                            "author" => $item['author'] ?? '',
+
+                            "canvasId" => $newCanvasId,
+                            "sortindex" => $item['sortindex'] ?? '',
+                            "status" => $item['status'] ?? '',
+                            "relates" => $item['relates'] ?? '',
+                            "milestoneId" => $milestoneId ?? '',
+                            "title" => $item['title'] ?? '',
+                            "parent" => $item['parent'] ?? '',
+                            "featured" => $item['featured'] ?? '',
+                            "tags" => $item['tags'] ?? '',
+                            "kpi" => $item['kpi'] ?? '',
+                            "data1" => $item['data1'] ?? '',
+                            "data2" => $item['data2'] ?? '',
+                            "data3" => $item['data3'] ?? '',
+                            "data4" => $item['data4'] ?? '',
+                            "data5" => $item['data5'] ?? '',
+                            "startDate" => '',
+                            "endDate" => '',
+                            "setting" => $item['setting'] ?? '',
+                            "metricType" => $item['metricType'] ?? '',
+                            "startValue" => '',
+                            "currentValue" => '',
+                            "endValue" => $item['endValue'] ?? '',
+                            "impact" => $item['impact'] ?? '',
+                            "effort" => $item['effort'] ?? '',
+                            "probability" => $item['probability'] ?? '',
+                            "action" => $item['action'] ?? '',
+                            "assignedTo" => $item['assignedTo'] ?? '',
+                        );
+
+                        $newId = $canvasRepo->addCanvasItem($canvasItemValues);
+                        $idMap[$item['id']] = $newId;
+                    }
+
+                    //Now fix relates to and parent relationships
+                    $newCanvasItems = $canvasRepo->getCanvasItemsById($newCanvasId);
+                    foreach ($canvasItems as $newItem) {
+                        $newCanvasItemValues = array(
+                            "relates" => $idMap[$newItem['relates']] ?? '',
+                            "parent" => $idMap[$newItem['parent']] ?? '',
+                        );
+
+                        $canvasRepo->patchCanvasItem($newItem['id'], $newCanvasItemValues);
+                    }
+                }
+            }
+
+            return true;
         }
 
         public function getProjectUserRelation($id)

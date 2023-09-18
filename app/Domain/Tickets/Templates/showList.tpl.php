@@ -57,7 +57,7 @@ foreach ($__data as $var => $val) {
         <?php $tpl->dispatchTplEvent('allTicketsTable.before', ['tickets' => $allTickets]); ?>
 
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
                         <input type="text" name="headline" autofocus placeholder="<?php echo $tpl->__("input.placeholders.create_task"); ?>" style="margin-bottom: 15px; margin-top: 3px; width: 320px;"/>
@@ -133,7 +133,7 @@ foreach ($__data as $var => $val) {
 
                 </div>
             </div>
-            <div class="col-md-8 hidden-sm"  >
+            <div class="col-md-9 hidden-sm"  >
                 <div id="ticketContent">
                     <div class="center">
                         <div class='svgContainer'>
@@ -155,9 +155,6 @@ foreach ($__data as $var => $val) {
 
     jQuery(document).ready(function() {
         <?php $tpl->dispatchTplEvent('scripts.afterOpen'); ?>
-
-
-        leantime.timesheetsController.initTicketTimers();
 
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>

@@ -158,10 +158,15 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown.noBg {
     background:transparent;
 
+
+}
+
+.maincontentinner .ticketDropdown.noBg a {
+    box-shadow: none;
 }
 
 .maincontentinner .ticketDropdown.noBg >a img {
-
+    margin-top:-1px;
 }
 
 .maincontentinner .dropdown img {
@@ -344,6 +349,40 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .maincontentinner .ticketDropdown.milestoneDropdown li a:hover{
     background: var(--dropdown-link-hover-bg) !important;
     color: var(--dropdown-link-hover-color) !important;
+}
+
+.maincontentinner .accordionTitle[class*="label-"] {
+    background:none;
+}
+
+.maincontentinner .accordionTitle.label-warning a{
+    background:none;
+    color:var(--yellow);
+}
+
+.maincontentinner .accordionTitle.label-important a {
+    background:none;
+    color:var(--red);
+}
+
+.maincontentinner .accordionTitle.label-info a {
+    background:none;
+    color:var(--dark-blue);
+}
+
+.maincontentinner .accordionTitle.label-danger a {
+    background:none;
+    color:var(--dark-red);
+}
+
+.maincontentinner .accordionTitle.label-success a {
+    background:none;
+    color:var(--green);
+}
+
+.maincontentinner .accordionTitle.label-default a {
+    background:none;
+    color:var(--grey);
 }
 
 

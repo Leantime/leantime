@@ -407,7 +407,7 @@
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle {
     margin-top:0px;
-    border-top:0px dashed var(--main-border-color);
+    border-top:1px dotted var(--main-border-color);
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle:first-child {
@@ -419,6 +419,14 @@
     text-transform: uppercase;
     padding: 10px 5px 10px 10px;
 }
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle a:has(.fa-angle-right){
+}
+
+.leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle a strong {
+    vertical-align: middle;
+}
+
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.title a {
     font-size: var(--font-size-xs);
@@ -1196,6 +1204,7 @@
     display:inline-block;
     float:left;
     padding:0px 5px;
+    margin-right:2px;
     background:var(--secondary-background);
 
 }

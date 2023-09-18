@@ -1167,3 +1167,7 @@ body .btn.btn-link.active {
 input[type=text].simpleColorPicker {
     color:#fff;
 }
+
+body .croppie-container {
+    height:auto;
+}

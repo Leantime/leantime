@@ -158,9 +158,9 @@ foreach ($__data as $var => $val) {
                             }
 
                             ?>
-                            <td class="dropdown-cell" data-order="<?=$name ?>">
-                                <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                    <a class="dropdown-toggle status <?=$class ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <td data-order="<?=$name ?>">
+                                <div class="dropdown ticketDropdown statusDropdown colorized show ">
+                                    <a class="dropdown-toggle status <?=$class ?>  f-left" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 
 
                                         <span class="text">
@@ -193,9 +193,9 @@ foreach ($__data as $var => $val) {
                             $milestoneHeadline = $tpl->__("label.no_milestone");
                         }?>
 
-                            <td class="dropdown-cell" data-order="<?=$milestoneHeadline?>">
+                            <td data-order="<?=$milestoneHeadline?>">
                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show">
-                                    <a style="background-color:<?=$tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a style="background-color:<?=$tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle label-default milestone  f-left" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?=$milestoneHeadline?></span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
@@ -211,9 +211,9 @@ foreach ($__data as $var => $val) {
                                     </ul>
                                 </div>
                             </td>
-                            <td class="dropdown-cell"  data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $tpl->__("label.story_points_unkown"); ?>">
+                            <td  data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $tpl->__("label.story_points_unkown"); ?>">
                                 <div class="dropdown ticketDropdown effortDropdown show">
-                                    <a class="dropdown-toggle label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle label-default effort  f-left" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
                                                                     echo $efforts["" . $row['storypoints']];
@@ -234,14 +234,14 @@ foreach ($__data as $var => $val) {
                                 </div>
                             </td>
 
-                            <td class="dropdown-cell"  data-order="<?php
+                            <td  data-order="<?php
                             if ($row['priority'] != '' && $row['priority'] > 0) {
                                 echo $priorities[$row['priority']];
                             } else {
                                 echo $tpl->__("label.priority_unkown");
                             }?>">
                                 <div class="dropdown ticketDropdown priorityDropdown show">
-                                    <a class="dropdown-toggle label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle label-default priority priority-bg-<?=$row['priority']?>  f-left" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
                                                                 if ($row['priority'] != '' && $row['priority'] > 0) {
                                                                     echo $priorities[$row['priority']];
@@ -261,8 +261,8 @@ foreach ($__data as $var => $val) {
                                     </ul>
                                 </div>
                             </td>
-                            <td class="dropdown-cell"  data-order="<?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?>">
-                                <div class="dropdown ticketDropdown userDropdown noBg show ">
+                            <td data-order="<?=$row["editorFirstname"] != "" ?  $tpl->escape($row["editorFirstname"]) : $tpl->__("dropdown.not_assigned")?>">
+                                <div class="dropdown ticketDropdown userDropdown noBg show f-left">
                                     <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
                                                                     <?php if ($row["editorFirstname"] != "") {
@@ -292,10 +292,10 @@ foreach ($__data as $var => $val) {
                                 $sprintHeadline = $tpl->__("label.backlog");
                             }?>
 
-                            <td class="dropdown-cell"  data-order="<?=$sprintHeadline?>">
+                            <td  data-order="<?=$sprintHeadline?>">
 
                                 <div class="dropdown ticketDropdown sprintDropdown show">
-                                    <a class="dropdown-toggle label-default sprint" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle label-default sprint f-left" href="javascript:void(0);" role="button" id="sprintDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="text"><?=$sprintHeadline?></span>
                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
@@ -359,57 +359,11 @@ foreach ($__data as $var => $val) {
                                 }?>
                             </td>
                             <td>
-                                <?php if ($login::userIsAtLeast($roles::$editor)) {
-                                    $clockedIn = $tpl->get("onTheClock");
+                                <?php echo app("blade.compiler")::render('@include("tickets::partials.ticketsubmenu", [
+                                                                                        "ticket" => $ticket,
+                                                                                        "onTheClock" => $onTheClock
+                                                                                    ])', ['ticket'=>$row, 'onTheClock'=> $tpl->get("onTheClock")]); ?>
 
-                                    ?>
-                                    <div class="inlineDropDownContainer">
-
-                                        <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                            <li><a href="#/tickets/showTicket/<?php echo $row["id"]; ?>"><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_todo"); ?></a></li>
-                                            <li><a href="#/tickets/moveTicket/<?php echo $row["id"]; ?>"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_todo"); ?></a></li>
-                                            <li><a href="#/tickets/delTicket/<?php echo $row["id"]; ?>"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete_todo"); ?></a></li>
-                                            <li class="nav-header border"><?php echo $tpl->__("subtitles.track_time"); ?></li>
-                                            <li id="timerContainer-<?php echo $row['id'];?>" class="timerContainer">
-                                                <a
-                                                    class="punchIn"
-                                                    href="javascript:void(0);"
-                                                    data-value="<?php echo $row["id"]; ?>"
-                                                    <?php if ($clockedIn !== false) {
-                                                        echo"style='display:none;'";
-                                                    } ?>
-                                                ><span class="fa-regular fa-clock"></span> <?php echo $tpl->__("links.start_work"); ?></a>
-                                                <a
-                                                    class="punchOut"
-                                                    href="javascript:void(0);"
-                                                    data-value="<?php echo $row["id"]; ?>"
-                                                    <?php if ($clockedIn === false || $clockedIn["id"] != $row["id"]) {
-                                                        echo"style='display:none;'";
-                                                    }?>
-                                                >
-                                                    <span class="fa-stop"></span>
-                                                    <?php if (is_array($clockedIn) == true) {
-                                                        echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
-                                                    } else {
-                                                        echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));
-                                                    } ?>
-                                                </a>
-                                                <span
-                                                    class='working'
-                                                    <?php if ($clockedIn === false || $clockedIn["id"] === $row["id"]) {
-                                                        echo"style='display:none;'";
-                                                    } ?>
-                                                >
-                                                    <?php echo $tpl->__("text.timer_set_other_todo"); ?>
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                <?php } ?>
 
                             </td>
                             <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
@@ -418,7 +372,11 @@ foreach ($__data as $var => $val) {
                     <?php $tpl->dispatchTplEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets]); ?>
                 </tbody>
                 <?php $tpl->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
-            </table>
+                    <tfoot align="right">
+                        <tr><td colspan="9"></td><td></td><td></td><td></td><td></td><td></td></tr>
+                    </tfoot>
+
+                </table>
                 <?php $tpl->dispatchTplEvent('allTicketsTable.afterClose', ['tickets' => $allTickets]); ?>
 
             <?php if ($group['label'] != 'all') { ?>
@@ -445,7 +403,7 @@ foreach ($__data as $var => $val) {
             leantime.ticketsController.initPriorityDropdown();
             leantime.ticketsController.initSprintDropdown();
             leantime.ticketsController.initStatusDropdown();
-            leantime.timesheetsController.initTicketTimers();
+
         <?php } else { ?>
         leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>

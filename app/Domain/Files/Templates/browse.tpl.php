@@ -21,17 +21,18 @@ $moduleId = $_SESSION['currentProject'];
 
 <div class="maincontent">
 
-    <div class="maincontentinner">
-        <?php
-        echo $tpl->displayNotification();
-        ?>
-        <h5 class="subtitle"><?=$tpl->__("headlines.upload_new_files"); ?></h5>
-
-
 
     <div id="fileManager">
+        <div class="maincontentinner">
+            <?php
+            echo $tpl->displayNotification();
+            ?>
+            <h5 class="subtitle"><?=$tpl->__("headline.browse_files_headline"); ?></h5>
 
-        <?php echo $tpl->displayNotification() ?>
+
+
+
+            <?php echo $tpl->displayNotification() ?>
 
         <?php if ($login::userIsAtLeast($roles::$editor)) {?>
         <div class="uploadWrapper">
@@ -54,6 +55,8 @@ $moduleId = $_SESSION['currentProject'];
 
         </div>
         <?php } ?>
+        </div>
+        <div class="maincontentinner">
 
         <div class='mediamgr'>
 
@@ -83,7 +86,7 @@ $moduleId = $_SESSION['currentProject'];
                                 <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
                                     <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                 <?php else : ?>
-                                    <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/images/doc.png' />
+                                    <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/doc.png' />
                                 <?php endif; ?>
                                 <span class="filename"><?php echo substr($file['realName'], 0, 10) . "(...)." . $file['extension'] ?></span>
                             </a>

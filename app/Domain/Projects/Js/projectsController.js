@@ -174,7 +174,7 @@ leantime.projectsController = (function () {
 
             var keyInt = jQuery(this).find('.labelKey').val();
 
-            if (keyInt >= highestKey) {
+            if (parseInt(keyInt) >= parseInt(highestKey)) {
                 highestKey = keyInt;
             }
 

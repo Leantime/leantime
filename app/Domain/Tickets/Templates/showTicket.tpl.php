@@ -90,7 +90,6 @@ foreach ($__data as $var => $val) {
 <script type="text/javascript">
 
     jQuery(window).load(function () {
-        leantime.timesheetsController.initTicketTimers();
         leantime.ticketsController.initTicketTabs();
 
         jQuery(window).resize();

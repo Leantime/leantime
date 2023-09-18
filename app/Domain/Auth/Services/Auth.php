@@ -4,6 +4,7 @@ namespace Leantime\Domain\Auth\Services {
 
     use Exception;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Ldap\Services\Ldap;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -207,7 +208,7 @@ namespace Leantime\Domain\Auth\Services {
             ////C: update users from the identity provider
             //Try Ldap
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
-                $ldap = app()->make(\Leantime\Domain\Ldap\Services\Ldap::class);
+                $ldap = app()->make(Ldap::class);
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
                     //Update username to include domain
@@ -445,6 +446,10 @@ namespace Leantime\Domain\Auth\Services {
 
                         return true;
                     }
+                } elseif ($this->config->debug) {
+                    error_log(
+                        "PW reset failed: maximum request count has been reached for user " . $userFromDB['id']
+                    );
                 }
             }
 
