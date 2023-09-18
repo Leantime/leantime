@@ -52,7 +52,8 @@
         "illuminate/filesystem": "^9.0",
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "symfony/http-foundation": "^5.4",
-        "symfony/error-handler": "^6.3"
+        "symfony/error-handler": "^6.3",
+        "vedmant/laravel-feed-reader": "^1.6"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",
@@ -63,7 +64,8 @@
         "codeception/module-db": "^3.1",
         "codeception/module-webdriver": "^3.2",
         "spatie/laravel-ignition": "^1.6",
-        "phpcsstandards/phpcsextra": "^1.1"
+        "phpcsstandards/phpcsextra": "^1.1",
+        "leantime/leantime-documentor": "dev-main"
     },
     "autoload": {
         "psr-4": {
