@@ -24,7 +24,6 @@ package: clean build
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)/config
-	cp ./config/appSettings.php $(TARGET_DIR)/config
 	cp ./config/configuration.sample.php $(TARGET_DIR)/config
 	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
