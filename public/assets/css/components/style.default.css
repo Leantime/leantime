@@ -2989,8 +2989,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .modal-footer .btn.btn-default {
-    background-color:var(--main-action-bg);
-    color:var(--main-action-color);
 }
 
 .modal-header .close {
@@ -3224,33 +3222,7 @@ a.filter-term {
 
 }
 
-.nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
 
-}
-
-.nyroModalCloseButton {
-
-    font-size: 20px;
-    text-indent: 0;
-    height: 17px;
-    width: 17px;
-    line-height: 25px;
-    text-align: center;
-    border-radius: 14px;
-    color: #999 !important;
-    z-index: 1000010;
-    border: 0 solid #ddd;
-    background: url(../../images/close.png) center center no-repeat;
-    top: 20px;
-    right: 20px;
-
-
-}
-
-.nyroModalCloseButton:hover {
-    text-decoration: none;
-    color: #000;
-}
 
 .hideOnLoad {
     display: none;

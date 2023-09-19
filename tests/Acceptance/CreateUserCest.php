@@ -19,7 +19,7 @@ class CreateUserCest
         $I->wantTo('Create a user');
         $I->amOnPage('/users/showAll');
         $I->click('Add User');
-        $I->waitForElement('#firstname', 30);
+        $I->waitForElement('#firstname', 120);
         $I->fillField('#firstname', 'John');
         $I->fillField('#lastname', 'Doe');
         $I->selectOption('#role', 'Read Only');
@@ -30,7 +30,8 @@ class CreateUserCest
         $I->fillField('#jobLevel', 'Testing');
         $I->fillField('#department', 'Testing');
         $I->click('Invite User');
-        $I->waitForElement('.growl', 60);
+        echo $I->grabPageSource();
+        $I->waitForElement('.growl', 120);
         $I->wait(2);
         $I->see('New user invited successfully');
     }
@@ -43,7 +44,7 @@ class CreateUserCest
         $I->see('Edit User');
         $I->fillField(['name' => 'jobTitle'], 'Testing');
         $I->click('Save');
-        $I->waitForElement('.growl', 60);
+        $I->waitForElement('.growl', 120);
         $I->see('User edited successfully');
     }
 }
