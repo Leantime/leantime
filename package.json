@@ -20,7 +20,7 @@
     "htmx.org": "^1.9.5",
     "imagesloaded": "^4.1.4",
     "isotope-layout": "^3.0.6",
-    "jquery": "3.7.0",
+    "jquery": "3.7.1",
     "jquery-migrate": "^1.4.1",
     "jquery-ui-dist": "1.13.2",
     "jquery-ui-touch-punch": "^0.2.3",
