@@ -20,12 +20,12 @@ $canvasTitle = $tpl->get('canvasTitle');
           <h4 class="modal-title"><i class='fa fa-plus'></i> <?=$tpl->__('subtitles.create_new_board') ?></h4>
         </div>
         <div class="modal-body">
-          <label><?=$tpl->__("label.$canvasName.title_new") ?></label>
+          <label><?=$tpl->__("label.$canvasName.title_new") ?></label><br />
           <input type="text" name="canvastitle" placeholder="<?=$tpl->__("input.placeholders.$canvasName.enter_title_for_board") ?>"
                  style="width: 100%"/>
         </div>
         <div class="modal-footer">
-          <input type="submit"  class="btn btn-default" value="<?=$tpl->__('buttons.create_board') ?>" name="newCanvas" />
+          <input type="submit"  class="btn btn-primary" value="<?=$tpl->__('buttons.create_board') ?>" name="newCanvas" />
           <button type="button" class="btn btn-default" data-dismiss="modal"><?=$tpl->__('buttons.close') ?></button>
         </div>
       </form>

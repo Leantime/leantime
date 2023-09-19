@@ -22,10 +22,10 @@ mix
         "./public/assets/js/app/core/modals.js",
         "./public/assets/js/app/core/tableHandling.js",
         ...[
-            ...glob.sync("./app/domain/**/*.js"),
-            ...glob.sync("./custom/domain/**/*.js"),
-            ...glob.sync("./app/plugin/**/*.js"),
-            ...glob.sync("./custom/plugin/**/*.js"),
+            ...glob.sync("./app/Domain/**/*.js"),
+            ...glob.sync("./custom/Domain/**/*.js"),
+            ...glob.sync("./app/Plugins/**/*.js"),
+            ...glob.sync("./custom/Plugins/**/*.js"),
         ].map(f => `./${f}`)
     ], `public/dist/js/compiled-app.${version}.min.js`)
     .combine([

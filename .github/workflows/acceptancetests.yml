@@ -25,4 +25,4 @@ jobs:
 
       - name: Run Acceptance Tests
         run: |
-          make Acceptance-test-ci
+          make acceptance-test-ci

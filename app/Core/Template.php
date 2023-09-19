@@ -454,7 +454,7 @@ class Template
     protected function confirmLayoutName($layoutName, $template)
     {
         $layout = htmlspecialchars($layoutName);
-        $layout = self::dispatch_filter('layout', $layout);
+        $layout = self::dispatch_filter("layout", $layout);
         $layout = self::dispatch_filter("layout.$template", $layout);
 
         $layout = $this->getTemplatePath('global', "layouts.$layout");
