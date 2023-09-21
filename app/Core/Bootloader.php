@@ -146,9 +146,9 @@ class Bootloader
 
         $this->checkIfInstalled();
 
-        $this->checkIfUpdated();
-
         Events::discover_listeners();
+
+        $this->checkIfUpdated();
 
         /**
          * The beginning of the application
@@ -240,6 +240,13 @@ class Bootloader
      */
     private function checkIfInstalled(): bool
     {
+
+        $config = $this->app->make(environment::class);
+        if ($config->skipInstaller) {
+            $this->setInstalled();
+            return true;
+        }
+
         $session_says = isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'];
         $config_says = $this->app->make(SettingRepository::class)->checkIfInstalled();
         $frontController = $this->app->make(Frontcontroller::class);
@@ -303,6 +310,20 @@ class Bootloader
     }
 
     /**
+     * Redirect to update
+     *
+     * @return void
+     */
+    private function redirectToUpdate(): void
+    {
+        $frontController = $this->app->make(frontcontroller::class);
+
+        if (! in_array($frontController::getCurrentRoute(), ['install.update', 'api.i18n'])) {
+            $frontController::redirect(BASE_URL . '/install/update');
+        }
+    }
+
+    /**
      * Check if Leantime is updated
      *
      * @return boolean
@@ -315,10 +336,12 @@ class Bootloader
         if ($dbVersion == $settingsDbVersion) {
             $_SESSION['isUpdated'] = true;
             return true;
+        } else {
+            $_SESSION['isUpdated'] = false;
         }
 
-        if (! isset($_GET['update']) && ! isset($_GET['install'])) {
-            $this->redirectToInstall();
+        if (! isset($_GET['act']) || ($_GET['act'] !== "install" && $_GET['act'] !== "install.update")) {
+            $this->redirectToUpdate();
         }
 
         return false;

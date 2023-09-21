@@ -4,6 +4,7 @@ namespace Leantime\Domain\Install\Repositories {
 
     use Exception;
     use Leantime\Core\AppSettings;
+    use Leantime\Domain\Setting\Repositories\Setting;
     use PDO;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use PDOException;
@@ -88,6 +89,7 @@ namespace Leantime\Domain\Install\Repositories {
             20118,
             20120,
             20121,
+            20122,
         );
 
         /**
@@ -345,9 +347,9 @@ namespace Leantime\Domain\Install\Repositories {
 
                 CREATE TABLE `zp_canvas_items` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `description` text,
+                  `description` MEDIUMTEXT,
                   `assumptions` text,
-                  `data` text,
+                  `data` MEDIUMTEXT,
                   `conclusion` text,
                   `box` varchar(255) DEFAULT NULL,
                   `author` int(11) DEFAULT NULL,
@@ -668,7 +670,7 @@ namespace Leantime\Domain\Install\Repositories {
 
                 CREATE TABLE `zp_settings` (
                     `key` VARCHAR(175) NOT NULL,
-                    `value` TEXT NULL,
+                    `value` MEDIUMTEXT NULL,
                     PRIMARY KEY (`key`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1592,6 +1594,42 @@ namespace Leantime\Domain\Install\Repositories {
                 return true;
             }
         }
+
+
+        public function update_sql_20122(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_settings`
+                    CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL ;",
+                "ALTER TABLE `zp_canvas_items`
+                    CHANGE COLUMN `description` `description` MEDIUMTEXT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL ;",
+
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+
+
+
+
     }
 
 }

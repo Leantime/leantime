@@ -22,10 +22,10 @@ mix
         "./public/assets/js/app/core/modals.js",
         "./public/assets/js/app/core/tableHandling.js",
         ...[
-            ...glob.sync("./app/domain/**/*.js"),
-            ...glob.sync("./custom/domain/**/*.js"),
-            ...glob.sync("./app/plugin/**/*.js"),
-            ...glob.sync("./custom/plugin/**/*.js"),
+            ...glob.sync("./app/Domain/**/*.js"),
+            ...glob.sync("./custom/Domain/**/*.js"),
+            ...glob.sync("./app/Plugins/**/*.js"),
+            ...glob.sync("./custom/Plugins/**/*.js"),
         ].map(f => `./${f}`)
     ], `public/dist/js/compiled-app.${version}.min.js`)
     .combine([
@@ -56,6 +56,7 @@ mix
         "./node_modules/tether-shepherd/dist/js/tether.js",
         "./node_modules/tether-shepherd/dist/js/shepherd.js",
         "./node_modules/isotope-layout/dist/isotope.pkgd.js",
+        "./node_modules/gridstack/dist/es5/gridstack-all.js",
         "./node_modules/jstree/dist/jstree.js",
         "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
         "./node_modules/leader-line/leader-line.min.js",

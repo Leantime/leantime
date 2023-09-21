@@ -351,6 +351,8 @@ if ($numberofColumns > 0) {
 
 <script type="text/javascript">
 
+    jQuery(document).ready(function(){
+
     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.ticketsController.initUserDropdown();
         leantime.ticketsController.initMilestoneDropdown();
@@ -369,7 +371,7 @@ if ($numberofColumns > 0) {
 
     leantime.ticketsController.setUpKanbanColumns();
 
-    jQuery(document).ready(function(){
+
 
 
 

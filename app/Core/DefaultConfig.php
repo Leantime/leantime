@@ -321,4 +321,6 @@ class DefaultConfig
      * @var integer Default Leantime Role on creation. (set to editor)
      */
     public $ldapDefaultRoleKey = 20;
+
+    public $skipInstaller = false;
 }

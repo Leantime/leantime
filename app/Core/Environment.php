@@ -382,6 +382,11 @@ class Environment implements ArrayAccess, ConfigContract
     public ?string $plugins;
 
     /**
+     * @var bool skip installer checks
+     */
+    public bool $skipInstaller;
+
+    /**
      * environment constructor.
      * @param \Leantime\Core\DefaultConfig $defaultConfiguration
      * @return self
@@ -475,6 +480,8 @@ class Environment implements ArrayAccess, ConfigContract
             $this->ldapDomain = $this->environmentHelper("LEAN_LDAP_LDAP_DOMAIN", $defaultConfiguration->ldapDomain ?? '');
             $this->ldapUri = $this->environmentHelper("LEAN_LDAP_URI", $defaultConfiguration->ldapUri ?? '');
         }
+
+        $this->skipInstaller = $this->getBool("LEAN_SKIP_INSTALLER", $defaultConfiguration->skipInstaller);
 
         /* OIDC */
         $this->oidcEnable = $this->getBool('LEAN_OIDC_ENABLE', false);

@@ -114,7 +114,7 @@ foreach ($__data as $var => $val) {
 </div>
 <script type="text/javascript">
 
-    jQuery(function(){
+    jQuery(document).ready(function(){
 
         <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
