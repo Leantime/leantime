@@ -316,25 +316,56 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
+        public function findMyChildren($currentParentId, array $projects) {
 
-        public function getProjectHierarchyAssignedToUser($userId, $projectStatus = "open", $clientId = "")
+            $branch = [];
+            foreach ($projects as $project) {
+                if ($project['parent'] == $currentParentId) {
+
+                    $children = $this->findMyChildren($project['id'], $projects);
+                    if($children) {
+                        $project['children'] = $children;
+                    }
+                    $branch[] = $project;
+                }
+            }
+            return $branch;
+        }
+
+
+        public function getProjectHierarchyAssignedToUser($userId, $projectStatus = "open", $clientId = null)
         {
 
-            //Build 3 level project selector
-            $projectHierarchy = array(
-                "strategy" => array("enabled" => false, "parents" => array("noStrategyParent"), "items" => array()), //Only one type allowed
-                "program" => array("enabled" => false, "parents" => array("noProgramParent"), "items" => array()), //Multiple types possible (projects/programs)
-                "project" => array("enabled" => true, "items" => array()), //Multiple types possible (projects/other)
-            );
-
+            $projectHierarchy = [];
             $projectHierarchy = self::dispatch_filter('beforeLoadingProjects', $projectHierarchy);
 
-
-            $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId, $projectHierarchy);
+            $projects = $this->projectRepository->getUserProjects(
+                userId: $userId,
+                projectStatus: $projectStatus,
+                clientId: $clientId,
+                accessStatus: "assigned");
 
             $projectHierarchy = self::dispatch_filter('beforePopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
 
+            //Build parent Child relationship
+            $hierarchy = $this->findMyChildren(0, $projects);
+
+            return ["allAssignedprojects" => $projects, "allAssignedprojectsHierarchy" => $hierarchy];
+
+
+
+
+
+
+
+
+
+
+
+
             //Fill projectColumns
+
+            /*
             foreach ($projects as $project) {
                 //Add all items that have strategy as parent.
                 if ($project['type'] == '' || $project['type'] == null || $project['type'] == 0) {
@@ -373,13 +404,15 @@ namespace Leantime\Domain\Projects\Services {
                 }
             }
 
+
+
             $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
 
             if ($projectHierarchy) {
                 return $projectHierarchy;
             } else {
                 return false;
-            }
+            }*/
         }
 
         public function getProjectRole($userId, $projectId)
@@ -398,9 +431,9 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function getProjectsUserHasAccessTo($userId, $projectStatus = "open", $clientId = "")
+        public function getProjectsUserHasAccessTo($userId)
         {
-            $projects = $this->projectRepository->getProjectsUserHasAccessTo($userId, $projectStatus, $clientId);
+            $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: "all");
 
             if ($projects) {
                 return $projects;

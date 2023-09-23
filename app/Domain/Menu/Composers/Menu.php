@@ -21,18 +21,21 @@ class Menu extends Composer
     private SettingService $settingSvc;
     private MenuRepository $menuRepo;
     private IncomingRequestCore $incomingRequest;
+    private \Leantime\Domain\Menu\Services\Menu $menuService;
 
     public function init(
         ProjectService $projectService,
         TicketService $ticketService,
         SettingService $settingSvc,
         MenuRepository $menuRepo,
+        \Leantime\Domain\Menu\Services\Menu $menuService,
         IncomingRequestCore $request
     ) {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->settingSvc = $settingSvc;
         $this->menuRepo = $menuRepo;
+        $this->menuService = $menuService;
         $this->incomingRequest = $request;
     }
 
@@ -44,63 +47,28 @@ class Menu extends Composer
         $returnVars = [];
 
         if (isset($_SESSION['userdata'])) {
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(
-                $_SESSION['userdata']['id'],
-                'open'
-            );
 
-            $allAssignedprojectsHierarchy = $this->projectService->getProjectHierarchyAssignedToUser(
-                $_SESSION['userdata']['id'],
-                'open'
-            );
+            $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);
 
-            $allAvailableProjects = $this->projectService->getProjectsUserHasAccessTo(
-                $_SESSION['userdata']['id'],
-                'open',
-                $_SESSION['userdata']['clientId']
-            );
+            $allAssignedprojects = $projectVars['assignedProjects'];
+            $allAvailableProjects  = $projectVars['availableProjects'];
+            $allAssignedprojectsHierarchy  = $projectVars['assignedHierarchy'];
+            $currentClient  = $projectVars['currentClient'];
+            $menuType  = $projectVars['menuType'];
+            $projectType  = $projectVars['projectType'];
+            $recentProjects  = $projectVars['recentProjects'];
 
-            $recent = $this->settingSvc->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
-            $recentArr = unserialize($recent);
-
-            if (is_array($recentArr) && is_array($allAvailableProjects)) {
-                $availableProjectColumn = array_column($allAvailableProjects, 'id');
-                foreach ($recentArr as $recentItem) {
-                    $found_key = array_search($recentItem, $availableProjectColumn);
-                    if ($found_key !== false) {
-                        $recentProjects[] = $allAvailableProjects[$found_key];
-                    }
-                }
-            }
-        }
-
-        $projectType = "project";
-        if (isset($_SESSION['currentProject'])) {
-            $project = $this->projectService->getProject($_SESSION['currentProject']);
-
-            $projectType = ($project !== false && isset($project['type']))
-                ? $project['type']
-                : "project";
-
-            if ($projectType != '' && $projectType != 'project') {
-                $menuType = $projectType;
-            } else {
-                $menuType = MenuRepository::DEFAULT_MENU;
-            }
-
-            if ($project !== false && isset($project["clientId"])) {
-                $currentClient = $project["clientId"];
-            } else {
-                $currentClient = '';
-            }
-        } else {
-            $menuType = MenuRepository::DEFAULT_MENU;
-            $currentClient = '';
         }
 
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
             $redirectUrl = '/dashboard/show';
         }
+
+        $projectTypeAvatars = [
+            "project" => "avatar",
+            "strategy" => "fa fa-chess",
+            "program" => "fa fa-layer-group"
+        ];
 
         return [
             'currentClient' => $currentClient,
@@ -121,6 +89,7 @@ class Menu extends Composer
                 'settingsTooltip' => __('menu.project_settings_tooltip'),
             ],
             'redirectUrl' => $redirectUrl,
+            'projectTypeAvatars' => $projectTypeAvatars,
         ];
     }
 }
