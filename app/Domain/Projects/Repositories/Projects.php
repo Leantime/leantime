@@ -107,43 +107,43 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        public function getNumberOfProjects($clientId = null, $type = null)
+        /**
+         * getUsersAssignedToProject - get one project
+         *
+         * @access public
+         * @param  $id
+         * @return array
+         */
+        public function getUsersAssignedToProject($id): array|bool
         {
 
-            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0";
+            $query = "SELECT
+					DISTINCT zp_user.id,
+					IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
+					zp_user.lastname,
+					zp_user.username,
+					zp_user.notifications,
+					zp_user.profileId,
+                    zp_user.status,
+                    zp_relationuserproject.projectRole
+				FROM zp_relationuserproject
+				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
+				WHERE zp_relationuserproject.projectId = :projectId AND
+                !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
+				ORDER BY zp_user.lastname";
 
-            if ($clientId != null && is_numeric($clientId)) {
-                $sql .= " AND clientId = :clientId";
-            }
-
-            if ($type != null) {
-                $sql .= " AND type = :type";
-            }
-
-            $stmn = $this->db->database->prepare($sql);
-
-            if ($clientId != null && is_numeric($clientId)) {
-                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
-            }
-
-            if ($type != null) {
-                $stmn->bindValue(':type', $type, PDO::PARAM_STR);
-            }
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
 
             $stmn->execute();
-            $values = $stmn->fetch();
+            $values = $stmn->fetchAll();
             $stmn->closeCursor();
 
-            if (isset($values['projectCount']) === true) {
-                return $values['projectCount'];
-            } else {
-                return 0;
-            }
+            return $values;
         }
 
-        // Get all open user projects /param: open, closed, all
 
-        public function getUserProjects($userId, $status = "all", $clientId = "", $hierarchy = array())
+        public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, $accessStatus = "assigned")
         {
 
             $query = "SELECT
@@ -161,13 +161,19 @@ namespace Leantime\Domain\Projects\Repositories {
 					client.id AS clientId,
 					parent.id AS parentId,
 					parent.name as parentName,
-					comments.status as status
+					comments.status as status,
+					IF(favorite.id IS NULL, false, true) as isFavorite
 				FROM zp_projects as project
 				LEFT JOIN zp_relationuserproject AS relation ON project.id = relation.projectId
 				LEFT JOIN zp_projects as parent ON parent.id = project.parent
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
 				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				LEFT JOIN zp_user as `user` ON relation.userId = user.id
+				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId
+				                                          AND favorite.module = 'project'
+				                                          AND favorite.reaction = 'favorite'
+				                                          AND favorite.userId = :id
+
 				LEFT JOIN zp_comment as comments ON comments.id = (
                       SELECT
 						id
@@ -176,19 +182,36 @@ namespace Leantime\Domain\Projects\Repositories {
                       ORDER BY date DESC LIMIT 1
                     )
                 LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
-				WHERE
+				WHERE (project.active > '-1' OR project.active IS NULL)";
 
-				(       relation.userId = :id
-				        OR project.psettings = 'all'
-				        OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
-				    )
+            //All Projects this user has access to
+            if($accessStatus == "all") {
+                $query .= " AND
+				(
+				    relation.userId = :id
+                    OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
+                    OR project.psettings = 'all'
+                    OR requestingUser.role >= 40
 
-				    AND (project.active > '-1' OR project.active IS NULL)
-				    ";
+				)";
 
-            if ($status == "open") {
+            //All projects the user is assigned to OR the users client is assigned to
+            }else if($accessStatus == "clients") {
+                $query .= " AND
+				(
+				    relation.userId = :id
+                    OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
+				)";
+
+            //Only assigned
+            }else {
+                $query .= " AND
+				(relation.userId = :id)";
+            }
+
+            if ($projectStatus == "open") {
                 $query .= " AND (project.state <> '-1' OR project.state IS NULL)";
-            } elseif ($status == "closed") {
+            } elseif ($projectStatus == "closed") {
                 $query .= " AND (project.state = -1)";
             }
 
@@ -196,17 +219,12 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            if ((isset($hierarchy['program']) && $hierarchy['program']['enabled'] == true) || (isset($hierarchy['strategy']) && $hierarchy['strategy']['enabled'] == true)) {
-                $query .= " GROUP BY
+            $query .= " GROUP BY
 					project.id
-				    ORDER BY parentName, clientName, project.name";
-            } else {
-                $query .= " GROUP BY
-					project.id
-				ORDER BY clientName, parentName, project.name";
-            }
+				    ORDER BY clientName, project.name";
 
             $stmn = $this->db->database->prepare($query);
+
             if ($userId == '') {
                 $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
             } else {
@@ -225,6 +243,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
+        // Deprecated
         public function getProjectsUserHasAccessTo($userId, $status = "all", $clientId = "")
         {
 
@@ -273,6 +292,51 @@ namespace Leantime\Domain\Projects\Repositories {
 
             return $values;
         }
+
+
+
+
+
+
+
+
+        public function getNumberOfProjects($clientId = null, $type = null)
+        {
+
+            $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0";
+
+            if ($clientId != null && is_numeric($clientId)) {
+                $sql .= " AND clientId = :clientId";
+            }
+
+            if ($type != null) {
+                $sql .= " AND type = :type";
+            }
+
+            $stmn = $this->db->database->prepare($sql);
+
+            if ($clientId != null && is_numeric($clientId)) {
+                $stmn->bindValue(':clientId', $clientId, PDO::PARAM_INT);
+            }
+
+            if ($type != null) {
+                $stmn->bindValue(':type', $type, PDO::PARAM_STR);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            if (isset($values['projectCount']) === true) {
+                return $values['projectCount'];
+            } else {
+                return 0;
+            }
+        }
+
+        // Get all open user projects /param: open, closed, all
+
+
 
         public function getClientProjects($clientId)
         {
@@ -387,40 +451,7 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-        /**
-         * getProject - get one project
-         *
-         * @access public
-         * @param  $id
-         * @return array
-         */
-        public function getUsersAssignedToProject($id): array|bool
-        {
 
-            $query = "SELECT
-					DISTINCT zp_user.id,
-					IF(zp_user.firstname IS NOT NULL, zp_user.firstname, zp_user.username) AS firstname,
-					zp_user.lastname,
-					zp_user.username,
-					zp_user.notifications,
-					zp_user.profileId,
-                    zp_user.status,
-                    zp_relationuserproject.projectRole
-				FROM zp_relationuserproject
-				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
-				WHERE zp_relationuserproject.projectId = :projectId AND
-                !(zp_user.source <=> 'api') AND zp_user.id IS NOT NULL
-				ORDER BY zp_user.lastname";
-
-            $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':projectId', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $values = $stmn->fetchAll();
-            $stmn->closeCursor();
-
-            return $values;
-        }
 
         public function getProjectBookedHours($id): array|bool
         {

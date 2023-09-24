@@ -4135,3 +4135,25 @@ Stack trace:
 #12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(160): Leantime\Core\Bootloader->handleRequest()
 #13 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
 #14 {main}
+[24-Sep-2023 10:29:54 America/Los_Angeles] cron start
+[24-Sep-2023 10:29:54 America/Los_Angeles] cron end
+[24-Sep-2023 10:32:41 America/Los_Angeles] Last cron execution was on 2023-09-24 10:29:54 plz come back later
+[24-Sep-2023 10:34:54 America/Los_Angeles] cron start
+[24-Sep-2023 10:34:54 America/Los_Angeles] cron end
+[24-Sep-2023 10:37:41 America/Los_Angeles] Last cron execution was on 2023-09-24 10:34:54 plz come back later
+[24-Sep-2023 10:39:53 America/Los_Angeles] Last cron execution was on 2023-09-24 10:34:54 plz come back later
+[24-Sep-2023 10:42:40 America/Los_Angeles] cron start
+[24-Sep-2023 10:42:40 America/Los_Angeles] cron end
+[24-Sep-2023 10:44:53 America/Los_Angeles] Last cron execution was on 2023-09-24 10:42:40 plz come back later
+[24-Sep-2023 10:47:41 America/Los_Angeles] cron start
+[24-Sep-2023 10:47:41 America/Los_Angeles] cron end
+[24-Sep-2023 10:49:54 America/Los_Angeles] Last cron execution was on 2023-09-24 10:47:41 plz come back later
+[24-Sep-2023 10:52:54 America/Los_Angeles] cron start
+[24-Sep-2023 10:52:54 America/Los_Angeles] cron end
+[24-Sep-2023 10:54:53 America/Los_Angeles] Last cron execution was on 2023-09-24 10:52:54 plz come back later
+[24-Sep-2023 10:58:55 America/Los_Angeles] 2023-09-24T10:58:55-07:00 [critical] Uncaught Error: syntax error, unexpected token "use", expecting "," or ";"
+[24-Sep-2023 10:59:00 America/Los_Angeles] 2023-09-24T10:59:00-07:00 [critical] Uncaught Error: syntax error, unexpected token "use", expecting "," or ";"
+[24-Sep-2023 10:59:01 America/Los_Angeles] 2023-09-24T10:59:01-07:00 [critical] Uncaught Error: syntax error, unexpected token "use", expecting "," or ";"
+[24-Sep-2023 10:59:54 America/Los_Angeles] cron start
+[24-Sep-2023 10:59:54 America/Los_Angeles] cron end
+[24-Sep-2023 11:04:53 America/Los_Angeles] Last cron execution was on 2023-09-24 10:59:54 plz come back later
