@@ -929,10 +929,14 @@
     left:auto;
 }
 
+#notificationsDropdown .scroll-wrapper {
+    height:calc(100vh - 100px);
+}
+
 .notificationDropdown .dropdown-menu {
-    right: -10px;
+    right: -15px;
     left: auto;
-    min-width:300px;
+    min-width:375px;
 }
 
 .notificationDropdown .dropdown-menu:after {
@@ -972,7 +976,12 @@
 
 .notificationDropdown .dropdown-menu li:hover {
     cursor:pointer;
-    background:var(--dropdown-link-hover-bg);
+    background:var(--main-menu-link-hover-bg);
+}
+
+.notificationDropdown .dropdown-menu li a:hover {
+    cursor:pointer;
+    background:var(--main-menu-link-hover-bg);
 }
 
 .notificationDropdown .dropdown-menu li .notificationProfileImage img {

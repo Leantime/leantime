@@ -307,6 +307,16 @@ class Template
             'endspaceless',
             fn ($args) => "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>",
         );
+
+        $this->bladeCompiler->directive(
+            'formatDate',
+            fn ($args) => "<?php echo \$tpl->getFormattedDateString($args); ?>",
+        );
+
+        $this->bladeCompiler->directive(
+            'formatTime',
+            fn ($args) => "<?php echo \$tpl->getFormattedTimeString($args); ?>",
+        );
     }
 
     /**

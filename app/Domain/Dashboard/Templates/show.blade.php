@@ -83,7 +83,7 @@
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
                                 <div class="row">
                                     <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
-                                        <a href="{{ BASE_URL }}/#/tickets/showTicket/{!! $row['dependingTicketId'] > 0 ? $row['dependingTicketId'] : $row['id'] !!}">
+                                        <a href="#/tickets/showTicket/{!! $row['dependingTicketId'] > 0 ? $row['dependingTicketId'] : $row['id'] !!}">
                                             {!! $row['dependingTicketId'] > 0 ? $row['parentHeadline'] : sprintf("<strong>%s</strong>", $row['headline']) !!}
                                         </a>
 

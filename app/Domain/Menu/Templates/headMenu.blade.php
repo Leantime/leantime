@@ -28,6 +28,16 @@
         >{!! __("menu.my_portfolio") !!}</a>
     </li>
 
+    <li>
+        <a
+            href='{{ BASE_URL }}/timesheets/showMy'
+            @if ($activePath == 'timesheets.showMy')
+                class="active"
+            @endif
+            data-tippy-content="{{ __('popover.my_timesheets') }}"
+        >{!! __("menu.my_timesheets") !!}</a>
+    </li>
+
     </li>
     <li class="notificationDropdown">
 
@@ -83,8 +93,8 @@
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
-                                <span class="notificationTitle">{{ $notif['message'] }}</span>
-                                <span class="notificationDate">@formatDate($notif['datetime'])</span>
+                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
+                                <span class="notificationDate"> @formatDate( $notif['datetime'] ) </span>
                             </a>
                         </li>
                     @endforeach
@@ -111,8 +121,11 @@
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
-                                <span class="notificationTitle">{{ $notif['message'] }}</span>
-                                <span class="notificationDate">@formatDate($notif['datetime']) @formatTime($notif['datetime'])</span>
+                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
+                                <span class="notificationDate">
+                                    @formatDate($notif['datetime'])
+                                    @formatTime($notif['datetime'])
+                                </span>
                             </a>
                         </li>
                     @endforeach
