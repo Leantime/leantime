@@ -146,9 +146,9 @@ class Bootloader
 
         $this->checkIfInstalled();
 
-        $this->checkIfUpdated();
-
         Events::discover_listeners();
+
+        $this->checkIfUpdated();
 
         /**
          * The beginning of the application
