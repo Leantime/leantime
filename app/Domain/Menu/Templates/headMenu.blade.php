@@ -136,7 +136,7 @@
 
     </li>
 
-    @if ($login::userIsAtLeast(Roles::$manager))
+    @if ($login::userIsAtLeast("manager"))
 
         <li class="appsDropdown">
 
