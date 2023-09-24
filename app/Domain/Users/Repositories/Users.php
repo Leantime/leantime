@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Users\Repositories {
 
-    use Leantime\Domain\Files\Repositories\Files
+    use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Core\Db as DbCore;
     use PDO;
 
