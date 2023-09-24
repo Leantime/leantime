@@ -191,6 +191,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				    relation.userId = :id
                     OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
                     OR project.psettings = 'all'
+                    OR requestingUser.role >= 40
 
 				)";
 

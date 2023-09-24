@@ -73,6 +73,25 @@
     width: 100% !important;
 }
 
+.leftmenu .project-selector  .projectListFilter {
+    border-bottom:1px solid var(--main-border-color);
+    padding:0px 15px;
+}
+
+.leftmenu .project-selector  .projectListFilter select{
+    border-color:var(--secondary-background);
+    box-shadow:none;
+    max-width: 135px;
+    margin-top: 6px;
+    margin-bottom: 8px;
+    margin-right: 10px;
+    padding-left: 0px;
+}
+
+.leftmenu .project-selector  .projectListFilter select:hover {
+    border-color:var(--main-border-color);
+}
+
 .logo {
     width: 240px;
     text-align: center;
@@ -156,6 +175,7 @@
     height:60px;
     color:var(--project-selector-color);
     background:var(--project-selector-bg);
+    border:none;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector i.fa {
@@ -189,7 +209,7 @@
     z-index: 10000000;
     top:0;
     border-radius: var(--box-radius);
-    min-width:360px;
+    min-width:375px;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector .projectAvatar {
@@ -293,11 +313,7 @@
     margin-right:0;
 }
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu  .bigProjectSelector > .projectAvatar {
-    float:none;
-    margin:0;
-    margin-top: 10px;
-}
+
 
 .leftmenu .nav-tabs.nav-stacked a {
     color: #555;
@@ -574,25 +590,13 @@
 
 
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu .dropdown ul li a {
-    display: block;
-    font-size: var(--base-font-size);
-    padding: 10px 0 10px 0;
-    width: 68px;
-    text-align: center;
-    color: var(--main-menu-link-color);
-    border-left: 5px solid transparent;
-}
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu .dropdown ul li.active a {
-    border-left: 5px solid var(--primary-color);
-}
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu > li.dropdown ul.submenu li a {
+.leftmenu .nav-tabs.nav-stacked.collapsedMenu > li.dropdown ul.submenu li a {
     padding-left: 0;
 }
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu .bigProjectSelector {
+.leftmenu .nav-tabs.nav-stacked.collapsedMenu .bigProjectSelector {
     display: block;
     font-weight: normal;
     font-size: var(--font-size-l);
@@ -606,19 +610,19 @@
     background: var(--project-selector-bg);
 }
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu .bigProjectSelector:hover {
+.leftmenu .nav-tabs.nav-stacked.collapsedMenu .bigProjectSelector:hover {
     background: var(--project-selector-hover-bg);
     color: var(--project-selector-hover-color);
 }
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu .bigProjectSelector i.fa {
+.leftmenu .nav-tabs.nav-stacked.collapsedMenu .bigProjectSelector i.fa {
     font-size: var(--base-font-size);
     padding-left: 0;
     float: none;
     margin-top: 0;
 }
 
-.leftmenu .nav-tabs.nav-stacked#minimizedMenu .fixedMenuPoint {
+.leftmenu .nav-tabs.nav-stacked.collapsedMenu .fixedMenuPoint {
     width:68px;
 }
 
@@ -639,11 +643,6 @@
     content: '';
 }
 
-
-.leftmenu #minimizedMenu .projectselector {
-    left:73px;
-}
-
 .leftpanel .leftmenu .nav-tabs .projectselector {
 }
 
@@ -654,7 +653,7 @@
     padding: 10px 20px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector li.active a {
+.leftpanel .leftmenu .nav-tabs .projectselector li.active > a {
     background-image:none;
     color:var(--main-menu-link-active-color);
     font-weight:bold;
@@ -678,11 +677,11 @@
 
 /* Project Selection Tabs and container */
 .leftpanel .leftmenu .nav-tabs .projectselector ul.tabs {
-    padding-left:5px;
+
 }
 .leftpanel .leftmenu .nav-tabs .projectselector ul.tabs li a {
-    padding: 0 10px;
-    margin-left:5px;
+    padding: 0 15px;
+    margin-left: 0px;
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector .ui-tabs-panel {
@@ -720,9 +719,8 @@
     text-transform: none;
     padding:5px 0 5px 15px;
     display:block;
+    border-bottom:1px dotted var(--main-border-color);
 }
-
-
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup {
     clear:both;
@@ -731,16 +729,21 @@
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup[class*=level-] {
-    margin-left: 28px;
-    padding-left: 12px;
+    margin-left: 13px;
+    padding-left: 5px;
     margin-top: 0px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.hideGroup {
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-0,
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-1{
+    margin-left: 18px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.closed {
     display:none;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.groupShow {
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.open {
     display:inherit;
 }
 
@@ -801,7 +804,7 @@
 
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.border {
-    border-top:1px solid var(--neutral);
+    border-top:1px dotted var(--neutral);
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.nav-header,
@@ -818,11 +821,32 @@
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .toggler {
+    float: left;
+    line-height: 20px;
+    width: 18px;
+    padding: 0;
+    text-align: center;
+    margin-left: 9px;
+    margin-right: 3px;
+    margin-top: 15px;
+    border-radius: 5px;
+    min-height: 20px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .projectGroup .toggler {
+    margin-left:5px;
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .toggler:hover {
+    background:var(--col-hover-bg);
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .favoriteIcon {
     float:right;
     line-height:30px;
     width:30px;
+    color:var(--neutral) !important;
     padding-left:10px;
-    border-left:1px solid var(--main-border-color);
     margin-right:10px;
 }
 
@@ -1039,6 +1063,11 @@
     overflow:auto;
 }
 
+
+
+
+/* Left Nav collapsed + + + + + + + + + + + + + + + + + */
+
 .mainwrapper.menuclosed .barmenu {}
 
 .mainwrapper.menuclosed .rightpanel {
@@ -1055,12 +1084,68 @@
     width:68px;
 }
 
-.mainwrapper.menuclosed #minimizedMenu {
-    display:block;
+.mainwrapper.menuclosed .leftpanel .submenu {
+    display:block !important;
 }
-.mainwrapper.menuclosed #expandedMenu {
+
+.mainwrapper.menuclosed .leftpanel .submenuToggle {
     display:none;
 }
+
+.mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a {
+    font-size:0px;
+    padding: 15px 0px 10px 0;
+    width: 68px;
+    text-align: center;
+    color: var(--main-menu-link-color);
+    border-left: 5px solid transparent;
+    display: block;
+    line-height:21px;
+}
+
+.mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a span{
+    font-size: var(--base-font-size);
+}
+
+.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector i.fa {
+    display:none;
+}
+
+.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector {
+    font-size: 0;
+    text-align:center;
+    height:51px;
+    line-height:51px;
+    border-bottom:1px solid var(--main-border-color);
+}
+
+.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector .fa {
+    font-size:var(--font-size-l);
+}
+
+.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector > .projectAvatar {
+    float:none;
+    margin: 10px 0 0;
+}
+
+.mainwrapper.menuclosed .leftmenu .projectselector {
+    left:73px;
+}
+
+.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
+    border-left: 5px solid var(--primary-color);
+}
+
+.mainwrapper.menuclosed .leftmenu .fixedMenuPoint {
+    width:68px;
+}
+
+
+
+
+
+
+/* Left Nav expanded + + + + + + + + + + + + + + + + + */
 
 .mainwrapper.menuopen .barmenu {}
 .mainwrapper.menuopen .rightpanel {
@@ -1076,16 +1161,18 @@
 .mainwrapper.menuopen .leftpanel {
     width:240px;
 }
-.mainwrapper.menuopen #minimizedMenu {
+
+.mainwrapper.menuopen .leftpanel .submenu.closed {
     display:none;
 }
-.mainwrapper.menuopen #expandedMenu {
+
+.mainwrapper.menuopen .leftpanel .submenu.open {
     display:block;
 }
 
 
 
-/* New horizontal Tab nav */
+/* New horizontal content tab nav */
 
 .maincontentinner.tabs {
     height: 50px;

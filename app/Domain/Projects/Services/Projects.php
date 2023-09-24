@@ -319,6 +319,7 @@ namespace Leantime\Domain\Projects\Services {
         public function findMyChildren($currentParentId, array $projects) {
 
             $branch = [];
+
             foreach ($projects as $project) {
                 if ($project['parent'] == $currentParentId) {
 
@@ -327,92 +328,115 @@ namespace Leantime\Domain\Projects\Services {
                         $project['children'] = $children;
                     }
                     $branch[] = $project;
+
                 }
             }
             return $branch;
+        }
+
+        /**
+         * Ensures all projects have a valid parent. If not the parent is removed.
+         * This way a user can still access a project even if they don't have access to the child.
+         *
+         * @param array $projects
+         * @return array
+         */
+        public function cleanParentRelationship(array $projects): array {
+
+            $parents = [];
+            foreach ($projects as $project) {
+                $parents[$project['id']] = $project;
+            }
+
+            $cleanList = [];
+            foreach ($projects as $project) {
+
+                if (isset($parents[$project['parent']])) {
+                    $cleanList[] = $project;
+                }else {
+                    $project['parent'] = 0;
+                    $cleanList[] = $project;
+                }
+            }
+
+            return $cleanList;
         }
 
 
         public function getProjectHierarchyAssignedToUser($userId, $projectStatus = "open", $clientId = null)
         {
 
-            $projectHierarchy = [];
-            $projectHierarchy = self::dispatch_filter('beforeLoadingProjects', $projectHierarchy);
-
+            //Load all projects user is assigned to
             $projects = $this->projectRepository->getUserProjects(
                 userId: $userId,
                 projectStatus: $projectStatus,
                 clientId: $clientId,
                 accessStatus: "assigned");
-
-            $projectHierarchy = self::dispatch_filter('beforePopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
-
-            //Build parent Child relationship
-            $hierarchy = $this->findMyChildren(0, $projects);
-
-            return ["allAssignedprojects" => $projects, "allAssignedprojectsHierarchy" => $hierarchy];
+            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
 
 
+            //Build project hierarchy
+            $projectsClean = $this->cleanParentRelationship($projects);
+            $projectHierarchy = $this->findMyChildren(0, $projectsClean);
+            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
+
+            //Get favorite projects
+            $favorites = [];
+            foreach($projects as $project) {
+                if(isset($project["isFavorite"]) && $project["isFavorite"] == 1) {
+                    $favorites[] = $project;
+                }
+            }
+            $favorites = self::dispatch_filter('afterPopulatingProjectFavorites', $favorites, array("projects" => $projects));
+
+            return [
+                "allAssignedProjects" => $projects,
+                "allAssignedProjectsHierarchy" => $projectHierarchy,
+                "favoriteProjects" => $favorites
+            ];
+
+        }
+
+        public function getProjectHierarchyAvailableToUser($userId, $projectStatus = "open", $clientId = null)
+        {
+
+            //Load all projects user is assigned to
+            $projects = $this->projectRepository->getUserProjects(
+                userId: $userId,
+                projectStatus: $projectStatus,
+                clientId: $clientId,
+                accessStatus: "all");
+            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
 
 
+            //Build project hierarchy
+            $projectsClean = $this->cleanParentRelationship($projects);
+            $projectHierarchy = $this->findMyChildren(0, $projectsClean);
+            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
 
+            $clients = $this->getClientsFromProjectList($projects);
 
+            return [
+                "allAvailableProjects" => $projects,
+                "allAvailableProjectsHierarchy" => $projectHierarchy,
+                "clients" => $clients
+            ];
 
+        }
 
+        public function getClientsFromProjectList(array $projects): array {
 
-
-
-
-            //Fill projectColumns
-
-            /*
+            $clients = [];
             foreach ($projects as $project) {
-                //Add all items that have strategy as parent.
-                if ($project['type'] == '' || $project['type'] == null || $project['type'] == 0) {
-                    $project['type'] = 'project';
-                }
-
-                //Get project items with parent id but user does not have access to parent
-                if (!in_array($project['parent'], $projectHierarchy["strategy"]["parents"]) && !in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project["type"] != "program" && $project["type"] != "strategy") {
-                    if ($projectHierarchy['strategy']["enabled"] === true) {
-                        $project['parent'] = "noStrategyParent";
-                    }
-                    if ($projectHierarchy['program']["enabled"] === true) {
-                        $project['parent'] = "noProgramParent";
-                    }
-                }
-
-                //IF the pgm module is not active, add all items
-                if ($projectHierarchy['program']["enabled"] === false) {
-                    if ($project['type'] != "program" && $project['type'] != "strategy") {
-                        if ($project['parent'] == 0 || $project['parent'] == '' || $project['parent'] == null) {
-                            $project['parent'] = "noparent";
-                        }
-                        $projectHierarchy["project"]["items"]['project'][$project['id']] = $project;
-                    }
-                } else {
-                    //Get items with program parents
-                    if (in_array($project['parent'], $projectHierarchy["program"]["parents"]) && $project['type'] != "program" && $project['type'] != "strategy") {
-                        $projectHierarchy["project"]["items"][$project['type']][$project['id']] = $project;
-                    }
-
-                    //Get items without parents and project type(s)
-                    if ($project["type"] !== "program" && $project["type"] !== "strategy" && ($project['parent'] == 0 || $project['parent'] == '' || $project['parent'] == null)) {
-                        $project["parent"] = "noparent";
-                        $projectHierarchy["project"]["items"][$project['type']][$project['id']] = $project;
-                    }
+                if (!array_key_exists($project["clientId"], $clients)) {
+                    $clients[$project["clientId"]] = array(
+                        "name" => $project['clientName'],
+                        "id" => $project["clientId"]
+                    );
                 }
             }
 
-
-
-            $projectHierarchy = self::dispatch_filter('afterPopulatingProjectHierarchy', $projectHierarchy, array("projects" => $projects));
-
-            if ($projectHierarchy) {
-                return $projectHierarchy;
-            } else {
-                return false;
-            }*/
+            return $clients;
         }
 
         public function getProjectRole($userId, $projectId)

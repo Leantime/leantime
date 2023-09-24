@@ -4,6 +4,7 @@ namespace Leantime\Domain\Menu\Services;
 
     use Couchbase\UpsertOptions;
     use DateTime;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Environment as EnvironmentCore;
@@ -17,7 +18,6 @@ namespace Leantime\Domain\Menu\Services;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
-
     use Leantime\Domain\Users\Services\Users;
 
     use function Leantime\Domain\Tickets\Services\app;
@@ -27,6 +27,8 @@ namespace Leantime\Domain\Menu\Services;
 
 class Menu
 {
+    use Eventhelpers;
+
     private TemplateCore $tpl;
     private LanguageCore $language;
     private EnvironmentCore $config;
@@ -68,7 +70,8 @@ class Menu
         $this->settingSvc = $settingSvc;
     }
 
-    public function getUserProjectList(int $userId): array {
+    public function getUserProjectList(int $userId): array
+    {
 
         $allAssignedprojects =
         $allAvailableProjects =
@@ -78,16 +81,16 @@ class Menu
         $user = $this->userService->getUser($userId);
 
 
-        $projects = $this->projectService->getProjectHierarchyAssignedToUser($userId,'open');
+        $projects = $this->projectService->getProjectHierarchyAssignedToUser($userId, 'open');
+        $allAssignedprojects = $projects['allAssignedProjects'];
+        $allAssignedprojectsHierarchy = $projects['allAssignedProjectsHierarchy'];
+        $favoriteProjects = $projects['favoriteProjects'];
 
-        $allAssignedprojects = $projects['allAssignedprojects'];
-        $allAssignedprojectsHierarchy = $projects['allAssignedprojectsHierarchy'];
 
-
-        $allAvailableProjects = $this->projectService->getProjectsUserHasAccessTo(
-            $userId
-        );
-
+        $projects = $this->projectService->getProjectHierarchyAvailableToUser($userId, 'open');
+        $allAvailableProjects = $projects['allAvailableProjects'];
+        $allAvailableProjectsHierarchy = $projects['allAvailableProjectsHierarchy'];
+        $clients = $projects['clients'];
 
         $recent = $this->settingSvc->getSetting("usersettings." . $userId . ".recentProjects");
         $recentArr = unserialize($recent);
@@ -132,15 +135,39 @@ class Menu
             "assignedProjects" => $allAssignedprojects,
             "availableProjects" => $allAvailableProjects,
             "assignedHierarchy" => $allAssignedprojectsHierarchy,
+            "availableProjectsHierarchy" => $allAvailableProjectsHierarchy,
             "currentClient" => $currentClient,
             "menuType" => $menuType,
             "recentProjects" => $recentProjects,
             "projectType" => $projectType,
+            "favoriteProjects" => $favoriteProjects,
+            "clients" => $clients,
+
         ];
-
-
-
     }
 
-}
+    public function getProjectTypeAvatars(): array
+    {
 
+        $projectTypeAvatars = [
+            "project" => "avatar",
+            "strategy" => "fa fa-chess",
+            "program" => "fa fa-layer-group",
+        ];
+
+        return self::dispatch_filter('projectTypeAvatars', $projectTypeAvatars);
+    }
+
+    public function getProjectSelectorGroupingOptions(): array
+    {
+
+        $projectSelectGrouping =
+            [
+                "structure" => "Group by Project Structure",
+                "client" => "Group by Client",
+                "none" => "No Grouping",
+            ];
+
+        return self::dispatch_filter('projectSelectorGrouping', $projectSelectGrouping);
+    }
+}

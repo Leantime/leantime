@@ -46,17 +46,29 @@ class Menu extends Composer
         $recentProjects =
         $returnVars = [];
 
+        if(isset($_SESSION['userdata']["projectSelectFilter"])){
+            $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"];
+        } else {
+            $projectSelectFilter = array(
+                "groupBy" => "none",
+                "clients" => ''
+            );
+        }
+
         if (isset($_SESSION['userdata'])) {
 
             $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
             $allAvailableProjects  = $projectVars['availableProjects'];
+            $allAvailableProjectsHierarchy  = $projectVars['availableProjectsHierarchy'];
             $allAssignedprojectsHierarchy  = $projectVars['assignedHierarchy'];
             $currentClient  = $projectVars['currentClient'];
             $menuType  = $projectVars['menuType'];
             $projectType  = $projectVars['projectType'];
             $recentProjects  = $projectVars['recentProjects'];
+            $favoriteProjects = $projectVars['favoriteProjects'];
+            $clients = $projectVars['clients'];
 
         }
 
@@ -64,11 +76,9 @@ class Menu extends Composer
             $redirectUrl = '/dashboard/show';
         }
 
-        $projectTypeAvatars = [
-            "project" => "avatar",
-            "strategy" => "fa fa-chess",
-            "program" => "fa fa-layer-group"
-        ];
+        $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
+        $projectSelectGroupOptions = $this->menuService->getProjectSelectorGroupingOptions();
+
 
         return [
             'currentClient' => $currentClient,
@@ -77,6 +87,7 @@ class Menu extends Composer
             'currentProjectType' => $projectType,
             'allAssignedProjects' => $allAssignedprojects,
             'allAvailableProjects' => $allAvailableProjects,
+            'allAvailableProjectsHierarchy' => $allAvailableProjectsHierarchy,
             'projectHierarchy' => $allAssignedprojectsHierarchy,
             'recentProjects' => $recentProjects,
             'currentProject' => $_SESSION['currentProject'] ?? null,
@@ -90,6 +101,10 @@ class Menu extends Composer
             ],
             'redirectUrl' => $redirectUrl,
             'projectTypeAvatars' => $projectTypeAvatars,
+            'favoriteProjects' => $favoriteProjects,
+            'projectSelectGroupOptions' => $projectSelectGroupOptions,
+            'projectSelectFilter' => $projectSelectFilter,
+            'clients' => $clients,
         ];
     }
 }

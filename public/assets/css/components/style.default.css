@@ -4225,6 +4225,25 @@ h3.todaysDate {
     fill:currentColor
 }
 
+.htmx-indicator {
+    display:none;
+}
 
+.htmx-indicator img{
+    width:75px;
+    margin:auto;
+}
+
+.htmx-request.htmx-indicator {
+    display:block;
+}
+
+.htmx-request .htmx-loaded-content {
+    display: none;
+}
+
+.htmx-request.htmx-loaded-content {
+    display: none;
+}
 
 
