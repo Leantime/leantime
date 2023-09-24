@@ -29,7 +29,7 @@ class Language
      * @static
      * @final
      */
-    private const CUSTOM_LANG_FOLDER = APP_ROOT . '/custom/language/';
+    private const CUSTOM_LANG_FOLDER = APP_ROOT . '/custom/Language/';
 
     /**
      * @var string
