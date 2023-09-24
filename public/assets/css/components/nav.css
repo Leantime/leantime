@@ -1002,6 +1002,7 @@
 .notificationDropdown .dropdown-menu li .notificationDate {
     font-size:var(--font-size-s);
     font-style: italic;
+    color:var(--primary-font-color);
 }
 
 .notificationDropdown .notifcationTabs.active{
