@@ -63,7 +63,7 @@ package: clean build
 	rm -rf $(TARGET_DIR)/public/dist/images/Screenshots
 
 	#removing js directories
-	find  $(TARGET_DIR)/app/domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
+	find  $(TARGET_DIR)/app/Domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
 	#removing uncompiled js files
 	find $(TARGET_DIR)/public/dist/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
