@@ -305,7 +305,7 @@ namespace Leantime\Domain\Projects\Services {
 
 
 
-        public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = "")
+        public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = null)
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
