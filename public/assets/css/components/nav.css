@@ -1208,7 +1208,7 @@
     border-radius:var(--element-radius);
     line-height:21px;
     display:block;
-    transition: all 0.2s ease-in-out 0s;
+    transition: background-color 0.2s ease-in-out 0s;
     color:var(--primary-font-color);
 }
 

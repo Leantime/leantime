@@ -2387,9 +2387,12 @@ ul.list-inline li {
 
 /*** TRANSITION ***/
 
-.headmenu-label, .headmenu-icon, .headmenu .count,
-.leftmenu .nav-tabs a, .dropdown-menu a,
-.shortcuts li a, .userloggedinfo ul li a,
+.headmenu-label,
+.headmenu-icon, .headmenu .count,
+.leftmenu .nav-tabs a,
+.dropdown-menu a,
+.shortcuts li a,
+.userloggedinfo ul li a,
 .inputwrapper input, .inputwrapper button,
 .quickAddLink, .btn, .dropdown-toggle,
 .headmenu a,
@@ -2397,9 +2400,9 @@ ul.list-inline li {
 .tab-primary.ui-tabs .ui-tabs-nav li a,
 .sortableTicketList li,
 .sortableTicketList li .ticketBox {
-    -moz-transition: all 0.2s ease-in-out 0s;
-    -webkit-transition: all 0.2s ease-in-out 0s;
-    transition: all 0.2s ease-in-out 0s;
+    -moz-transition: background-color 0.2s ease-in-out 0s;
+    -webkit-transition: background-color 0.2s ease-in-out 0s;
+    transition: background-color 0.2s ease-in-out 0s;
 }
 
 /*** BOOTSTRAP OVERRIDE ***/
