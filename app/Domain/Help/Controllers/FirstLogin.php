@@ -96,7 +96,7 @@ namespace Leantime\Domain\Help\Controllers {
                                 $userId = $userService->createUserInvite($values);
                                 $projectsRepo->editUserProjectRelations($userId, array($_SESSION['currentProject']));
 
-                                $this->tpl->setNotification("notification.user_invited_successfully", 'success');
+                                $this->tpl->setNotification("notification.user_invited_successfully", 'success', 'user_invited_' . $i);
                             }
                         }
                     }

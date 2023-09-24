@@ -214,13 +214,7 @@
             </div>
 
             <div class="maincontentinner">
-                @if ($login::userIsAtLeast($roles::$manager))
-                    <div class="pull-right">
-                        <a class="titleInsertLink" href="{{ BASE_URL }}/projects/showProject/{!! $project['id'] !!}#team">
-                            <i class="fa fa-users"></i> {{ __('links.manage_team') }}
-                        </a>
-                    </div>
-                @endif
+                @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
                 <h5 class="subtitle">{{ __('tabs.team') }}</h5>
 

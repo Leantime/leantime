@@ -228,9 +228,9 @@
                             onclick="leantime.helperController.showHelperModal('{{ __($modal) }}', 300, 500)"
                         >{!! __('menu.what_is_this_page') !!}</a></li>
 
-                    <li><a href="https://docs.leantime.io" target="_blank">{!! __('menu.knowledge_base') !!}</a></li>
+                    <li><a href="https://leantime.io/knowledge-base/" target="_blank">{!! __('menu.knowledge_base') !!}</a></li>
 
-                    <li><a href="https://community.leantime.io" target="_blank">{!! __('menu.community') !!}</a></li>
+                    <li><a href="https://discord.gg/4zMzJtAq9z" target="_blank">{!! __('menu.community') !!}</a></li>
 
                     <li><a href="https://leantime.io/contact-us" target="_blank">{!! __('menu.contact_us') !!}</a></li>
 

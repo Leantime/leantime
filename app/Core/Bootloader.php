@@ -351,6 +351,8 @@ class Bootloader
         $frontController = $this->app->make(Frontcontroller::class);
         $incomingRequest = $this->app->make(IncomingRequest::class);
 
+        $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions, ['bootloader' => $this]);
+
         // handle public request
         if (in_array($frontController::getCurrentRoute(), $this->publicActions)) {
             $frontController::dispatch();
@@ -359,6 +361,9 @@ class Bootloader
 
         // handle API request
         if ($incomingRequest instanceof ApiRequest) {
+
+            self::dispatch_event("before_api_request", ['application' => $this]);
+
             $apiKey = $incomingRequest->getAPIKey();
             $apiUser = $this->app->make(ApiService::class)->getAPIKeyUser($apiKey);
 
