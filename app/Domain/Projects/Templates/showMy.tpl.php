@@ -18,26 +18,6 @@ foreach ($__data as $var => $val) {
         <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
-            <div class="col-md-4">
-
-            </div>
-            <div class="col-md-4">
-
-            </div>
-            <div class="col-md-4">
-                <div class="pull-right">
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$tpl->__("menu.milestone_gantt") ?></a></li>
-                            <li class="active"><a href="<?=BASE_URL ?>/projects/showMy"><?=$tpl->__("menu.card_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$tpl->__("menu.table_view") ?></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-12">
 
             <br />

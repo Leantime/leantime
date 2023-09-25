@@ -137,9 +137,7 @@ class Bootloader
         }
 
         if (! defined('CURRENT_URL')) {
-            define('CURRENT_URL', !empty($config->appUrl)
-            ? $config->appUrl . $request->getPathInfo()
-            : $request->getFullUrl());
+            define('CURRENT_URL', BASE_URL . $request->getRequestUri());
         }
 
         $this->loadHeaders();
