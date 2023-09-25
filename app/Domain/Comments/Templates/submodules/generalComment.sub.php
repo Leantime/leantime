@@ -4,6 +4,7 @@ foreach ($__data as $var => $val) {
 }
 $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
 $formUrl = CURRENT_URL;
+$formHash = md5($formUrl);
 
 //Controller may not redirect. Make sure delComment is only added once
 if (strpos($formUrl, '?delComment=') !== false) {
@@ -14,21 +15,21 @@ if (strpos($formUrl, '?delComment=') !== false) {
 }
 ?>
 
-<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm" class="formModal">
+<form method="post" accept-charset="utf-8" action="<?php echo $formUrl ?>" id="commentForm-<?=$formHash ?>" class="formModal">
 
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
-        <div class="" id="mainToggler">
+        <div class="mainToggler-<?=$formHash ?>" id="">
             <div class="commentImage">
                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>" />
             </div>
             <div class="commentReply" style="border:1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius); margin-bottom:10px;">
-                <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)">
+                <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, '<?=$formHash?>')">
                     <?php echo $tpl->__('links.add_new_comment') ?>
                 </a>
             </div>
         </div>
 
-        <div id="comment0" class="commentBox" style="display:none;">
+        <div id="comment-<?=$formHash ?>-0" class="commentBox-<?=$formHash ?>" style="display:none;">
             <div class="commentImage">
                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>" />
             </div>
@@ -37,12 +38,12 @@ if (strpos($formUrl, '?delComment=') !== false) {
                 <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
             </div>
             <input type="hidden" name="comment" value="1"/>
-            <input type="hidden" name="father" id="father" value="0"/>
+            <input type="hidden" name="father" id="father-<?=$formHash ?>" value="0"/>
             <br/>
         </div>
     <?php } ?>
 
-    <div id="comments">
+    <div id="comments-<?=$formHash ?>">
         <div>
             <?php foreach ($tpl->get('comments') as $row) : ?>
                 <div class="clearall">
@@ -65,7 +66,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
                                             <ul class="dropdown-menu">
                                                 <?php if (($row['userId'] == $_SESSION['userdata']['id']) || $login::userIsAtLeast($roles::$manager)) { ?>
-                                                    <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment">
+                                                    <li><a href="<?php echo $deleteUrlBase . $row['id'] ?>" class="deleteComment formModal">
                                                         <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                     </a></li>
                                                 <?php } ?>
@@ -78,7 +79,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                     <?php } ?>
                             </div>
                             <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></span>
-                            <div class="text mce-content-body" id="commentText-<?=$row['id']?>">
+                            <div class="text mce-content-body" id="commentText-<?=$formHash ?>-<?=$row['id']?>">
                                 <?php echo $tpl->escapeMinimal($row['text']); ?>
                             </div>
 
@@ -88,7 +89,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                         <div class="commentLinks">
                             <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                 <a href="javascript:void(0);"
-                                   onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
+                                   onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, '<?=$formHash ?>')">
                                     <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                 </a>
                             <?php } ?>
@@ -117,12 +118,12 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                             <div class="commentLinks">
                                                 <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
                                                     <a href="javascript:void(0);"
-                                                       onclick="toggleCommentBoxes(<?php echo $row['id']; ?>)">
+                                                       onclick="toggleCommentBoxes(<?php echo $row['id']; ?>, '<?=$formHash ?>')">
                                                         <span class="fa fa-reply"></span> <?php echo $tpl->__('links.reply') ?>
                                                     </a>
                                                     <?php if ($comment['userId'] == $_SESSION['userdata']['id']) { ?>
                                                         <a href="<?php echo $deleteUrlBase . $comment['id'] ?>"
-                                                           class="deleteComment">
+                                                           class="deleteComment formModal">
                                                             <span class="fa fa-trash"></span> <?php echo $tpl->__('links.delete') ?>
                                                         </a>
                                                     <?php } ?>
@@ -133,7 +134,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                     </div>
                                 <?php endforeach; ?>
                             <?php endif; ?>
-                            <div style="display:none;" id="comment<?php echo $row['id']; ?>" class="commentBox">
+                            <div style="display:none;" id="comment-<?=$formHash?>-<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
                                     <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>"/>
                                 </div>
@@ -161,23 +162,23 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
     leantime.editorController.initSimpleEditor();
 
-    function toggleCommentBoxes(id) {
+    function toggleCommentBoxes(id, formHash) {
 
         <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
             if (id == 0) {
-                jQuery('#mainToggler').hide();
+                jQuery('.mainToggler-'+formHash).hide();
             } else {
-                jQuery('#mainToggler').show();
+                jQuery('.mainToggler-'+formHash).show();
             }
-            jQuery('.commentBox textarea').remove();
+            jQuery('.commentBox-'+formHash+' textarea').remove();
 
-            jQuery('.commentBox').hide();
+            jQuery('.commentBox-'+formHash+'').hide();
 
-            jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+            jQuery('#comment-'+formHash+'-' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
             leantime.editorController.initSimpleEditor();
 
-            jQuery('#comment' + id + '').show();
-            jQuery('#father').val(id);
+            jQuery('#comment-'+formHash+'-' + id + '').show();
+            jQuery('#father-'+formHash).val(id);
 
         <?php } ?>
     }
