@@ -342,7 +342,7 @@ foreach ($__data as $var => $val) {
                                                 <div class="col-md-8">
                                                     <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>">
                                                         <span class="projectAvatar">
-                                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']?>" />
+                                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']?>&v=<?=strtotime($project['modified'] ?? '0') ?>" />
                                                         </span>
                                                         <small><?php $tpl->e($project['clientName'])?></small><br />
                                                         <strong><?php $tpl->e($project['name'])?></strong>

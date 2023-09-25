@@ -108,6 +108,7 @@ class Menu
 
 
         $projectType = "project";
+        $project = [];
         if (isset($_SESSION['currentProject'])) {
             $project = $this->projectService->getProject($_SESSION['currentProject']);
 
@@ -142,6 +143,7 @@ class Menu
             "projectType" => $projectType,
             "favoriteProjects" => $favoriteProjects,
             "clients" => $clients,
+            "currentProject" => $project,
 
         ];
     }

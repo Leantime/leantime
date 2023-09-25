@@ -53,10 +53,6 @@ namespace Leantime\Domain\Ideas\Repositories {
 
         public function getCanvasLabels()
         {
-
-            //Todo: Remove!
-            unset($_SESSION["projectsettings"]["idealabels"]);
-
             if (isset($_SESSION["projectsettings"]["idealabels"])) {
                 return $_SESSION["projectsettings"]["idealabels"];
             } else {

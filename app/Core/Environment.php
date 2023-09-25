@@ -144,7 +144,7 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * @var string S3 End Point
      */
-    public string $s3EndPoint;
+    public ?string $s3EndPoint;
 
     /**
      * @var string S3 Key
@@ -503,7 +503,7 @@ class Environment implements ArrayAccess, ConfigContract
         }
 
         /* Plugins */
-        $this->plugins = $this->getString('LEAN_PLUGINS', '');
+        $this->plugins = $this->environmentHelper("LEAN_PLUGINS", $defaultConfiguration->plugins ?? '', "string");
     }
 
     /**

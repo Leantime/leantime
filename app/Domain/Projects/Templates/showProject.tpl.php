@@ -22,15 +22,18 @@ foreach ($__data as $var => $val) {
 
         <?php echo $tpl->displayNotification() ?>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-                    <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal btn btn-default"><?=$tpl->__("links.duplicate_project") ?></a>
+        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px;">
 
-                </div>
-            </div>
+            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="nav-header">Project</li>
+                <li><a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal"><?=$tpl->__("links.duplicate_project") ?></a></li>
+                <li><a href="<?=BASE_URL?>/projects/delProject/<?=$project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a></li>
+
+            </ul>
         </div>
-
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
@@ -76,7 +79,7 @@ foreach ($__data as $var => $val) {
                                                 checked="checked"
                                                 />
                                             <div class="commentImage">
-                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>"/>
+                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>&v=<?=strtotime($assignedUser['modified']) ?>"/>
                                             </div>
                                             <label for="user-<?php echo $userId ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])); ?>
                                                 <?php if ($assignedUser['jobTitle'] != '') { ?>
@@ -142,7 +145,7 @@ foreach ($__data as $var => $val) {
                                                 <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
 
                                                 <div class="commentImage">
-                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>"/>
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>&v=<?=strtotime($row['modified']) ?>"/>
                                                 </div>
                                                 <label for="user-<?php echo $row['id'] ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></label>
                                                 <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>

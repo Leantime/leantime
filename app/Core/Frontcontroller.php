@@ -60,7 +60,7 @@ class Frontcontroller
      * @param  integer $httpResponseCode
      * @return void
      */
-    public static function dispatch($action = '', $httpResponseCode = 200): void
+    public static function dispatch(string $action = '', int $httpResponseCode = 200): void
     {
         self::$fullAction = empty($action) ? self::getCurrentRoute() : $action;
 
@@ -69,11 +69,7 @@ class Frontcontroller
         }
 
         //execute action
-        try {
-            self::executeAction(self::$fullAction, array(), $httpResponseCode);
-        } catch (Exception $e) {
-            echo $e->getMessage();
-        }
+        self::executeAction(self::$fullAction, array(), $httpResponseCode);
     }
 
     /**
@@ -96,24 +92,16 @@ class Frontcontroller
         $incomingRequest = app()->make(IncomingRequest::class);
         $controllerType = $incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
 
-        // Execute The Route
-        try {
-            //Setting default response code to 200, can be changed in controller
-            self::setResponseCode(200);
+        //Setting default response code to 200, can be changed in controller
+        self::setResponseCode(200);
 
-            $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
+        $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
 
-            if (! class_exists($classname)) {
-                self::redirect(BASE_URL . "/errors/error404", 404);
-            }
-
-            app()->make($classname);
-        } catch (Exception $e) {
-            error_log($e, 0);
-            self::redirect(BASE_URL . "/errors/error500", 500);
-
-            return;
+        if (! class_exists($classname)) {
+            self::redirect(BASE_URL . "/errors/error404", 404);
         }
+
+        app()->make($classname);
 
         self::$lastAction = $completeName;
     }

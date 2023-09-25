@@ -20,7 +20,10 @@ class Ldap
         "email" => "mail",
         "firstname" => "displayname",
         "lastname" => '',
-        "phonenumber" => 'telephonenumber',
+        "phone" => 'telephonenumber',
+        "jobTitle" => "title",
+        "jobLevel" => "level",
+        "department" => "department"
     );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
@@ -185,8 +188,7 @@ class Ldap
 
         $filter = "(" . $this->ldapKeys->username . "=" . $this->extractLdapFromUsername($username) . ")";
 
-        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone, $this->ldapKeys->jobTitle, $this->ldapKeys->jobLevel, $this->ldapKeys->department);
-//        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phonenumber);
+        $attr = array($this->ldapKeys->groups, $this->ldapKeys->firstname, $this->ldapKeys->lastname, $this->ldapKeys->email, $this->ldapKeys->phone);
 
         $result = ldap_search($this->ldapConnection, $this->ldapDn, $filter, $attr) or exit("Unable to search LDAP server");
         $entries = ldap_get_entries($this->ldapConnection, $result);
@@ -215,7 +217,7 @@ class Ldap
         //Find Firstname & Lastname
         $firstname = isset($entries[0][$this->ldapKeys->firstname]) ? $entries[0][$this->ldapKeys->firstname][0] : '';
         $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
-        $phonenumber = isset($entries[0][$this->ldapKeys->phone]) ? $entries[0][$this->ldapKeys->phone][0] : '';
+        $phone = isset($entries[0][$this->ldapKeys->phone]) ? $entries[0][$this->ldapKeys->phone][0] : '';
         $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
         $jobTitle = isset($entries[0][$this->ldapKeys->jobTitle]) ? $entries[0][$this->ldapKeys->jobTitle][0] : '';
         $jobLevel = isset($entries[0][$this->ldapKeys->jobLevel]) ? $entries[0][$this->ldapKeys->jobLevel][0] : '';
@@ -227,7 +229,7 @@ class Ldap
             error_log("LEANTIME: >>>Attributes Begin>>>>>>\n");
             error_log("LEANTIME: fn $firstname", 0);
             error_log("LEANTIME: sn $lastname", 0);
-            error_log("LEANTIME: phone $phonenumber", 0);
+            error_log("LEANTIME: phone $phone", 0);
             error_log("LEANTIME: role $role", 0);
             error_log("LEANTIME: username $uname ", 0);
             error_log("LEANTIME: jobTitle $jobTitle ", 0);
@@ -241,7 +243,7 @@ class Ldap
             "firstname" => $firstname,
             "lastname" => $lastname,
             "role" => $role,
-            "phone" => $phonenumber,
+            "phone" => $phone,
             "jobTitle" => $jobTitle,
             "jobLevel" => $jobLevel,
             "department" => $department,

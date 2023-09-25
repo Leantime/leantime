@@ -137,18 +137,16 @@ class Bootloader
         }
 
         if (! defined('CURRENT_URL')) {
-            define('CURRENT_URL', !empty($config->appUrl)
-            ? $config->appUrl . $request->getPathInfo()
-            : $request->getFullUrl());
+            define('CURRENT_URL', BASE_URL . $request->getRequestUri());
         }
 
         $this->loadHeaders();
 
         $this->checkIfInstalled();
 
-        $this->checkIfUpdated();
-
         Events::discover_listeners();
+
+        $this->checkIfUpdated();
 
         /**
          * The beginning of the application
@@ -188,9 +186,12 @@ class Bootloader
         $this->bindRequest();
 
         // Setup Configuration
-        $this->app->singleton(Environment::class, Environment::class);
+        //$this->app->singleton(Environment::class, Environment::class);
+        $this->app->singleton(Environment::class, fn ($app) => $_SESSION['configclass'] ??= new Environment($app->make(DefaultConfig::class)));
         $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
         $this->app->alias(Environment::class, alias: "config");
+
+
 
         // specify singletons/instances
         $this->app->singleton(Db::class, Db::class);
@@ -351,6 +352,8 @@ class Bootloader
         $frontController = $this->app->make(Frontcontroller::class);
         $incomingRequest = $this->app->make(IncomingRequest::class);
 
+        $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions, ['bootloader' => $this]);
+
         // handle public request
         if (in_array($frontController::getCurrentRoute(), $this->publicActions)) {
             $frontController::dispatch();
@@ -359,6 +362,9 @@ class Bootloader
 
         // handle API request
         if ($incomingRequest instanceof ApiRequest) {
+
+            self::dispatch_event("before_api_request", ['application' => $this]);
+
             $apiKey = $incomingRequest->getAPIKey();
             $apiUser = $this->app->make(ApiService::class)->getAPIKeyUser($apiKey);
 

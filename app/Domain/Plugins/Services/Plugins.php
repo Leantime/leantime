@@ -10,7 +10,7 @@ namespace Leantime\Domain\Plugins\Services {
     class Plugins
     {
         private PluginRepository $pluginRepository;
-        private string $pluginDirectory =  ROOT . "/../app/plugins/";
+        private string $pluginDirectory =  ROOT . "/../app/Plugins/";
         private EnvironmentCore $config;
 
 
@@ -191,9 +191,9 @@ namespace Leantime\Domain\Plugins\Services {
         {
             return app()->getNamespace()
                 . 'Plugins\\'
-                . htmlspecialchars($plugin->foldername)
+                . htmlspecialchars(ucfirst($plugin->foldername))
                 . '\\Services\\'
-                . htmlspecialchars($plugin->foldername);
+                . htmlspecialchars(ucfirst($plugin->foldername));
         }
     }
 }

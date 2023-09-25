@@ -1,12 +1,12 @@
 {
   "name": "leantime",
-  "version": "2.4-beta-3",
+  "version": "2.4-beta-4",
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
     "@fortawesome/fontawesome-free": "^6.4.2",
     "@popperjs/core": "^2.11.8",
-    "chart.js": "^4.4.0",
+    "chart.js": "^3.6.0",
     "chartjs-adapter-moment": "^1.0.1",
     "chosen-js": "^1.8.7",
     "composer": "^4.1.0",

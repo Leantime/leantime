@@ -83,7 +83,7 @@
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
                                 <div class="row">
                                     <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
-                                        <a href="{{ BASE_URL }}/#/tickets/showTicket/{!! $row['dependingTicketId'] > 0 ? $row['dependingTicketId'] : $row['id'] !!}">
+                                        <a href="#/tickets/showTicket/{!! $row['dependingTicketId'] > 0 ? $row['dependingTicketId'] : $row['id'] !!}">
                                             {!! $row['dependingTicketId'] > 0 ? $row['parentHeadline'] : sprintf("<strong>%s</strong>", $row['headline']) !!}
                                         </a>
 
@@ -214,13 +214,7 @@
             </div>
 
             <div class="maincontentinner">
-                @if ($login::userIsAtLeast($roles::$manager))
-                    <div class="pull-right">
-                        <a class="titleInsertLink" href="{{ BASE_URL }}/projects/showProject/{!! $project['id'] !!}#team">
-                            <i class="fa fa-users"></i> {{ __('links.manage_team') }}
-                        </a>
-                    </div>
-                @endif
+                @dispatchEvent('teamBoxBeginning', ['project' => $project])
 
                 <h5 class="subtitle">{{ __('tabs.team') }}</h5>
 
@@ -387,7 +381,7 @@
                                                     <x-comments::reply :comment="$comment" :iteration="$loop->iteration" />
                                                 @endforeach
                                             @endif
-                                            <x-comments::input :commentId="$row['id']" :userId="$_SESSION['userdata']['id']" />
+                                            <x-comments::input :commentId="$row['id']" :user="$_SESSION['userdata']" />
                                         </div>
                                     </div>
                                 </div>
@@ -519,66 +513,6 @@
                 jQuery("#projectDescription").addClass("kanbanContent");
             }
         });
-
-        /** Deprecated by HTMX
-        jQuery('.progressWrapper .dropdown-menu li input').change(function (e) {
-            if (jQuery(this).parent().hasClass('done')) {
-                jQuery(this).parent().removeClass('done');
-            } else {
-                jQuery(this).parent().addClass('done');
-            }
-
-            jQuery.ajax({
-                type : 'PATCH',
-                url  : leantime.appUrl + '/api/projects',
-                data : {
-                    patchProjectProgress : "true",
-                    values   : jQuery("form#progressForm").serialize()
-                }
-            });
-
-            var stepCount = 1;
-            var totalSteps = jQuery(".progressWrapper .step").length;
-            var stepsComplete = 1;
-            var foundCurrent = false;
-            jQuery(".progressWrapper .step").each(function(){
-
-                var tasksComplete = true;
-                jQuery(this).find("ul li").each(function() {
-                    var inputChecked = jQuery(this).find("input").attr("checked");
-                    if (typeof inputChecked === typeof undefined || inputChecked === false) {
-                        tasksComplete = false;
-                    }
-                });
-
-                if (tasksComplete) {
-                    jQuery(this).addClass("complete");
-                    stepsComplete++;
-                    jQuery(this).removeClass("current");
-                    if(jQuery(this).find(".title .fa-check").length == 0) {
-                        jQuery(this).find(".title").prepend('<i class="fa fa-check"></i>');
-                    }
-                } else {
-                    //Only do that for the first one that is incomplete
-                    if (foundCurrent === false) {
-                        jQuery(this).removeClass("complete");
-                        jQuery(this).addClass("current");
-                        foundCurrent = true;
-                    }
-
-                    if (jQuery(this).find(".title .fa-check").length == 1) {
-                        jQuery(this).find(".title .fa-check").remove();
-                    }
-                }
-
-                stepCount++;
-            });
-
-            var halfSteps =  1/totalSteps/2 *100;
-            var percentComplete = stepsComplete / totalSteps * 100 - halfSteps;
-            jQuery(".projectSteps .progress .progress-bar").css("width", percentComplete+"%");
-        });
-        **/
 
         jQuery(document).on('click', '.progressWrapper .dropdown-menu', function (e) {
             e.stopPropagation();

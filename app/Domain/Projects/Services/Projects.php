@@ -310,25 +310,29 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
             if ($projects) {
+
+                foreach ($projects as &$project) {
+                    $project['team'] = $this->projectRepository->getUsersAssignedToProject($project['id']);
+                }
+
                 return $projects;
             } else {
                 return false;
             }
         }
 
-        public function findMyChildren($currentParentId, array $projects) {
+        public function findMyChildren($currentParentId, array $projects)
+        {
 
             $branch = [];
 
             foreach ($projects as $project) {
                 if ($project['parent'] == $currentParentId) {
-
                     $children = $this->findMyChildren($project['id'], $projects);
-                    if($children) {
+                    if ($children) {
                         $project['children'] = $children;
                     }
                     $branch[] = $project;
-
                 }
             }
             return $branch;
@@ -341,7 +345,8 @@ namespace Leantime\Domain\Projects\Services {
          * @param array $projects
          * @return array
          */
-        public function cleanParentRelationship(array $projects): array {
+        public function cleanParentRelationship(array $projects): array
+        {
 
             $parents = [];
             foreach ($projects as $project) {
@@ -350,10 +355,9 @@ namespace Leantime\Domain\Projects\Services {
 
             $cleanList = [];
             foreach ($projects as $project) {
-
                 if (isset($parents[$project['parent']])) {
                     $cleanList[] = $project;
-                }else {
+                } else {
                     $project['parent'] = 0;
                     $cleanList[] = $project;
                 }
@@ -371,7 +375,8 @@ namespace Leantime\Domain\Projects\Services {
                 userId: $userId,
                 projectStatus: $projectStatus,
                 clientId: $clientId,
-                accessStatus: "assigned");
+                accessStatus: "assigned"
+            );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
 
 
@@ -382,8 +387,8 @@ namespace Leantime\Domain\Projects\Services {
 
             //Get favorite projects
             $favorites = [];
-            foreach($projects as $project) {
-                if(isset($project["isFavorite"]) && $project["isFavorite"] == 1) {
+            foreach ($projects as $project) {
+                if (isset($project["isFavorite"]) && $project["isFavorite"] == 1) {
                     $favorites[] = $project;
                 }
             }
@@ -392,9 +397,8 @@ namespace Leantime\Domain\Projects\Services {
             return [
                 "allAssignedProjects" => $projects,
                 "allAssignedProjectsHierarchy" => $projectHierarchy,
-                "favoriteProjects" => $favorites
+                "favoriteProjects" => $favorites,
             ];
-
         }
 
         public function getProjectHierarchyAvailableToUser($userId, $projectStatus = "open", $clientId = null)
@@ -405,7 +409,8 @@ namespace Leantime\Domain\Projects\Services {
                 userId: $userId,
                 projectStatus: $projectStatus,
                 clientId: $clientId,
-                accessStatus: "all");
+                accessStatus: "all"
+            );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
 
 
@@ -419,19 +424,19 @@ namespace Leantime\Domain\Projects\Services {
             return [
                 "allAvailableProjects" => $projects,
                 "allAvailableProjectsHierarchy" => $projectHierarchy,
-                "clients" => $clients
+                "clients" => $clients,
             ];
-
         }
 
-        public function getClientsFromProjectList(array $projects): array {
+        public function getClientsFromProjectList(array $projects): array
+        {
 
             $clients = [];
             foreach ($projects as $project) {
                 if (!array_key_exists($project["clientId"], $clients)) {
                     $clients[$project["clientId"]] = array(
                         "name" => $project['clientName'],
-                        "id" => $project["clientId"]
+                        "id" => $project["clientId"],
                     );
                 }
             }

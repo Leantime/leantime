@@ -78,12 +78,16 @@
     padding:0px 15px;
 }
 
+.projectListFilter .fa {
+    vertical-align: middle;
+}
+
 .leftmenu .project-selector  .projectListFilter select{
     border-color:var(--secondary-background);
     box-shadow:none;
     max-width: 135px;
     margin-top: 6px;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     margin-right: 10px;
     padding-left: 0px;
 }
@@ -646,6 +650,15 @@
 .leftpanel .leftmenu .nav-tabs .projectselector {
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector .projectSelectorFooter {
+    border-top:1px solid var(--main-border-color);
+}
+
+.leftpanel .leftmenu .nav-tabs .projectselector .projectSelectorFooter li a {
+    display: block;
+    padding-left: 15px;
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector  li a{
     color:var(--primary-font-color);
     font-size: var(--base-font-size);
@@ -690,7 +703,7 @@
 
 .leftpanel .leftmenu .nav-tabs .projectselector .scrollingTab {
     padding:0;
-    height:calc(100vh - 200px);
+    height:calc(100vh - 310px);
     overflow:auto;
 }
 
@@ -929,10 +942,14 @@
     left:auto;
 }
 
+#notificationsDropdown .scroll-wrapper {
+    height:calc(100vh - 100px);
+}
+
 .notificationDropdown .dropdown-menu {
-    right: -10px;
+    right: -15px;
     left: auto;
-    min-width:300px;
+    min-width:375px;
 }
 
 .notificationDropdown .dropdown-menu:after {
@@ -972,7 +989,12 @@
 
 .notificationDropdown .dropdown-menu li:hover {
     cursor:pointer;
-    background:var(--dropdown-link-hover-bg);
+    background:var(--main-menu-link-hover-bg);
+}
+
+.notificationDropdown .dropdown-menu li a:hover {
+    cursor:pointer;
+    background:var(--main-menu-link-hover-bg);
 }
 
 .notificationDropdown .dropdown-menu li .notificationProfileImage img {
@@ -993,6 +1015,7 @@
 .notificationDropdown .dropdown-menu li .notificationDate {
     font-size:var(--font-size-s);
     font-style: italic;
+    color:var(--primary-font-color);
 }
 
 .notificationDropdown .notifcationTabs.active{
@@ -1139,6 +1162,8 @@
 .mainwrapper.menuclosed .leftmenu .fixedMenuPoint {
     width:68px;
 }
+
+
 
 
 

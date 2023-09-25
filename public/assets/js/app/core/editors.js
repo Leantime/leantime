@@ -96,7 +96,7 @@ leantime.editorController = (function () {
                     };
 
                     jQuery.nmManual(
-                        leantime.appUrl + '/files/showAll&modalPopUp=true',
+                        leantime.appUrl + '/files/showAll?modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,
@@ -252,7 +252,7 @@ leantime.editorController = (function () {
                     };
 
                     jQuery.nmManual(
-                        leantime.appUrl + '/files/showAll&modalPopUp=true',
+                        leantime.appUrl + '/files/showAll?modalPopUp=true',
                         {
                             stack: true,
                             callbacks: shortOptions,

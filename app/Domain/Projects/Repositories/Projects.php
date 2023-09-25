@@ -79,6 +79,8 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.dollarBudget,
 					project.state,
                     project.menuType,
+                    project.type,
+                    project.modified,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId
@@ -125,6 +127,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					zp_user.notifications,
 					zp_user.profileId,
                     zp_user.status,
+                    zp_user.modified,
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
@@ -149,6 +152,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $query = "SELECT
 					project.id,
 					project.name,
+					project.details,
 					project.clientId,
 					project.state,
 					project.hourBudget,
@@ -156,6 +160,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				    project.menuType,
 				    project.type,
 				    project.parent,
+				    project.modified,
 					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
@@ -256,6 +261,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.dollarBudget,
 				    project.menuType,
 				    project.type,
+				    project.modified,
 					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
@@ -349,6 +355,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.dollarBudget,
 					project.state,
 				    project.menuType,
+				    project.modified,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId
@@ -421,6 +428,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				    zp_projects.cover,
 				    zp_projects.type,
 				    zp_projects.parent,
+				    zp_projects.modified,
 					zp_clients.name AS clientName,
 					 zp_projects.start,
 					  zp_projects.end,
@@ -577,21 +585,25 @@ namespace Leantime\Domain\Projects\Repositories {
                            `type`,
                            `parent`,
                            `start`,
-                           `end`
+                           `end`,
+                           `created`,
+                           `modified`
 
-			) VALUES (
-				:name,
-				:details,
-				:clientId,
-				:hourBudget,
-				:dollarBudget,
-			    :psettings,
-                :menuType,
-			    :type,
-			    :parent,
-			          :start,
-			          :end
-			)";
+                        ) VALUES (
+                            :name,
+                            :details,
+                            :clientId,
+                            :hourBudget,
+                            :dollarBudget,
+                            :psettings,
+                            :menuType,
+                            :type,
+                            :parent,
+                            :start,
+                            :end,
+                            :created,
+                            :modified
+                        )";
 
             $stmn = $this->db->database->prepare($query);
 
@@ -604,6 +616,8 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->bindValue('menuType', $values['menuType'], PDO::PARAM_STR);
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
+            $stmn->bindValue('created', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue('modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             $startDate = null;
             if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
@@ -660,7 +674,8 @@ namespace Leantime\Domain\Projects\Repositories {
 				type = :type,
 				parent = :parent,
 				start = :start,
-				end = :end
+				end = :end,
+				modified = :modified
 				WHERE id = :id
 
 				LIMIT 1";
@@ -678,6 +693,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->bindValue('type', $values['type'] ?? 'project', PDO::PARAM_STR);
             $stmn->bindValue('id', $id, PDO::PARAM_STR);
             $stmn->bindValue('parent', $values['parent'] ?? null, PDO::PARAM_STR);
+            $stmn->bindValue('modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             $startDate = null;
             if (isset($values['start']) && $values['start'] !== false && $values['start'] != '') {
@@ -888,7 +904,8 @@ namespace Leantime\Domain\Projects\Repositories {
             $query = "SELECT
 				zp_relationuserproject.userId,
 				zp_relationuserproject.projectId,
-				zp_projects.name
+				zp_projects.name,
+                zp_projects.modified
 			FROM zp_relationuserproject JOIN zp_projects
 				ON zp_relationuserproject.projectId = zp_projects.id
 			WHERE userId = :userId AND zp_relationuserproject.projectId = :projectId LIMIT 1";
@@ -916,15 +933,18 @@ namespace Leantime\Domain\Projects\Repositories {
 				zp_relationuserproject.projectId,
 				zp_relationuserproject.projectRole,
 				zp_projects.name,
+				zp_projects.modified,
 				zp_user.username,
 				IF(zp_user.firstname <> '', zp_user.firstname, zp_user.username) AS firstname,
 				zp_user.lastname,
+				zp_user.id,
 				zp_user.jobTitle,
 				zp_user.jobLevel,
 				zp_user.department,
 				zp_user.profileId,
 				zp_user.role,
-				zp_user.status
+				zp_user.status,
+                zp_user.modified
 			FROM zp_relationuserproject
 			    LEFT JOIN zp_projects ON zp_relationuserproject.projectId = zp_projects.id
 			    LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
@@ -1070,10 +1090,13 @@ namespace Leantime\Domain\Projects\Repositories {
                 $sql .= "" . DbCore::sanitizeToColumnString($key) . "=:" . DbCore::sanitizeToColumnString($key) . ", ";
             }
 
-            $sql .= "id=:id WHERE id=:id LIMIT 1";
+            $sql .= "modified=:modified ";
+
+            $sql .= " WHERE id=:id LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             foreach ($params as $key => $value) {
                 $stmn->bindValue(':' . DbCore::sanitizeToColumnString($key), $value, PDO::PARAM_STR);
@@ -1109,11 +1132,17 @@ namespace Leantime\Domain\Projects\Repositories {
             $lastId = $files->upload($_FILE, 'project', $id, true, 300, 300);
 
             if (isset($lastId['fileId'])) {
-                $sql = 'UPDATE `zp_projects` SET avatar = :fileId WHERE id = :userId';
+                $sql = 'UPDATE
+                            `zp_projects`
+                        SET
+                            avatar = :fileId,
+                            modified = :modified
+                        WHERE id = :userId';
 
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':fileId', $lastId['fileId'], PDO::PARAM_INT);
                 $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
+                $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
                 $stmn->execute();
                 $stmn->closeCursor();

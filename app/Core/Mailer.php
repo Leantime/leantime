@@ -91,7 +91,7 @@ class Mailer
      * @access public
      * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config, language $language)
+    public function __construct(\Leantime\Core\Environment $config, Language $language)
     {
         if ($config->email != '') {
             $this->emailDomain = $config->email;

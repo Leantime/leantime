@@ -69,6 +69,7 @@ class Menu extends Composer
             $recentProjects  = $projectVars['recentProjects'];
             $favoriteProjects = $projectVars['favoriteProjects'];
             $clients = $projectVars['clients'];
+            $currentProject = $projectVars['currentProject'];
 
         }
 
@@ -90,7 +91,7 @@ class Menu extends Composer
             'allAvailableProjectsHierarchy' => $allAvailableProjectsHierarchy,
             'projectHierarchy' => $allAssignedprojectsHierarchy,
             'recentProjects' => $recentProjects,
-            'currentProject' => $_SESSION['currentProject'] ?? null,
+            'currentProject' => $currentProject,
             'menuStructure' => $this->menuRepo->getMenuStructure($menuType) ?? [],
             'settingsLink' => [
                 'label' => __('menu.project_settings'),
@@ -104,7 +105,7 @@ class Menu extends Composer
             'favoriteProjects' => $favoriteProjects,
             'projectSelectGroupOptions' => $projectSelectGroupOptions,
             'projectSelectFilter' => $projectSelectFilter,
-            'clients' => $clients,
+            'clients' => $clients
         ];
     }
 }
