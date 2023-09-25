@@ -32,11 +32,7 @@ $menuTypes = $tpl->get('menuTypes');
             </div>
             <div class="row padding-top">
                 <div class="col-md-12">
-                    <?php if ($project['id'] != '') : ?>
-                        <div class="pull-right padding-top">
-                            <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
-                        </div>
-                    <?php endif; ?>
+
                     <input type="submit" name="save" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
                 </div>
 

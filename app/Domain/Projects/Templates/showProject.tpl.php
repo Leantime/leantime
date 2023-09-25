@@ -22,15 +22,18 @@ foreach ($__data as $var => $val) {
 
         <?php echo $tpl->displayNotification() ?>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="pull-right">
-                    <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal btn btn-default"><?=$tpl->__("links.duplicate_project") ?></a>
+        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px;">
 
-                </div>
-            </div>
+            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
+                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="nav-header">Project</li>
+                <li><a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal"><?=$tpl->__("links.duplicate_project") ?></a></li>
+                <li><a href="<?=BASE_URL?>/projects/delProject/<?=$project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a></li>
+
+            </ul>
         </div>
-
         <div class="tabbedwidget tab-primary projectTabs">
 
             <ul>
