@@ -79,7 +79,10 @@ class Config
         "email":"mail",
         "firstname":"displayname",
         "lastname":"",
-        "phonenumber":""
+        "phone":"",
+        "jobTitle":"title",
+        "jobLevel":"level",
+        "department":"department"
         }';
     //For AD use
     /*
