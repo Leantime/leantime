@@ -6,7 +6,7 @@
         @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
             <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
         @else
-            <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}' />
+            <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  strtotime($project['modified'] ?? '0') }}' />
         @endif
     </span>
     <span class='projectName'>

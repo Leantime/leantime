@@ -26,7 +26,6 @@ if (strpos($formUrl, '?delComment=') !== false) {
     </a>
 
     <div id="comment0" class="commentBox">
-        <!--<img src="<?= BASE_URL ?>/api/users?profileImage=currentUser" style="float:left; width:50px; margin-right:10px; padding:2px;"/>-->
         <textarea rows="5" cols="50" class="tinymceSimple"
                   name="text"></textarea><br/>
         <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>"
@@ -42,7 +41,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
         <div>
             <?php foreach ($tpl->get('comments') as $row) : ?>
                 <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
-                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>"
+                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?=strtotime($row['userModified']) ?>"
                          style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                     <div class="right"><?php printf(
                         $tpl->__('text.written_on'),
@@ -81,7 +80,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                 <?php if ($comments->getReplies($row['id'])) : ?>
                     <?php foreach ($comments->getReplies($row['id']) as $comment) : ?>
                         <div style="display:block; padding:10px; padding-left: 60px; border-bottom:1px solid #f0f0f0;">
-                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>"
+                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>&v=<?= $comment['userModified'] ?>"
                                  style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                             <div>
                                 <div class="right">

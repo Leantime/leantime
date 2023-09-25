@@ -19,7 +19,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
         <div class="" id="mainToggler">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>" />
             </div>
             <div class="commentReply" style="border:1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius); margin-bottom:10px;">
                 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0)">
@@ -30,7 +30,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
         <div id="comment0" class="commentBox" style="display:none;">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>" />
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
@@ -47,7 +47,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
             <?php foreach ($tpl->get('comments') as $row) : ?>
                 <div class="clearall">
                     <div class="commentImage">
-                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>"/>
+                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?= strtotime($row['userModified'] ?? '0') ?>"/>
                     </div>
                     <div class="commentMain">
                         <div class="commentContent">
@@ -99,7 +99,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                                 <?php foreach ($comments->getReplies($row['id']) as $comment) : ?>
                                     <div>
                                         <div class="commentImage">
-                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>"/>
+                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>&v=<?=strtotime($comment['userModified'] ?? '0') ?>"/>
                                         </div>
                                         <div class="commentMain">
                                             <div class="commentContent">
@@ -135,7 +135,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                             <?php endif; ?>
                             <div style="display:none;" id="comment<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
-                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>"/>
+                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>"/>
                                 </div>
                                 <div class="commentReply">
                                     <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" class="btn btn-primary"/>

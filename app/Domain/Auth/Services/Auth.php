@@ -323,6 +323,7 @@ namespace Leantime\Domain\Auth\Services {
                         'twoFASecret' => $this->twoFASecret,
                         'isLdap' => $isLdap,
                         'createdOn' => $user['createdOn'] ?? '',
+                        'modified' => $user['modified'] ?? date("Y-m-d H:i:s"),
             ]);
 
             $this->updateUserSessionDB($this->userId, $this->session);

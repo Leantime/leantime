@@ -12,12 +12,11 @@ $currentClientName = $tpl->get("currentClientName");
 <div class="pageheader">
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>
     <div class="pageicon">
-        <span class="fa fa-fw fa-thumb-tack"></span>
+        <span class="fa fa fa-briefcase"></span>
     </div>
     <div class="pagetitle">
 
-
-        <h1><?php echo $tpl->__("headlines.my_portfolio"); ?>
+        <h1><?php echo $tpl->__("headlines.my_projects"); ?>
 
             <?php if (count($clients) > 0) {?>
                 //

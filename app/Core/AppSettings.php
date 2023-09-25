@@ -12,7 +12,7 @@ class AppSettings
 {
     public $appVersion = "2.4-beta-3";
 
-    public $dbVersion = "2.1.21";
+    public $dbVersion = "2.1.22";
 
     protected Environment $config;
 

@@ -27,8 +27,6 @@ if ($login->logged_in()!==true) {
     header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
     header('Content-Type: image/jpeg');
 
-
-
     ob_end_clean();
     clearstatcache();
     readfile(__DIR__.'/dist/images/leantime-no-access.jpg');

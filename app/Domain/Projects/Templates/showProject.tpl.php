@@ -76,7 +76,7 @@ foreach ($__data as $var => $val) {
                                                 checked="checked"
                                                 />
                                             <div class="commentImage">
-                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>"/>
+                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>&v=<?=strtotime($assignedUser['modified']) ?>"/>
                                             </div>
                                             <label for="user-<?php echo $userId ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])); ?>
                                                 <?php if ($assignedUser['jobTitle'] != '') { ?>
@@ -142,7 +142,7 @@ foreach ($__data as $var => $val) {
                                                 <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
 
                                                 <div class="commentImage">
-                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>"/>
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>&v=<?=strtotime($row['modified']) ?>"/>
                                                 </div>
                                                 <label for="user-<?php echo $row['id'] ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></label>
                                                 <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>

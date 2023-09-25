@@ -67,7 +67,7 @@ foreach ($__data as $var => $val) {
                                 <div class="row" style="padding-bottom:10px;">
                                     <div class="col-md-8">
                                     <div class="projectAvatar">
-                                        <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>"/>
+                                        <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>&v=<?=strtotime($project['modified'] ?? '0') ?>"/>
                                     </div>
                                     <small><?php $tpl->e($project['clientName'])?></small>
                                     <h4>

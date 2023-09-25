@@ -148,7 +148,7 @@ $canvasItems = $tpl->get('canvasItems');
                                          $tpl->escape($user['lastname'])
                                      ) . "' data-value='" . $row['id'] . "_" . $user['id'] . "_" .
                                      $user['profileId'] . "' id='userStatusChange" . $row['id'] . $user['id'] . "' ><img src='" .
-                                     BASE_URL . "/api/users?profileImage=" . $user['id'] . "' width='25' " .
+                                     BASE_URL . "/api/users?profileImage=" . $user['id'] . "&v=" . $user['modified'] . "' width='25' " .
                                      "style='vertical-align: middle; margin-right:5px;'/>" .
                                      sprintf(
                                          $tpl->__("text.full_name"),
