@@ -381,7 +381,7 @@
                                                     <x-comments::reply :comment="$comment" :iteration="$loop->iteration" />
                                                 @endforeach
                                             @endif
-                                            <x-comments::input :commentId="$row['id']" :userId="$_SESSION['userdata']['id']" />
+                                            <x-comments::input :commentId="$row['id']" :user="$_SESSION['userdata']" />
                                         </div>
                                     </div>
                                 </div>

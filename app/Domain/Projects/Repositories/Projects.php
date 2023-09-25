@@ -79,6 +79,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					project.dollarBudget,
 					project.state,
                     project.menuType,
+                    project.type,
                     project.modified,
 					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
@@ -126,6 +127,7 @@ namespace Leantime\Domain\Projects\Repositories {
 					zp_user.notifications,
 					zp_user.profileId,
                     zp_user.status,
+                    zp_user.modified,
                     zp_relationuserproject.projectRole
 				FROM zp_relationuserproject
 				LEFT JOIN zp_user ON zp_relationuserproject.userId = zp_user.id
@@ -150,6 +152,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $query = "SELECT
 					project.id,
 					project.name,
+					project.details,
 					project.clientId,
 					project.state,
 					project.hourBudget,
@@ -934,6 +937,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				zp_user.username,
 				IF(zp_user.firstname <> '', zp_user.firstname, zp_user.username) AS firstname,
 				zp_user.lastname,
+				zp_user.id,
 				zp_user.jobTitle,
 				zp_user.jobLevel,
 				zp_user.department,

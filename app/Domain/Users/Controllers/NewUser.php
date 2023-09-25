@@ -116,6 +116,13 @@ namespace Leantime\Domain\Users\Controllers {
                     }
                 }
 
+                $preSelectedClient = '';
+                if (isset($_GET['preSelectedClient'])) {
+                    $preSelectedClient = (int)$_GET['preSelectedClient'];
+                }
+
+
+                $this->tpl->assign('preSelectedClient', $preSelectedClient);
                 $this->tpl->assign('clients', $clients->getAll());
                 $this->tpl->assign('allProjects', $this->projectsRepo->getAll());
                 $this->tpl->assign('roles', Roles::getRoles());
