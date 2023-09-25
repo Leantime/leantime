@@ -731,12 +731,12 @@ namespace Leantime\Domain\Install\Repositories {
                     `authors`)
                     VALUES
                     (
-                    'leantime/motivationalquotes',
+                    'leantime/MotivationalQuotes',
                     1,
                     'Displays a random quote on the welcome page',
                     '0.1',
                     '2023-07-20 00:00:00',
-                    'motivationalQuotes',
+                    'MotivationalQuotes',
                     'https://leantime.io',
                     '[{\"name\":\"Leantime\",\"email\":\"support@leantime.io\"}]');
 

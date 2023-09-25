@@ -34,10 +34,11 @@ class Oidc
     private string $fieldEmail = '';
     private string $fieldFirstName = '';
     private string $fieldLastName = '';
+    private Language $language;
 
     public function __construct(
-        environment $config,
-        language $language,
+        Environment $config,
+        Language $language,
         AuthService $authService,
         UserRepository $userRepo
     ) {
