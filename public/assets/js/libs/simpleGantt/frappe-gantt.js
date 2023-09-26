@@ -816,10 +816,6 @@ var Gantt = (function () {
             let changed = false;
             const { new_start_date, new_end_date } = this.compute_start_end_date();
 
-            //console.log("Date Changed");
-            //console.log(new_start_date);
-            //console.log(new_end_date);
-
             if (Number(this.task._start) !== Number(new_start_date)) {
                 changed = true;
                 this.task._start = new_start_date;
@@ -890,10 +886,6 @@ var Gantt = (function () {
             const diff = date_utils.diff(task_start, gantt_start, 'hour');
             let x = (diff / step) * column_width;
 
-            //if (this.gantt.view_is('Month')) {
-                //const diff = date_utils.diff(task_start, gantt_start, 'day');
-                //x = (diff * column_width) / 30;
-            //}
             return x;
         }
 
@@ -1684,14 +1676,7 @@ var Gantt = (function () {
 
                 if (this.view_is(VIEW_MODE.MONTH)) {
 
-                    /*console.log("tick maker");
-                    console.log(date);
-                    console.log(date_utils.get_days_in_month(date));
-                    console.log(this.options.column_width);*/
-
                     tick_x +=  (this.options.column_width / 30) * date_utils.get_days_in_month(date);
-
-                    //console.log(tick_x);
 
                 } else {
                     tick_x += this.options.column_width;
