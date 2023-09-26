@@ -24,7 +24,6 @@ package: clean build
 	cp -R ./app $(TARGET_DIR)
 	cp -R ./bin $(TARGET_DIR)
 	mkdir -p $(TARGET_DIR)/config
-	cp ./config/appSettings.php $(TARGET_DIR)/config
 	cp ./config/configuration.sample.php $(TARGET_DIR)/config
 	cp ./config/sample.env $(TARGET_DIR)/config
 	mkdir -p $(TARGET_DIR)/logs
@@ -64,7 +63,7 @@ package: clean build
 	rm -rf $(TARGET_DIR)/public/dist/images/Screenshots
 
 	#removing js directories
-	find  $(TARGET_DIR)/app/domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
+	find  $(TARGET_DIR)/app/Domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
 	#removing uncompiled js files
 	find $(TARGET_DIR)/public/dist/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
@@ -85,14 +84,14 @@ gendocs: # Requires github CLI (brew install gh)
 
 	# Generate the docs
 	phpDocumentor
-	vendor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md --memory-limit=-1
+	php vendor/bin/leantime-documentor parse app --format=markdown --template=templates/markdown.php --output=builddocs/technical/hooks.md --memory-limit=-1
 
 	# create pull request
-	cd $(DOCS_DIR) && git switch -c "release/$(VERSION)
+	cd $(DOCS_DIR) && git switch -c "release/$(VERSION)"
 	cd $(DOCS_DIR) && git add -A
-	cd $(DOCS_DIR) && git commit -m "Generated docs release $(VERSION)
-	cd $(DOCS_DIR) && git push --set-upstream origin "release/$(VERSION)
-	cd $(DOCS_DIR) && gh pr create --title "release/$(VERSION) --body ""
+	cd $(DOCS_DIR) && git commit -m "Generated docs release $(VERSION)"
+	cd $(DOCS_DIR) && git push --set-upstream origin "release/$(VERSION)"
+	cd $(DOCS_DIR) && gh pr create --title "release/$(VERSION) --body "
 
 	# Delete the temporary docs directory
 	rm -rf $(DOCS_DIR)
@@ -104,10 +103,10 @@ clean:
 run-dev: build-dev
 	cd .dev && docker-compose up --build --remove-orphans
 
-Acceptance-test: build-dev
+acceptance-test: build-dev
 	php vendor/bin/codecept run Acceptance --steps
 
-Acceptance-test-ci: build-dev
+acceptance-test-ci: build-dev
 	php vendor/bin/codecept build
 ifeq ($(strip $(RUNNING_DOCKER_CONTAINERS)),)
 	@echo "No running docker containers found"

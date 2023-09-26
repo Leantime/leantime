@@ -177,7 +177,7 @@ class Events
         $pluginPath = APP_ROOT . "/app/Plugins/";
 
         $enabledPlugins = [];
-        if ($_SESSION['isInstalled'] === true && $_SESSION['isUpdated'] === true) {
+        if ($_SESSION['isInstalled'] === true) {
             $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
             $enabledPlugins = $pluginService->getEnabledPlugins();
         }

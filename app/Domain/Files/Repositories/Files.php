@@ -170,7 +170,7 @@ namespace Leantime\Domain\Files\Repositories {
             }
 
             if ($userId && $userId > 0) {
-                $sql .= " AND userId=" . $userId;
+                $sql .= " AND userId= :userId";
             }
 
             $stmn = $this->db->database->prepare($sql);
@@ -180,6 +180,11 @@ namespace Leantime\Domain\Files\Repositories {
 
             if ($moduleId != null) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+            }
+
+            if ($userId && $userId > 0) {
+                $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+
             }
 
             $stmn->execute();

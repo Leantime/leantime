@@ -18,14 +18,36 @@
 .nmReposition {
 	position: absolute;
 }
-.nyroModalCloseButton {
-	top: -8px;
-	right: -13px;
-	width: 12px;
-	height: 12px;
-	text-indent: -9999em;
-	background: url(../../js/libs/jquery.nyroModal/img/close.gif);
+
+.nyroModalCloseButton:hover {
+
 }
+
+.nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
+
+}
+
+.nyroModalCloseButton {
+
+    font-size: var(--font-size-xxl);
+    text-indent: 0;
+    color: #aaa !important;
+    border-radius:5px;
+    height: 25px;
+    line-height: 26px;
+    right: 26px;
+    text-align: center;
+    top: 31px;
+    width: 25px;
+    z-index: 1000010;
+}
+
+.nyroModalCloseButton:hover {
+    text-decoration: none;
+    color: var(--primary-font-color);
+    background-color:var(--col-hover-bg);
+}
+
 .nyroModalTitle {
 	top: -26px;
 	left: 0;
@@ -100,15 +122,11 @@
 	left: 0;
 }
 .nyroModalPrev:hover {
-	background-image: url(../../js/libs/jquery.nyroModal/img/prev.gif);
 }
 .nyroModalNext {
 	right: 0;
-	background-position: right 20%;
 }
 .nyroModalNext:hover {
-	background-position: right 20%;
-	background-image: url(../../js/libs/jquery.nyroModal/img/next.gif);
 }
 
 .nyroModalCont textarea,

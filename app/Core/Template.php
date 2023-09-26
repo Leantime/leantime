@@ -307,6 +307,16 @@ class Template
             'endspaceless',
             fn ($args) => "<?php echo preg_replace('/>\\s+</', '><', ob_get_clean()); ?>",
         );
+
+        $this->bladeCompiler->directive(
+            'formatDate',
+            fn ($args) => "<?php echo \$tpl->getFormattedDateString($args); ?>",
+        );
+
+        $this->bladeCompiler->directive(
+            'formatTime',
+            fn ($args) => "<?php echo \$tpl->getFormattedTimeString($args); ?>",
+        );
     }
 
     /**
@@ -454,7 +464,7 @@ class Template
     protected function confirmLayoutName($layoutName, $template)
     {
         $layout = htmlspecialchars($layoutName);
-        $layout = self::dispatch_filter('layout', $layout);
+        $layout = self::dispatch_filter("layout", $layout);
         $layout = self::dispatch_filter("layout.$template", $layout);
 
         $layout = $this->getTemplatePath('global', "layouts.$layout");
@@ -619,7 +629,7 @@ class Template
             $notification = app('blade.compiler')::render(
                 '<div class="inputwrapper login-alert login-{{ $type }}" style="position: relative;">
                     <div class="alert alert-{{ $type }}" style="padding:15px;" >
-                        <strong>{{ $message }}</strong>
+                        <strong>{!! $message !!}</strong>
                     </div>
                 </div>',
                 [

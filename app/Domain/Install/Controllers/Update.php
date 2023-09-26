@@ -41,7 +41,8 @@ namespace Leantime\Domain\Install\Controllers {
                 FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
             }
 
-            $this->tpl->display("install.update", "entry");
+            $updatePage = self::dispatch_filter('customUpdatePage', 'install.update');
+            $this->tpl->display($updatePage, "entry");
         }
 
         public function post($params)

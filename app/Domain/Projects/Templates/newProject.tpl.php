@@ -10,10 +10,6 @@ $project = $tpl->get('project');
 
 <div class="pageheader">
 
-    <div class="pull-right padding-top">
-        <a href="<?=BASE_URL ?>/projects/showAll" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?php echo $tpl->__('links.go_back') ?></a>
-    </div>
-
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
         <h5><?php echo $tpl->__('label.administration') ?></h5>

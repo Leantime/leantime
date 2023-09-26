@@ -348,6 +348,7 @@ class Fileupload
         );
 
         if ($this->config->useS3 == true && $fullPath == '') {
+
             $s3Client = new S3Client([
                 'version'     => 'latest',
                 'region'      => $this->config->s3Region,
@@ -394,6 +395,10 @@ class Fileupload
                 if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
                     header('Content-type: ' . $mimes[$ext]);
                     header('Content-disposition: inline; filename="' . $imageName . '";');
+                    header('Pragma: public');
+                    header('Cache-Control: max-age=900');
+                    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 900));
+
 
                     readfile($fullPath);
                 }

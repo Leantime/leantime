@@ -2387,9 +2387,12 @@ ul.list-inline li {
 
 /*** TRANSITION ***/
 
-.headmenu-label, .headmenu-icon, .headmenu .count,
-.leftmenu .nav-tabs a, .dropdown-menu a,
-.shortcuts li a, .userloggedinfo ul li a,
+.headmenu-label,
+.headmenu-icon, .headmenu .count,
+.leftmenu .nav-tabs a,
+.dropdown-menu a,
+.shortcuts li a,
+.userloggedinfo ul li a,
 .inputwrapper input, .inputwrapper button,
 .quickAddLink, .btn, .dropdown-toggle,
 .headmenu a,
@@ -2397,9 +2400,9 @@ ul.list-inline li {
 .tab-primary.ui-tabs .ui-tabs-nav li a,
 .sortableTicketList li,
 .sortableTicketList li .ticketBox {
-    -moz-transition: all 0.2s ease-in-out 0s;
-    -webkit-transition: all 0.2s ease-in-out 0s;
-    transition: all 0.2s ease-in-out 0s;
+    -moz-transition: background-color 0.2s ease-in-out 0s;
+    -webkit-transition: background-color 0.2s ease-in-out 0s;
+    transition: background-color 0.2s ease-in-out 0s;
 }
 
 /*** BOOTSTRAP OVERRIDE ***/
@@ -2989,8 +2992,6 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .modal-footer .btn.btn-default {
-    background-color:var(--main-action-bg);
-    color:var(--main-action-color);
 }
 
 .modal-header .close {
@@ -3224,33 +3225,7 @@ a.filter-term {
 
 }
 
-.nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {
 
-}
-
-.nyroModalCloseButton {
-
-    font-size: 20px;
-    text-indent: 0;
-    height: 17px;
-    width: 17px;
-    line-height: 25px;
-    text-align: center;
-    border-radius: 14px;
-    color: #999 !important;
-    z-index: 1000010;
-    border: 0 solid #ddd;
-    background: url(../../images/close.png) center center no-repeat;
-    top: 20px;
-    right: 20px;
-
-
-}
-
-.nyroModalCloseButton:hover {
-    text-decoration: none;
-    color: #000;
-}
 
 .hideOnLoad {
     display: none;
@@ -3720,6 +3695,7 @@ body .widgettitle .editHeadline:hover {
     margin-top:0px;
     float:left;
     margin-right:10px;
+
 }
 
 .commentImage img {
@@ -3727,6 +3703,7 @@ body .widgettitle .editHeadline:hover {
     width:38px;
     height:38px;
     border:1px solid var(--main-border-color);
+    background:var(--secondary-background);
 }
 .commentLinks {
 
@@ -3919,7 +3896,7 @@ a.titleInsertLink:hover {
 
 .scrollableItemList {
     width:100%;
-    height:50%;
+    height:80%;
     max-height:500px;
     overflow:auto;
     padding:10px;
@@ -4253,6 +4230,25 @@ h3.todaysDate {
     fill:currentColor
 }
 
+.htmx-indicator {
+    display:none;
+}
 
+.htmx-indicator img{
+    width:75px;
+    margin:auto;
+}
+
+.htmx-request.htmx-indicator {
+    display:block;
+}
+
+.htmx-request .htmx-loaded-content {
+    display: none;
+}
+
+.htmx-request.htmx-loaded-content {
+    display: none;
+}
 
 

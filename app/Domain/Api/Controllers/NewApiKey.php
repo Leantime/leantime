@@ -28,6 +28,9 @@ namespace Leantime\Domain\Api\Controllers {
             UserService $userService,
             ApiService $APIService
         ) {
+
+            self::dispatch_event('api_key_init', $this);
+
             $this->userRepo = $userRepo;
             $this->projectsRepo = $projectsRepo;
             $this->userService = $userService;

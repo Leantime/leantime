@@ -8,7 +8,8 @@
 
 \Leantime\Core\Events::add_event_listener(
     //Register event listener
-    "core.template.tpl.dashboard.home.afterWelcomeMessage",
+    "leantime.core.template.tpl.dashboard.home.afterWelcomeMessage",
+
     //Create function for the event
     function ($payload) {
         // code here

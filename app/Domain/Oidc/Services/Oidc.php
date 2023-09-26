@@ -34,10 +34,11 @@ class Oidc
     private string $fieldEmail = '';
     private string $fieldFirstName = '';
     private string $fieldLastName = '';
+    private Language $language;
 
     public function __construct(
-        environment $config,
-        language $language,
+        Environment $config,
+        Language $language,
         AuthService $authService,
         UserRepository $userRepo
     ) {
@@ -45,7 +46,10 @@ class Oidc
         $this->authService = $authService;
         $this->userRepo = $userRepo;
         $this->language = $language;
+
+
         $providerUrl = $this->config->get('oidcProviderUrl');
+
         $this->providerUrl = !empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
         $this->clientId = $this->config->get('oidcClientId');
         $this->clientSecret = $this->config->get('oidcClientSecret');

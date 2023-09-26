@@ -22,14 +22,14 @@ class Language
      * @static
      * @final
      */
-    private const DEFAULT_LANG_FOLDER = APP_ROOT . '/app/language/';
+    private const DEFAULT_LANG_FOLDER = APP_ROOT . '/app/Language/';
 
     /**
      * @var string
      * @static
      * @final
      */
-    private const CUSTOM_LANG_FOLDER = APP_ROOT . '/custom/language/';
+    private const CUSTOM_LANG_FOLDER = APP_ROOT . '/custom/Language/';
 
     /**
      * @var string

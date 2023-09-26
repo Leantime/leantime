@@ -1,0 +1,47 @@
+<div class="projectListFilter">
+
+    <form
+          hx-target="#mainProjectSelector"
+          hx-swap="outerHTML"
+          hx-trigger="change">
+        <i class="fas fa-filter"></i>
+        <select data-placeholder="" title=""
+                hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu"
+                hx-target="#mainProjectSelector"
+                hx-swap="outerHTML"
+                hx-indicator=".htmx-indicator, .htmx-loaded-content"
+                name="client"
+                id="clientProjectSelect" >
+            <option value="" data-placeholder="true">All Clients</option>
+            @foreach ($clients as $client)
+                <option value='{{ $client['id'] }}'
+                @if (isset($projectSelectFilter['clients']) && $projectSelectFilter['clients'] == $client['id'])
+                    selected='selected'
+                @endif
+               >{{ $client['name'] }}</option>
+            @endforeach
+        </select>
+        <i class="fa-solid fa-diagram-project"></i>
+        <select data-placeholder="" name="groupBy" id="groupBySelect"
+                hx-post="{{ BASE_URL }}/hx/menu/projectSelector/update-menu"
+                hx-target="#mainProjectSelector"
+                hx-indicator=".htmx-indicator, .htmx-loaded-content"
+                hx-swap="outerHTML">
+            @foreach ($projectSelectGroupOptions as $key => $group)
+                <option value='{{ $key }}'
+
+                    {{  $projectSelectFilter["groupBy"] == $key ? " selected='selected' " : "" }}
+
+                >{{ $group }}</option>
+
+            @endforeach
+        </select>
+
+    </form>
+
+</div>
+
+<div class="htmx-indicator tw-ml-m tw-mr-m tw-pt-l">
+    <x-global::loadingText type="project" count="5" includeHeadline="false"/>
+</div>
+

@@ -193,9 +193,9 @@ foreach ($__data as $var => $val) {
 
                                                         <small><?=$tpl->e($row['projectName']) ?></small><br />
                                                         <?php if ($row['dependingTicketId'] > 0) { ?>
-                                                            <a href="<?=BASE_URL?>/dashboard/home/#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
+                                                            <a href="#/tickets/showTicket/<?=$row['dependingTicketId'] ?>"><?=$tpl->escape($row['parentHeadline']) ?></a> //
                                                         <?php } ?>
-                                                        <strong><a href="<?=BASE_URL ?>/dashboard/home/#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
+                                                        <strong><a href="#/tickets/showTicket/<?php echo $row['id'];?>" ><?php $tpl->e($row['headline']); ?></a></strong>
 
                                                     </div>
                                                 </div>
@@ -342,7 +342,7 @@ foreach ($__data as $var => $val) {
                                                 <div class="col-md-8">
                                                     <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>">
                                                         <span class="projectAvatar">
-                                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']?>" />
+                                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']?>&v=<?=strtotime($project['modified'] ?? '0') ?>" />
                                                         </span>
                                                         <small><?php $tpl->e($project['clientName'])?></small><br />
                                                         <strong><?php $tpl->e($project['name'])?></strong>

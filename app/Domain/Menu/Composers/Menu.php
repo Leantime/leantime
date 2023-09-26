@@ -21,18 +21,21 @@ class Menu extends Composer
     private SettingService $settingSvc;
     private MenuRepository $menuRepo;
     private IncomingRequestCore $incomingRequest;
+    private \Leantime\Domain\Menu\Services\Menu $menuService;
 
     public function init(
         ProjectService $projectService,
         TicketService $ticketService,
         SettingService $settingSvc,
         MenuRepository $menuRepo,
+        \Leantime\Domain\Menu\Services\Menu $menuService,
         IncomingRequestCore $request
     ) {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->settingSvc = $settingSvc;
         $this->menuRepo = $menuRepo;
+        $this->menuService = $menuService;
         $this->incomingRequest = $request;
     }
 
@@ -43,64 +46,40 @@ class Menu extends Composer
         $recentProjects =
         $returnVars = [];
 
-        if (isset($_SESSION['userdata'])) {
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(
-                $_SESSION['userdata']['id'],
-                'open'
+        if(isset($_SESSION['userdata']["projectSelectFilter"])){
+            $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"];
+        } else {
+            $projectSelectFilter = array(
+                "groupBy" => "none",
+                "clients" => ''
             );
-
-            $allAssignedprojectsHierarchy = $this->projectService->getProjectHierarchyAssignedToUser(
-                $_SESSION['userdata']['id'],
-                'open'
-            );
-
-            $allAvailableProjects = $this->projectService->getProjectsUserHasAccessTo(
-                $_SESSION['userdata']['id'],
-                'open',
-                $_SESSION['userdata']['clientId']
-            );
-
-            $recent = $this->settingSvc->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".recentProjects");
-            $recentArr = unserialize($recent);
-
-            if (is_array($recentArr) && is_array($allAvailableProjects)) {
-                $availableProjectColumn = array_column($allAvailableProjects, 'id');
-                foreach ($recentArr as $recentItem) {
-                    $found_key = array_search($recentItem, $availableProjectColumn);
-                    if ($found_key !== false) {
-                        $recentProjects[] = $allAvailableProjects[$found_key];
-                    }
-                }
-            }
         }
 
-        $projectType = "project";
-        if (isset($_SESSION['currentProject'])) {
-            $project = $this->projectService->getProject($_SESSION['currentProject']);
+        if (isset($_SESSION['userdata'])) {
 
-            $projectType = ($project !== false && isset($project['type']))
-                ? $project['type']
-                : "project";
+            $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);
 
-            if ($projectType != '' && $projectType != 'project') {
-                $menuType = $projectType;
-            } else {
-                $menuType = MenuRepository::DEFAULT_MENU;
-            }
+            $allAssignedprojects = $projectVars['assignedProjects'];
+            $allAvailableProjects  = $projectVars['availableProjects'];
+            $allAvailableProjectsHierarchy  = $projectVars['availableProjectsHierarchy'];
+            $allAssignedprojectsHierarchy  = $projectVars['assignedHierarchy'];
+            $currentClient  = $projectVars['currentClient'];
+            $menuType  = $projectVars['menuType'];
+            $projectType  = $projectVars['projectType'];
+            $recentProjects  = $projectVars['recentProjects'];
+            $favoriteProjects = $projectVars['favoriteProjects'];
+            $clients = $projectVars['clients'];
+            $currentProject = $projectVars['currentProject'];
 
-            if ($project !== false && isset($project["clientId"])) {
-                $currentClient = $project["clientId"];
-            } else {
-                $currentClient = '';
-            }
-        } else {
-            $menuType = MenuRepository::DEFAULT_MENU;
-            $currentClient = '';
         }
 
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
             $redirectUrl = '/dashboard/show';
         }
+
+        $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
+        $projectSelectGroupOptions = $this->menuService->getProjectSelectorGroupingOptions();
+
 
         return [
             'currentClient' => $currentClient,
@@ -109,9 +88,10 @@ class Menu extends Composer
             'currentProjectType' => $projectType,
             'allAssignedProjects' => $allAssignedprojects,
             'allAvailableProjects' => $allAvailableProjects,
+            'allAvailableProjectsHierarchy' => $allAvailableProjectsHierarchy,
             'projectHierarchy' => $allAssignedprojectsHierarchy,
             'recentProjects' => $recentProjects,
-            'currentProject' => $_SESSION['currentProject'] ?? null,
+            'currentProject' => $currentProject,
             'menuStructure' => $this->menuRepo->getMenuStructure($menuType) ?? [],
             'settingsLink' => [
                 'label' => __('menu.project_settings'),
@@ -121,6 +101,11 @@ class Menu extends Composer
                 'settingsTooltip' => __('menu.project_settings_tooltip'),
             ],
             'redirectUrl' => $redirectUrl,
+            'projectTypeAvatars' => $projectTypeAvatars,
+            'favoriteProjects' => $favoriteProjects,
+            'projectSelectGroupOptions' => $projectSelectGroupOptions,
+            'projectSelectFilter' => $projectSelectFilter,
+            'clients' => $clients
         ];
     }
 }

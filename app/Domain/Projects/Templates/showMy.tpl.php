@@ -18,26 +18,6 @@ foreach ($__data as $var => $val) {
         <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
-            <div class="col-md-4">
-
-            </div>
-            <div class="col-md-4">
-
-            </div>
-            <div class="col-md-4">
-                <div class="pull-right">
-                    <div class="btn-group viewDropDown">
-                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
-                        <ul class="dropdown-menu">
-                            <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$tpl->__("menu.milestone_gantt") ?></a></li>
-                            <li class="active"><a href="<?=BASE_URL ?>/projects/showMy"><?=$tpl->__("menu.card_view") ?></a></li>
-                            <li><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$tpl->__("menu.table_view") ?></a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-12">
 
             <br />
@@ -65,16 +45,20 @@ foreach ($__data as $var => $val) {
                         <div class="row " id="projectProgressContainer">
                             <div class="col-md-12">
                                 <div class="row" style="padding-bottom:10px;">
-                                    <div class="col-md-8">
-                                    <div class="projectAvatar">
-                                        <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>"/>
+                                    <div class="col-md-9">
+                                        <div class="projectAvatar">
+                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>&v=<?=strtotime($project['modified'] ?? '0') ?>"/>
+                                        </div>
+                                        <small><?php $tpl->e($project['clientName'])?></small>
+                                        <h4>
+                                            <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"
+                                               <?php if(strlen($project['details'])>0){ ?>
+                                            data-tippy-content="<?=$tpl->e(substr(strip_tags($project['details']), 0, 80)) ?>"
+                                               <?php } ?>
+                                            ><?php $tpl->e($project['name'])?></a>
+                                        </h4>
                                     </div>
-                                    <small><?php $tpl->e($project['clientName'])?></small>
-                                    <h4>
-                                        <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"><?php $tpl->e($project['name'])?></a>
-                                    </h4>
-                                    </div>
-                                    <div class="col-md-4" style="text-align:right">
+                                    <div class="col-md-3" style="text-align:right">
                                         <?php if ($project['status'] !== null && $project['status'] != '') {?>
                                             <span class="label label-<?php $tpl->e($project['status'])?>"><?=$tpl->__("label.project_status_" . $project['status']) ?></span><br />
 
@@ -83,22 +67,7 @@ foreach ($__data as $var => $val) {
                                         <?php } ?>
                                     </div>
                                 </div>
-
-                                <div class="row">
-
-                                    <div class="col-md-7">
-                                        <?=$tpl->__("subtitles.project_progress") ?>
-                                    </div>
-                                    <div class="col-md-5" style="text-align:right">
-                                        <?=sprintf($tpl->__("text.percent_complete"), round($project['progress']['percent']))?>
-                                    </div>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?=round($project['progress']['percent']); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=round($project['progress']['percent']); ?>%">
-                                        <span class="sr-only"><?=round($project['progress']['percent']); ?>% Complete</span>
-                                    </div>
-                                </div>
-                                <br />
+                                <div class="clearall"></div><br />
 
                                 <?php if ($project['lastUpdate'] !== false) {?>
                                     <div class="lastStatus">
@@ -120,12 +89,51 @@ foreach ($__data as $var => $val) {
                                     <div class="clearall"></div>
                                     <br />
                                 <?php } ?>
+
+                                <div class="row">
+                                    <div class="col-md-7">
+                                        <?=$tpl->__("subtitles.project_progress") ?>
+                                    </div>
+                                    <div class="col-md-5" style="text-align:right">
+                                        <?=sprintf($tpl->__("text.percent_complete"), round($project['progress']['percent']))?>
+                                    </div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?=round($project['progress']['percent']); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=round($project['progress']['percent']); ?>%">
+                                        <span class="sr-only"><?=round($project['progress']['percent']); ?>% Complete</span>
+                                    </div>
+                                </div>
+                                <br />
+
+
                             </div>
                         </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+
+                                <div class="team">
+                                    <?php foreach($project['team'] as $member) { ?>
+                                        <div class="commentImage" style="margin-right:-10px;">
+                                            <img
+                                                style=""
+                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'])?>" data-tippy-content="<?=$member['firstname'].' '.$member['lastname'] ?>" />
+                                        </div>
+                                    <?php } ?>
+                                </div>
+                                <div class="clearall"></div>
+                            </div>
+                        </div>
+
+
+
+                        <?php /*
                         <div class="center">
                             <a class="showMoreLink" href="javascript:void(0);"  onclick="jQuery('#moreInfo-<?=$project['id']?>').toggle('fast')"><?=$tpl->__("links.read_more") ?></a>
 
                         </div>
+ */ ?>
                         <div id="moreInfo-<?=$project['id']?>" style="display:none;">
                             <div class="row  padding-md">
                                 <div class="col-md-12">

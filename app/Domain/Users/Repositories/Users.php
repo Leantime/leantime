@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Users\Repositories {
 
+    use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Core\Db as DbCore;
     use PDO;
 
@@ -213,7 +214,8 @@ namespace Leantime\Domain\Users\Repositories {
             zp_user.lastname,
             zp_user.jobTitle,
             zp_user.jobLevel,
-            zp_user.department
+            zp_user.department,
+            zp_user.modified
          FROM zp_user
             ORDER BY lastname";
 
@@ -248,7 +250,8 @@ namespace Leantime\Domain\Users\Repositories {
                       zp_clients.name AS clientName,
                       jobTitle,
                       jobLevel,
-                      department
+                      department,
+                      modified
                     FROM `zp_user`
                     LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
                     WHERE !(source <=> 'api')";
@@ -283,7 +286,8 @@ namespace Leantime\Domain\Users\Repositories {
                       createdOn,
                       jobTitle,
                       jobLevel,
-                      department
+                      department,
+                      modified
                     FROM `zp_user`
                     WHERE source <=> :source
                     ORDER BY lastname";
@@ -319,7 +323,8 @@ namespace Leantime\Domain\Users\Repositories {
                         zp_clients.name AS clientName,
                         jobTitle,
                         jobLevel,
-                        department
+                        department,
+                        modified
                     FROM `zp_user`
                     LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
                     WHERE clientId = :clientId
@@ -383,7 +388,8 @@ namespace Leantime\Domain\Users\Repositories {
                 jobLevel = :jobLevel,
                 department = :department,
                 " . $chgPW . "
-                clientId = :clientId
+                clientId = :clientId,
+                modified = :modified
              WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -399,6 +405,7 @@ namespace Leantime\Domain\Users\Repositories {
             $stmn->bindValue(':jobTitle', $values['jobTitle'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':jobLevel', $values['jobLevel'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':department', $values['department'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -471,7 +478,8 @@ namespace Leantime\Domain\Users\Repositories {
                 username = :username,
                 " . $chgPW . "
                 phone = :phone,
-                notifications = :notifications
+                notifications = :notifications,
+                modified = :modified
                 WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
@@ -480,6 +488,7 @@ namespace Leantime\Domain\Users\Repositories {
             $stmn->bindValue(':username', $values['user'], PDO::PARAM_STR);
             $stmn->bindValue(':phone', $values['phone'], PDO::PARAM_STR);
             $stmn->bindValue(':notifications', $values['notifications'], PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
 
@@ -515,7 +524,8 @@ namespace Leantime\Domain\Users\Repositories {
                             createdOn,
                             jobTitle,
                             jobLevel,
-                            department
+                            department,
+                            modified
                         ) VALUES (
                             :firstname,
                             :lastname,
@@ -528,10 +538,11 @@ namespace Leantime\Domain\Users\Repositories {
                             :source,
                             :pwReset,
                             :status,
-                            NOW(),
+                            :createdOn,
                             :jobTitle,
                             :jobLevel,
-                            :department
+                            :department,
+                            :modified
                         )";
 
             $stmn = $this->db->database->prepare($query);
@@ -548,6 +559,8 @@ namespace Leantime\Domain\Users\Repositories {
             $stmn->bindValue(':jobTitle', $values['jobTitle'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':jobLevel', $values['jobLevel'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':department', $values['department'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':createdOn', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             if (isset($values['source'])) {
                 $stmn->bindValue(':source', $values['source'], PDO::PARAM_STR);
@@ -615,11 +628,17 @@ namespace Leantime\Domain\Users\Repositories {
             $lastId = $files->upload($_FILE, 'user', $id, true, 200, 200);
 
             if (isset($lastId['fileId'])) {
-                $sql = 'UPDATE `zp_user` SET profileId = :fileId WHERE id = :userId';
+                $sql = 'UPDATE
+                            `zp_user`
+                        SET
+                            profileId = :fileId,
+                            modified = :modified
+                        WHERE id = :userId';
 
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':fileId', $lastId['fileId'], PDO::PARAM_INT);
                 $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
+                $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
                 $stmn->execute();
                 $stmn->closeCursor();
@@ -697,11 +716,13 @@ namespace Leantime\Domain\Users\Repositories {
                 $sql .= DbCore::sanitizeToColumnString($key) . "=:" . DbCore::sanitizeToColumnString($key) . ", ";
             }
 
-            $sql .= " id=:id WHERE id=:id2 LIMIT 1";
+            $sql .= " modified =:modified ";
+
+            $sql .= " WHERE id=:id LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->bindValue(':id2', $id, PDO::PARAM_STR);
+            $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
             foreach ($params as $key => $value) {
                 $cleanKey = DbCore::sanitizeToColumnString($key);

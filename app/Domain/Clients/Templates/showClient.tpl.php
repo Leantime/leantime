@@ -40,29 +40,29 @@ $users = $tpl->get('users');
                             <h4 class="widgettitle title-light"><span class="fa fa-leaf"></span> <?php echo $tpl->__('subtitle.details'); ?></h4>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.client_id') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.client_id') ?></label>
+                                <div class="">
                                     <input type="text" name="id" id="id" value="<?php $tpl->e($values['id']); ?>" readonly />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.name') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.name') ?></label>
+                                <div class="">
                                     <input type="text" name="name" id="name" value="<?php $tpl->e($values['name']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.email') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.email') ?></label>
+                                <div class="">
                                     <input type="text" name="email" id="email" value="<?php $tpl->e($values['email']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.url') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.url') ?></label>
+                                <div class="">
                                     <input
                                             type="text" name="internet" id="internet"
                                             value="<?php $tpl->e($values['internet']); ?>" />
@@ -70,8 +70,8 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.street') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.street') ?></label>
+                                <div class="">
                                     <input
                                             type="text" name="street" id="street"
                                             value="<?php $tpl->e($values['street']); ?>" />
@@ -79,24 +79,24 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.zip') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.zip') ?></label>
+                                <div class="">
                                     <input type="text"
                                     name="zip" id="zip" value="<?php $tpl->e($values['zip']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.city') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.city') ?></label>
+                                <div class="">
                                     <input type="text"
                                            name="city" id="city" value="<?php $tpl->e($values['city']); ?>" />
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.state') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.state') ?></label>
+                                <div class="">
                                     <input
                                             type="text" name="state" id="state"
                                             value="<?php $tpl->e($values['state']); ?>" />
@@ -104,8 +104,8 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.country') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.country') ?></label>
+                                <div class="">
                                     <input
                                             type="text" name="country" id="country"
                                             value="<?php $tpl->e($values['country']); ?>" />
@@ -113,8 +113,8 @@ $users = $tpl->get('users');
                             </div>
 
                             <div class="form-group">
-                                <label class="span4 control-label"><?php echo $tpl->__('label.phone') ?></label>
-                                <div class="span6">
+                                <label class=" control-label"><?php echo $tpl->__('label.phone') ?></label>
+                                <div class="">
                                     <input
                                             type="text" name="phone" id="phone"
                                             value="<?php $tpl->e($values['phone']); ?>" />
@@ -125,7 +125,7 @@ $users = $tpl->get('users');
 
                         <div class="col-md-6">
                             <h4 class="widgettitle title-light"><span class="fa fa-users"></span> <?php echo $tpl->__('subtitles.users_assigned_to_this_client') ?></h4>
-
+                            <a href="#/users/newUser?preSelectedClient=<?=$values['id'] ?>" class="btn btn-primary"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_user') ?> </a>
                             <table class='table table-bordered'>
                                 <colgroup>
                                     <col class="con1" />

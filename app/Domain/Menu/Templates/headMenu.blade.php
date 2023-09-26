@@ -24,8 +24,18 @@
             @if ($activePath == 'projects.showMy')
                 class="active"
             @endif
-            data-tippy-content="{{ __('popover.my_portfolio') }}"
-        >{!! __("menu.my_portfolio") !!}</a>
+            data-tippy-content="{{ __('popover.my_projects') }}"
+        >{!! __("menu.my_projects") !!}</a>
+    </li>
+
+    <li>
+        <a
+            href='{{ BASE_URL }}/timesheets/showMy'
+            @if ($activePath == 'timesheets.showMy')
+                class="active"
+            @endif
+            data-tippy-content="{{ __('popover.my_timesheets') }}"
+        >{!! __("menu.my_timesheets") !!}</a>
     </li>
 
     </li>
@@ -83,8 +93,8 @@
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
-                                <span class="notificationTitle">{{ $notif['message'] }}</span>
-                                <span class="notificationDate">@formatDate($notif['datetime'])</span>
+                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
+                                <span class="notificationDate"> @formatDate( $notif['datetime'] ) </span>
                             </a>
                         </li>
                     @endforeach
@@ -111,8 +121,11 @@
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
-                                <span class="notificationTitle">{{ $notif['message'] }}</span>
-                                <span class="notificationDate">@formatDate($notif['datetime']) @formatTime($notif['datetime'])</span>
+                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
+                                <span class="notificationDate">
+                                    @formatDate($notif['datetime'])
+                                    @formatTime($notif['datetime'])
+                                </span>
                             </a>
                         </li>
                     @endforeach
@@ -123,7 +136,7 @@
 
     </li>
 
-    @if ($login::userIsAtLeast(Roles::$manager))
+    @if ($login::userIsAtLeast("manager"))
 
         <li class="appsDropdown">
 
@@ -198,50 +211,8 @@
     <li>
         <div class="userloggedinfo">
 
-            @dispatchEvent('beforeUserinfoMenuOpen')
+            @include("auth::partials.loginInfo")
 
-            <div class="userinfo">
-
-                @dispatchEvent('afterUserinfoMenuOpen')
-
-                <a
-                    href="{{ BASE_URL }}/users/editOwn"
-                    class="dropdown-toggle profileHandler"
-                    data-toggle="dropdown"
-                >
-                    <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}" class="profilePicture"/>
-                    <i class="fa fa-caret-down" aria-hidden="true"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-
-                    @dispatchEvent('afterUserinfoMenuOpen')
-
-                    <li><a href="{{ BASE_URL }}/users/editOwn/">
-                            {!! __('menu.my_profile') !!}
-                        </a></li>
-
-                    <li class="nav-header border">{{ __('menu.help_support') }}</li>
-
-                    <li><a
-                            href="javascript:void(0);"
-                            onclick="leantime.helperController.showHelperModal('{{ __($modal) }}', 300, 500)"
-                        >{!! __('menu.what_is_this_page') !!}</a></li>
-
-                    <li><a href="https://docs.leantime.io" target="_blank">{!! __('menu.knowledge_base') !!}</a></li>
-
-                    <li><a href="https://community.leantime.io" target="_blank">{!! __('menu.community') !!}</a></li>
-
-                    <li><a href="https://leantime.io/contact-us" target="_blank">{!! __('menu.contact_us') !!}</a></li>
-
-                    <li class="border"><a href="{{ BASE_URL }}/auth/logout">{!! __('menu.sign_out') !!}</a></li>
-
-                    @dispatchEvent('beforeUserinfoDropdownMenuClose')
-                </ul>
-
-                @dispatchEvent('beforeUserinfoMenuClose')
-
-            </div>
         </div>
 
         @dispatchEvent('afterUser')

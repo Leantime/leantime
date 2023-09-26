@@ -30,7 +30,7 @@ echo -e "${NC}"
 
 echo -e "\nFor correct operation of this script, please ensure you have zip, unzip, wget and curl installed.\n"
 
-CURRENT_VERSION=$(grep "appVersion" config/appSettings.php |tr -d [:cntrl:] |tr -d \" |tr -d [:space:] |tr -d ";" |awk -F'=' '{print "v"$2}')
+CURRENT_VERSION=$(grep "appVersion" app/Core/AppSettings.php |tr -d [:cntrl:] |tr -d \" |tr -d [:space:] |tr -d ";" |awk -F'=' '{print "v"$2}')
 LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/leantime/leantime/releases/latest)
 LATEST_VERSION=$(echo $LATEST_RELEASE | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
 DOWNLOAD_URL=$(echo "https://github.com/leantime/leantime/releases/download/$LATEST_VERSION/Leantime-$LATEST_VERSION.zip")
@@ -78,19 +78,19 @@ else
 					then
 						echo "We were not able to detect the database login credentials. Please enter them manually: "
 						read -r -p "\n- Hostname [localhost]:  " HOST
-						if [ -z HOST ] 
+						if [ -z HOST ]
 						then
 							HOST='localhost'
 						fi
 						read -r -p "\n- Username: " USER
 						read -r -p "\n- Password: " PSWD
 						read -r -p "\n- Database [leantime]: " DTBS
-						if [ -z DTBS ] 
+						if [ -z DTBS ]
 						then
 							DTBS='leantime'
 						fi
 						read -r -p "\n- Portnumber [3306]: " PORT
-						if [ -z PORT ] 
+						if [ -z PORT ]
 						then
 							PORT='3306'
 						fi

@@ -4,6 +4,7 @@ namespace Leantime\Domain\Install\Repositories {
 
     use Exception;
     use Leantime\Core\AppSettings;
+    use Leantime\Domain\Setting\Repositories\Setting;
     use PDO;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use PDOException;
@@ -88,6 +89,7 @@ namespace Leantime\Domain\Install\Repositories {
             20118,
             20120,
             20121,
+            20122,
         );
 
         /**
@@ -617,6 +619,7 @@ namespace Leantime\Domain\Install\Repositories {
                   `jobTitle` VARCHAR(200) NULL,
                   `jobLevel` VARCHAR(50) NULL,
                   `department` VARCHAR(200) NULL,
+                  `modified` DATETIME DEFAULT NULL,
                   PRIMARY KEY (`id`),
                   UNIQUE KEY `username` (`username`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -728,12 +731,12 @@ namespace Leantime\Domain\Install\Repositories {
                     `authors`)
                     VALUES
                     (
-                    'leantime/motivationalquotes',
+                    'leantime/MotivationalQuotes',
                     1,
                     'Displays a random quote on the welcome page',
                     '0.1',
                     '2023-07-20 00:00:00',
-                    'motivationalQuotes',
+                    'MotivationalQuotes',
                     'https://leantime.io',
                     '[{\"name\":\"Leantime\",\"email\":\"support@leantime.io\"}]');
 
@@ -1575,6 +1578,38 @@ namespace Leantime\Domain\Install\Repositories {
             $sql = [
                 "ALTER TABLE `zp_canvas`
                     ADD COLUMN `description` TEXT NULL DEFAULT NULL AFTER `type`;",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        public function update_sql_20122(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_settings`
+                    CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL ;",
+                "ALTER TABLE `zp_canvas_items`
+                    CHANGE COLUMN `description` `description` MEDIUMTEXT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL;",
+                "ALTER TABLE `zp_user`
+                    ADD COLUMN `modified` DATETIME NULL DEFAULT NULL;"
+
             ];
 
             foreach ($sql as $statement) {

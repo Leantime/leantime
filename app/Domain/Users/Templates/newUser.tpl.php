@@ -104,7 +104,8 @@ $projects = $tpl->get('relations');
                     <option value="0" selected="selected"><?php echo $tpl->__('label.no_clients') ?></option>
                 <?php } ?>
                 <?php foreach ($tpl->get('clients') as $client) : ?>
-                    <option value="<?php echo $client['id'] ?>" <?php if ($client['id'] == $values['clientId']) :
+                    <option value="<?php echo $client['id'] ?>"
+                            <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id'] ) :
                         ?>selected="selected"<?php
                                    endif; ?>><?php $tpl->e($client['name']) ?></option>
                 <?php endforeach; ?>
@@ -162,12 +163,19 @@ $projects = $tpl->get('relations');
                             <div id='accordion_" . $i . "' class='simpleAccordionContainer'>";
                             $currentClient = $row['clientName'];
                         } ?>
-                            <div class="item">
+                            <div class="item" style="padding:10px 0px;">
                                 <input type="checkbox" name="projects[]" id='project_<?php echo $row['id'] ?>' value="<?php echo $row['id'] ?>"
                                 <?php if (is_array($projects) === true && in_array($row['id'], $projects) === true) {
                                     echo "checked='checked';";
                                 } ?>
-                                /><label for="project_<?php echo $row['id'] ?>"><?php $tpl->e($row['name']); ?></label>
+                                />
+                                <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
+                                    <img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=strtotime($row['modified'] ?? '0') ?>' />
+                                </span>
+
+                                <label for="project_<?php echo $row['id'] ?>" style="margin-top:-11px">
+                                    <small><?php $tpl->e($row['type']); ?></small><br />
+                                    <?php $tpl->e($row['name']); ?></label>
                                 <div class="clearall"></div>
                             </div>
                         <?php $i++; ?>

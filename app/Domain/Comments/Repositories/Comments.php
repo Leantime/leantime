@@ -33,7 +33,8 @@ namespace Leantime\Domain\Comments\Repositories {
                     comment.status,
 					user.firstname,
 					user.lastname,
-					user.profileId
+					user.profileId,
+					user.modified AS userModified
 				FROM zp_comment as comment
 					INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
@@ -95,8 +96,16 @@ namespace Leantime\Domain\Comments\Repositories {
         {
 
             $sql = "SELECT
-					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent,
-					user.firstname, user.lastname, user.profileId
+					comment.id,
+					comment.text,
+					comment.date,
+					comment.moduleId,
+					comment.userId,
+					comment.commentParent,
+					user.firstname,
+					user.lastname,
+					user.profileId,
+					user.modified AS userModified
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id
 				WHERE commentParent = :id";

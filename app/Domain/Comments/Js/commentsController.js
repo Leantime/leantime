@@ -20,6 +20,7 @@ leantime.commentsController = (function () {
 
     var toggleCommentBoxes = function (id) {
 
+
         if (id == 0) {
             jQuery('#mainToggler').hide();
         } else {

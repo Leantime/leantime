@@ -50,7 +50,7 @@ leantime.ticketsController = (function () {
 
 
     var toggleFilterBar = function () {
-        jQuery(".filterBar").toggle("fast");
+        jQuery(".filterBar").toggle();
 
     };
 
