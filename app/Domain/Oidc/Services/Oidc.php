@@ -46,7 +46,10 @@ class Oidc
         $this->authService = $authService;
         $this->userRepo = $userRepo;
         $this->language = $language;
+
+
         $providerUrl = $this->config->get('oidcProviderUrl');
+
         $this->providerUrl = !empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
         $this->clientId = $this->config->get('oidcClientId');
         $this->clientSecret = $this->config->get('oidcClientSecret');

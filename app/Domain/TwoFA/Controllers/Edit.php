@@ -91,7 +91,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
             $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
             $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
-            $this->tpl->display('twoFA.edit');
+            $this->tpl->display('twofa.edit');
         }
     }
 

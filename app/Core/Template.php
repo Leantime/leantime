@@ -629,7 +629,7 @@ class Template
             $notification = app('blade.compiler')::render(
                 '<div class="inputwrapper login-alert login-{{ $type }}" style="position: relative;">
                     <div class="alert alert-{{ $type }}" style="padding:15px;" >
-                        <strong>{{ $message }}</strong>
+                        <strong>{!! $message !!}</strong>
                     </div>
                 </div>',
                 [

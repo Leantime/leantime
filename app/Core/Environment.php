@@ -393,7 +393,11 @@ class Environment implements ArrayAccess, ConfigContract
         $this->phpConfig = null;
         if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
             require_once $phpConfigFile;
-            $this->phpConfig = new \Leantime\Config\Config();
+            if(class_exists(\Leantime\Config\Config::class)) {
+                $this->phpConfig = new \Leantime\Config\Config();
+            }else{
+                die("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/Leantime/leantime/releases/tag/v2.4-beta-2 for more details.");
+            }
         }
 
         /* Dotenv */
@@ -540,6 +544,8 @@ class Environment implements ArrayAccess, ConfigContract
      */
     private function environmentHelper(string $envVar, $default, $dataType = "string")
     {
+
+
         if (isset($_SESSION['mainconfig'][$envVar])) {
             return $_SESSION['mainconfig'][$envVar];
         }
@@ -641,11 +647,12 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function get($key, $default = null)
     {
+
         if (is_array($key)) {
             return $this->getMany($key);
         }
 
-        return Arr::get($_SESSION['mainconfig'], $key, $default);
+        return $this->$key ?? Arr::get($_SESSION['mainconfig'], $key, $default);
     }
 
     /**
@@ -663,7 +670,7 @@ class Environment implements ArrayAccess, ConfigContract
                 [$key, $default] = [$default, null];
             }
 
-            $config[$key] = Arr::get($_SESSION['mainconfig'], $key, $default);
+            $config[$key] = $this->$key ?? Arr::get($_SESSION['mainconfig'], $key, $default);
         }
 
         return $config;
