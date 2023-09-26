@@ -393,7 +393,12 @@ class Environment implements ArrayAccess, ConfigContract
         $this->phpConfig = null;
         if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
             require_once $phpConfigFile;
-            $this->phpConfig = new \Leantime\Config\Config();
+            if(class_exists(\Leantime\Config\Config::class)) {
+                $this->phpConfig = new \Leantime\Config\Config();
+                $defaultConfiguration = $this->phpConfig;
+            }else{
+                die("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template.");
+            }
         }
 
         /* Dotenv */
@@ -552,7 +557,7 @@ class Environment implements ArrayAccess, ConfigContract
          * This allows us to use any one or a combination of those methods to configure leantime.
          */
         $found = null;
-        $found = $this->tryGetFromPhp($envVar, $found);
+        //$found = $this->tryGetFromPhp($envVar, $found);
         $found = $this->tryGetFromYaml($envVar, $found);
         $found = $this->tryGetFromEnvironment($envVar, $found);
 
