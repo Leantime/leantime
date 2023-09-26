@@ -187,7 +187,7 @@ class Bootloader
 
         // Setup Configuration
         //$this->app->singleton(Environment::class, Environment::class);
-        $this->app->singleton(Environment::class, fn ($app) => $_SESSION['configclass'] ??= new Environment($app->make(DefaultConfig::class)));
+        $this->app->singleton(Environment::class, Environment::class);
         $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
         $this->app->alias(Environment::class, alias: "config");
 
