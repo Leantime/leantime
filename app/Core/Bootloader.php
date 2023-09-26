@@ -144,7 +144,7 @@ class Bootloader
 
         $this->checkIfInstalled();
 
-        Events::discover_listeners();
+        self::dispatch_event('after_install');
 
         $this->checkIfUpdated();
 
@@ -186,12 +186,16 @@ class Bootloader
         $this->bindRequest();
 
         // Setup Configuration
-        //$this->app->singleton(Environment::class, Environment::class);
         $this->app->singleton(Environment::class, Environment::class);
         $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
         $this->app->alias(Environment::class, alias: "config");
 
+        Events::discover_listeners();
 
+        $this->app->extend(
+            Environment::class,
+            fn (Environment $config) => self::dispatch_filter('config', $config)
+        );
 
         // specify singletons/instances
         $this->app->singleton(Db::class, Db::class);

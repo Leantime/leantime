@@ -5,6 +5,7 @@ namespace Leantime\Domain\Tickets\Repositories {
     use Leantime\Core\Eventhelpers as EventhelperCore;
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Users\Services\Users;
     use PDO;
 
     class Tickets
