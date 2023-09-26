@@ -73,14 +73,21 @@ class Db
         } catch (PDOException $e) {
             $newline = defined('LEAN_CLI') ? "\n" : "<br />\n";
             echo "No database connection, check your database credentials in your configuration file.$newline";
-            echo "Checking common issues:$newline";
+            $found_errors = [];
 
             if (!extension_loaded('PDO')) {
-                echo "- php-PDO is required, but not installed$newline";
+                $found_errors[] = "php-PDO is required, but not installed";
             }
 
             if (!extension_loaded('pdo_mysql')) {
-                echo "- php-pdo_mysql is required, but not installed$newline";
+                $found_errors[] = "php-pdo_mysql is required, but not installed";
+            }
+
+            if (! empty($found_errors)) {
+                echo "Checking common issues:$newline";
+                foreach ($found_errors as $error) {
+                    echo "- $error$newline";
+                }
             }
 
             error_log($e);
