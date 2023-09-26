@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Controllers {
 
+    use DateTime;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
