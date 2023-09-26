@@ -174,21 +174,33 @@ class Events
             }
         }
 
-        $pluginPath = APP_ROOT . "/app/Plugins/";
-
-        $enabledPlugins = [];
-        if ($_SESSION['isInstalled'] === true) {
-            $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
-            $enabledPlugins = $pluginService->getEnabledPlugins();
-        }
-
-        foreach ($enabledPlugins as $plugin) {
-            if ($plugin != null) {
-                if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
-                    include $pluginPath . $plugin->foldername . "/register.php";
+        if (
+            isset(app(Environment::class)->plugins)
+            && $configplugins = explode(',', app(Environment::class)->plugins)
+        ) {
+            foreach ($configplugins as $plugin) {
+                if (file_exists(APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {
+                    include_once APP_ROOT . "/app/Plugins/" . $plugin . "/register.php";
                 }
             }
         }
+
+        Events::add_event_listener('core.Bootloader.boot.after_install', function () {
+            $enabledPlugins = [];
+            $pluginPath = APP_ROOT . "/app/Plugins/";
+            if ($_SESSION['isInstalled'] === true) {
+                $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
+                $enabledPlugins = $pluginService->getEnabledPlugins();
+            }
+
+            foreach ($enabledPlugins as $plugin) {
+                if ($plugin != null) {
+                    if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
+                        include_once $pluginPath . $plugin->foldername . "/register.php";
+                    }
+                }
+            }
+        });
     }
 
     /**
