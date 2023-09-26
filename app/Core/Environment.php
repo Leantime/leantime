@@ -77,7 +77,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function __construct(DefaultConfig $defaultConfiguration)
     {
-        if (! empty($_SESSION['mainconfig']) || ! $_SESSION['mainconfig']['debug']) {
+        if (! empty($_SESSION['mainconfig']) && ! $_SESSION['mainconfig']['debug']) {
             $this->config = $_SESSION['mainconfig'];
             return $this;
         }
