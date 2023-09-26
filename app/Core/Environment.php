@@ -396,7 +396,7 @@ class Environment implements ArrayAccess, ConfigContract
             if(class_exists(\Leantime\Config\Config::class)) {
                 $this->phpConfig = new \Leantime\Config\Config();
             }else{
-                die("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template.");
+                die("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/Leantime/leantime/releases/tag/v2.4-beta-2 for more details.");
             }
         }
 
