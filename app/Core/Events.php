@@ -185,7 +185,7 @@ class Events
             }
         }
 
-        Events::add_event_listener('core.Bootloader.boot.after_install', function () {
+        Events::add_event_listener('leantime.core.bootloader.boot.after_install', function () {
             $enabledPlugins = [];
             $pluginPath = APP_ROOT . "/app/Plugins/";
             if ($_SESSION['isInstalled'] === true) {
