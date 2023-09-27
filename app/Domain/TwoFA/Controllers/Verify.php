@@ -36,7 +36,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
             }
 
             $this->tpl->assign("redirectUrl", $redirectUrl);
-            $this->tpl->display("twoFA.verify", "entry");
+            $this->tpl->display("twofa.verify", "entry");
         }
 
         public function post($params)

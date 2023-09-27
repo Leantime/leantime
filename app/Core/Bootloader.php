@@ -398,7 +398,6 @@ class Bootloader
         // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
         if ($_SESSION['userdata']['twoFAEnabled'] && ! $_SESSION['userdata']['twoFAVerified']) {
             $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '');
-            return;
         }
 
         // handle authorized requests
