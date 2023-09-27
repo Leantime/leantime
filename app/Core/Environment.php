@@ -299,8 +299,12 @@ class Environment implements ArrayAccess, ConfigContract
         $keys = is_array($key) ? $key : [$key => $value];
 
         foreach ($keys as $key => $value) {
-            Arr::set($_SESSION['mainconfig'], $key, $value);
             Arr::set($this->config, $key, $value);
+
+            # this basically checks to see if the session is initialized
+            if (isset($_SESSION['mainconfig'])) {
+                Arr::set($_SESSION['mainconfig'], $key, $value);
+            }
         }
     }
 
