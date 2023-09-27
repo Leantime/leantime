@@ -38,7 +38,7 @@ namespace Leantime\Domain\Auth\Controllers {
 
             $redirectUrl = BASE_URL . "/dashboard/home";
 
-            if (isset($_GET['redirect']) && trim($_GET['redirect']) !== '') {
+            if (isset($_GET['redirect']) && trim($_GET['redirect']) !== '' && trim($_GET['redirect']) !== '/') {
                 $redirectUrl = BASE_URL . urldecode($_GET['redirect']);
             }
 

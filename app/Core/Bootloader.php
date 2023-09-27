@@ -423,7 +423,7 @@ class Bootloader
     public function redirectWithOrigin(string $route, string $origin): void
     {
         $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
-        $queryParams = !empty($origin) ? '?' . http_build_query(['redirect' => $origin]) : '';
+        $queryParams = !empty($origin)  && $origin !== '/' ? '?' . http_build_query(['redirect' => $origin]) : '';
         $frontController = $this->app->make(Frontcontroller::class);
 
         if ($frontController::getCurrentRoute() == $route) {
