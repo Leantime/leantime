@@ -192,15 +192,15 @@ class Bootloader
 
         Events::discover_listeners();
 
-        $this->app->extend(
-            Environment::class,
-            fn (Environment $config) => self::dispatch_filter('config', $config)
-        );
+        self::dispatch_event('config_initialized');
 
         // specify singletons/instances
         $this->app->singleton(Db::class, Db::class);
         $this->app->singleton(Frontcontroller::class, Frontcontroller::class);
         $this->app->instance(Session::class, $this->app->make(Session::class));
+
+        self::dispatch_event('session_initialized');
+
         $this->app->singleton(Language::class, Language::class);
         $this->app->singleton(AuthService::class, AuthService::class);
         $this->app->singleton(OidcService::class, OidcService::class);

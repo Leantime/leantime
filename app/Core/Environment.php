@@ -35,7 +35,7 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * @var array The Config
      */
-    public array $config;
+    public array $config = [];
 
     /**
      * @var array list of legacy mappings
@@ -77,7 +77,10 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function __construct(DefaultConfig $defaultConfiguration)
     {
-        if (! empty($_SESSION['mainconfig']) && ! $_SESSION['mainconfig']['debug']) {
+        if (
+            isset($_SESSION)
+            && (! empty($_SESSION['mainconfig']) || ! $_SESSION['mainconfig']['debug'])
+        ) {
             $this->config = $_SESSION['mainconfig'];
             return $this;
         }
@@ -116,6 +119,13 @@ class Environment implements ArrayAccess, ConfigContract
                 dataType: $type,
             );
         }
+
+        Events::add_event_listener(
+            'leantime.core.bootloader.getApplication.session_initialized',
+            function () {
+                $_SESSION['mainconfig'] = $this->config;
+            }
+        );
     }
 
     /**
@@ -152,12 +162,6 @@ class Environment implements ArrayAccess, ConfigContract
      */
     private function environmentHelper(string $envVar, $default, $dataType = "string")
     {
-        $sessionKey = array_search($envVar, self::LEGACY_MAPPINGS) ?: Str::of($envVar)->replace('LEAN_', '')->lower()->camel()->toString();
-
-        if (isset($_SESSION['mainconfig'][$sessionKey])) {
-            return $_SESSION['mainconfig'][$sessionKey];
-        }
-
         /**
          * Basically, here, we are doing the fetch order of
          * environment -> .env file -> yaml file -> user default -> leantime default
@@ -169,19 +173,16 @@ class Environment implements ArrayAccess, ConfigContract
         $found = $this->tryGetFromEnvironment($envVar, $found);
 
         if (!$found || $found == "") {
-            $_SESSION['mainconfig'][$sessionKey] = $default;
             return $default;
         }
 
         // we need to check to see if we need to convert the found data
-        $_SESSION['mainconfig'][$sessionKey] = match ($dataType) {
+        return match ($dataType) {
             "string" => $found,
             "boolean" => $found == "true" ? true : false,
             "number" => intval($found),
             default => $found,
         };
-
-        return $_SESSION['mainconfig'][$sessionKey];
     }
 
     private function tryGetFromPhp(string $envVar, mixed $currentValue): mixed
@@ -244,7 +245,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function has($key)
     {
-        return Arr::has($_SESSION['mainconfig'] ?? $this->config, $key);
+        return Arr::has($_SESSION['mainconfig'] ?? [], $key) ?: Arr::has($this->config, $key);
     }
 
     /**
@@ -256,12 +257,13 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function get($key, $default = null)
     {
-
         if (is_array($key)) {
             return $this->getMany($key);
         }
 
-        return Arr::get($_SESSION['mainconfig'] ?? $this->config, $key, $default);
+        return Arr::get($_SESSION['mainconfig'] ?? [], $key, Arr::get(
+            $this->config, $key, $default
+        ));
     }
 
     /**
@@ -279,7 +281,7 @@ class Environment implements ArrayAccess, ConfigContract
                 [$key, $default] = [$default, null];
             }
 
-            $config[$key] = Arr::get($_SESSION['mainconfig'] ?? $this->config, $key, $default);
+            $config[$key] = $this->get($key, $default);
         }
 
         return $config;
@@ -409,7 +411,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function __set(string $key, mixed $value): void
     {
-        $this->set($key);
+        $this->set($key, $value);
     }
 
     /**
