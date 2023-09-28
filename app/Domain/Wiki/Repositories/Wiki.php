@@ -280,18 +280,16 @@ namespace Leantime\Domain\Wiki\Repositories {
         {
 
             $query = "UPDATE zp_canvas_items
-
-                        SET
-                     title = :title,
-                     description = :description,
-                     data = :data,
-                     parent = :parent,
-                     tags = :tags,
-                     status = :status,
-                     modified = :modified,
-                     milestoneId = :milestoneId
-
-                        WHERE id = :id LIMIT 1";
+                SET
+                    title = :title,
+                    description = :description,
+                    data = :data,
+                    parent = :parent,
+                    tags = :tags,
+                    status = :status,
+                    modified = :modified,
+                    milestoneId = :milestoneId
+                WHERE id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':title', $article->title, PDO::PARAM_STR);
