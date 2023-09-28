@@ -1464,12 +1464,12 @@ leantime.ticketsController = (function () {
 
                     e.preventDefault();
 
-                    if (jQuery('textarea.complexEditor').length > 0) {
+                    if (jQuery('textarea.complexEditor').length > 0 && jQuery('textarea.complexEditor').tinymce() !== null) {
                         jQuery('textarea.complexEditor').tinymce().save();
                         jQuery('textarea.complexEditor').tinymce().remove();
                     }
 
-                    jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/images/svg/loading-animation.svg' width='100px'/></div>");
+                    jQuery(element).html("<div class='center'><img src='" + leantime.appUrl + "/dist/images/svg/loading-animation.svg' width='100px'/></div>");
 
                     var data = jQuery(this).serialize();
 
