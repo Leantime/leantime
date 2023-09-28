@@ -168,9 +168,9 @@ class Environment implements ArrayAccess, ConfigContract
          * This allows us to use any one or a combination of those methods to configure leantime.
          */
         $found = $default;
-        $found = $this->tryGetFromPhp($envVar, $found);
-        $found = $this->tryGetFromYaml($envVar, $found);
-        $found = $this->tryGetFromEnvironment($envVar, $found);
+        $found = $this->tryGetFromPhp($envVar, $found) ?? $found;
+        $found = $this->tryGetFromYaml($envVar, $found) ?? $found;
+        $found = $this->tryGetFromEnvironment($envVar, $found) ?? $found;
 
         // we need to check to see if we need to convert the found data
         return match ($dataType) {
