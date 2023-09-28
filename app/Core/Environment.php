@@ -167,14 +167,10 @@ class Environment implements ArrayAccess, ConfigContract
          * environment -> .env file -> yaml file -> user default -> leantime default
          * This allows us to use any one or a combination of those methods to configure leantime.
          */
-        $found = null;
+        $found = $default;
         $found = $this->tryGetFromPhp($envVar, $found);
         $found = $this->tryGetFromYaml($envVar, $found);
         $found = $this->tryGetFromEnvironment($envVar, $found);
-
-        if (!$found || $found == "") {
-            return $default;
-        }
 
         // we need to check to see if we need to convert the found data
         return match ($dataType) {
@@ -187,14 +183,11 @@ class Environment implements ArrayAccess, ConfigContract
 
     private function tryGetFromPhp(string $envVar, mixed $currentValue): mixed
     {
-        if ($currentValue != null && $currentValue != "") {
-            return $currentValue;
-        }
 
         if ($this->phpConfig) {
             $key = array_search($envVar, self::LEGACY_MAPPINGS) ?: Str::of($envVar)->replace('LEAN_', '')->lower()->camel()->toString();
 
-            return isset($this->phpConfig->$key) ? $this->phpConfig->$key : null;
+            return isset($this->phpConfig->$key) ? $this->phpConfig->$key : $currentValue;
         }
 
         return null;
@@ -209,11 +202,8 @@ class Environment implements ArrayAccess, ConfigContract
      */
     private function tryGetFromEnvironment(string $envVar, mixed $currentValue): mixed
     {
-        if ($currentValue != null && $currentValue != "") {
-            return $currentValue;
-        }
 
-        return $_ENV[$envVar] ?? null;
+        return $_ENV[$envVar] ?? $currentValue;
     }
 
     /**
@@ -225,13 +215,10 @@ class Environment implements ArrayAccess, ConfigContract
      */
     private function tryGetFromYaml(string $envVar, mixed $currentValue): mixed
     {
-        if ($currentValue != null && $currentValue != "") {
-            return $currentValue;
-        }
 
         if ($this->yaml) {
             $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
-            return isset($this->yaml[$key]) ? $this->yaml[$key] : null;
+            return isset($this->yaml[$key]) ? $this->yaml[$key] : $currentValue;
         }
 
         return null;
