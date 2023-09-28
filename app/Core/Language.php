@@ -74,7 +74,7 @@ class Language
     /**
      * @var Theme $themeCore
      */
-    public Theme $ThemeCore;
+    public Theme $themeCore;
 
     /**
      * @var string $theme
