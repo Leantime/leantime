@@ -414,7 +414,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function __isset(string $key): bool
     {
-        return $this->has($key);
+        return $this->has($key) && $this->get($key) !== null;
     }
 
     /**
