@@ -276,7 +276,7 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function updateArticle(Article $Article)
+        public function updateArticle(Article $article)
         {
 
             $query = "UPDATE zp_canvas_items
