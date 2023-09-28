@@ -16,9 +16,23 @@ leantime.ticketsController = (function () {
     function countTickets()
     {
 
-        jQuery(".sortableTicketKanban .column").each(function () {
-            var counting = jQuery(this).find('.moveable').length;
-            jQuery(this).find('.count').text(counting);
+        let ticketCounts=[];
+        jQuery(".sortableTicketList").each(function (indexList) {
+            jQuery(this).find(".column").each(function(indexCol){
+
+                if(ticketCounts[indexCol] === undefined){
+                    ticketCounts[indexCol] = 0;
+                }
+
+                var counting = jQuery(this).find('.moveable').length;
+                ticketCounts[indexCol] += counting;
+
+            });
+
+        });
+
+        jQuery(".widgettitle .count").each(function(index){
+            jQuery(this).text(ticketCounts[index]);
         });
 
     }
