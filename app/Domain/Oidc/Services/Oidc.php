@@ -51,18 +51,18 @@ class Oidc
         $providerUrl = $this->config->get('oidcProviderUrl');
 
         $this->providerUrl = !empty($providerUrl) ? $this->trimTrailingSlash($providerUrl) : $providerUrl;
-        $this->clientId = $this->config->get('oidcClientId');
-        $this->clientSecret = $this->config->get('oidcClientSecret');
-        $this->authUrl = $this->config->get('oidcAuthUrl');
-        $this->tokenUrl = $this->config->get('oidcTokenUrl');
-        $this->jwksUrl = $this->config->get('oidcJwksUrl');
-        $this->userInfoUrl = $this->config->get('oidcUserInfoUrl');
-        $this->certificateString = $this->config->get('oidcCertificateString');
-        $this->certificateFile = $this->config->get('oidcCertificateFile');
-        $this->scopes = $this->config->get('oidcScopes');
-        $this->fieldEmail = $this->config->get('oidcFieldEmail');
-        $this->fieldFirstName = $this->config->get('oidcFieldFirstName');
-        $this->fieldLastName = $this->config->get('oidcFieldLastName');
+        $this->clientId = $this->config->get('oidcClientId', '');
+        $this->clientSecret = $this->config->get('oidcClientSecret', '');
+        $this->authUrl = $this->config->get('oidcAuthUrl', '');
+        $this->tokenUrl = $this->config->get('oidcTokenUrl', '');
+        $this->jwksUrl = $this->config->get('oidcJwksUrl', '');
+        $this->userInfoUrl = $this->config->get('oidcUserInfoUrl', '');
+        $this->certificateString = $this->config->get('oidcCertificateString', '');
+        $this->certificateFile = $this->config->get('oidcCertificateFile', '');
+        $this->scopes = $this->config->get('oidcScopes', '');
+        $this->fieldEmail = $this->config->get('oidcFieldEmail', '');
+        $this->fieldFirstName = $this->config->get('oidcFieldFirstName', '');
+        $this->fieldLastName = $this->config->get('oidcFieldLastName', '');
     }
 
     private function trimTrailingSlash(string $str): string
