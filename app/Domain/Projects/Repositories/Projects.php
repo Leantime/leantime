@@ -50,6 +50,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @var    array state for projects
          */
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
+        private \Leantime\Core\Environment $config;
 
         public function __construct(
             \Leantime\Core\Environment $config,

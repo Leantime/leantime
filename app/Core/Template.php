@@ -83,12 +83,18 @@ class Template
     /**
      * @var Theme
      */
-    private Theme $Theme;
+    private Theme $theme;
 
     /**
      * @var \Illuminate\View\Factory
      */
-    public \Illuminate\View\Factory $viewFactory;
+    public \Illuminate\Contracts\View\Factory $viewFactory;
+    private AppSettings $settings;
+    private Environment $config;
+    private AuthService $login;
+    private Roles $roles;
+    private \Illuminate\View\Compilers\CompilerInterface $bladeCompiler;
+
 
     /**
      * __construct - get instance of frontcontroller
