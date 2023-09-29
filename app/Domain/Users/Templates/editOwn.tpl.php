@@ -228,7 +228,7 @@ $user = $tpl->get('user');
                                 </div>
                             </div>
                             <input type="hidden" name="savenotifications" value="1" />
-                            <input type="submit" name="save" id="savePw" value="<?php echo $tpl->__('buttons.save'); ?>" class="button"/>
+                            <input type="submit" name="save" value="<?php echo $tpl->__('buttons.save'); ?>" class="button"/>
                         </form>
                     </div>
                 </div>
