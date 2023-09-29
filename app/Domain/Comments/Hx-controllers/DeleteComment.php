@@ -7,8 +7,9 @@ class DeleteComment extends HtmxController
     public static $view = 'Comments::components.reply';
 
     public function init(
-        private Tickets $Tickets,
+        Tickets $tickets,
     ) {
+
     }
 
     public function post(IncomingRequest $incomingRequest)

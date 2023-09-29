@@ -75,6 +75,8 @@ namespace Leantime\Domain\Calendar\Repositories {
                     $tickets = $ticketArray["thisWeek"]["tickets"];
                 } elseif ($ticketArray["later"]["tickets"]) {
                     $tickets = $ticketArray["later"]["tickets"];
+                } else {
+                    $tickets = array();
                 }
             } else {
                 $tickets = array();

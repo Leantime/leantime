@@ -25,10 +25,11 @@ namespace Leantime\Domain\Tickets\Controllers {
             if (Auth::userIsAtLeast(Roles::$editor)) {
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
+                    $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+                    $this->tpl->displayPartial('tickets.delTicket');
+                } else {
+                    $this->tpl->display('errors.error404');
                 }
-
-                $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                $this->tpl->displayPartial('tickets.delTicket');
             } else {
                 $this->tpl->display('errors.error403');
             }

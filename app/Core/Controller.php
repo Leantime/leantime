@@ -24,7 +24,12 @@ abstract class Controller
     /**
      * @var language
      */
-    protected Language $Language;
+    protected Language $language;
+
+    /**
+     * @var IncomingRequest
+     */
+    protected IncomingRequest $incomingRequest;
 
     /**
      * constructor - initialize private variables
