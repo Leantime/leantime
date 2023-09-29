@@ -9,8 +9,11 @@
             <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  strtotime($project['modified'] ?? '0') }}' />
         @endif
     </span>
-    <span class='projectName'>
-        <small>{{ $project["clientName"] }}</small><br />
+    <span class='projectName {{ $project["clientName"] == '' ? 'tw-pt-sm' : '' }}'>
+        @if($project["clientName"] != '')
+            <small>{{ $project["clientName"] }}</small><br />
+        @endif
+
         {{ $project["name"] }}
     </span>
 </a>

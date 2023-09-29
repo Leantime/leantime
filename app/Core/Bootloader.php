@@ -59,6 +59,13 @@ class Bootloader
     );
 
     /**
+     * Telemetry response
+     *
+     * @var array
+     */
+    private $telemetryResponse;
+
+    /**
      * Set the Bootloader instance
      *
      * @param \Leantime\Core\Bootloader $instance

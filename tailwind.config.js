@@ -20,7 +20,8 @@ module.exports = {
         },
         padding: {
             'none': '0',
-            'sm': '5px',
+            'xs': '5px',
+            'sm': '10px',
             'base': '15px',
             'm': '15px',
             'l': '20px',
