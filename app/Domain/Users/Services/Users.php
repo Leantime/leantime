@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Users\Services {
 
-    use Leantime\Core\Template as TemplateCore;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -13,6 +13,8 @@ namespace Leantime\Domain\Users\Services {
 
     class Users
     {
+        use Eventhelpers;
+
         private UserRepository $userRepo;
         private LanguageCore $language;
         private ProjectRepository $projectRepository;
@@ -41,7 +43,11 @@ namespace Leantime\Domain\Users\Services {
 
         public function editUser($values, $id)
         {
-            return $this->userRepo->editUser($values, $id);
+
+            $results = $this->userRepo->editUser($values, $id);
+            self::dispatch_event("editUser", ["id" => $id, "values" => $values]);
+
+            return $results;
         }
 
         public function getNumberOfUsers()
@@ -51,7 +57,11 @@ namespace Leantime\Domain\Users\Services {
 
         public function getAll($activeOnly = false)
         {
-            return $this->userRepo->getAll($activeOnly);
+            $users =  $this->userRepo->getAll($activeOnly);
+
+            $users = self::dispatch_filter("getAll", $users);
+
+            return $users;
         }
 
         public function getUser($id): array|bool
@@ -254,6 +264,8 @@ namespace Leantime\Domain\Users\Services {
             $user = $this->getUser($id);
 
             $this->authService->setUserSession($user);
+
+            self::dispatch_event("editUser", ["id"=>$id, "values"=>$values]);
         }
     }
 }

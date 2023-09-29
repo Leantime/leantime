@@ -1,13 +1,5 @@
 <?php
 
-/**
- * dashboard class
- *
- * @author  Jacob Jensen <jjensen@colibrisdesign.com>
- * @version 1.0
- * @package classes
- */
-
 namespace Leantime\Domain\Dashboard\Repositories {
 
     use Leantime\Core\Db as DbCore;
