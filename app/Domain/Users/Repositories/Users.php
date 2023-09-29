@@ -8,6 +8,7 @@ namespace Leantime\Domain\Users\Repositories {
 
     class Users
     {
+
         /**
          * @access public
          * @var    string
@@ -415,6 +416,7 @@ namespace Leantime\Domain\Users\Repositories {
 
             $result = $stmn->execute();
             $stmn->closeCursor();
+
             return $result;
         }
 

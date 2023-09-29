@@ -33,7 +33,7 @@ class Frontcontroller
     /**
      * @var IncomingRequest
      */
-    private IncomingRequest $incomingRequest;
+    private static IncomingRequest $incomingRequest;
 
     /**
      * @var array - valid status codes
@@ -49,7 +49,7 @@ class Frontcontroller
     public function __construct(IncomingRequest $incomingRequest)
     {
         $this->rootPath = ROOT;
-        $this->incomingRequest = $incomingRequest;
+        self::$incomingRequest = $incomingRequest;
     }
 
     /**
@@ -80,15 +80,15 @@ class Frontcontroller
      * @param  array  $params
      * @return void
      */
-    private static function executeAction($completeName, $params = array()): void
+    private static function executeAction(string $completeName, array $params = array()): void
     {
         $namespace = app()->getNamespace(false);
         $actionName = Str::studly(self::getActionName($completeName));
         $moduleName = Str::studly(self::getModuleName($completeName));
-        $controllerNs = in_array(
-            $completeName,
-            self::dispatch_filter('plugin_routes', [])
-        ) ? "Plugins" : "Domain";
+
+        $controllerNs = "Domain";
+        $controllerType = self::$incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
+
         $incomingRequest = app()->make(IncomingRequest::class);
         $controllerType = $incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
 
@@ -98,7 +98,20 @@ class Frontcontroller
         $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
 
         if (! class_exists($classname)) {
-            self::redirect(BASE_URL . "/errors/error404", 404);
+            $classname = "$namespace\\Plugins\\$moduleName\\$controllerType\\$actionName";
+            $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
+
+            $pluginEnabled = false;
+            foreach ($enabledPlugins as $key => $obj) {
+                if ($obj->foldername == $moduleName) {
+                    $pluginEnabled = true;
+                    break;
+                }
+            }
+
+            if (!$pluginEnabled || !class_exists($classname)) {
+                self::redirect(BASE_URL . "/errors/error404", 404);
+            }
         }
 
         app()->make($classname);
