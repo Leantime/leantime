@@ -6,7 +6,10 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
+use Illuminate\Support\Str;
 use Leantime\Core\Controller;
+use ReflectionClass;
+use ReflectionParameter;
 
 class Jsonrpc extends Controller
 {
@@ -158,12 +161,21 @@ class Jsonrpc extends Controller
         $methodparts = $this->parseMethodString(isset($params['method']) ? $params['method'] : '');
         $jsonRpcVer = isset($params['jsonrpc']) ? $params['jsonrpc'] : null;
         $serviceName = Str::studly($methodparts['service']);
-        $serviceName = app()->getNamespace() . "Domain\\$serviceName\\Services\\$serviceName";
+
+        $domainServiceNamespace = app()->getNamespace() . "Domain\\$serviceName\\Services\\$serviceName";
+        $pluginServiceNamespace = app()->getNamespace() . "Plugins\\$serviceName\\Services\\$serviceName";
+
         $methodName = Str::camel($methodparts['method']);
+
         $paramsFromRequest = isset($params['params']) ? $params['params'] : [];
         $id = isset($params['id']) ? $params['id'] : null;
 
-        if (! class_exists($serviceName)) {
+
+        if(class_exists($domainServiceNamespace)) {
+            $serviceName = $domainServiceNamespace;
+        }else if(class_exists($pluginServiceNamespace)) {
+            $serviceName = $pluginServiceNamespace;
+        }else{
             $this->returnMethodNotFound("Service doesn't exist: $serviceName");
         }
 
@@ -230,11 +242,11 @@ class Jsonrpc extends Controller
      * @param string $servicename
      * @param string $methodname
      *
-     * @return \ReflectionParameter[]
+     * @return ReflectionParameter[]
      */
     private function getMethodParameters(string $servicename, string $methodname): array
     {
-        $reflectionParameters = (new \ReflectionClass($servicename))
+        $reflectionParameters = (new ReflectionClass($servicename))
             ->getMethod($methodname)
             ->getParameters();
 
@@ -245,7 +257,7 @@ class Jsonrpc extends Controller
      * Checks request params
      *
      * @param array                  $params
-     * @param \ReflectionParameter[] $methodParams
+     * @param ReflectionParameter[] $methodParams
      *
      * @return array
      */
@@ -329,7 +341,7 @@ class Jsonrpc extends Controller
      * @see https://jsonrpc.org/specification#error_object
      *
      * @param string  $errorMessage
-     * @param integer $httpResponseCode
+     * @param int $httpResponseCode
      *
      * @return void
      */

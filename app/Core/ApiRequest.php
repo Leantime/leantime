@@ -4,6 +4,22 @@ namespace Leantime\Core;
 
 class ApiRequest extends IncomingRequest
 {
+
+    /**
+     * @param array                $query      The GET parameters
+     * @param array                $request    The POST parameters
+     * @param array                $attributes The request attributes (parameters parsed from the PATH_INFO, ...)
+     * @param array                $cookies    The COOKIE parameters
+     * @param array                $files      The FILES parameters
+     * @param array                $server     The SERVER parameters
+     * @param string|resource|null $content    The raw body data
+     */
+    public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
+    {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+
+    }
+
     /**
      * Get header Authorization
      *
@@ -45,7 +61,7 @@ class ApiRequest extends IncomingRequest
      */
     public function getAPIKey(): string
     {
-        return trim($this->headers->get('HTTP_X_API_KEY') ?? '');
+        return trim($this->headers->get('x-api-key') ?? '');
     }
 
     /**

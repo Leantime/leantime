@@ -394,6 +394,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
 						LEFT JOIN zp_user AS t1 ON zp_tickets.userId = t1.id
 						LEFT JOIN zp_user AS t2 ON zp_tickets.editorId = t2.id
+						LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
 						LEFT JOIN zp_comment ON zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket'
 						LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
 						LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
@@ -402,9 +403,10 @@ namespace Leantime\Domain\Tickets\Repositories {
 						LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0
 						LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
 						WHERE
-						    (zp_relationuserproject.userId = :userId
+						    (   zp_relationuserproject.userId = :userId
 						        OR zp_projects.psettings = 'all'
 				                OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+						        OR (requestor.role >= 40)
 						        )";
 
             $query .= " AND zp_tickets.type <> 'milestone'";
@@ -562,6 +564,8 @@ namespace Leantime\Domain\Tickets\Repositories {
             if ($limit !== null && $limit > 0) {
                 $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
             }
+
+            $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
             $stmn->execute();
 
