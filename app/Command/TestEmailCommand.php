@@ -2,6 +2,8 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Environment;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -9,24 +11,35 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Leantime\Core\Mailer;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class TestEmailCommand extends Command
 {
     protected static $defaultName = 'email:test';
     protected static $defaultDescription = 'Sends an email to test system configuration';
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();
         $this->addOption('address', null, InputOption::VALUE_REQUIRED, "Recipient email address");
     }
 
-  /**
-   * Execute the command
-   *
-   * @param  InputInterface  $input
-   * @param  OutputInterface $output
-   * @return integer 0 if everything went fine, or an exit code.
-   */
+    /**
+     * Execute the command
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return integer 0 if everything went fine, or an exit code.
+     * @throws BindingResolutionException
+     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         //Depending on the entry point, the constants may not be defined
@@ -47,7 +60,7 @@ class TestEmailCommand extends Command
             return Command::INVALID;
         }
 
-        $config = app()->make(\Leantime\Core\Environment::class);
+        $config = app()->make(Environment::class);
 
         // force debug output from mailer subsystem
         $config->debug = 1;

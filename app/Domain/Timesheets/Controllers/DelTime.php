@@ -7,6 +7,13 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class DelTime extends Controller
     {
         private TimesheetRepository $timesheetsRepo;

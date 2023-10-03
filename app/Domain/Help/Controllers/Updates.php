@@ -4,6 +4,13 @@ namespace Leantime\Domain\Help\Controllers {
 
     use Leantime\Core\Controller;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Updates extends Controller
     {
         /**

@@ -11,6 +11,13 @@ namespace Leantime\Domain\Setting\Controllers {
     use Leantime\Domain\Reports\Services\Reports as ReportService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class EditCompanySettings extends Controller
     {
         private EnvironmentCore $config;
@@ -68,7 +75,7 @@ namespace Leantime\Domain\Setting\Controllers {
 
             $logoPath = $this->settingsRepo->getSetting("companysettings.logoPath");
             if ($logoPath !== false) {
-                if (strpos($logoPath, 'http') === 0) {
+                if (str_starts_with($logoPath, 'http')) {
                     $companySettings["logo"] = $logoPath;
                 } else {
                     $companySettings["logo"] = BASE_URL . $logoPath;

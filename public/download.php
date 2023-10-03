@@ -3,6 +3,11 @@
  * downloads.php - For Handling Downloads.
  *
  */
+
+use Leantime\Core\AppSettings;
+use Leantime\Core\Environment;
+use Leantime\Domain\Auth\Services\Auth;
+
 define('RESTRICTED', TRUE);
 define('ROOT', dirname(__FILE__));
 define('APP_ROOT', dirname(__FILE__, 2));
@@ -14,11 +19,11 @@ if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
 require $composer;
 
 $app = bootstrap_minimal_app();
-$config = $app->make(\Leantime\Core\Environment::class);
-$settings = $app->make(\Leantime\Core\AppSettings::class);
+$config = $app->make(Environment::class);
+$settings = $app->make(AppSettings::class);
 $settings->loadSettings($config);
 
-$login = $app->make(\Leantime\Domain\Auth\Services\Auth::class);
+$login = $app->make(Auth::class);
 
 if ($login->logged_in()!==true) {
 
@@ -47,9 +52,13 @@ if ($login->logged_in()!==true) {
 
 }
 
+/**
+ * @return void
+ * @throws \Illuminate\Contracts\Container\BindingResolutionException
+ */
 function getFileLocally()
 {
-	$config = app()->make(\Leantime\Core\Environment::class);
+	$config = app()->make(Environment::class);
 
 	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
  	$realName = $_GET['realName'];
@@ -115,6 +124,10 @@ function getFileLocally()
     }
 }
 
+/**
+ * @return void
+ * @throws \Illuminate\Contracts\Container\BindingResolutionException
+ */
 function getFileFromS3(){
 
     // Include the AWS SDK using the Composer autoloader.
@@ -123,7 +136,7 @@ function getFileFromS3(){
     $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
     $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-    $config = app()->make(\Leantime\Core\Environment::class);
+    $config = app()->make(Environment::class);
 
     $mimes = array
     (

@@ -2,18 +2,41 @@
 
 namespace Leantime\Domain\Wiki\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Wiki\Models\Wiki;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class WikiModal extends Controller
     {
         private WikiService $wikiService;
 
+        /**
+         * @param WikiService $wikiService
+         * @return void
+         */
         public function init(WikiService $wikiService)
         {
             $this->wikiService = $wikiService;
         }
 
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function get($params)
         {
             $wiki = app()->make(Wiki::class);
@@ -26,6 +49,16 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->displayPartial("wiki.wikiDialog");
         }
 
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function post($params)
         {
             $wiki = app()->make(Wiki::class);

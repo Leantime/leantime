@@ -26,7 +26,7 @@ class Plugins
      * constructor
      *
      * @param \Leantime\Core\Environment $config
-     * @return self
+     * @return void
      */
     public function __construct(\Leantime\Core\Environment $config)
     {

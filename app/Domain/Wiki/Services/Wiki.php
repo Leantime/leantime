@@ -2,16 +2,38 @@
 
 namespace Leantime\Domain\Wiki\Services {
 
+    use Leantime\Domain\Wiki\Models\Article;
     use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Wiki
     {
         private $wikiRepository;
 
+        /**
+         * @param WikiRepository $wikiRepository
+         */
         public function __construct(WikiRepository $wikiRepository)
         {
             $this->wikiRepository = $wikiRepository;
         }
 
+        /**
+         * @param $id
+         * @param $projectId
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @param $projectId
+         * @return mixed
+         */
         public function getArticle($id, $projectId = null)
         {
 
@@ -29,37 +51,97 @@ namespace Leantime\Domain\Wiki\Services {
             return $article;
         }
 
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
         public function getAllProjectWikis($projectId)
         {
             return $this->wikiRepository->getAllProjectWikis($projectId);
         }
 
+        /**
+         * @param $wikiId
+         * @param $userId
+         * @return array|false
+         */
+        /**
+         * @param $wikiId
+         * @param $userId
+         * @return array|false
+         */
         public function getAllWikiHeadlines($wikiId, $userId)
         {
             return $this->wikiRepository->getAllWikiHeadlines($wikiId, $userId);
         }
 
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
         public function getWiki($id)
         {
             return $this->wikiRepository->getWiki($id);
         }
 
+        /**
+         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
+         * @return false|string
+         */
+        /**
+         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
+         * @return false|string
+         */
         public function createWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki)
         {
             return $this->wikiRepository->createWiki($wiki);
         }
 
+        /**
+         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
+         * @param $wikiId
+         * @return bool
+         */
+        /**
+         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
+         * @param $wikiId
+         * @return boolean
+         */
         public function updateWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki, $wikiId)
         {
             return $this->wikiRepository->updateWiki($wiki, $wikiId);
         }
 
-        public function createArticle(\Leantime\Domain\Wiki\Models\Article $article)
+        /**
+         * @param Article $article
+         * @return false|string
+         */
+        /**
+         * @param Article $article
+         * @return false|string
+         */
+        public function createArticle(Article $article)
         {
             return $this->wikiRepository->createArticle($article);
         }
 
-        public function updateArticle(\Leantime\Domain\Wiki\Models\Article $article)
+        /**
+         * @param Article $article
+         * @return bool
+         */
+        /**
+         * @param Article $article
+         * @return boolean
+         */
+        public function updateArticle(Article $article)
         {
             return $this->wikiRepository->updateArticle($article);
         }

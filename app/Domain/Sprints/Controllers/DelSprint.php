@@ -7,6 +7,13 @@ namespace Leantime\Domain\Sprints\Controllers {
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class DelSprint extends Controller
     {
         private SprintRepository $sprintRepo;

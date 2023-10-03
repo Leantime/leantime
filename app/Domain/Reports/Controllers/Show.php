@@ -13,6 +13,13 @@ namespace Leantime\Domain\Reports\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Show extends Controller
     {
         private DashboardRepository $dashboardRepo;
@@ -23,6 +30,16 @@ namespace Leantime\Domain\Reports\Controllers {
         private TimesheetService $timesheetService;
         private ReportService $reportService;
 
+        /**
+         * @param DashboardRepository $dashboardRepo
+         * @param ProjectService      $projectService
+         * @param SprintService       $sprintService
+         * @param TicketService       $ticketService
+         * @param UserService         $userService
+         * @param TimesheetService    $timesheetService
+         * @param ReportService       $reportService
+         * @return void
+         */
         public function init(
             DashboardRepository $dashboardRepo,
             ProjectService $projectService,
@@ -107,6 +124,14 @@ namespace Leantime\Domain\Reports\Controllers {
             $this->tpl->display('reports.show');
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         */
         public function post($params)
         {
 

@@ -12,6 +12,14 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class NewProject extends Controller
     {
         private ProjectRepository $projectRepo;

@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Menu\Composers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\IncomingRequest as IncomingRequestCore;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
@@ -10,6 +11,13 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Menu extends Composer
 {
     public static $views = [
@@ -23,6 +31,15 @@ class Menu extends Composer
     private IncomingRequestCore $incomingRequest;
     private \Leantime\Domain\Menu\Services\Menu $menuService;
 
+    /**
+     * @param ProjectService                      $projectService
+     * @param TicketService                       $ticketService
+     * @param SettingService                      $settingSvc
+     * @param MenuRepository                      $menuRepo
+     * @param \Leantime\Domain\Menu\Services\Menu $menuService
+     * @param IncomingRequestCore                 $request
+     * @return void
+     */
     public function init(
         ProjectService $projectService,
         TicketService $ticketService,
@@ -39,6 +56,14 @@ class Menu extends Composer
         $this->incomingRequest = $request;
     }
 
+    /**
+     * @return array
+     * @throws BindingResolutionException
+     */
+    /**
+     * @return array
+     * @throws BindingResolutionException
+     */
     public function with()
     {
         $allAssignedprojects =
@@ -46,14 +71,10 @@ class Menu extends Composer
         $recentProjects =
         $returnVars = [];
 
-        if (isset($_SESSION['userdata']["projectSelectFilter"])) {
-            $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"];
-        } else {
-            $projectSelectFilter = array(
-                "groupBy" => "none",
-                "clients" => '',
-            );
-        }
+        $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"] ?? array(
+            "groupBy" => "none",
+            "clients" => '',
+        );
 
         if (isset($_SESSION['userdata'])) {
             $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);

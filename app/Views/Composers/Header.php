@@ -8,6 +8,13 @@ use Leantime\Core\Environment;
 use Leantime\Core\AppSettings;
 use Leantime\Core\Theme;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Header extends Composer
 {
     public static $views = [
@@ -19,6 +26,13 @@ class Header extends Composer
     private AppSettings $AppSettings;
     private Theme $ThemeCore;
 
+    /**
+     * @param Setting     $settingsRepo
+     * @param Environment $config
+     * @param AppSettings $appSettings
+     * @param Theme       $themeCore
+     * @return void
+     */
     public function init(
         Setting $settingsRepo,
         Environment $config,
@@ -31,6 +45,12 @@ class Header extends Composer
         $this->themeCore = $themeCore;
     }
 
+    /**
+     * @return array
+     */
+    /**
+     * @return array
+     */
     public function with()
     {
         return [

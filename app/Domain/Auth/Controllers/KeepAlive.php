@@ -4,6 +4,14 @@ namespace Leantime\Domain\Auth\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class KeepAlive extends Controller
     {
         private $authService;

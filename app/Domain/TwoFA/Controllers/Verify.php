@@ -5,6 +5,14 @@ namespace Leantime\Domain\TwoFA\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Verify extends Controller
     {
         private AuthService $authService;
@@ -39,6 +47,14 @@ namespace Leantime\Domain\TwoFA\Controllers {
             $this->tpl->display("twofa.verify", "entry");
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         */
         public function post($params)
         {
 

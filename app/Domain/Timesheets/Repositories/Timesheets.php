@@ -7,6 +7,13 @@ namespace Leantime\Domain\Timesheets\Repositories {
     use Leantime\Core\Repository;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Timesheets extends Repository
     {
         /**
@@ -145,6 +152,14 @@ namespace Leantime\Domain\Timesheets\Repositories {
             return $call->fetchAll();
         }
 
+        /**
+         * @param $values
+         * @return void
+         */
+        /**
+         * @param $values
+         * @return void
+         */
         public function export($values)
         {
 
@@ -203,6 +218,14 @@ namespace Leantime\Domain\Timesheets\Repositories {
             file_put_contents($file, $content);
         }
 
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
         public function getUsersHours($id)
         {
             $sql = "SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC";
@@ -215,6 +238,12 @@ namespace Leantime\Domain\Timesheets\Repositories {
             return $call->fetchAll();
         }
 
+        /**
+         * @return int|mixed
+         */
+        /**
+         * @return integer|mixed
+         */
         public function getHoursBooked()
         {
             $sql = "SELECT SUM(hours) AS hoursBooked
@@ -235,6 +264,18 @@ namespace Leantime\Domain\Timesheets\Repositories {
             return $values;
         }
 
+        /**
+         * @param $projectId
+         * @param $dateStart
+         * @param $userId
+         * @return mixed
+         */
+        /**
+         * @param $projectId
+         * @param $dateStart
+         * @param $userId
+         * @return mixed
+         */
         public function getWeeklyTimesheets($projectId = -1, $dateStart = '0000-01-01 00:00:00', $userId = 0)
         {
 
@@ -370,6 +411,14 @@ namespace Leantime\Domain\Timesheets\Repositories {
             $call->execute();
         }
 
+        /**
+         * @param $values
+         * @return void
+         */
+        /**
+         * @param $values
+         * @return void
+         */
         public function simpleInsert($values)
         {
 
@@ -606,10 +655,10 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * dateRange - returns every single day between two dates
          *
          * @access private
-         * @param $first first date
-         * @param $last last date
-         * @param string           $step   default 1 day, can be changed to get every other day, week etc.
-         * @param string           $format date format
+         * @param first  $first  date
+         * @param last   $last   date
+         * @param string $step   default 1 day, can be changed to get every other day, week etc.
+         * @param string $format date format
          * @return array
          */
         private function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
@@ -628,6 +677,14 @@ namespace Leantime\Domain\Timesheets\Repositories {
             return $dates;
         }
 
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
         public function deleteTime($id)
         {
 
@@ -709,6 +766,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          * @param  $ticketId
+         * @return mixed
          */
         public function punchIn($ticketId)
         {
@@ -806,7 +864,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * isClocked - Checks to see whether a user is clocked in
          *
          * @access public
-         * @param  id
+         * @param id $id
+         * @return array|false
          */
         public function isClocked($id)
         {

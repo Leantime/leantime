@@ -12,6 +12,13 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class DelGCal extends Controller
     {
         private CalendarRepository $calendarRepo;

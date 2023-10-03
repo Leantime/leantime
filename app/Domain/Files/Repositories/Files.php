@@ -2,11 +2,19 @@
 
 namespace Leantime\Domain\Files\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Files
     {
         private $adminModules = array('project' => 'Projects','ticket' => 'Tickets','client' => 'Clients','lead' => 'Lead','private' => 'General'); // 'user'=>'Users',
@@ -15,11 +23,24 @@ namespace Leantime\Domain\Files\Repositories {
 
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
+        /**
+         * @param $id
+         * @return string[]
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return string[]
+         * @throws BindingResolutionException
+         */
         public function getModules($id)
         {
             $users = app()->make(UserRepo::class);
@@ -32,6 +53,16 @@ namespace Leantime\Domain\Files\Repositories {
             return $modules;
         }
 
+        /**
+         * @param $values
+         * @param $module
+         * @return false|string
+         */
+        /**
+         * @param $values
+         * @param $module
+         * @return false|string
+         */
         public function addFile($values, $module)
         {
 
@@ -56,6 +87,14 @@ namespace Leantime\Domain\Files\Repositories {
             return $this->db->database->lastInsertId();
         }
 
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
         public function getFile($id)
         {
 
@@ -76,6 +115,14 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
+        /**
+         * @param $userId
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @return array|false
+         */
         public function getFiles($userId = 0)
         {
 
@@ -99,29 +146,27 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
+        /**
+         * @param $module
+         * @return array
+         */
+        /**
+         * @param $module
+         * @return array
+         */
         public function getFolders($module)
         {
 
             $folders = array();
             $files = $this->getFiles($_SESSION['userdata']['id'], true);
 
-            switch ($module) {
-                case 'ticket':
-                    $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
-                    break;
-                case 'client':
-                    $sql = "SELECT name as title, id FROM zp_clients WHERE id=:moduleId LIMIT 1";
-                    break;
-                case 'project':
-                    $sql = "SELECT name as title, id FROM zp_projects WHERE id=:moduleId LIMIT 1";
-                    break;
-                case 'lead':
-                    $sql = "SELECT name as title, id FROM zp_lead WHERE id=:moduleId LIMIT 1";
-                    break;
-                default:
-                    $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
-                    break;
-            }
+            $sql = match ($module) {
+                'ticket' => "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1",
+                'client' => "SELECT name as title, id FROM zp_clients WHERE id=:moduleId LIMIT 1",
+                'project' => "SELECT name as title, id FROM zp_projects WHERE id=:moduleId LIMIT 1",
+                'lead' => "SELECT name as title, id FROM zp_lead WHERE id=:moduleId LIMIT 1",
+                default => "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1",
+            };
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -140,6 +185,18 @@ namespace Leantime\Domain\Files\Repositories {
             return $folders;
         }
 
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return array|false
+         */
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return array|false
+         */
         public function getFilesByModule($module = '', $moduleId = null, $userId = 0)
         {
 
@@ -193,6 +250,14 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
+        /**
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @return boolean
+         */
         public function deleteFile($id)
         {
 
@@ -221,6 +286,20 @@ namespace Leantime\Domain\Files\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $file
+         * @param $module
+         * @param $moduleId
+         * @return array|false
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $file
+         * @param $module
+         * @param $moduleId
+         * @return array|false
+         * @throws BindingResolutionException
+         */
         public function upload($file, $module, $moduleId)
         {
 
@@ -274,6 +353,20 @@ namespace Leantime\Domain\Files\Repositories {
             return $return;
         }
 
+        /**
+         * @param $name
+         * @param $url
+         * @param $module
+         * @param $moduleId
+         * @return void
+         */
+        /**
+         * @param $name
+         * @param $url
+         * @param $module
+         * @param $moduleId
+         * @return void
+         */
         public function uploadCloud($name, $url, $module, $moduleId)
         {
 

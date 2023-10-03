@@ -6,13 +6,16 @@
  * Register Events here
  */
 
-\Leantime\Core\Events::add_event_listener(
+use Leantime\Core\Events;
+use Leantime\Plugins\MotivationalQuotes\Services\MotivationalQuotes;
+
+Events::add_event_listener(
     //Register event listener
     "leantime.core.template.tpl.dashboard.home.afterWelcomeMessage",
     //Create function for the event
     function ($payload) {
         // code here
-        $motivationalQuotesSvc = app()->make(\Leantime\Plugins\MotivationalQuotes\Services\MotivationalQuotes::class);
+        $motivationalQuotesSvc = app()->make(MotivationalQuotes::class);
         $randomQuote = $motivationalQuotesSvc->getRandomQuote();
         echo"<div class='motivationalQuote' style='margin-bottom:20px;'><br />";
         echo "<p>Quote of the day:</p>";

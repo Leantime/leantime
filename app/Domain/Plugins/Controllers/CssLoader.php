@@ -7,10 +7,21 @@ namespace Leantime\Domain\Plugins\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class CssLoader extends Controller
     {
         private PluginService $pluginService;
 
+        /**
+         * @param PluginService $pluginService
+         * @return void
+         */
         public function init(PluginService $pluginService)
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin]);

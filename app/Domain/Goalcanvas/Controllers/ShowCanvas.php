@@ -8,10 +8,19 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Core\Mailer;
+    use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
+    use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
     use Leantime\Domain\Canvas\Services\Canvas as CanvasService;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowCanvas extends Controller
     {
         /**
@@ -20,13 +29,13 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         protected const CANVAS_NAME = 'goal';
 
         private $canvasRepo;
-        private \Leantime\Domain\Projects\Services\Projects $projectService;
-        private \Leantime\Domain\Goalcanvas\Services\Goalcanvas $goalService;
+        private Projects $projectService;
+        private Goalcanvas $goalService;
 
         /**
          * init - initialize private variables
          */
-        public function init(\Leantime\Domain\Projects\Services\Projects $projectService, \Leantime\Domain\Goalcanvas\Services\Goalcanvas $goalService)
+        public function init(Projects $projectService, Goalcanvas $goalService)
         {
             $this->projectService = $projectService;
             $this->goalService = $goalService;

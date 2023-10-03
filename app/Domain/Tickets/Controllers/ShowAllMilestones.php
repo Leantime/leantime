@@ -7,6 +7,14 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowAllMilestones extends Controller
     {
         private ProjectService $projectService;
@@ -14,6 +22,13 @@ namespace Leantime\Domain\Tickets\Controllers {
         private SprintService $sprintService;
         private TimesheetService $timesheetService;
 
+        /**
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param SprintService    $sprintService
+         * @param TimesheetService $timesheetService
+         * @return void
+         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
@@ -28,6 +43,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             $_SESSION['lastPage'] = CURRENT_URL;
         }
 
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
         public function get($params)
         {
 

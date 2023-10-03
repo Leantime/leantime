@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Exception;
 
@@ -44,7 +45,7 @@ class Frontcontroller
      * __construct - Set the rootpath of the server
      *
      * @param IncomingRequest $incomingRequest
-     * @return self
+     * @return void
      */
     public function __construct(IncomingRequest $incomingRequest)
     {
@@ -57,7 +58,7 @@ class Frontcontroller
      *
      * @access public
      * @param  string  $action
-     * @param  integer $httpResponseCode
+     * @param integer $httpResponseCode
      * @return void
      */
     public static function dispatch(string $action = '', int $httpResponseCode = 200): void
@@ -76,9 +77,10 @@ class Frontcontroller
      * executeAction - includes the class in includes/modules by the Request
      *
      * @access private
-     * @param  string $completeName actionname.filename
-     * @param  array  $params
+     * @param string $completeName actionname.filename
+     * @param array  $params
      * @return void
+     * @throws BindingResolutionException
      */
     private static function executeAction(string $completeName, array $params = array()): void
     {
@@ -137,7 +139,7 @@ class Frontcontroller
      * getActionName - split string to get actionName
      *
      * @access public
-     * @param  string $completeName
+     * @param string|null $completeName
      * @return string
      */
     public static function getActionName(string $completeName = null): string
@@ -159,7 +161,7 @@ class Frontcontroller
      * getModuleName - split string to get modulename
      *
      * @access public
-     * @param  string $completeName
+     * @param string|null $completeName
      * @return string
      */
     public static function getModuleName(string $completeName = null): string
@@ -180,6 +182,7 @@ class Frontcontroller
      *
      * @access public
      * @return string
+     * @throws BindingResolutionException
      */
     public static function getCurrentRoute(): string
     {

@@ -14,6 +14,13 @@ namespace Leantime\Domain\Menu\Repositories {
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Menu
     {
         use Eventhelpers;
@@ -109,6 +116,13 @@ namespace Leantime\Domain\Menu\Repositories {
         private TicketService $ticketsService;
         private AuthService $authService;
 
+        /**
+         * @param SettingRepository $settingsRepo
+         * @param LanguageCore      $language
+         * @param EnvironmentCore   $config
+         * @param TicketService     $ticketsService
+         * @param AuthService       $authService
+         */
         public function __construct(
             SettingRepository $settingsRepo,
             LanguageCore $language,
@@ -183,11 +197,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $_SESSION['submenuToggle'] = unserialize($subStructure);
 
-            if (isset($_SESSION['submenuToggle'][$submenu])) {
-                return $_SESSION['submenuToggle'][$submenu];
-            } else {
-                return false;
-            }
+            return $_SESSION['submenuToggle'][$submenu] ?? false;
         }
 
         /**
@@ -217,7 +227,7 @@ namespace Leantime\Domain\Menu\Repositories {
             }
 
             foreach ($menuStructure as $key => $element) {
-                $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
+                $menuStructure[$key]['title'] = $language->__($element['title']);
 
                 switch ($element['type']) {
                     case 'header':
@@ -277,6 +287,16 @@ namespace Leantime\Domain\Menu\Repositories {
             return $menuStructure;
         }
 
+        /**
+         * @param $element
+         * @param $structure
+         * @return void
+         */
+        /**
+         * @param $element
+         * @param $structure
+         * @return void
+         */
         public function processMenuItem($element, &$structure)
         {
 
@@ -304,6 +324,12 @@ namespace Leantime\Domain\Menu\Repositories {
             return;
         }
 
+        /**
+         * @return array|mixed|string|string[]
+         */
+        /**
+         * @return array|mixed|string|string[]
+         */
         public function getTicketMenu()
         {
 
@@ -314,6 +340,12 @@ namespace Leantime\Domain\Menu\Repositories {
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
 
+        /**
+         * @return string
+         */
+        /**
+         * @return string
+         */
         public function getIdeaMenu()
         {
             $url = "/ideas/showBoards";

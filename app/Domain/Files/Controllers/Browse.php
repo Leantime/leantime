@@ -6,8 +6,20 @@ use Leantime\Core\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Browse extends Controller
 {
+    /**
+     * @param FileRepository $filesRepo
+     * @param FileService    $filesService
+     * @return void
+     */
     public function init(
         FileRepository $filesRepo,
         FileService $filesService
@@ -16,6 +28,10 @@ class Browse extends Controller
         $this->filesService = $filesService;
     }
 
+    /**
+     * @return void
+     * @throws \Exception
+     */
     public function run()
     {
         $currentModule = $_SESSION['currentProject'];

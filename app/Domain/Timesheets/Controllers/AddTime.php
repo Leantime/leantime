@@ -9,6 +9,13 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class AddTime extends Controller
     {
         private TimesheetRepository $timesheetsRepo;

@@ -6,7 +6,7 @@ $comments = app()->make(Leantime\Domain\Comments\Repositories\Comments::class);
 $formUrl = CURRENT_URL;
 
 //Controller may not redirect. Make sure delComment is only added once
-if (strpos($formUrl, '?delComment=') !== false) {
+if (str_contains($formUrl, '?delComment=')) {
     $urlParts = explode('?delComment=', $formUrl);
     $deleteUrlBase = $urlParts[0] . "?delComment=";
 } else {
@@ -47,7 +47,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                         $tpl->__('text.written_on'),
                         $tpl->getFormattedDateString($row['date']),
                         $tpl->getFormattedTimeString($row['date'])
-                                       ); ?></div>
+                    ); ?></div>
                     <strong>
                     <?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
                     </strong><br/>

@@ -3,6 +3,14 @@
 namespace Leantime\Domain\Dashboard\Repositories {
 
     use Leantime\Core\Db as DbCore;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Dashboard
     {
         /**
@@ -21,7 +29,7 @@ namespace Leantime\Domain\Dashboard\Repositories {
          * __construct - neu db connection
          *
          * @access public
-         * @return
+         * @param DbCore $db
          */
         public function __construct(DbCore $db)
         {

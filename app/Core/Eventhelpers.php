@@ -2,8 +2,16 @@
 
 namespace Leantime\Core {
 
+    use Exception;
     use Leantime\Core\Events;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     trait Eventhelpers
     {
         private static $event_context = '';
@@ -13,9 +21,9 @@ namespace Leantime\Core {
          *
          * @access protected
          *
-         * @param string $hook
-         * @param mixed  $available_params
-         *
+         * @param string              $hook
+         * @param mixed               $available_params
+         * @param string|integer|null $function
          * @return void
          */
         public static function dispatch_event(string $hook, mixed $available_params = [], string|int $function = null): void
@@ -28,10 +36,10 @@ namespace Leantime\Core {
          *
          * @access protected
          *
-         * @param string $hook
-         * @param mixed  $payload
-         * @param mixed  $available_params
-         *
+         * @param string              $hook
+         * @param mixed               $payload
+         * @param mixed               $available_params
+         * @param string|integer|null $function
          * @return mixed
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
@@ -44,6 +52,7 @@ namespace Leantime\Core {
          *
          * @access private
          *
+         * @param $function
          * @return string
          */
         private static function get_event_context($function): string
@@ -79,6 +88,7 @@ namespace Leantime\Core {
          *
          * @access private
          *
+         * @param null $functionInt
          * @return string
          */
         private static function get_function_context($functionInt = null): string
@@ -86,7 +96,7 @@ namespace Leantime\Core {
             $tracePointer = is_int($functionInt) ? $functionInt : 3;
 
             // Create an exception
-            $ex = new \Exception();
+            $ex = new Exception();
 
             // Call getTrace() function
             $trace = $ex->getTrace();

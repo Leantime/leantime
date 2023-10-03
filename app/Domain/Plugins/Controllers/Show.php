@@ -7,10 +7,21 @@ namespace Leantime\Domain\Plugins\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Show extends Controller
     {
         private PluginService $pluginService;
 
+        /**
+         * @param PluginService $pluginService
+         * @return void
+         */
         public function init(PluginService $pluginService)
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
@@ -75,6 +86,14 @@ namespace Leantime\Domain\Plugins\Controllers {
             $this->tpl->display("plugins.show");
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         */
         public function post($params)
         {
 

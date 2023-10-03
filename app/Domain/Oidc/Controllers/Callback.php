@@ -3,18 +3,40 @@
 namespace Leantime\Domain\Oidc\Controllers;
 
 use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Callback extends Controller
 {
     private OidcService $oidc;
 
+    /**
+     * @param OidcService $oidc
+     * @return void
+     */
     public function init(OidcService $oidc)
     {
         $this->oidc = $oidc;
     }
 
+    /**
+     * @param $params
+     * @return void
+     * @throws GuzzleException
+     */
+    /**
+     * @param $params
+     * @return void
+     * @throws GuzzleException
+     */
     public function get($params)
     {
         $code = $_GET['code'];

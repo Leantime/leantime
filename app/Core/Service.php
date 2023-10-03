@@ -13,7 +13,7 @@ interface Service
     /**
      * patches the object by key.
      *
-     * @param  integer $id     id of the object to be patched
+     * @param integer $id     id of the object to be patched
      * @param  array   $params key=>value array where key represents the object field name and value the value.
      * @access public
      *
@@ -44,7 +44,7 @@ interface Service
      * Deletes object
      *
      * @access public
-     * @param  integer $id id of the object to be deleted
+     * @param integer $id id of the object to be deleted
      * @return boolean returns id of new element or false
      */
     public function delete(int $id): bool;
@@ -53,7 +53,7 @@ interface Service
      * Gets 1 specific item
      *
      * @access public
-     * @param  integer $id id of the object to be retrieved
+     * @param integer $id id of the object to be retrieved
      * @return object|array|false returns object or array. False on failure or if item cannot be found
      */
     public function get(int $id): object|array|false;
@@ -62,7 +62,7 @@ interface Service
      * Get all items
      *
      * @access public
-     * @param  array $searchparams search parameters
+     * @param array|null $searchparams search parameters
      * @return array|false returns array on success, false on failure. No results should return empty array
      */
     public function getAll(array $searchparams = null): array|false;

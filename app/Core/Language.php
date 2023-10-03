@@ -2,7 +2,9 @@
 
 namespace Leantime\Core;
 
+use DateTime;
 use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Domain\Reports\Repositories\Reports;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Core\Eventhelpers;
@@ -84,7 +86,9 @@ class Language
     /**
      * __construct - Check standard language otherwise get language from browser
      *
-     * @return self
+     * @param Environment $config
+     * @param Setting     $settingsRepo
+     * @throws BindingResolutionException
      */
     public function __construct(
         Environment $config,
@@ -171,7 +175,8 @@ class Language
      *
      * @access public
      * @param  $lang
-     * @return array
+     * @return void
+     * @throws Exception
      */
     public function setLanguage($lang)
     {
@@ -214,7 +219,7 @@ class Language
      * getLanguage - set the language (format: de-DE, languageCode-CountryCode)
      *
      * @access public
-     * @return array
+     * @return string
      */
     public function getCurrentLanguage()
     {
@@ -238,6 +243,7 @@ class Language
      *
      * @access public
      * @return array
+     * @throws Exception
      */
     public function readIni()
     {
@@ -295,10 +301,11 @@ class Language
      * includeOverrides - include overrides from ini file
      *
      * @access public
-     * @param  array   $language
-     * @param  string  $filepath
-     * @param  boolean $foreignLanguage
+     * @param array   $language
+     * @param string  $filepath
+     * @param boolean $foreignLanguage
      * @return array
+     * @throws Exception
      */
     protected function includeOverrides(array $language, string $filepath, bool $foreignLanguage = false)
     {
@@ -317,7 +324,7 @@ class Language
         }
 
         foreach ($ini_overrides as $languageKey => $languageValue) {
-            $language[$languageKey] = $ini_overrides[$languageKey];
+            $language[$languageKey] = $languageValue;
         }
 
         return $language;
@@ -401,7 +408,7 @@ class Language
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
             //If datetime object
-            if ($date instanceof \DateTime) {
+            if ($date instanceof DateTime) {
                 return $date->format($this->__("language.dateformat"));
             }
 

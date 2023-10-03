@@ -6,11 +6,20 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
+use JetBrains\PhpStorm\NoReturn;
 use Leantime\Core\Controller;
 use ReflectionClass;
 use ReflectionParameter;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Jsonrpc extends Controller
 {
     /**
@@ -155,11 +164,13 @@ class Jsonrpc extends Controller
      * @param array $params - request body
      *
      * @return void
+     * @throws BindingResolutionException
+     * @throws \ReflectionException
      */
     private function executeApiRequest($params): void
     {
-        $methodparts = $this->parseMethodString(isset($params['method']) ? $params['method'] : '');
-        $jsonRpcVer = isset($params['jsonrpc']) ? $params['jsonrpc'] : null;
+        $methodparts = $this->parseMethodString($params['method'] ?? '');
+        $jsonRpcVer = $params['jsonrpc'] ?? null;
         $serviceName = Str::studly($methodparts['service']);
 
         $domainServiceNamespace = app()->getNamespace() . "Domain\\$serviceName\\Services\\$serviceName";
@@ -167,8 +178,8 @@ class Jsonrpc extends Controller
 
         $methodName = Str::camel($methodparts['method']);
 
-        $paramsFromRequest = isset($params['params']) ? $params['params'] : [];
-        $id = isset($params['id']) ? $params['id'] : null;
+        $paramsFromRequest = $params['params'] ?? [];
+        $id = $params['id'] ?? null;
 
 
         if (class_exists($domainServiceNamespace)) {
@@ -242,7 +253,8 @@ class Jsonrpc extends Controller
      * @param string $servicename
      * @param string $methodname
      *
-     * @return ReflectionParameter[]
+     * @return array
+     * @throws \ReflectionException
      */
     private function getMethodParameters(string $servicename, string $methodname): array
     {
@@ -256,8 +268,8 @@ class Jsonrpc extends Controller
     /**
      * Checks request params
      *
-     * @param array                 $params
-     * @param ReflectionParameter[] $methodParams
+     * @param array $params
+     * @param array $methodParams
      *
      * @return array
      */
@@ -311,9 +323,8 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#response_object
      *
-     * @param array|null $returnValue
-     * @param string     $requestMethod
-     *
+     * @param array|null  $returnValue
+     * @param string|null $id
      * @return void
      */
     private function returnResponse(array|null $returnValue, string $id = null): void
@@ -340,12 +351,12 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param string  $errorMessage
-     * @param integer $httpResponseCode
-     *
+     * @param string     $errorMessage
+     * @param integer    $errorcode
+     * @param mixed|null $additional_info
      * @return void
      */
-    private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null): void
+    #[NoReturn] private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null): void
     {
         echo json_encode([
             'code' => $errorcode,

@@ -9,6 +9,13 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class IdeaDialog extends Controller
     {
         private IdeaRepository $ideaRepo;
@@ -64,11 +71,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                 $comments = $this->commentsRepo->getComments('idea', $canvasItem['id']);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('ideas', $canvasItem['id']));
             } else {
-                if (isset($params['type'])) {
-                    $type = $params['type'];
-                } else {
-                    $type = "idea";
-                }
+                $type = $params['type'] ?? "idea";
 
                 $canvasItem = array(
                     "id" => "",

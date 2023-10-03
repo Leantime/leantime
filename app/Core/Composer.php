@@ -2,9 +2,17 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\View\View;
 use Illuminate\Support\Fluent;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 abstract class Composer
 {
     /**
@@ -31,8 +39,9 @@ abstract class Composer
     /**
      * Compose the view before rendering.
      *
-     * @param  View $view
+     * @param View $view
      * @return void
+     * @throws BindingResolutionException
      */
     public function compose(View $view)
     {

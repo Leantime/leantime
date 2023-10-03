@@ -7,12 +7,24 @@ namespace Leantime\Domain\Cron\Services {
     use Leantime\Domain\Queue\Services\Queue;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Cron
     {
         private Audit $AuditRepo;
         private Queue $queueSvc;
         private Environment $Environment;
 
+        /**
+         * @param Audit       $auditRepo
+         * @param Queue       $queueSvc
+         * @param Environment $environment
+         */
         public function __construct(Audit $auditRepo, Queue $queueSvc, Environment $environment)
         {
             $this->auditRepo = $auditRepo;
@@ -20,6 +32,12 @@ namespace Leantime\Domain\Cron\Services {
             $this->environment = $environment;
         }
 
+        /**
+         * @return bool
+         */
+        /**
+         * @return boolean
+         */
         public function runCron()
         {
 

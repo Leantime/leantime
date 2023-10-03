@@ -65,9 +65,9 @@ class Fileupload
     public $path_parts = array();
 
     /**
-     * @var \Leantime\Core\Environment configuration object
+     * @var Environment configuration object
      */
-    public \Leantime\Core\Environment $config;
+    public Environment $config;
 
     /**
      * @var S3Client|string
@@ -77,10 +77,10 @@ class Fileupload
     /**
      * fileupload constructor.
      *
-     * @param \Leantime\Core\Environment $config
-     * @return self
+     * @param Environment $config
+     * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config)
+    public function __construct(Environment $config)
     {
         $this->config = $config;
         $this->path = $this->config->userFilePath;
@@ -327,6 +327,12 @@ class Fileupload
         }
     }
 
+    /**
+     * @return bool
+     */
+    /**
+     * @return boolean
+     */
     private function uploadLocal()
     {
 

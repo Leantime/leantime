@@ -6,11 +6,23 @@ use Leantime\Core\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class ShowAll extends Controller
 {
     private FileRepository $filesRepo;
     private FileService $filesService;
 
+    /**
+     * @param FileRepository $filesRepo
+     * @param FileService    $filesService
+     * @return void
+     */
     public function init(
         FileRepository $filesRepo,
         FileService $filesService
@@ -19,6 +31,9 @@ class ShowAll extends Controller
         $this->filesService = $filesService;
     }
 
+    /**
+     * @return void
+     */
     public function run()
     {
 

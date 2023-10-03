@@ -5,6 +5,13 @@ namespace Leantime\Domain\Plugins\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Plugins
     {
         private DbCore $db;
@@ -19,6 +26,14 @@ namespace Leantime\Domain\Plugins\Repositories {
             $this->db = $db;
         }
 
+        /**
+         * @param $enabledOnly
+         * @return array|false
+         */
+        /**
+         * @param $enabledOnly
+         * @return array|false
+         */
         public function getAllPlugins($enabledOnly = true)
         {
 
@@ -56,6 +71,10 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $allPlugins;
         }
 
+        /**
+         * @param integer $id
+         * @return \Leantime\Domain\Plugins\Models\Plugins|false
+         */
         public function getPlugin(int $id): \Leantime\Domain\Plugins\Models\Plugins|false
         {
 
@@ -82,6 +101,14 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $plugin;
         }
 
+        /**
+         * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
+         * @return false|string
+         */
+        /**
+         * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
+         * @return false|string
+         */
         public function addPlugin(\Leantime\Domain\Plugins\Models\Plugins $plugin)
         {
 
@@ -123,6 +150,14 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $id;
         }
 
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param integer $id
+         * @return boolean
+         */
         public function enablePlugin(int $id)
         {
 
@@ -141,6 +176,14 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $result;
         }
 
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param integer $id
+         * @return boolean
+         */
         public function disablePlugin(int $id)
         {
 
@@ -159,6 +202,14 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $result;
         }
 
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param integer $id
+         * @return boolean
+         */
         public function removePlugin(int $id)
         {
 

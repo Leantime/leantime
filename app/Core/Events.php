@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Plugins;
 
 /**
@@ -153,6 +154,7 @@ class Events
      * @access public
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public static function discover_listeners(): void
     {
@@ -353,6 +355,7 @@ class Events
      * @access private
      *
      * @param array        $registry
+     * @param string       $registryType
      * @param string       $hookName
      * @param mixed        $payload
      * @param array|object $available_params

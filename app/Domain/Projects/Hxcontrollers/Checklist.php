@@ -2,9 +2,17 @@
 
 namespace Leantime\Domain\Projects\Hxcontrollers;
 
+use Error;
 use Leantime\Core\HtmxController;
 use Leantime\Domain\Projects\Services\Projects;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Checklist extends HtmxController
 {
     /**
@@ -13,14 +21,14 @@ class Checklist extends HtmxController
     protected static $view = 'projects::partials.checklist';
 
     /**
-     * @var \Leantime\Domain\Projects\Services\Projects
+     * @var Projects
      */
     private Projects $projectService;
 
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param Projects $projectService The projects domain service.
      * @return void
      */
     public function init(Projects $projectService)
@@ -36,7 +44,7 @@ class Checklist extends HtmxController
     public function updateSubtask()
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
-            throw new \Error('This endpoint only supports PATCH requests');
+            throw new Error('This endpoint only supports PATCH requests');
         }
 
         // update project progress

@@ -7,6 +7,13 @@
 
 namespace Leantime\Domain\Modulemanager\Services {
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Modulemanager
     {
         private static $modules = array(
@@ -38,12 +45,19 @@ namespace Leantime\Domain\Modulemanager\Services {
          * __construct - get and test Session or make session
          *
          * @access private
-         * @return
          */
         public function __construct()
         {
         }
 
+        /**
+         * @param $module
+         * @return bool
+         */
+        /**
+         * @param $module
+         * @return boolean
+         */
         public static function isModuleEnabled($module)
         {
             if (isset(self::$modules[$module])) {

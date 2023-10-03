@@ -7,6 +7,14 @@ namespace Leantime\Domain\Auth\Controllers {
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Users\Services\Users as UserService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ResetPw extends Controller
     {
         private FileRepository $fileRepo;

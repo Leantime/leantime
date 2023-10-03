@@ -7,7 +7,7 @@ $formUrl = CURRENT_URL;
 $formHash = md5($formUrl);
 
 //Controller may not redirect. Make sure delComment is only added once
-if (strpos($formUrl, '?delComment=') !== false) {
+if (str_contains($formUrl, '?delComment=')) {
     $urlParts = explode('?delComment=', $formUrl);
     $deleteUrlBase = $urlParts[0] . "?delComment=";
 } else {

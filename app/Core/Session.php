@@ -7,6 +7,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Eventhelpers;
 
 /**
@@ -93,6 +94,7 @@ class Session
      *
      * @access public
      * @return string
+     * @throws BindingResolutionException
      */
     public static function getSID(): string
     {

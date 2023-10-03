@@ -7,6 +7,13 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class DelUser extends Controller
     {
         private UserRepository $userRepo;

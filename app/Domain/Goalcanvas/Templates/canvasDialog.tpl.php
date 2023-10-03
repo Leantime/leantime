@@ -78,7 +78,9 @@ if (isset($_GET['canvasId'])) {
                     <select name="relates"  style="width: 50%" id="relatesCanvas">
                     </select><br />
                 <?php } else { ?>
-                    <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
+                    <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
+                        $hiddenRelatesLabels
+                                                               ) ?>" />
                 <?php } ?>
                 <br />
                 <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i> <?=$tpl->__("Metrics") ?></h4>
@@ -152,7 +154,9 @@ if (isset($_GET['canvasId'])) {
                     <select name="status" style="width: 50%" id="statusCanvas">
                     </select><br /><br />
                 <?php } else { ?>
-                    <input type="hidden" name="status" value="<?php echo isset($canvasItem['status']) ? $canvasItem['status'] : array_key_first($hiddenStatusLabels) ?>" />
+                    <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?? array_key_first(
+                        $hiddenStatusLabels
+                                                              ) ?>" />
                 <?php } ?>
 
 

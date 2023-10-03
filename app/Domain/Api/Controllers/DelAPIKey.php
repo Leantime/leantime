@@ -8,6 +8,13 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Domain\Api\Services\Api;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class DelAPIKey extends Controller
     {
         private Api $APIService;

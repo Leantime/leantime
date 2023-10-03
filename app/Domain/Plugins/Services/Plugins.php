@@ -2,11 +2,20 @@
 
 namespace Leantime\Domain\Plugins\Services {
 
+    use Exception;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
     use Leantime\Domain\Plugins\Models\Plugins as PluginModel;
     use Ramsey\Uuid\Uuid;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Plugins
     {
         private PluginRepository $pluginRepository;
@@ -14,17 +23,37 @@ namespace Leantime\Domain\Plugins\Services {
         private EnvironmentCore $config;
 
 
+        /**
+         * @param PluginRepository $pluginRepository
+         * @param EnvironmentCore  $config
+         */
         public function __construct(PluginRepository $pluginRepository, EnvironmentCore $config)
         {
             $this->pluginRepository = $pluginRepository;
             $this->config = $config;
         }
 
+        /**
+         * @return array|false
+         */
+        /**
+         * @return array|false
+         */
         public function getAllPlugins()
         {
             return $this->pluginRepository->getAllPlugins(false);
         }
 
+        /**
+         * @param $pluginFolder
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $pluginFolder
+         * @return boolean
+         * @throws BindingResolutionException
+         */
         public function isPluginEnabled($pluginFolder)
         {
 
@@ -39,6 +68,14 @@ namespace Leantime\Domain\Plugins\Services {
             return false;
         }
 
+        /**
+         * @return array|false|mixed
+         * @throws BindingResolutionException
+         */
+        /**
+         * @return array|false|mixed
+         * @throws BindingResolutionException
+         */
         public function getEnabledPlugins()
         {
             if (isset($_SESSION['enabledPlugins'])) {
@@ -53,7 +90,7 @@ namespace Leantime\Domain\Plugins\Services {
                 && $configplugins = explode(',', $this->config->plugins)
             ) {
                 $configplugins = array_map(function ($pluginStr) {
-                    $pluginModel = app()->make(\Leantime\Domain\Plugins\Models\Plugins::class);
+                    $pluginModel = app()->make(PluginModel::class);
                     $pluginModel->foldername = $pluginStr;
                     $pluginModel->name = $pluginStr;
                     $pluginModel->enabled = true;
@@ -67,6 +104,14 @@ namespace Leantime\Domain\Plugins\Services {
             return $_SESSION['enabledPlugins'];
         }
 
+        /**
+         * @return array
+         * @throws BindingResolutionException
+         */
+        /**
+         * @return array
+         * @throws BindingResolutionException
+         */
         public function discoverNewPlugins()
         {
 
@@ -90,7 +135,7 @@ namespace Leantime\Domain\Plugins\Services {
                         $json = file_get_contents($pluginJsonFile);
 
                         $pluginFile = json_decode($json, true);
-                        $plugin = app()->make(\Leantime\Domain\Plugins\Models\Plugins::class);
+                        $plugin = app()->make(PluginModel::class);
                         $plugin->name = $pluginFile['name'];
                         $plugin->enabled = 0;
                         $plugin->description = $pluginFile['description'];
@@ -108,6 +153,16 @@ namespace Leantime\Domain\Plugins\Services {
             return $newPlugins;
         }
 
+        /**
+         * @param $pluginFolder
+         * @return false|string
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $pluginFolder
+         * @return false|string
+         * @throws BindingResolutionException
+         */
         public function installPlugin($pluginFolder)
         {
 
@@ -135,7 +190,7 @@ namespace Leantime\Domain\Plugins\Services {
                 if (method_exists($newPluginSvc, "install")) {
                     try {
                         $newPluginSvc->install();
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         error_log($e);
                         return false;
                     }
@@ -147,22 +202,48 @@ namespace Leantime\Domain\Plugins\Services {
             return false;
         }
 
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param integer $id
+         * @return boolean
+         */
         public function enablePlugin(int $id)
         {
             unset($_SESSION['enabledPlugins']);
             return $this->pluginRepository->enablePlugin($id);
         }
 
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param integer $id
+         * @return boolean
+         */
         public function disablePlugin(int $id)
         {
             unset($_SESSION['enabledPlugins']);
             return $this->pluginRepository->disablePlugin($id);
         }
 
+        /**
+         * @param int $id
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param integer $id
+         * @return boolean
+         * @throws BindingResolutionException
+         */
         public function removePlugin(int $id)
         {
             unset($_SESSION['enabledPlugins']);
-            /** @var PluginModel|false */
+            /** @var PluginModel|false $plugin */
             $plugin = $this->pluginRepository->getPlugin($id);
 
             if (! $plugin) {
@@ -176,7 +257,7 @@ namespace Leantime\Domain\Plugins\Services {
             if (method_exists($newPluginSvc, "uninstall")) {
                 try {
                     $newPluginSvc->install();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     error_log($e);
                     return false;
                 }
@@ -187,6 +268,16 @@ namespace Leantime\Domain\Plugins\Services {
             //TODO remove files savely
         }
 
+        /**
+         * @param PluginModel $plugin
+         * @return string
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param PluginModel $plugin
+         * @return string
+         * @throws BindingResolutionException
+         */
         public function getPluginClassName(PluginModel $plugin)
         {
             return app()->getNamespace()

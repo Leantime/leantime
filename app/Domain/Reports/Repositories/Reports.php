@@ -2,11 +2,19 @@
 
 namespace Leantime\Domain\Reports\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db as DbCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Reports
     {
         private DbCore $db;
@@ -25,7 +33,10 @@ namespace Leantime\Domain\Reports\Repositories {
          * getSprint - get single sprint
          *
          * @access public
+         * @param $projectId
+         * @param $sprintId
          * @return array
+         * @throws BindingResolutionException
          */
         public function runTicketReport($projectId, $sprintId)
         {
@@ -154,6 +165,14 @@ namespace Leantime\Domain\Reports\Repositories {
             return $values;
         }
 
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
         public function checkLastReportEntries($projectId)
         {
 
@@ -171,6 +190,14 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
+        /**
+         * @param $report
+         * @return void
+         */
+        /**
+         * @param $report
+         * @return void
+         */
         public function addReport($report)
         {
             $report = (object)$report;
@@ -275,6 +302,14 @@ namespace Leantime\Domain\Reports\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $sprint
+         * @return array
+         */
+        /**
+         * @param $sprint
+         * @return array
+         */
         public function getSprintReport($sprint): array
         {
 
@@ -292,6 +327,14 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
+        /**
+         * @param $project
+         * @return array|false
+         */
+        /**
+         * @param $project
+         * @return array|false
+         */
         public function getBacklogReport($project)
         {
 
@@ -309,6 +352,14 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
+        /**
+         * @param $project
+         * @return array|false
+         */
+        /**
+         * @param $project
+         * @return array|false
+         */
         public function getFullReport($project)
         {
 

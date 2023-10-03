@@ -2,11 +2,20 @@
 
 namespace Leantime\Domain\Menu\Hxcontrollers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
+use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class ProjectSelector extends HtmxController
 {
     /**
@@ -15,7 +24,7 @@ class ProjectSelector extends HtmxController
     protected static $view = 'menu::partials.projectSelector';
 
     /**
-     * @var \Leantime\Domain\Projects\Services\Timesheets
+     * @var Timesheets
      */
     private Timesheets $timesheetService;
     private Menu $menuService;
@@ -24,7 +33,9 @@ class ProjectSelector extends HtmxController
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param Timesheets                              $timesheetService
+     * @param Menu                                    $menuService
+     * @param \Leantime\Domain\Menu\Repositories\Menu $menuRepo
      * @return void
      */
     public function init(Timesheets $timesheetService, Menu $menuService, \Leantime\Domain\Menu\Repositories\Menu $menuRepo)
@@ -34,6 +45,10 @@ class ProjectSelector extends HtmxController
         $this->menuRepo = $menuRepo;
     }
 
+    /**
+     * @return void
+     * @throws BindingResolutionException
+     */
     public function updateMenu()
     {
 
@@ -98,6 +113,9 @@ class ProjectSelector extends HtmxController
         $this->tpl->assign('clients', $clients);
     }
 
+    /**
+     * @return void
+     */
     public function filter()
     {
     }

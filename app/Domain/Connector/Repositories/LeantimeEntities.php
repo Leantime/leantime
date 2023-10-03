@@ -8,6 +8,13 @@ namespace Leantime\Domain\Connector\Repositories {
 
     use Leantime\Domain\Connector\Models\FieldTypes;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class LeantimeEntities
     {
         public array $availableLeantimeEntities = array();

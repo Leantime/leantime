@@ -5,15 +5,33 @@ namespace Leantime\Domain\Api\Repositories {
     use PDO;
     use Leantime\Core\Db as DbCore;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Api
     {
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
+        /**
+         * @param $apiKeyUser
+         * @return mixed
+         */
+        /**
+         * @param $apiKeyUser
+         * @return mixed
+         */
         public function getAPIKeyUser($apiKeyUser)
         {
 

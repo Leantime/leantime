@@ -8,7 +8,15 @@ use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Core\Eventhelpers;
 use Ramsey\Uuid\Uuid;
+use RangeException;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Api
 {
     use Eventhelpers;
@@ -27,6 +35,14 @@ class Api
         $this->userRepo = $userRepo;
     }
 
+    /**
+     * @param $apiKey
+     * @return bool|array
+     */
+    /**
+     * @param $apiKey
+     * @return boolean|array
+     */
     public function getAPIKeyUser($apiKey): bool|array
     {
 
@@ -118,15 +134,16 @@ class Api
      *
      * @param integer $length   How many characters do we want?
      * @param string  $keyspace A string of all possible characters
-     *                          to select from
+     *                           to select from
      * @return string
+     * @throws Exception
      */
     public function random_str(
         int $length = 64,
         string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     ): string {
         if ($length < 1) {
-            throw new \RangeException("Length must be a positive integer");
+            throw new RangeException("Length must be a positive integer");
         }
         $pieces = [];
         $max = mb_strlen($keyspace, '8bit') - 1;
@@ -136,6 +153,18 @@ class Api
         return implode('', $pieces);
     }
 
+    /**
+     * @param $code
+     * @param $message
+     * @param $data
+     * @return void
+     */
+    /**
+     * @param $code
+     * @param $message
+     * @param $data
+     * @return void
+     */
     public function setError($code, $message, $data)
     {
         $this->error = array(
@@ -145,6 +174,11 @@ class Api
         );
     }
 
+    /**
+     * @param integer    $id
+     * @param array|null $result
+     * @return void
+     */
     public function jsonResponse(int $id, ?array $result)
     {
 

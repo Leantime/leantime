@@ -6,7 +6,16 @@
 
 namespace Leantime\Domain\Goalcanvas\Repositories {
 
-    class Goalcanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
+    class Goalcanvas extends Canvas
     {
         /**
          * Constant that must be redefined

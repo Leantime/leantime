@@ -2,14 +2,27 @@
 
 namespace Leantime\Domain\Setting\Services {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Setting
     {
         private TemplateCore $tpl;
         public SettingRepository $settingsRepo;
 
+        /**
+         * @param TemplateCore      $tpl
+         * @param SettingRepository $settingsRepo
+         */
         public function __construct(
             TemplateCore $tpl,
             SettingRepository $settingsRepo
@@ -18,6 +31,16 @@ namespace Leantime\Domain\Setting\Services {
             $this->settingsRepo = $settingsRepo;
         }
 
+        /**
+         * @param $file
+         * @return true|void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $file
+         * @return true|void
+         * @throws BindingResolutionException
+         */
         public function setLogo($file)
         {
 
@@ -34,7 +57,7 @@ namespace Leantime\Domain\Setting\Services {
                 if ($url !== false) {
                     $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
 
-                    if (strpos($url, 'http') === 0) {
+                    if (str_starts_with($url, 'http')) {
                         $_SESSION["companysettings.logoPath"] = $url;
                     } else {
                         $_SESSION["companysettings.logoPath"] = BASE_URL . $url;
@@ -45,6 +68,9 @@ namespace Leantime\Domain\Setting\Services {
             }
         }
 
+        /**
+         * @return void
+         */
         public function resetLogo()
         {
 
@@ -55,11 +81,29 @@ namespace Leantime\Domain\Setting\Services {
             $_SESSION["companysettings.logoPath"] = BASE_URL . $url;
         }
 
+        /**
+         * @param $key
+         * @param $value
+         * @return bool
+         */
+        /**
+         * @param $key
+         * @param $value
+         * @return boolean
+         */
         public function saveSetting($key, $value)
         {
             return $this->settingsRepo->saveSetting($key, $value);
         }
 
+        /**
+         * @param $key
+         * @return false|mixed
+         */
+        /**
+         * @param $key
+         * @return false|mixed
+         */
         public function getSetting($key)
         {
             return $this->settingsRepo->getSetting($key);

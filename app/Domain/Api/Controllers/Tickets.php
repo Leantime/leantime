@@ -9,6 +9,13 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Tickets extends Controller
     {
         private ProjectRepository $projects;

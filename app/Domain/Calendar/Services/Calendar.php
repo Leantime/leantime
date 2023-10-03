@@ -5,11 +5,23 @@ namespace Leantime\Domain\Calendar\Services {
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Calendar
     {
         private CalendarRepository $calendarRepo;
         private LanguageCore $language;
 
+        /**
+         * @param CalendarRepository $calendarRepo
+         * @param LanguageCore       $language
+         */
         public function __construct(CalendarRepository $calendarRepo, LanguageCore $language)
         {
             $this->calendarRepo = $calendarRepo;
@@ -98,6 +110,14 @@ namespace Leantime\Domain\Calendar\Services {
         }
 
 
+        /**
+         * @param $eventId
+         * @return mixed
+         */
+        /**
+         * @param $eventId
+         * @return mixed
+         */
         public function getEvent($eventId)
         {
             return $this->calendarRepo->getEvent($eventId);

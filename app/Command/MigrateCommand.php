@@ -2,7 +2,7 @@
 
 namespace Leantime\Command;
 
-use Leantime\Domain\Auth\Models\Roles;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,12 +13,22 @@ use Exception;
 use Leantime\Domain\Users\Repositories\Users;
 use array_values;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class MigrateCommand extends Command
 {
     protected static $defaultName = 'db:migrate';
 
     protected static $defaultDescription = 'Runs any Pending Database Migrations';
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();
@@ -36,9 +46,10 @@ class MigrateCommand extends Command
     /**
      * Execute the command
      *
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      * @return integer 0 if everything went fine, or an exit code.
+     * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

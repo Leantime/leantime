@@ -5,6 +5,13 @@ namespace Leantime\Domain\Sprints\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Sprints
     {
         private DbCore $db;
@@ -173,6 +180,14 @@ namespace Leantime\Domain\Sprints\Repositories {
             return $value;
         }
 
+        /**
+         * @param $sprint
+         * @return bool
+         */
+        /**
+         * @param $sprint
+         * @return boolean
+         */
         public function addSprint($sprint)
         {
 
@@ -191,6 +206,14 @@ namespace Leantime\Domain\Sprints\Repositories {
             return $execution;
         }
 
+        /**
+         * @param $sprint
+         * @return bool
+         */
+        /**
+         * @param $sprint
+         * @return boolean
+         */
         public function editSprint($sprint)
         {
 
@@ -216,6 +239,14 @@ namespace Leantime\Domain\Sprints\Repositories {
             return $execution;
         }
 
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
         public function delSprint($id)
         {
 

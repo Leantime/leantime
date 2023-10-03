@@ -2,6 +2,7 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Users\Repositories\Users;
 use Symfony\Component\Console\Command\Command;
@@ -12,11 +13,21 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Leantime\Domain\Auth\Models\Roles;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class AddUserCommand extends Command
 {
     protected static $defaultName = 'user:add';
     protected static $defaultDescription = 'Add a new User';
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();
@@ -40,9 +51,10 @@ class AddUserCommand extends Command
     /**
      * Execute the command
      *
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      * @return integer 0 if everything went fine, or an exit code.
+     * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

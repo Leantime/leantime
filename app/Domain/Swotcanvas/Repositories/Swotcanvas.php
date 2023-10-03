@@ -6,7 +6,16 @@
 
 namespace Leantime\Domain\Swotcanvas\Repositories {
 
-    class Swotcanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
+    class Swotcanvas extends Canvas
     {
         /**
          * Constant that must be redefined

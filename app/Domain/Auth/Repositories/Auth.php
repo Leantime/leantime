@@ -6,6 +6,14 @@ namespace Leantime\Domain\Auth\Repositories {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Core\Db as DbCore;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Auth
     {
         /**
@@ -128,6 +136,11 @@ namespace Leantime\Domain\Auth\Repositories {
         private EnvironmentCore $config;
         private UserRepository $userRepo;
 
+        /**
+         * @param DbCore          $db
+         * @param EnvironmentCore $config
+         * @param UserRepository  $userRepo
+         */
         public function __construct(
             DbCore $db,
             EnvironmentCore $config,
@@ -163,7 +176,7 @@ namespace Leantime\Domain\Auth\Repositories {
          * checkSessions - check all sessions in the database and unset them if necessary
          *
          * @access private
-         * @return void
+         * @return boolean
          */
         private function invalidateExpiredUserSessions(): bool
         {
@@ -183,7 +196,7 @@ namespace Leantime\Domain\Auth\Repositories {
          * @access public
          * @param  $username
          * @param  $password
-         * @return boolean
+         * @return array|false
          */
         public function getUserByLogin($username, $password): array|false
         {
@@ -197,6 +210,14 @@ namespace Leantime\Domain\Auth\Repositories {
             return false;
         }
 
+        /**
+         * @param $username
+         * @return array|false
+         */
+        /**
+         * @param $username
+         * @return array|false
+         */
         public function getUserByEmail($username): array|false
         {
             return $this->userRepo->getUserByEmail($username);
@@ -206,9 +227,10 @@ namespace Leantime\Domain\Auth\Repositories {
          * updateSession - Update the session time by sessionId
          *
          * @access public
+         * @param $userId
          * @param  $sessionid
          * @param  $time
-         * @return
+         * @return boolean
          */
         public function updateUserSession($userId, $sessionid, $time)
         {
@@ -285,6 +307,16 @@ namespace Leantime\Domain\Auth\Repositories {
             return $returnValues;
         }
 
+        /**
+         * @param $username
+         * @param $resetLink
+         * @return bool
+         */
+        /**
+         * @param $username
+         * @param $resetLink
+         * @return boolean
+         */
         public function setPWResetLink($username, $resetLink): bool
         {
 
@@ -308,6 +340,16 @@ namespace Leantime\Domain\Auth\Repositories {
             return $result;
         }
 
+        /**
+         * @param $password
+         * @param $hash
+         * @return bool
+         */
+        /**
+         * @param $password
+         * @param $hash
+         * @return boolean
+         */
         public function changePW($password, $hash)
         {
 

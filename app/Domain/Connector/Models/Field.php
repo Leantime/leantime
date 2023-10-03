@@ -2,6 +2,13 @@
 
 namespace Leantime\Domain\Connector\Models {
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Field
     {
         public int $id;

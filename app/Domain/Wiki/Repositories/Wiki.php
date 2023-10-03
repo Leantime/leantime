@@ -7,6 +7,13 @@ namespace Leantime\Domain\Wiki\Repositories {
     use Leantime\Domain\Wiki\Models\Article;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Wiki extends \Leantime\Domain\Canvas\Repositories\Canvas
     {
         /**
@@ -15,7 +22,16 @@ namespace Leantime\Domain\Wiki\Repositories {
         protected const CANVAS_NAME = 'wiki';
 
 
-
+        /**
+         * @param $id
+         * @param $projectId
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @param $projectId
+         * @return mixed
+         */
         public function getArticle($id, $projectId)
         {
             $query = "SELECT
@@ -85,6 +101,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $value;
         }
 
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
         public function getAllProjectWikis($projectId)
         {
             $query = "SELECT
@@ -112,6 +136,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
         public function getWiki($id)
         {
             $query = "SELECT
@@ -140,6 +172,16 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
+        /**
+         * @param $canvasId
+         * @param $userId
+         * @return array|false
+         */
+        /**
+         * @param $canvasId
+         * @param $userId
+         * @return array|false
+         */
         public function getAllWikiHeadlines($canvasId, $userId)
         {
             $query = "SELECT
@@ -172,6 +214,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
+        /**
+         * @param $wiki
+         * @return false|string
+         */
+        /**
+         * @param $wiki
+         * @return false|string
+         */
         public function createWiki($wiki)
         {
 
@@ -202,6 +252,16 @@ namespace Leantime\Domain\Wiki\Repositories {
         }
 
 
+        /**
+         * @param $wiki
+         * @param $wikiId
+         * @return bool
+         */
+        /**
+         * @param $wiki
+         * @param $wikiId
+         * @return boolean
+         */
         public function updateWiki($wiki, $wikiId)
         {
 
@@ -223,6 +283,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $execution;
         }
 
+        /**
+         * @param Article $article
+         * @return false|string
+         */
+        /**
+         * @param Article $article
+         * @return false|string
+         */
         public function createArticle(Article $article)
         {
 
@@ -275,6 +343,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $this->db->database->lastInsertId();
         }
 
+        /**
+         * @param Article $article
+         * @return bool
+         */
+        /**
+         * @param Article $article
+         * @return boolean
+         */
         public function updateArticle(Article $article)
         {
 
@@ -308,6 +384,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $execution;
         }
 
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
         public function delArticle($id)
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
@@ -321,6 +405,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
         public function delWiki($id)
         {
 
@@ -339,6 +431,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        /**
+         * @param $projectId
+         * @return integer|mixed
+         */
         public function getNumberOfBoards($projectId = null)
         {
 
@@ -369,6 +469,14 @@ namespace Leantime\Domain\Wiki\Repositories {
             return 0;
         }
 
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        /**
+         * @param $projectId
+         * @return integer|mixed
+         */
         public function getNumberOfCanvasItems($projectId = null)
         {
 

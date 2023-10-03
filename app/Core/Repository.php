@@ -2,8 +2,10 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use PDO;
 use PDOStatement;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
@@ -58,8 +60,8 @@ abstract class Repository
             /**
              * constructor
              *
-             * @param array  $args         - usually the value of func_get_args(), gives events/filters values to work with
-             * @param object $caller_class - the class object that was called
+             * @param array      $args         - usually the value of func_get_args(), gives events/filters values to work with
+             * @param Repository $caller_class - the class object that was called
              */
             public function __construct(array $args, repository $caller_class)
             {
@@ -117,8 +119,8 @@ abstract class Repository
             /**
              * executes the sql call - uses \PDO
              *
-             * @param string $fetchtype - the type of fetch to do (optional)
-             *
+             * @param $mode
+             * @param $class
              * @return mixed
              */
             public function setFetchMode($mode, $class)
@@ -149,8 +151,8 @@ abstract class Repository
             /**
              * executes the sql call - uses \PDO
              *
-             * @param string $fetchtype - the type of fetch to do (optional)
-             *
+             * @param string    $method
+             * @param $arguments
              * @return mixed
              */
             public function __call(string $method, $arguments): mixed
@@ -218,6 +220,10 @@ abstract class Repository
         return $call->execute();
     }
 
+    /**
+     * @param object $objectToInsert
+     * @return false|integer
+     */
     public function insert(object $objectToInsert): false|int
     {
 
@@ -276,6 +282,9 @@ abstract class Repository
      * get - gets a record from the database
      *
      * @param integer $id - the id of the record to get
+     * @return false
+     * @throws BindingResolutionException
+     * @throws \ReflectionException
      */
     public function get($id)
     {
@@ -323,6 +332,7 @@ abstract class Repository
      * @param string  $property  - the property to get the attribute from
      * @param boolean $includeId - whether or not to include the id attribute
      * @return array|false
+     * @throws \ReflectionException
      */
     protected function getFieldAttribute($class, $property, $includeId = false): array|false
     {
@@ -349,10 +359,11 @@ abstract class Repository
      *
      * @param object|string $class - the class to get the fields from
      * @return array
+     * @throws \ReflectionException
      */
     protected function getDbFields(object|string $class): array
     {
-        $property = new \ReflectionClass($class);
+        $property = new ReflectionClass($class);
 
         $properties = $property->getProperties();
 

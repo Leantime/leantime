@@ -10,6 +10,13 @@ namespace Leantime\Domain\Canvas\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Canvas
     {
         /**
@@ -111,7 +118,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * __construct - get db connection
          *
          * @access public
-         * @return unknown_type
+         * @return void
          */
         public function __construct(DbCore $db, LanguageCore $language)
         {
@@ -224,6 +231,16 @@ namespace Leantime\Domain\Canvas\Repositories {
         }
 
 
+        /**
+         * @param $projectId
+         * @param $type
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @param $type
+         * @return array|false
+         */
         public function getAllCanvas($projectId, $type = null)
         {
 
@@ -262,6 +279,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
+        /**
+         * @param $canvasId
+         * @return array|false
+         */
+        /**
+         * @param $canvasId
+         * @return array|false
+         */
         public function getSingleCanvas($canvasId)
         {
             $sql = "SELECT
@@ -289,6 +314,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
         public function deleteCanvas($id)
         {
 
@@ -307,6 +340,16 @@ namespace Leantime\Domain\Canvas\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $values
+         * @param $type
+         * @return false|string
+         */
+        /**
+         * @param $values
+         * @param $type
+         * @return false|string
+         */
         public function addCanvas($values, $type = null)
         {
 
@@ -347,6 +390,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $this->db->database->lastInsertId();
         }
 
+        /**
+         * @param $values
+         * @return mixed
+         */
+        /**
+         * @param $values
+         * @return mixed
+         */
         public function updateCanvas($values)
         {
 
@@ -368,6 +419,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $result;
         }
 
+        /**
+         * @param $values
+         * @return void
+         */
+        /**
+         * @param $values
+         * @return void
+         */
         public function editCanvasItem($values)
         {
             $sql = "UPDATE zp_canvas_items SET
@@ -433,7 +492,16 @@ namespace Leantime\Domain\Canvas\Repositories {
         }
 
 
-
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $params
+         * @return boolean
+         */
         public function patchCanvasItem($id, $params)
         {
 
@@ -459,6 +527,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $return;
         }
 
+        /**
+         * @param $id
+         * @return array|false
+         */
+        /**
+         * @param $id
+         * @return array|false
+         */
         public function getCanvasItemsById($id)
         {
 
@@ -543,6 +619,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
+        /**
+         * @param $id
+         * @return array|false
+         */
+        /**
+         * @param $id
+         * @return array|false
+         */
         public function getCanvasItemsByKPI($id)
         {
 
@@ -599,6 +683,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
         public function getAllAvailableParents($projectId)
         {
             $sql = "SELECT
@@ -666,6 +758,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
         public function getAllAvailableKPIs($projectId)
         {
             $sql = "SELECT
@@ -710,6 +810,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
+        /**
+         * @param $id
+         * @return false|mixed
+         */
+        /**
+         * @param $id
+         * @return false|mixed
+         */
         public function getSingleCanvasItem($id)
         {
             $sql = "SELECT
@@ -796,6 +904,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             }
         }
 
+        /**
+         * @param $values
+         * @return false|string
+         */
+        /**
+         * @param $values
+         * @return false|string
+         */
         public function addCanvasItem($values)
         {
 
@@ -899,6 +1015,14 @@ namespace Leantime\Domain\Canvas\Repositories {
         }
 
 
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
         public function delCanvasItem($id)
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
@@ -912,6 +1036,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        /**
+         * @param $projectId
+         * @return integer|mixed
+         */
         public function getNumberOfCanvasItems($projectId = null)
         {
 
@@ -943,6 +1075,14 @@ namespace Leantime\Domain\Canvas\Repositories {
             return 0;
         }
 
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        /**
+         * @param $projectId
+         * @return integer|mixed
+         */
         public function getNumberOfBoards($projectId = null)
         {
 
@@ -976,7 +1116,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * existCanvas - return if a canvas exists with a given title in the specified project
          *
          * @access public
-         * @param  integer $projectId   Project identifier
+         * @param integer $projectId   Project identifier
          * @param  string  $canvasTitle Canvas title
          * @return boolean   True if canvas exists
          */
@@ -1002,9 +1142,9 @@ namespace Leantime\Domain\Canvas\Repositories {
          * copyCanvas - create a copy of an existing canvas
          *
          * @access public
-         * @param  integer $projectId   Project identifier
-         * @param  integer $canvasId    Original canvas identifier
-         * @param  integer $authorId    Author identifier
+         * @param integer $projectId   Project identifier
+         * @param integer $canvasId    Original canvas identifier
+         * @param integer $authorId    Author identifier
          * @param  string  $canvasTitle New canvas title
          * @return integer    Identifier of new Canvas
          */
@@ -1058,8 +1198,8 @@ namespace Leantime\Domain\Canvas\Repositories {
          * mergeCanvas - merge canvas into existing canvas
          *
          * @access public
-         * @param  integer $canvasId Original canvas identifier
-         * @param  integer $mergeId  Canvas to perge into existing one
+         * @param integer $canvasId Original canvas identifier
+         * @param string  $mergeId  Canvas to perge into existing one
          * @return boolean Status of merge
          */
         public function mergeCanvas(int $canvasId, string $mergeId): bool
@@ -1108,7 +1248,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * getCanvasProgressCount - gets canvases by type and counts number of items per box
          *
          * @access public
-         * @param  integer $projectId Project od
+         * @param integer $projectId Project od
          * @param  array   $boards    List of board types to pull
          * @return boolean Status of merge
          */
@@ -1166,7 +1306,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * getLastUpdateCanvas - gets the list of canvas that have been updated recently
          *
          * @access public
-         * @param  integer $projectId Project od
+         * @param integer $projectId Project od
          * @param  array   $boards    List of board types to pull
          * @return array    array of canvas boards sorted by last update date
          */
@@ -1223,7 +1363,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * getTags - gets the list of tags across all canvas items in a given project
          *
          * @access public
-         * @param  integer $projectId Project od
+         * @param integer $projectId Project od
          * @return array    array of canvas boards sorted by last update date
          */
         public function getTags(int $projectId)

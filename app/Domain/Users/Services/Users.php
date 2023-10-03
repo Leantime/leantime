@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Users\Services {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Eventhelpers;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
@@ -10,7 +11,15 @@ namespace Leantime\Domain\Users\Services {
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Ramsey\Uuid\Uuid;
+    use SVG\SVG;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Users
     {
         use Eventhelpers;
@@ -21,6 +30,13 @@ namespace Leantime\Domain\Users\Services {
         private ClientRepository $clientRepo;
         private AuthService $authService;
 
+        /**
+         * @param UserRepository    $userRepo
+         * @param LanguageCore      $language
+         * @param ProjectRepository $projectRepository
+         * @param ClientRepository  $clientRepo
+         * @param AuthService       $authService
+         */
         public function __construct(
             UserRepository $userRepo,
             LanguageCore $language,
@@ -36,11 +52,31 @@ namespace Leantime\Domain\Users\Services {
         }
 
         //GET
+
+        /**
+         * @param $id
+         * @return string[]|SVG
+         */
+        /**
+         * @param $id
+         * @return string[]|SVG
+         * @throws BindingResolutionException
+         */
         public function getProfilePicture($id)
         {
             return $this->userRepo->getProfilePicture($id);
         }
 
+        /**
+         * @param $values
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $values
+         * @param $id
+         * @return boolean
+         */
         public function editUser($values, $id)
         {
 
@@ -50,11 +86,25 @@ namespace Leantime\Domain\Users\Services {
             return $results;
         }
 
+        /**
+         * @return int
+         */
+        /**
+         * @return integer
+         */
         public function getNumberOfUsers()
         {
             return $this->userRepo->getNumberOfUsers();
         }
 
+        /**
+         * @param $activeOnly
+         * @return mixed
+         */
+        /**
+         * @param $activeOnly
+         * @return mixed
+         */
         public function getAll($activeOnly = false)
         {
             $users =  $this->userRepo->getAll($activeOnly);
@@ -64,16 +114,40 @@ namespace Leantime\Domain\Users\Services {
             return $users;
         }
 
+        /**
+         * @param $id
+         * @return array|bool
+         */
+        /**
+         * @param $id
+         * @return array|boolean
+         */
         public function getUser($id): array|bool
         {
             return $this->userRepo->getUser($id);
         }
 
+        /**
+         * @param $email
+         * @return array|false
+         */
+        /**
+         * @param $email
+         * @return array|false
+         */
         public function getUserByEmail($email)
         {
             return $this->userRepo->getUserByEmail($email);
         }
 
+        /**
+         * @param $source
+         * @return array|false
+         */
+        /**
+         * @param $source
+         * @return array|false
+         */
         public function getAllBySource($source)
         {
             return $this->userRepo->getAllBySource($source);
@@ -81,11 +155,35 @@ namespace Leantime\Domain\Users\Services {
 
 
         //POST
+
+        /**
+         * @param $photo
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $photo
+         * @param $id
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function setProfilePicture($photo, $id)
         {
             $this->userRepo->setPicture($photo, $id);
         }
 
+        /**
+         * @param $category
+         * @param $setting
+         * @param $value
+         * @return bool
+         */
+        /**
+         * @param $category
+         * @param $setting
+         * @param $value
+         * @return boolean
+         */
         public function updateUserSettings($category, $setting, $value)
         {
 
@@ -138,8 +236,9 @@ namespace Leantime\Domain\Users\Services {
          * TODO: Should accept userModel
          *
          * @access public
-         * @param  array $values basic user values
+         * @param array $values basic user values
          * @return boolean|integer returns new user id on success, false on failure
+         * @throws BindingResolutionException
          */
         public function createUserInvite(array $values): bool|int
         {
@@ -257,6 +356,16 @@ namespace Leantime\Domain\Users\Services {
             return [];
         }
 
+        /**
+         * @param $values
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $values
+         * @param $id
+         * @return void
+         */
         public function editOwn($values, $id)
         {
             $this->userRepo->editOwn($values, $id);

@@ -2,9 +2,17 @@
 
 namespace Leantime\Domain\Setting\Repositories {
 
+    use Exception;
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Setting
     {
         private DbCore $db;
@@ -17,13 +25,21 @@ namespace Leantime\Domain\Setting\Repositories {
          * __construct - neu db connection
          *
          * @access public
-         * @return
+         * @param DbCore $db
          */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
+        /**
+         * @param $type
+         * @return false|mixed
+         */
+        /**
+         * @param $type
+         * @return false|mixed
+         */
         public function getSetting($type)
         {
             if ($this->checkIfInstalled() === false) {
@@ -42,7 +58,7 @@ namespace Leantime\Domain\Setting\Repositories {
                 $stmn->execute();
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e);
                 return false;
             }
@@ -55,6 +71,16 @@ namespace Leantime\Domain\Setting\Repositories {
                 return false;
         }
 
+        /**
+         * @param $type
+         * @param $value
+         * @return bool
+         */
+        /**
+         * @param $type
+         * @param $value
+         * @return boolean
+         */
         public function saveSetting($type, $value)
         {
 
@@ -77,6 +103,14 @@ namespace Leantime\Domain\Setting\Repositories {
             return $return;
         }
 
+        /**
+         * @param $type
+         * @return void
+         */
+        /**
+         * @param $type
+         * @return void
+         */
         public function deleteSetting($type)
         {
 
@@ -122,7 +156,7 @@ namespace Leantime\Domain\Setting\Repositories {
 
                 $_SESSION['isInstalled'] = true;
                 return true;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e);
                 $_SESSION['isInstalled'] = false;
                 return false;

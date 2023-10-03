@@ -5,15 +5,37 @@ namespace Leantime\Domain\Read\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Read
     {
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return void
+         */
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return void
+         */
         public function markAsRead($module, $moduleId, $userId)
         {
 
@@ -28,6 +50,18 @@ namespace Leantime\Domain\Read\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return bool
+         */
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return boolean
+         */
         public function isRead($module, $moduleId, $userId)
         {
 

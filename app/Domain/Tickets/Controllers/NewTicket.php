@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -14,6 +15,13 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class NewTicket extends Controller
     {
         private ProjectService $projectService;
@@ -24,6 +32,16 @@ namespace Leantime\Domain\Tickets\Controllers {
         private TimesheetService $timesheetService;
         private UserService $userService;
 
+        /**
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param SprintService    $sprintService
+         * @param FileService      $fileService
+         * @param CommentService   $commentService
+         * @param TimesheetService $timesheetService
+         * @param UserService      $userService
+         * @return void
+         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
@@ -49,6 +67,10 @@ namespace Leantime\Domain\Tickets\Controllers {
         }
 
 
+        /**
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function get()
         {
             $ticket = app()->make(TicketModel::class, [
@@ -86,6 +108,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->displayPartial('tickets.newTicketModal');
         }
 
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function post($params)
         {
 

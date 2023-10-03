@@ -13,6 +13,13 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Calendar\Services\Calendar;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class EditEvent extends Controller
     {
         private CalendarService $calendarService;

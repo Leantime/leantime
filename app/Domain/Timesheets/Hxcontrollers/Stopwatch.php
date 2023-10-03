@@ -2,9 +2,18 @@
 
 namespace Leantime\Domain\Timesheets\Hxcontrollers;
 
+use Error;
 use Leantime\Core\HtmxController;
+use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Stopwatch extends HtmxController
 {
     /**
@@ -13,14 +22,14 @@ class Stopwatch extends HtmxController
     protected static $view = 'timesheets::partials.stopwatch';
 
     /**
-     * @var \Leantime\Domain\Projects\Services\Timesheets
+     * @var Timesheets
      */
     private Timesheets $timesheetService;
 
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param Timesheets $timesheetService
      * @return void
      */
     public function init(Timesheets $timesheetService)
@@ -48,7 +57,7 @@ class Stopwatch extends HtmxController
     public function stopTimer()
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
-            throw new \Error('This endpoint only supports PATCH requests');
+            throw new Error('This endpoint only supports PATCH requests');
         }
 
 
@@ -67,10 +76,13 @@ class Stopwatch extends HtmxController
         $this->tpl->assign("onTheClock", $onTheClock);
     }
 
+    /**
+     * @return void
+     */
     public function startTimer()
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
-            throw new \Error('This endpoint only supports PATCH requests');
+            throw new Error('This endpoint only supports PATCH requests');
         }
 
         header("HX-Trigger:timerUpdate");

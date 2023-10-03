@@ -2,10 +2,29 @@
 
 namespace Leantime\Domain\Notifications\Events;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Events;
 use Leantime\Domain\Notifications\Services\Notifications;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class AddNotification
 {
+    /**
+     * @param $payload
+     * @return void
+     * @throws BindingResolutionException
+     */
+    /**
+     * @param $payload
+     * @return void
+     * @throws BindingResolutionException
+     */
     public function handle($payload)
     {
 
@@ -30,4 +49,4 @@ class AddNotification
     }
 }
 
-\Leantime\Core\Events::add_event_listener("domain.services.projects.notifyProjectUsers", new addNotification());
+Events::add_event_listener("domain.services.projects.notifyProjectUsers", new addNotification());

@@ -6,6 +6,13 @@ namespace Leantime\Domain\Cron\Controllers {
     use Leantime\Domain\Cron\Services\Cron;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Run extends Controller
     {
         private Cron $cronSvc;
@@ -20,6 +27,9 @@ namespace Leantime\Domain\Cron\Controllers {
             $this->cronSvc = $cronSvc;
         }
 
+        /**
+         * @return void
+         */
         public function run()
         {
             $this->cronSvc->runCron();

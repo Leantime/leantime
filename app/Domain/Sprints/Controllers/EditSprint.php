@@ -10,6 +10,13 @@ namespace Leantime\Domain\Sprints\Controllers {
     use DateInterval;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class EditSprint extends Controller
     {
         private SprintService $sprintService;

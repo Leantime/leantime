@@ -7,6 +7,15 @@ namespace Leantime\Domain\Queue\Services {
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use PHPMailer\PHPMailer\Exception;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Queue
     {
         private QueueRepository $queue;
@@ -15,6 +24,13 @@ namespace Leantime\Domain\Queue\Services {
         private MailerCore $mailer;
         private LanguageCore $language;
 
+        /**
+         * @param QueueRepository   $queue
+         * @param UserRepository    $userRepo
+         * @param SettingRepository $settingsRepo
+         * @param MailerCore        $mailer
+         * @param LanguageCore      $language
+         */
         public function __construct(
             QueueRepository $queue,
             UserRepository $userRepo,
@@ -34,6 +50,14 @@ namespace Leantime\Domain\Queue\Services {
 
         // Fake template to be replaced by something better
         // TODO : Rework email templating system
+        /**
+         * @param $messageToSendToUser
+         * @return string
+         */
+        /**
+         * @param $messageToSendToUser
+         * @return string
+         */
         private function doFormatMail($messageToSendToUser)
         {
             $outputHTML = $this->language->__('text.here_are_news') . "<br/>\n";
@@ -47,6 +71,13 @@ namespace Leantime\Domain\Queue\Services {
             return $outputHTML;
         }
 
+        /**
+         * @return true
+         */
+        /**
+         * @return true
+         * @throws Exception
+         */
         public function processQueue()
         {
 

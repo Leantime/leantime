@@ -11,6 +11,13 @@ namespace Leantime\Domain\Setting\Controllers {
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class EditBoxLabel extends Controller
     {
         private TicketRepository $ticketsRepo;

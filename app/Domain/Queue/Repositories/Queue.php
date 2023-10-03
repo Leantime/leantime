@@ -6,17 +6,42 @@ namespace Leantime\Domain\Queue\Repositories {
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Queue
     {
         private DbCore $db;
         private UserRepo $users;
 
+        /**
+         * @param DbCore   $db
+         * @param UserRepo $users
+         */
         public function __construct(DbCore $db, UserRepo $users)
         {
             $this->db = $db;
             $this->users = $users;
         }
 
+        /**
+         * @param $recipients
+         * @param $message
+         * @param $subject
+         * @param $projectId
+         * @return void
+         */
+        /**
+         * @param $recipients
+         * @param $message
+         * @param $subject
+         * @param $projectId
+         * @return void
+         */
         public function queueMessageToUsers($recipients, $message, $subject = "", $projectId = 0)
         {
 
@@ -56,6 +81,19 @@ namespace Leantime\Domain\Queue\Repositories {
         }
 
         // TODO later : lists messages per user or per project ?
+
+        /**
+         * @param $channel
+         * @param $recipients
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $channel
+         * @param $recipients
+         * @param $projectId
+         * @return array|false
+         */
         public function listMessageInQueue($channel = 'email', $recipients = null, $projectId = 0)
         {
             $sql = 'SELECT * from zp_queue WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
@@ -70,6 +108,14 @@ namespace Leantime\Domain\Queue\Repositories {
             return $values;
         }
 
+        /**
+         * @param $msghashes
+         * @return bool
+         */
+        /**
+         * @param $msghashes
+         * @return boolean
+         */
         public function deleteMessageInQueue($msghashes)
         {
             // NEW : Allowing one hash or an array of them

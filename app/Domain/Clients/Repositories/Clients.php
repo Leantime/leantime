@@ -10,6 +10,13 @@ namespace Leantime\Domain\Clients\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Clients
     {
         /**
@@ -126,6 +133,12 @@ namespace Leantime\Domain\Clients\Repositories {
         }
 
 
+        /**
+         * @return int|mixed
+         */
+        /**
+         * @return integer|mixed
+         */
         public function getNumberOfClients()
         {
 
@@ -144,6 +157,14 @@ namespace Leantime\Domain\Clients\Repositories {
             }
         }
 
+        /**
+         * @param $values
+         * @return bool
+         */
+        /**
+         * @param $values
+         * @return boolean
+         */
         public function isClient($values)
         {
 
@@ -166,6 +187,14 @@ namespace Leantime\Domain\Clients\Repositories {
             return $flag;
         }
 
+        /**
+         * @param $clientId
+         * @return array|false
+         */
+        /**
+         * @param $clientId
+         * @return array|false
+         */
         public function getClientsUsers($clientId)
         {
 
@@ -195,7 +224,8 @@ namespace Leantime\Domain\Clients\Repositories {
          * addClient - add a client and postback test
          *
          * @access public
-         * @param  array $values
+         * @param array $values
+         * @return false|string
          */
         public function addClient(array $values)
         {

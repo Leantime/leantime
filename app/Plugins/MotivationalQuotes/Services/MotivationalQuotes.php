@@ -14,7 +14,7 @@ class MotivationalQuotes
      * constructor
      *
      * @param MotivationalQuotesRepository $quotesRepo
-     * @return self
+     * @return void
      */
     public function __construct(MotivationalQuotesRepository $quotesRepo)
     {

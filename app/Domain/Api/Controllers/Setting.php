@@ -4,6 +4,14 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Setting extends Controller
     {
         private SettingService $settingService;

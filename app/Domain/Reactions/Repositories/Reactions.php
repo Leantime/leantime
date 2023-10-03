@@ -5,6 +5,13 @@ namespace Leantime\Domain\Reactions\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Reactions
     {
         /**
@@ -13,6 +20,9 @@ namespace Leantime\Domain\Reactions\Repositories {
          */
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
@@ -84,10 +94,10 @@ namespace Leantime\Domain\Reactions\Repositories {
          * getMyReactions - gets user reactions. Can be very broad or very targeted
          * @access public
          *
-         * @param integer $userId
-         * @param string  $module
-         * @param integer $moduleId
-         * @param string  $reaction
+         * @param integer      $userId
+         * @param string       $module
+         * @param integer|null $moduleId
+         * @param string       $reaction
          *
          * @return array|false
          */
@@ -163,8 +173,10 @@ namespace Leantime\Domain\Reactions\Repositories {
          * removeUserReaction - removes a users reaction to an entity
          * @access public
          *
-         * @param integer $id
-         *
+         * @param integer $userId
+         * @param string  $module
+         * @param integer $moduleId
+         * @param string  $reaction
          * @return boolean
          */
         public function removeUserReaction(int $userId, string $module, int $moduleId, string $reaction): bool

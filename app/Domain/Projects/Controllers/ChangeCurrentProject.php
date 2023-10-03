@@ -6,11 +6,23 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ChangeCurrentProject extends Controller
     {
         private ProjectService $projectService;
         private SettingService $settingService;
 
+        /**
+         * @param ProjectService $projectService
+         * @param SettingService $settingService
+         * @return void
+         */
         public function init(ProjectService $projectService, SettingService $settingService)
         {
             $this->projectService = $projectService;

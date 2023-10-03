@@ -12,6 +12,13 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class EditOwn extends Controller
     {
         protected LanguageCore $language;
@@ -46,6 +53,10 @@ namespace Leantime\Domain\Users\Controllers {
         }
 
 
+        /**
+         * @return void
+         * @throws \Exception
+         */
         public function get()
         {
 
@@ -91,6 +102,10 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->display('users.editOwn');
         }
 
+        /**
+         * @return void
+         * @throws \Exception
+         */
         public function post()
         {
 

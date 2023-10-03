@@ -11,6 +11,13 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowMy extends Controller
     {
         private TimesheetRepository $timesheetsRepo;
@@ -86,6 +93,14 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $this->tpl->display('timesheets.showMy');
         }
 
+        /**
+         * @param $postData
+         * @return void
+         */
+        /**
+         * @param $postData
+         * @return void
+         */
         public function saveTimeSheet($postData)
         {
             $ticketId = "";

@@ -8,7 +8,16 @@ use Leantime\Core\Environment;
 use Leantime\Core\Controller;
 use Leantime\Core\Theme;
 use Exception;
+use Leantime\Domain\Menu\Repositories\Menu;
+use Leantime\Domain\Setting\Repositories\Setting;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class App extends Composer
 {
     public static $views = [
@@ -16,11 +25,18 @@ class App extends Composer
         'global::layouts.entry',
     ];
 
+    /**
+     * @param Menu        $menuRepo
+     * @param Setting     $settingsRepo
+     * @param Theme       $themeCore
+     * @param Environment $config
+     * @return void
+     */
     public function init(
-        \Leantime\Domain\Menu\Repositories\Menu $menuRepo,
-        \Leantime\Domain\Setting\Repositories\Setting $settingsRepo,
-        \Leantime\Core\Theme $themeCore,
-        \Leantime\Core\Environment $config
+        Menu $menuRepo,
+        Setting $settingsRepo,
+        Theme $themeCore,
+        Environment $config
     ) {
         $this->menuRepo = $menuRepo;
         $this->settingsRepo = $settingsRepo;
@@ -28,6 +44,12 @@ class App extends Composer
         $this->config = $config;
     }
 
+    /**
+     * @return array
+     */
+    /**
+     * @return array
+     */
     public function with()
     {
         if (! isset($_SESSION["userdata"]["id"])) {

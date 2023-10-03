@@ -8,11 +8,19 @@
 namespace Leantime\Domain\Calendar\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Environment;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Auth\Services\Auth;
     use Ramsey\Uuid\Uuid;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Export extends Controller
     {
         private $config;
@@ -21,7 +29,7 @@ namespace Leantime\Domain\Calendar\Controllers {
         /**
          * init - initialize private variables
          */
-        public function init(\Leantime\Core\Environment $config, SettingRepository $settingsRepo)
+        public function init(Environment $config, SettingRepository $settingsRepo)
         {
             $this->config = $config;
             $this->settingsRepo = $settingsRepo;

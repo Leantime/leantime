@@ -12,6 +12,13 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Ical extends Controller
     {
         private CalendarRepository $calendarRepo;

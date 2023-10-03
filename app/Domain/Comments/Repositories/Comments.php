@@ -5,15 +5,39 @@ namespace Leantime\Domain\Comments\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Comments
     {
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $parent
+         * @param $orderByState
+         * @return array|false
+         */
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $parent
+         * @param $orderByState
+         * @return array|false
+         */
         public function getComments($module, $moduleId, $parent = 0, $orderByState = "0")
         {
             $orderBy = "DESC";
@@ -52,6 +76,16 @@ namespace Leantime\Domain\Comments\Repositories {
             return $values;
         }
 
+        /**
+         * @param $module
+         * @param $moduleId
+         * @return int|mixed
+         */
+        /**
+         * @param $module
+         * @param $moduleId
+         * @return integer|mixed
+         */
         public function countComments($module = null, $moduleId = null)
         {
 
@@ -85,13 +119,17 @@ namespace Leantime\Domain\Comments\Repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if (isset($values['count'])) {
-                return $values['count'];
-            } else {
-                return 0;
-            }
+            return $values['count'] ?? 0;
         }
 
+        /**
+         * @param $id
+         * @return array|false
+         */
+        /**
+         * @param $id
+         * @return array|false
+         */
         public function getReplies($id)
         {
 
@@ -120,6 +158,14 @@ namespace Leantime\Domain\Comments\Repositories {
             return $values;
         }
 
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
         public function getComment($id)
         {
 
@@ -137,6 +183,16 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $values
+         * @param $module
+         * @return false|string
+         */
+        /**
+         * @param $values
+         * @param $module
+         * @return false|string
+         */
         public function addComment($values, $module)
         {
 
@@ -167,6 +223,14 @@ namespace Leantime\Domain\Comments\Repositories {
             }
         }
 
+        /**
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @return boolean
+         */
         public function deleteComment($id)
         {
 
@@ -180,6 +244,16 @@ namespace Leantime\Domain\Comments\Repositories {
             return $result;
         }
 
+        /**
+         * @param $text
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $text
+         * @param $id
+         * @return boolean
+         */
         public function editComment($text, $id)
         {
 

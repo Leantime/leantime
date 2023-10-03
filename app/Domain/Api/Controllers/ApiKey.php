@@ -9,6 +9,13 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ApiKey extends Controller
     {
         private ProjectRepository $projectsRepo;

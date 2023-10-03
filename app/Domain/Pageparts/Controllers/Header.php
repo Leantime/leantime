@@ -7,16 +7,31 @@ namespace Leantime\Domain\Pageparts\Controllers {
     use Leantime\Core\Environment;
     use Leantime\Core\Controller;
     use Leantime\Core\Theme;
+    use Leantime\Domain\Setting\Repositories\Setting;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Header extends Controller
     {
-        private \Leantime\Domain\Setting\Repositories\Setting $settingsRepo;
+        private Setting $settingsRepo;
         private Environment $config;
         private AppSettings $AppSettings;
         private Theme $ThemeCore;
 
+        /**
+         * @param Setting     $settingsRepo
+         * @param Environment $config
+         * @param AppSettings $appSettings
+         * @param Theme       $themeCore
+         * @return void
+         */
         public function init(
-            \Leantime\Domain\Setting\Repositories\Setting $settingsRepo,
+            Setting $settingsRepo,
             Environment $config,
             AppSettings $appSettings,
             Theme $themeCore
@@ -27,6 +42,9 @@ namespace Leantime\Domain\Pageparts\Controllers {
             $this->themeCore = $themeCore;
         }
 
+        /**
+         * @return void
+         */
         public function run()
         {
 

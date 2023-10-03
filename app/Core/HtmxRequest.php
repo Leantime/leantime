@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Leantime\Core;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class HtmxRequest extends IncomingRequest
 {
     /**

@@ -9,6 +9,22 @@ foreach ($__data as $var => $val) {
     $currentArticle = $tpl->get('currentArticle');
 
 
+/**
+ * @param $array
+ * @param $currentParent
+ * @param $currLevel
+ * @param $prevLevel
+ * @param $tplObject
+ * @return void
+ */
+/**
+ * @param $array
+ * @param $currentParent
+ * @param $currLevel
+ * @param $prevLevel
+ * @param $tplObject
+ * @return void
+ */
 function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1, $tplObject = '')
 {
 

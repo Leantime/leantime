@@ -7,10 +7,21 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class DelTicket extends Controller
     {
         private $ticketService;
 
+        /**
+         * @param TicketService $ticketService
+         * @return void
+         */
         public function init(TicketService $ticketService)
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
@@ -18,6 +29,10 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->ticketService = $ticketService;
         }
 
+        /**
+         * @return void
+         * @throws \Exception
+         */
         public function get()
         {
 
@@ -35,6 +50,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
         }
 
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
         public function post($params)
         {
 

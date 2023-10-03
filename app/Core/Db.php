@@ -49,10 +49,10 @@ class Db
     /**
      * __construct - connect to database and select db
      *
-     * @param \Leantime\Core\Environment $config
-     * @return self
+     * @param Environment $config
+     * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config)
+    public function __construct(Environment $config)
     {
         $this->user = $config->dbUser;
         $this->password = $config->dbPassword;

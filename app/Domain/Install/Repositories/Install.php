@@ -3,13 +3,23 @@
 namespace Leantime\Domain\Install\Repositories {
 
     use Exception;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\AppSettings;
+    use Leantime\Core\Environment;
     use Leantime\Domain\Setting\Repositories\Setting;
     use PDO;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use PDOException;
     use Leantime\Core\Eventhelpers as EventhelperCore;
     use Leantime\Core\AppSettings as AppSettingCore;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Install
     {
         use EventhelperCore;
@@ -111,7 +121,7 @@ namespace Leantime\Domain\Install\Repositories {
          *
          * @access public
          */
-        public function __construct(\Leantime\Core\Environment $config, AppSettingCore $settings)
+        public function __construct(Environment $config, AppSettingCore $settings)
         {
             //Some scripts might take a long time to execute. Set timeout to 5minutes
             ini_set('max_execution_time', 300);
@@ -174,6 +184,14 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @param $dbName
+         * @return bool
+         */
+        /**
+         * @param $dbName
+         * @return boolean
+         */
         public function createDB($dbName)
         {
 
@@ -197,7 +215,7 @@ namespace Leantime\Domain\Install\Repositories {
          *
          * @param array $values Form values for admin user and company information
          * @access public
-         * @return boolean | string
+         * @return boolean
          */
         public function setupDB(array $values, $db = '')
         {
@@ -239,6 +257,7 @@ namespace Leantime\Domain\Install\Repositories {
          *
          * @access public
          * @return boolean|array
+         * @throws BindingResolutionException
          */
         public function updateDB()
         {
@@ -872,6 +891,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20100()
         {
 
@@ -900,6 +925,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20101()
         {
 
@@ -951,6 +982,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20102()
         {
             $errors = array();
@@ -976,6 +1013,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20103()
         {
             $errors = array();
@@ -1001,6 +1044,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20104()
         {
             $errors = array();
@@ -1029,6 +1078,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20105()
         {
             $errors = array();
@@ -1053,6 +1108,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20106()
         {
             $errors = array();
@@ -1077,6 +1138,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20107()
         {
             $errors = array();
@@ -1101,6 +1168,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20108()
         {
             $errors = array();
@@ -1127,6 +1200,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20109()
         {
 
@@ -1163,6 +1242,12 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return array|true
+         */
+        /**
+         * @return array|true
+         */
         private function update_sql_20110()
         {
 
@@ -1212,6 +1297,9 @@ namespace Leantime\Domain\Install\Repositories {
          * @return bool|array    Success of database update or array of errors
          */
 
+        /**
+         * @return boolean|array
+         */
         private function update_sql_20111(): bool|array
         {
 
@@ -1253,6 +1341,9 @@ namespace Leantime\Domain\Install\Repositories {
          * @return bool|array    Success of database update or array of errors
          */
 
+        /**
+         * @return boolean|array
+         */
         private function update_sql_20112(): bool|array
         {
 
@@ -1314,6 +1405,9 @@ namespace Leantime\Domain\Install\Repositories {
          * @return bool|array    Success of database update or array of errors
          */
 
+        /**
+         * @return boolean|array
+         */
         private function update_sql_20113(): bool|array
         {
 
@@ -1339,6 +1433,9 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20114(): bool|array
         {
 
@@ -1369,6 +1466,9 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20115(): bool|array
         {
 
@@ -1408,6 +1508,9 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20116(): bool|array
         {
 
@@ -1447,6 +1550,9 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20117(): bool|array
         {
 
@@ -1483,6 +1589,9 @@ namespace Leantime\Domain\Install\Repositories {
         }
 
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20118(): bool|array
         {
 
@@ -1516,6 +1625,9 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20120(): bool|array
         {
 
@@ -1570,6 +1682,9 @@ namespace Leantime\Domain\Install\Repositories {
         }
 
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20121(): bool|array
         {
 
@@ -1596,6 +1711,9 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
+        /**
+         * @return boolean|array
+         */
         public function update_sql_20122(): bool|array
         {
 

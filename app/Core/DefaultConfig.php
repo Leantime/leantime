@@ -72,7 +72,7 @@ class DefaultConfig
     public bool $keepTheme = true;
 
     /**
-     * @var boolean|integer Debug flag
+     * @var bool|int Debug flag
      */
     public int|bool $debug = 0;
 
@@ -158,7 +158,7 @@ class DefaultConfig
     public string $s3FolderName = '';
 
     /**
-     * @var string S3 EndPoint S3 Compatible
+     * @var string|null S3 EndPoint S3 Compatible
      * @see https://sfo2.digitaloceanspaces.com
      */
     public ?string $s3EndPoint = null;

@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Projects\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -9,8 +10,21 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class DuplicateProject extends Controller
     {
+        /**
+         * @param ProjectRepository $projectRepo
+         * @param ClientRepository  $clientRepo
+         * @param ProjectService    $projectService
+         * @return void
+         */
         public function init(
             ProjectRepository $projectRepo,
             ClientRepository $clientRepo,
@@ -23,6 +37,9 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->projectService = $projectService;
         }
 
+        /**
+         * @return void
+         */
         public function get()
         {
 
@@ -46,6 +63,15 @@ namespace Leantime\Domain\Projects\Controllers {
             }
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function post($params)
         {
 

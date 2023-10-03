@@ -6,7 +6,16 @@
 
 namespace Leantime\Domain\Riskscanvas\Repositories {
 
-    class Riskscanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
+    class Riskscanvas extends Canvas
     {
         /**
          * Constant that must be redefined

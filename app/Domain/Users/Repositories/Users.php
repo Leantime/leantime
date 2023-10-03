@@ -2,10 +2,21 @@
 
 namespace Leantime\Domain\Users\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+    use LasseRafn\InitialAvatarGenerator\InitialAvatar;
+    use Leantime\Core\Environment;
     use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Core\Db as DbCore;
     use PDO;
+    use SVG\SVG;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Users
     {
         /**
@@ -73,7 +84,7 @@ namespace Leantime\Domain\Users\Repositories {
          */
         private $db;
 
-        public \Leantime\Core\Environment $config;
+        public Environment $config;
 
         /**
          * __construct - neu db connection
@@ -81,8 +92,8 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          */
         public function __construct(
-            \Leantime\Core\Environment $config,
-            \Leantime\Core\Db $db
+            Environment $config,
+            DbCore $db
         ) {
 
             $this->db = $db;
@@ -115,7 +126,7 @@ namespace Leantime\Domain\Users\Repositories {
          * getUser - get on user from db
          *
          * @access public
-         * @param  $id
+         * @param $hash
          * @return array
          */
         public function getUserBySha($hash)
@@ -139,7 +150,6 @@ namespace Leantime\Domain\Users\Repositories {
          * getLastLogin - get the date of the last login of any user
          *
          * @access public
-         * @param  $id
          * @return string|null returns datetime string with last login or null if nothing could be found
          */
         public function getLastLogin(): string|null
@@ -163,8 +173,8 @@ namespace Leantime\Domain\Users\Repositories {
          * getUserByEmail - get on user from db
          *
          * @access public
-         * @param  $id
-         * @return array
+         * @param $email
+         * @return array|false
          */
         public function getUserByEmail($email): array | false
         {
@@ -181,6 +191,9 @@ namespace Leantime\Domain\Users\Repositories {
             return $values;
         }
 
+        /**
+         * @return integer
+         */
         public function getNumberOfUsers(): int
         {
 
@@ -271,6 +284,14 @@ namespace Leantime\Domain\Users\Repositories {
             return $values;
         }
 
+        /**
+         * @param $source
+         * @return array|false
+         */
+        /**
+         * @param $source
+         * @return array|false
+         */
         public function getAllBySource($source)
         {
 
@@ -340,6 +361,14 @@ namespace Leantime\Domain\Users\Repositories {
             return $values;
         }
 
+        /**
+         * @param $userId
+         * @return bool
+         */
+        /**
+         * @param $userId
+         * @return boolean
+         */
         public function isAdmin($userId): bool
         {
 
@@ -364,8 +393,9 @@ namespace Leantime\Domain\Users\Repositories {
          * editUSer - edit user
          *
          * @access public
-         * @param  array $values
+         * @param array $values
          * @param  $id
+         * @return boolean
          */
         public function editUser(array $values, $id)
         {
@@ -505,7 +535,8 @@ namespace Leantime\Domain\Users\Repositories {
          * addUser - add User to db
          *
          * @access public
-         * @param  array $values
+         * @param array $values
+         * @return false|string
          */
         public function addUser(array $values): false|string
         {
@@ -602,7 +633,9 @@ namespace Leantime\Domain\Users\Repositories {
          * setPicture - set the profile picture for an individual
          *
          * @access public
-         * @param  string
+         * @param string $_FILE
+         * @param $id
+         * @throws BindingResolutionException
          */
         public function setPicture($_FILE, $id)
         {
@@ -646,6 +679,16 @@ namespace Leantime\Domain\Users\Repositories {
             }
         }
 
+        /**
+         * @param $id
+         * @return string[]|SVG
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return string[]|SVG
+         * @throws BindingResolutionException
+         */
         public function getProfilePicture($id)
         {
 
@@ -679,7 +722,7 @@ namespace Leantime\Domain\Users\Repositories {
                 if (file_exists(APP_ROOT . "/cache/avatars/" . $imagename . ".png")) {
                     return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
                 } else {
-                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $avatar = new InitialAvatar();
                     $image = $avatar
                         ->name($value['firstname'] . " " . $value['lastname'])
                         ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
@@ -696,7 +739,7 @@ namespace Leantime\Domain\Users\Repositories {
                 }
             } else {
                 //USer doesn't exist for whatever reason. Return ghost. Boo
-                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                $avatar = new InitialAvatar();
                 $image = $avatar
                     ->name("👻")
                     ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')
@@ -708,6 +751,16 @@ namespace Leantime\Domain\Users\Repositories {
             }
         }
 
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $params
+         * @return boolean
+         */
         public function patchUser($id, $params)
         {
 
@@ -744,8 +797,8 @@ namespace Leantime\Domain\Users\Repositories {
          * getUserIdByName - Get Author/User Id by first- and lastname
          *
          * @access public
-         * @param  string $firstnam Firstname
-         * @param  string $lastname Lastname
+         * @param string $firstname
+         * @param string $lastname  Lastname
          * @return integer|boolean Identifier of user or false, if not found
          */
         public function getUserIdByName(string $firstname, string $lastname): int|bool

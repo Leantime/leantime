@@ -4,6 +4,13 @@ namespace Leantime\Domain\Auth\Models {
 
     use Leantime\Core\Eventhelpers;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Roles
     {
         use Eventhelpers;
@@ -24,16 +31,36 @@ namespace Leantime\Domain\Auth\Models {
             50 => 'owner',         //prev: admin
         );
 
+        /**
+         * @return mixed
+         */
+        /**
+         * @return mixed
+         */
         private static function getFilteredRoles()
         {
             return self::dispatch_filter('available_roles', self::$roleKeys);
         }
 
+        /**
+         * @param $key
+         * @return false|mixed
+         */
+        /**
+         * @param $key
+         * @return false|mixed
+         */
         public static function getRoleString($key)
         {
             return self::getFilteredRoles()[$key] ?? false;
         }
 
+        /**
+         * @return mixed
+         */
+        /**
+         * @return mixed
+         */
         public static function getRoles()
         {
             return self::getFilteredRoles();

@@ -10,6 +10,13 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowBoards extends Controller
     {
         private IdeaRepository $ideaRepo;

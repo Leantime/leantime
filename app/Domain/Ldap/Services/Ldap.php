@@ -2,10 +2,18 @@
 
 namespace Leantime\Domain\Ldap\Services;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Environment;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Ldap
 {
     private $ldapConnection;
@@ -45,13 +53,21 @@ class Ldap
      */
     public $autoCreateUser;
 
+    /**
+     * @param $differentConfig
+     * @throws BindingResolutionException
+     */
+    /**
+     * @param $differentConfig
+     * @throws BindingResolutionException
+     */
     public function __construct($differentConfig = false)
     {
 
         $this->settingsRepo = app()->make(SettingRepository::class);
 
         if (!$differentConfig) {
-            $this->config = app()->make(\Leantime\Core\Environment::class);
+            $this->config = app()->make(Environment::class);
             //Map config vars
             $this->useLdap = $this->config->useLdap;
 
@@ -86,6 +102,12 @@ class Ldap
         return true;
     }
 
+    /**
+     * @return bool|void
+     */
+    /**
+     * @return boolean|void
+     */
     public function connect()
     {
 
@@ -114,6 +136,16 @@ class Ldap
         }
     }
 
+    /**
+     * @param $username
+     * @param $password
+     * @return bool
+     */
+    /**
+     * @param $username
+     * @param $password
+     * @return boolean
+     */
     public function bind($username = '', $password = '')
     {
 
@@ -158,6 +190,14 @@ class Ldap
         }
     }
 
+    /**
+     * @param $username
+     * @return mixed|string|void
+     */
+    /**
+     * @param $username
+     * @return mixed|string|void
+     */
     public function getEmail($username)
     {
         if (!$this->ldapConnection) {
@@ -179,6 +219,14 @@ class Ldap
         return $mail;
     }
 
+    /**
+     * @param $username
+     * @return array|false|void
+     */
+    /**
+     * @param $username
+     * @return array|false|void
+     */
     public function getSingleUser($username)
     {
 
@@ -250,6 +298,14 @@ class Ldap
         );
     }
 
+    /**
+     * @param $username
+     * @return mixed|string
+     */
+    /**
+     * @param $username
+     * @return mixed|string
+     */
     public function extractLdapFromUsername($username)
     {
 
@@ -262,6 +318,12 @@ class Ldap
         }
     }
 
+    /**
+     * @return array|false|void
+     */
+    /**
+     * @return array|false|void
+     */
     public function getAllMembers()
     {
 
@@ -292,6 +354,16 @@ class Ldap
         }
     }
 
+    /**
+     * @param $ldapUsers
+     * @return true
+     * @throws BindingResolutionException
+     */
+    /**
+     * @param $ldapUsers
+     * @return true
+     * @throws BindingResolutionException
+     */
     public function upsertUsers($ldapUsers)
     {
 

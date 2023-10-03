@@ -2,6 +2,13 @@
 
 namespace Leantime\Domain\Reactions\Services {
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Reactions
     {
         /**
@@ -10,6 +17,9 @@ namespace Leantime\Domain\Reactions\Services {
          */
         private \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo;
 
+        /**
+         * @param \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo
+         */
         public function __construct(\Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo)
         {
             $this->reactionsRepo = $reactionsRepo;
@@ -86,10 +96,10 @@ namespace Leantime\Domain\Reactions\Services {
          * getMyReactions - gets user reactions. Can be very broad or very targeted
          * @access public
          *
-         * @param integer $userId
-         * @param string  $module
-         * @param integer $moduleId
-         * @param string  $reaction
+         * @param integer      $userId
+         * @param string       $module
+         * @param integer|null $moduleId
+         * @param string       $reaction
          *
          * @return array|false
          */

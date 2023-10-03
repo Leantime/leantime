@@ -5,6 +5,14 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Ideas extends Controller
     {
         private ProjectRepository $projects;

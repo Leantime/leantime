@@ -5,6 +5,13 @@ namespace Leantime\Domain\Notifications\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Notifications
     {
         private DbCore $db;
@@ -20,6 +27,22 @@ namespace Leantime\Domain\Notifications\Repositories {
         }
 
 
+        /**
+         * @param $userId
+         * @param $showNewOnly
+         * @param $limitStart
+         * @param $limitEnd
+         * @param $filterOptions
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @param $showNewOnly
+         * @param $limitStart
+         * @param $limitEnd
+         * @param $filterOptions
+         * @return array|false
+         */
         public function getAllNotifications($userId, $showNewOnly = false, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
         {
 
@@ -71,6 +94,14 @@ namespace Leantime\Domain\Notifications\Repositories {
             return $userNotifications;
         }
 
+        /**
+         * @param array $notifications
+         * @return bool|void
+         */
+        /**
+         * @param array $notifications
+         * @return boolean|void
+         */
         public function addNotifications(array $notifications)
         {
 
@@ -128,6 +159,14 @@ namespace Leantime\Domain\Notifications\Repositories {
             return $results;
         }
 
+        /**
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @return boolean
+         */
         public function markNotificationRead($id)
         {
 
@@ -144,6 +183,14 @@ namespace Leantime\Domain\Notifications\Repositories {
             return $results;
         }
 
+        /**
+         * @param $userId
+         * @return bool
+         */
+        /**
+         * @param $userId
+         * @return boolean
+         */
         public function markAllNotificationRead($userId)
         {
 

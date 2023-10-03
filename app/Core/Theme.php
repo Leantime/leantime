@@ -3,6 +3,7 @@
 namespace Leantime\Core;
 
 use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
  * theme - Engine for handling themes
@@ -180,6 +181,7 @@ class Theme
      *
      * @access public
      * @return array return an array of all themes
+     * @throws BindingResolutionException
      */
     public function getAll(): array
     {
@@ -398,6 +400,7 @@ class Theme
      *
      * @access public
      * @return string Localized name of theme
+     * @throws BindingResolutionException
      */
     public function getName(): string
     {

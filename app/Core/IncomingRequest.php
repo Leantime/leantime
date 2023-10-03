@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -31,7 +32,7 @@ class IncomingRequest extends Request
     /**
      * Sets the request destination from the path
      *
-     * @param string $requestUri
+     * @param string|null $requestUri
      * @return void
      */
     protected function setRequestDest(?string $requestUri = null): void
@@ -81,6 +82,7 @@ class IncomingRequest extends Request
      * Will adjust for subfolder installations
      *
      * @return string
+     * @throws BindingResolutionException
      */
     public function getRequestUri()
     {
@@ -113,7 +115,7 @@ class IncomingRequest extends Request
     /**
      * Gets the request params
      *
-     * @param string $method
+     * @param string|null $method
      * @return array
      */
     public function getRequestParams(string $method = null): array

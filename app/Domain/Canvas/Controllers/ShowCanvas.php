@@ -13,6 +13,13 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowCanvas extends Controller
     {
         /**

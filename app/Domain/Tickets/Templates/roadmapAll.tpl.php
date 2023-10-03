@@ -18,11 +18,7 @@ foreach ($clients as $client) {
     $htmlDropdownClients .= "<li><a href='$href' $labelActive> {$client['name']} </a></li>";
 }
 
-if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
-    $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'];
-} else {
-    $roadmapView = "Month";
-}
+$roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
 ?>
 <?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
 
@@ -152,8 +148,11 @@ if (isset($_SESSION['userdata']['settings']['views']['roadmap'])) {
                     projectName :'" . $mlst->projectName . "',
                     id :'" . $mlst->id . "',
                     name :" . json_encode($headline) . ",
-                    start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',
-                    end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time()))) . "',
+                    start :'" . (($mlst->editFrom != '0000-00-00 00:00:00' && !str_starts_with(
+                        $mlst->editFrom,
+                        '1969-12-31'
+                    )) ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',
+                    end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && !str_starts_with($mlst->editTo, '1969-12-31')) ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time()))) . "',
                     progress :'" . $mlst->percentDone . "',
                     dependencies :'" . implode(",", $dependencyList) . "',
                     custom_class :'',

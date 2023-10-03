@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
@@ -9,11 +10,23 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class MoveTicket extends Controller
     {
         private TicketService $ticketService;
         private ProjectService $projectService;
 
+        /**
+         * @param TicketService  $ticketService
+         * @param ProjectService $projectService
+         * @return void
+         */
         public function init(
             TicketService $ticketService,
             ProjectService $projectService
@@ -24,6 +37,15 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->projectService = $projectService;
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function get($params)
         {
             $ticketId = $params['id'] ?? '';
@@ -38,6 +60,14 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->displayPartial('tickets.moveTicket');
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         */
         public function post($params)
         {
             $ticketId = null;

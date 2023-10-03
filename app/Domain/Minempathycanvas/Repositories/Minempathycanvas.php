@@ -6,7 +6,16 @@
 
 namespace Leantime\Domain\Minempathycanvas\Repositories {
 
-    class Minempathycanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
+    class Minempathycanvas extends Canvas
     {
         /**
          * Constant that must be redefined

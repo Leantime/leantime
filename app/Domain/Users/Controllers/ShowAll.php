@@ -8,17 +8,33 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Ldap\Services\Ldap as LdapService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowAll extends Controller
     {
         private UserRepository $userRepo;
         private LdapService $ldapService;
 
+        /**
+         * @param UserRepository $userRepo
+         * @param LdapService    $ldapService
+         * @return void
+         */
         public function init(UserRepository $userRepo, LdapService $ldapService)
         {
             $this->userRepo = $userRepo;
             $this->ldapService = $ldapService;
         }
 
+        /**
+         * @return void
+         * @throws \Exception
+         */
         public function get()
         {
 
@@ -43,6 +59,14 @@ namespace Leantime\Domain\Users\Controllers {
             }
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         */
         public function post($params)
         {
         }

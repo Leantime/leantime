@@ -5,15 +5,45 @@ namespace Leantime\Domain\Audit\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Audit
     {
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
+        /**
+         * @param $action
+         * @param $values
+         * @param $entity
+         * @param $entityId
+         * @param $userId
+         * @param $projectId
+         * @param $thedate
+         * @return void
+         */
+        /**
+         * @param $action
+         * @param $values
+         * @param $entity
+         * @param $entityId
+         * @param $userId
+         * @param $projectId
+         * @param $thedate
+         * @return void
+         */
         public function storeEvent($action = "ping", $values = "", $entity = "", $entityId = 0, $userId = 0, $projectId = 0, $thedate = '')
         {
 
@@ -38,6 +68,14 @@ namespace Leantime\Domain\Audit\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $action
+         * @return mixed|void
+         */
+        /**
+         * @param $action
+         * @return mixed|void
+         */
         public function getLastEvent($action = '')
         {
             $sql = 'SELECT * FROM zp_audit';
@@ -63,6 +101,14 @@ namespace Leantime\Domain\Audit\Repositories {
             }
         }
 
+        /**
+         * @param $ageDays
+         * @return void
+         */
+        /**
+         * @param $ageDays
+         * @return void
+         */
         public function pruneEvents($ageDays = 30)
         {
             $sql = 'DELETE FROM zp_audit WHERE DATE(`date`) < CURDATE() - INTERVAL :age DAY';

@@ -1,4 +1,7 @@
 <?php
+
+use Leantime\Core\Theme;
+
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -51,7 +54,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
                 <br />
                 <select name="theme" id="theme" style="width: 220px">
                     <?php
-                    $themeCore = app()->make(\Leantime\Core\Theme::class);
+                    $themeCore = app()->make(Theme::class);
                     $themeAll = $themeCore->getAll();
                     foreach ($themeAll as $key => $name) {
                         ?>

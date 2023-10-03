@@ -3,12 +3,20 @@
 namespace Leantime\Domain\Notifications\Services {
 
     use DOMDocument;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Notifications
     {
         private DbCore $db;
@@ -33,6 +41,22 @@ namespace Leantime\Domain\Notifications\Services {
             $this->language = $language;
         }
 
+        /**
+         * @param $userId
+         * @param $showNewOnly
+         * @param $limitStart
+         * @param $limitEnd
+         * @param $filterOptions
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @param $showNewOnly
+         * @param $limitStart
+         * @param $limitEnd
+         * @param $filterOptions
+         * @return array|false
+         */
         public function getAllNotifications($userId, $showNewOnly = 0, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
         {
 
@@ -40,12 +64,30 @@ namespace Leantime\Domain\Notifications\Services {
         }
 
 
+        /**
+         * @param array $notifications
+         * @return bool|null
+         */
+        /**
+         * @param array $notifications
+         * @return boolean|null
+         */
         public function addNotifications(array $notifications)
         {
 
             return $this->notificationsRepo->addNotifications($notifications);
         }
 
+        /**
+         * @param $id
+         * @param $userId
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $userId
+         * @return boolean
+         */
         public function markNotificationRead($id, $userId)
         {
 
@@ -56,6 +98,15 @@ namespace Leantime\Domain\Notifications\Services {
             }
         }
 
+        /**
+         * @param string  $content
+         * @param string  $module
+         * @param integer $moduleId
+         * @param integer $authorId
+         * @param string  $url
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
         {
 
@@ -66,11 +117,7 @@ namespace Leantime\Domain\Notifications\Services {
             $links = $dom->getElementsByTagName("a");
 
             $author = $this->userRepository->getUser($authorId);
-            if (isset($author['firstname'])) {
-                $authorName = $author['firstname'];
-            } else {
-                $authorName = $this->language->__('label.team_mate');
-            }
+            $authorName = $author['firstname'] ?? $this->language->__('label.team_mate');
 
             for ($i = 0; $i < $links->count(); $i++) {
                 $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');

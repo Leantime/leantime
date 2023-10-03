@@ -11,6 +11,8 @@ define('APP_ROOT', dirname(__FILE__, 2));
 
 use Aws\S3\Exception\S3Exception;
 use Aws\S3;
+use Leantime\Core\AppSettings;
+use Leantime\Core\Environment;
 
 if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
     throw new RuntimeException('Please run "composer install".');
@@ -19,10 +21,20 @@ if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
 require $composer;
 
 $app = bootstrap_minimal_app();
-$config = $app->make(\Leantime\Core\Environment::class);
-$settings = $app->make(\Leantime\Core\AppSettings::class);
+$config = $app->make(Environment::class);
+$settings = $app->make(AppSettings::class);
 $settings->loadSettings($config);
 
+/**
+ * @param $backupFile
+ * @param $config
+ * @return string[]|void
+ */
+/**
+ * @param $backupFile
+ * @param $config
+ * @return string[]|void
+ */
 function runBackup($backupFile, $config)
 {
     $backupPath = $config->dbBackupPath . $backupFile;
@@ -44,6 +56,16 @@ function runBackup($backupFile, $config)
     }
 }
 
+/**
+ * @param $backupFile
+ * @param $config
+ * @return mixed|string|null
+ */
+/**
+ * @param $backupFile
+ * @param $config
+ * @return mixed|string|null
+ */
 function uploadS3($backupFile, $config){
 
     $s3Client = new S3\S3Client(

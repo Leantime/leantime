@@ -19,6 +19,13 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowProject extends Controller
     {
         //services

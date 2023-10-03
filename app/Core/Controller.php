@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Template;
 use Leantime\Core\Events;
 use Leantime\Core\Language;
@@ -39,7 +40,7 @@ abstract class Controller
      * @param IncomingRequest $incomingRequest The request to be initialized.
      * @param template        $tpl             The template to be initialized.
      * @param language        $language        The language to be initialized.
-     * @return self
+     * @return void
      */
     public function __construct(
         IncomingRequest $incomingRequest,
@@ -70,6 +71,7 @@ abstract class Controller
      * @param array|object $params
      *
      * @return void
+     * @throws BindingResolutionException
      */
     private function executeActions($method, $params): void
     {

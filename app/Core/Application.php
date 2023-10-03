@@ -42,6 +42,7 @@ class Application extends Container
     /**
      * Get the application namespace
      *
+     * @param boolean $includeSuffix
      * @return string
      *
      * @see \Illuminate\Contracts\Foundation\Application::getNamespace()

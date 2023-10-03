@@ -2,6 +2,9 @@
 
 namespace Leantime\Domain\Projects\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+    use LasseRafn\InitialAvatarGenerator\InitialAvatar;
+    use Leantime\Core\Environment;
     use Leantime\Core\Eventhelpers as EventhelperCore;
     use Leantime\Core\Db as DbCore;
     use Leantime\Domain\Auth\Models\Roles;
@@ -10,7 +13,15 @@ namespace Leantime\Domain\Projects\Repositories {
     use DateInterval;
     use DatePeriod;
     use PDO;
+    use SVG\SVG;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Projects
     {
         use EventhelperCore;
@@ -50,11 +61,15 @@ namespace Leantime\Domain\Projects\Repositories {
          * @var    array state for projects
          */
         public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
-        private \Leantime\Core\Environment $config;
+        private Environment $config;
 
+        /**
+         * @param Environment $config
+         * @param DbCore      $db
+         */
         public function __construct(
-            \Leantime\Core\Environment $config,
-            \Leantime\Core\Db $db
+            Environment $config,
+            DbCore $db
         ) {
             $this->config = $config;
             $this->db = $db;
@@ -65,7 +80,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * getAll - get all projects open and closed
          *
          * @access public
-         * @param  $onlyOpen
+         * @param boolean $showClosedProjects
          * @return array
          */
         public function getAll($showClosedProjects = false)
@@ -115,7 +130,7 @@ namespace Leantime\Domain\Projects\Repositories {
          *
          * @access public
          * @param  $id
-         * @return array
+         * @return array|boolean
          */
         public function getUsersAssignedToProject($id): array|bool
         {
@@ -147,6 +162,20 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
 
+        /**
+         * @param int $userId
+         * @param string $projectStatus
+         * @param int|null $clientId
+         * @param $accessStatus
+         * @return array|false
+         */
+        /**
+         * @param integer      $userId
+         * @param string       $projectStatus
+         * @param integer|null $clientId
+         * @param $accessStatus
+         * @return array|false
+         */
         public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, $accessStatus = "assigned")
         {
 
@@ -250,6 +279,19 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
         // Deprecated
+
+        /**
+         * @param $userId
+         * @param $status
+         * @param $clientId
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @param $status
+         * @param $clientId
+         * @return array|false
+         */
         public function getProjectsUserHasAccessTo($userId, $status = "all", $clientId = "")
         {
 
@@ -301,12 +343,16 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
 
-
-
-
-
-
-
+        /**
+         * @param $clientId
+         * @param $type
+         * @return int|mixed
+         */
+        /**
+         * @param $clientId
+         * @param $type
+         * @return integer|mixed
+         */
         public function getNumberOfProjects($clientId = null, $type = null)
         {
 
@@ -344,7 +390,14 @@ namespace Leantime\Domain\Projects\Repositories {
         // Get all open user projects /param: open, closed, all
 
 
-
+        /**
+         * @param $clientId
+         * @return array|false
+         */
+        /**
+         * @param $clientId
+         * @return array|false
+         */
         public function getClientProjects($clientId)
         {
 
@@ -382,6 +435,14 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
         public function getProjectTickets($projectId)
         {
 
@@ -410,7 +471,7 @@ namespace Leantime\Domain\Projects\Repositories {
          *
          * @access public
          * @param  $id
-         * @return mixed
+         * @return array|boolean
          */
         public function getProject($id): array|bool
         {
@@ -461,7 +522,14 @@ namespace Leantime\Domain\Projects\Repositories {
         }
 
 
-
+        /**
+         * @param $id
+         * @return array|bool
+         */
+        /**
+         * @param $id
+         * @return array|boolean
+         */
         public function getProjectBookedHours($id): array|bool
         {
 
@@ -480,6 +548,16 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
+        /**
+         * @param $needle
+         * @param $haystack
+         * @return false|int|string
+         */
+        /**
+         * @param $needle
+         * @param $haystack
+         * @return false|integer|string
+         */
         public function recursive_array_search($needle, $haystack)
         {
             foreach ($haystack as $key => $value) {
@@ -491,6 +569,14 @@ namespace Leantime\Domain\Projects\Repositories {
             return false;
         }
 
+        /**
+         * @param $id
+         * @return array|bool
+         */
+        /**
+         * @param $id
+         * @return array|boolean
+         */
         public function getProjectBookedHoursArray($id): array|bool
         {
 
@@ -546,6 +632,14 @@ namespace Leantime\Domain\Projects\Repositories {
             return $chartArr;
         }
 
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
         public function getProjectBookedDollars($id)
         {
 
@@ -720,8 +814,8 @@ namespace Leantime\Domain\Projects\Repositories {
          * editProject - edit a project
          *
          * @access public
-         * @param array $values
-         * @param  $id
+         * @param array     $values
+         * @param $projectId
          */
         public function editProjectRelations(array $values, $projectId)
         {
@@ -792,6 +886,7 @@ namespace Leantime\Domain\Projects\Repositories {
          *
          * @access public
          * @param  $id
+         * @param null $projectId
          * @return array
          */
         public function getUserProjectRelation($id, $projectId = null)
@@ -824,6 +919,18 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return boolean
+         * @throws BindingResolutionException
+         */
         public function isUserAssignedToProject($userId, $projectId)
         {
 
@@ -881,6 +988,18 @@ namespace Leantime\Domain\Projects\Repositories {
             return false;
         }
 
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return boolean
+         * @throws BindingResolutionException
+         */
         public function isUserMemberOfProject($userId, $projectId)
         {
 
@@ -926,6 +1045,14 @@ namespace Leantime\Domain\Projects\Repositories {
             return false;
         }
 
+        /**
+         * @param $id
+         * @return array
+         */
+        /**
+         * @param $id
+         * @return array
+         */
         public function getProjectUserRelation($id)
         {
 
@@ -971,6 +1098,7 @@ namespace Leantime\Domain\Projects\Repositories {
          *
          * @access public
          * @param  $id
+         * @param $projects
          * @return boolean
          */
         public function editUserProjectRelations($id, $projects)
@@ -1013,6 +1141,16 @@ namespace Leantime\Domain\Projects\Repositories {
             return true;
         }
 
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return void
+         */
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return void
+         */
         public function deleteProjectRelation($userId, $projectId)
         {
 
@@ -1028,6 +1166,14 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $userId
+         * @return void
+         */
+        /**
+         * @param $userId
+         * @return void
+         */
         public function deleteAllProjectRelations($userId)
         {
 
@@ -1042,6 +1188,14 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $projectId
+         * @return void
+         */
+        /**
+         * @param $projectId
+         * @return void
+         */
         public function deleteAllUserRelations($projectId)
         {
 
@@ -1056,6 +1210,18 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $userId
+         * @param $projectId
+         * @param $projectRole
+         * @return void
+         */
+        /**
+         * @param $userId
+         * @param $projectId
+         * @param $projectRole
+         * @return void
+         */
         public function addProjectRelation($userId, $projectId, $projectRole)
         {
 
@@ -1082,6 +1248,16 @@ namespace Leantime\Domain\Projects\Repositories {
             static::dispatch_event("userAddedToProject", array("userId" => $userId, "projectId" => $projectId, "projectRole" => $projectRole));
         }
 
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $params
+         * @return boolean
+         */
         public function patch($id, $params)
         {
 
@@ -1113,7 +1289,9 @@ namespace Leantime\Domain\Projects\Repositories {
          * setPicture - set the profile picture for an individual
          *
          * @access public
-         * @param  string
+         * @param string $_FILE
+         * @param $id
+         * @throws BindingResolutionException
          */
         public function setPicture($_FILE, $id)
         {
@@ -1150,6 +1328,16 @@ namespace Leantime\Domain\Projects\Repositories {
             }
         }
 
+        /**
+         * @param $id
+         * @return string[]|SVG
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return string[]|SVG
+         * @throws BindingResolutionException
+         */
         public function getProjectAvatar($id)
         {
 
@@ -1176,7 +1364,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
                     return array("filename" => $filePath, "type" => "uploaded");
                 } else {
-                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $avatar = new InitialAvatar();
                     $image = $avatar
                         ->name("🦄")
                         ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
@@ -1192,7 +1380,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 if (file_exists(APP_ROOT . "/cache/avatars/" . $imagename . ".png")) {
                     return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
                 } else {
-                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $avatar = new InitialAvatar();
                     $image = $avatar
                         ->name($value['name'])
                         ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
@@ -1209,7 +1397,7 @@ namespace Leantime\Domain\Projects\Repositories {
                     }
                 }
             } else {
-                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                $avatar = new InitialAvatar();
                 $image = $avatar
                     ->name("🦄")
                     ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')

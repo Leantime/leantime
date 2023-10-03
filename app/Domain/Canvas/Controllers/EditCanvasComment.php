@@ -15,6 +15,13 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class EditCanvasComment extends Controller
     {
         /**

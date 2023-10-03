@@ -91,7 +91,7 @@ class Mailer
      * @access public
      * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config, Language $language)
+    public function __construct(Environment $config, Language $language)
     {
         if ($config->email != '') {
             $this->emailDomain = $config->email;
@@ -266,10 +266,10 @@ class Mailer
      * sendMail - send the mail with mail()
      *
      * @access public
-     * @param  array $to
+     * @param array $to
      * @param  $from
      * @return void
-     * @throws phpmailerException
+     * @throws Exception
      */
     public function sendMail(array $to, $from)
     {

@@ -1,7 +1,9 @@
 
 <?php
 
-$currentRoute = \Leantime\Core\Frontcontroller::getCurrentRoute();
+use Leantime\Core\Frontcontroller;
+
+$currentRoute = Frontcontroller::getCurrentRoute();
 
 $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", $currentRoute);
 $groupBy        = $tpl->get('groupByOptions');
@@ -136,8 +138,13 @@ $statusLabels = $tpl->get("allTicketStates");
                     <div class="form-group">
                         <select multiple="multiple"  data-placeholder="<?=$tpl->__("input.placeholders.filter_by_status")?>" name="searchStatus"  multiple="multiple" class="status-select" id="statusSelect">
                             <option value="" data-placeholder="true">All Statuses</option>
-                            <option value="not_done" <?php if ($searchCriteria['status'] !== false && strpos($searchCriteria['status'], 'not_done') !== false) {
-                                echo" selected='selected' ";
+                            <option value="not_done" <?php if (
+                            $searchCriteria['status'] !== false && str_contains(
+                                $searchCriteria['status'],
+                                'not_done'
+                            )
+) {
+                                                                           echo" selected='selected' ";
                                                      }?>><?=$tpl->__("label.not_done")?></option>
                             <?php foreach ($statusLabels as $key => $label) {?>
                                 <?php echo"<option value='" . $key . "'";

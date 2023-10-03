@@ -2,19 +2,28 @@
 
 namespace Leantime\Command;
 
-use Leantime\Domain\Setting\Repositories\Setting;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Domain\Cron\Services\Cron;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Leantime\Domain\Auth\Models\Roles;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class RunCronCommand extends Command
 {
     protected static $defaultName = 'cron:run';
     protected static $defaultDescription = 'Runs the cronjob';
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         parent::configure();
@@ -23,9 +32,10 @@ class RunCronCommand extends Command
     /**
      * Execute the command
      *
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      * @return integer 0 if everything went fine, or an exit code.
+     * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

@@ -10,6 +10,13 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class NewUser extends Controller
     {
         private UserRepository $userRepo;

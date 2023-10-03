@@ -4,12 +4,20 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class I18n extends Controller
 {
     /**
      * Attach the language file to javascript
      *
      * @param $params Parameters or body of the request.
+     * @throws \Exception
      * @access public
      */
     public function get($params)

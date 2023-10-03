@@ -2,6 +2,13 @@
 
 namespace Leantime\Domain\Tickets\Models {
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Tickets
     {
         public $id;
@@ -44,6 +51,12 @@ namespace Leantime\Domain\Tickets\Models {
 
         public $doneTickets;
 
+        /**
+         * @param $values
+         */
+        /**
+         * @param $values
+         */
         public function __construct($values = false)
         {
 

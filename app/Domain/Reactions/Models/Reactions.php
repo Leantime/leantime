@@ -4,6 +4,13 @@ namespace Leantime\Domain\Reactions\Models;
 
 use Leantime\Core\Eventhelpers;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Reactions
 {
     use Eventhelpers;
@@ -48,11 +55,25 @@ class Reactions
     public static string $interesting = 'interesting';
     public static string $sad = 'sad';
 
+    /**
+     * @return mixed
+     */
+    /**
+     * @return mixed
+     */
     public static function getReactions()
     {
         return self::dispatch_filter('available_reactions', self::$reactionTypes);
     }
 
+    /**
+     * @param string $type
+     * @return false|mixed
+     */
+    /**
+     * @param string $type
+     * @return false|mixed
+     */
     public static function getReactionsByType(string $type)
     {
         $reactions = self::dispatch_filter('available_reactions', self::$reactionTypes);

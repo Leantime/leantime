@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Dashboard\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -13,6 +14,13 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Core\Controller;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Home extends Controller
     {
         private ProjectService $projectsService;
@@ -23,6 +31,16 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private SettingRepository $settingRepo;
         private CalendarRepository $calendarRepo;
 
+        /**
+         * @param ProjectService     $projectsService
+         * @param TicketService      $ticketsService
+         * @param UserService        $usersService
+         * @param TimesheetService   $timesheetsService
+         * @param ReportService      $reportsService
+         * @param SettingRepository  $settingRepo
+         * @param CalendarRepository $calendarRepo
+         * @return void
+         */
         public function init(
             ProjectService $projectsService,
             TicketService $ticketsService,
@@ -146,6 +164,16 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->display('dashboard.home');
         }
 
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function post($params)
         {
 

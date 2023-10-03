@@ -6,7 +6,16 @@
 
 namespace Leantime\Domain\Sqcanvas\Repositories {
 
-    class Sqcanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
+    class Sqcanvas extends Canvas
     {
         /**
          * Constant that must be redefined

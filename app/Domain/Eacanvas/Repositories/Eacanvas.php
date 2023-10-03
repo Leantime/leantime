@@ -6,7 +6,16 @@
 
 namespace Leantime\Domain\Eacanvas\Repositories {
 
-    class Eacanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
+    class Eacanvas extends Canvas
     {
         /**
          * Constant that must be redefined

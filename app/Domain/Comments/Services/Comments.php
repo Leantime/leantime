@@ -2,16 +2,30 @@
 
 namespace Leantime\Domain\Comments\Services {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Comments
     {
         private CommentRepository $commentRepository;
         private ProjectService $projectService;
         private LanguageCore $language;
 
+        /**
+         * @param CommentRepository $commentRepository
+         * @param ProjectService    $projectService
+         * @param LanguageCore      $language
+         */
         public function __construct(
             CommentRepository $commentRepository,
             ProjectService $projectService,
@@ -22,11 +36,39 @@ namespace Leantime\Domain\Comments\Services {
             $this->language = $language;
         }
 
+        /**
+         * @param $module
+         * @param $entityId
+         * @param $commentOrder
+         * @return array|false
+         */
+        /**
+         * @param $module
+         * @param $entityId
+         * @param $commentOrder
+         * @return array|false
+         */
         public function getComments($module, $entityId, $commentOrder = 0)
         {
             return $this->commentRepository->getComments($module, $entityId, "", $commentOrder);
         }
 
+        /**
+         * @param $values
+         * @param $module
+         * @param $entityId
+         * @param $entity
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $values
+         * @param $module
+         * @param $entityId
+         * @param $entity
+         * @return boolean
+         * @throws BindingResolutionException
+         */
         public function addComment($values, $module, $entityId, $entity)
         {
 
@@ -89,6 +131,14 @@ namespace Leantime\Domain\Comments\Services {
             return false;
         }
 
+        /**
+         * @param $commentId
+         * @return bool
+         */
+        /**
+         * @param $commentId
+         * @return boolean
+         */
         public function deleteComment($commentId)
         {
 

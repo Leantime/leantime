@@ -6,6 +6,13 @@ namespace Leantime\Domain\Goalcanvas\Services {
     use Mpdf\Tag\P;
     use Ramsey\Uuid\Uuid;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Goalcanvas
     {
         private GoalcanvaRepository $goalRepository;
@@ -15,11 +22,18 @@ namespace Leantime\Domain\Goalcanvas\Services {
             "nolink",
         ];
 
+        /**
+         * @param GoalcanvaRepository $goalRepository
+         */
         public function __construct(GoalcanvaRepository $goalRepository)
         {
             $this->goalRepository = $goalRepository;
         }
 
+        /**
+         * @param integer $id
+         * @return array
+         */
         public function getCanvasItemsById(int $id): array
         {
 
@@ -52,6 +66,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
+        /**
+         * @param $parentId
+         * @return int|mixed
+         */
+        /**
+         * @param $parentId
+         * @return integer|mixed
+         */
         public function getChildGoalsForReporting($parentId)
         {
 
@@ -73,6 +95,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $currentValueSum;
         }
 
+        /**
+         * @param $parentId
+         * @return array
+         */
+        /**
+         * @param $parentId
+         * @return array
+         */
         public function getChildrenbyKPI($parentId)
         {
 
@@ -120,6 +150,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
+        /**
+         * @param $projectId
+         * @return array
+         */
+        /**
+         * @param $projectId
+         * @return array
+         */
         public function getParentKPIs($projectId)
         {
 

@@ -1,16 +1,19 @@
 <?php
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
+use Leantime\Core\Language;
 
 if (! function_exists('app')) {
     /**
      * Returns the application instance.
      *
      * @param string $abstract
-     * @param array $parameters
+     * @param array  $parameters
      * @return mixed|Application
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
      */
     function app(string $abstract = '', array $parameters = []): mixed
     {
@@ -37,7 +40,8 @@ if (! function_exists('bootstrap_minimal_app')) {
     /**
      * Bootstrap a new IoC container instance.
      *
-     * @return \Leantime\Core\Application
+     * @return Application
+     * @throws BindingResolutionException
      */
     function bootstrap_minimal_app(): Application
     {
@@ -52,12 +56,12 @@ if (! function_exists('__')) {
      *
      * @param string $index
      * @return string
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws BindingResolutionException
+     * @throws BindingResolutionException
      */
     function __(string $index): string
     {
-        return app()->make(\Leantime\Core\Language::class)->__($index);
+        return app()->make(Language::class)->__($index);
     }
 }
 
@@ -65,12 +69,12 @@ if (! function_exists('view')) {
     /**
      * Get the view factory instance.
      *
-     * @return \Illuminate\View\Factory
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @return Factory
+     * @throws BindingResolutionException
      */
-    function view(): \Illuminate\View\Factory
+    function view(): Factory
     {
-        return app()->make(\Illuminate\View\Factory::class);
+        return app()->make(Factory::class);
     }
 }
 

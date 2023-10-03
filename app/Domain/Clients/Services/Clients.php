@@ -9,6 +9,13 @@ use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects;
 
+/**
+ *
+ */
+
+/**
+ *
+ */
 class Clients
 {
     private TemplateCore $tpl;
@@ -18,6 +25,7 @@ class Clients
     /**
      * @param TemplateCore      $tpl
      * @param ProjectRepository $projectRepository
+     * @param ClientRepository  $clientRepository
      */
     public function __construct(
         TemplateCore $tpl,

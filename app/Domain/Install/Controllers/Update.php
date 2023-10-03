@@ -2,11 +2,20 @@
 
 namespace Leantime\Domain\Install\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\AppSettings as AppSettingCore;
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Install\Repositories\Install as InstallRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Update extends Controller
     {
         private InstallRepository $installRepo;
@@ -45,6 +54,15 @@ namespace Leantime\Domain\Install\Controllers {
             $this->tpl->display($updatePage, "entry");
         }
 
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function post($params)
         {
 

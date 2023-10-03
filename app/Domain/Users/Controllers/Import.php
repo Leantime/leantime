@@ -4,6 +4,7 @@
 
 namespace Leantime\Domain\Users\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -11,11 +12,23 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Import extends Controller
     {
         private UserRepository $userRepo;
         private LdapService $ldapService;
 
+        /**
+         * @param UserRepository $userRepo
+         * @param LdapService    $ldapService
+         * @return void
+         */
         public function init(UserRepository $userRepo, LdapService $ldapService)
         {
             $this->userRepo = $userRepo;
@@ -26,6 +39,10 @@ namespace Leantime\Domain\Users\Controllers {
             }
         }
 
+        /**
+         * @return void
+         * @throws \Exception
+         */
         public function get()
         {
 
@@ -46,6 +63,16 @@ namespace Leantime\Domain\Users\Controllers {
             }
         }
 
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function post($params)
         {
             $this->tpl = app()->make(TemplateCore::class);

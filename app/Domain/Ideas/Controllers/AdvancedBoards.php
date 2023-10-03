@@ -7,6 +7,14 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class AdvancedBoards extends Controller
     {
         /**

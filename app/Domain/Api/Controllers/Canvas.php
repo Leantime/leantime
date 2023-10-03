@@ -10,6 +10,13 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Canvas extends Controller
     {
         /**

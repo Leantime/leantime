@@ -19,6 +19,13 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Files\Services\Files as FileService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class ShowClient extends Controller
     {
         private ClientRepository $clientRepo;

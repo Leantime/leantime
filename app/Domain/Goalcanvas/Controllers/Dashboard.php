@@ -10,9 +10,18 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Core\Mailer;
     use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Canvas\Service\Canvas as CanvasService;
+    use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
+    use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepo;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
+
+    /**
+     *
+     */
     class Dashboard extends Controller
     {
         /**
@@ -20,16 +29,16 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          */
         protected const CANVAS_NAME = 'goal';
 
-        private \Leantime\Domain\Projects\Services\Projects $projectService;
-        private \Leantime\Domain\Goalcanvas\Services\Goalcanvas $goalService;
+        private Projects $projectService;
+        private Goalcanvas $goalService;
         private object $canvasRepo;
 
         /**
          * init - initialize private variables
          */
         public function init(
-            \Leantime\Domain\Projects\Services\Projects $projectService,
-            \Leantime\Domain\Goalcanvas\Services\Goalcanvas $goalService
+            Projects $projectService,
+            Goalcanvas $goalService
         ) {
             $this->projectService = $projectService;
             $this->goalService = $goalService;
@@ -156,7 +165,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
                         $mailer = app()->make(Mailer::class);
-                        $this->projectService = app()->make(\Leantime\Domain\Projects\Services\Projects::class);
+                        $this->projectService = app()->make(Projects::class);
                         $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
 
                         $mailer->setSubject($this->language->__('notification.board_created'));
@@ -269,7 +278,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
 
                             $mailer = app()->make(Mailer::class);
-                            $this->projectService = app()->make(\Leantime\Domain\Projects\Services\Projects::class);
+                            $this->projectService = app()->make(Projects::class);
                             $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
                             $canvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
                             $mailer->setSubject($this->language->__('notification.board_imported'));

@@ -1,4 +1,7 @@
 <?php
+
+use Leantime\Core\Theme;
+
 defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -158,7 +161,7 @@ $user = $tpl->get('user');
                                     <span class='field span6'>
                                         <select name="theme" id="theme" style="width: 220px">
                                             <?php
-                                            $themeCore = app()->make(\Leantime\Core\Theme::class);
+                                            $themeCore = app()->make(Theme::class);
                                             $themeAll = $themeCore->getAll();
                                             foreach ($themeAll as $key => $name) {
                                                 ?>
