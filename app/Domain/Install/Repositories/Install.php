@@ -1608,7 +1608,7 @@ namespace Leantime\Domain\Install\Repositories {
                     CHANGE COLUMN `description` `description` MEDIUMTEXT NULL DEFAULT NULL ,
                     CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL;",
                 "ALTER TABLE `zp_user`
-                    ADD COLUMN `modified` DATETIME NULL DEFAULT NULL;"
+                    ADD COLUMN `modified` DATETIME NULL DEFAULT NULL;",
 
             ];
 

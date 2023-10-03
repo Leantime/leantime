@@ -46,17 +46,16 @@ class Menu extends Composer
         $recentProjects =
         $returnVars = [];
 
-        if(isset($_SESSION['userdata']["projectSelectFilter"])){
+        if (isset($_SESSION['userdata']["projectSelectFilter"])) {
             $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"];
         } else {
             $projectSelectFilter = array(
                 "groupBy" => "none",
-                "clients" => ''
+                "clients" => '',
             );
         }
 
         if (isset($_SESSION['userdata'])) {
-
             $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
@@ -70,7 +69,6 @@ class Menu extends Composer
             $favoriteProjects = $projectVars['favoriteProjects'];
             $clients = $projectVars['clients'];
             $currentProject = $projectVars['currentProject'];
-
         }
 
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
@@ -105,7 +103,7 @@ class Menu extends Composer
             'favoriteProjects' => $favoriteProjects,
             'projectSelectGroupOptions' => $projectSelectGroupOptions,
             'projectSelectFilter' => $projectSelectFilter,
-            'clients' => $clients
+            'clients' => $clients,
         ];
     }
 }

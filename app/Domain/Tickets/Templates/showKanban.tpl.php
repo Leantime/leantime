@@ -149,7 +149,7 @@ if ($numberofColumns > 0) {
                                                     <?php echo app("blade.compiler")::render('@include("tickets::partials.ticketsubmenu", [
                                                                                         "ticket" => $ticket,
                                                                                         "onTheClock" => $onTheClock
-                                                                                    ])', ['ticket'=>$row, 'onTheClock'=> $tpl->get("onTheClock")]); ?>
+                                                                                    ])', ['ticket' => $row, 'onTheClock' => $tpl->get("onTheClock")]); ?>
 
 
                                                     <?php if ($row['dependingTicketId'] > 0) { ?>

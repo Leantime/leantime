@@ -8,7 +8,6 @@ namespace Leantime\Domain\Users\Repositories {
 
     class Users
     {
-
         /**
          * @access public
          * @var    string

@@ -9,7 +9,6 @@ class DeleteComment extends HtmxController
     public function init(
         Tickets $tickets,
     ) {
-
     }
 
     public function post(IncomingRequest $incomingRequest)

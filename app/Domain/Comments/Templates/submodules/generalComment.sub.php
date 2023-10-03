@@ -20,7 +20,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
         <div class="mainToggler-<?=$formHash ?>" id="">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified'] ?? '0') ?>" />
             </div>
             <div class="commentReply" style="border:1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius); margin-bottom:10px;">
                 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, '<?=$formHash?>')">
@@ -31,7 +31,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
 
         <div id="comment-<?=$formHash ?>-0" class="commentBox-<?=$formHash ?>" style="display:none;">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?= strtotime($_SESSION['userdata']['modified'] ?? '0') ?>" />
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
@@ -136,7 +136,7 @@ if (strpos($formUrl, '?delComment=') !== false) {
                             <?php endif; ?>
                             <div style="display:none;" id="comment-<?=$formHash?>-<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
-                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified']?? '0') ?>"/>
+                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified'] ?? '0') ?>"/>
                                 </div>
                                 <div class="commentReply">
                                     <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" class="btn btn-primary"/>

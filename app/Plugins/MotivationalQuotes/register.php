@@ -9,7 +9,6 @@
 \Leantime\Core\Events::add_event_listener(
     //Register event listener
     "leantime.core.template.tpl.dashboard.home.afterWelcomeMessage",
-
     //Create function for the event
     function ($payload) {
         // code here

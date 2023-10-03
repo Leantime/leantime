@@ -23,7 +23,7 @@ class Ldap
         "phone" => 'telephonenumber',
         "jobTitle" => "title",
         "jobLevel" => "level",
-        "department" => "department"
+        "department" => "department",
     );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
@@ -95,7 +95,7 @@ class Ldap
 
         if (function_exists("ldap_connect")) {
             if ($this->ldapUri != '' && str_starts_with($this->ldapUri, "ldap")) {
-                $this->ldapConnection = ldap_connect($this->uri);
+                $this->ldapConnection = ldap_connect($this->ldapUri);
             } else {
                 $this->ldapConnection = ldap_connect($this->host, $this->port);
             }

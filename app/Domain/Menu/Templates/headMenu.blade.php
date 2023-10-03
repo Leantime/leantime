@@ -93,8 +93,11 @@
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
+                                <span class="notificationDate">
+                                    @formatDate($notif['datetime'])
+                                    @formatTime($notif['datetime'])
+                                </span>
                                 <span class="notificationTitle">{!! $notif['message'] !!}</span>
-                                <span class="notificationDate"> @formatDate( $notif['datetime'] ) </span>
                             </a>
                         </li>
                     @endforeach
@@ -121,11 +124,11 @@
                                 <span class="notificationProfileImage">
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
-                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
                                 <span class="notificationDate">
                                     @formatDate($notif['datetime'])
                                     @formatTime($notif['datetime'])
                                 </span>
+                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
                             </a>
                         </li>
                     @endforeach

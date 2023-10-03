@@ -204,12 +204,13 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $this->menuStructures = self::dispatch_filter('menuStructures', $this->menuStructures, array("menuType" => $menuType));
 
-
             if (!isset($this->menuStructures[$menuType]) || empty($menuType)) {
                 $menuType = self::DEFAULT_MENU;
             }
 
             $menuStructure = $this->menuStructures[$menuType];
+
+            ksort($menuStructure);
 
             if (isset($_SESSION['submenuToggle']) === false || is_array($_SESSION['submenuToggle']) === false) {
                 $_SESSION['submenuToggle'] = array();

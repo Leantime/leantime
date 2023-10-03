@@ -189,7 +189,7 @@ foreach ($__data as $var => $val) {
                                                         <?php echo app("blade.compiler")::render('@include("tickets::partials.ticketsubmenu", [
                                                                                         "ticket" => $ticket,
                                                                                         "onTheClock" => $onTheClock
-                                                                                    ])', ['ticket'=>$row, 'onTheClock'=> $tpl->get("onTheClock")]); ?>
+                                                                                    ])', ['ticket' => $row, 'onTheClock' => $tpl->get("onTheClock")]); ?>
 
                                                         <small><?=$tpl->e($row['projectName']) ?></small><br />
                                                         <?php if ($row['dependingTicketId'] > 0) { ?>
@@ -246,9 +246,20 @@ foreach ($__data as $var => $val) {
                                                                     <?php
                                                                     if (isset($milestones[$row['projectId']])) {
                                                                         foreach ($milestones[$row['projectId']] as $milestone) {
-                                                                            echo"<li class='dropdown-item'>
-                                                                                <a href='javascript:void(0);' data-label='" . $tpl->escape($milestone->headline) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape($milestone->tags) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape($milestone->tags) . "'>" . $tpl->escape($milestone->headline) . "</a>";
-                                                                            echo"</li>";
+                                                                            if ($milestone != null && is_object($milestone)) {
+
+                                                                                echo "<li class='dropdown-item'>
+                                                                                    <a href='javascript:void(0);' data-label='" . $tpl->escape(
+                                                                                    $milestone->headline
+                                                                                ) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape(
+                                                                                    $milestone->tags
+                                                                                ) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape(
+                                                                                    $milestone->tags
+                                                                                ) . "'>" . $tpl->escape(
+                                                                                    $milestone->headline
+                                                                                ) . "</a>";
+                                                                                echo "</li>";
+                                                                            }
                                                                         }
                                                                     }
                                                                     ?>

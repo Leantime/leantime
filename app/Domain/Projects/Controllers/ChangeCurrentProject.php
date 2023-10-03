@@ -5,6 +5,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
+
     class ChangeCurrentProject extends Controller
     {
         private ProjectService $projectService;
@@ -32,16 +33,9 @@ namespace Leantime\Domain\Projects\Controllers {
                     if ($project !== false) {
                         $this->projectService->changeCurrentSessionProject($id);
 
-                        if (isset($params['redirect'])) {
-                            $redirect = strip_tags($params['redirect']);
-                            $urlParts = explode("/", $redirect);
-                            if (count($urlParts) > 2) {
-                                $this->tpl->redirect(BASE_URL . "/" . $urlParts[1] . "/" . $urlParts[2]);
-                            }
-                        }
-
                         $defaultURL = "/dashboard/show";
-                        $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL);
+                        $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL, $project);
+
                         $this->tpl->redirect(BASE_URL . $redirectFilter);
                     } else {
                         $this->tpl->redirect(BASE_URL . "/errors/error404");

@@ -1,26 +1,26 @@
 <?php
 
-    defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $sprints        = $tpl->get("sprints");
-    $searchCriteria = $tpl->get("searchCriteria");
-    $currentSprint  = $tpl->get("currentSprint");
+$sprints        = $tpl->get("sprints");
+$searchCriteria = $tpl->get("searchCriteria");
+$currentSprint  = $tpl->get("currentSprint");
 
-    $allTicketGroups     = $tpl->get('allTickets');
+$allTicketGroups     = $tpl->get('allTickets');
 
-    echo $tpl->displayNotification();
+echo $tpl->displayNotification();
 
-    $efforts        = $tpl->get('efforts');
-    $priorities     = $tpl->get('priorities');
-    $statusLabels   = $tpl->get('allTicketStates');
-    $groupBy        = $tpl->get('groupBy');
-    $newField       = $tpl->get('newField');
+$efforts        = $tpl->get('efforts');
+$priorities     = $tpl->get('priorities');
+$statusLabels   = $tpl->get('allTicketStates');
+$groupBy        = $tpl->get('groupBy');
+$newField       = $tpl->get('newField');
 
-    //All states >0 (<1 is archive)
-    $numberofColumns = count($tpl->get('allTicketStates')) - 1;
-    $size = floor(100 / $numberofColumns);
+//All states >0 (<1 is archive)
+$numberofColumns = count($tpl->get('allTicketStates')) - 1;
+$size = floor(100 / $numberofColumns);
 
 ?>
 
@@ -60,10 +60,10 @@ foreach ($__data as $var => $val) {
             <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
-                        <input type="text" name="headline" autofocus placeholder="<?php echo $tpl->__("input.placeholders.create_task"); ?>" style="margin-bottom: 15px; margin-top: 3px; width: 320px;"/>
+                        <input type="text" name="headline" autofocus placeholder="<?php echo $tpl->__("input.placeholders.create_task"); ?>" style="margin-bottom: 15px; margin-top: 3px; width: 100%;"/>
                         <input type="hidden" name="sprint" value="<?=$currentSprint?>" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <input type="submit" class="btn btn-default" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; margin-top:3px;  width:100px;"/>
+                        <input type="submit" class="btn btn-default tw-mb-m" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; margin-top:3px;  width:100px;"/>
                     </form>
 
 
@@ -82,49 +82,49 @@ foreach ($__data as $var => $val) {
 
                         <table class="table display listStyleTable" style="width:100%">
 
-                        <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
-                        <thead>
-                        <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
-                        <tr style="display:none;">
+                            <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
+                            <thead>
+                            <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
+                            <tr style="display:none;">
 
-                            <th style="width:20px" class="status-col"><?= $tpl->__("label.todo_status"); ?></th>
-                            <th><?= $tpl->__("label.title"); ?></th>
-                        </tr>
-
-                        <?php $tpl->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
-                        </thead>
-
-                        <?php $tpl->dispatchTplEvent('allTicketsTable.afterHead', ['tickets' => $allTickets]); ?>
-                        <tbody>
-                        <?php $tpl->dispatchTplEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets]); ?>
-                        <?php foreach ($allTickets as $rowNum => $row) {?>
-                            <tr onclick="leantime.ticketsController.loadTicketToContainer('<?=$row['id']?>', '#ticketContent')" id="row-<?=$row['id']?>" class="ticketRows">
-                                <?php $tpl->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                                <td data-order="<?=$statusLabels[$row['status']]["sortKey"]; ?>" data-search="<?=$statusLabels[$row['status']]["name"]; ?>" class="roundStatusBtn" style="width:20px">
-                                    <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                        <a class="dropdown-toggle status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-caret-down" aria-hidden="true"></i>
-                                        </a>
-                                        <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
-                                            <li class="nav-header border"><?=$tpl->__("dropdown.choose_status")?></li>
-                                            <?php foreach ($statusLabels as $key => $label) {
-                                                echo"<li class='dropdown-item'>
-                                            <a href='javascript:void(0);' class='" . $label["class"] . "' data-label='" . $tpl->escape($label["name"]) . "' data-value='" . $row['id'] . "_" . $key . "_" . $label["class"] . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $tpl->escape($label["name"]) . "</a>";
-                                                echo"</li>";
-                                            }?>
-                                        </ul>
-                                    </div>
-                                </td>
-
-                                <td data-search="<?=$statusLabels[$row['status']]["name"]; ?>" data-order="<?=$tpl->e($row['headline']); ?>" >
-                                    <a href="javascript:void(0);"><strong><?=$tpl->e($row['headline']); ?></strong></a></td>
-
-                                <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
+                                <th style="width:20px" class="status-col"><?= $tpl->__("label.todo_status"); ?></th>
+                                <th><?= $tpl->__("label.title"); ?></th>
                             </tr>
-                        <?php } ?>
-                        <?php $tpl->dispatchTplEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets]); ?>
-                        </tbody>
-                        <?php $tpl->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
-                    </table>
+
+                            <?php $tpl->dispatchTplEvent('allTicketsTable.afterHeadRow', ['tickets' => $allTickets]); ?>
+                            </thead>
+
+                            <?php $tpl->dispatchTplEvent('allTicketsTable.afterHead', ['tickets' => $allTickets]); ?>
+                            <tbody>
+                            <?php $tpl->dispatchTplEvent('allTicketsTable.beforeFirstRow', ['tickets' => $allTickets]); ?>
+                            <?php foreach ($allTickets as $rowNum => $row) {?>
+                                <tr onclick="leantime.ticketsController.loadTicketToContainer('<?=$row['id']?>', '#ticketContent')" id="row-<?=$row['id']?>" class="ticketRows">
+                                    <?php $tpl->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
+                                    <td data-order="<?=$statusLabels[$row['status']]["sortKey"]; ?>" data-search="<?=$statusLabels[$row['status']]["name"]; ?>" class="roundStatusBtn" style="width:20px">
+                                        <div class="dropdown ticketDropdown statusDropdown colorized show">
+                                            <a class="dropdown-toggle status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-caret-down" aria-hidden="true"></i>
+                                            </a>
+                                            <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
+                                                <li class="nav-header border"><?=$tpl->__("dropdown.choose_status")?></li>
+                                                <?php foreach ($statusLabels as $key => $label) {
+                                                    echo"<li class='dropdown-item'>
+                                            <a href='javascript:void(0);' class='" . $label["class"] . "' data-label='" . $tpl->escape($label["name"]) . "' data-value='" . $row['id'] . "_" . $key . "_" . $label["class"] . "' id='ticketStatusChange" . $row['id'] . $key . "' >" . $tpl->escape($label["name"]) . "</a>";
+                                                    echo"</li>";
+                                                }?>
+                                            </ul>
+                                        </div>
+                                    </td>
+
+                                    <td data-search="<?=$statusLabels[$row['status']]["name"]; ?>" data-order="<?=$tpl->e($row['headline']); ?>" >
+                                        <a href="javascript:void(0);"><strong><?=$tpl->e($row['headline']); ?></strong></a></td>
+
+                                    <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>
+                                </tr>
+                            <?php } ?>
+                            <?php $tpl->dispatchTplEvent('allTicketsTable.afterLastRow', ['tickets' => $allTickets]); ?>
+                            </tbody>
+                            <?php $tpl->dispatchTplEvent('allTicketsTable.afterBody', ['tickets' => $allTickets]); ?>
+                        </table>
 
                         <?php if ($group['label'] != 'all') { ?>
                             </div>
@@ -158,7 +158,7 @@ foreach ($__data as $var => $val) {
 
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.ticketsController.initStatusDropdown();
+        leantime.ticketsController.initStatusDropdown();
         <?php } else { ?>
         leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>

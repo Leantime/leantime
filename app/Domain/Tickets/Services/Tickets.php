@@ -92,8 +92,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             //There is a non zero chance that a user has tickets assigned to them without a project assignment.
             //Checking user assigned tickets to see if there are missing projects.
-            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint" => ""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint" => ""), "duedate");
 
             foreach ($allTickets as $row) {
                 if (!isset($statusLabelsByProject[$row['projectId']])) {
@@ -425,6 +424,7 @@ namespace Leantime\Domain\Tickets\Services {
                 case "priority":
                 case "storypoints":
                     $ticketGroups = array_sort($ticketGroups, 'id');
+                // no break
                 default:
                     $ticketGroups = array_sort($ticketGroups, 'label');
                     break;
@@ -602,20 +602,19 @@ namespace Leantime\Domain\Tickets\Services {
             $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
             if ($userProjects) {
                 foreach ($userProjects as $project) {
-                    $allProjectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+                    $allProjectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $project['id']]);
                     $milestones[$project['id']] = $allProjectMilestones;
                 }
             }
 
             if (isset($_SESSION['currentProject'])) {
-                $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+                $allProjectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
                 $milestones[$_SESSION['currentProject']] = $allProjectMilestones;
             }
 
             //There is a non zero chance that a user has tickets assigned to them without a project assignment.
             //Checking user assigned tickets to see if there are missing projects.
-            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint" => ""));
-            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria(array("currentProject" => "", "users" => $userId, "status" => "not_done", "sprint" => ""), "duedate");
 
             foreach ($allTickets as $row) {
                 if (!isset($milestones[$row['projectId']])) {
@@ -1127,7 +1126,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getLastTicketViewUrl()
         {
 
-            $url = BASE_URL . "/tickets/showKanban";
+            $url = BASE_URL . "/tickets/showAll";
 
             if (isset($_SESSION['lastTicketView']) && $_SESSION['lastTicketView'] != "") {
                 if ($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {
@@ -1140,6 +1139,14 @@ namespace Leantime\Domain\Tickets\Services {
 
                 if ($_SESSION['lastTicketView'] == "list" && isset($_SESSION['lastFilterdTicketListView']) && $_SESSION['lastFilterdTicketListView'] != "") {
                     return $_SESSION['lastFilterdTicketListView'];
+                }
+
+                if ($_SESSION['lastTicketView'] == "roadmap" && isset($_SESSION['lastFilterdTicketRoadmapView']) && $_SESSION['lastFilterdTicketRoadmapView'] != "") {
+                    return $_SESSION['lastFilterdTicketRoadmapView'];
+                }
+
+                if ($_SESSION['lastTicketView'] == "calendar" && isset($_SESSION['lastFilterdTicketCalendarView']) && $_SESSION['lastFilterdTicketCalendarView'] != "") {
+                    return $_SESSION['lastFilterdTicketCalendarView'];
                 }
 
                 return $url;
@@ -1325,11 +1332,11 @@ namespace Leantime\Domain\Tickets\Services {
 
             $users  =  $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]);
 
-             $milestones = $this->getAllMilestones([
-                 "sprint" => '',
-                 "type" => "milestone",
-                 "currentProject" => $_SESSION["currentProject"],
-             ]);
+            $milestones = $this->getAllMilestones([
+                "sprint" => '',
+                "type" => "milestone",
+                "currentProject" => $_SESSION["currentProject"],
+            ]);
 
             $groupByOptions  =  $this->getGroupByFieldOptions();
             $newField  =  $this->getNewFieldOptions();

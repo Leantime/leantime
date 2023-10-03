@@ -104,7 +104,7 @@ class Mailer
 
         $this->mailAgent->CharSet = 'UTF-8';                    // Ensure UTF-8 is used for emails
         //Use SMTP or php mail().
-        if ($config->useSMTP === true) {
+        if ($config->useSMTP === true || $config->useSMTP == "true") {
             if ($config->debug) {
                 $this->mailAgent->SMTPDebug = 4;                // ensure all aspects (connection, TLS, SMTP, etc) are covered
                 $this->mailAgent->Debugoutput = function ($str, $level) {

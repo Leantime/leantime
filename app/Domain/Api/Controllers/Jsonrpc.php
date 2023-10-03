@@ -171,11 +171,11 @@ class Jsonrpc extends Controller
         $id = isset($params['id']) ? $params['id'] : null;
 
 
-        if(class_exists($domainServiceNamespace)) {
+        if (class_exists($domainServiceNamespace)) {
             $serviceName = $domainServiceNamespace;
-        }else if(class_exists($pluginServiceNamespace)) {
+        } elseif (class_exists($pluginServiceNamespace)) {
             $serviceName = $pluginServiceNamespace;
-        }else{
+        } else {
             $this->returnMethodNotFound("Service doesn't exist: $serviceName");
         }
 
@@ -256,7 +256,7 @@ class Jsonrpc extends Controller
     /**
      * Checks request params
      *
-     * @param array                  $params
+     * @param array                 $params
      * @param ReflectionParameter[] $methodParams
      *
      * @return array
@@ -341,7 +341,7 @@ class Jsonrpc extends Controller
      * @see https://jsonrpc.org/specification#error_object
      *
      * @param string  $errorMessage
-     * @param int $httpResponseCode
+     * @param integer $httpResponseCode
      *
      * @return void
      */

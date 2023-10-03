@@ -30,6 +30,12 @@ $id = "";
 if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     $id = $canvasItem['id'];
 }
+
+$currentCanvas = $tpl->get('currentCanvas');
+
+if (isset($_GET['canvasId'])) {
+    $currentCanvas = (int)$_GET['canvasId'];
+}
 ?>
 
 <script type="text/javascript">
@@ -43,13 +49,13 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 <div style="width:1000px">
 
-  <h1><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h1>
+    <h1><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h1>
 
     <?php echo $tpl->displayNotification(); ?>
 
     <form class="formModal" method="post" action="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>">
 
-        <input type="hidden" value="<?php echo $tpl->get('currentCanvas'); ?>" name="canvasId" />
+        <input type="hidden" value="<?php echo $currentCanvas ?>" name="canvasId" />
         <input type="hidden" value="<?php $tpl->e($canvasItem['box']) ?>" name="box" id="box"/>
         <input type="hidden" value="<?php echo $id ?>" name="itemId" id="itemId"/>
         <input type="hidden" name="milestoneId" value="<?php echo $canvasItem['milestoneId'] ?? '' ?>" />
@@ -59,21 +65,21 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
             <div class="col-md-8">
 
 
-        <label><?=$tpl->__("label.what_is_your_goal") ?></label>
-        <input type="text" name="title" value="<?php $tpl->e($canvasItem['title']) ?>"  style="width:100%" /><br />
+                <label><?=$tpl->__("label.what_is_your_goal") ?></label>
+                <input type="text" name="title" value="<?php $tpl->e($canvasItem['title']) ?>"  style="width:100%" /><br />
 
 
 
 
 
 
-             <?php if (!empty($relatesLabels)) { ?>
-            <label><?=$tpl->__("label.relates") ?></label>
-            <select name="relates"  style="width: 50%" id="relatesCanvas">
-            </select><br />
-             <?php } else { ?>
-            <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
-             <?php } ?>
+                <?php if (!empty($relatesLabels)) { ?>
+                    <label><?=$tpl->__("label.relates") ?></label>
+                    <select name="relates"  style="width: 50%" id="relatesCanvas">
+                    </select><br />
+                <?php } else { ?>
+                    <input type="hidden" name="relates" value="<?php echo isset($canvasItem['relates']) ? $canvasItem['relates'] : array_key_first($hiddenRelatesLabels) ?>" />
+                <?php } ?>
                 <br />
                 <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i> <?=$tpl->__("Metrics") ?></h4>
 
@@ -171,17 +177,17 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
                     <ul class="sortableTicketList" style="width: 100%">
 
-                    <?php if ($canvasItem['milestoneId'] == '') {?>
-                        <li class="ui-state-default center" id="milestone_0">
-                            <h4><?=$tpl->__("headlines.no_milestone_attached") ?></h4>
+                        <?php if ($canvasItem['milestoneId'] == '') {?>
+                            <li class="ui-state-default center" id="milestone_0">
+                                <h4><?=$tpl->__("headlines.no_milestone_attached") ?></h4>
                                 <div class="row" id="milestoneSelectors">
                                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                    <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_attach_milestone") ?></a>
-                                        <?php if (count($tpl->get('milestones')) > 0) { ?>
-                                            | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.attach_existing_milestone") ?></a>
-                                        <?php } ?>
-                                    </div>
+                                        <div class="col-md-12">
+                                            <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_attach_milestone") ?></a>
+                                            <?php if (count($tpl->get('milestones')) > 0) { ?>
+                                                | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.attach_existing_milestone") ?></a>
+                                            <?php } ?>
+                                        </div>
                                     <?php } ?>
                                 </div>
                                 <div class="row" id="newMilestone" style="display:none;">
@@ -198,16 +204,16 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     <div class="col-md-12">
                                         <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
                                             <option value=""></option>
-                                                <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
-                                                    <?php echo"<option value='" . $milestoneRow->id . "'";
+                                            <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
+                                                <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                                    if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                                        echo" selected='selected' ";
-                                                    }
+                                                if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
+                                                    echo" selected='selected' ";
+                                                }
 
-                                                    echo">" . $milestoneRow->headline . "</option>"; ?>
-                                                    <?php
-                                                }     ?>
+                                                echo">" . $milestoneRow->headline . "</option>"; ?>
+                                                <?php
+                                            }     ?>
                                         </select>
                                         <input type="hidden" name="type" value="milestone" />
                                         <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
@@ -216,15 +222,15 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     </div>
                                 </div>
 
-                        </li>
-                    <?php } else {
-                        if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
-                            $date = $tpl->__("text.no_date_defined");
-                        } else {
-                            $date = new DateTime($canvasItem['milestoneEditTo']);
-                            $date = $date->format($tpl->__("language.dateformat"));
-                        }
-                        ?>
+                            </li>
+                        <?php } else {
+                            if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
+                                $date = $tpl->__("text.no_date_defined");
+                            } else {
+                                $date = new DateTime($canvasItem['milestoneEditTo']);
+                                $date = $date->format($tpl->__("language.dateformat"));
+                            }
+                            ?>
 
                             <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
                                 <div class="ticketBox fixed">
@@ -258,7 +264,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     </div>
                                 </div>
                             </li>
-                    <?php } ?>
+                        <?php } ?>
 
                     </ul>
 
@@ -282,48 +288,47 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         leantime.ticketsController.initDates();
 
         <?php if (!empty($statusLabels)) { ?>
-            new SlimSelect({
-                select: '#statusCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                    <?php foreach ($statusLabels as $key => $data) { ?>
-                        <?php if ($data['active']) { ?>
-                            { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
-                              text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['status'] == $key ? 'true' : 'false'; ?>},
-                        <?php } ?>
+        new SlimSelect({
+            select: '#statusCanvas',
+            showSearch: false,
+            valuesUseText: false,
+            data: [
+                <?php foreach ($statusLabels as $key => $data) { ?>
+                    <?php if ($data['active']) { ?>
+                { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
+                    text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['status'] == $key ? 'true' : 'false'; ?>},
                     <?php } ?>
-                ]
-            });
+                <?php } ?>
+            ]
+        });
         <?php } ?>
 
         <?php if (!empty($relatesLabels)) { ?>
-            new SlimSelect({
-                select: '#relatesCanvas',
-                showSearch: false,
-                valuesUseText: false,
-                data: [
-                    <?php foreach ($relatesLabels as $key => $data) { ?>
-                        <?php if ($data['active']) { ?>
-                            { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
-                              text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['relates'] == $key ? 'true' : 'false'; ?>},
-                        <?php } ?>
+        new SlimSelect({
+            select: '#relatesCanvas',
+            showSearch: false,
+            valuesUseText: false,
+            data: [
+                <?php foreach ($relatesLabels as $key => $data) { ?>
+                    <?php if ($data['active']) { ?>
+                { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
+                    text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['relates'] == $key ? 'true' : 'false'; ?>},
                     <?php } ?>
-                ]
-            });
+                <?php } ?>
+            ]
+        });
         <?php } ?>
 
         leantime.editorController.initSimpleEditor();
 
         <?php if (!$login::userIsAtLeast($roles::$editor)) { ?>
-            leantime.authController.makeInputReadonly(".nyroModalCont");
+        leantime.authController.makeInputReadonly(".nyroModalCont");
 
         <?php } ?>
 
         <?php if ($login::userHasRole([$roles::$commenter])) { ?>
-            leantime.commentsController.enableCommenterForms();
+        leantime.commentsController.enableCommenterForms();
         <?php }?>
 
     })
 </script>
-

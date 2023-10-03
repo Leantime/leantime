@@ -184,7 +184,6 @@ namespace Leantime\Domain\Files\Repositories {
 
             if ($userId && $userId > 0) {
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
-
             }
 
             $stmn->execute();
