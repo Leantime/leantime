@@ -47,7 +47,7 @@ class AppSettings
             ini_set('display_errors', 0);
         }
 
-        if ($config->useRedis == "true" || $config->useRedis === "true") {
+        if ($config->useRedis == "true" || $config->useRedis === true) {
             ini_set('session.save_handler', 'redis');
             ini_set('session.save_path', $config->redisURL);
         }
