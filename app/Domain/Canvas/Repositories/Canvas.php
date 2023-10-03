@@ -227,9 +227,9 @@ namespace Leantime\Domain\Canvas\Repositories {
         public function getAllCanvas($projectId, $type = null)
         {
 
-            if($type == null || $type == ''){
+            if ($type == null || $type == '') {
                 $canvasType = static::CANVAS_NAME . 'canvas';
-            }else{
+            } else {
                 $canvasType = $type;
             }
 
@@ -310,9 +310,9 @@ namespace Leantime\Domain\Canvas\Repositories {
         public function addCanvas($values, $type = null)
         {
 
-            if($type == null || $type == ''){
+            if ($type == null || $type == '') {
                 $canvasType = static::CANVAS_NAME . 'canvas';
-            }else{
+            } else {
                 $canvasType = $type;
             }
 

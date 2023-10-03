@@ -9,7 +9,6 @@ namespace Leantime\Domain\Wiki\Repositories {
 
     class Wiki extends \Leantime\Domain\Canvas\Repositories\Canvas
     {
-
         /**
          * Constant that must be redefined
          */

@@ -265,7 +265,7 @@ namespace Leantime\Domain\Users\Services {
 
             $this->authService->setUserSession($user);
 
-            self::dispatch_event("editUser", ["id"=>$id, "values"=>$values]);
+            self::dispatch_event("editUser", ["id" => $id, "values" => $values]);
         }
     }
 }

@@ -105,9 +105,9 @@ $projects = $tpl->get('relations');
                 <?php } ?>
                 <?php foreach ($tpl->get('clients') as $client) : ?>
                     <option value="<?php echo $client['id'] ?>"
-                            <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id'] ) :
-                        ?>selected="selected"<?php
-                                   endif; ?>><?php $tpl->e($client['name']) ?></option>
+                            <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']) :
+                                ?>selected="selected"<?php
+                            endif; ?>><?php $tpl->e($client['name']) ?></option>
                 <?php endforeach; ?>
             </select><br/>
             <br/>

@@ -14,8 +14,6 @@ namespace Leantime\Domain\Help\Controllers {
          */
         public function get($params)
         {
-
-
         }
 
         /**

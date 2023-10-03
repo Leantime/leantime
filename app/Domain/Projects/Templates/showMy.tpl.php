@@ -52,7 +52,7 @@ foreach ($__data as $var => $val) {
                                         <small><?php $tpl->e($project['clientName'])?></small>
                                         <h4>
                                             <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>"
-                                               <?php if(strlen($project['details'])>0){ ?>
+                                               <?php if (strlen($project['details']) > 0) { ?>
                                             data-tippy-content="<?=$tpl->e(substr(strip_tags($project['details']), 0, 80)) ?>"
                                                <?php } ?>
                                             ><?php $tpl->e($project['name'])?></a>
@@ -114,11 +114,11 @@ foreach ($__data as $var => $val) {
 
 
                                 <div class="team">
-                                    <?php foreach($project['team'] as $member) { ?>
+                                    <?php foreach ($project['team'] as $member) { ?>
                                         <div class="commentImage" style="margin-right:-10px;">
                                             <img
                                                 style=""
-                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'])?>" data-tippy-content="<?=$member['firstname'].' '.$member['lastname'] ?>" />
+                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'])?>" data-tippy-content="<?=$member['firstname'] . ' ' . $member['lastname'] ?>" />
                                         </div>
                                     <?php } ?>
                                 </div>

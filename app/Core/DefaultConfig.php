@@ -245,7 +245,7 @@ class DefaultConfig
     public string $ldapHost = '';
 
     /**
-     * @var int LDAP port
+     * @var integer LDAP port
      */
     public int $ldapPort = 389;
 

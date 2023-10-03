@@ -310,7 +310,6 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
             if ($projects) {
-
                 foreach ($projects as &$project) {
                     $project['team'] = $this->projectRepository->getUsersAssignedToProject($project['id']);
                 }

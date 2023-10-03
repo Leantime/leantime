@@ -86,7 +86,6 @@ class Fileupload
         $this->path = $this->config->userFilePath;
 
         if ($this->config->useS3 == true) {
-
             $s3Config = [
                 'version' => 'latest',
                 'region' => $this->config->s3Region,
@@ -96,11 +95,11 @@ class Fileupload
                 ],
             ];
 
-            if($this->config->s3EndPoint != "" && $this->config->s3EndPoint !== false && $this->config->s3EndPoint != null){
+            if ($this->config->s3EndPoint != "" && $this->config->s3EndPoint !== false && $this->config->s3EndPoint != null) {
                 $s3Config['endpoint'] = $this->config->s3EndPoint;
             }
 
-            if($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === "true") {
+            if ($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === "true") {
                 $s3Config['use_path_style_endpoint'] = true;
             }
 
@@ -360,14 +359,13 @@ class Fileupload
         );
 
         if ($this->config->useS3 == true && $fullPath == '') {
-
             try {
                 // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
                 $fileName = implode('/', array_filter(array($this->config->s3FolderName, $imageName)));
                 $result = $this->s3Client->getObject([
                     'Bucket' => $this->config->s3Bucket,
-                    'Key' => $fileName
+                    'Key' => $fileName,
                 ]);
 
                 header('Content-Type: ' . $result['ContentType']);
@@ -379,7 +377,6 @@ class Fileupload
                 $body = $result->get('Body');
 
                 echo $body->getContents();
-
             } catch (Aws\S3\Exception\S3Exception $e) {
                 echo $e->getMessage() . "\n";
             }

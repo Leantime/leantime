@@ -28,7 +28,8 @@ class TimerButton extends HtmxController
         $this->timesheetService = $timesheetService;
     }
 
-    public function getStatus() {
+    public function getStatus()
+    {
 
         $params =  $this->incomingRequest->query->all();
 
@@ -36,5 +37,4 @@ class TimerButton extends HtmxController
         $this->tpl->assign("onTheClock", $onTheClock);
         $this->tpl->assign("parentTicketId", $params['request_parts'] ?? false);
     }
-
 }

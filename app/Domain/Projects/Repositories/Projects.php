@@ -191,7 +191,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				WHERE (project.active > '-1' OR project.active IS NULL)";
 
             //All Projects this user has access to
-            if($accessStatus == "all") {
+            if ($accessStatus == "all") {
                 $query .= " AND
 				(
 				    relation.userId = :id
@@ -202,7 +202,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				)";
 
             //All projects the user is assigned to OR the users client is assigned to
-            }else if($accessStatus == "clients") {
+            } elseif ($accessStatus == "clients") {
                 $query .= " AND
 				(
 				    relation.userId = :id
@@ -210,7 +210,7 @@ namespace Leantime\Domain\Projects\Repositories {
 				)";
 
             //Only assigned
-            }else {
+            } else {
                 $query .= " AND
 				(relation.userId = :id)";
             }

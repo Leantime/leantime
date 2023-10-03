@@ -33,7 +33,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
 $currentCanvas = $tpl->get('currentCanvas');
 
-if(isset($_GET['canvasId'])) {
+if (isset($_GET['canvasId'])) {
     $currentCanvas = (int)$_GET['canvasId'];
 }
 ?>
@@ -115,13 +115,13 @@ if(isset($_GET['canvasId'])) {
                         <select name="metricType">
                             <option value="number" <?php if ($canvasItem['metricType'] == 'number') {
                                 echo"selected";
-                            } ?>>Number</option>
+                                                   } ?>>Number</option>
                             <option value="percent" <?php if ($canvasItem['metricType'] == 'percent') {
                                 echo"selected";
-                            } ?>>% Percent</option>
+                                                    } ?>>% Percent</option>
                             <option value="currency" <?php if ($canvasItem['metricType'] == 'currency') {
                                 echo"selected";
-                            } ?>><?=$tpl->__('language.currency') ?></option>
+                                                     } ?>><?=$tpl->__('language.currency') ?></option>
                         </select>
                     </div>
                 </div>
@@ -294,10 +294,10 @@ if(isset($_GET['canvasId'])) {
             valuesUseText: false,
             data: [
                 <?php foreach ($statusLabels as $key => $data) { ?>
-                <?php if ($data['active']) { ?>
+                    <?php if ($data['active']) { ?>
                 { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
                     text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['status'] == $key ? 'true' : 'false'; ?>},
-                <?php } ?>
+                    <?php } ?>
                 <?php } ?>
             ]
         });
@@ -310,10 +310,10 @@ if(isset($_GET['canvasId'])) {
             valuesUseText: false,
             data: [
                 <?php foreach ($relatesLabels as $key => $data) { ?>
-                <?php if ($data['active']) { ?>
+                    <?php if ($data['active']) { ?>
                 { innerHTML: '<?php echo "<i class=\"fas fa-fw " . $data["icon"] . "\"></i>&nbsp;" . $data['title']; ?>',
                     text: "<?=$data['title'] ?>", value: "<?=$key ?>", selected: <?php echo $canvasItem['relates'] == $key ? 'true' : 'false'; ?>},
-                <?php } ?>
+                    <?php } ?>
                 <?php } ?>
             ]
         });

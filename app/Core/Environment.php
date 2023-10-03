@@ -227,8 +227,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Determine if the given configuration value exists.
      *
-     * @param  string  $key
-     * @return bool
+     * @param  string $key
+     * @return boolean
      */
     public function has($key)
     {
@@ -238,8 +238,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Get the specified configuration value.
      *
-     * @param  array|string  $key
-     * @param  mixed  $default
+     * @param  array|string $key
+     * @param  mixed        $default
      * @return mixed
      */
     public function get($key, $default = null)
@@ -249,14 +249,16 @@ class Environment implements ArrayAccess, ConfigContract
         }
 
         return Arr::get($_SESSION['mainconfig'] ?? [], $key, Arr::get(
-            $this->config, $key, $default
+            $this->config,
+            $key,
+            $default
         ));
     }
 
     /**
      * Get many configuration values.
      *
-     * @param  array  $keys
+     * @param  array $keys
      * @return array
      */
     public function getMany($keys)
@@ -277,8 +279,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Set a given configuration value.
      *
-     * @param  array|string  $key
-     * @param  mixed  $value
+     * @param  array|string $key
+     * @param  mixed        $value
      * @return void
      */
     public function set($key, $value = null)
@@ -298,7 +300,7 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Prepend a value onto an array configuration value.
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $value
      * @return void
      */
@@ -314,7 +316,7 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Push a value onto an array configuration value.
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $value
      * @return void
      */
@@ -340,8 +342,8 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Determine if the given configuration option exists.
      *
-     * @param  string  $key
-     * @return bool
+     * @param  string $key
+     * @return boolean
      */
     public function offsetExists($key): bool
     {
@@ -351,7 +353,7 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Get a configuration option.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return mixed
      */
     public function offsetGet($key): mixed
@@ -362,7 +364,7 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Set a configuration option.
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $value
      * @return void
      */
@@ -374,7 +376,7 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Unset a configuration option.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return void
      */
     public function offsetUnset($key): void
@@ -396,7 +398,7 @@ class Environment implements ArrayAccess, ConfigContract
      * Dynamically set the configuration using object syntax.
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      *
      * @return void
      */
@@ -410,7 +412,7 @@ class Environment implements ArrayAccess, ConfigContract
      *
      * @param string $key
      *
-     * @return bool
+     * @return boolean
      */
     public function __isset(string $key): bool
     {

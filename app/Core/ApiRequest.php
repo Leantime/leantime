@@ -4,7 +4,6 @@ namespace Leantime\Core;
 
 class ApiRequest extends IncomingRequest
 {
-
     /**
      * @param array                $query      The GET parameters
      * @param array                $request    The POST parameters
@@ -17,7 +16,6 @@ class ApiRequest extends IncomingRequest
     public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
-
     }
 
     /**

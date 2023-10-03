@@ -23,7 +23,7 @@ class Ldap
         "phone" => 'telephonenumber',
         "jobTitle" => "title",
         "jobLevel" => "level",
-        "department" => "department"
+        "department" => "department",
     );
     private $ldapLtGroupAssignments = array();
     private $settingsRepo;
