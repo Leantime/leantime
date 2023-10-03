@@ -24,7 +24,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
          * @param UserRepository $userRepo
          * @return void
          */
-        public function init(UserRepository $userRepo)
+        public function init(UserRepository $userRepo): void
         {
             $this->userRepo = $userRepo;
         }
@@ -33,7 +33,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
          * @return void
          * @throws TwoFactorAuthException
          */
-        public function run()
+        public function run(): void
         {
 
             $userId = $_SESSION['userdata']['id'];
@@ -128,7 +128,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
         /**
          * @return string
          */
-        public function getMimeType()
+        public function getMimeType(): string
         {
             return 'image/png';
         }
@@ -143,7 +143,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
          * @param $size
          * @return string
          */
-        public function getQRCodeImage($qrtext, $size)
+        public function getQRCodeImage($qrtext, $size): string
         {
             $qrCode = new QrCode($qrtext);
             $qrCode->setSize($size);

@@ -29,7 +29,7 @@ namespace Leantime\Domain\Projects\Controllers {
             ProjectRepository $projectRepo,
             ClientRepository $clientRepo,
             ProjectService $projectService
-        ) {
+        ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             $this->projectRepo = $projectRepo;
@@ -40,7 +40,7 @@ namespace Leantime\Domain\Projects\Controllers {
         /**
          * @return void
          */
-        public function get()
+        public function get(): void
         {
 
             //Only admins
@@ -72,7 +72,7 @@ namespace Leantime\Domain\Projects\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
             //Only admins

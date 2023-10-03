@@ -16,7 +16,7 @@ namespace Leantime\Domain\Auth\Controllers {
      */
     class Logout extends Controller
     {
-        private $fileRepo;
+
         private $authService;
 
         /**
@@ -25,9 +25,8 @@ namespace Leantime\Domain\Auth\Controllers {
          * @access public
          * @params parameters or body of the request
          */
-        public function init(FileRepository $fileRepo, AuthService $authService)
+        public function init(AuthService $authService)
         {
-            $this->fileRepo = $fileRepo;
             $this->authService = $authService;
         }
 

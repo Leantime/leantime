@@ -27,7 +27,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @param CommentService $commentService
          * @return void
          */
-        public function init(WikiService $wikiService, CommentService $commentService)
+        public function init(WikiService $wikiService, CommentService $commentService): void
         {
             $this->wikiService = $wikiService;
             $this->commentService = $commentService;
@@ -43,7 +43,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function get($params)
+        public function get($params): void
         {
 
             $currentArticle = '';
@@ -212,7 +212,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
             if (isset($_GET['id']) === true) {

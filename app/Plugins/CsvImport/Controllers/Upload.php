@@ -30,7 +30,7 @@ class Upload extends Controller
      * @param  CsvImportService $providerService
      * @return void
      */
-    public function init(CsvImportService $providerService)
+    public function init(CsvImportService $providerService): void
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
@@ -43,7 +43,7 @@ class Upload extends Controller
      * @access public
      * @return void
      */
-    public function get()
+    public function get(): void
     {
         $this->tpl->displayPartial("csvImport.upload");
     }

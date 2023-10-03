@@ -18,21 +18,21 @@ class Events
      *
      * @var array
      */
-    private static $eventRegistry = [];
+    private static array $eventRegistry = [];
 
     /**
      * Registry of all filters added to a hook
      *
      * @var array
      */
-    private static $filterRegistry = [];
+    private static array $filterRegistry = [];
 
     /**
      * Registry of all hooks available
      *
      * @var array
      */
-    private static $available_hooks = [
+    private static array $available_hooks = [
         'filters' => [],
         'events' => [],
     ];
@@ -319,6 +319,7 @@ class Events
      * @param mixed $paramAttr
      *
      * @return array|object
+     * @throws BindingResolutionException
      */
     private static function defineParams(mixed $paramAttr): array|object
     {

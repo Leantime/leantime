@@ -39,7 +39,7 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * @return array|false
          */
-        public function getAllPlugins()
+        public function getAllPlugins(): false|array
         {
             return $this->pluginRepository->getAllPlugins(false);
         }
@@ -54,7 +54,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @return boolean
          * @throws BindingResolutionException
          */
-        public function isPluginEnabled($pluginFolder)
+        public function isPluginEnabled($pluginFolder): bool
         {
 
             $plugins = $this->getEnabledPlugins();
@@ -76,7 +76,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @return array|false|mixed
          * @throws BindingResolutionException
          */
-        public function getEnabledPlugins()
+        public function getEnabledPlugins(): mixed
         {
             if (isset($_SESSION['enabledPlugins'])) {
                 return $_SESSION['enabledPlugins'];
@@ -112,7 +112,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @return array
          * @throws BindingResolutionException
          */
-        public function discoverNewPlugins()
+        public function discoverNewPlugins(): array
         {
 
             $installedPlugins = $this->getAllPlugins();
@@ -163,7 +163,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @return false|string
          * @throws BindingResolutionException
          */
-        public function installPlugin($pluginFolder)
+        public function installPlugin($pluginFolder): false|string
         {
 
             $pluginFolder = strip_tags(stripslashes($pluginFolder));
@@ -210,7 +210,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @param integer $id
          * @return boolean
          */
-        public function enablePlugin(int $id)
+        public function enablePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
             return $this->pluginRepository->enablePlugin($id);
@@ -224,7 +224,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @param integer $id
          * @return boolean
          */
-        public function disablePlugin(int $id)
+        public function disablePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
             return $this->pluginRepository->disablePlugin($id);
@@ -240,7 +240,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @return boolean
          * @throws BindingResolutionException
          */
-        public function removePlugin(int $id)
+        public function removePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
             /** @var PluginModel|false $plugin */
@@ -278,7 +278,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @return string
          * @throws BindingResolutionException
          */
-        public function getPluginClassName(PluginModel $plugin)
+        public function getPluginClassName(PluginModel $plugin): string
         {
             return app()->getNamespace()
                 . 'Plugins\\'

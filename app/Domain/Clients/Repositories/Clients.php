@@ -23,13 +23,13 @@ namespace Leantime\Domain\Clients\Repositories {
          * @access public
          * @var    string
          */
-        public $name;
+        public string $name;
 
         /**
          * @access public
          * @var    integer
          */
-        public $id;
+        public int $id;
 
         /**
          * @access public
@@ -53,9 +53,9 @@ namespace Leantime\Domain\Clients\Repositories {
          *
          * @access public
          * @param  $id
-         * @return array
+         * @return array|false
          */
-        public function getClient($id)
+        public function getClient($id): array|false
         {
 
             $query = "SELECT
@@ -105,7 +105,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @access public
          * @return array
          */
-        public function getAll()
+        public function getAll(): array
         {
 
             $query = "SELECT
@@ -139,7 +139,7 @@ namespace Leantime\Domain\Clients\Repositories {
         /**
          * @return integer|mixed
          */
-        public function getNumberOfClients()
+        public function getNumberOfClients(): mixed
         {
 
             $sql = "SELECT COUNT(id) AS clientCount FROM `zp_clients`";
@@ -165,7 +165,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @param $values
          * @return boolean
          */
-        public function isClient($values)
+        public function isClient($values): bool
         {
 
             $sql = "SELECT name, street FROM zp_clients WHERE
@@ -195,7 +195,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @param $clientId
          * @return array|false
          */
-        public function getClientsUsers($clientId)
+        public function getClientsUsers($clientId): false|array
         {
 
             $sql = "SELECT
@@ -227,7 +227,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @param array $values
          * @return false|string
          */
-        public function addClient(array $values)
+        public function addClient(array $values): false|string
         {
 
             $sql = "INSERT INTO zp_clients (
@@ -262,7 +262,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @param  array $values
          * @param  $id
          */
-        public function editClient(array $values, $id)
+        public function editClient(array $values, $id): void
         {
 
             $query = "UPDATE zp_clients SET
@@ -299,7 +299,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @access public
          * @param  $id
          */
-        public function deleteClient($id)
+        public function deleteClient($id): void
         {
 
             $query = "DELETE zp_clients, zp_projects FROM zp_clients LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId WHERE zp_clients.id = :id";
@@ -317,7 +317,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @param  $id
          * @return boolean
          */
-        public function hasTickets($id)
+        public function hasTickets($id): bool
         {
 
             $query = "SELECT zp_projects.id FROM zp_projects JOIN zp_tickets ON zp_projects.id = zp_tickets.projectId WHERE zp_projects.clientId = :id";

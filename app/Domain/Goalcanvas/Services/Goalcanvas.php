@@ -16,7 +16,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
     class Goalcanvas
     {
         private GoalcanvaRepository $goalRepository;
-        public $reportingSettings = [
+        public array $reportingSettings = [
             "linkonly",
             "linkAndReport",
             "nolink",
@@ -74,7 +74,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
          * @param $parentId
          * @return integer|mixed
          */
-        public function getChildGoalsForReporting($parentId)
+        public function getChildGoalsForReporting($parentId): mixed
         {
 
             //Goals come back as rows for levl1 and lvl2 being columns, so
@@ -103,7 +103,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
          * @param $parentId
          * @return array
          */
-        public function getChildrenbyKPI($parentId)
+        public function getChildrenbyKPI($parentId): array
         {
 
             $goals = array();
@@ -158,7 +158,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
          * @param $projectId
          * @return array
          */
-        public function getParentKPIs($projectId)
+        public function getParentKPIs($projectId): array
         {
 
             $kpis = $this->goalRepository->getAllAvailableKPIs($projectId);

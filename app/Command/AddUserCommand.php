@@ -28,7 +28,7 @@ class AddUserCommand extends Command
     /**
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->addOption('email', null, InputOption::VALUE_REQUIRED, "User's Email")

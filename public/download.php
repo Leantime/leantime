@@ -56,7 +56,7 @@ if ($login->logged_in()!==true) {
  * @return void
  * @throws \Illuminate\Contracts\Container\BindingResolutionException
  */
-function getFileLocally()
+function getFileLocally(): void
 {
 	$config = app()->make(Environment::class);
 
@@ -128,7 +128,8 @@ function getFileLocally()
  * @return void
  * @throws \Illuminate\Contracts\Container\BindingResolutionException
  */
-function getFileFromS3(){
+function getFileFromS3(): void
+{
 
     // Include the AWS SDK using the Composer autoloader.
     $encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);

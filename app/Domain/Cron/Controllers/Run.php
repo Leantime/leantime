@@ -30,7 +30,7 @@ namespace Leantime\Domain\Cron\Controllers {
         /**
          * @return void
          */
-        public function run()
+        public function run(): void
         {
             $this->cronSvc->runCron();
         }

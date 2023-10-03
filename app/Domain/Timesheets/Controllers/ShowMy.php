@@ -101,7 +101,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
          * @param $postData
          * @return void
          */
-        public function saveTimeSheet($postData)
+        public function saveTimeSheet($postData): void
         {
             $ticketId = "";
 

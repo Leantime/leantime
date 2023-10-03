@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Plugins\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Plugins\Services\Plugins as PluginService;
     use Leantime\Domain\Auth\Services\Auth;
@@ -22,7 +23,7 @@ namespace Leantime\Domain\Plugins\Controllers {
          * @param PluginService $pluginService
          * @return void
          */
-        public function init(PluginService $pluginService)
+        public function init(PluginService $pluginService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
             $this->pluginService = $pluginService;
@@ -30,8 +31,9 @@ namespace Leantime\Domain\Plugins\Controllers {
 
         /**
          * @return void
+         * @throws BindingResolutionException
          */
-        public function get()
+        public function get(): void
         {
 
             if (isset($_GET['install']) && $_GET['install'] != '') {
@@ -94,7 +96,7 @@ namespace Leantime\Domain\Plugins\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params)
+        public function post($params): void
         {
 
             $this->tpl->redirect(BASE_URL . "/plugins/show");

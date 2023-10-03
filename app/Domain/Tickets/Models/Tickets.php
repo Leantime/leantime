@@ -11,43 +11,43 @@ namespace Leantime\Domain\Tickets\Models {
      */
     class Tickets
     {
-        public $id;
-        public $headline;
-        public $type;
-        public $description;
-        public $projectId;
-        public $editorId;
-        public $userId;
-        public $priority;
+        public mixed $id;
+        public mixed $headline;
+        public mixed $type;
+        public mixed $description;
+        public mixed $projectId;
+        public mixed $editorId;
+        public mixed $userId;
+        public mixed $priority;
         public $sortIndex;
 
-        public $date;
+        public mixed $date;
         public $timelineDate;
         public $timelineDateToFinish;
-        public $dateToFinish;
+        public mixed $dateToFinish;
         public $timeToFinish;
-        public $status;
-        public $storypoints;
-        public $hourRemaining;
-        public $planHours;
-        public $sprint;
-        public $acceptanceCriteria;
-        public $tags;
+        public mixed $status;
+        public mixed $storypoints;
+        public mixed $hourRemaining;
+        public mixed $planHours;
+        public mixed $sprint;
+        public mixed $acceptanceCriteria;
+        public mixed $tags;
         public $url;
-        public $editFrom;
+        public mixed $editFrom;
         public $timeFrom;
-        public $editTo;
+        public mixed $editTo;
         public $timeTo;
-        public $dependingTicketId;
+        public mixed $dependingTicketId;
         public $parentHeadline;
-        public $milestoneid;
+        public mixed $milestoneid;
 
-        public $projectName;
-        public $clientName;
-        public $userFirstname;
-        public $userLastname;
-        public $editorFirstname;
-        public $editorLastname;
+        public mixed $projectName;
+        public mixed $clientName;
+        public mixed $userFirstname;
+        public mixed $userLastname;
+        public mixed $editorFirstname;
+        public mixed $editorLastname;
 
         public $doneTickets;
 
@@ -55,9 +55,9 @@ namespace Leantime\Domain\Tickets\Models {
          * @param $values
          */
         /**
-         * @param $values
+         * @param false $values
          */
-        public function __construct($values = false)
+        public function __construct(false $values = false)
         {
 
             if ($values !== false) {

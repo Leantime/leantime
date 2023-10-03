@@ -34,7 +34,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             TicketService $ticketService,
             SprintService $sprintService,
             TimesheetService $timesheetService
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->sprintService = $sprintService;
@@ -53,7 +53,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function get($params)
+        public function get($params): void
         {
 
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);

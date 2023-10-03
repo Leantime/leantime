@@ -11,13 +11,13 @@ namespace Leantime\Domain\Projects\Models {
      */
     class Project
     {
-        public $id;
+        public int $id;
         public $name;
-        public $clientId;
+        public int $clientId;
 
         public $start;
         public $end;
-        public $projectId;
+        public int $projectId;
         public $type;
         public $state;
         public $menuType;

@@ -24,7 +24,7 @@ namespace Leantime\Domain\Wiki\Controllers {
         /**
          * @return void
          */
-        public function init()
+        public function init(): void
         {
         }
 
@@ -36,7 +36,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @param $params
          * @return void
          */
-        public function get($params)
+        public function get($params): void
         {
             $this->tpl->displayPartial("wiki.templates");
         }

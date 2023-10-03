@@ -66,7 +66,8 @@ function runBackup($backupFile, $config)
  * @param $config
  * @return mixed|string|null
  */
-function uploadS3($backupFile, $config){
+function uploadS3($backupFile, $config): mixed
+{
 
     $s3Client = new S3\S3Client(
         [

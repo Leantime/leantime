@@ -38,7 +38,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $sessionId
          * @return array|false
          */
-        public function isClocked($sessionId)
+        public function isClocked($sessionId): false|array
         {
 
             return $this->timesheetsRepo->isClocked($sessionId);
@@ -52,7 +52,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $ticketId
          * @return mixed
          */
-        public function punchIn($ticketId)
+        public function punchIn($ticketId): mixed
         {
 
             return $this->timesheetsRepo->punchIn($ticketId);
@@ -66,7 +66,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $ticketId
          * @return false|float|integer
          */
-        public function punchOut($ticketId)
+        public function punchOut($ticketId): float|false|int
         {
             return $this->timesheetsRepo->punchOut($ticketId);
         }
@@ -81,7 +81,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $params
          * @return string[]|true
          */
-        public function logTime($ticketId, $params)
+        public function logTime($ticketId, $params): array|true
         {
 
             $values = array(
@@ -140,7 +140,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $ticketId
          * @return array
          */
-        public function getLoggedHoursForTicketByDate($ticketId)
+        public function getLoggedHoursForTicketByDate($ticketId): array
         {
 
             return $this->timesheetsRepo->getLoggedHoursForTicket($ticketId);
@@ -154,7 +154,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $ticketId
          * @return integer|mixed
          */
-        public function getSumLoggedHoursForTicket($ticketId)
+        public function getSumLoggedHoursForTicket($ticketId): mixed
         {
 
             $result = $this->getLoggedHoursForTicketByDate($ticketId);
@@ -177,7 +177,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $ticket
          * @return integer|mixed
          */
-        public function getRemainingHours($ticket)
+        public function getRemainingHours($ticket): mixed
         {
 
             $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticket->id);
@@ -202,7 +202,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $userId
          * @return integer|mixed
          */
-        public function getUsersTicketHours($ticketId, $userId)
+        public function getUsersTicketHours($ticketId, $userId): mixed
         {
             return  $this->timesheetsRepo->getUsersTicketHours($ticketId, $userId);
         }
@@ -213,7 +213,7 @@ namespace Leantime\Domain\Timesheets\Services {
         /**
          * @return array|string[]
          */
-        public function getLoggableHourTypes()
+        public function getLoggableHourTypes(): array
         {
             return $this->timesheetsRepo->kind;
         }
@@ -232,19 +232,19 @@ namespace Leantime\Domain\Timesheets\Services {
          * @return void
          */
         /**
-         * @param $projectId
-         * @param $kind
-         * @param $dateFrom
-         * @param $dateTo
-         * @param $userId
-         * @param $invEmpl
-         * @param $invComp
-         * @param $ticketFilter
-         * @param $paid
-         * @param $clientId
+         * @param int $projectId
+         * @param string $kind
+         * @param string $dateFrom
+         * @param string $dateTo
+         * @param string $userId
+         * @param string $invEmpl
+         * @param string $invComp
+         * @param string $ticketFilter
+         * @param string $paid
+         * @param string $clientId
          * @return void
          */
-        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1', $clientId = '-1')
+        public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', string $userId = 'all', string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): void
         {
             return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid, $clientId);
         }
@@ -257,7 +257,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $values
          * @return null
          */
-        public function export($values)
+        public function export($values): null
         {
             return $this->timesheetsRepo->export($values);
         }
@@ -270,11 +270,11 @@ namespace Leantime\Domain\Timesheets\Services {
          */
         /**
          * @param $invEmpl
-         * @param $invComp
-         * @param $paid
+         * @param string $invComp
+         * @param string $paid
          * @return null
          */
-        public function updateInvoices($invEmpl, $invComp = '', $paid = '')
+        public function updateInvoices($invEmpl, string $invComp = '', string $paid = ''): null
         {
             return $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
         }
@@ -285,7 +285,7 @@ namespace Leantime\Domain\Timesheets\Services {
         /**
          * @return array|string[]
          */
-        public function getBookedHourTypes()
+        public function getBookedHourTypes(): array
         {
             return $this->timesheetsRepo->kind;
         }

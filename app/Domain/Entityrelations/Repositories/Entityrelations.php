@@ -15,9 +15,9 @@ namespace Leantime\Domain\Entityrelations\Repositories {
      */
     class Entityrelations
     {
-        private $db;
+        private DbCore $db;
 
-        public $applications = array(
+        public array $applications = array(
             'general' => 'General',
         );
 
@@ -40,7 +40,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
          * @param $type
          * @return false|mixed
          */
-        public function getSetting($type)
+        public function getSetting($type): mixed
         {
             if ($this->checkIfInstalled() === false) {
                 return false;
@@ -81,7 +81,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
          * @param $value
          * @return boolean
          */
-        public function saveSetting($type, $value)
+        public function saveSetting($type, $value): bool
         {
 
             if ($this->checkIfInstalled() === false) {
@@ -111,7 +111,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
          * @param $type
          * @return void
          */
-        public function deleteSetting($type)
+        public function deleteSetting($type): void
         {
 
             $sql = "DELETE FROM zp_settings WHERE `key` = :key LIMIT 1";
@@ -129,7 +129,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
          * @access public
          * @return boolean
          */
-        public function checkIfInstalled()
+        public function checkIfInstalled(): bool
         {
 
             if (isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] == true) {

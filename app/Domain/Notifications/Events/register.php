@@ -25,7 +25,7 @@ class AddNotification
      * @return void
      * @throws BindingResolutionException
      */
-    public function handle($payload)
+    public function handle($payload): void
     {
 
         $notificationService = app()->make(Notifications::class);

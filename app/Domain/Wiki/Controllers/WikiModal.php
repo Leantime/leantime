@@ -22,7 +22,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @param WikiService $wikiService
          * @return void
          */
-        public function init(WikiService $wikiService)
+        public function init(WikiService $wikiService): void
         {
             $this->wikiService = $wikiService;
         }
@@ -37,7 +37,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function get($params)
+        public function get($params): void
         {
             $wiki = app()->make(Wiki::class);
 
@@ -59,7 +59,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
             $wiki = app()->make(Wiki::class);
 

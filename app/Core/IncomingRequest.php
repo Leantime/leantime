@@ -72,7 +72,7 @@ class IncomingRequest extends Request
      *
      * @return string
      */
-    public function getFullUrl()
+    public function getFullUrl(): string
     {
         return  $this->getSchemeAndHttpHost() .  $this->getBaseUrl() .  $this->getPathInfo();
     }
@@ -84,7 +84,7 @@ class IncomingRequest extends Request
      * @return string
      * @throws BindingResolutionException
      */
-    public function getRequestUri()
+    public function getRequestUri(): string
     {
 
 

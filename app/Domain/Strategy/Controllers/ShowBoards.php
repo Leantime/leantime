@@ -20,7 +20,7 @@ namespace Leantime\Domain\Strategy\Controllers {
          * @param CanvaService $canvasService
          * @return void
          */
-        public function init(CanvaService $canvasService)
+        public function init(CanvaService $canvasService): void
         {
             $this->canvasService = $canvasService;
         }
@@ -29,7 +29,7 @@ namespace Leantime\Domain\Strategy\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function run()
+        public function run(): void
         {
 
 

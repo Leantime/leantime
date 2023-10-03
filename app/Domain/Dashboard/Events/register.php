@@ -21,7 +21,7 @@ namespace Leantime\Domain\Dashboard\Events {
          * @param $payload
          * @return void
          */
-        public function handle($payload)
+        public function handle($payload): void
         {
             // code here
         }

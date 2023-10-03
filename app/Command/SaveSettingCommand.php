@@ -25,7 +25,7 @@ class SaveSettingCommand extends Command
     /**
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->addOption('key', null, InputOption::VALUE_REQUIRED, "Setting Key")

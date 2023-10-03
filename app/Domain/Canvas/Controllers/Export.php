@@ -29,7 +29,7 @@ namespace Leantime\Domain\Canvas\Controllers {
         // Internal variables
         protected EnvironmentCore $config;
         protected LanguageCore $language;
-        protected $canvasRepo;
+        protected mixed $canvasRepo;
         protected array $canvasTypes;
         protected array $statusLabels;
         protected array $relatesLabels;

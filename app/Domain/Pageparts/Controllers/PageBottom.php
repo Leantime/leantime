@@ -14,13 +14,13 @@ namespace Leantime\Domain\Pageparts\Controllers {
      */
     class PageBottom extends Controller
     {
-        private $settings;
+        private AppSettingCore $settings;
 
         /**
          * @param AppSettingCore $appSettings
          * @return void
          */
-        public function init(AppSettingCore $appSettings)
+        public function init(AppSettingCore $appSettings): void
         {
             $this->settings = $appSettings;
         }
@@ -28,7 +28,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
         /**
          * @return void
          */
-        public function run()
+        public function run(): void
         {
             $this->tpl->assign("appSettings", $this->settings);
             $this->tpl->displayPartial('pageparts.pageBottom');

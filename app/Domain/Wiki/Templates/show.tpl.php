@@ -20,12 +20,12 @@ foreach ($__data as $var => $val) {
 /**
  * @param $array
  * @param $currentParent
- * @param $currLevel
- * @param $prevLevel
- * @param $tplObject
+ * @param int $currLevel
+ * @param int $prevLevel
+ * @param string $tplObject
  * @return void
  */
-function createTreeView($array, $currentParent, $currLevel = 0, $prevLevel = -1, $tplObject = '')
+function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, string $tplObject = ''): void
 {
 
     foreach ($array as $headline) {

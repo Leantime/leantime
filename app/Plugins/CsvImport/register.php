@@ -24,7 +24,7 @@ class AddCSVImportProvider
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function handle($payload)
+    public function handle($payload): mixed
     {
 
         $provider = app()->make(CsvImportService::class);

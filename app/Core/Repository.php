@@ -74,9 +74,9 @@ abstract class Repository
              * prepares sql for entry; wrapper for PDO\prepare()
              *
              * @param string $sql
-             * @param array  $args - additional arguments to pass along to prepare function
+             * @param array $args - additional arguments to pass along to prepare function
              */
-            public function prepare($sql, $args = []): void
+            public function prepare(string $sql, array $args = []): void
             {
                 $sql = $this->caller_class::dispatch_filter(
                     "sql",
@@ -93,9 +93,9 @@ abstract class Repository
              *
              * @param string $needle  - placeholder to replace
              * @param string $replace - value to replace with
-             * @param mixed  $type    - type of value being replaced
+             * @param int $type    - type of value being replaced
              */
-            public function bindValue($needle, $replace, $type = PDO::PARAM_STR): void
+            public function bindValue(string $needle, string $replace, int $type = PDO::PARAM_STR): void
             {
                 $replace = $this->caller_class::dispatch_filter(
                     'binding.' . str_replace(':', '', $needle),
@@ -121,9 +121,9 @@ abstract class Repository
              *
              * @param $mode
              * @param $class
-             * @return mixed
+             * @return bool
              */
-            public function setFetchMode($mode, $class)
+            public function setFetchMode($mode, $class): bool
             {
                 return $this->stmn->setFetchMode($mode, $class);
             }
@@ -135,7 +135,7 @@ abstract class Repository
              *
              * @return array
              */
-            private function getArgs($additions = []): array
+            private function getArgs(array $additions = []): array
             {
                 $args = array_merge($this->args, ['self' => $this]);
 
@@ -158,11 +158,11 @@ abstract class Repository
             public function __call(string $method, $arguments): mixed
             {
                 if (!isset($this->stmn)) {
-                    throw new Error("You must run the 'prepare' method first!");
+                    throw new \Error("You must run the 'prepare' method first!");
                 }
 
                 if (!in_array($method, ['execute', 'fetch', 'fetchAll'])) {
-                    throw new Error("Method does not exist");
+                    throw new \Error("Method does not exist");
                 }
 
                 $this->caller_class::dispatch_event("beforeExecute", $this->getArgs(), 4);
@@ -223,6 +223,7 @@ abstract class Repository
     /**
      * @param object $objectToInsert
      * @return false|integer
+     * @throws \ReflectionException
      */
     public function insert(object $objectToInsert): false|int
     {
@@ -274,7 +275,7 @@ abstract class Repository
      *
      * @param integer $id - the id of the record to delete
      */
-    public function delete($id)
+    public function delete(int $id): void
     {
     }
 
@@ -286,7 +287,7 @@ abstract class Repository
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
-    public function get($id)
+    public function get(int $id): false
     {
         if ($this->entity == '' || $this->model == '') {
             error_log("Get not implemented for this entity");
@@ -321,20 +322,20 @@ abstract class Repository
      * @param integer $id - the id of the record to get
      * @todo - implement
      */
-    public function getAll($id)
+    public function getAll(int $id): void
     {
     }
 
     /**
      * getFieldAttribute - gets the field attribute for a given property
      *
-     * @param string  $class     - the class to get the attribute from
-     * @param string  $property  - the property to get the attribute from
+     * @param string $class     - the class to get the attribute from
+     * @param string $property  - the property to get the attribute from
      * @param boolean $includeId - whether or not to include the id attribute
      * @return array|false
      * @throws \ReflectionException
      */
-    protected function getFieldAttribute($class, $property, $includeId = false): array|false
+    protected function getFieldAttribute(string $class, string $property, bool $includeId = false): array|false
     {
         //Don't create or update id attributes
         if ($includeId === false && $property == "id") {

@@ -35,7 +35,7 @@ namespace Leantime\Domain\Calendar\Controllers {
         /**
          * @return void
          */
-        public function get()
+        public function get(): void
         {
             $values = array(
                 'description' => '',
@@ -56,7 +56,7 @@ namespace Leantime\Domain\Calendar\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params)
+        public function post($params): void
         {
             $result = $this->calendarService->addEvent($params);
 

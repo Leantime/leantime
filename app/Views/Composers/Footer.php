@@ -14,17 +14,17 @@ use Leantime\Core\Composer;
  */
 class Footer extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'global::sections.footer',
     ];
 
-    protected $settings;
+    protected AppSettings $settings;
 
     /**
      * @param AppSettings $settings
      * @return void
      */
-    public function init(AppSettings $settings)
+    public function init(AppSettings $settings): void
     {
         $this->settings = $settings;
     }
@@ -35,7 +35,7 @@ class Footer extends Composer
     /**
      * @return array
      */
-    public function with()
+    public function with(): array
     {
         return [
             'version' => $this->settings->appVersion,

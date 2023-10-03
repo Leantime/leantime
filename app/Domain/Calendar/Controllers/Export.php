@@ -23,8 +23,8 @@ namespace Leantime\Domain\Calendar\Controllers {
      */
     class Export extends Controller
     {
-        private $config;
-        private $settingsRepo;
+        private Environment $config;
+        private SettingRepository $settingsRepo;
 
         /**
          * init - initialize private variables

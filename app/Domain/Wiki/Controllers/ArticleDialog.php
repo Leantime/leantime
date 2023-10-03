@@ -28,7 +28,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @param TicketService $ticketService
          * @return void
          */
-        public function init(WikiService $wikiService, TicketService $ticketService)
+        public function init(WikiService $wikiService, TicketService $ticketService): void
         {
             $this->wikiService = $wikiService;
             $this->ticketService = $ticketService;
@@ -44,7 +44,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function get($params)
+        public function get($params): void
         {
 
             $article = app()->make(Article::class);
@@ -88,7 +88,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
             $article = app()->make(Article::class);

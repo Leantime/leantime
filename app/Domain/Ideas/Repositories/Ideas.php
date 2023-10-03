@@ -19,13 +19,13 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @access public
          * @var    object
          */
-        public $result = null;
+        public ?object $result = null;
 
         /**
          * @access public
          * @var    object
          */
-        public $tickets = null;
+        public ?object $tickets = null;
 
         /**
          * @access private
@@ -33,7 +33,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         private ?DbCore $db = null;
 
-        public $canvasTypes = array(
+        public array $canvasTypes = array(
             "idea" => "status.ideation",
             "research" => "status.discovery",
             "prototype" => "status.delivering",
@@ -42,7 +42,7 @@ namespace Leantime\Domain\Ideas\Repositories {
             "deferred" => "status.deferred",
         );
 
-        public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
+        public array $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
 
         private LanguageCore $language;
 
@@ -64,7 +64,7 @@ namespace Leantime\Domain\Ideas\Repositories {
         /**
          * @return array|mixed
          */
-        public function getCanvasLabels()
+        public function getCanvasLabels(): mixed
         {
             if (isset($_SESSION["projectsettings"]["idealabels"])) {
                 return $_SESSION["projectsettings"]["idealabels"];
@@ -114,7 +114,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $projectId
          * @return array|false
          */
-        public function getAllCanvas($projectId)
+        public function getAllCanvas($projectId): false|array
         {
 
             $sql = "SELECT
@@ -149,7 +149,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $id
          * @return void
          */
-        public function deleteCanvas($id)
+        public function deleteCanvas($id): void
         {
 
             $query = "DELETE FROM zp_canvas_items WHERE canvasId = :id";
@@ -175,7 +175,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $values
          * @return false|string
          */
-        public function addCanvas($values)
+        public function addCanvas($values): false|string
         {
 
             $query = "INSERT INTO zp_canvas (
@@ -214,7 +214,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $values
          * @return mixed
          */
-        public function updateCanvas($values)
+        public function updateCanvas($values): mixed
         {
 
             $query = "UPDATE zp_canvas SET
@@ -241,7 +241,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $values
          * @return void
          */
-        public function editCanvasItem($values)
+        public function editCanvasItem($values): void
         {
             $sql = "UPDATE zp_canvas_items SET
 					description = :description,
@@ -280,7 +280,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $params
          * @return boolean
          */
-        public function patchCanvasItem($id, $params)
+        public function patchCanvasItem($id, $params): bool
         {
 
             $sql = "UPDATE zp_canvas_items SET ";
@@ -312,7 +312,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $sortingArray
          * @return boolean
          */
-        public function updateIdeaSorting($sortingArray)
+        public function updateIdeaSorting($sortingArray): bool
         {
 
             $sql = "INSERT INTO zp_canvas_items (id, sortindex) VALUES ";
@@ -342,7 +342,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $id
          * @return array|false
          */
-        public function getCanvasItemsById($id)
+        public function getCanvasItemsById($id): false|array
         {
 
             $sql = "SELECT
@@ -415,7 +415,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $id
          * @return mixed
          */
-        public function getSingleCanvasItem($id)
+        public function getSingleCanvasItem($id): mixed
         {
 
             $sql = "SELECT
@@ -481,7 +481,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $values
          * @return false|string
          */
-        public function addCanvasItem($values)
+        public function addCanvasItem($values): false|string
         {
 
             $query = "INSERT INTO zp_canvas_items (
@@ -538,7 +538,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $id
          * @return void
          */
-        public function delCanvasItem($id)
+        public function delCanvasItem($id): void
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
 
@@ -562,7 +562,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $status
          * @return boolean
          */
-        public function updateIdeaStatus($ideaId, $status)
+        public function updateIdeaStatus($ideaId, $status): bool
         {
 
             $query = "UPDATE zp_canvas_items SET
@@ -589,7 +589,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $projectId
          * @return integer|mixed
          */
-        public function getNumberOfIdeas($projectId = null)
+        public function getNumberOfIdeas($projectId = null): mixed
         {
 
             $sql = "SELECT
@@ -628,7 +628,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $projectId
          * @return integer|mixed
          */
-        public function getNumberOfBoards($projectId = null)
+        public function getNumberOfBoards($projectId = null): mixed
         {
 
             $sql = "SELECT
@@ -667,7 +667,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $params
          * @return boolean
          */
-        public function bulkUpdateIdeaStatus($params)
+        public function bulkUpdateIdeaStatus($params): bool
         {
 
 

@@ -36,7 +36,7 @@ namespace Leantime\Domain\Read\Repositories {
          * @param $userId
          * @return void
          */
-        public function markAsRead($module, $moduleId, $userId)
+        public function markAsRead($module, $moduleId, $userId): void
         {
 
             $sql = 'INSERT INTO zp_read (module,moduleId,userId) VALUES (:module,:moduleId,:userId)';
@@ -62,7 +62,7 @@ namespace Leantime\Domain\Read\Repositories {
          * @param $userId
          * @return boolean
          */
-        public function isRead($module, $moduleId, $userId)
+        public function isRead($module, $moduleId, $userId): bool
         {
 
             $sql = "SELECT * FROM zp_read

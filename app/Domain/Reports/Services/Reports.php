@@ -88,8 +88,9 @@ namespace Leantime\Domain\Reports\Services {
 
         /**
          * @return void
+         * @throws BindingResolutionException
          */
-        public function dailyIngestion()
+        public function dailyIngestion(): void
         {
 
             if (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
@@ -133,7 +134,7 @@ namespace Leantime\Domain\Reports\Services {
          * @param $projectId
          * @return array|false
          */
-        public function getFullReport($projectId)
+        public function getFullReport($projectId): false|array
         {
             return $this->reportRepository->getFullReport($projectId);
         }
@@ -149,7 +150,7 @@ namespace Leantime\Domain\Reports\Services {
          * @return array
          * @throws BindingResolutionException
          */
-        public function getRealtimeReport($projectId, $sprintId)
+        public function getRealtimeReport($projectId, $sprintId): array
         {
             return $this->reportRepository->runTicketReport($projectId, $sprintId);
         }
@@ -212,7 +213,7 @@ namespace Leantime\Domain\Reports\Services {
             SbcanvaRepository $sbCanvasRepo,
             SwotcanvaRepository $swotCanvasRepo,
             WikiRepository $wikiRepo
-        ) {
+        ): array {
 
             //Get anonymous company guid
             $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");

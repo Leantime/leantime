@@ -20,7 +20,7 @@ use Leantime\Domain\Setting\Repositories\Setting;
  */
 class App extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'global::layouts.app',
         'global::layouts.entry',
     ];
@@ -37,7 +37,7 @@ class App extends Composer
         Setting $settingsRepo,
         Theme $themeCore,
         Environment $config
-    ) {
+    ): void {
         $this->menuRepo = $menuRepo;
         $this->settingsRepo = $settingsRepo;
         $this->themeCore = $themeCore;
@@ -50,7 +50,7 @@ class App extends Composer
     /**
      * @return array
      */
-    public function with()
+    public function with(): array
     {
         if (! isset($_SESSION["userdata"]["id"])) {
             // This is a login session, we need to ensure the default theme and the default language (or the user's browser)

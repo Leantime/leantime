@@ -38,11 +38,11 @@ namespace Leantime\Domain\Queue\Repositories {
         /**
          * @param $recipients
          * @param $message
-         * @param $subject
-         * @param $projectId
+         * @param string $subject
+         * @param int $projectId
          * @return void
          */
-        public function queueMessageToUsers($recipients, $message, $subject = "", $projectId = 0)
+        public function queueMessageToUsers($recipients, $message, string $subject = "", int $projectId = 0): void
         {
 
             $sql = 'INSERT INTO zp_queue (msghash,channel,userId,subject,message,thedate,projectId) VALUES (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
@@ -89,12 +89,12 @@ namespace Leantime\Domain\Queue\Repositories {
          * @return array|false
          */
         /**
-         * @param $channel
+         * @param string $channel
          * @param $recipients
-         * @param $projectId
+         * @param int $projectId
          * @return array|false
          */
-        public function listMessageInQueue($channel = 'email', $recipients = null, $projectId = 0)
+        public function listMessageInQueue(string $channel = 'email', $recipients = null, int $projectId = 0): false|array
         {
             $sql = 'SELECT * from zp_queue WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
 
@@ -116,7 +116,7 @@ namespace Leantime\Domain\Queue\Repositories {
          * @param $msghashes
          * @return boolean
          */
-        public function deleteMessageInQueue($msghashes)
+        public function deleteMessageInQueue($msghashes): bool
         {
             // NEW : Allowing one hash or an array of them
             if (is_string($msghashes)) {

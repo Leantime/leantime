@@ -32,7 +32,7 @@ namespace Leantime\Domain\Api\Repositories {
          * @param $apiKeyUser
          * @return mixed
          */
-        public function getAPIKeyUser($apiKeyUser)
+        public function getAPIKeyUser($apiKeyUser): mixed
         {
 
             $sql = "SELECT * FROM `zp_user` WHERE username = :apiKeyUsername AND source <=> 'api' LIMIT 1";

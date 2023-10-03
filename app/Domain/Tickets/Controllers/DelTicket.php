@@ -16,13 +16,13 @@ namespace Leantime\Domain\Tickets\Controllers {
      */
     class DelTicket extends Controller
     {
-        private $ticketService;
+        private TicketService $ticketService;
 
         /**
          * @param TicketService $ticketService
          * @return void
          */
-        public function init(TicketService $ticketService)
+        public function init(TicketService $ticketService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
@@ -33,7 +33,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function get()
+        public function get(): void
         {
 
             //Only admins
@@ -60,7 +60,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function post($params)
+        public function post($params): void
         {
 
             if (isset($_GET['id'])) {

@@ -25,7 +25,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @param LdapService    $ldapService
          * @return void
          */
-        public function init(UserRepository $userRepo, LdapService $ldapService)
+        public function init(UserRepository $userRepo, LdapService $ldapService): void
         {
             $this->userRepo = $userRepo;
             $this->ldapService = $ldapService;
@@ -35,7 +35,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function get()
+        public function get(): void
         {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
@@ -67,7 +67,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params)
+        public function post($params): void
         {
         }
     }

@@ -20,7 +20,7 @@ class Plugins
      *
      * @var    array
      */
-    private $enabledPlugins = [];
+    private array $enabledPlugins = [];
 
     /**
      * constructor

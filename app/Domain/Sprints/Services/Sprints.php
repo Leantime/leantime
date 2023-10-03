@@ -60,7 +60,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $id
          * @return array|false
          */
-        public function getSprint($id)
+        public function getSprint($id): false|array
         {
 
             $sprint = $this->sprintRepository->getSprint($id);
@@ -80,7 +80,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return integer|boolean
          */
-        public function getCurrentSprintId($projectId)
+        public function getCurrentSprintId($projectId): bool|int
         {
 
             if (isset($_SESSION["currentSprint"]) && $_SESSION["currentSprint"] != "") {
@@ -106,7 +106,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        public function getUpcomingSprint($projectId)
+        public function getUpcomingSprint($projectId): false|array
         {
 
             $sprint = $this->sprintRepository->getUpcomingSprint($projectId);
@@ -126,7 +126,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array
          */
-        public function getAllSprints($projectId)
+        public function getAllSprints($projectId): array
         {
 
             $sprints = $this->sprintRepository->getAllSprints($projectId);
@@ -147,7 +147,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        public function getAllFutureSprints($projectId)
+        public function getAllFutureSprints($projectId): false|array
         {
 
             $sprints = $this->sprintRepository->getAllFutureSprints($projectId);
@@ -167,7 +167,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $params
          * @return false|object
          */
-        public function addSprint($params)
+        public function addSprint($params): object|false
         {
 
             $sprint = (object) $params;
@@ -194,7 +194,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $params
          * @return false|object
          */
-        public function editSprint($params)
+        public function editSprint($params): object|false
         {
 
             $sprint = (object) $params;
@@ -223,7 +223,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @return array|false
          * @throws \Exception
          */
-        public function getSprintBurndown($sprint)
+        public function getSprintBurndown($sprint): false|array
         {
 
             if (!is_object($sprint)) {
@@ -337,7 +337,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @return array|false
          * @throws \Exception
          */
-        public function getCummulativeReport($project)
+        public function getCummulativeReport($project): false|array
         {
 
             if (!($project)) {

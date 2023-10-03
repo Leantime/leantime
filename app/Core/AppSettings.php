@@ -10,9 +10,9 @@ namespace Leantime\Core;
  */
 class AppSettings
 {
-    public $appVersion = "2.4-beta-7";
+    public string $appVersion = "2.4-beta-7";
 
-    public $dbVersion = "2.1.22";
+    public string $dbVersion = "2.1.22";
 
     protected Environment $config;
 
@@ -29,7 +29,7 @@ class AppSettings
      * loadSettings - load all appSettings and set ini
      *
      */
-    public function loadSettings(Environment $config = null)
+    public function loadSettings(Environment $config = null): void
     {
         $config = $config ?? $this->config;
 

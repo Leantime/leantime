@@ -13,7 +13,7 @@ use Leantime\Core\Frontcontroller;
  * @return string
  * @throws \Illuminate\Contracts\Container\BindingResolutionException
  */
-function findActive($route)
+function findActive($route): string
 {
     if (str_contains(Frontcontroller::getCurrentRoute(), $route)) {
         return "active";

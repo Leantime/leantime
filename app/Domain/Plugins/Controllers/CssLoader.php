@@ -22,7 +22,7 @@ namespace Leantime\Domain\Plugins\Controllers {
          * @param PluginService $pluginService
          * @return void
          */
-        public function init(PluginService $pluginService)
+        public function init(PluginService $pluginService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
             $this->pluginService = $pluginService;
@@ -31,7 +31,7 @@ namespace Leantime\Domain\Plugins\Controllers {
         /**
          * @return void
          */
-        public function get()
+        public function get(): void
         {
             $cssFiles = array();
 

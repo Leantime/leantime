@@ -14,7 +14,7 @@ namespace Leantime\Domain\Auth\Controllers {
      */
     class KeepAlive extends Controller
     {
-        private $authService;
+        private AuthService $authService;
 
         /**
          * init - initialize private variables

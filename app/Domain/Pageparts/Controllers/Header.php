@@ -35,7 +35,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
             Environment $config,
             AppSettings $appSettings,
             Theme $themeCore
-        ) {
+        ): void {
             $this->settingsRepo = $settingsRepo;
             $this->config = $config;
             $this->appSettings = $appSettings;
@@ -45,7 +45,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
         /**
          * @return void
          */
-        public function run()
+        public function run(): void
         {
 
             if (!isset($_SESSION["userdata"]["id"])) {

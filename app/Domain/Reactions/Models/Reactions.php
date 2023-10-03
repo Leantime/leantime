@@ -50,7 +50,7 @@ class Reactions
     public static string $like = 'like';
     public static string $anger = 'anger';
     public static string $love = 'love';
-    public static $support = 'support';
+    public static string $support = 'support';
     public static string $celebrate = 'celebrate';
     public static string $interesting = 'interesting';
     public static string $sad = 'sad';
@@ -61,7 +61,7 @@ class Reactions
     /**
      * @return mixed
      */
-    public static function getReactions()
+    public static function getReactions(): mixed
     {
         return self::dispatch_filter('available_reactions', self::$reactionTypes);
     }
@@ -74,7 +74,7 @@ class Reactions
      * @param string $type
      * @return false|mixed
      */
-    public static function getReactionsByType(string $type)
+    public static function getReactionsByType(string $type): mixed
     {
         $reactions = self::dispatch_filter('available_reactions', self::$reactionTypes);
 

@@ -31,10 +31,10 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @return array|false
          */
         /**
-         * @param $enabledOnly
+         * @param true $enabledOnly
          * @return array|false
          */
-        public function getAllPlugins($enabledOnly = true)
+        public function getAllPlugins(true $enabledOnly = true): false|array
         {
 
             $query = "SELECT
@@ -109,7 +109,7 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
          * @return false|string
          */
-        public function addPlugin(\Leantime\Domain\Plugins\Models\Plugins $plugin)
+        public function addPlugin(\Leantime\Domain\Plugins\Models\Plugins $plugin): false|string
         {
 
             $sql = "INSERT INTO zp_plugins (
@@ -158,7 +158,7 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @param integer $id
          * @return boolean
          */
-        public function enablePlugin(int $id)
+        public function enablePlugin(int $id): bool
         {
 
             $sql = "UPDATE zp_plugins
@@ -184,7 +184,7 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @param integer $id
          * @return boolean
          */
-        public function disablePlugin(int $id)
+        public function disablePlugin(int $id): bool
         {
 
             $sql = "UPDATE zp_plugins
@@ -210,7 +210,7 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @param integer $id
          * @return boolean
          */
-        public function removePlugin(int $id)
+        public function removePlugin(int $id): bool
         {
 
             $sql = "DELETE FROM zp_plugins

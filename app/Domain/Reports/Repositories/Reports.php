@@ -38,7 +38,7 @@ namespace Leantime\Domain\Reports\Repositories {
          * @return array
          * @throws BindingResolutionException
          */
-        public function runTicketReport($projectId, $sprintId)
+        public function runTicketReport($projectId, $sprintId): array
         {
 
             $ticketRepo = app()->make(TicketRepository::class);
@@ -173,7 +173,7 @@ namespace Leantime\Domain\Reports\Repositories {
          * @param $projectId
          * @return array|false
          */
-        public function checkLastReportEntries($projectId)
+        public function checkLastReportEntries($projectId): false|array
         {
 
             $query = "SELECT * FROM zp_stats WHERE DATE(date) = DATE(NOW() - INTERVAL 1 DAY) AND projectId = :projectId LIMIT 2";
@@ -198,7 +198,7 @@ namespace Leantime\Domain\Reports\Repositories {
          * @param $report
          * @return void
          */
-        public function addReport($report)
+        public function addReport($report): void
         {
             $report = (object)$report;
 
@@ -335,7 +335,7 @@ namespace Leantime\Domain\Reports\Repositories {
          * @param $project
          * @return array|false
          */
-        public function getBacklogReport($project)
+        public function getBacklogReport($project): false|array
         {
 
             $query = "SELECT * FROM zp_stats WHERE projectId = :project AND sprintId = 0 ORDER BY date ASC LIMIT 95 ";
@@ -360,7 +360,7 @@ namespace Leantime\Domain\Reports\Repositories {
          * @param $project
          * @return array|false
          */
-        public function getFullReport($project)
+        public function getFullReport($project): false|array
         {
 
             $query = "SELECT

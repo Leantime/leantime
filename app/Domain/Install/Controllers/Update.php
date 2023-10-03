@@ -63,7 +63,7 @@ namespace Leantime\Domain\Install\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
 

@@ -43,7 +43,7 @@ class CsvImport extends Provider implements ProviderIntegration
     /**
      * @return void
      */
-    public function connect()
+    public function connect(): void
     {
 
 
@@ -62,7 +62,7 @@ class CsvImport extends Provider implements ProviderIntegration
      * @param Entity $Entity
      * @return true
      */
-    public function sync(Entity $Entity)
+    public function sync(Entity $Entity): true
     {
 
         return true;
@@ -76,7 +76,7 @@ class CsvImport extends Provider implements ProviderIntegration
     /**
      * @return array|mixed
      */
-    public function getFields()
+    public function getFields(): mixed
     {
         return $_SESSION['csvImporter']['headers'] ?? array();
     }
@@ -85,7 +85,7 @@ class CsvImport extends Provider implements ProviderIntegration
      * @param array $fields
      * @return void
      */
-    public function setFields(array $fields)
+    public function setFields(array $fields): void
     {
 
         //$_SESSION['csvImporter']['headers'] = json_encode($fields);
@@ -99,7 +99,7 @@ class CsvImport extends Provider implements ProviderIntegration
     /**
      * @return array
      */
-    public function getEntities()
+    public function getEntities(): array
     {
         return $this->entities;
     }
@@ -108,7 +108,7 @@ class CsvImport extends Provider implements ProviderIntegration
      * @param Entity $Entity
      * @return void
      */
-    public function getValues(Entity $Entity)
+    public function getValues(Entity $Entity): void
     {
     }
 }

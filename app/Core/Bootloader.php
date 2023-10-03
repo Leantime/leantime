@@ -32,21 +32,21 @@ class Bootloader
      *
      * @var static
      */
-    protected static $instance;
+    protected static Bootloader $instance;
 
     /**
      * Application instance
      *
      * @var Application
      */
-    protected $app;
+    protected Application|null|PsrContainerContract $app;
 
     /**
      * Public actions
      *
      * @var array
      */
-    private $publicActions = array(
+    private array $publicActions = array(
         "auth.login",
         "auth.resetPw",
         "auth.userInvite",
@@ -66,7 +66,7 @@ class Bootloader
      *
      * @var array
      */
-    private $telemetryResponse;
+    private array $telemetryResponse;
 
     /**
      * Set the Bootloader instance
@@ -106,6 +106,7 @@ class Bootloader
      * Boot the Application.
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public function __invoke(): void
     {
@@ -126,7 +127,7 @@ class Bootloader
 
         $app = $this->getApplication();
 
-        if ($app->hasBeenBootstrapped()) {
+        if ($app::hasBeenBootstrapped()) {
             return;
         }
 
@@ -167,7 +168,7 @@ class Bootloader
 
         $this->handleRequest();
 
-        $app->setHasBeenBootstrapped(true);
+        $app::setHasBeenBootstrapped(true);
 
         $this->handleTelemetryResponse();
 

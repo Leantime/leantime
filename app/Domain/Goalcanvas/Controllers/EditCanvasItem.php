@@ -46,7 +46,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             TicketService $ticketService,
             ProjectService $projectService,
             GoalcanvaService $goalService
-        ) {
+        ): void {
             $this->canvasRepo = $canvasRepo;
             $this->commentsRepo = $commentsRepo;
             $this->ticketService = $ticketService;
@@ -62,7 +62,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          * @param $params
          * @return void
          */
-        public function get($params)
+        public function get($params): void
         {
             if (isset($params['id'])) {
                 // Delete comment
@@ -143,7 +143,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
             if (isset($params['comment'])) {

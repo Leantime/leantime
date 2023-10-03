@@ -57,9 +57,10 @@ class Frontcontroller
      * run - executes the action depending on Request or firstAction
      *
      * @access public
-     * @param  string  $action
+     * @param string $action
      * @param integer $httpResponseCode
      * @return void
+     * @throws BindingResolutionException
      */
     public static function dispatch(string $action = '', int $httpResponseCode = 200): void
     {
@@ -125,11 +126,12 @@ class Frontcontroller
      * includeAction - possible to include action from everywhere
      *
      * @access public
-     * @param  string $completeName
-     * @param  array  $params
+     * @param string $completeName
+     * @param array $params
      * @return void
+     * @throws BindingResolutionException
      */
-    public static function includeAction($completeName, $params = array()): void
+    public static function includeAction(string $completeName, array $params = array()): void
     {
         self::executeAction($completeName, $params);
     }
@@ -141,6 +143,7 @@ class Frontcontroller
      * @access public
      * @param string|null $completeName
      * @return string
+     * @throws BindingResolutionException
      */
     public static function getActionName(string $completeName = null): string
     {
@@ -163,6 +166,7 @@ class Frontcontroller
      * @access public
      * @param string|null $completeName
      * @return string
+     * @throws BindingResolutionException
      */
     public static function getModuleName(string $completeName = null): string
     {

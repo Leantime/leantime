@@ -19,7 +19,7 @@ class Stopwatch extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'timesheets::partials.stopwatch';
+    protected static string $view = 'timesheets::partials.stopwatch';
 
     /**
      * @var Timesheets
@@ -32,7 +32,7 @@ class Stopwatch extends HtmxController
      * @param Timesheets $timesheetService
      * @return void
      */
-    public function init(Timesheets $timesheetService)
+    public function init(Timesheets $timesheetService): void
     {
         $this->timesheetService = $timesheetService;
     }
@@ -42,7 +42,7 @@ class Stopwatch extends HtmxController
      *
      * @return void
      */
-    public function getStatus()
+    public function getStatus(): void
     {
 
         $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
@@ -54,7 +54,7 @@ class Stopwatch extends HtmxController
      *
      * @return void
      */
-    public function stopTimer()
+    public function stopTimer(): void
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
             throw new Error('This endpoint only supports PATCH requests');
@@ -79,7 +79,7 @@ class Stopwatch extends HtmxController
     /**
      * @return void
      */
-    public function startTimer()
+    public function startTimer(): void
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
             throw new Error('This endpoint only supports PATCH requests');

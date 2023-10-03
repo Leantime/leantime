@@ -32,109 +32,109 @@ namespace Leantime\Domain\Auth\Services {
          * @access private
          * @var    integer user id from DB
          */
-        private $userId = null;
+        private ?int $userId = null;
 
         /**
          * @access private
          * @var    integer user id from DB
          */
-        private $clientId = null;
+        private ?int $clientId = null;
 
         /**
          * @access private
          * @var    string username from db
          */
-        private $username = null;
+        private ?string $username = null;
 
         /**
          * @access private
          * @var    string username from db
          */
-        private $name = '';
+        private string $name = '';
 
         /**
          * @access private
          * @var    string profileid (image) from db
          */
-        private $profileId = '';
+        private string $profileId = '';
 
         /**
          * @access private
          * @var    string
          */
-        private $password = null;
+        private ?string $password = null;
 
         /**
          * @access private
          * @var    string username (emailaddress)
          */
-        private $user = null;
+        private ?string $user = null;
 
         /**
          * @access private
          * @var    string username (emailaddress)
          */
-        private $mail = null;
+        private ?string $mail = null;
 
         /**
          * @access private
          * @var    boolean $twoFAEnabled
          */
-        private $twoFAEnabled;
+        private bool $twoFAEnabled;
 
         /**
          * @access private
          * @var    string $twoFASecret
          */
-        private $twoFASecret;
+        private string $twoFASecret;
 
         /**
          * @access private
          * @var    string
          */
-        private $session = null;
+        private ?string $session = null;
 
         /**
          * @access public
          * @var    string userrole (admin, client, employee)
          */
-        public $role = '';
-        public $settings = '';
+        public string $role = '';
+        public string $settings = '';
 
         /**
          * @access public
          * @var    integer time for cookie
          */
-        public $cookieTime;
+        public mixed $cookieTime;
 
         /**
          * @access public
          * @var    string
          */
-        public $error = "";
+        public string $error = "";
 
         /**
          * @access public
          * @var    string
          */
-        public $success = "";
+        public string $success = "";
 
         /**
          * @access public
          * @var    string
          */
-        public $resetInProgress = false;
+        public string|bool $resetInProgress = false;
 
         /**
          * @access public
          * @var    object
          */
-        public $hasher;
+        public object $hasher;
 
         /*
          * How often can a user reset a password before it has to be changed
          */
-        public $pwResetLimit = 5;
+        public int $pwResetLimit = 5;
 
         private EnvironmentCore $config;
         public LanguageCore $language;
@@ -162,7 +162,7 @@ namespace Leantime\Domain\Auth\Services {
             UserRepository $userRepo
         ) {
             $this->config = $config;
-            $this->session = $session->getSID();
+            $this->session = $session::getSID();
             $this->language = $language;
             $this->settingsRepo = $settingsRepo;
             $this->authRepo = $authRepo;
@@ -212,7 +212,7 @@ namespace Leantime\Domain\Auth\Services {
          * @return boolean
          * @throws BindingResolutionException
          */
-        public function login($username, $password)
+        public function login($username, $password): bool
         {
 
             self::dispatch_event("beforeLoginCheck", ['username' => $username, 'password' => $password]);
@@ -226,7 +226,7 @@ namespace Leantime\Domain\Auth\Services {
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
                 $ldap = app()->make(Ldap::class);
 
-                if ($ldap->connect() && $ldap->bind($username, $password)) {
+                if ($ldap->connect() && $ldap::bind($username, $password)) {
                     //Update username to include domain
                     $usernameWDomain = $ldap->getEmail($username);
                     //Get user
@@ -316,10 +316,10 @@ namespace Leantime\Domain\Auth\Services {
          */
         /**
          * @param $user
-         * @param $isLdap
+         * @param false $isLdap
          * @return false|void
          */
-        public function setUserSession($user, $isLdap = false)
+        public function setUserSession($user, false $isLdap = false)
         {
             if (!$user || !is_array($user)) {
                 return false;
@@ -365,7 +365,7 @@ namespace Leantime\Domain\Auth\Services {
          * @param $sessionID
          * @return boolean
          */
-        public function updateUserSessionDB($userId, $sessionID)
+        public function updateUserSessionDB($userId, $sessionID): bool
         {
             return $this->authRepo->updateUserSession($userId, $sessionID, time());
         }
@@ -376,7 +376,7 @@ namespace Leantime\Domain\Auth\Services {
          * @access public
          * @return boolean
          */
-        public function logged_in()
+        public function logged_in(): bool
         {
 
             //Check if we actually have a php session available
@@ -395,7 +395,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return string
          */
-        public function getSessionId()
+        public function getSessionId(): ?string
         {
             return $this->session;
         }
@@ -405,7 +405,7 @@ namespace Leantime\Domain\Auth\Services {
          *
          * @access private
          */
-        public function logout()
+        public function logout(): void
         {
 
             $this->authRepo->invalidateSession($this->session);
@@ -440,7 +440,7 @@ namespace Leantime\Domain\Auth\Services {
          * @param string $hash invite link hash
          * @return boolean
          */
-        public function validateResetLink(string $hash)
+        public function validateResetLink(string $hash): bool
         {
 
             return $this->authRepo->validateResetLink($hash);
@@ -453,7 +453,7 @@ namespace Leantime\Domain\Auth\Services {
          * @param string $hash invite link hash
          * @return array|boolean
          */
-        public function getUserByInviteLink($hash)
+        public function getUserByInviteLink(string $hash): bool|array
         {
             return $this->authRepo->getUserByInviteLink($hash);
         }
@@ -522,10 +522,10 @@ namespace Leantime\Domain\Auth\Services {
          */
         /**
          * @param string               $role
-         * @param $forceGlobalRoleCheck
+         * @param false $forceGlobalRoleCheck
          * @return boolean
          */
-        public static function userIsAtLeast(string $role, $forceGlobalRoleCheck = false)
+        public static function userIsAtLeast(string $role, false $forceGlobalRoleCheck = false): bool
         {
 
             //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
@@ -558,10 +558,10 @@ namespace Leantime\Domain\Auth\Services {
          */
         /**
          * @param $role
-         * @param $forceGlobalRoleCheck
+         * @param false $forceGlobalRoleCheck
          * @return boolean
          */
-        public static function authOrRedirect($role, $forceGlobalRoleCheck = false): bool
+        public static function authOrRedirect($role, false $forceGlobalRoleCheck = false): bool
         {
 
             if (self::userHasRole($role, $forceGlobalRoleCheck)) {
@@ -580,10 +580,10 @@ namespace Leantime\Domain\Auth\Services {
          */
         /**
          * @param string|array         $role
-         * @param $forceGlobalRoleCheck
+         * @param false $forceGlobalRoleCheck
          * @return boolean
          */
-        public static function userHasRole(string|array $role, $forceGlobalRoleCheck = false): bool
+        public static function userHasRole(string|array $role, false $forceGlobalRoleCheck = false): bool
         {
 
             //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
@@ -601,7 +601,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return void
          */
-        public static function getRole()
+        public static function getRole(): void
         {
         }
 
@@ -611,7 +611,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return mixed
          */
-        public static function getUserClientId()
+        public static function getUserClientId(): mixed
         {
             return $_SESSION['userdata']['clientId'];
         }
@@ -622,7 +622,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return mixed
          */
-        public static function getUserId()
+        public static function getUserId(): mixed
         {
             return $_SESSION['userdata']['id'];
         }
@@ -633,7 +633,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return mixed
          */
-        public function use2FA()
+        public function use2FA(): mixed
         {
             return $_SESSION['userdata']['twoFAEnabled'];
         }
@@ -646,7 +646,7 @@ namespace Leantime\Domain\Auth\Services {
          * @param $code
          * @return boolean
          */
-        public function verify2FA($code)
+        public function verify2FA($code): bool
         {
             $tfa = new TwoFactorAuth('Leantime');
             return $tfa->verifyCode($_SESSION['userdata']['twoFASecret'], $code);
@@ -658,7 +658,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return mixed
          */
-        public function get2FAVerified()
+        public function get2FAVerified(): mixed
         {
             return $_SESSION['userdata']['twoFAVerified'];
         }
@@ -666,7 +666,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return void
          */
-        public function set2FAVerified()
+        public function set2FAVerified(): void
         {
             $_SESSION['userdata']['twoFAVerified'] = true;
         }

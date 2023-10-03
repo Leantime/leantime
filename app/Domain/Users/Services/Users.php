@@ -62,7 +62,7 @@ namespace Leantime\Domain\Users\Services {
          * @return string[]|SVG
          * @throws BindingResolutionException
          */
-        public function getProfilePicture($id)
+        public function getProfilePicture($id): array|SVG
         {
             return $this->userRepo->getProfilePicture($id);
         }
@@ -77,7 +77,7 @@ namespace Leantime\Domain\Users\Services {
          * @param $id
          * @return boolean
          */
-        public function editUser($values, $id)
+        public function editUser($values, $id): bool
         {
 
             $results = $this->userRepo->editUser($values, $id);
@@ -92,7 +92,7 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @return integer
          */
-        public function getNumberOfUsers()
+        public function getNumberOfUsers(): int
         {
             return $this->userRepo->getNumberOfUsers();
         }
@@ -102,10 +102,10 @@ namespace Leantime\Domain\Users\Services {
          * @return mixed
          */
         /**
-         * @param $activeOnly
+         * @param false $activeOnly
          * @return mixed
          */
-        public function getAll($activeOnly = false)
+        public function getAll(false $activeOnly = false): mixed
         {
             $users =  $this->userRepo->getAll($activeOnly);
 
@@ -135,7 +135,7 @@ namespace Leantime\Domain\Users\Services {
          * @param $email
          * @return array|false
          */
-        public function getUserByEmail($email)
+        public function getUserByEmail($email): false|array
         {
             return $this->userRepo->getUserByEmail($email);
         }
@@ -148,7 +148,7 @@ namespace Leantime\Domain\Users\Services {
          * @param $source
          * @return array|false
          */
-        public function getAllBySource($source)
+        public function getAllBySource($source): false|array
         {
             return $this->userRepo->getAllBySource($source);
         }
@@ -167,7 +167,7 @@ namespace Leantime\Domain\Users\Services {
          * @return void
          * @throws BindingResolutionException
          */
-        public function setProfilePicture($photo, $id)
+        public function setProfilePicture($photo, $id): void
         {
             $this->userRepo->setPicture($photo, $id);
         }
@@ -184,7 +184,7 @@ namespace Leantime\Domain\Users\Services {
          * @param $value
          * @return boolean
          */
-        public function updateUserSettings($category, $setting, $value)
+        public function updateUserSettings($category, $setting, $value): bool
         {
 
             $filteredInput = htmlspecialchars($setting);
@@ -300,11 +300,11 @@ namespace Leantime\Domain\Users\Services {
          * TODO: Should accept userModel
          *
          * @access public
-         * @param string  $username  username
-         * @param integer $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
+         * @param string $username  username
+         * @param integer|string $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
          * @return boolean returns true or false
          */
-        public function usernameExist($username, $notUserId = '')
+        public function usernameExist(string $username, int|string $notUserId = ''): bool
         {
             return $this->userRepo->usernameExist($username, $notUserId);
         }
@@ -316,8 +316,9 @@ namespace Leantime\Domain\Users\Services {
          *
          * @access public
          * @param integer $currentUser user who is trying to access the project
-         * @param integer $projectId   project id
+         * @param integer $projectId project id
          * @return array returns array of users
+         * @throws BindingResolutionException
          */
         public function getUsersWithProjectAccess(int $currentUser, int $projectId): array
         {
@@ -366,7 +367,7 @@ namespace Leantime\Domain\Users\Services {
          * @param $id
          * @return void
          */
-        public function editOwn($values, $id)
+        public function editOwn($values, $id): void
         {
             $this->userRepo->editOwn($values, $id);
 

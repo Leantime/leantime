@@ -20,7 +20,7 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
  */
 class Menu extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'menu::menu',
     ];
 
@@ -47,7 +47,7 @@ class Menu extends Composer
         MenuRepository $menuRepo,
         \Leantime\Domain\Menu\Services\Menu $menuService,
         IncomingRequestCore $request
-    ) {
+    ): void {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->settingSvc = $settingSvc;
@@ -64,7 +64,7 @@ class Menu extends Composer
      * @return array
      * @throws BindingResolutionException
      */
-    public function with()
+    public function with(): array
     {
         $allAssignedprojects =
         $allAvailableProjects =

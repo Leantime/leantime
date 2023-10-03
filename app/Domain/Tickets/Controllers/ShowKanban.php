@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -34,7 +35,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             TicketService $ticketService,
             SprintService $sprintService,
             TimesheetService $timesheetService
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->sprintService = $sprintService;
@@ -50,7 +51,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function get(array $params)
+        public function get(array $params): void
         {
 
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
@@ -64,8 +65,9 @@ namespace Leantime\Domain\Tickets\Controllers {
         /**
          * @param array $params
          * @return void
+         * @throws BindingResolutionException
          */
-        public function post(array $params)
+        public function post(array $params): void
         {
 
             //QuickAdd

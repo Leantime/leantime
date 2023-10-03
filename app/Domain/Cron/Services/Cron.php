@@ -6,6 +6,7 @@ namespace Leantime\Domain\Cron\Services {
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
     use PDO;
+    use PHPMailer\PHPMailer\Exception;
 
     /**
      *
@@ -37,8 +38,9 @@ namespace Leantime\Domain\Cron\Services {
          */
         /**
          * @return boolean
+         * @throws Exception
          */
-        public function runCron()
+        public function runCron(): bool
         {
 
             $lastEvent = $this->auditRepo->getLastEvent('cron');

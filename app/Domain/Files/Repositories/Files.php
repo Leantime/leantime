@@ -17,9 +17,9 @@ namespace Leantime\Domain\Files\Repositories {
      */
     class Files
     {
-        private $adminModules = array('project' => 'Projects','ticket' => 'Tickets','client' => 'Clients','lead' => 'Lead','private' => 'General'); // 'user'=>'Users',
+        private array $adminModules = array('project' => 'Projects','ticket' => 'Tickets','client' => 'Clients','lead' => 'Lead','private' => 'General'); // 'user'=>'Users',
 
-        private $userModules = array('project' => 'Projects','ticket' => 'Tickets','private' => 'General');
+        private array $userModules = array('project' => 'Projects','ticket' => 'Tickets','private' => 'General');
 
         private DbCore $db;
 
@@ -41,7 +41,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @return string[]
          * @throws BindingResolutionException
          */
-        public function getModules($id)
+        public function getModules($id): array
         {
             $users = app()->make(UserRepo::class);
 
@@ -63,7 +63,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @param $module
          * @return false|string
          */
-        public function addFile($values, $module)
+        public function addFile($values, $module): false|string
         {
 
 
@@ -95,7 +95,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @param $id
          * @return mixed
          */
-        public function getFile($id)
+        public function getFile($id): mixed
         {
 
             $sql = "SELECT
@@ -120,10 +120,10 @@ namespace Leantime\Domain\Files\Repositories {
          * @return array|false
          */
         /**
-         * @param $userId
+         * @param int $userId
          * @return array|false
          */
-        public function getFiles($userId = 0)
+        public function getFiles(int $userId = 0): false|array
         {
 
             $sql = "SELECT
@@ -154,7 +154,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @param $module
          * @return array
          */
-        public function getFolders($module)
+        public function getFolders($module): array
         {
 
             $folders = array();
@@ -192,12 +192,12 @@ namespace Leantime\Domain\Files\Repositories {
          * @return array|false
          */
         /**
-         * @param $module
+         * @param string $module
          * @param $moduleId
-         * @param $userId
+         * @param int $userId
          * @return array|false
          */
-        public function getFilesByModule($module = '', $moduleId = null, $userId = 0)
+        public function getFilesByModule(string $module = '', $moduleId = null, int $userId = 0): false|array
         {
 
             $sql = "SELECT
@@ -258,7 +258,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @param $id
          * @return boolean
          */
-        public function deleteFile($id)
+        public function deleteFile($id): bool
         {
 
             $sql = "SELECT encName, extension FROM zp_file WHERE id=:id";
@@ -300,7 +300,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @return array|false
          * @throws BindingResolutionException
          */
-        public function upload($file, $module, $moduleId)
+        public function upload($file, $module, $moduleId): false|array
         {
 
             //Clean module mess
@@ -367,7 +367,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @param $moduleId
          * @return void
          */
-        public function uploadCloud($name, $url, $module, $moduleId)
+        public function uploadCloud($name, $url, $module, $moduleId): void
         {
 
            //Add cloud stuff ehre.

@@ -25,7 +25,7 @@ namespace Leantime\Domain\Canvas\Controllers {
          */
         protected const CANVAS_NAME = '??';
 
-        private $canvasRepo;
+        private mixed $canvasRepo;
 
         /**
          * init - initialize private variables

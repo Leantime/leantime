@@ -30,7 +30,7 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function init(
             TicketService $ticketService,
             ProjectService $projectService
-        ) {
+        ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->ticketService = $ticketService;
@@ -46,7 +46,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function get($params)
+        public function get($params): void
         {
             $ticketId = $params['id'] ?? '';
 
@@ -68,7 +68,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params)
+        public function post($params): void
         {
             $ticketId = null;
             if (isset($_GET['id'])) {

@@ -50,7 +50,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $dateTo
          * @return array|false
          */
-        public function getAllDates($dateFrom, $dateTo)
+        public function getAllDates($dateFrom, $dateTo): false|array
         {
             $query = "SELECT * FROM zp_calendar WHERE
 					userId = :userId ORDER BY zp_calendar.dateFrom";
@@ -74,7 +74,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @return array
          * @throws BindingResolutionException
          */
-        public function getCalendar($userId)
+        public function getCalendar($userId): array
         {
 
             /*
@@ -253,7 +253,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @return array|false
          * @throws BindingResolutionException
          */
-        public function getCalendarBySecretHash($userHash, $calHash)
+        public function getCalendarBySecretHash($userHash, $calHash): false|array
         {
             //get user
             $userRepo = app()->make(Users::class);
@@ -283,7 +283,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return array
          */
-        public function getCalendarEventsForToday($id)
+        public function getCalendarEventsForToday($id): array
         {
 
 
@@ -398,7 +398,7 @@ namespace Leantime\Domain\Calendar\Repositories {
         /**
          * @return array|false
          */
-        public function getTicketWishDates()
+        public function getTicketWishDates(): false|array
         {
 
             $query = "SELECT id, headline, dateToFinish FROM zp_tickets WHERE (userId = :userId OR editorId = :userId) AND dateToFinish <> '000-00-00 00:00:00'";
@@ -420,7 +420,7 @@ namespace Leantime\Domain\Calendar\Repositories {
         /**
          * @return array|false
          */
-        public function getTicketEditDates()
+        public function getTicketEditDates(): false|array
         {
 
             $query = "SELECT id, headline, editFrom, editTo FROM zp_tickets WHERE (userId = :userId OR editorId = :userId) AND editFrom <> '000-00-00 00:00:00'";
@@ -443,7 +443,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $values
          * @return false|string
          */
-        public function addEvent($values)
+        public function addEvent($values): false|string
         {
 
             $query = "INSERT INTO zp_calendar (userId, dateFrom, dateTo, description, allDay)
@@ -474,7 +474,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return mixed
          */
-        public function getEvent($id)
+        public function getEvent($id): mixed
         {
 
             $query = "SELECT * FROM zp_calendar WHERE id = :id";
@@ -499,7 +499,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return void
          */
-        public function editEvent($values, $id)
+        public function editEvent($values, $id): void
         {
 
             $query = "UPDATE zp_calendar SET
@@ -531,7 +531,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return boolean
          */
-        public function delPersonalEvent($id)
+        public function delPersonalEvent($id): bool
         {
 
             $query = "DELETE FROM zp_calendar WHERE id = :id AND userId = :userId LIMIT 1";
@@ -552,7 +552,7 @@ namespace Leantime\Domain\Calendar\Repositories {
         /**
          * @return array|false
          */
-        public function getMyGoogleCalendars()
+        public function getMyGoogleCalendars(): false|array
         {
 
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId";
@@ -575,7 +575,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return mixed
          */
-        public function getGCal($id)
+        public function getGCal($id): mixed
         {
 
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
@@ -601,7 +601,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return void
          */
-        public function editGUrl($values, $id)
+        public function editGUrl($values, $id): void
         {
 
             $query = "UPDATE zp_gcallinks SET
@@ -629,7 +629,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return void
          */
-        public function deleteGCal($id)
+        public function deleteGCal($id): void
         {
 
             $query = "DELETE FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
@@ -651,7 +651,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $values
          * @return void
          */
-        public function addGUrl($values)
+        public function addGUrl($values): void
         {
 
             $query = "INSERT INTO zp_gcallinks (userId, name, url, colorClass)

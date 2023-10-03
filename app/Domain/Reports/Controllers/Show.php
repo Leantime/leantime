@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Reports\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Dashboard\Repositories\Dashboard as DashboardRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -48,7 +49,7 @@ namespace Leantime\Domain\Reports\Controllers {
             UserService $userService,
             TimesheetService $timesheetService,
             ReportService $reportService
-        ) {
+        ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->dashboardRepo = $dashboardRepo;
@@ -66,8 +67,9 @@ namespace Leantime\Domain\Reports\Controllers {
 
         /**
          * @return void
+         * @throws BindingResolutionException
          */
-        public function get()
+        public function get(): void
         {
 
             //Project Progress
@@ -132,7 +134,7 @@ namespace Leantime\Domain\Reports\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params)
+        public function post($params): void
         {
 
             $this->tpl->redirect(BASE_URL . "/dashboard/show");

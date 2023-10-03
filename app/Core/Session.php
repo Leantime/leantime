@@ -23,17 +23,17 @@ class Session
     /**
      * @var static object
      */
-    private static $instance = null;
+    private static ?Session $instance = null;
 
     /**
      * @var static string
      */
-    private static $sid = null;
+    private static string|Session|null $sid = null;
 
     /**
      * @var string
      */
-    private $sessionpassword = '';
+    private mixed $sessionpassword = '';
 
     /**
      * @var environment

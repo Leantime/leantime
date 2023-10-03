@@ -25,6 +25,7 @@ class Settings extends Controller
      * get
      *
      * @return void
+     * @throws \Exception
      */
     public function get(): void
     {

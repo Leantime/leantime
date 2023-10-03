@@ -16,7 +16,7 @@ namespace Leantime\Domain\Modulemanager\Services {
      */
     class Modulemanager
     {
-        private static $modules = array(
+        private static array $modules = array(
             "api" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "calendar" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
             "clients" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
@@ -58,7 +58,7 @@ namespace Leantime\Domain\Modulemanager\Services {
          * @param $module
          * @return boolean
          */
-        public static function isModuleEnabled($module)
+        public static function isModuleEnabled($module): bool
         {
             if (isset(self::$modules[$module])) {
                 if (self::$modules[$module]['enabled'] === true) {

@@ -51,7 +51,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             CommentService $commentService,
             ReactionService $reactionsService,
             ReportService $reportsService
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->userService = $userService;
@@ -68,7 +68,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function get()
+        public function get(): void
         {
 
             if (!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
@@ -157,7 +157,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {

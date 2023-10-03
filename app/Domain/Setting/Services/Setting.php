@@ -71,7 +71,7 @@ namespace Leantime\Domain\Setting\Services {
         /**
          * @return void
          */
-        public function resetLogo()
+        public function resetLogo(): void
         {
 
             $url = '/dist/images/logo.svg';
@@ -91,7 +91,7 @@ namespace Leantime\Domain\Setting\Services {
          * @param $value
          * @return boolean
          */
-        public function saveSetting($key, $value)
+        public function saveSetting($key, $value): bool
         {
             return $this->settingsRepo->saveSetting($key, $value);
         }
@@ -104,7 +104,7 @@ namespace Leantime\Domain\Setting\Services {
          * @param $key
          * @return false|mixed
          */
-        public function getSetting($key)
+        public function getSetting($key): mixed
         {
             return $this->settingsRepo->getSetting($key);
         }

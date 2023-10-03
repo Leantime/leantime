@@ -57,7 +57,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function get()
+        public function get(): void
         {
 
             $row = $this->userRepo->getUser($this->userId);
@@ -106,7 +106,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function post()
+        public function post(): void
         {
 
             //Save Profile Info

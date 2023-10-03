@@ -26,7 +26,7 @@ class TestEmailCommand extends Command
     /**
      * @return void
      */
-    protected function configure()
+    protected function configure(): void
     {
         parent::configure();
         $this->addOption('address', null, InputOption::VALUE_REQUIRED, "Recipient email address");

@@ -18,7 +18,7 @@ namespace Leantime\Domain\Errors\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function run()
+        public function run(): void
         {
 
             FrontcontrollerCore::setResponseCode(404);

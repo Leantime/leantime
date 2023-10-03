@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Ldap\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use LDAP\Connection;
 use Leantime\Core\Environment;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -16,13 +17,13 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
  */
 class Ldap
 {
-    private $ldapConnection;
-    private $host;
-    private $port;
-    private $ldapDomain;
-    private $ldapUri;
-    private $ldapDn; //DN where users are located (including baseDn)
-    private $ldapKeys = array(
+    private false|Connection $ldapConnection;
+    private mixed $host;
+    private mixed $port;
+    private mixed $ldapDomain;
+    private mixed $ldapUri;
+    private mixed $ldapDn; //DN where users are located (including baseDn)
+    private mixed $ldapKeys = array(
         "username" => "uid",
         "groups" => "memberof",
         "email" => "mail",
@@ -33,10 +34,10 @@ class Ldap
         "jobLevel" => "level",
         "department" => "department",
     );
-    private $ldapLtGroupAssignments = array();
-    private $settingsRepo;
-    private $defaultRoleKey;
-    private $directoryType = "OL";
+    private mixed $ldapLtGroupAssignments = array();
+    private mixed $settingsRepo;
+    private mixed $defaultRoleKey;
+    private mixed $directoryType = "OL";
 
     /**
      * @var environment $config
@@ -46,22 +47,22 @@ class Ldap
     /**
      * @var array|boolean|integer|mixed|string
      */
-    public $useLdap;
+    public mixed $useLdap;
 
     /**
      * @var array|boolean|integer|mixed|string
      */
-    public $autoCreateUser;
+    public mixed $autoCreateUser;
 
     /**
      * @param $differentConfig
      * @throws BindingResolutionException
      */
     /**
-     * @param $differentConfig
+     * @param false $differentConfig
      * @throws BindingResolutionException
      */
-    public function __construct($differentConfig = false)
+    public function __construct(false $differentConfig = false)
     {
 
         $this->settingsRepo = app()->make(SettingRepository::class);
@@ -142,11 +143,11 @@ class Ldap
      * @return bool
      */
     /**
-     * @param $username
-     * @param $password
+     * @param string $username
+     * @param string $password
      * @return boolean
      */
-    public function bind($username = '', $password = '')
+    public function bind(string $username = '', string $password = ''): bool
     {
 
         if ($username != '' && $password != '') {
@@ -306,7 +307,7 @@ class Ldap
      * @param $username
      * @return mixed|string
      */
-    public function extractLdapFromUsername($username)
+    public function extractLdapFromUsername($username): mixed
     {
 
         $getLdap = explode("@", $username);
@@ -364,7 +365,7 @@ class Ldap
      * @return true
      * @throws BindingResolutionException
      */
-    public function upsertUsers($ldapUsers)
+    public function upsertUsers($ldapUsers): true
     {
 
         $userRepo = app()->make(UserRepository::class);

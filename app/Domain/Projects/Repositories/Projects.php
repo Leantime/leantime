@@ -30,37 +30,37 @@ namespace Leantime\Domain\Projects\Repositories {
          * @access public
          * @var    string
          */
-        public $name = '';
+        public string $name = '';
 
         /**
          * @access public
          * @var    integer
          */
-        public $id = 0; // WAS: '';
+        public int $id = 0; // WAS: '';
 
         /**
          * @access public
          * @var    integer
          */
-        public $clientId = 0; // WAS: '';
+        public int $clientId = 0; // WAS: '';
 
         /**
          * @access private
          * @var    object
          */
-        private $db; // WAS: = '';
+        private DbCore|object $db; // WAS: = '';
 
         /**
          * @access public
          * @var    object
          */
-        public $result; // WAS: = '';
+        public object $result; // WAS: = '';
 
         /**
          * @access public
          * @var    array state for projects
          */
-        public $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
+        public array $state = array(0 => 'OPEN', 1 => 'CLOSED', null => 'OPEN');
         private Environment $config;
 
         /**
@@ -83,7 +83,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param boolean $showClosedProjects
          * @return array
          */
-        public function getAll($showClosedProjects = false)
+        public function getAll(bool $showClosedProjects = false): array
         {
 
 
@@ -173,10 +173,10 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param integer      $userId
          * @param string       $projectStatus
          * @param integer|null $clientId
-         * @param $accessStatus
+         * @param string $accessStatus
          * @return array|false
          */
-        public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, $accessStatus = "assigned")
+        public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, string $accessStatus = "assigned"): false|array
         {
 
             $query = "SELECT
@@ -288,11 +288,11 @@ namespace Leantime\Domain\Projects\Repositories {
          */
         /**
          * @param $userId
-         * @param $status
-         * @param $clientId
+         * @param string $status
+         * @param string $clientId
          * @return array|false
          */
-        public function getProjectsUserHasAccessTo($userId, $status = "all", $clientId = "")
+        public function getProjectsUserHasAccessTo($userId, string $status = "all", string $clientId = ""): false|array
         {
 
             $query = "SELECT
@@ -353,7 +353,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $type
          * @return integer|mixed
          */
-        public function getNumberOfProjects($clientId = null, $type = null)
+        public function getNumberOfProjects($clientId = null, $type = null): mixed
         {
 
             $sql = "SELECT COUNT(id) AS projectCount FROM `zp_projects` WHERE id >0";
@@ -398,7 +398,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $clientId
          * @return array|false
          */
-        public function getClientProjects($clientId)
+        public function getClientProjects($clientId): false|array
         {
 
             $sql = "SELECT
@@ -443,7 +443,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $projectId
          * @return array|false
          */
-        public function getProjectTickets($projectId)
+        public function getProjectTickets($projectId): false|array
         {
 
             $sql = "SELECT zp_tickets.id,
@@ -558,7 +558,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $haystack
          * @return false|integer|string
          */
-        public function recursive_array_search($needle, $haystack)
+        public function recursive_array_search($needle, $haystack): false|int|string
         {
             foreach ($haystack as $key => $value) {
                 $current_key = $key;
@@ -640,7 +640,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $id
          * @return mixed
          */
-        public function getProjectBookedDollars($id)
+        public function getProjectBookedDollars($id): mixed
         {
 
             $query = "SELECT zp_tickets.projectId, SUM(zp_timesheets.hours*zp_timesheets.rate) AS totalDollars
@@ -663,10 +663,10 @@ namespace Leantime\Domain\Projects\Repositories {
          * addProject - add a project to a client
          *
          * @access public
-         * @param array|boolean $values
+         * @param boolean|array $values
          * @return integer|boolean returns new project id on success, false on failure.
          */
-        public function addProject($values): int|bool
+        public function addProject(bool|array $values): int|bool
         {
 
             $query = "INSERT INTO `zp_projects` (
@@ -754,7 +754,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param array $values
          * @param  $id
          */
-        public function editProject(array $values, $id)
+        public function editProject(array $values, $id): void
         {
 
             $query = "UPDATE zp_projects SET
@@ -817,7 +817,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param array     $values
          * @param $projectId
          */
-        public function editProjectRelations(array $values, $projectId)
+        public function editProjectRelations(array $values, $projectId): void
         {
 
             $this->deleteAllUserRelations($projectId);
@@ -841,7 +841,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @access public
          * @param  $id
          */
-        public function deleteProject($id)
+        public function deleteProject($id): void
         {
 
             $query = "DELETE FROM zp_projects WHERE id = :id LIMIT 1";
@@ -860,7 +860,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param  $id
          * @return boolean
          */
-        public function hasTickets($id)
+        public function hasTickets($id): bool
         {
 
             $query = "SELECT id FROM zp_tickets WHERE projectId = :id
@@ -889,7 +889,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param null $projectId
          * @return array
          */
-        public function getUserProjectRelation($id, $projectId = null)
+        public function getUserProjectRelation($id, $projectId = null): array
         {
 
             $query = "SELECT
@@ -931,7 +931,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @return boolean
          * @throws BindingResolutionException
          */
-        public function isUserAssignedToProject($userId, $projectId)
+        public function isUserAssignedToProject($userId, $projectId): bool
         {
 
             $userRepo = app()->make(UserRepository::class);
@@ -1000,7 +1000,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @return boolean
          * @throws BindingResolutionException
          */
-        public function isUserMemberOfProject($userId, $projectId)
+        public function isUserMemberOfProject($userId, $projectId): bool
         {
 
             $userRepo = app()->make(UserRepository::class);
@@ -1053,7 +1053,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $id
          * @return array
          */
-        public function getProjectUserRelation($id)
+        public function getProjectUserRelation($id): array
         {
 
             $query = "SELECT
@@ -1101,7 +1101,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $projects
          * @return boolean
          */
-        public function editUserProjectRelations($id, $projects)
+        public function editUserProjectRelations($id, $projects): bool
         {
 
             $sql = "SELECT id,userId,projectId,projectRole FROM zp_relationuserproject WHERE userId=:id";
@@ -1151,7 +1151,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $projectId
          * @return void
          */
-        public function deleteProjectRelation($userId, $projectId)
+        public function deleteProjectRelation($userId, $projectId): void
         {
 
             $sql = "DELETE FROM zp_relationuserproject WHERE projectId=:projectId AND userId=:userId";
@@ -1174,7 +1174,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $userId
          * @return void
          */
-        public function deleteAllProjectRelations($userId)
+        public function deleteAllProjectRelations($userId): void
         {
 
             $sql = "DELETE FROM zp_relationuserproject WHERE userId=:userId";
@@ -1196,7 +1196,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $projectId
          * @return void
          */
-        public function deleteAllUserRelations($projectId)
+        public function deleteAllUserRelations($projectId): void
         {
 
             $sql = "DELETE FROM zp_relationuserproject WHERE projectId=:projectId";
@@ -1222,7 +1222,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $projectRole
          * @return void
          */
-        public function addProjectRelation($userId, $projectId, $projectRole)
+        public function addProjectRelation($userId, $projectId, $projectRole): void
         {
 
             $sql = "INSERT INTO zp_relationuserproject (
@@ -1258,7 +1258,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $params
          * @return boolean
          */
-        public function patch($id, $params)
+        public function patch($id, $params): bool
         {
 
             $sql = "UPDATE zp_projects SET ";
@@ -1293,7 +1293,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $id
          * @throws BindingResolutionException
          */
-        public function setPicture($_FILE, $id)
+        public function setPicture(string $_FILE, $id): void
         {
 
             $project = $this->getProject($id);
@@ -1338,7 +1338,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @return string[]|SVG
          * @throws BindingResolutionException
          */
-        public function getProjectAvatar($id)
+        public function getProjectAvatar($id): array|SVG
         {
 
             $value = false;

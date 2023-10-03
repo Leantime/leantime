@@ -26,7 +26,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @access public
          * @var    array
          */
-        public $kind = array(
+        public array $kind = array(
             'GENERAL_BILLABLE' => 'label.general_billable',
             'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
             'PROJECTMANAGEMENT' => 'label.projectmanagement',
@@ -50,7 +50,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1', $clientId = '-1')
+        public function getAll(int $id = -1)
         {
             $query = "SELECT
                         zp_timesheets.id,
@@ -85,7 +85,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 $query .= " AND (zp_projects.clientId = :clientId)";
             }
 
-            if ($projectId > 0) {
+            if ($id > 0) {
                 $query .= " AND (zp_tickets.projectId = :projectId)";
             }
 
@@ -133,8 +133,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 $call->bindValue(':clientId', $clientId);
             }
 
-            if ($projectId > 0) {
-                $call->bindValue(':projectId', $projectId);
+            if ($id > 0) {
+                $call->bindValue(':projectId', $id);
             }
 
             if ($ticketFilter > 0) {
@@ -160,7 +160,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param $values
          * @return void
          */
-        public function export($values)
+        public function export($values): void
         {
 
             /*zp_timesheets.id,
@@ -226,7 +226,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param $id
          * @return mixed
          */
-        public function getUsersHours($id)
+        public function getUsersHours($id): mixed
         {
             $sql = "SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC";
 
@@ -244,7 +244,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
         /**
          * @return integer|mixed
          */
-        public function getHoursBooked()
+        public function getHoursBooked(): mixed
         {
             $sql = "SELECT SUM(hours) AS hoursBooked
                     FROM zp_timesheets;";
@@ -271,12 +271,12 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @return mixed
          */
         /**
-         * @param $projectId
-         * @param $dateStart
-         * @param $userId
+         * @param int $projectId
+         * @param string $dateStart
+         * @param int $userId
          * @return mixed
          */
-        public function getWeeklyTimesheets($projectId = -1, $dateStart = '0000-01-01 00:00:00', $userId = 0)
+        public function getWeeklyTimesheets(int $projectId = -1, string $dateStart = '0000-01-01 00:00:00', int $userId = 0): mixed
         {
 
             $query = "SELECT
@@ -419,7 +419,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param $values
          * @return void
          */
-        public function simpleInsert($values)
+        public function simpleInsert($values): void
         {
 
             $query = "INSERT INTO zp_timesheets
@@ -607,7 +607,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param $ticketId
          * @return array
          */
-        public function getLoggedHoursForTicket($ticketId)
+        public function getLoggedHoursForTicket($ticketId): array
         {
 
             $query = "SELECT
@@ -655,13 +655,13 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * dateRange - returns every single day between two dates
          *
          * @access private
-         * @param first  $first  date
-         * @param last   $last   date
+         * @param string $first  date
+         * @param string $last   date
          * @param string $step   default 1 day, can be changed to get every other day, week etc.
          * @param string $format date format
          * @return array
          */
-        private function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
+        private function dateRange(string $first, string $last, string $step = '+1 day', string $format = 'Y-m-d'): array
         {
 
             $dates = array();
@@ -685,7 +685,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param $id
          * @return void
          */
-        public function deleteTime($id)
+        public function deleteTime($id): void
         {
 
             $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
@@ -768,7 +768,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param  $ticketId
          * @return mixed
          */
-        public function punchIn($ticketId)
+        public function punchIn($ticketId): mixed
         {
 
             $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,:time)";
@@ -791,7 +791,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function punchOut($ticketId)
+        public function punchOut($ticketId): float|false|int
         {
 
             $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
@@ -867,7 +867,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param id $id
          * @return array|false
          */
-        public function isClocked($id)
+        public function isClocked(id $id): false|array
         {
 
             if (!isset($_SESSION['userdata'])) {
@@ -917,7 +917,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function getTicketHours($ticketId)
+        public function getTicketHours($ticketId): array
         {
 
             $query = "SELECT

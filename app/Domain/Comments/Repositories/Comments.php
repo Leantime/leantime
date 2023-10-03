@@ -34,11 +34,11 @@ namespace Leantime\Domain\Comments\Repositories {
         /**
          * @param $module
          * @param $moduleId
-         * @param $parent
-         * @param $orderByState
+         * @param int $parent
+         * @param string $orderByState
          * @return array|false
          */
-        public function getComments($module, $moduleId, $parent = 0, $orderByState = "0")
+        public function getComments($module, $moduleId, int $parent = 0, string $orderByState = "0"): false|array
         {
             $orderBy = "DESC";
 
@@ -86,7 +86,7 @@ namespace Leantime\Domain\Comments\Repositories {
          * @param $moduleId
          * @return integer|mixed
          */
-        public function countComments($module = null, $moduleId = null)
+        public function countComments($module = null, $moduleId = null): mixed
         {
 
             $sql = "SELECT count(id) as count
@@ -130,7 +130,7 @@ namespace Leantime\Domain\Comments\Repositories {
          * @param $id
          * @return array|false
          */
-        public function getReplies($id)
+        public function getReplies($id): false|array
         {
 
             $sql = "SELECT
@@ -166,7 +166,7 @@ namespace Leantime\Domain\Comments\Repositories {
          * @param $id
          * @return void
          */
-        public function getComment($id)
+        public function getComment($id): void
         {
 
             $sql = "SELECT
@@ -193,7 +193,7 @@ namespace Leantime\Domain\Comments\Repositories {
          * @param $module
          * @return false|string
          */
-        public function addComment($values, $module)
+        public function addComment($values, $module): false|string
         {
 
             $sql = "INSERT INTO zp_comment (
@@ -231,7 +231,7 @@ namespace Leantime\Domain\Comments\Repositories {
          * @param $id
          * @return boolean
          */
-        public function deleteComment($id)
+        public function deleteComment($id): bool
         {
 
             $sql = "DELETE FROM zp_comment WHERE id = :id";
@@ -254,7 +254,7 @@ namespace Leantime\Domain\Comments\Repositories {
          * @param $id
          * @return boolean
          */
-        public function editComment($text, $id)
+        public function editComment($text, $id): bool
         {
 
             $sql = "UPDATE zp_comment SET text = :text WHERE id = :id";

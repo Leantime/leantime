@@ -11,22 +11,22 @@ namespace Leantime\Domain\Connector\Models {
      */
     class Entity
     {
-        public $id;
+        public int $id;
 
-        public $name;
+        public string $name;
 
-        public $authData;
+        public string $authData;
 
-        public $notes;
+        public string $notes;
 
         //Leantime domain object
-        public $leantimeEntity;
+        public mixed $leantimeEntity;
 
         //Array of field objects
-        public $fieldMappings = [];
+        public array $fieldMappings = [];
 
         //External domain object
-        public $providerEntity;
+        public mixed $providerEntity;
 
 
         public function __construct()

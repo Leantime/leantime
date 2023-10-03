@@ -22,7 +22,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
          * @param TimesheetService $timesheetService
          * @return void
          */
-        public function init(TimesheetService $timesheetService)
+        public function init(TimesheetService $timesheetService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 

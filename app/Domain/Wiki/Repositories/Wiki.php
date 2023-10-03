@@ -32,7 +32,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $projectId
          * @return mixed
          */
-        public function getArticle($id, $projectId)
+        public function getArticle($id, $projectId): mixed
         {
             $query = "SELECT
 					zp_canvas_items.id,
@@ -109,7 +109,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $projectId
          * @return array|false
          */
-        public function getAllProjectWikis($projectId)
+        public function getAllProjectWikis($projectId): false|array
         {
             $query = "SELECT
 
@@ -144,7 +144,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $id
          * @return mixed
          */
-        public function getWiki($id)
+        public function getWiki($id): mixed
         {
             $query = "SELECT
 
@@ -182,7 +182,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $userId
          * @return array|false
          */
-        public function getAllWikiHeadlines($canvasId, $userId)
+        public function getAllWikiHeadlines($canvasId, $userId): false|array
         {
             $query = "SELECT
 
@@ -222,7 +222,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $wiki
          * @return false|string
          */
-        public function createWiki($wiki)
+        public function createWiki($wiki): false|string
         {
 
             $query = "INSERT INTO zp_canvas
@@ -262,7 +262,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $wikiId
          * @return boolean
          */
-        public function updateWiki($wiki, $wikiId)
+        public function updateWiki($wiki, $wikiId): bool
         {
 
             $query = "UPDATE zp_canvas
@@ -291,7 +291,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param Article $article
          * @return false|string
          */
-        public function createArticle(Article $article)
+        public function createArticle(Article $article): false|string
         {
 
             $query = "INSERT INTO zp_canvas_items
@@ -351,7 +351,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param Article $article
          * @return boolean
          */
-        public function updateArticle(Article $article)
+        public function updateArticle(Article $article): bool
         {
 
             $query = "UPDATE zp_canvas_items
@@ -392,7 +392,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $id
          * @return void
          */
-        public function delArticle($id)
+        public function delArticle($id): void
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
 
@@ -413,7 +413,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $id
          * @return void
          */
-        public function delWiki($id)
+        public function delWiki($id): void
         {
 
             $query = "DELETE FROM zp_canvas_items WHERE canvasId = :id";
@@ -439,7 +439,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $projectId
          * @return integer|mixed
          */
-        public function getNumberOfBoards($projectId = null)
+        public function getNumberOfBoards($projectId = null): mixed
         {
 
             $sql = "SELECT
@@ -477,7 +477,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $projectId
          * @return integer|mixed
          */
-        public function getNumberOfCanvasItems($projectId = null)
+        public function getNumberOfCanvasItems($projectId = null): mixed
         {
 
             $sql = "SELECT

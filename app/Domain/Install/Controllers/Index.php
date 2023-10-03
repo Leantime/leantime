@@ -50,7 +50,7 @@ namespace Leantime\Domain\Install\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params)
+        public function post($params): void
         {
 
             $values = array(

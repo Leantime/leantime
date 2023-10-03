@@ -16,27 +16,27 @@ interface ProviderIntegration
     /**
      * @return mixed
      */
-    public function connect();
+    public function connect(): mixed;
 
     /**
      * @param Entity $entity
      * @return mixed
      */
-    public function sync(Entity $entity);
+    public function sync(Entity $entity): mixed;
 
     /**
      * @return mixed
      */
-    public function getFields();
+    public function getFields(): mixed;
 
     /**
      * @return mixed
      */
-    public function getEntities();
+    public function getEntities(): mixed;
 
     /**
      * @param Entity $entity
      * @return mixed
      */
-    public function getValues(Entity $entity);
+    public function getValues(Entity $entity): mixed;
 }

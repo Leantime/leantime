@@ -19,7 +19,7 @@ use Leantime\Domain\Auth\Services\Auth as AuthService;
  */
 class HeadMenu extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'menu::headMenu',
     ];
 
@@ -40,7 +40,7 @@ class HeadMenu extends Composer
         TimesheetService $timesheets,
         UserService $userService,
         AuthService $authService
-    ) {
+    ): void {
         $this->notificationService = $notificationService;
         $this->timesheets = $timesheets;
         $this->userService = $userService;
@@ -54,7 +54,7 @@ class HeadMenu extends Composer
      * @return array
      * @throws BindingResolutionException
      */
-    public function with()
+    public function with(): array
     {
         $notificationService = $this->notificationService;
         $notifications = array();

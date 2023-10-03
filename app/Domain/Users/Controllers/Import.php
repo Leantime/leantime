@@ -29,7 +29,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @param LdapService    $ldapService
          * @return void
          */
-        public function init(UserRepository $userRepo, LdapService $ldapService)
+        public function init(UserRepository $userRepo, LdapService $ldapService): void
         {
             $this->userRepo = $userRepo;
             $this->ldapService = $ldapService;
@@ -43,7 +43,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function get()
+        public function get(): void
         {
 
             //Only Admins
@@ -73,7 +73,7 @@ namespace Leantime\Domain\Users\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
             $this->tpl = app()->make(TemplateCore::class);
             $this->ldapService = app()->make(LdapService::class);

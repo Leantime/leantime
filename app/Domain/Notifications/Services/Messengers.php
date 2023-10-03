@@ -23,7 +23,7 @@ class Messengers
     private SettingRepository $settingsRepo;
     private LanguageCore $language;
     private array $supportedMessengers = array("slack", "discord", "mattermost", "zulip");
-    private $projectName = '';
+    private string $projectName = '';
 
     /**
      * __construct - get database connection
@@ -77,7 +77,7 @@ class Messengers
      *
      * @access public
      */
-    private function slackWebhook(NotificationModel $notification)
+    private function slackWebhook(NotificationModel $notification): bool
     {
 
         $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".slackWebhookURL");
@@ -113,7 +113,7 @@ class Messengers
      *
      * @access public
      */
-    private function mattermostWebhook(NotificationModel $notification)
+    private function mattermostWebhook(NotificationModel $notification): bool
     {
 
         $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".mattermostWebhookURL");
@@ -152,7 +152,7 @@ class Messengers
      *
      * @access public
      */
-    private function zulipWebhook(NotificationModel $notification)
+    private function zulipWebhook(NotificationModel $notification): bool
     {
 
         $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".zulipHook");
@@ -206,7 +206,7 @@ class Messengers
      *
      * @access public
      */
-    public function discordWebhook(NotificationModel $notification)
+    public function discordWebhook(NotificationModel $notification): true
     {
         $converter = false;
 

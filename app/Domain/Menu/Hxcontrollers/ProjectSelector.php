@@ -21,7 +21,7 @@ class ProjectSelector extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'menu::partials.projectSelector';
+    protected static string $view = 'menu::partials.projectSelector';
 
     /**
      * @var Timesheets
@@ -38,7 +38,7 @@ class ProjectSelector extends HtmxController
      * @param \Leantime\Domain\Menu\Repositories\Menu $menuRepo
      * @return void
      */
-    public function init(Timesheets $timesheetService, Menu $menuService, \Leantime\Domain\Menu\Repositories\Menu $menuRepo)
+    public function init(Timesheets $timesheetService, Menu $menuService, \Leantime\Domain\Menu\Repositories\Menu $menuRepo): void
     {
         $this->timesheetService = $timesheetService;
         $this->menuService = $menuService;
@@ -49,7 +49,7 @@ class ProjectSelector extends HtmxController
      * @return void
      * @throws BindingResolutionException
      */
-    public function updateMenu()
+    public function updateMenu(): void
     {
 
         $allAssignedprojects =
@@ -116,7 +116,7 @@ class ProjectSelector extends HtmxController
     /**
      * @return void
      */
-    public function filter()
+    public function filter(): void
     {
     }
 }

@@ -22,47 +22,47 @@ class Fileupload
     /**
      * @var    string path on the server
      */
-    private $path;
+    private mixed $path;
 
     /**
      * @var integer max filesize in kb
      */
-    public $max_size = 10000;
+    public int $max_size = 10000;
 
     /**
      * @var string filename in a temporary variable
      */
-    private $file_tmp_name;
+    private string $file_tmp_name;
 
     /**
      * @var integer
      */
-    public $file_size;
+    public int $file_size;
 
     /**
      * @var string give the file-type (not extension)
      */
-    public $file_type;
+    public string $file_type;
 
     /**
      * @var string - Name of file after renaming and on server
      */
-    public $file_name;
+    public string $file_name;
 
     /**
      * @var string
      */
-    public $error = '';
+    public string $error = '';
 
     /**
      * @var string name of file after by upload
      */
-    public $real_name = '';
+    public string $real_name = '';
 
     /**
      * @var array parts of the path
      */
-    public $path_parts = array();
+    public array $path_parts = array();
 
     /**
      * @var Environment configuration object
@@ -72,7 +72,7 @@ class Fileupload
     /**
      * @var S3Client|string
      */
-    public $s3Client = "";
+    public string|S3Client $s3Client = "";
 
     /**
      * fileupload constructor.
@@ -125,7 +125,7 @@ class Fileupload
      * @param string $sSize
      * @return integer The value in bytes
      */
-    private static function convertPHPSizeToBytes($sSize)
+    private static function convertPHPSizeToBytes(string $sSize): int
     {
         $sSuffix = strtoupper(substr($sSize, -1));
         if (!in_array($sSuffix, array('P','T','G','M','K'))) {
@@ -160,7 +160,7 @@ class Fileupload
      * @return string
      * @throws Exception
      */
-    public function getAbsolutePath()
+    public function getAbsolutePath(): string
     {
         $path = realpath(__DIR__ . "/../../" . $this->path);
         if ($path === false) {
@@ -174,7 +174,7 @@ class Fileupload
      * @return string
      * @throws Exception
      */
-    public function getPublicFilesPath()
+    public function getPublicFilesPath(): string
     {
         $relative_path = self::dispatch_filter('relative_path', "/../../public/userfiles");
 
@@ -193,7 +193,7 @@ class Fileupload
      * @access public
      * @param  $file $file from Post
      */
-    public function initFile($file)
+    public function initFile($file): void
     {
         $this->file_tmp_name = $file['tmp_name'];
         $this->file_size = $file['size'];
@@ -208,7 +208,7 @@ class Fileupload
      * @access public
      * @return boolean
      */
-    public function checkFileSize()
+    public function checkFileSize(): bool
     {
         if ($this->file_size <= $this->max_size * 1024) {
             return true;
@@ -246,7 +246,7 @@ class Fileupload
      * @access public
      * @return boolean
      */
-    public function upload()
+    public function upload(): bool
     {
         //S3 upload
         if ($this->config->useS3 == true) {
@@ -263,7 +263,7 @@ class Fileupload
      * @access public
      * @return string|false
      */
-    public function uploadPublic()
+    public function uploadPublic(): false|string
     {
         if ($this->config->useS3 == true) {
             try {
@@ -306,7 +306,7 @@ class Fileupload
      * @access private
      * @return boolean
      */
-    private function uploadToS3()
+    private function uploadToS3(): bool
     {
         try {
             // Upload data.
@@ -333,7 +333,7 @@ class Fileupload
     /**
      * @return boolean
      */
-    private function uploadLocal()
+    private function uploadLocal(): bool
     {
 
         try {
@@ -351,11 +351,11 @@ class Fileupload
     /**
      * displayImageFile - display image file
      *
-     * @param  string $imageName
-     * @param  string $fullPath
+     * @param string $imageName
+     * @param string $fullPath
      * @return void
      */
-    public function displayImageFile($imageName, $fullPath = '')
+    public function displayImageFile(string $imageName, string $fullPath = ''): void
     {
         $mimes = array(
             'jpg' => 'image/jpg',

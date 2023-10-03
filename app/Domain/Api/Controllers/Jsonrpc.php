@@ -32,7 +32,7 @@ class Jsonrpc extends Controller
      *
      * @return void
      */
-    public function init()
+    public function init(): void
     {
         header('Content-Type: application/json; charset=utf-8');
 
@@ -47,6 +47,8 @@ class Jsonrpc extends Controller
      * @param array $params - value of $_POST
      *
      * @return void
+     * @throws BindingResolutionException
+     * @throws \ReflectionException
      */
     public function post(array $params): void
     {
@@ -86,6 +88,8 @@ class Jsonrpc extends Controller
      * @param array $params - value of $_GET
      *
      * @return void
+     * @throws BindingResolutionException
+     * @throws \ReflectionException
      */
     public function get(array $params): void
     {
@@ -167,7 +171,7 @@ class Jsonrpc extends Controller
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
-    private function executeApiRequest($params): void
+    private function executeApiRequest(array $params): void
     {
         $methodparts = $this->parseMethodString($params['method'] ?? '');
         $jsonRpcVer = $params['jsonrpc'] ?? null;

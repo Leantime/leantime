@@ -32,7 +32,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @access public
          * @return array
          */
-        public function getSprint($id)
+        public function getSprint($id): array
         {
 
             $query = "SELECT
@@ -62,7 +62,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @access public
          * @return array
          */
-        public function getAllSprints($projectId)
+        public function getAllSprints($projectId): array
         {
 
 
@@ -93,7 +93,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @access public
          * @return array
          */
-        public function getAllFutureSprints($projectId)
+        public function getAllFutureSprints($projectId): array
         {
 
 
@@ -124,7 +124,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @access public
          * @return mixed
          */
-        public function getCurrentSprint($projectId)
+        public function getCurrentSprint($projectId): mixed
         {
 
             $query = "SELECT
@@ -155,7 +155,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @access public
          * @return array
          */
-        public function getUpcomingSprint($projectId)
+        public function getUpcomingSprint($projectId): array
         {
 
             $query = "SELECT
@@ -188,7 +188,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @param $sprint
          * @return boolean
          */
-        public function addSprint($sprint)
+        public function addSprint($sprint): bool
         {
 
             $query = "INSERT INTO zp_sprints (name, projectId, startDate, endDate) VALUES (:name, :projectId, :startDate, :endDate)";
@@ -214,7 +214,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @param $sprint
          * @return boolean
          */
-        public function editSprint($sprint)
+        public function editSprint($sprint): bool
         {
 
             $query = "UPDATE zp_sprints
@@ -247,7 +247,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @param $id
          * @return void
          */
-        public function delSprint($id)
+        public function delSprint($id): void
         {
 
             $query = "UPDATE zp_tickets

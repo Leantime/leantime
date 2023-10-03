@@ -38,35 +38,35 @@ class Language
      * @static
      * @final
      */
-    private $language = 'en-US';
+    private string $language = 'en-US';
 
     /**
      * @var array
      * @static
      * @final
      */
-    public $ini_array;
+    public array $ini_array;
 
     /**
      * @var array
      * @static
      * @final
      */
-    public $ini_array_fallback;
+    public array $ini_array_fallback;
 
     /**
      * @var array
      * @static
      * @final
      */
-    public $langlist;
+    public mixed $langlist;
 
     /**
      * @var array $alert - debug value. Will highlight untranslated text
      * @static
      * @final
      */
-    private $alert = false;
+    private array|bool $alert = false;
 
     /**
      * @var environment $config
@@ -178,7 +178,7 @@ class Language
      * @return void
      * @throws Exception
      */
-    public function setLanguage($lang)
+    public function setLanguage($lang): void
     {
         $this->language = $lang;
 
@@ -221,7 +221,7 @@ class Language
      * @access public
      * @return string
      */
-    public function getCurrentLanguage()
+    public function getCurrentLanguage(): string
     {
         return $this->language;
     }
@@ -233,7 +233,7 @@ class Language
      * @param  $langCode
      * @return boolean
      */
-    public function isValidLanguage($langCode)
+    public function isValidLanguage($langCode): bool
     {
         return isset($this->langlist[$langCode]);
     }
@@ -245,7 +245,7 @@ class Language
      * @return array
      * @throws Exception
      */
-    public function readIni()
+    public function readIni(): array
     {
         if (isset($_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme]) && $this->config->debug == 0) {
             $this->ini_array = $_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme] = self::dispatch_filter(
@@ -307,7 +307,7 @@ class Language
      * @return array
      * @throws Exception
      */
-    protected function includeOverrides(array $language, string $filepath, bool $foreignLanguage = false)
+    protected function includeOverrides(array $language, string $filepath, bool $foreignLanguage = false): array
     {
         if ($foreignLanguage && $this->language == 'en-US') {
             return $language;
@@ -336,7 +336,7 @@ class Language
      * @access public
      * @return array|boolean
      */
-    public function getLanguageList()
+    public function getLanguageList(): bool|array
     {
         if (file_exists(static::CUSTOM_LANG_FOLDER . '/languagelist.ini')) {
             $this->langlist = parse_ini_file(static::CUSTOM_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
@@ -357,7 +357,7 @@ class Language
      * @access public
      * @return string
      */
-    public function getBrowserLanguage()
+    public function getBrowserLanguage(): string
     {
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
             $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
@@ -401,10 +401,10 @@ class Language
      * getFormattedDateString - returns a language specific formatted date string
      *
      * @access public
-     * @param  string $date
+     * @param string $date
      * @return string
      */
-    public function getFormattedDateString($date): string
+    public function getFormattedDateString(string $date): string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
             //If datetime object
@@ -431,10 +431,10 @@ class Language
      * getFormattedTimeString - returns a language specific formatted time string
      *
      * @access public
-     * @param  string $date
+     * @param string $date
      * @return string
      */
-    public function getFormattedTimeString($date)
+    public function getFormattedTimeString(string $date): string
     {
         if (
             is_null($date) === false
@@ -456,10 +456,10 @@ class Language
      * getFormattedDateTimeString - returns a language specific formatted date time string
      *
      * @access public
-     * @param  string $date
+     * @param string $date
      * @return string
      */
-    public function get24HourTimestring($date)
+    public function get24HourTimestring(string $date): false|string
     {
         if (
             is_null($date) === false
@@ -481,10 +481,10 @@ class Language
      * getISODateString - returns an ISO date string (hours, minutes seconds zeroed out) based on language specific format
      *
      * @access public
-     * @param  string $date
+     * @param string $date
      * @return string|boolean
      */
-    public function getISODateString($date)
+    public function getISODateString(string $date): bool|string
     {
         if (
             is_null($date) === false
@@ -506,10 +506,10 @@ class Language
      * getISODateString - returns an ISO date string (hours, minutes seconds zeroed out) based on language specific format
      *
      * @access public
-     * @param  string $date
+     * @param string $date
      * @return string|boolean
      */
-    public function getISODateTimeString($date, $time)
+    public function getISODateTimeString(string $date, $time): bool|string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
             $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
@@ -532,10 +532,10 @@ class Language
      * getISOTimeString - returns an ISO time string (hours, minutes seconds zeroed out) based on language specific format
      *
      * @access public
-     * @param  string $time
+     * @param string $time
      * @return string|boolean
      */
-    public function getISOTimeString($time)
+    public function getISOTimeString(string $time): bool|string
     {
         if (is_null($time) === false && $time != "" && $time != "1969-12-31 00:00:00" && $time != "0000-00-00 00:00:00") {
             $timestamp = date_create_from_format($this->__("language.timeformat"), $time);
@@ -552,10 +552,10 @@ class Language
      * extractTime - returns an ISO time string (hours, minutes seconds zeroed out) based on language specific format
      *
      * @access public
-     * @param  string $dateTime
+     * @param string $dateTime
      * @return string|boolean
      */
-    public function extractTime($dateTime)
+    public function extractTime(string $dateTime): bool|string
     {
         if (is_null($dateTime) === false && $dateTime != "" && $dateTime != "1969-12-31 00:00:00" && $dateTime != "0000-00-00 00:00:00") {
             $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime);

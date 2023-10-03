@@ -49,7 +49,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             ReportService $reportsService,
             SettingRepository $settingRepo,
             CalendarRepository $calendarRepo
-        ) {
+        ): void {
             $this->projectsService = $projectsService;
             $this->ticketsService = $ticketsService;
             $this->usersService = $usersService;
@@ -63,8 +63,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
         /**
          * @return void
+         * @throws BindingResolutionException
          */
-        public function get()
+        public function get(): void
         {
             $images = array(
                 "undraw_smiley_face_re_9uid.svg",
@@ -174,7 +175,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {

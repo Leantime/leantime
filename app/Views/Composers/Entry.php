@@ -13,7 +13,7 @@ use Leantime\Core\Composer;
  */
 class Entry extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'global::layouts.entry',
     ];
 
@@ -23,7 +23,7 @@ class Entry extends Composer
     /**
      * @return array|string[]
      */
-    public function with()
+    public function with(): array
     {
         return [
             'logoPath' => $_SESSION['companysettings.logoPath'] ?? '',

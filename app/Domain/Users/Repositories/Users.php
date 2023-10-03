@@ -23,66 +23,66 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @var    string
          */
-        public $user;
+        public string $user;
 
         /**
          * @access public
          * @var    string
          */
-        public $lastname;
+        public string $lastname;
 
         /**
          * @access public
          * @var    string
          */
-        public $firstname;
+        public string $firstname;
 
         /**
          * @access public
          * @var    integer
          */
-        public $role;
+        public int $role;
 
         /**
         * @access public
         * @var    string
         */
-        public $jobTitle;
+        public string $jobTitle;
 
         /**
          * @access public
          * @var    string
          */
-        public $jobLevel;
+        public string $jobLevel;
 
         /**
          * @access public
          * @var    string
          */
-        public $department;
+        public string $department;
         /**
          * @access public
          * @var    integer
          */
-        public $id;
+        public int $id;
 
         /**
          * @access public
          * @var    array
          */
-        public $adminRoles = array(2, 4);
+        public array $adminRoles = array(2, 4);
 
         /**
          * @access public
          * @var    array
          */
-        public $status = array('active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited');
+        public array $status = array('active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited');
 
         /**
          * @access public
          * @var    object
          */
-        private $db;
+        private DbCore|object $db;
 
         public Environment $config;
 
@@ -129,7 +129,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @param $hash
          * @return array
          */
-        public function getUserBySha($hash)
+        public function getUserBySha($hash): array
         {
 
 
@@ -218,7 +218,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @return array
          */
-        public function getEmployees()
+        public function getEmployees(): array
         {
 
             $sql = "SELECT
@@ -247,7 +247,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @return array
          */
-        public function getAll($activeOnly = false)
+        public function getAll($activeOnly = false): array
         {
 
             $query = "SELECT
@@ -292,7 +292,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @param $source
          * @return array|false
          */
-        public function getAllBySource($source)
+        public function getAllBySource($source): false|array
         {
 
             $query = "SELECT
@@ -329,7 +329,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @return array
          */
-        public function getAllClientUsers($clientId)
+        public function getAllClientUsers($clientId): array
         {
 
             $query = "SELECT
@@ -397,7 +397,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @param  $id
          * @return boolean
          */
-        public function editUser(array $values, $id)
+        public function editUser(array $values, $id): bool
         {
             if (isset($values['password']) && $values['password'] != '') {
                 $chgPW = " password = :password, ";
@@ -454,10 +454,10 @@ namespace Leantime\Domain\Users\Repositories {
          *
          * @access public
          * @param  $username
-         * @param  $userId
+         * @param string $userId
          * @return boolean
          */
-        public function usernameExist($username, $userId = ''): bool
+        public function usernameExist($username, string $userId = ''): bool
         {
 
             if ($userId != '') {
@@ -494,7 +494,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @param  $values
          * @param  $id
          */
-        public function editOwn($values, $id)
+        public function editOwn($values, $id): void
         {
 
             if (isset($values['password']) && $values['password'] != '') {
@@ -617,7 +617,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @param  $id
          */
-        public function deleteUser($id)
+        public function deleteUser($id): void
         {
 
             $query = "DELETE FROM `zp_user` WHERE zp_user.id = :id";
@@ -637,7 +637,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @param $id
          * @throws BindingResolutionException
          */
-        public function setPicture($_FILE, $id)
+        public function setPicture(string $_FILE, $id): void
         {
 
             $sql = "SELECT * FROM `zp_user` WHERE id=:id";
@@ -689,7 +689,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @return string[]|SVG
          * @throws BindingResolutionException
          */
-        public function getProfilePicture($id)
+        public function getProfilePicture($id): array|SVG
         {
 
             $value = false;
@@ -761,7 +761,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @param $params
          * @return boolean
          */
-        public function patchUser($id, $params)
+        public function patchUser($id, $params): bool
         {
 
             $sql = "UPDATE zp_user SET ";

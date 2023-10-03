@@ -18,7 +18,7 @@ namespace Leantime\Domain\Connector\Services {
     {
         use Eventhelpers;
 
-        private $providers = [];
+        private array $providers = [];
 
         public function __construct()
         {
@@ -28,7 +28,7 @@ namespace Leantime\Domain\Connector\Services {
         /**
          * @return void
          */
-        public function loadProviders()
+        public function loadProviders(): void
         {
 
             //providerId => provider
@@ -41,7 +41,7 @@ namespace Leantime\Domain\Connector\Services {
         /**
          * @return array
          */
-        public function getProviders()
+        public function getProviders(): array
         {
             return $this->providers;
         }

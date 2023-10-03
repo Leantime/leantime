@@ -64,12 +64,12 @@ namespace Leantime\Domain\Reactions\Repositories {
          * getGroupedEntityReactions - gets all reactions for a given entity grouped and counted by reactions
          * @access public
          *
-         * @param string  $module
+         * @param string $module
          * @param integer $moduleId
          *
          * @return array|boolean returns the array on success or false on failure
          */
-        public function getGroupedEntityReactions($module, $moduleId): array|false
+        public function getGroupedEntityReactions(string $module, int $moduleId): array|false
         {
 
             $sql = "SELECT

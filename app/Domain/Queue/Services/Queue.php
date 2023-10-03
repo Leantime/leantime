@@ -58,7 +58,7 @@ namespace Leantime\Domain\Queue\Services {
          * @param $messageToSendToUser
          * @return string
          */
-        private function doFormatMail($messageToSendToUser)
+        private function doFormatMail($messageToSendToUser): string
         {
             $outputHTML = $this->language->__('text.here_are_news') . "<br/>\n";
             foreach ($messageToSendToUser as $chunk) {
@@ -78,7 +78,7 @@ namespace Leantime\Domain\Queue\Services {
          * @return true
          * @throws Exception
          */
-        public function processQueue()
+        public function processQueue(): true
         {
 
             $messages = $this->queue->listMessageInQueue('email');

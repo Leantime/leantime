@@ -18,7 +18,7 @@ class TimerButton extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'tickets::partials.timerLink';
+    protected static string $view = 'tickets::partials.timerLink';
 
     /**
      * @var Timesheets
@@ -31,7 +31,7 @@ class TimerButton extends HtmxController
      * @param Timesheets $timesheetService
      * @return void
      */
-    public function init(Timesheets $timesheetService)
+    public function init(Timesheets $timesheetService): void
     {
         $this->timesheetService = $timesheetService;
     }
@@ -39,7 +39,7 @@ class TimerButton extends HtmxController
     /**
      * @return void
      */
-    public function getStatus()
+    public function getStatus(): void
     {
 
         $params =  $this->incomingRequest->query->all();

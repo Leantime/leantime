@@ -58,7 +58,7 @@ namespace Leantime\Domain\Calendar\Services {
          *
          * @return boolean true on success, false on failure
          */
-        private function userIsAllowedToUpdate($eventId)
+        private function userIsAllowedToUpdate($eventId): bool
         {
 
             if (Auth::userIsAtLeast(Roles::$admin)) {
@@ -118,7 +118,7 @@ namespace Leantime\Domain\Calendar\Services {
          * @param $eventId
          * @return mixed
          */
-        public function getEvent($eventId)
+        public function getEvent($eventId): mixed
         {
             return $this->calendarRepo->getEvent($eventId);
         }

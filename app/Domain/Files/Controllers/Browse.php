@@ -23,7 +23,7 @@ class Browse extends Controller
     public function init(
         FileRepository $filesRepo,
         FileService $filesService
-    ) {
+    ): void {
         $this->filesRepo = $filesRepo;
         $this->filesService = $filesService;
     }
@@ -32,7 +32,7 @@ class Browse extends Controller
      * @return void
      * @throws \Exception
      */
-    public function run()
+    public function run(): void
     {
         $currentModule = $_SESSION['currentProject'];
 

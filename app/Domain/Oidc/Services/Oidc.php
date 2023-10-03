@@ -125,7 +125,7 @@ class Oidc
      * @return void
      * @throws GuzzleException
      */
-    public function callback(string $code, string $state)
+    public function callback(string $code, string $state): void
     {
         if (!$this->verifyState($state)) {
             $this->displayError('oidc.error.invalidState');
@@ -330,10 +330,10 @@ class Oidc
 
     /**
      * @param string $kid
-     * @return OpenSSLAsymmetricKey
+     * @return OpenSSLAsymmetricKey|false
      * @throws GuzzleException
      */
-    private function getPublicKey(string $kid): OpenSSLAsymmetricKey
+    private function getPublicKey(string $kid): OpenSSLAsymmetricKey|false
     {
         if ($this->certificateString) {
             return openssl_pkey_get_public($this->certificateString);

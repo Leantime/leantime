@@ -297,7 +297,7 @@ namespace Leantime\Domain\Menu\Repositories {
          * @param $structure
          * @return void
          */
-        public function processMenuItem($element, &$structure)
+        public function processMenuItem($element, &$structure): void
         {
 
             //ModuleManager Check
@@ -308,7 +308,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
             // Update security
             if (isset($element['role'])) {
-                $accessGranted = $this->authService::userIsAtLeast($element['role'], true);
+                $accessGranted = AuthService::userIsAtLeast($element['role'], true);
 
                 if (!$accessGranted) {
                     $structure['type'] = 'disabled';
@@ -330,7 +330,7 @@ namespace Leantime\Domain\Menu\Repositories {
         /**
          * @return array|mixed|string|string[]
          */
-        public function getTicketMenu()
+        public function getTicketMenu(): mixed
         {
 
             $ticketService = $this->ticketsService;
@@ -346,7 +346,7 @@ namespace Leantime\Domain\Menu\Repositories {
         /**
          * @return string
          */
-        public function getIdeaMenu()
+        public function getIdeaMenu(): string
         {
             $url = "/ideas/showBoards";
             if (isset($_SESSION['lastIdeaView'])) {

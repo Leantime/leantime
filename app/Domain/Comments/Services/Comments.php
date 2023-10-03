@@ -45,10 +45,10 @@ namespace Leantime\Domain\Comments\Services {
         /**
          * @param $module
          * @param $entityId
-         * @param $commentOrder
+         * @param int $commentOrder
          * @return array|false
          */
-        public function getComments($module, $entityId, $commentOrder = 0)
+        public function getComments($module, $entityId, int $commentOrder = 0): false|array
         {
             return $this->commentRepository->getComments($module, $entityId, "", $commentOrder);
         }
@@ -69,7 +69,7 @@ namespace Leantime\Domain\Comments\Services {
          * @return boolean
          * @throws BindingResolutionException
          */
-        public function addComment($values, $module, $entityId, $entity)
+        public function addComment($values, $module, $entityId, $entity): bool
         {
 
 
@@ -139,7 +139,7 @@ namespace Leantime\Domain\Comments\Services {
          * @param $commentId
          * @return boolean
          */
-        public function deleteComment($commentId)
+        public function deleteComment($commentId): bool
         {
 
             return $this->commentRepository->deleteComment($commentId);

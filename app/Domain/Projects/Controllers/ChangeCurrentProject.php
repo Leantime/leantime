@@ -23,7 +23,7 @@ namespace Leantime\Domain\Projects\Controllers {
          * @param SettingService $settingService
          * @return void
          */
-        public function init(ProjectService $projectService, SettingService $settingService)
+        public function init(ProjectService $projectService, SettingService $settingService): void
         {
             $this->projectService = $projectService;
             $this->settingService = $settingService;

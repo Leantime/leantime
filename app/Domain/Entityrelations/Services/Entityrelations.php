@@ -39,10 +39,10 @@ namespace Leantime\Domain\Entityrelations\Services {
          * @param $relationship
          * @param $entityB
          * @param $entityBType
-         * @param $meta
+         * @param string $meta
          * @return mixed
          */
-        public function saveRelationship($entityA, $entityAType, $relationship, $entityB, $entityBType, $meta = "")
+        public function saveRelationship($entityA, $entityAType, $relationship, $entityB, $entityBType, string $meta = ""): mixed
         {
             return $this->settingsRepo->saveSetting($entityA, $entityAType, $relationship, $entityB, $entityBType, $meta = "");
         }
@@ -61,7 +61,7 @@ namespace Leantime\Domain\Entityrelations\Services {
          * @param string  $relationship
          * @return mixed
          */
-        public function getRelationshipByEntity(string $entitySide, int $entity, string $entityType, string $relationship)
+        public function getRelationshipByEntity(string $entitySide, int $entity, string $entityType, string $relationship): mixed
         {
             return $this->settingsRepo->getSetting($entitySide, $entity, $entityType, $relationship);
         }

@@ -16,11 +16,11 @@ class I18n extends Controller
     /**
      * Attach the language file to javascript
      *
-     * @param $params Parameters or body of the request.
+     * @param Parameters $params or body of the request.
      * @throws \Exception
      * @access public
      */
-    public function get($params)
+    public function get(Parameters $params)
     {
         header('Content-Type: application/javascript');
 

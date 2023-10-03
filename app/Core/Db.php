@@ -19,27 +19,27 @@ class Db
     /**
      * @var string database host default: localhost
      */
-    private $host = '';
+    private mixed $host = '';
 
     /**
      * @var string username for db
      */
-    private $user = '';
+    private mixed $user = '';
 
     /**
      * @var string password for db
      */
-    private $password = '';
+    private mixed $password = '';
 
     /**
      * @var string database name
      */
-    private $databaseName = '';
+    private mixed $databaseName = '';
 
     /**
      * @var string database port default: 3306
      */
-    private $port = '3306';
+    private mixed $port = '3306';
 
     /**
      * @var PDO database connection
@@ -103,11 +103,11 @@ class Db
      * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
      *
-     * @param string  $name
+     * @param string $name
      * @param integer $count
      * @return string
      */
-    public static function arrayToPdoBindingString($name, $count)
+    public static function arrayToPdoBindingString(string $name, int $count): string
     {
         $bindingStatement = "";
         for ($i = 0; $i < $count; $i++) {
@@ -128,7 +128,7 @@ class Db
      * @param string $string
      * @return string
      */
-    public static function sanitizeToColumnString(string $string)
+    public static function sanitizeToColumnString(string $string): string
     {
         return preg_replace("/[^a-zA-Z0-9_]/", "", $string);
     }

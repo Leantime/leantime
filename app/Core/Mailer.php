@@ -23,27 +23,27 @@ class Mailer
     /**
      * @var string
      */
-    public $cc;
+    public string $cc;
 
     /**
      * @var string
      */
-    public $bcc;
+    public string $bcc;
 
     /**
      * @var string
      */
-    public $text = '';
+    public string $text = '';
 
     /**
      * @var string
      */
-    public $subject;
+    public string $subject;
 
     /**
      * @var string
      */
-    public $context;
+    public string $context;
 
     /**
      * @var PHPMailer
@@ -53,12 +53,12 @@ class Mailer
     /**
      * @var string
      */
-    private $emailDomain;
+    private mixed $emailDomain;
 
     /**
      * @var language
      */
-    private $language;
+    private Language $language;
 
     /**
      * @var string
@@ -158,7 +158,7 @@ class Mailer
      * @param  $context
      * @return void
      */
-    public function setContext($context)
+    public function setContext($context): void
     {
         $this->context = $context;
     }
@@ -170,7 +170,7 @@ class Mailer
      * @param  $text
      * @return void
      */
-    public function setText($text)
+    public function setText($text): void
     {
         $this->text = $text;
     }
@@ -180,10 +180,10 @@ class Mailer
      *
      * @access public
      * @param  $html
-     * @param  $hideWrapper
+     * @param false $hideWrapper
      * @return void
      */
-    public function setHtml($html, $hideWrapper = false)
+    public function setHtml($html, false $hideWrapper = false): void
     {
         $this->hideWrapper = $hideWrapper;
         $this->html = $html;
@@ -196,7 +196,7 @@ class Mailer
      * @param  $subject
      * @return void
      */
-    public function setSubject($subject)
+    public function setSubject($subject): void
     {
         $this->subject = $subject;
     }
@@ -206,10 +206,10 @@ class Mailer
      *
      * @param  $hookname
      * @param  $payload
-     * @param  $additional_params
+     * @param array $additional_params
      * @return void
      */
-    private function dispatchMailerEvent($hookname, $payload, $additional_params = [])
+    private function dispatchMailerEvent($hookname, $payload, array $additional_params = []): void
     {
         $this->dispatchMailerHook('event', $hookname, $payload, $additional_params);
     }
@@ -219,10 +219,10 @@ class Mailer
      *
      * @param  $hookname
      * @param  $payload
-     * @param  $additional_params
+     * @param array $additional_params
      * @return void
      */
-    private function dispatchMailerFilter($hookname, $payload, $additional_params = [])
+    private function dispatchMailerFilter($hookname, $payload, array $additional_params = [])
     {
         return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
     }
@@ -233,10 +233,10 @@ class Mailer
      * @param  $type
      * @param  $hookname
      * @param  $payload
-     * @param  $additional_params
+     * @param array $additional_params
      * @return void|mixed
      */
-    private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
+    private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = [])
     {
         if ($type !== 'filter' && $type !== 'event') {
             return false;
@@ -271,7 +271,7 @@ class Mailer
      * @return void
      * @throws Exception
      */
-    public function sendMail(array $to, $from)
+    public function sendMail(array $to, $from): void
     {
 
         $this->dispatchMailerEvent('beforeSendMail', []);

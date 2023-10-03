@@ -37,13 +37,13 @@ namespace Leantime\Domain\Notifications\Repositories {
          */
         /**
          * @param $userId
-         * @param $showNewOnly
-         * @param $limitStart
-         * @param $limitEnd
-         * @param $filterOptions
+         * @param false $showNewOnly
+         * @param int $limitStart
+         * @param int $limitEnd
+         * @param array $filterOptions
          * @return array|false
          */
-        public function getAllNotifications($userId, $showNewOnly = false, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
+        public function getAllNotifications($userId, false $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
         {
 
             $query = "SELECT
@@ -167,7 +167,7 @@ namespace Leantime\Domain\Notifications\Repositories {
          * @param $id
          * @return boolean
          */
-        public function markNotificationRead($id)
+        public function markNotificationRead($id): bool
         {
 
             $sql = "UPDATE zp_notifications SET `read` = 1 WHERE id = :id";
@@ -191,7 +191,7 @@ namespace Leantime\Domain\Notifications\Repositories {
          * @param $userId
          * @return boolean
          */
-        public function markAllNotificationRead($userId)
+        public function markAllNotificationRead($userId): bool
         {
 
             $sql = "UPDATE zp_notifications SET `read` = 1 WHERE userId = :id";

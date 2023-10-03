@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Files\Controllers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
@@ -26,15 +27,16 @@ class ShowAll extends Controller
     public function init(
         FileRepository $filesRepo,
         FileService $filesService
-    ) {
+    ): void {
         $this->filesRepo = $filesRepo;
         $this->filesService = $filesService;
     }
 
     /**
      * @return void
+     * @throws BindingResolutionException
      */
-    public function run()
+    public function run(): void
     {
 
         $currentModule = '';

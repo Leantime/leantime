@@ -38,9 +38,9 @@ abstract class Controller
      * @access public
      *
      * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param template        $tpl             The template to be initialized.
-     * @param language        $language        The language to be initialized.
-     * @return void
+     * @param template $tpl The template to be initialized.
+     * @param language $language The language to be initialized.
+     * @throws BindingResolutionException
      */
     public function __construct(
         IncomingRequest $incomingRequest,
@@ -67,13 +67,13 @@ abstract class Controller
      *
      * @access private
      *
-     * @param string       $method
-     * @param array|object $params
+     * @param string $method
+     * @param object|array $params
      *
      * @return void
      * @throws BindingResolutionException
      */
-    private function executeActions($method, $params): void
+    private function executeActions(string $method, object|array $params): void
     {
         $available_params = [
             'controller' => $this,

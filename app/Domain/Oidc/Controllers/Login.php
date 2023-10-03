@@ -24,9 +24,9 @@ class Login extends Controller
      * @return void
      * @throws GuzzleException
      */
-    public function init(OidcService $oidc, frontcontroller $frontcontroller)
+    public function init(OidcService $oidc, frontcontroller $frontcontroller): void
     {
         $this->oidc = $oidc;
-        $frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
+        Frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
     }
 }

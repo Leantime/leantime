@@ -17,7 +17,7 @@ use Leantime\Core\Theme;
  */
 class Header extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'global::sections.header',
     ];
 
@@ -38,7 +38,7 @@ class Header extends Composer
         Environment $config,
         AppSettings $appSettings,
         Theme $themeCore
-    ) {
+    ): void {
         $this->settingsRepo = $settingsRepo;
         $this->config = $config;
         $this->appSettings = $appSettings;
@@ -51,7 +51,7 @@ class Header extends Composer
     /**
      * @return array
      */
-    public function with()
+    public function with(): array
     {
         return [
             'sitename' => $_SESSION['companysettings.sitename'] ?? '',

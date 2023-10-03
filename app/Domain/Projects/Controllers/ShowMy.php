@@ -38,7 +38,7 @@ namespace Leantime\Domain\Projects\Controllers {
             ReportService $reportService,
             CommentService $commentService,
             ClientRepository $clientRepo
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->reportService = $reportService;

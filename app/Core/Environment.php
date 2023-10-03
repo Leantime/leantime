@@ -164,7 +164,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param string $dataType
      * @return mixed
      */
-    private function environmentHelper(string $envVar, $default, $dataType = "string")
+    private function environmentHelper(string $envVar, mixed $default, string $dataType = "string"): mixed
     {
         /**
          * Basically, here, we are doing the fetch order of
@@ -239,7 +239,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  string $key
      * @return boolean
      */
-    public function has($key)
+    public function has($key): bool
     {
         return Arr::has($_SESSION['mainconfig'] ?? [], $key) ?: Arr::has($this->config, $key);
     }
@@ -251,7 +251,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed        $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         if (is_array($key)) {
             return $this->getMany($key);
@@ -267,10 +267,10 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Get many configuration values.
      *
-     * @param  array $keys
+     * @param array $keys
      * @return array
      */
-    public function getMany($keys)
+    public function getMany(array $keys): array
     {
         $config = [];
 
@@ -292,7 +292,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed        $value
      * @return void
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null): void
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
@@ -313,7 +313,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed  $value
      * @return void
      */
-    public function prepend($key, $value)
+    public function prepend($key, $value): void
     {
         $array = $this->get($key, []);
 
@@ -329,7 +329,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed  $value
      * @return void
      */
-    public function push($key, $value)
+    public function push($key, $value): void
     {
         $array = $this->get($key, []);
 
@@ -343,7 +343,7 @@ class Environment implements ArrayAccess, ConfigContract
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->items;
     }
@@ -377,7 +377,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($key, $value): void
+    public function offsetSet($key, mixed $value): void
     {
         $this->set($key, $value);
     }

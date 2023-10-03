@@ -22,7 +22,7 @@ class Callback extends Controller
      * @param OidcService $oidc
      * @return void
      */
-    public function init(OidcService $oidc)
+    public function init(OidcService $oidc): void
     {
         $this->oidc = $oidc;
     }
@@ -37,7 +37,7 @@ class Callback extends Controller
      * @return void
      * @throws GuzzleException
      */
-    public function get($params)
+    public function get($params): void
     {
         $code = $_GET['code'];
         $state = $_GET['state'];

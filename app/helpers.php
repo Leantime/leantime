@@ -45,7 +45,7 @@ if (! function_exists('bootstrap_minimal_app')) {
      */
     function bootstrap_minimal_app(): Application
     {
-        $app = app()->setInstance(new Application())->setHasBeenBootstrapped();
+        $app = app()::setInstance(new Application())::setHasBeenBootstrapped();
         return Bootloader::getInstance($app)->getApplication();
     }
 }
@@ -82,11 +82,11 @@ if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param array  $array
+     * @param array $array
      * @param string $sortyBy
      * @return array
      */
-    function array_sort($array, $sortyBy): array
+    function array_sort(array $array, string $sortyBy): array
     {
         $collection = collect($array);
 

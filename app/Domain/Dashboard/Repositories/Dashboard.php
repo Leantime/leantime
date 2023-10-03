@@ -15,15 +15,15 @@ namespace Leantime\Domain\Dashboard\Repositories {
     {
         /**
          * @access public
-         * @var    object
+         * @var    ?DbCore
          */
-        public $db;
+        public ?DbCore $db;
 
         /**
          * @access private
          * @var    array
          */
-        private $defaultWidgets = array(1, 3, 9);
+        private array $defaultWidgets = array(1, 3, 9);
 
         /**
          * __construct - neu db connection

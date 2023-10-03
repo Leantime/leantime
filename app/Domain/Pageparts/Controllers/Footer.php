@@ -20,7 +20,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
          * @param AppSettingCore $settings
          * @return void
          */
-        public function init(AppSettingCore $settings)
+        public function init(AppSettingCore $settings): void
         {
             $this->settings = $settings;
         }
@@ -28,7 +28,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
         /**
          * @return void
          */
-        public function run()
+        public function run(): void
         {
             $this->tpl->assign("version", $this->settings->appVersion);
             $this->tpl->displayPartial('pageparts.footer');

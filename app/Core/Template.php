@@ -35,53 +35,53 @@ class Template
     /**
      * @var array - vars that are set in the action
      */
-    private $vars = array();
+    private array $vars = array();
 
     /**
      *
      * @var string
      */
-    public $frontcontroller = '';
+    public string|Frontcontroller $frontcontroller = '';
 
     /**
      * @var string
      */
-    private $notifcation = '';
+    private string $notifcation = '';
 
     /**
      * @var string
      */
-    private $notifcationType = '';
+    private string $notifcationType = '';
 
     /**
      * @var string
      */
-    private $hookContext = '';
+    private string $hookContext = '';
 
     /**
      * @var string
      */
-    public $tmpError = '';
+    public string $tmpError = '';
 
     /**
      * @var IncomingRequest|string
      */
-    public $incomingRequest = '';
+    public string|IncomingRequest $incomingRequest = '';
 
     /**
      * @var language|string
      */
-    public $language = '';
+    public Language|string $language = '';
 
     /**
      * @var string
      */
-    public $template = '';
+    public string $template = '';
 
     /**
      * @var array
      */
-    public $picture = array(
+    public array $picture = array(
         'calendar' => 'fa-calendar',
         'clients' => 'fa-people-group',
         'dashboard' => 'fa-th-large',
@@ -172,7 +172,7 @@ class Template
     public function setupBlade(
         Application $app,
         Dispatcher $eventDispatcher
-    ) {
+    ): void {
         // ComponentTagCompiler Expects the Foundation\Application Implmentation, let's trick it and give it the container.
         $app->instance(\Illuminate\Contracts\Foundation\Application::class, $app::getInstance());
 
@@ -274,7 +274,7 @@ class Template
      * @return void
      * @throws \ReflectionException
      */
-    public function attachComposers()
+    public function attachComposers(): void
     {
         if (empty($_SESSION['composers']) || $this->config->debug) {
             $customComposerClasses = collect(glob(APP_ROOT . '/custom/Views/Composers/*.php'))
@@ -312,7 +312,7 @@ class Template
      *
      * @return void
      */
-    public function setupDirectives()
+    public function setupDirectives(): void
     {
         $this->bladeCompiler->directive(
             'dispatchEvent',
@@ -350,7 +350,7 @@ class Template
      *
      * @return void
      */
-    public function setupGlobalVars()
+    public function setupGlobalVars(): void
     {
         $this->viewFactory->share([
             'frontController' => $this->frontcontroller,
@@ -397,10 +397,10 @@ class Template
      * getTemplatePath - Find template in custom and src directories
      *
      * @access public
-     * @param  string $namespace The namespace the template is for.
-     * @param  string $path      The path to the template.
-     * @return string|boolean Full template path or false if file does not exist
-     *@throws Exception If template not found.
+     * @param string $namespace The namespace the template is for.
+     * @param string $path The path to the template.
+     * @return string Full template path or false if file does not exist
+     * @throws Exception If template not found.
      */
     public function getTemplatePath(string $namespace, string $path): string
     {
@@ -458,8 +458,8 @@ class Template
 
         $layout = $this->confirmLayoutName($layout, $template);
 
-        $action = $this->frontcontroller::getActionName($template);
-        $module = $this->frontcontroller::getModuleName($template);
+        $action = Frontcontroller::getActionName($template);
+        $module = Frontcontroller::getModuleName($template);
 
         $loadFile = $this->getTemplatePath($module, $action);
 
@@ -501,7 +501,7 @@ class Template
      * @return boolean|string
      * @throws Exception
      */
-    protected function confirmLayoutName($layoutName, $template)
+    protected function confirmLayoutName($layoutName, $template): bool|string
     {
         $layout = htmlspecialchars($layoutName);
         $layout = self::dispatch_filter("layout", $layout);
@@ -519,7 +519,7 @@ class Template
      * @param  $jsonContent
      * @return void
      */
-    public function displayJson($jsonContent)
+    public function displayJson($jsonContent): void
     {
         header('Content-Type: application/json; charset=utf-8');
         if ($jsonContent !== false) {
@@ -535,8 +535,9 @@ class Template
      * @access public
      * @param  $template
      * @return void
+     * @throws Exception
      */
-    public function displayPartial($template)
+    public function displayPartial($template): void
     {
         $this->display($template, 'blank');
     }
@@ -581,7 +582,7 @@ class Template
      * @return void
      * @throws Exception
      */
-    public function displaySubmodule(string $alias)
+    public function displaySubmodule(string $alias): void
     {
         if (! str_contains($alias, '-')) {
             throw new Exception("Submodule alias must be in the format module-submodule");
@@ -601,7 +602,7 @@ class Template
      * @return string
      * @throws BindingResolutionException
      */
-    public function displayNotification()
+    public function displayNotification(): string
     {
         $notification = '';
         $note = $this->getNotification();
@@ -646,7 +647,7 @@ class Template
      * @return string
      * @throws BindingResolutionException
      */
-    public function displayInlineNotification()
+    public function displayInlineNotification(): string
     {
         $notification = '';
         $note = $this->getNotification();
@@ -792,10 +793,10 @@ class Template
      * getFormattedDateString - returns a language specific formatted date string. wraps language class method
      *
      * @access public
-     * @param  string $date
+     * @param string $date
      * @return string
      */
-    public function getFormattedDateString($date): string
+    public function getFormattedDateString(string $date): string
     {
         return $this->language->getFormattedDateString($date);
     }
@@ -807,7 +808,7 @@ class Template
      * @param string $date
      * @return string
      */
-    public function getFormattedTimeString($date): string
+    public function getFormattedTimeString(string $date): string
     {
         return $this->language->getFormattedTimeString($date);
     }
@@ -830,14 +831,14 @@ class Template
      * @see https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
      * @author Søren Løvborg <https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg>
      * @access public
-     * @param  string  $html
+     * @param string $html
      * @param integer $maxLength
-     * @param  string  $ending
+     * @param string $ending
      * @param boolean $exact
      * @param boolean $considerHtml
      * @return string
      */
-    public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false)
+    public function truncate(string $html, int $maxLength = 100, string $ending = '(...)', bool $exact = true, bool $considerHtml = false): string
     {
         $printedLength = 0;
         $position = 0;
@@ -917,7 +918,7 @@ class Template
      * @param string|null $text
      * @return string
      */
-    public function convertRelativePaths(?string $text)
+    public function convertRelativePaths(?string $text): ?string
     {
         if (is_null($text)) {
             return $text;
@@ -952,7 +953,7 @@ class Template
      * @access public
      * @return string
      */
-    public function getModulePicture()
+    public function getModulePicture(): string
     {
         $module = frontcontroller::getModuleName($this->template);
 
@@ -968,13 +969,13 @@ class Template
      * displayLink - display link
      *
      * @access public
-     * @param  string $module
-     * @param  string $name
-     * @param  array  $params
-     * @param  array  $attribute
+     * @param string $module
+     * @param string $name
+     * @param array|null $params
+     * @param array|null $attribute
      * @return string
      */
-    public function displayLink($module, $name, $params = null, $attribute = null)
+    public function displayLink(string $module, string $name, array $params = null, array $attribute = null): false|string
     {
 
         $mod = explode('.', $module);
@@ -1037,21 +1038,21 @@ class Template
 
     /**
      * @param string $hookName
-     * @param mixed  $payload
+     * @param mixed|array $payload
      */
-    public function dispatchTplEvent($hookName, $payload = [])
+    public function dispatchTplEvent(string $hookName, array $payload = []): void
     {
         $this->dispatchTplHook('event', $hookName, $payload);
     }
 
     /**
      * @param string $hookName
-     * @param mixed  $payload
-     * @param mixed  $available_params
+     * @param mixed|array $payload
+     * @param mixed|array $available_params
      *
      * @return mixed
      */
-    public function dispatchTplFilter($hookName, $payload = [], $available_params = [])
+    public function dispatchTplFilter(string $hookName, array $payload = [], array $available_params = []): mixed
     {
         return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
     }
@@ -1059,17 +1060,17 @@ class Template
     /**
      * @param string $type
      * @param string $hookName
-     * @param mixed  $payload
-     * @param mixed  $available_params
+     * @param mixed|array $payload
+     * @param mixed|array $available_params
      *
      * @return null|mixed
      */
-    private function dispatchTplHook($type, $hookName, $payload = [], $available_params = [])
+    private function dispatchTplHook(string $type, string $hookName, array $payload = [], array $available_params = []): mixed
     {
         if (
             !is_string($type) || !in_array($type, ['event', 'filter'])
         ) {
-            return;
+            return null;
         }
 
         if ($type == 'filter') {
@@ -1077,5 +1078,7 @@ class Template
         }
 
         self::dispatch_event($hookName, $payload, $this->hookContext);
+
+        return null;
     }
 }

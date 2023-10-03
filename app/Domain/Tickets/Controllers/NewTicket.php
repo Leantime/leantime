@@ -50,7 +50,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             CommentService $commentService,
             TimesheetService $timesheetService,
             UserService $userService
-        ) {
+        ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->projectService = $projectService;
@@ -71,7 +71,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function get()
+        public function get(): void
         {
             $ticket = app()->make(TicketModel::class, [
                 [
@@ -118,7 +118,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params)
+        public function post($params): void
         {
 
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {

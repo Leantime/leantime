@@ -55,7 +55,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params)
+        public function post($params): void
         {
 
             if (isset($_SESSION['userdata']) && $this->authService->use2FA()) {

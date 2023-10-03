@@ -78,8 +78,9 @@ class Api
      * TODO: Should accept userModel
      *
      * @access public
-     * @param  array $values basic user values
+     * @param array $values basic user values
      * @return boolean|array returns new user id on success, false on failure
+     * @throws Exception
      */
     public function createAPIKey(array $values): bool|array
     {
@@ -110,7 +111,7 @@ class Api
      * @access public
      * @return array|false
      */
-    public function getAPIKeys()
+    public function getAPIKeys(): false|array
     {
         $keys =  $this->userRepo->getAllBySource("api");
 
@@ -165,7 +166,7 @@ class Api
      * @param $data
      * @return void
      */
-    public function setError($code, $message, $data)
+    public function setError($code, $message, $data): void
     {
         $this->error = array(
             "code" => $code,
@@ -179,7 +180,7 @@ class Api
      * @param array|null $result
      * @return void
      */
-    public function jsonResponse(int $id, ?array $result)
+    public function jsonResponse(int $id, ?array $result): void
     {
 
         $jsonRPCArray = array(
