@@ -43,10 +43,12 @@ class Events
      * @access public
      *
      * @param string $eventName
-     * @param mixed  $payload
+     * @param mixed $payload
      * @param string $context
      *
      * @return void
+     * @throws BindingResolutionException
+     * @throws BindingResolutionException
      */
     public static function dispatch_event(
         string $eventName,
@@ -112,18 +114,19 @@ class Events
     }
 
 
-
     /**
      * Dispatches a filter to manipulate a variable somewhere
      *
      * @access public
      *
      * @param string $filtername
-     * @param mixed  $payload
-     * @param mixed  $available_params
-     * @param mixed  $context
+     * @param mixed $payload
+     * @param mixed $available_params
+     * @param mixed $context
      *
      * @return mixed
+     * @throws BindingResolutionException
+     * @throws BindingResolutionException
      */
     public static function dispatch_filter(
         string $filtername,

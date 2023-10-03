@@ -42,7 +42,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
         /**
          * @access private
-         * @var    object
+         * @var    DbCore|null
          */
         private ?DbCore $db;
 

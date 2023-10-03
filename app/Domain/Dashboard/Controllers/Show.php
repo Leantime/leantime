@@ -30,14 +30,16 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private ReactionService $reactionsService;
 
         /**
-         * @param ProjectService   $projectService
-         * @param TicketService    $ticketService
-         * @param UserService      $userService
+         * @param ProjectService $projectService
+         * @param TicketService $ticketService
+         * @param UserService $userService
          * @param TimesheetService $timesheetService
-         * @param CommentService   $commentService
-         * @param ReactionService  $reactionsService
-         * @param ReportService    $reportsService
+         * @param CommentService $commentService
+         * @param ReactionService $reactionsService
+         * @param ReportService $reportsService
          * @return void
+         * @throws BindingResolutionException
+         * @throws BindingResolutionException
          */
         public function init(
             ProjectService $projectService,

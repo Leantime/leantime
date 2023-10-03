@@ -189,8 +189,8 @@ namespace Leantime\Domain\Files\Repositories {
          */
         /**
          * @param string $module
-         * @param $moduleId
-         * @param int $userId
+         * @param null $moduleId
+         * @param int|null $userId
          * @return array|false
          */
         public function getFilesByModule(string $module = '', $moduleId = null, ?int $userId = 0): false|array

@@ -60,6 +60,11 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $allDates;
         }
 
+        /**
+         * @param $dateFrom
+         * @param $dateTo
+         * @return false|array
+         */
         public function getAll($dateFrom, $dateTo): false|array
         {
             return $this->getAllDates($dateFrom, $dateTo);

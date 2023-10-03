@@ -26,19 +26,19 @@ namespace Leantime\Domain\Auth\Services {
 
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    integer|null user id from DB
          */
         private ?int $userId = null;
 
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    integer|null user id from DB
          */
         private ?int $clientId = null;
 
         /**
          * @access private
-         * @var    string username from db
+         * @var    string|null username from db
          */
         private ?string $username = null;
 
@@ -56,19 +56,19 @@ namespace Leantime\Domain\Auth\Services {
 
         /**
          * @access private
-         * @var    string
+         * @var    string|null
          */
         private ?string $password = null;
 
         /**
          * @access private
-         * @var    string username (emailaddress)
+         * @var    string|null username (emailaddress)
          */
         private ?string $user = null;
 
         /**
          * @access private
-         * @var    string username (emailaddress)
+         * @var    string|null username (emailaddress)
          */
         private ?string $mail = null;
 
@@ -86,7 +86,7 @@ namespace Leantime\Domain\Auth\Services {
 
         /**
          * @access private
-         * @var    string
+         * @var    string|null
          */
         private ?string $session = null;
 
@@ -118,7 +118,7 @@ namespace Leantime\Domain\Auth\Services {
 
         /**
          * @access public
-         * @var    string
+         * @var    string|bool
          */
         public string|bool $resetInProgress = false;
 

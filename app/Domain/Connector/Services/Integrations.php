@@ -45,6 +45,8 @@ namespace Leantime\Domain\Connector\Services {
         /**
          * @param object|array $object
          * @return integer|false
+         * @throws \ReflectionException
+         * @throws \ReflectionException
          */
         public function create(object|array $object): int|false
         {

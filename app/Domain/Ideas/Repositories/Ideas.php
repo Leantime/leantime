@@ -13,13 +13,13 @@ namespace Leantime\Domain\Ideas\Repositories {
     {
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
         public ?object $result = null;
 
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
         public ?object $tickets = null;
 

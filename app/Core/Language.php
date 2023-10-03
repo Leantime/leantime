@@ -62,7 +62,7 @@ class Language
     public mixed $langlist;
 
     /**
-     * @var array $alert - debug value. Will highlight untranslated text
+     * @var array|bool $alert - debug value. Will highlight untranslated text
      * @static
      * @final
      */

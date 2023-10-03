@@ -32,7 +32,7 @@ class Application extends Container
     /**
      * Set the application as having been bootstrapped
      *
-     * @return void
+     * @return Application
      */
     public static function setHasBeenBootstrapped(): self
     {
