@@ -1,6 +1,6 @@
-<a href='{{ BASE_URL }}/projects/changeCurrentProject/{{ $project["id"] }}?redirect={{ $redirectUrl }}'
-    @if(strlen($project["name"]) > 25)
-        data-tippy-content='{{ $project["name"] }}'
+<a href='{{ BASE_URL }}/projects/changeCurrentProject/{{ $project["id"] }}'
+   @if(strlen($project["name"]) > 25)
+       data-tippy-content='{{ $project["name"] }}'
     @endif >
     <span class='projectAvatar'>
         @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
@@ -9,9 +9,11 @@
             <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  strtotime($project['modified'] ?? '0') }}' />
         @endif
     </span>
-    <span class='projectName {{ $project["clientName"] == '' ? 'tw-pt-sm' : '' }}'>
+    <span class='projectName'>
         @if($project["clientName"] != '')
             <small>{{ $project["clientName"] }}</small><br />
+        @else
+            <small>{{ __('projectType.'.$project["type"] ?? 'project') }}</small><br />
         @endif
 
         {{ $project["name"] }}

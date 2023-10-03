@@ -86,19 +86,27 @@ class Fileupload
         $this->path = $this->config->userFilePath;
 
         if ($this->config->useS3 == true) {
+
+            $s3Config = [
+                'version' => 'latest',
+                'region' => $this->config->s3Region,
+                'credentials' => [
+                    'key' => $this->config->s3Key,
+                    'secret' => $this->config->s3Secret,
+                ],
+            ];
+
+            if($this->config->s3EndPoint != "" && $this->config->s3EndPoint !== false && $this->config->s3EndPoint != null){
+                $s3Config['endpoint'] = $this->config->s3EndPoint;
+            }
+
+            if($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === "true") {
+                $s3Config['use_path_style_endpoint'] = true;
+            }
+
+
             // Instantiate the S3 client with your AWS credentials
-            $this->s3Client = new S3Client(
-                [
-                    'version' => 'latest',
-                    'region' => $this->config->s3Region,
-                    'endpoint' => $this->config->s3EndPoint == "" ? null : $this->config->s3EndPoint,
-                    'use_path_style_endpoint' => !($this->config->s3UsePathStyleEndpoint == "false"),
-                    'credentials' => [
-                        'key' => $this->config->s3Key,
-                        'secret' => $this->config->s3Secret,
-                    ],
-                ]
-            );
+            $this->s3Client = new S3Client($s3Config);
         }
     }
 
@@ -129,15 +137,19 @@ class Fileupload
             case 'P':
                 $iValue *= 1024;
             // Fallthrough intended
+            // no break
             case 'T':
                 $iValue *= 1024;
             // Fallthrough intended
+            // no break
             case 'G':
                 $iValue *= 1024;
             // Fallthrough intended
+            // no break
             case 'M':
                 $iValue *= 1024;
             // Fallthrough intended
+            // no break
             case 'K':
                 $iValue *= 1024;
                 break;
@@ -349,25 +361,13 @@ class Fileupload
 
         if ($this->config->useS3 == true && $fullPath == '') {
 
-            $s3Client = new S3Client([
-                'version'     => 'latest',
-                'region'      => $this->config->s3Region,
-                'endpoint' => $this->config->s3EndPoint,
-                'use_path_style_endpoint' => $this->config->s3UsePathStyleEndpoint,
-                'credentials' => [
-                    'key'    => $this->config->s3Key,
-                    'secret' => $this->config->s3Secret,
-                ],
-            ]);
-
             try {
                 // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
                 $fileName = implode('/', array_filter(array($this->config->s3FolderName, $imageName)));
-                $result = $s3Client->getObject([
+                $result = $this->s3Client->getObject([
                     'Bucket' => $this->config->s3Bucket,
-                    'Key' => $fileName,
-                    'Body'   => 'this is the body!',
+                    'Key' => $fileName
                 ]);
 
                 header('Content-Type: ' . $result['ContentType']);
@@ -379,6 +379,7 @@ class Fileupload
                 $body = $result->get('Body');
 
                 echo $body->getContents();
+
             } catch (Aws\S3\Exception\S3Exception $e) {
                 echo $e->getMessage() . "\n";
             }

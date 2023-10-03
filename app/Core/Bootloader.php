@@ -338,11 +338,12 @@ class Bootloader
         $dbVersion = $this->app->make(SettingRepository::class)->getSetting('db-version');
         $settingsDbVersion = $this->app->make(AppSettings::class)->dbVersion;
 
-        if ($dbVersion == $settingsDbVersion) {
-            $_SESSION['isUpdated'] = true;
+        $_SESSION['isUpdated'] = $dbVersion == $settingsDbVersion;
+
+        self::dispatch_event('system_update', ['dbVersion' => $dbVersion, 'settingsDbVersion' => $settingsDbVersion]);
+
+        if ($_SESSION['isUpdated']) {
             return true;
-        } else {
-            $_SESSION['isUpdated'] = false;
         }
 
         if (! isset($_GET['act']) || ($_GET['act'] !== "install" && $_GET['act'] !== "install.update")) {
@@ -373,7 +374,6 @@ class Bootloader
 
         // handle API request
         if ($incomingRequest instanceof ApiRequest) {
-
             self::dispatch_event("before_api_request", ['application' => $this]);
 
             $apiKey = $incomingRequest->getAPIKey();
@@ -511,11 +511,11 @@ class Bootloader
             getallheaders()
         );
 
-        if(isset($headers['Hx-Request'])) {
+        if (isset($headers['Hx-Request'])) {
             $incomingRequest = $this->app->instance(IncomingRequest::class, HtmxRequest::createFromGlobals());
-        }else if(isset($headers['X-Api-Key'])) {
+        } elseif (isset($headers['X-Api-Key'])) {
             $incomingRequest = $this->app->instance(IncomingRequest::class, ApiRequest::createFromGlobals());
-        }else{
+        } else {
             $incomingRequest = $this->app->instance(IncomingRequest::class, IncomingRequest::createFromGlobals());
         }
 

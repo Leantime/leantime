@@ -352,7 +352,7 @@ h4 {
 
 html,
 body.loginpage {
-   height:100%;
+    height:100%;
     background:var(--secondary-background) !important;
 }
 
@@ -531,7 +531,7 @@ a .label.feature-label:after {
     margin-top:-4px;
 }
 
-    /* Time */
+/* Time */
 #headClock {
     color: #555;
     font-size: var(--base-font-size);
@@ -940,9 +940,9 @@ a .label.feature-label:after {
 .header {
     clear: both;
     height: 50px;
-	position: fixed;
-	z-index: 10;
-	width: calc(100% - 240px);
+    position: fixed;
+    z-index: 10;
+    width: calc(100% - 240px);
     margin-left:240px;
     box-shadow: var(--large-shadow);
     background:var(--header-bg-color);
@@ -999,7 +999,7 @@ a .label.feature-label:after {
 .rightpanel {
     margin-left: 240px;
 
-	padding-top: 50px;
+    padding-top: 50px;
 }
 
 .rightpanel:after {
@@ -1062,7 +1062,11 @@ a .label.feature-label:after {
     font-size: var(--font-size-xl);
     color: var(--main-action-color);
     line-height:60px;
+}
 
+.pagetitle h1 a {
+    color: var(--main-action-color);
+    text-decoration:underline;
 }
 
 .pagetitle h5 {
@@ -4159,6 +4163,10 @@ h3.todaysDate {
     border-radius:var(--element-radius);
 }
 
+.minCalendar .fc .fc-multimonth-daygrid {
+    background:var(--secondary-background);
+}
+
 .profileImage {
 
     overflow:hidden;
@@ -4250,5 +4258,3 @@ h3.todaysDate {
 .htmx-request.htmx-loaded-content {
     display: none;
 }
-
-

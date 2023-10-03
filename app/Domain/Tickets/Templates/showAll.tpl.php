@@ -211,7 +211,7 @@ foreach ($__data as $var => $val) {
                                     </ul>
                                 </div>
                             </td>
-                            <td  data-order="<?=$row['storypoints'] ? $efforts[$row['storypoints']] : $tpl->__("label.story_points_unkown"); ?>">
+                            <td  data-order="<?=$row['storypoints'] ? $efforts[''.$row['storypoints'].''] : $tpl->__("label.story_points_unkown"); ?>">
                                 <div class="dropdown ticketDropdown effortDropdown show">
                                     <a class="dropdown-toggle label-default effort  f-left" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php

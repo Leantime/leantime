@@ -82,7 +82,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     'relates' => '',
                     'startValue' => '',
                     'currentValue' => '',
-                    'canvasId' => (int)$_SESSION['currentGOALCanvas'],
+                    'canvasId' => (int)$_GET["canvasId"] ?? (int)$_SESSION['currentGOALCanvas'],
                     'endValue' => '',
                     'kpi' => '',
                     'startDate' => '',
@@ -153,7 +153,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
 
             if (isset($params['changeItem'])) {
-                $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                $currentCanvasId = $params["canvasId"] ?? (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
 
                 if (isset($params['itemId']) && !empty($params['itemId'])) {
                     if (isset($params['title']) && !empty($params['title'])) {
@@ -168,7 +168,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'currentValue' => $params['currentValue'],
                             'endValue' => $params['endValue'],
                             'itemId' => $params['itemId'],
-                            'canvasId' => $currentCanvasId,
+                            'canvasId' => $params['canvasId'],
                             'parent' => $params['parent'] ?? null,
                             "id" => $params['itemId'],
                             'kpi' => $params['kpi'] ?? '',
@@ -244,7 +244,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'startValue' => $params['startValue'],
                             'currentValue' => $params['currentValue'],
                             'endValue' => $params['endValue'],
-                            'canvasId' => $currentCanvasId,
+                            'canvasId' => $params['canvasId'],
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
                             'startDate' => $this->language->getISODateString($params['startDate']),

@@ -1,5 +1,6 @@
 @props([
-    'redirect' => 'dashboard/show'
+    'redirect' => 'dashboard/show',
+    'currentProject'
 ])
 
 <div class="dropdown-menu projectselector" id="mainProjectSelector">
@@ -19,11 +20,11 @@
             @include('menu::partials.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
             <ul class="selectorList projectList htmx-loaded-content">
                 @if($projectSelectFilter["groupBy"] == "client")
-                    @include('menu::partials.clientGroup', ['projects' => $allAssignedProjects, 'parent' => 0, 'level'=> 0, "prefix" => "myClientProjects"])
+                    @include('menu::partials.clientGroup', ['projects' => $allAssignedProjects, 'parent' => 0, 'level'=> 0, "prefix" => "myClientProjects", "currentProject"=>$currentProject])
                 @elseif($projectSelectFilter["groupBy"] == "structure")
-                    @include('menu::partials.projectGroup', ['projects' => $projectHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "myProjects"])
+                    @include('menu::partials.projectGroup', ['projects' => $projectHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "myProjects", "currentProject"=>$currentProject])
                 @else
-                    @include('menu::partials.noGroup', ['projects' => $allAssignedProjects])
+                    @include('menu::partials.noGroup', ['projects' => $allAssignedProjects, "currentProject"=>$currentProject])
                 @endif
             </ul>
         </div>
@@ -31,11 +32,11 @@
             @include('menu::partials.projectListFilter', ['clients' => $clients, 'projectSelectFilter' => $projectSelectFilter])
             <ul class="selectorList projectList htmx-loaded-content">
                 @if($projectSelectFilter["groupBy"] == "client")
-                    @include('menu::partials.clientGroup', ['projects' => $allAvailableProjects, 'parent' => 0, 'level'=> 0, "prefix" => "allClientProjects"])
+                    @include('menu::partials.clientGroup', ['projects' => $allAvailableProjects, 'parent' => 0, 'level'=> 0, "prefix" => "allClientProjects", "currentProject"=>$currentProject])
                 @elseif($projectSelectFilter["groupBy"] == "structure")
-                    @include('menu::partials.projectGroup', ['projects' => $allAvailableProjectsHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "allProjects"])
+                    @include('menu::partials.projectGroup', ['projects' => $allAvailableProjectsHierarchy, 'parent' => 0, 'level'=> 0, "prefix" => "allProjects", "currentProject"=>$currentProject])
                 @else
-                    @include('menu::partials.noGroup', ['projects' => $allAvailableProjects])
+                    @include('menu::partials.noGroup', ['projects' => $allAvailableProjects, "currentProject"=>$currentProject])
                 @endif
             </ul>
         </div>
@@ -81,5 +82,3 @@
         leantime.menuController.initProjectSelector();
     });
 </script>
-
-

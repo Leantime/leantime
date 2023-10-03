@@ -384,7 +384,7 @@ foreach ($__data as $var => $val) {
 <script>
 
     jQuery(document).ready(function(){
-        jQuery("select").chosen();
+        jQuery(".ticketTabs select").chosen();
 
         //Set accordion states
         //All accordions start open

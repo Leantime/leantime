@@ -62,6 +62,7 @@ class ProjectSelector extends HtmxController
             $recentProjects  = $projectVars['recentProjects'];
             $favoriteProjects = $projectVars['favoriteProjects'];
             $clients = $projectVars['clients'];
+            $currentProject = $projectVars['currentProject'];
         }
 
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
@@ -80,7 +81,7 @@ class ProjectSelector extends HtmxController
         $this->tpl->assign('allAvailableProjectsHierarchy', $allAvailableProjectsHierarchy);
         $this->tpl->assign('projectHierarchy', $allAssignedprojectsHierarchy);
         $this->tpl->assign('recentProjects', $recentProjects);
-        $this->tpl->assign('currentProject', $_SESSION['currentProject'] ?? null);
+        $this->tpl->assign('currentProject', $currentProject);
         $this->tpl->assign('menuStructure', $this->menuRepo->getMenuStructure($menuType) ?? []);
         $this->tpl->assign('settingsLink', [
             'label' => __('menu.project_settings'),

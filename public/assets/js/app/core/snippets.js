@@ -25,7 +25,7 @@ leantime.snippets = (function () {
 
     var accordionToggle = function (id) {
 
-        var currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
+        var currentLink = jQuery("#accordion_toggle_"+id).find("i.fa").first();
         var submenuName = '#accordion_'+id;
         var submenuState = "closed";
 

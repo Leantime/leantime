@@ -116,10 +116,10 @@
                                                     aria-haspopup="true"
                                                     aria-expanded="false"
                                                 ><span class="text">
-                                                    {{ $row['storypoints'] != '' && $row['storypoints'] > 0
-                                                        ? $efforts[$row['storypoints']]
-                                                        : __('label.story_points_unkown')
-                                                    }}
+                                                     {{ $row['storypoints'] != '' && $row['storypoints'] > 0
+                                                            ? $efforts[''.$row['storypoints'].'']
+                                                            : __('label.story_points_unkown')
+                                                        }}
                                                 </span>&nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i></a>
 
                                                 <ul class="dropdown-menu" aria-labelledby="effortDropdownMenuLink{{ $row['id'] }}">

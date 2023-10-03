@@ -138,7 +138,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->assign('priorities', $this->ticketsService->getPriorityLabels());
             $this->tpl->assign("types", $this->ticketsService->getTicketTypes());
             $this->tpl->assign("statusLabels", $this->ticketsService->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]));
-            $allProjectMilestones = $this->ticketsService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+
+            $allProjectMilestones = $this->ticketsService->getAllMilestonesByUserProjects($_SESSION["userdata"]["id"]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
 
