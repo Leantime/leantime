@@ -120,5 +120,12 @@ else
 endif
 	php vendor/bin/codecept run Acceptance --steps
 
+codesniffer:
+	./vendor/squizlabs/php_codesniffer/bin/phpcs app
+
+codesniffer-fix:
+	./vendor/squizlabs/php_codesniffer/bin/phpcfb app
+
+
 .PHONY: install-deps build package clean run-dev
 
