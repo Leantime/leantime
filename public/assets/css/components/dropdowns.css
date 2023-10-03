@@ -19,6 +19,11 @@
     margin: 0 5px;
     padding: 5px 10px;
 }
+.pagetitle .dropdown-menu > li > a {
+    color:var(--primary-font-color);
+    text-decoration:none;
+}
+
 
 .dropdown-menu>.active>a,
 .dropdown-menu>.active>a:hover,
