@@ -8,7 +8,9 @@ if (! function_exists('app')) {
      * Returns the application instance.
      *
      * @param string $abstract
-     * @return mixed|\Leantime\Core\Application
+     * @param array $parameters
+     * @return mixed|Application
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function app(string $abstract = '', array $parameters = []): mixed
     {
@@ -50,6 +52,8 @@ if (! function_exists('__')) {
      *
      * @param string $index
      * @return string
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function __(string $index): string
     {
@@ -61,9 +65,8 @@ if (! function_exists('view')) {
     /**
      * Get the view factory instance.
      *
-     * @param string $view
-     * @param array  $data
      * @return \Illuminate\View\Factory
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     function view(): \Illuminate\View\Factory
     {
