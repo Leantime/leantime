@@ -11,10 +11,6 @@ namespace Leantime\Domain\Reports\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Reports
     {
         private DbCore $db;

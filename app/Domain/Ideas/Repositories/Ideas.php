@@ -9,10 +9,6 @@ namespace Leantime\Domain\Ideas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Ideas
     {
         /**

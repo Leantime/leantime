@@ -4,11 +4,8 @@ namespace Leantime\Domain\Calendar\Services {
 
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-
-    /**
-     *
-     */
 
     /**
      *

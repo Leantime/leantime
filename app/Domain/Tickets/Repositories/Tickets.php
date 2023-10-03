@@ -16,14 +16,6 @@ namespace Leantime\Domain\Tickets\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
-
-    /**
-     *
-     */
     class Tickets
     {
         use EventhelperCore;
@@ -145,9 +137,9 @@ namespace Leantime\Domain\Tickets\Repositories {
 
         /**
          * @access numPages
-         * @var    unknown_type
+         * @var  string
          */
-        public unknown_type|string $numPages = '';
+        public string $numPages = '';
 
         /**
          * @access public
@@ -325,7 +317,7 @@ namespace Leantime\Domain\Tickets\Repositories {
          *
          * @access public
          * @param int $limit
-         * @return array
+         * @return false|array
          * @throws BindingResolutionException
          */
         public function getAll(int $limit = 9999): false|array
@@ -1578,7 +1570,7 @@ namespace Leantime\Domain\Tickets\Repositories {
          * @param  array $values
          * @return boolean
          */
-        public function addTicket(array $values): bool
+        public function addTicket(array $values): bool|int
         {
 
 
@@ -1665,7 +1657,9 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             $stmn->closeCursor();
 
-            return $this->db->database->lastInsertId();
+            if($this->db->database->lastInsertId()) {
+                return intval($this->db->database->lastInsertId());
+            }
         }
 
 

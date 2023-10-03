@@ -283,11 +283,11 @@ abstract class Repository
      * get - gets a record from the database
      *
      * @param integer $id - the id of the record to get
-     * @return false
+     * @return mixed
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
-    public function get(int $id): false
+    public function get(int $id): mixed
     {
         if ($this->entity == '' || $this->model == '') {
             error_log("Get not implemented for this entity");
@@ -316,15 +316,6 @@ abstract class Repository
          return $call->fetch();
     }
 
-    /**
-     * getAll - gets all records from the database
-     *
-     * @param integer $id - the id of the record to get
-     * @todo - implement
-     */
-    public function getAll(int $id): void
-    {
-    }
 
     /**
      * getFieldAttribute - gets the field attribute for a given property

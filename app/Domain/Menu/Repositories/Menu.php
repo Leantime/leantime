@@ -17,10 +17,6 @@ namespace Leantime\Domain\Menu\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Menu
     {
         use Eventhelpers;

@@ -13,10 +13,6 @@ namespace Leantime\Domain\Connector\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Integration extends Controller
     {
         private Providers $providerService;

@@ -8,10 +8,6 @@ namespace Leantime\Domain\Sprints\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Sprints
     {
         private DbCore $db;

@@ -16,10 +16,6 @@ namespace Leantime\Domain\Projects\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class NewProject extends Controller
     {
         private ProjectRepository $projectRepo;

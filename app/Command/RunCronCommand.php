@@ -50,7 +50,7 @@ class RunCronCommand extends Command
                 $io->error("Cron not executed. Not enough time elapsed");
                 return Command::FAILURE;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $io->error($ex);
             return Command::FAILURE;
         }

@@ -10,10 +10,6 @@ namespace Leantime\Domain\Sprints\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelSprint extends Controller
     {
         private SprintRepository $sprintRepo;

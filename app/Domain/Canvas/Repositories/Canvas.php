@@ -13,10 +13,6 @@ namespace Leantime\Domain\Canvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Canvas
     {
         /**
@@ -1250,9 +1246,9 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @access public
          * @param integer $projectId Project od
          * @param  array   $boards    List of board types to pull
-         * @return boolean Status of merge
+         * @return array|bool list of boards or false
          */
-        public function getCanvasProgressCount(int $projectId, array $boards): bool
+        public function getCanvasProgressCount(int $projectId, array $boards): array|bool
         {
 
             $sql = "SELECT

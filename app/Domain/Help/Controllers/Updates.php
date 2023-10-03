@@ -7,10 +7,6 @@ namespace Leantime\Domain\Help\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Updates extends Controller
     {
         /**

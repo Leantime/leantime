@@ -11,10 +11,6 @@ namespace Leantime\Domain\Cpcanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Cpcanvas extends Canvas
     {
         /**

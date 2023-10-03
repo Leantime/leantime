@@ -66,7 +66,7 @@ class SaveSettingCommand extends Command
                 $io->error("Failed to save setting");
                 return Command::FAILURE;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $io->error($ex);
             return Command::FAILURE;
         }

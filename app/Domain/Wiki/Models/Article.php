@@ -5,10 +5,6 @@ namespace Leantime\Domain\Wiki\Models {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Article
     {
         public $id;

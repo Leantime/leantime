@@ -11,10 +11,6 @@ namespace Leantime\Domain\Obmcanvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Pdf extends PdfController
     {
         protected const CANVAS_NAME = 'obm';

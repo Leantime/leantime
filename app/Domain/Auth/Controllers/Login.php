@@ -10,10 +10,6 @@ namespace Leantime\Domain\Auth\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Login extends Controller
     {
         private AuthService $authService;

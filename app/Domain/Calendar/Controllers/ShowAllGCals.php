@@ -15,10 +15,6 @@ namespace Leantime\Domain\Calendar\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowAllGCals extends Controller
     {
         private CalendarRepository $calendarRepo;

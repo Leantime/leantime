@@ -17,10 +17,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Home extends Controller
     {
         private ProjectService $projectsService;

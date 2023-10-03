@@ -5,10 +5,6 @@ namespace Leantime\Domain\Projects\Models {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Project
     {
         public int $id;

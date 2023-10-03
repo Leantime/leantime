@@ -10,10 +10,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Calendar extends Controller
     {
         private CalendarService $calendarSvc;

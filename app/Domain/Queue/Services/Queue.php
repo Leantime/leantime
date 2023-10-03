@@ -12,10 +12,6 @@ namespace Leantime\Domain\Queue\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Queue
     {
         private QueueRepository $queue;

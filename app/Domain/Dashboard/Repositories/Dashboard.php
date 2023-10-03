@@ -7,10 +7,6 @@ namespace Leantime\Domain\Dashboard\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Dashboard
     {
         /**

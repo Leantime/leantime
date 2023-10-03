@@ -14,10 +14,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowMy extends Controller
     {
         private TimesheetRepository $timesheetsRepo;
@@ -62,7 +58,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
                         $dateFrom = $this->language->getISODateString($_POST['startDate']);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
                     }
                 }
@@ -72,7 +68,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
                         $dateFrom = $this->language->getISODateString($_POST['startDate']);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
                     }
                 }

@@ -13,10 +13,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class MoveTicket extends Controller
     {
         private TicketService $ticketService;

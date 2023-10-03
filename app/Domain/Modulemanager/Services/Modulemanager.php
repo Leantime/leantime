@@ -10,10 +10,6 @@ namespace Leantime\Domain\Modulemanager\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Modulemanager
     {
         private static array $modules = array(

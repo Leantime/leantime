@@ -15,10 +15,6 @@ namespace Leantime\Domain\Users\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditOwn extends Controller
     {
         protected LanguageCore $language;

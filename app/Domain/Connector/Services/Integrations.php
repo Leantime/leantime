@@ -9,10 +9,6 @@ namespace Leantime\Domain\Connector\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Integrations implements Service
     {
         private IntegrationsRepo $integrationRepo;
@@ -43,6 +39,7 @@ namespace Leantime\Domain\Connector\Services {
         public function update(object|array $object): bool
         {
             // TODO: Implement update() method.
+            return false;
         }
 
         /**
@@ -61,6 +58,7 @@ namespace Leantime\Domain\Connector\Services {
         public function delete(int $id): bool
         {
             // TODO: Implement delete() method.
+            return false;
         }
 
         /**
@@ -70,6 +68,7 @@ namespace Leantime\Domain\Connector\Services {
         public function getAll(array $searchparams = null): array|false
         {
             // TODO: Implement getAll() method.
+            return false;
         }
 
         /**

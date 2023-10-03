@@ -11,10 +11,6 @@ namespace Leantime\Domain\Sqcanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Sqcanvas extends Canvas
     {
         /**

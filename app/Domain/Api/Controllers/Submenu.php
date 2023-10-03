@@ -12,10 +12,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Submenu extends Controller
     {
         private MenuRepository $menu;

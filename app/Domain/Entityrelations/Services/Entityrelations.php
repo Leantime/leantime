@@ -7,10 +7,6 @@ namespace Leantime\Domain\Entityrelations\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Entityrelations
     {
         private EntityrelationRepository $entityRelationshipsRepo;

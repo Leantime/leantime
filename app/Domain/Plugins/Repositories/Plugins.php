@@ -8,10 +8,6 @@ namespace Leantime\Domain\Plugins\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Plugins
     {
         private DbCore $db;
@@ -34,7 +30,7 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @param true $enabledOnly
          * @return array|false
          */
-        public function getAllPlugins(true $enabledOnly = true): false|array
+        public function getAllPlugins(bool $enabledOnly = true): false|array
         {
 
             $query = "SELECT

@@ -12,10 +12,6 @@ namespace Leantime\Domain\TwoFA\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Edit extends Controller
     {
         private UserRepository $userRepo;
@@ -112,10 +108,6 @@ namespace Leantime\Domain\TwoFA\Controllers {
     }
 
     // TODO: lets find a place for this
-
-    /**
-     *
-     */
 
     /**
      *

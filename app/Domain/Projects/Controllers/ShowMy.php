@@ -12,10 +12,6 @@ namespace Leantime\Domain\Projects\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowMy extends Controller
     {
         private ProjectService $projectService;

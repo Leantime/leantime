@@ -6,8 +6,7 @@ use Leantime\Core\Frontcontroller;
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-/** @var Leantime\Auth\Services\Auth $login */
-/** @var Leantime\Core\Language $language */
+
 $module = Frontcontroller::getModuleName('');
 $action = Frontcontroller::getActionName('');
 $maxSize = Fileupload::getMaximumFileUploadSize();

@@ -11,10 +11,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelMilestone extends Controller
     {
         private TicketService $ticketService;

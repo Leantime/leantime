@@ -12,10 +12,6 @@ namespace Leantime\Domain\Pageparts\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Header extends Controller
     {
         private Setting $settingsRepo;

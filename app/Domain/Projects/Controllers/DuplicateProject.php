@@ -13,10 +13,6 @@ namespace Leantime\Domain\Projects\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DuplicateProject extends Controller
     {
         /**

@@ -2,8 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-/** @var Leantime\Auth\Services\Auth $login */
-/** @var Leantime\Core\Language $language */
+
 ?>
 
 

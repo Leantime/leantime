@@ -11,10 +11,6 @@ namespace Leantime\Domain\Ideas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class AdvancedBoards extends Controller
     {
         /**

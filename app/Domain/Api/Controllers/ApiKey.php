@@ -12,10 +12,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ApiKey extends Controller
     {
         private ProjectRepository $projectsRepo;

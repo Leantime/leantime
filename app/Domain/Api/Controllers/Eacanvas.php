@@ -9,11 +9,7 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
-    class Eacanvas extends api\canvas
+    class Eacanvas extends Canvas
     {
         protected const CANVAS_NAME = 'ea';
     }

@@ -14,10 +14,6 @@ namespace Leantime\Domain\Help\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class FirstLogin extends Controller
     {
         /**

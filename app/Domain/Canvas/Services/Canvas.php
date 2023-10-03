@@ -11,10 +11,6 @@ namespace Leantime\Domain\Canvas\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Canvas
     {
         /**

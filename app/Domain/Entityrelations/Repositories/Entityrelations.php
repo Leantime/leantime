@@ -9,10 +9,6 @@ namespace Leantime\Domain\Entityrelations\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Entityrelations
     {
         private DbCore $db;

@@ -9,10 +9,6 @@ namespace Leantime\Domain\Install\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Index extends Controller
     {
         private InstallRepository $installRepo;

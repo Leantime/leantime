@@ -8,10 +8,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Timer extends Controller
     {
         private TimesheetService $timesheetService;

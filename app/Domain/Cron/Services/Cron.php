@@ -11,10 +11,6 @@ namespace Leantime\Domain\Cron\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Cron
     {
         private Audit $AuditRepo;

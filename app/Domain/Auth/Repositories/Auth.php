@@ -10,10 +10,6 @@ namespace Leantime\Domain\Auth\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Auth
     {
         /**

@@ -8,10 +8,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Setting extends Controller
     {
         private SettingService $settingService;

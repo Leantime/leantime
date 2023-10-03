@@ -12,10 +12,6 @@ namespace Leantime\Domain\Ideas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class IdeaDialog extends Controller
     {
         private IdeaRepository $ideaRepo;

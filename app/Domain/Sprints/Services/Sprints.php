@@ -15,10 +15,6 @@ namespace Leantime\Domain\Sprints\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Sprints
     {
         private TemplateCore $tpl;

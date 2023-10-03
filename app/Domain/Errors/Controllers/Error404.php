@@ -8,10 +8,6 @@ namespace Leantime\Domain\Errors\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Error404 extends Controller
     {
         /**

@@ -18,10 +18,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditCanvasItem extends \Leantime\Domain\Canvas\Controllers\EditCanvasItem
     {
         protected const CANVAS_NAME = 'goal';

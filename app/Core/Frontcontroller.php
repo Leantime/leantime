@@ -71,7 +71,7 @@ class Frontcontroller
         }
 
         //execute action
-        self::executeAction(self::$fullAction, array(), $httpResponseCode);
+        self::executeAction(self::$fullAction, array());
     }
 
     /**

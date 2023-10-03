@@ -3,18 +3,14 @@
 namespace Leantime\Domain\Wiki\Repositories {
 
     use Leantime\Core\Db as DbCore;
-    use leantime\domain\repositories\canvas;
+    use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Wiki\Models\Article;
     use PDO;
 
     /**
      *
      */
-
-    /**
-     *
-     */
-    class Wiki extends \Leantime\Domain\Canvas\Repositories\Canvas
+    class Wiki extends Canvas
     {
         /**
          * Constant that must be redefined

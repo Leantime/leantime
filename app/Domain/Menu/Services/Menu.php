@@ -20,14 +20,6 @@ namespace Leantime\Domain\Menu\Services;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Users\Services\Users;
 
-    use function Leantime\Domain\Tickets\Services\app;
-    use function Leantime\Domain\Tickets\Services\array_sort;
-
-    use const Leantime\Domain\Tickets\Services\BASE_URL;
-
-    /**
-     *
-     */
 
     /**
      *

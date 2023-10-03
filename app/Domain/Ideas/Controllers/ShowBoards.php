@@ -13,10 +13,6 @@ namespace Leantime\Domain\Ideas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowBoards extends Controller
     {
         private IdeaRepository $ideaRepo;

@@ -10,10 +10,6 @@ namespace Leantime\Domain\Wiki\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class WikiModal extends Controller
     {
         private WikiService $wikiService;

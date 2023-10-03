@@ -11,10 +11,6 @@ namespace Leantime\Domain\Sbcanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Sbcanvas extends Canvas
     {
         /**

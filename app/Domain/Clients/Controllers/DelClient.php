@@ -15,10 +15,6 @@ namespace Leantime\Domain\Clients\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelClient extends Controller
     {
         private ClientRepository $clientRepo;

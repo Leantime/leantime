@@ -179,7 +179,7 @@ class Environment implements ArrayAccess, ConfigContract
         // we need to check to see if we need to convert the found data
         return match ($dataType) {
             "string" => $found,
-            "boolean" => $found == "true" ? true : false,
+            "boolean" => $found == "true",
             "number" => intval($found),
             default => $found,
         };
@@ -241,7 +241,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function has($key): bool
     {
-        return Arr::has($_SESSION['mainconfig'] ?? [], $key) ?: Arr::has($this->config, $key);
+        return Arr::has($_SESSION['mainconfig'] ?? [], $key) || Arr::has($this->config, $key);
     }
 
     /**

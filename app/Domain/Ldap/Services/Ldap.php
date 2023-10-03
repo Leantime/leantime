@@ -163,18 +163,14 @@ class Ldap
                 }
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN . "@" . $this->ldapDomain, $passwordBind);
-                if ($bind) {
-                    return true;
-                }
-
-            //OL requires distinguished name login
+                //OL requires distinguished name login
             } else {
                 $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
-                if ($bind) {
-                    return true;
-                }
+            }
+            if ($bind) {
+                return true;
             }
 
             if ($this->config->debug == 1) {
@@ -184,11 +180,8 @@ class Ldap
                     error_log($err);
                 }
             }
-
-            return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**

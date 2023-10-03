@@ -9,10 +9,6 @@ namespace Leantime\Domain\TwoFA\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Verify extends Controller
     {
         private AuthService $authService;

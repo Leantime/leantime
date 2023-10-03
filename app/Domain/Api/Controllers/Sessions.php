@@ -9,10 +9,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Sessions extends Controller
     {
         private UserService $usersService;

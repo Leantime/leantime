@@ -7,10 +7,6 @@ namespace Leantime\Domain\Auth\Models {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Roles
     {
         use Eventhelpers;

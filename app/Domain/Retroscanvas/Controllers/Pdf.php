@@ -11,10 +11,6 @@ namespace Leantime\Domain\Retroscanvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Pdf extends PdfController
     {
         protected const CANVAS_NAME = 'retros';

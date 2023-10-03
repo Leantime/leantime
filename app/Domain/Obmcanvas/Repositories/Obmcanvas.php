@@ -11,10 +11,6 @@ namespace Leantime\Domain\Obmcanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Obmcanvas extends Canvas
     {
         /**

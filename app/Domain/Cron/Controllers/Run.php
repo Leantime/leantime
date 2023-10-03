@@ -9,10 +9,6 @@ namespace Leantime\Domain\Cron\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Run extends Controller
     {
         private Cron $cronSvc;

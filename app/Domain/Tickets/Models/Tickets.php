@@ -5,10 +5,6 @@ namespace Leantime\Domain\Tickets\Models {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Tickets
     {
         public mixed $id;

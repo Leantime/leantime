@@ -9,10 +9,6 @@ namespace Leantime\Domain\Connector\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Integrations extends Repository
     {
         public function __construct()

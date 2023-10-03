@@ -10,10 +10,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelTime extends Controller
     {
         private TimesheetRepository $timesheetsRepo;

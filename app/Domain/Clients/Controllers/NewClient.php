@@ -16,10 +16,6 @@ namespace Leantime\Domain\Clients\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class NewClient extends Controller
     {
         private ClientRepository $clientRepo;

@@ -15,10 +15,6 @@ namespace Leantime\Domain\Calendar\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Ical extends Controller
     {
         private CalendarRepository $calendarRepo;

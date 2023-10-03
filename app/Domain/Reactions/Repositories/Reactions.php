@@ -8,10 +8,6 @@ namespace Leantime\Domain\Reactions\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Reactions
     {
         /**

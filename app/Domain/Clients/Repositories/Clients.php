@@ -13,10 +13,6 @@ namespace Leantime\Domain\Clients\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Clients
     {
         /**

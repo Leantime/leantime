@@ -9,10 +9,6 @@ namespace Leantime\Domain\Setting\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Setting
     {
         private DbCore $db;

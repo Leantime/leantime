@@ -11,10 +11,6 @@ namespace Leantime\Domain\Dbmcanvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Pdf extends CanvasPdf
     {
         protected const CANVAS_NAME = 'dbm';

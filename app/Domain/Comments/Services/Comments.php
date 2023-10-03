@@ -8,9 +8,6 @@ namespace Leantime\Domain\Comments\Services {
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
-    /**
-     *
-     */
 
     /**
      *
@@ -50,7 +47,7 @@ namespace Leantime\Domain\Comments\Services {
          */
         public function getComments($module, $entityId, int $commentOrder = 0): false|array
         {
-            return $this->commentRepository->getComments($module, $entityId, "", $commentOrder);
+            return $this->commentRepository->getComments($module, $entityId, 0, $commentOrder);
         }
 
         /**
@@ -59,14 +56,6 @@ namespace Leantime\Domain\Comments\Services {
          * @param $entityId
          * @param $entity
          * @return bool
-         * @throws BindingResolutionException
-         */
-        /**
-         * @param $values
-         * @param $module
-         * @param $entityId
-         * @param $entity
-         * @return boolean
          * @throws BindingResolutionException
          */
         public function addComment($values, $module, $entityId, $entity): bool

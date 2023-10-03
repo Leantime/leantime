@@ -14,10 +14,6 @@ namespace Leantime\Domain\Setting\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditBoxLabel extends Controller
     {
         private TicketRepository $ticketsRepo;

@@ -18,10 +18,6 @@ namespace Leantime\Domain\Projects\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Projects
     {
         use EventhelperCore;
@@ -42,13 +38,13 @@ namespace Leantime\Domain\Projects\Repositories {
          * @access public
          * @var    integer
          */
-        public int $clientId = 0; // WAS: '';
+        public int $clientId = 0;
 
         /**
          * @access private
          * @var    object
          */
-        private DbCore|object $db; // WAS: = '';
+        private ?DbCore $db;
 
         /**
          * @access public

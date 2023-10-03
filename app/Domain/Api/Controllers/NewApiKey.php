@@ -13,10 +13,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class NewApiKey extends Controller
     {
         private UserRepository $userRepo;

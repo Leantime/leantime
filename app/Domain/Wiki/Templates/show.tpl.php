@@ -25,7 +25,7 @@ foreach ($__data as $var => $val) {
  * @param string $tplObject
  * @return void
  */
-function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, string $tplObject = ''): void
+function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\Template $tplObject = null): void
 {
 
     foreach ($array as $headline) {

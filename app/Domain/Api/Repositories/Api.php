@@ -8,10 +8,6 @@ namespace Leantime\Domain\Api\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Api
     {
         private DbCore $db;

@@ -4,7 +4,6 @@ namespace Leantime\Core;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use phpmailerException;
 use Leantime\Core\Eventhelpers;
 
 /**

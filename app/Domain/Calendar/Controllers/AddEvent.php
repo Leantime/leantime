@@ -15,10 +15,6 @@ namespace Leantime\Domain\Calendar\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class AddEvent extends Controller
     {
         private Calendar $calendarService;

@@ -106,7 +106,7 @@ class ApiSession
             ];
 
             if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
-                throw new Error(
+                throw new \Error(
                     "oAuth2 credentials were incorrectly provided"
                 );
             }
@@ -162,7 +162,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
-            throw new Error(
+            throw new \Error(
                 "oAuth1 credentials were incorrectly provided"
             );
         }
@@ -203,7 +203,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "basic auth credentials must match exactly: ['username' => ..., 'password' => ...]"
             );
         }
@@ -240,7 +240,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "basic auth credentials must match exactly: ['username' => ..., 'password' => ..., 'digest' => ...]"
             );
         }
@@ -277,7 +277,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "basic auth credentials must match exactly: ['username' => ..., 'password' => ..., 'ntlm' => ...]"
             );
         }
@@ -309,7 +309,7 @@ class ApiSession
         $requiredCreds = ['token'];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "bearer token credentials must match exactly: ['token' => ...]"
             );
         }

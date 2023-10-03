@@ -11,10 +11,6 @@ namespace Leantime\Domain\Valuecanvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Pdf extends PdfController
     {
         protected const CANVAS_NAME = 'value';

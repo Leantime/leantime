@@ -10,10 +10,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelTicket extends Controller
     {
         private TicketService $ticketService;

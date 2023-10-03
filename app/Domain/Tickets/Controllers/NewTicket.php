@@ -18,10 +18,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class NewTicket extends Controller
     {
         private ProjectService $projectService;

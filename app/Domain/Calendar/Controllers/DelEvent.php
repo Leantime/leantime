@@ -15,10 +15,6 @@ namespace Leantime\Domain\Calendar\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelEvent extends Controller
     {
         private CalendarService $calendarService;

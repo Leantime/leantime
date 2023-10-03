@@ -9,10 +9,6 @@ namespace Leantime\Domain\Tags\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Tags
     {
         private ProjectRepository $projectRepository;

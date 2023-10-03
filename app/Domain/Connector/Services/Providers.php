@@ -10,10 +10,6 @@ namespace Leantime\Domain\Connector\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Providers
     {
         use Eventhelpers;

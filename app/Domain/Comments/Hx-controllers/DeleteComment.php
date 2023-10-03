@@ -1,5 +1,7 @@
 <?php
 
+use Leantime\Core\HtmxController;
+use Leantime\Core\IncomingRequest;
 use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
@@ -9,7 +11,7 @@ use Leantime\Domain\Tickets\Services\Tickets;
 /**
  *
  */
-class DeleteComment extends HtmxController
+class DeleteComment extends HTMXController
 {
     public static string $view = 'Comments::components.reply';
 

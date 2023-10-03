@@ -16,10 +16,6 @@ namespace Leantime\Domain\Canvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowCanvas extends Controller
     {
         /**

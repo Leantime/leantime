@@ -13,10 +13,6 @@ namespace Leantime\Domain\Users\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Users
     {
         /**
@@ -82,7 +78,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @var    object
          */
-        private DbCore|object $db;
+        private ?DbCore $db;
 
         public Environment $config;
 

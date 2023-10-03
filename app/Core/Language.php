@@ -123,13 +123,10 @@ class Language
             if ($language === false) {
                 $language = $this->config->language;
             }
-
-            $_SESSION["companysettings.language"] = $language;
         } else {
             $language = $_SESSION["companysettings.language"];
-
-            $_SESSION["companysettings.language"] = $language;
         }
+        $_SESSION["companysettings.language"] = $language;
 
         //Get user language
         if (!isset($_SESSION["userdata"]["id"])) {
@@ -457,7 +454,7 @@ class Language
      *
      * @access public
      * @param string $date
-     * @return string
+     * @return false|string
      */
     public function get24HourTimestring(string $date): false|string
     {
@@ -472,9 +469,9 @@ class Language
             if (is_array($timePart) && count($timePart) == 2) {
                 return $timePart[1];
             }
-
-            return false;
         }
+
+        return false;
     }
 
     /**

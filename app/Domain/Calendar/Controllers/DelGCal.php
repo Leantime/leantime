@@ -15,10 +15,6 @@ namespace Leantime\Domain\Calendar\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelGCal extends Controller
     {
         private CalendarRepository $calendarRepo;

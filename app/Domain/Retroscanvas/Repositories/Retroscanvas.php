@@ -11,10 +11,6 @@ namespace Leantime\Domain\Retroscanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Retroscanvas extends Canvas
     {
         /**

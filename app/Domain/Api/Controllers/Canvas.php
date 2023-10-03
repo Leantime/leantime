@@ -13,10 +13,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Canvas extends Controller
     {
         /**

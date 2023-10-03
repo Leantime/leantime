@@ -12,10 +12,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditTime extends Controller
     {
         private TimesheetRepository $timesheetsRepo;

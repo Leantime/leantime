@@ -9,10 +9,6 @@ namespace Leantime\Domain\Queue\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Queue
     {
         private DbCore $db;

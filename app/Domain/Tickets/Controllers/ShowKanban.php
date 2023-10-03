@@ -12,10 +12,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowKanban extends Controller
     {
         private ProjectService $projectService;

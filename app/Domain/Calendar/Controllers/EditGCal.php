@@ -15,10 +15,6 @@ namespace Leantime\Domain\Calendar\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditGCal extends Controller
     {
         private CalendarRepository $calendarRepo;

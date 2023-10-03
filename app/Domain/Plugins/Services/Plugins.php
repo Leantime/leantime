@@ -12,10 +12,6 @@ namespace Leantime\Domain\Plugins\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Plugins
     {
         private PluginRepository $pluginRepository;

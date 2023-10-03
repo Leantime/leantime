@@ -5,10 +5,6 @@ namespace Leantime\Domain\Plugins\Models {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Plugins
     {
         public int $id;
@@ -19,7 +15,7 @@ namespace Leantime\Domain\Plugins\Models {
         public string $installdate;
         public string $foldername;
         public string $homepage;
-        public string $authors;
+        public string|array $authors;
 
         /**
          * @return string

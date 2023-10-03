@@ -8,10 +8,6 @@ namespace Leantime\Domain\Timesheets\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Timesheets
     {
         private TimesheetRepository $timesheetsRepo;
@@ -244,7 +240,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param string $clientId
          * @return void
          */
-        public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', string $userId = 'all', string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): void
+        public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', string $userId = 'all', string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
         {
             return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid, $clientId);
         }

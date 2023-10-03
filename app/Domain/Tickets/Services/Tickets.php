@@ -20,10 +20,6 @@ namespace Leantime\Domain\Tickets\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Tickets
     {
         private TemplateCore $tpl;
@@ -594,7 +590,7 @@ namespace Leantime\Domain\Tickets\Services {
          * @return array
          * @throws \Exception
          */
-        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, false $includeDoneTickets = false): array
+        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false): array
         {
 
             if ($includeDoneTickets === true) {
@@ -735,20 +731,13 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         /**
-         * @param $includeArchived
-         * @param $sortBy
-         * @param $includeTasks
-         * @param $clientId
-         * @return array|false
-         */
-        /**
-         * @param false $includeArchived
+         * @param bool $includeArchived
          * @param string $sortBy
-         * @param false $includeTasks
-         * @param false $clientId
+         * @param bool $includeTasks
+         * @param bool $clientId
          * @return array|false
          */
-        public function getAllMilestonesOverview(false $includeArchived = false, string $sortBy = "duedate", false $includeTasks = false, false $clientId = false): false|array
+        public function getAllMilestonesOverview(bool $includeArchived = false, string $sortBy = "duedate", bool $includeTasks = false, int $clientId = 0): false|array
         {
 
             $allProjectMilestones = $this->ticketRepository->getAllMilestones(["sprint" => '', "type" => "milestone", "currentClient" => $clientId]);
@@ -803,10 +792,10 @@ namespace Leantime\Domain\Tickets\Services {
          * @return array|false
          */
         /**
-         * @param $ticketId
+         * @param int $ticketId
          * @return array|false
          */
-        public function getAllSubtasks($ticketId): false|array
+        public function getAllSubtasks(int $ticketId): false|array
         {
             $values = $this->ticketRepository->getAllSubtasks($ticketId);
             return $values;
@@ -892,7 +881,7 @@ namespace Leantime\Domain\Tickets\Services {
          * @param $params
          * @return boolean|string[]
          */
-        public function quickAddMilestone($params): array|bool
+        public function quickAddMilestone($params): array|bool|int
         {
 
             $values = array(
@@ -927,11 +916,6 @@ namespace Leantime\Domain\Tickets\Services {
             return $this->ticketRepository->addTicket($values);
         }
 
-        /**
-         * @param $values
-         * @return bool|string[]|void
-         * @throws BindingResolutionException
-         */
         /**
          * @param $values
          * @return boolean|string[]|void

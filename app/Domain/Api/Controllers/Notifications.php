@@ -8,10 +8,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Notifications extends Controller
     {
         public NotificationService $notificationsService;

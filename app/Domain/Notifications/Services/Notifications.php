@@ -13,10 +13,6 @@ namespace Leantime\Domain\Notifications\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Notifications
     {
         private DbCore $db;

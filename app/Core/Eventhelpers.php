@@ -8,10 +8,6 @@ namespace Leantime\Core {
     /**
      *
      */
-
-    /**
-     *
-     */
     trait Eventhelpers
     {
         private static string $event_context = '';

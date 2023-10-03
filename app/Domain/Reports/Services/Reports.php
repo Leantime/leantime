@@ -39,10 +39,6 @@ namespace Leantime\Domain\Reports\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Reports
     {
         use Eventhelpers;

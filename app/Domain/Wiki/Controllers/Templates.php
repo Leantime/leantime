@@ -12,10 +12,6 @@ namespace Leantime\Domain\Wiki\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Templates extends Controller
     {
         private WikiService $wikiService;

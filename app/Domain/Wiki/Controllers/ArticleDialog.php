@@ -14,10 +14,6 @@ namespace Leantime\Domain\Wiki\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ArticleDialog extends Controller
     {
         private WikiService $wikiService;
@@ -126,12 +122,6 @@ namespace Leantime\Domain\Wiki\Controllers {
                 if ($results) {
                     $this->tpl->setNotification("notification.article_updated_successfully", "success");
                 }
-
-                if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
-                } else {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
-                }
             } else {
                 //New
                 $article->title = $params['title'];
@@ -148,12 +138,11 @@ namespace Leantime\Domain\Wiki\Controllers {
                 if ($id) {
                     $this->tpl->setNotification("notification.article_created_successfully", "success");
                 }
-
-                if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
-                } else {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
-                }
+            }
+            if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
+                $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
+            } else {
+                $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
             }
         }
     }

@@ -11,10 +11,6 @@ namespace Leantime\Domain\Files\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Files
     {
         private array $adminModules = array('project' => 'Projects','ticket' => 'Tickets','client' => 'Clients','lead' => 'Lead','private' => 'General'); // 'user'=>'Users',
@@ -158,7 +154,7 @@ namespace Leantime\Domain\Files\Repositories {
         {
 
             $folders = array();
-            $files = $this->getFiles($_SESSION['userdata']['id'], true);
+            $files = $this->getFiles($_SESSION['userdata']['id']);
 
             $sql = match ($module) {
                 'ticket' => "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1",
@@ -197,7 +193,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @param int $userId
          * @return array|false
          */
-        public function getFilesByModule(string $module = '', $moduleId = null, int $userId = 0): false|array
+        public function getFilesByModule(string $module = '', $moduleId = null, ?int $userId = 0): false|array
         {
 
             $sql = "SELECT

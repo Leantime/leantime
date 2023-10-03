@@ -29,10 +29,6 @@ namespace Leantime\Domain\Projects\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Projects
     {
         use Eventhelpers;

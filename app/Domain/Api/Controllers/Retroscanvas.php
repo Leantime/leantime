@@ -9,11 +9,7 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
-    class Retroscanvas extends api\canvas
+    class Retroscanvas extends Canvas
     {
         protected const CANVAS_NAME = 'retros';
     }

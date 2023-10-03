@@ -13,10 +13,6 @@ namespace Leantime\Domain\Wiki\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Show extends Controller
     {
         private WikiService $wikiService;

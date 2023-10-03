@@ -13,10 +13,6 @@ namespace Leantime\Domain\Sprints\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditSprint extends Controller
     {
         private SprintService $sprintService;

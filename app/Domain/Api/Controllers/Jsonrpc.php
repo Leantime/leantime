@@ -212,7 +212,7 @@ class Jsonrpc extends Controller
         // can be null
         try {
             $method_response = app()->make($serviceName)->$methodName(...$preparedParams);
-        } catch (Error $e) {
+        } catch (\Error $e) {
             $this->returnServerError($e);
         }
 
@@ -283,7 +283,7 @@ class Jsonrpc extends Controller
 
         // matches params, params that don't match are ignored
         foreach ($methodParams as $methodparam) {
-            $required = $methodparam->isDefaultValueAvailable() ? false : true;
+            $required = !$methodparam->isDefaultValueAvailable();
             $position = $methodparam->getPosition();
             $name = $methodparam->name;
             $type = $methodparam->getType();

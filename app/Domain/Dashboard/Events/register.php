@@ -7,10 +7,6 @@ namespace Leantime\Domain\Dashboard\Events {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DashboardTest
     {
         /**

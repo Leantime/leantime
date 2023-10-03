@@ -5,10 +5,6 @@ namespace Leantime\Domain\Connector\Models {
     /**
      *
      */
-
-    /**
-     *
-     */
     final class FieldTypes
     {
         public static string $int = "int";

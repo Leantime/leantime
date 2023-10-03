@@ -14,10 +14,6 @@ namespace Leantime\Domain\Calendar\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Calendar extends RepositoryCore
     {
         /**
@@ -62,6 +58,11 @@ namespace Leantime\Domain\Calendar\Repositories {
             $allDates = $stmn->fetchAll();
 
             return $allDates;
+        }
+
+        public function getAll($dateFrom, $dateTo): false|array
+        {
+            return $this->getAllDates($dateFrom, $dateTo);
         }
 
         /**

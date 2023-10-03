@@ -9,10 +9,6 @@ namespace Leantime\Domain\Connector\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Providers extends Controller
     {
         /**

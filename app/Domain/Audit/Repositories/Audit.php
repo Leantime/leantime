@@ -8,10 +8,6 @@ namespace Leantime\Domain\Audit\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Audit
     {
         private DbCore $db;

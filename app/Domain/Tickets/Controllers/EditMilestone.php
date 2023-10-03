@@ -16,10 +16,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditMilestone extends Controller
     {
         private TicketService $ticketService;
@@ -180,12 +176,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
-
-                        $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
-                        $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                     }
+                    $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                 }
 
                 $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);

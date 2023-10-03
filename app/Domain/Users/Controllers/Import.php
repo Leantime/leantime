@@ -15,10 +15,6 @@ namespace Leantime\Domain\Users\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Import extends Controller
     {
         private UserRepository $userRepo;

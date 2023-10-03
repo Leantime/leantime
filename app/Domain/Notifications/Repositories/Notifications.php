@@ -8,10 +8,6 @@ namespace Leantime\Domain\Notifications\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Notifications
     {
         private DbCore $db;
@@ -43,7 +39,7 @@ namespace Leantime\Domain\Notifications\Repositories {
          * @param array $filterOptions
          * @return array|false
          */
-        public function getAllNotifications($userId, false $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
+        public function getAllNotifications($userId, bool $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
         {
 
             $query = "SELECT

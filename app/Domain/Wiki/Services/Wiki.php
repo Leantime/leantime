@@ -8,10 +8,6 @@ namespace Leantime\Domain\Wiki\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Wiki
     {
         private WikiRepository $wikiRepository;

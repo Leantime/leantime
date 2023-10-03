@@ -12,10 +12,6 @@ namespace Leantime\Domain\Projects\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowAll extends Controller
     {
         private ProjectRepository $projectRepo;

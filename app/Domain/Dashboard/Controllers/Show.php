@@ -20,10 +20,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Show extends Controller
     {
         private ProjectService $projectService;
@@ -127,7 +123,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $comment = array_map(function ($comment) use ($comments) {
                 $comment['replies'] = $comments->getReplies($comment['id']);
                 return $comment;
-            }, $comments->getComments('project', $_SESSION['currentProject'], ""));
+            }, $comments->getComments('project', $_SESSION['currentProject'], 0));
 
 
             $url = parse_url(CURRENT_URL);
@@ -147,11 +143,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->display('dashboard.show');
         }
 
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
+
         /**
          * @param $params
          * @return void

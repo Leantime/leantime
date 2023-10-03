@@ -8,10 +8,6 @@ namespace Leantime\Domain\Read\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Read
     {
         private DbCore $db;

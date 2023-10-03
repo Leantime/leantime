@@ -11,10 +11,6 @@ namespace Leantime\Domain\Valuecanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Valuecanvas extends Canvas
     {
         /**

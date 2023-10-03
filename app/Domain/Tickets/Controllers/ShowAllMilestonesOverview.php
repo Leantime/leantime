@@ -13,10 +13,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowAllMilestonesOverview extends Controller
     {
         private ProjectService $projectService;

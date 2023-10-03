@@ -10,10 +10,6 @@ namespace Leantime\Domain\Wiki\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelWiki extends Controller
     {
         private WikiRepository $wikiRepo;

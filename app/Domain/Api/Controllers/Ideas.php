@@ -9,10 +9,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Ideas extends Controller
     {
         private ProjectRepository $projects;

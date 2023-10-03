@@ -19,10 +19,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowProjectCalendar extends Controller
     {
         private CalendarRepository $calendarRepo;

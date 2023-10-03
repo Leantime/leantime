@@ -17,10 +17,6 @@ namespace Leantime\Domain\Reports\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Show extends Controller
     {
         private DashboardRepository $dashboardRepo;

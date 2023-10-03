@@ -11,10 +11,6 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Goalcanvas extends Canvas
     {
         /**

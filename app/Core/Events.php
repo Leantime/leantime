@@ -371,7 +371,7 @@ class Events
         array|object $available_params = []
     ): mixed {
 
-        $isEvent = $registryType == "events" ? true : false;
+        $isEvent = $registryType == "events";
         $filteredPayload = null;
 
         //sort matches by priority

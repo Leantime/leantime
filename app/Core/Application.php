@@ -34,9 +34,11 @@ class Application extends Container
      *
      * @return void
      */
-    public static function setHasBeenBootstrapped(): void
+    public static function setHasBeenBootstrapped(): self
     {
         self::$bootstrapped = true;
+
+        return self::getInstance();
     }
 
     /**

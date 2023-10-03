@@ -8,10 +8,6 @@ namespace Leantime\Domain\Strategy\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowBoards extends Controller
     {
         private CanvaService $canvasService;

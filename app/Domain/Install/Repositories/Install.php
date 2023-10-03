@@ -16,10 +16,6 @@ namespace Leantime\Domain\Install\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Install
     {
         use EventhelperCore;

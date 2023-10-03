@@ -11,10 +11,6 @@ namespace Leantime\Domain\Connector\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class LeantimeEntities
     {
         public array $availableLeantimeEntities = array();

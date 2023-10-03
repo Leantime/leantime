@@ -5,10 +5,6 @@ namespace Leantime\Domain\Reactions\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Reactions
     {
         /**

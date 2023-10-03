@@ -12,10 +12,6 @@ namespace Leantime\Domain\Install\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Update extends Controller
     {
         private InstallRepository $installRepo;

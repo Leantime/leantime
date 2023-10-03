@@ -20,10 +20,6 @@ namespace Leantime\Domain\Auth\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Auth
     {
         use Eventhelpers;
@@ -99,7 +95,8 @@ namespace Leantime\Domain\Auth\Services {
          * @var    string userrole (admin, client, employee)
          */
         public string $role = '';
-        public string $settings = '';
+
+        public array $settings = array();
 
         /**
          * @access public
@@ -162,7 +159,7 @@ namespace Leantime\Domain\Auth\Services {
             UserRepository $userRepo
         ) {
             $this->config = $config;
-            $this->session = $session::getSID();
+            $this->session = SessionCore::getSID();
             $this->language = $language;
             $this->settingsRepo = $settingsRepo;
             $this->authRepo = $authRepo;
@@ -319,7 +316,7 @@ namespace Leantime\Domain\Auth\Services {
          * @param false $isLdap
          * @return false|void
          */
-        public function setUserSession($user, false $isLdap = false)
+        public function setUserSession($user, bool $isLdap = false)
         {
             if (!$user || !is_array($user)) {
                 return false;
@@ -393,7 +390,7 @@ namespace Leantime\Domain\Auth\Services {
          * @return string
          */
         /**
-         * @return string
+         * @return string|null
          */
         public function getSessionId(): ?string
         {
@@ -525,7 +522,7 @@ namespace Leantime\Domain\Auth\Services {
          * @param false $forceGlobalRoleCheck
          * @return boolean
          */
-        public static function userIsAtLeast(string $role, false $forceGlobalRoleCheck = false): bool
+        public static function userIsAtLeast(string $role, bool $forceGlobalRoleCheck = false): bool
         {
 
             //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
@@ -551,17 +548,13 @@ namespace Leantime\Domain\Auth\Services {
             }
         }
 
+
         /**
          * @param $role
-         * @param $forceGlobalRoleCheck
-         * @return bool
-         */
-        /**
-         * @param $role
-         * @param false $forceGlobalRoleCheck
+         * @param bool $forceGlobalRoleCheck
          * @return boolean
          */
-        public static function authOrRedirect($role, false $forceGlobalRoleCheck = false): bool
+        public static function authOrRedirect($role, bool $forceGlobalRoleCheck = false): bool
         {
 
             if (self::userHasRole($role, $forceGlobalRoleCheck)) {
@@ -574,16 +567,11 @@ namespace Leantime\Domain\Auth\Services {
         }
 
         /**
-         * @param string|array $role
-         * @param $forceGlobalRoleCheck
-         * @return bool
-         */
-        /**
          * @param string|array         $role
          * @param false $forceGlobalRoleCheck
          * @return boolean
          */
-        public static function userHasRole(string|array $role, false $forceGlobalRoleCheck = false): bool
+        public static function userHasRole(string|array $role, bool $forceGlobalRoleCheck = false): bool
         {
 
             //Force Global Role check to circumvent projectRole checks for global controllers (users, projects, clients etc)
@@ -638,23 +626,18 @@ namespace Leantime\Domain\Auth\Services {
             return $_SESSION['userdata']['twoFAEnabled'];
         }
 
+
         /**
-         * @param $code
-         * @return bool
-         */
-        /**
-         * @param $code
+         * @param string $code
          * @return boolean
          */
-        public function verify2FA($code): bool
+        public function verify2FA(string $code): bool
         {
             $tfa = new TwoFactorAuth('Leantime');
             return $tfa->verifyCode($_SESSION['userdata']['twoFASecret'], $code);
         }
 
-        /**
-         * @return mixed
-         */
+
         /**
          * @return mixed
          */

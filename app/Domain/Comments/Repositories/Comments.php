@@ -8,10 +8,6 @@ namespace Leantime\Domain\Comments\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Comments
     {
         private DbCore $db;

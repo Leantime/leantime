@@ -11,10 +11,6 @@ namespace Leantime\Domain\Dbmcanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Dbmcanvas extends Canvas
     {
         /**

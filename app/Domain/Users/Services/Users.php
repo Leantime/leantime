@@ -16,10 +16,6 @@ namespace Leantime\Domain\Users\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Users
     {
         use Eventhelpers;

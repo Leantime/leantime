@@ -8,10 +8,6 @@ namespace Leantime\Domain\Pageparts\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Footer extends Controller
     {
         private AppSettingCore $settings;

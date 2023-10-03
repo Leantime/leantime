@@ -133,7 +133,7 @@ class AddUserCommand extends Command
                 $io->error("Failed to Add User");
                 return Command::FAILURE;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $io->error($ex);
             return Command::FAILURE;
         }

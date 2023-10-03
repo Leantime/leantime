@@ -11,10 +11,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowAll extends Controller
     {
         private ProjectService $projectService;

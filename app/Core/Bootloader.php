@@ -3,9 +3,9 @@
 namespace Leantime\Core;
 
 use Exception;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
-use Illumiante\Contracts\Foundation\Application as IlluminateApplicationContract;
 use Psr\Container\ContainerInterface as PsrContainerContract;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
@@ -64,9 +64,9 @@ class Bootloader
     /**
      * Telemetry response
      *
-     * @var array
+     * @var bool|PromiseInterface
      */
-    private array $telemetryResponse;
+    private bool|PromiseInterface $telemetryResponse;
 
     /**
      * Set the Bootloader instance
@@ -159,24 +159,15 @@ class Bootloader
 
         $this->checkIfUpdated();
 
-        /**
-         * The beginning of the application
-         *
-         * @param Leantime\Core\Bootloader $bootloader The bootloader object.
-         */
+
         self::dispatch_event("beginning", ['bootloader' => $this]);
 
         $this->handleRequest();
 
-        $app::setHasBeenBootstrapped(true);
+        $app::setHasBeenBootstrapped();
 
         $this->handleTelemetryResponse();
 
-        /**
-         * The end of the application
-         *
-         * @param Leantime\Core\Bootloader $bootloader The bootloader object.
-         */
         self::dispatch_event("end", ['bootloader' => $this]);
     }
 
@@ -218,12 +209,6 @@ class Bootloader
         $this->app->singleton(OidcService::class, OidcService::class);
         $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
 
-        /**
-         * Filter on container right after initial bindings.
-         *
-         * @param Leantime\Core\Bootloader $bootloader The bootloader object.
-         * @return IlluminateContainerContract $container The container object.
-         */
         $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
 
         Application::setInstance($this->app);

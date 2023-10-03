@@ -10,10 +10,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Projects extends Controller
     {
         private FileuploadCore $fileUpload;

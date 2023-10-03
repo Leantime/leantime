@@ -13,10 +13,6 @@ namespace Leantime\Domain\Auth\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class UserInvite extends Controller
     {
         private $fileRepo;

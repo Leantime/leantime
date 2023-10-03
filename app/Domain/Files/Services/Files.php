@@ -11,10 +11,6 @@ namespace Leantime\Domain\Files\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Files
     {
         private FileRepository $fileRepository;
@@ -37,12 +33,7 @@ namespace Leantime\Domain\Files\Services {
             $this->language = $language;
         }
 
-        /**
-         * @param $module
-         * @param $entityId
-         * @param $userId
-         * @return array|false
-         */
+
         /**
          * @param string $module
          * @param $entityId

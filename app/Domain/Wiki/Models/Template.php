@@ -5,10 +5,6 @@ namespace Leantime\Domain\Wiki\Models {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Template
     {
         public $title;

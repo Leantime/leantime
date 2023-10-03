@@ -11,10 +11,6 @@ namespace Leantime\Domain\Minempathycanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Minempathycanvas extends Canvas
     {
         /**

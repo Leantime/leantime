@@ -9,10 +9,6 @@ namespace Leantime\Domain\Projects\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ChangeCurrentProject extends Controller
     {
         private ProjectService $projectService;

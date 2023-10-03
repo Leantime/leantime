@@ -8,10 +8,6 @@ namespace Leantime\Domain\Api\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Tags extends Controller
     {
         private TagService $tagService;

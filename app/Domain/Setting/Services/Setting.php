@@ -10,10 +10,6 @@ namespace Leantime\Domain\Setting\Services {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Setting
     {
         private TemplateCore $tpl;

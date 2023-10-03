@@ -11,7 +11,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Leantime\Domain\Install\Repositories\Install;
 use Exception;
 use Leantime\Domain\Users\Repositories\Users;
-use array_values;
 
 /**
  *

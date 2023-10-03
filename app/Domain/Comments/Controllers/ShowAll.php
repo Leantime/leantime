@@ -13,10 +13,6 @@ namespace Leantime\Domain\Comments\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowAll extends Controller
     {
         private ProjectService $projectService;

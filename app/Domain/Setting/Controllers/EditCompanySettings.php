@@ -14,10 +14,6 @@ namespace Leantime\Domain\Setting\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditCompanySettings extends Controller
     {
         private EnvironmentCore $config;

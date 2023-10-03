@@ -17,10 +17,6 @@ namespace Leantime\Domain\Calendar\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Export extends Controller
     {
         private Environment $config;

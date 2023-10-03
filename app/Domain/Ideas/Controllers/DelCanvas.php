@@ -10,10 +10,6 @@ namespace Leantime\Domain\Ideas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelCanvas extends Controller
     {
         private IdeaRepository $ideaRepo;

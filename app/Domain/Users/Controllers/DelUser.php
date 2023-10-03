@@ -10,10 +10,6 @@ namespace Leantime\Domain\Users\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelUser extends Controller
     {
         private UserRepository $userRepo;

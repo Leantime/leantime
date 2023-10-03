@@ -11,10 +11,6 @@ namespace Leantime\Domain\Auth\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ResetPw extends Controller
     {
         private FileRepository $fileRepo;

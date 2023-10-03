@@ -11,10 +11,6 @@ namespace Leantime\Domain\Swotcanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Swotcanvas extends Canvas
     {
         /**

@@ -10,10 +10,6 @@ namespace Leantime\Domain\Timesheets\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Timesheets extends Repository
     {
         /**
@@ -50,7 +46,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function getAll(int $id = -1)
+        public function getAll(int $id = -1): array|false
         {
             $query = "SELECT
                         zp_timesheets.id,
@@ -864,10 +860,10 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * isClocked - Checks to see whether a user is clocked in
          *
          * @access public
-         * @param id $id
+         * @param int $id $id
          * @return array|false
          */
-        public function isClocked(id $id): false|array
+        public function isClocked(int $id): false|array
         {
 
             if (!isset($_SESSION['userdata'])) {

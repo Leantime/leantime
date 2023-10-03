@@ -10,10 +10,6 @@ namespace Leantime\Domain\Auth\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Logout extends Controller
     {
 

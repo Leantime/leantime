@@ -6,17 +6,14 @@ namespace Leantime\Domain\Connector\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Connector\Services\Connector as ConnectorService;
     use Leantime\Domain\Auth\Services\Auth;
-
-    /**
-     *
-     */
+    use Leantime\Domain\Connector\Services;
 
     /**
      *
      */
     class Show extends Controller
     {
-        private ConnectorService\providers $providerService;
+        private Services\Providers $providerService;
 
         /**
          * constructor - initialize private variables
@@ -24,7 +21,7 @@ namespace Leantime\Domain\Connector\Controllers {
          * @access public
          *
          */
-        public function init(ConnectorService\providers $projectService)
+        public function init(Services\Providers $projectService)
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
             $this->providerService = $projectService;

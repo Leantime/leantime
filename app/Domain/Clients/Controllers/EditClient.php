@@ -15,10 +15,6 @@ namespace Leantime\Domain\Clients\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditClient extends Controller
     {
         private ClientRepository $clientRepo;

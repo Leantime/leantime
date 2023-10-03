@@ -11,10 +11,6 @@ namespace Leantime\Domain\Cpcanvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Pdf extends CanvasPdf
     {
         protected const CANVAS_NAME = 'cp';

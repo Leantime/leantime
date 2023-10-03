@@ -11,10 +11,6 @@ namespace Leantime\Domain\Sbcanvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Pdf extends PdfController
     {
         protected const CANVAS_NAME = 'sb';

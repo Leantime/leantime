@@ -11,10 +11,6 @@ namespace Leantime\Domain\Riskscanvas\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Riskscanvas extends Canvas
     {
         /**

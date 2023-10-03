@@ -12,10 +12,6 @@ namespace Leantime\Domain\Users\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditUser extends Controller
     {
         private ProjectRepository $projectsRepo;

@@ -10,10 +10,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class ShowMyList extends Controller
     {
         private TimesheetService $timesheetService;

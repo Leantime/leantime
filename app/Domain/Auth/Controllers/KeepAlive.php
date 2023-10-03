@@ -8,10 +8,6 @@ namespace Leantime\Domain\Auth\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class KeepAlive extends Controller
     {
         private AuthService $authService;

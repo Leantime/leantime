@@ -12,10 +12,6 @@ namespace Leantime\Domain\Tickets\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class RoadmapAll extends Controller
     {
         private ProjectRepository $projectsRepo;

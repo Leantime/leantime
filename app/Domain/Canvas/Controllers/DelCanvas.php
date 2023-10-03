@@ -14,10 +14,6 @@ namespace Leantime\Domain\Canvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class DelCanvas extends Controller
     {
         /**

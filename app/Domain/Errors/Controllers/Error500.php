@@ -8,10 +8,6 @@ namespace Leantime\Domain\Errors\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Error500 extends Controller
     {
         /**

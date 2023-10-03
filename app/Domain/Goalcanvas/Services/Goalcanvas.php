@@ -3,12 +3,6 @@
 namespace Leantime\Domain\Goalcanvas\Services {
 
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
-    use Mpdf\Tag\P;
-    use Ramsey\Uuid\Uuid;
-
-    /**
-     *
-     */
 
     /**
      *

@@ -383,7 +383,7 @@ class Fileupload
                 $body = $result->get('Body');
 
                 echo $body->getContents();
-            } catch (Aws\S3\Exception\S3Exception $e) {
+            } catch (S3Exception $e) {
                 echo $e->getMessage() . "\n";
             }
         } else {

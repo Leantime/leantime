@@ -11,10 +11,6 @@ namespace Leantime\Domain\Plugins\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Show extends Controller
     {
         private PluginService $pluginService;

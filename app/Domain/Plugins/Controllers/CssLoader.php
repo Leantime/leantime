@@ -10,10 +10,6 @@ namespace Leantime\Domain\Plugins\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class CssLoader extends Controller
     {
         private PluginService $pluginService;

@@ -18,10 +18,6 @@ namespace Leantime\Domain\Canvas\Controllers {
     /**
      *
      */
-
-    /**
-     *
-     */
     class EditCanvasComment extends Controller
     {
         /**

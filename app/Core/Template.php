@@ -398,7 +398,7 @@ class Template
      *
      * @access public
      * @param string $namespace The namespace the template is for.
-     * @param string $path The path to the template.
+     * @param string $path      The path to the template.
      * @return string Full template path or false if file does not exist
      * @throws Exception If template not found.
      */
@@ -611,7 +611,7 @@ class Template
 
         $message = self::dispatch_filter(
             'message',
-            $language->__($message_id, false),
+            $language->__($message_id),
             $note
         );
         $message = self::dispatch_filter(
@@ -656,7 +656,7 @@ class Template
 
         $message = self::dispatch_filter(
             'message',
-            $language->__($message_id, false),
+            $language->__($message_id),
             $note
         );
         $message = self::dispatch_filter(
@@ -796,8 +796,12 @@ class Template
      * @param string $date
      * @return string
      */
-    public function getFormattedDateString(string $date): string
+    public function getFormattedDateString(?string $date): string
     {
+        if ($date == null) {
+            return '';
+        }
+
         return $this->language->getFormattedDateString($date);
     }
 
@@ -831,9 +835,9 @@ class Template
      * @see https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
      * @author Søren Løvborg <https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg>
      * @access public
-     * @param string $html
+     * @param string  $html
      * @param integer $maxLength
-     * @param string $ending
+     * @param string  $ending
      * @param boolean $exact
      * @param boolean $considerHtml
      * @return string
@@ -916,7 +920,7 @@ class Template
      *
      * @access public
      * @param string|null $text
-     * @return string
+     * @return string|null
      */
     public function convertRelativePaths(?string $text): ?string
     {
@@ -969,11 +973,11 @@ class Template
      * displayLink - display link
      *
      * @access public
-     * @param string $module
-     * @param string $name
+     * @param string     $module
+     * @param string     $name
      * @param array|null $params
      * @param array|null $attribute
-     * @return string
+     * @return false|string
      */
     public function displayLink(string $module, string $name, array $params = null, array $attribute = null): false|string
     {
@@ -1038,34 +1042,35 @@ class Template
 
     /**
      * @param string $hookName
-     * @param mixed|array $payload
+     * @param mixed  $payload
      */
-    public function dispatchTplEvent(string $hookName, array $payload = []): void
+    public function dispatchTplEvent(string $hookName, mixed $payload = null): void
     {
         $this->dispatchTplHook('event', $hookName, $payload);
     }
 
     /**
      * @param string $hookName
-     * @param mixed|array $payload
-     * @param mixed|array $available_params
+     * @param mixed  $payload
+     * @param array  $available_params
      *
      * @return mixed
      */
-    public function dispatchTplFilter(string $hookName, array $payload = [], array $available_params = []): mixed
+    public function dispatchTplFilter(string $hookName, mixed $payload, array $available_params = []): mixed
     {
+
         return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
     }
 
     /**
      * @param string $type
      * @param string $hookName
-     * @param mixed|array $payload
-     * @param mixed|array $available_params
+     * @param array  $payload
+     * @param array  $available_params
      *
      * @return null|mixed
      */
-    private function dispatchTplHook(string $type, string $hookName, array $payload = [], array $available_params = []): mixed
+    private function dispatchTplHook(string $type, string $hookName, mixed $payload, array $available_params = []): mixed
     {
         if (
             !is_string($type) || !in_array($type, ['event', 'filter'])
