@@ -245,8 +245,9 @@ foreach ($__data as $var => $val) {
 
                                                                     <?php
                                                                     if (isset($milestones[$row['projectId']])) {
-                                                                        if ($milestone != null && is_object($milestone)) {
-                                                                            foreach ($milestones[$row['projectId']] as $milestone) {
+                                                                        foreach ($milestones[$row['projectId']] as $milestone) {
+                                                                            if ($milestone != null && is_object($milestone)) {
+
                                                                                 echo "<li class='dropdown-item'>
                                                                                     <a href='javascript:void(0);' data-label='" . $tpl->escape(
                                                                                     $milestone->headline
