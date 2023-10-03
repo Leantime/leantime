@@ -46,8 +46,9 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function getAll(int $id = -1): array|false
+        public function getAll(int $id = -1, ?string $kind, ?string $dateFrom, ?string $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
         {
+
             $query = "SELECT
                         zp_timesheets.id,
                         zp_timesheets.userId,
@@ -93,7 +94,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 $query .= " AND (zp_timesheets.kind = :kind)";
             }
 
-            if ($userId != 'all') {
+            if ($userId != 'all' && $userId != null) {
                 $query .= " AND (zp_timesheets.userId = :userId)";
             }
 
@@ -141,7 +142,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 $call->bindValue(':kind', $kind);
             }
 
-            if ($userId != 'all') {
+            if ($userId != 'all' && $userId != null) {
                 $call->bindValue(':userId', $userId);
             }
 

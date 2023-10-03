@@ -80,14 +80,14 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $dateFrom = date("Y-m-d", $dateFromMk);
             $dateTo = date("Y-m-d", $dateToMk);
             $kind = 'all';
-            $userId = 'all';
+            $userId = null;
 
             if (isset($_POST['kind']) && $_POST['kind'] != '') {
                 $kind = strip_tags($_POST['kind']);
             }
 
             if (isset($_POST['userId']) && $_POST['userId'] != '') {
-                $userId = strip_tags($_POST['userId']);
+                $userId = intval(strip_tags($_POST['userId']));
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {

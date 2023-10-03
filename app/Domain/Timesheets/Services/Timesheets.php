@@ -214,19 +214,7 @@ namespace Leantime\Domain\Timesheets\Services {
             return $this->timesheetsRepo->kind;
         }
 
-        /**
-         * @param $projectId
-         * @param $kind
-         * @param $dateFrom
-         * @param $dateTo
-         * @param $userId
-         * @param $invEmpl
-         * @param $invComp
-         * @param $ticketFilter
-         * @param $paid
-         * @param $clientId
-         * @return void
-         */
+
         /**
          * @param int $projectId
          * @param string $kind
@@ -240,7 +228,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param string $clientId
          * @return void
          */
-        public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', string $userId = 'all', string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
+        public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
         {
             return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid, $clientId);
         }

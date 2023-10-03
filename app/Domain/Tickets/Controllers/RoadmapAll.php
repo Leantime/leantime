@@ -49,7 +49,7 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function get($params)
         {
 
-            $clientId = "";
+            $clientId = 0;
             $currentClientName = "";
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int)$_GET['client'];
