@@ -22,7 +22,7 @@ namespace Leantime\Domain\Tickets\Models {
         public mixed $timelineDateToFinish = null;
         public mixed $dateToFinish = null;
         public mixed $timeToFinish = null;
-        public mixed $status = null;
+        public mixed $status = 3;
         public mixed $storypoints = null;
         public mixed $hourRemaining = null;
         public mixed $planHours = null;
@@ -60,7 +60,7 @@ namespace Leantime\Domain\Tickets\Models {
         /**
          * @param false $values
          */
-        public function __construct(bool $values = false)
+        public function __construct(array|bool $values = false)
         {
 
             if ($values !== false) {
