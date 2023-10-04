@@ -16,7 +16,6 @@ use Illuminate\View\Engines\PhpEngine;
 use Illuminate\View\FileViewFinder;
 use Illuminate\View\View;
 use Illuminate\View\ViewFinderInterface;
-use JetBrains\PhpStorm\NoReturn;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Illuminate\Support\Str;
@@ -695,7 +694,7 @@ class Template
      * @param  string $url
      * @return void
      */
-    #[NoReturn] public function redirect(string $url): void
+    public function redirect(string $url): void
     {
         header("Location:" . trim($url));
         exit();

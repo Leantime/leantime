@@ -7,7 +7,7 @@
 
 namespace Leantime\Domain\Calendar\Controllers {
 
-    use JetBrains\PhpStorm\NoReturn;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
@@ -61,7 +61,7 @@ namespace Leantime\Domain\Calendar\Controllers {
          * @access public
          *
          */
-        #[NoReturn] public function post($params)
+        public function post($params)
         {
 
             $params['id'] = $_GET['id'] ?? null;

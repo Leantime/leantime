@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use JetBrains\PhpStorm\NoReturn;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Models\Article;
@@ -75,7 +75,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        #[NoReturn] public function post($params): void
+        public function post($params): void
         {
 
             $article = app()->make(Article::class);

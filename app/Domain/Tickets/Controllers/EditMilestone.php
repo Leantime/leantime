@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
-    use JetBrains\PhpStorm\NoReturn;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -109,7 +109,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @access public
          *
          */
-        #[NoReturn] public function post($params)
+        public function post($params)
         {
             //If ID is set its an update
             if (isset($_GET['id']) && (int) $_GET['id'] > 0) {

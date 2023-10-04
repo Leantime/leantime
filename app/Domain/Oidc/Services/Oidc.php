@@ -5,7 +5,7 @@ namespace Leantime\Domain\Oidc\Services;
 //This class Handles authentication via OpenID Connect (OIDC)
 
 use GuzzleHttp\Exception\GuzzleException;
-use JetBrains\PhpStorm\NoReturn;
+
 use Leantime\Core\Environment;
 use GuzzleHttp\Client;
 use Leantime\Core\Frontcontroller;
@@ -513,7 +513,7 @@ class Oidc
      * @param string ...$values
      * @return void
      */
-    #[NoReturn] private function displayError(string $translationKey, string ...$values): void
+    private function displayError(string $translationKey, string ...$values): void
     {
         die(sprintf($this->language->__($translationKey), ...$values));
     }

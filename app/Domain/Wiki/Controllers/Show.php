@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use JetBrains\PhpStorm\NoReturn;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Models\Wiki;
@@ -200,7 +200,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        #[NoReturn] public function post($params): void
+        public function post($params): void
         {
 
             if (isset($_GET['id']) === true) {
