@@ -53,7 +53,7 @@ namespace Leantime\Domain\Cron\Services {
             $nowDate = time();
             $timeSince = abs($nowDate - $lastCronEvent);
 
-            if ($timeSince < 300) {
+            if ($timeSince < 60) {
                 if ($this->environment->debug) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
                 }
