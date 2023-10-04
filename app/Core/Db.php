@@ -19,27 +19,27 @@ class Db
     /**
      * @var string database host default: localhost
      */
-    private mixed $host = '';
+    private string $host = '';
 
     /**
      * @var string username for db
      */
-    private mixed $user = '';
+    private string $user = '';
 
     /**
      * @var string password for db
      */
-    private mixed $password = '';
+    private string $password = '';
 
     /**
      * @var string database name
      */
-    private mixed $databaseName = '';
+    private string $databaseName = '';
 
     /**
-     * @var string database port default: 3306
+     * @var string|int database port default: 3306
      */
-    private mixed $port = '3306';
+    private string|int $port = '3306';
 
     /**
      * @var PDO database connection

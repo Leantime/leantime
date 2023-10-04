@@ -657,18 +657,6 @@ namespace Leantime\Domain\Tickets\Repositories {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllByProjectId($projectId): false|array
         {
 
@@ -722,18 +710,6 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $values;
         }
 
-        /**
-         * @param $projectId
-         * @return array|false
-         */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         /**
          * @param $projectId
          * @return array|false
@@ -892,21 +868,6 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $values;
         }
 
-        /**
-         * @param \Leantime\Domain\Tickets\Models\Tickets $ticket
-         * @param $projectId
-         * @return array|false
-         */
-        /**
-         * @param \Leantime\Domain\Tickets\Models\Tickets $ticket
-         * @param $projectId
-         * @return array|false
-         */
-        /**
-         * @param \Leantime\Domain\Tickets\Models\Tickets $ticket
-         * @param $projectId
-         * @return array|false
-         */
         /**
          * @param \Leantime\Domain\Tickets\Models\Tickets $ticket
          * @param $projectId

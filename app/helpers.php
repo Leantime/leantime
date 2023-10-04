@@ -57,7 +57,6 @@ if (! function_exists('__')) {
      * @param string $index
      * @return string
      * @throws BindingResolutionException
-     * @throws BindingResolutionException
      */
     function __(string $index): string
     {

@@ -8,7 +8,6 @@ namespace Leantime\Domain\Api\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
-use JetBrains\PhpStorm\NoReturn;
 use Leantime\Core\Controller;
 use ReflectionClass;
 use ReflectionParameter;
@@ -356,7 +355,7 @@ class Jsonrpc extends Controller
      * @param mixed|null $additional_info
      * @return void
      */
-    #[NoReturn] private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null): void
+    private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null): void
     {
         echo json_encode([
             'code' => $errorcode,
@@ -375,7 +374,7 @@ class Jsonrpc extends Controller
      *
      * @return void
      */
-    #[NoReturn] private function returnParseError(mixed $additional_info = null): void
+    private function returnParseError(mixed $additional_info = null): void
     {
         $this->returnError('Parse error', -32700, $additional_info);
     }
@@ -389,7 +388,7 @@ class Jsonrpc extends Controller
      *
      * @return void
      */
-    #[NoReturn] private function returnInvalidRequest(mixed $additional_info = null): void
+    private function returnInvalidRequest(mixed $additional_info = null): void
     {
         $this->returnError('Invalid Request', -32600, $additional_info);
     }
@@ -403,7 +402,7 @@ class Jsonrpc extends Controller
      *
      * @return void
      */
-    #[NoReturn] private function returnMethodNotFound(mixed $additional_info = null): void
+    private function returnMethodNotFound(mixed $additional_info = null): void
     {
         $this->returnError('Method not found', -32601, $additional_info);
     }
@@ -417,7 +416,7 @@ class Jsonrpc extends Controller
      *
      * @return void
      */
-    #[NoReturn] private function returnInvalidParams(mixed $additional_info = null): void
+    private function returnInvalidParams(mixed $additional_info = null): void
     {
         $this->returnError('Invalid params', -32602, $additional_info);
     }
@@ -431,7 +430,7 @@ class Jsonrpc extends Controller
      *
      * @return void
      */
-    #[NoReturn] private function returnServerError(mixed $additional_info): void
+    private function returnServerError(mixed $additional_info): void
     {
         $this->returnError('Server error', -32000, $additional_info);
     }

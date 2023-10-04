@@ -135,7 +135,7 @@ class Bootloader
 
         $this->setErrorHandler($config->debug ?? 0);
 
-        $app->make(AppSettings::class)->loadSettings();
+
 
         $request = $app->make(IncomingRequest::class);
 
@@ -192,6 +192,9 @@ class Bootloader
         $this->app->singleton(Environment::class, Environment::class);
         $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
         $this->app->alias(Environment::class, alias: "config");
+
+        $this->app->singleton(AppSettings::class, AppSettings::class);
+        $this->app->make(AppSettings::class)->loadSettings();
 
         Events::discover_listeners();
 

@@ -48,7 +48,6 @@ class Events
      *
      * @return void
      * @throws BindingResolutionException
-     * @throws BindingResolutionException
      */
     public static function dispatch_event(
         string $eventName,
@@ -125,7 +124,6 @@ class Events
      * @param mixed  $context
      *
      * @return mixed
-     * @throws BindingResolutionException
      * @throws BindingResolutionException
      */
     public static function dispatch_filter(

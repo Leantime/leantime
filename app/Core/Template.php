@@ -957,7 +957,6 @@ class Template
      * @access public
      * @return string
      * @throws BindingResolutionException
-     * @throws BindingResolutionException
      */
     public function getModulePicture(): string
     {
