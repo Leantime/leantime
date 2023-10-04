@@ -4,7 +4,6 @@ namespace Leantime\Domain\Connector\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Connector\Services\Connector as ConnectorService;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Connector\Services;
 

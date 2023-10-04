@@ -13,11 +13,10 @@ namespace Leantime\Domain\Cron\Services {
      */
     class Cron
     {
-        private Audit $AuditRepo;
+        private Audit $auditRepo;
         private Queue $queueSvc;
         private Environment $Environment;
         private Environment $environment;
-        private Audit $auditRepo;
 
         /**
          * @param Audit       $auditRepo
@@ -26,7 +25,7 @@ namespace Leantime\Domain\Cron\Services {
          */
         public function __construct(Audit $auditRepo, Queue $queueSvc, Environment $environment)
         {
-            $this->auditRepo = $auditRepo;
+            $this->auditRepo =  $auditRepo;
             $this->queueSvc = $queueSvc;
             $this->environment = $environment;
         }
