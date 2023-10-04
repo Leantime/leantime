@@ -62,17 +62,17 @@ class DefaultConfig
     public string $defaultTimezone = 'America/Los_Angeles';
 
     /**
-     * @var boolean Enable to specifiy menu on a project by project basis
+     * @var bool Enable to specifiy menu on a project by project basis
      */
     public bool $enableMenuType = false;
 
     /**
-     * @var boolean Keep theme and language from previous user for login screen
+     * @var bool Keep theme and language from previous user for login screen
      */
     public bool $keepTheme = true;
 
     /**
-     * @var boolean|integer Debug flag
+     * @var bool|int Debug flag
      */
     public int|bool $debug = 0;
 
@@ -123,7 +123,7 @@ class DefaultConfig
 
     # S3 configuration ==============================================================================
     /**
-     * @var boolean Set to true if you want to use S3 instead of local files
+     * @var bool Set to true if you want to use S3 instead of local files
      */
     public bool $useS3 = false;
 
@@ -143,7 +143,7 @@ class DefaultConfig
     public string $s3Bucket = '';
 
     /**
-     * @var boolean false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
+     * @var bool false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
      */
     public bool $s3UsePathStyleEndpoint = false;
 
@@ -158,7 +158,7 @@ class DefaultConfig
     public string $s3FolderName = '';
 
     /**
-     * @var string S3 EndPoint S3 Compatible
+     * @var string|null S3 EndPoint S3 Compatible
      * @see https://sfo2.digitaloceanspaces.com
      */
     public ?string $s3EndPoint = null;
@@ -171,7 +171,7 @@ class DefaultConfig
     public string $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**
-     * @var integer How many seconds after inactivity should we logout?  28800seconds = 8hours
+     * @var int How many seconds after inactivity should we logout?  28800seconds = 8hours
      */
     public int $sessionExpiration = 28800;
 
@@ -183,7 +183,7 @@ class DefaultConfig
     public string $email = '';
 
     /**
-     * @var boolean Use SMTP? If set to false, the default php mail() function will be used
+     * @var bool Use SMTP? If set to false, the default php mail() function will be used
      */
     public bool $useSMTP = false;
 
@@ -193,7 +193,7 @@ class DefaultConfig
     public string $smtpHosts = '';
 
     /**
-     * @var boolean SMTP use user/password authentication
+     * @var bool SMTP use user/password authentication
      */
     public bool $smtpAuth = true;
 
@@ -208,7 +208,7 @@ class DefaultConfig
     public string $smtpPassword = '';
 
     /**
-     * @var boolean SMTP Enable TLS encryption automatically if a server supports it
+     * @var bool SMTP Enable TLS encryption automatically if a server supports it
      */
     public bool $smtpAutoTLS = true;
 
@@ -218,19 +218,19 @@ class DefaultConfig
     public string $smtpSecure = '';
 
     /**
-     * @var boolean SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
+     * @var bool SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
      */
     public bool $smtpSSLNoverify = false;
 
     /**
-     * @var integer SMTP Port (usually one of 25, 465, 587, 2526)
+     * @var int SMTP Port (usually one of 25, 465, 587, 2526)
      */
     public int $smtpPort = 587;
 
 
     # ldap default settings (can be changed in company settings) ==================================
     /**
-     * @var boolean Set to true if you want to use LDAP
+     * @var bool Set to true if you want to use LDAP
      */
     public bool $useLdap = false;
 
@@ -245,7 +245,7 @@ class DefaultConfig
     public string $ldapHost = '';
 
     /**
-     * @var integer LDAP port
+     * @var int LDAP port
      */
     public int $ldapPort = 389;
 
@@ -326,14 +326,14 @@ class DefaultConfig
     public string $plugins = '';
 
     /**
-     * @var integer Default Leantime Role on creation. (set to editor)
+     * @var int Default Leantime Role on creation. (set to editor)
      */
     public int $ldapDefaultRoleKey = 20;
 
 
     # OIDC Settings ================================================================================
     /**
-     * @var boolean Set to true if you want to use OIDC
+     * @var bool Set to true if you want to use OIDC
      */
     public bool $oidcEnable = false;
 
@@ -405,7 +405,7 @@ class DefaultConfig
 
     # Redis Settings ===============================================================================
     /**
-     * @var boolean Set to true if you want to use Redis
+     * @var bool Set to true if you want to use Redis
      */
     public bool $useRedis = false;
 

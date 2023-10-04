@@ -5,16 +5,26 @@ namespace Leantime\Domain\Api\Repositories {
     use PDO;
     use Leantime\Core\Db as DbCore;
 
+    /**
+     *
+     */
     class Api
     {
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
-        public function getAPIKeyUser($apiKeyUser)
+        /**
+         * @param $apiKeyUser
+         * @return mixed
+         */
+        public function getAPIKeyUser($apiKeyUser): mixed
         {
 
             $sql = "SELECT * FROM `zp_user` WHERE username = :apiKeyUsername AND source <=> 'api' LIMIT 1";

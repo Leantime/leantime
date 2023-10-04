@@ -4,12 +4,21 @@ namespace Leantime\Domain\Calendar\Services {
 
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+
+    /**
+     *
+     */
     class Calendar
     {
         private CalendarRepository $calendarRepo;
         private LanguageCore $language;
 
+        /**
+         * @param CalendarRepository $calendarRepo
+         * @param LanguageCore       $language
+         */
         public function __construct(CalendarRepository $calendarRepo, LanguageCore $language)
         {
             $this->calendarRepo = $calendarRepo;
@@ -24,7 +33,7 @@ namespace Leantime\Domain\Calendar\Services {
          * @params $id id of event to be updated (only events can be updated. Tickets need to be updated via ticket api
          * @params $params key value array of columns to be updated
          *
-         * @return boolean true on success, false on failure
+         * @return bool true on success, false on failure
          */
         public function patch($id, $params): bool
         {
@@ -44,9 +53,9 @@ namespace Leantime\Domain\Calendar\Services {
          * @access public
          * @params int $eventId Id of event to be checked
          *
-         * @return boolean true on success, false on failure
+         * @return bool true on success, false on failure
          */
-        private function userIsAllowedToUpdate($eventId)
+        private function userIsAllowedToUpdate($eventId): bool
         {
 
             if (Auth::userIsAtLeast(Roles::$admin)) {
@@ -68,7 +77,7 @@ namespace Leantime\Domain\Calendar\Services {
          * @access public
          * @params array $values array of event values
          *
-         * @return integer|false returns the id on success, false on failure
+         * @return int|false returns the id on success, false on failure
          */
         public function addEvent(array $values): int|false
         {
@@ -98,7 +107,15 @@ namespace Leantime\Domain\Calendar\Services {
         }
 
 
-        public function getEvent($eventId)
+        /**
+         * @param $eventId
+         * @return mixed
+         */
+        /**
+         * @param $eventId
+         * @return mixed
+         */
+        public function getEvent($eventId): mixed
         {
             return $this->calendarRepo->getEvent($eventId);
         }
@@ -109,7 +126,7 @@ namespace Leantime\Domain\Calendar\Services {
          * @access public
          * @params array $values array of event values
          *
-         * @return boolean returns true on success, false on failure
+         * @return bool returns true on success, false on failure
          */
         public function editEvent(array $values): bool
         {
@@ -158,7 +175,7 @@ namespace Leantime\Domain\Calendar\Services {
          * @access public
          * @params array $values array of event values
          *
-         * @return integer|false returns the id on success, false on failure
+         * @return int|false returns the id on success, false on failure
          */
         public function delEvent($id): int|false
         {

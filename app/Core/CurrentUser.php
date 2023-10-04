@@ -11,7 +11,7 @@ namespace Leantime\Core;
 class CurrentUser
 {
     /**
-     * @var integer
+     * @var int
      */
     public int $id;
 
@@ -31,12 +31,12 @@ class CurrentUser
     public string $mail;
 
     /**
-     * @var integer
+     * @var int
      */
     public int $clientId;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public bool $twoFAEnabled;
 
@@ -46,7 +46,7 @@ class CurrentUser
     public string $twoFASecret;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public bool $twoFAVerified;
 
@@ -56,7 +56,7 @@ class CurrentUser
     public string $role;
 
     /**
-     * @var integer
+     * @var int
      */
     public int $profileId;
 
@@ -66,7 +66,7 @@ class CurrentUser
     public array $settings;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public bool $isLdap;
 }

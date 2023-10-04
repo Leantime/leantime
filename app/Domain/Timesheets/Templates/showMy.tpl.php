@@ -346,56 +346,91 @@ jQuery(document).ready(function(){
                                 echo"active";
                                                         } ?>" <?php if ($today == $currentDate) {
                                                         echo"active";
-                                                        } ?>><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (in_array($currentDate, $workDatesArray) == true) {
-                                                        echo "existing";
+                                                        } ?>><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (
+                                                            in_array(
+                                                                $currentDate,
+                                                                $workDatesArray
+                                                            )
+                                                        ) {
+                                                            echo "existing";
                                                         } else {
                                                             echo "new";
                                                         }?>|<?php echo $currentDate ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursMonday"]; ?>" /></td>
                             <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
                             <td width="7%" class="rowTu <?php if ($today == $currentDate) {
                                 echo"active";
-                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (in_array($currentDate, $workDatesArray) == true) {
-                                                        echo "existing";
+                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (
+                                                            in_array(
+                                                                $currentDate,
+                                                                $workDatesArray
+                                                            )
+                                                        ) {
+                                                            echo "existing";
                                                         } else {
                                                             echo "new";
                                                         }?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursTuesday"]; ?>" /></td>
                             <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
                             <td width="7%" class="rowWe <?php if ($today == $currentDate) {
                                 echo"active";
-                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (in_array($currentDate, $workDatesArray) == true) {
-                                                        echo "existing";
+                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (
+                                                            in_array(
+                                                                $currentDate,
+                                                                $workDatesArray
+                                                            )
+                                                        ) {
+                                                            echo "existing";
                                                         } else {
                                                             echo "new";
                                                         }?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursWednesday"]; ?>" /></td>
                             <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
                             <td width="7%" class="rowTh <?php if ($today == $currentDate) {
                                 echo"active";
-                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (in_array($currentDate, $workDatesArray) == true) {
-                                                        echo "existing";
+                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (
+                                                            in_array(
+                                                                $currentDate,
+                                                                $workDatesArray
+                                                            )
+                                                        ) {
+                                                            echo "existing";
                                                         } else {
                                                             echo "new";
                                                         }?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursThursday"]; ?>" /></td>
                             <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
                             <td width="7%" class="rowFr <?php if ($today == $currentDate) {
                                 echo"active";
-                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (in_array($currentDate, $workDatesArray) == true) {
-                                                        echo "existing";
+                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (
+                                                            in_array(
+                                                                $currentDate,
+                                                                $workDatesArray
+                                                            )
+                                                        ) {
+                                                            echo "existing";
                                                         } else {
                                                             echo "new";
                                                         }?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursFriday"]; ?>" /></td>
                             <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
                             <td width="7%" class="rowSa <?php if ($today == $currentDate) {
                                 echo"active";
-                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (in_array($currentDate, $workDatesArray) == true) {
-                                                        echo "existing";
+                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (
+                                                            in_array(
+                                                                $currentDate,
+                                                                $workDatesArray
+                                                            )
+                                                        ) {
+                                                            echo "existing";
                                                         } else {
                                                             echo "new";
                                                         }?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursSaturday"]; ?>" /></td>
                             <?php $currentDate = $dateFrom->add(new DateInterval('P1D'))->format('Y-m-d'); ?>
                             <td width="7%" class="rowSu <?php if ($today == $currentDate) {
                                 echo"active";
-                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (in_array($currentDate, $workDatesArray) == true) {
-                                                        echo "existing";
+                                                        } ?>"><input type="text" class="<?php echo $timeRow["workDates"]; ?> hourCell" name="<?php echo $timeRow["ticketId"];?>|<?php if (
+                                                            in_array(
+                                                                $currentDate,
+                                                                $workDatesArray
+                                                            )
+                                                        ) {
+                                                            echo "existing";
                                                         } else {
                                                             echo "new";
                                                         }?>|<?php echo $currentDate; ?>|<?php echo $timeRow["kind"];?>" value="<?php echo $timeRow["hoursSunday"]; ?>" /></td>

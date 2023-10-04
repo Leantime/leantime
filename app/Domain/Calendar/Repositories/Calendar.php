@@ -2,16 +2,23 @@
 
 namespace Leantime\Domain\Calendar\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Repository as RepositoryCore;
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Setting\Repositories\Setting;
+    use Leantime\Domain\Tickets\Services\Tickets;
+    use Leantime\Domain\Users\Repositories\Users;
     use PDO;
 
+    /**
+     *
+     */
     class Calendar extends RepositoryCore
     {
         /**
          * @access public
-         * @var    DbCore
+         * @var    DbCore|null
          */
         private ?DbCore $db;
 
@@ -29,7 +36,17 @@ namespace Leantime\Domain\Calendar\Repositories {
             $this->entity = "calendar";
         }
 
-        public function getAllDates($dateFrom, $dateTo)
+        /**
+         * @param $dateFrom
+         * @param $dateTo
+         * @return array|false
+         */
+        /**
+         * @param $dateFrom
+         * @param $dateTo
+         * @return array|false
+         */
+        public function getAllDates($dateFrom, $dateTo): false|array
         {
             $query = "SELECT * FROM zp_calendar WHERE
 					userId = :userId ORDER BY zp_calendar.dateFrom";
@@ -43,7 +60,27 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $allDates;
         }
 
-        public function getCalendar($userId)
+        /**
+         * @param $dateFrom
+         * @param $dateTo
+         * @return false|array
+         */
+        public function getAll($dateFrom, $dateTo): false|array
+        {
+            return $this->getAllDates($dateFrom, $dateTo);
+        }
+
+        /**
+         * @param $userId
+         * @return array
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $userId
+         * @return array
+         * @throws BindingResolutionException
+         */
+        public function getCalendar($userId): array
         {
 
             /*
@@ -65,7 +102,7 @@ namespace Leantime\Domain\Calendar\Repositories {
             $stmn->closeCursor();
             */
 
-            $ticketService = app()->make(\Leantime\Domain\Tickets\Services\Tickets::class);
+            $ticketService = app()->make(Tickets::class);
             $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
 
             if (!empty($ticketArray)) {
@@ -106,16 +143,16 @@ namespace Leantime\Domain\Calendar\Repositories {
                         'y' => date('Y', $dateFrom),
                         'm' => date('m', $dateFrom),
                         'd' => date('d', $dateFrom),
-                        'h' => $allDay == true ? "00" : date('H', $dateFrom),
-                        'i' => $allDay == true ? "00" : date('i', $dateFrom),
+                        'h' => $allDay ? "00" : date('H', $dateFrom),
+                        'i' => $allDay ? "00" : date('i', $dateFrom),
                     'ical' => date('Ymd\THis', $dateFrom),
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
                         'm' => date('m', $dateTo),
-                        'd' => $allDay == true ? date('d', ($dateFrom + (60 * 60 * 24))) : date('d', $dateTo),
-                        'h' => $allDay == true ? "00" : date('H', $dateTo),
-                        'i' => $allDay == true ? "00" : date('i', $dateTo),
+                        'd' => $allDay ? date('d', ($dateFrom + (60 * 60 * 24))) : date('d', $dateTo),
+                        'h' => $allDay ? "00" : date('H', $dateTo),
+                        'i' => $allDay ? "00" : date('i', $dateTo),
                         'ical' => date('Ymd\THis', $dateTo),
                     ),
                     'id' => $value['id'],
@@ -210,10 +247,22 @@ namespace Leantime\Domain\Calendar\Repositories {
         }
 
 
-        public function getCalendarBySecretHash($userHash, $calHash)
+        /**
+         * @param $userHash
+         * @param $calHash
+         * @return array|false
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $userHash
+         * @param $calHash
+         * @return array|false
+         * @throws BindingResolutionException
+         */
+        public function getCalendarBySecretHash($userHash, $calHash): false|array
         {
             //get user
-            $userRepo = app()->make(\Leantime\Domain\Users\Repositories\Users::class);
+            $userRepo = app()->make(Users::class);
             $user = $userRepo->getUserBySha($userHash);
 
 
@@ -222,7 +271,7 @@ namespace Leantime\Domain\Calendar\Repositories {
             }
 
             //Check if setting exists
-            $settingService = app()->make(\Leantime\Domain\Setting\Repositories\Setting::class);
+            $settingService = app()->make(Setting::class);
             $hash = $settingService->getSetting("usersettings." . $user['id'] . ".icalSecret");
 
             if ($hash !== false && $calHash == $hash) {
@@ -232,7 +281,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             }
         }
 
-        public function getCalendarEventsForToday($id)
+        /**
+         * @param $id
+         * @return array
+         */
+        /**
+         * @param $id
+         * @return array
+         */
+        public function getCalendarEventsForToday($id): array
         {
 
 
@@ -341,7 +398,13 @@ namespace Leantime\Domain\Calendar\Repositories {
         }
 
 
-        public function getTicketWishDates()
+        /**
+         * @return array|false
+         */
+        /**
+         * @return array|false
+         */
+        public function getTicketWishDates(): false|array
         {
 
             $query = "SELECT id, headline, dateToFinish FROM zp_tickets WHERE (userId = :userId OR editorId = :userId) AND dateToFinish <> '000-00-00 00:00:00'";
@@ -357,8 +420,13 @@ namespace Leantime\Domain\Calendar\Repositories {
         }
 
 
-
-        public function getTicketEditDates()
+        /**
+         * @return array|false
+         */
+        /**
+         * @return array|false
+         */
+        public function getTicketEditDates(): false|array
         {
 
             $query = "SELECT id, headline, editFrom, editTo FROM zp_tickets WHERE (userId = :userId OR editorId = :userId) AND editFrom <> '000-00-00 00:00:00'";
@@ -373,7 +441,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $values;
         }
 
-        public function addEvent($values)
+        /**
+         * @param $values
+         * @return false|string
+         */
+        /**
+         * @param $values
+         * @return false|string
+         */
+        public function addEvent($values): false|string
         {
 
             $query = "INSERT INTO zp_calendar (userId, dateFrom, dateTo, description, allDay)
@@ -396,7 +472,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             }
         }
 
-        public function getEvent($id)
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
+        public function getEvent($id): mixed
         {
 
             $query = "SELECT * FROM zp_calendar WHERE id = :id";
@@ -411,7 +495,17 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $values;
         }
 
-        public function editEvent($values, $id)
+        /**
+         * @param $values
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $values
+         * @param $id
+         * @return void
+         */
+        public function editEvent($values, $id): void
         {
 
             $query = "UPDATE zp_calendar SET
@@ -435,7 +529,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             $stmn->closeCursor();
         }
 
-        public function delPersonalEvent($id)
+        /**
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @return bool
+         */
+        public function delPersonalEvent($id): bool
         {
 
             $query = "DELETE FROM zp_calendar WHERE id = :id AND userId = :userId LIMIT 1";
@@ -450,7 +552,13 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $value;
         }
 
-        public function getMyGoogleCalendars()
+        /**
+         * @return array|false
+         */
+        /**
+         * @return array|false
+         */
+        public function getMyGoogleCalendars(): false|array
         {
 
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId";
@@ -465,7 +573,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $values;
         }
 
-        public function getGCal($id)
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
+        public function getGCal($id): mixed
         {
 
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
@@ -481,7 +597,17 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $values;
         }
 
-        public function editGUrl($values, $id)
+        /**
+         * @param $values
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $values
+         * @param $id
+         * @return void
+         */
+        public function editGUrl($values, $id): void
         {
 
             $query = "UPDATE zp_gcallinks SET
@@ -501,7 +627,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             $stmn->closeCursor();
         }
 
-        public function deleteGCal($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
+        public function deleteGCal($id): void
         {
 
             $query = "DELETE FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
@@ -515,7 +649,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             $stmn->closeCursor();
         }
 
-        public function addGUrl($values)
+        /**
+         * @param $values
+         * @return void
+         */
+        /**
+         * @param $values
+         * @return void
+         */
+        public function addGUrl($values): void
         {
 
             $query = "INSERT INTO zp_gcallinks (userId, name, url, colorClass)

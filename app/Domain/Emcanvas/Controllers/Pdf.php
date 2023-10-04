@@ -8,6 +8,9 @@ namespace Leantime\Domain\Emcanvas\Controllers {
 
     use Leantime\Domain\Canvas\Controllers\Pdf as CanvasPdf;
 
+    /**
+     *
+     */
     class Pdf extends CanvasPdf
     {
         protected const CANVAS_NAME = 'em';
@@ -147,8 +150,9 @@ namespace Leantime\Domain\Emcanvas\Controllers {
          * reportGenerate - Generate report for module
          *
          * @access public
-         * @param  integer $id     Canvas identifier
-         * @param  string  $filter Filter value
+         * @param int   $id      Canvas identifier
+         * @param array $filter  Filter value
+         * @param array $options
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string

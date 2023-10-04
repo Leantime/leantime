@@ -1,7 +1,7 @@
 {
     "name": "leantime/leantime",
     "description": "Open source project management system",
-    "version": "2.4-beta",
+    "version": "2.4-beta-7",
     "type": "project",
     "config": {
         "platform-check": false,
@@ -53,7 +53,8 @@
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "symfony/http-foundation": "^5.4",
         "symfony/error-handler": "^6.3",
-        "vedmant/laravel-feed-reader": "^1.6"
+        "vedmant/laravel-feed-reader": "^1.6",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",

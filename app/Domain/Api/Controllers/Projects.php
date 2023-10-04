@@ -6,6 +6,10 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+
+    /**
+     *
+     */
     class Projects extends Controller
     {
         private FileuploadCore $fileUpload;
@@ -78,7 +82,7 @@ namespace Leantime\Domain\Api\Controllers {
 
             if (isset($params['action']) && $params['action'] == "sortIndex" && isset($params["payload"]) === true) {
                 $handler = null;
-                if (isset($params["handler"]) == true) {
+                if (isset($params["handler"])) {
                     $handler = $params["handler"];
                 }
 

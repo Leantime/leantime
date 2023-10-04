@@ -7,17 +7,29 @@ namespace Leantime\Domain\TwoFA\Controllers {
     use Leantime\Core\Controller;
     use RobThree\Auth\Providers\Qr\IQRCodeProvider;
     use RobThree\Auth\TwoFactorAuth;
+    use RobThree\Auth\TwoFactorAuthException;
 
+    /**
+     *
+     */
     class Edit extends Controller
     {
         private UserRepository $userRepo;
 
-        public function init(UserRepository $userRepo)
+        /**
+         * @param UserRepository $userRepo
+         * @return void
+         */
+        public function init(UserRepository $userRepo): void
         {
             $this->userRepo = $userRepo;
         }
 
-        public function run()
+        /**
+         * @return void
+         * @throws TwoFactorAuthException
+         */
+        public function run(): void
         {
 
             $userId = $_SESSION['userdata']['id'];
@@ -96,14 +108,27 @@ namespace Leantime\Domain\TwoFA\Controllers {
     }
 
     // TODO: lets find a place for this
+
+    /**
+     *
+     */
     class TwoFAQRCode implements IQRCodeProvider
     {
-        public function getMimeType()
+        /**
+         * @return string
+         */
+        public function getMimeType(): string
         {
             return 'image/png';
         }
 
-        public function getQRCodeImage($qrtext, $size)
+
+        /**
+         * @param $qrtext
+         * @param $size
+         * @return string
+         */
+        public function getQRCodeImage($qrtext, $size): string
         {
             $qrCode = new QrCode($qrtext);
             $qrCode->setSize($size);

@@ -2,9 +2,13 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\View\View;
 use Illuminate\Support\Fluent;
 
+/**
+ *
+ */
 abstract class Composer
 {
     /**
@@ -12,29 +16,30 @@ abstract class Composer
      *
      * @var string[]
      */
-    public static $views;
+    public static array $views;
 
     /**
      * Current view
      *
      * @var View
      */
-    protected $view;
+    protected View $view;
 
     /**
      * Current view data
      *
      * @var Fluent
      */
-    protected $data;
+    protected Fluent $data;
 
     /**
      * Compose the view before rendering.
      *
-     * @param  View $view
+     * @param View $view
      * @return void
+     * @throws BindingResolutionException
      */
-    public function compose(View $view)
+    public function compose(View $view): void
     {
         $this->view = $view;
         $this->data = new Fluent($view->getData());
@@ -51,7 +56,7 @@ abstract class Composer
      *
      * @return array
      */
-    protected function merge()
+    protected function merge(): array
     {
         return array_merge(
             $this->view->getData(),
@@ -64,7 +69,7 @@ abstract class Composer
      *
      * @return array
      */
-    protected function with()
+    protected function with(): array
     {
         return [];
     }

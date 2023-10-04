@@ -2,6 +2,9 @@
 
 namespace Leantime\Domain\Reactions\Services {
 
+    /**
+     *
+     */
     class Reactions
     {
         /**
@@ -10,6 +13,9 @@ namespace Leantime\Domain\Reactions\Services {
          */
         private \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo;
 
+        /**
+         * @param \Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo
+         */
         public function __construct(\Leantime\Domain\Reactions\Repositories\Reactions $reactionsRepo)
         {
             $this->reactionsRepo = $reactionsRepo;
@@ -19,12 +25,12 @@ namespace Leantime\Domain\Reactions\Services {
          * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
          * @access public
          *
-         * @param string  $module
-         * @param integer $moduleId
-         * @param integer $userId
-         * @param string  $reaction
+         * @param string $module
+         * @param int    $moduleId
+         * @param int    $userId
+         * @param string $reaction
          *
-         * @return boolean
+         * @return bool
          */
         public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {
@@ -54,7 +60,7 @@ namespace Leantime\Domain\Reactions\Services {
          *
          * @return string|false
          */
-        public function getReactionType($reaction): string|false
+        public function getReactionType(string $reaction): string|false
         {
 
             $types = \Leantime\Domain\Reactions\Models\Reactions::getReactions();
@@ -72,12 +78,12 @@ namespace Leantime\Domain\Reactions\Services {
          * getGroupedEntityReactions - gets all reactions for a given entity grouped and counted by reactions
          * @access public
          *
-         * @param string  $module
-         * @param integer $moduleId
+         * @param string $module
+         * @param int    $moduleId
          *
-         * @return array|boolean returns the array on success or false on failure
+         * @return array|bool returns the array on success or false on failure
          */
-        public function getGroupedEntityReactions($module, $moduleId): array|false
+        public function getGroupedEntityReactions(string $module, int $moduleId): array|false
         {
             return $this->reactionsRepo->getGroupedEntityReactions($module, $moduleId);
         }
@@ -86,10 +92,10 @@ namespace Leantime\Domain\Reactions\Services {
          * getMyReactions - gets user reactions. Can be very broad or very targeted
          * @access public
          *
-         * @param integer $userId
-         * @param string  $module
-         * @param integer $moduleId
-         * @param string  $reaction
+         * @param int      $userId
+         * @param string   $module
+         * @param int|null $moduleId
+         * @param string   $reaction
          *
          * @return array|false
          */
@@ -103,12 +109,12 @@ namespace Leantime\Domain\Reactions\Services {
          * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
          * @access public
          *
-         * @param string  $module
-         * @param integer $moduleId
-         * @param integer $userId
-         * @param string  $reaction
+         * @param string $module
+         * @param int    $moduleId
+         * @param int    $userId
+         * @param string $reaction
          *
-         * @return boolean
+         * @return bool
          */
         public function removeReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {

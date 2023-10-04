@@ -13,6 +13,9 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
     class ShowCanvas extends Controller
     {
         /**
@@ -45,7 +48,7 @@ namespace Leantime\Domain\Canvas\Controllers {
             $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
             //Create default canvas.
-            if ($allCanvas == false || count($allCanvas) == 0) {
+            if (!$allCanvas || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__("label.board"),
                     'author' => $_SESSION['userdata']['id'],
@@ -67,7 +70,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                     }
                 }
 
-                if ($found == false) {
+                if (!$found) {
                     $currentCanvasId = -1;
                     $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = '';
                 }

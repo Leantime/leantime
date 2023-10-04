@@ -2,19 +2,24 @@
 
 namespace Leantime\Domain\Ldap\Services;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+use LDAP\Connection;
 use Leantime\Core\Environment;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
+/**
+ *
+ */
 class Ldap
 {
-    private $ldapConnection;
-    private $host;
-    private $port;
-    private $ldapDomain;
-    private $ldapUri;
-    private $ldapDn; //DN where users are located (including baseDn)
-    private $ldapKeys = array(
+    private false|Connection $ldapConnection;
+    private mixed $host;
+    private mixed $port;
+    private mixed $ldapDomain;
+    private mixed $ldapUri;
+    private mixed $ldapDn; //DN where users are located (including baseDn)
+    private mixed $ldapKeys = array(
         "username" => "uid",
         "groups" => "memberof",
         "email" => "mail",
@@ -25,10 +30,10 @@ class Ldap
         "jobLevel" => "level",
         "department" => "department",
     );
-    private $ldapLtGroupAssignments = array();
-    private $settingsRepo;
-    private $defaultRoleKey;
-    private $directoryType = "OL";
+    private mixed $ldapLtGroupAssignments = array();
+    private mixed $settingsRepo;
+    private mixed $defaultRoleKey;
+    private mixed $directoryType = "OL";
 
     /**
      * @var environment $config
@@ -36,22 +41,26 @@ class Ldap
     private Environment $config;
 
     /**
-     * @var array|boolean|integer|mixed|string
+     * @var array|bool|int|mixed|string
      */
-    public $useLdap;
+    public mixed $useLdap;
 
     /**
-     * @var array|boolean|integer|mixed|string
+     * @var array|bool|int|mixed|string
      */
-    public $autoCreateUser;
+    public mixed $autoCreateUser;
 
-    public function __construct($differentConfig = false)
+    /**
+     * @param false $differentConfig
+     * @throws BindingResolutionException
+     */
+    public function __construct(bool|Environment $differentConfig = false)
     {
 
         $this->settingsRepo = app()->make(SettingRepository::class);
 
         if (!$differentConfig) {
-            $this->config = app()->make(\Leantime\Core\Environment::class);
+            $this->config = app()->make(Environment::class);
             //Map config vars
             $this->useLdap = $this->config->useLdap;
 
@@ -86,6 +95,12 @@ class Ldap
         return true;
     }
 
+    /**
+     * @return bool|void
+     */
+    /**
+     * @return bool|void
+     */
     public function connect()
     {
 
@@ -114,7 +129,17 @@ class Ldap
         }
     }
 
-    public function bind($username = '', $password = '')
+    /**
+     * @param $username
+     * @param $password
+     * @return bool
+     */
+    /**
+     * @param string $username
+     * @param string $password
+     * @return bool
+     */
+    public function bind(string $username = '', string $password = ''): bool
     {
 
         if ($username != '' && $password != '') {
@@ -130,18 +155,14 @@ class Ldap
                 }
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN . "@" . $this->ldapDomain, $passwordBind);
-                if ($bind) {
-                    return true;
-                }
-
-            //OL requires distinguished name login
+                //OL requires distinguished name login
             } else {
                 $usernameDN = $this->ldapKeys->username . "=" . $username . "," . $this->ldapDn;
 
                 $bind = ldap_bind($this->ldapConnection, $usernameDN, $passwordBind);
-                if ($bind) {
-                    return true;
-                }
+            }
+            if ($bind) {
+                return true;
             }
 
             if ($this->config->debug == 1) {
@@ -151,13 +172,18 @@ class Ldap
                     error_log($err);
                 }
             }
-
-            return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
+    /**
+     * @param $username
+     * @return mixed|string|void
+     */
+    /**
+     * @param $username
+     * @return mixed|string|void
+     */
     public function getEmail($username)
     {
         if (!$this->ldapConnection) {
@@ -179,6 +205,14 @@ class Ldap
         return $mail;
     }
 
+    /**
+     * @param $username
+     * @return array|false|void
+     */
+    /**
+     * @param $username
+     * @return array|false|void
+     */
     public function getSingleUser($username)
     {
 
@@ -250,7 +284,15 @@ class Ldap
         );
     }
 
-    public function extractLdapFromUsername($username)
+    /**
+     * @param $username
+     * @return mixed|string
+     */
+    /**
+     * @param $username
+     * @return mixed|string
+     */
+    public function extractLdapFromUsername($username): mixed
     {
 
         $getLdap = explode("@", $username);
@@ -262,6 +304,12 @@ class Ldap
         }
     }
 
+    /**
+     * @return array|false|void
+     */
+    /**
+     * @return array|false|void
+     */
     public function getAllMembers()
     {
 
@@ -292,7 +340,17 @@ class Ldap
         }
     }
 
-    public function upsertUsers($ldapUsers)
+    /**
+     * @param $ldapUsers
+     * @return true
+     * @throws BindingResolutionException
+     */
+    /**
+     * @param $ldapUsers
+     * @return bool
+     * @throws BindingResolutionException
+     */
+    public function upsertUsers($ldapUsers): bool
     {
 
         $userRepo = app()->make(UserRepository::class);

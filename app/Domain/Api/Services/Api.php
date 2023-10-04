@@ -8,7 +8,11 @@ use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Core\Eventhelpers;
 use Ramsey\Uuid\Uuid;
+use RangeException;
 
+/**
+ *
+ */
 class Api
 {
     use Eventhelpers;
@@ -27,6 +31,10 @@ class Api
         $this->userRepo = $userRepo;
     }
 
+    /**
+     * @param $apiKey
+     * @return bool|array
+     */
     public function getAPIKeyUser($apiKey): bool|array
     {
 
@@ -62,8 +70,9 @@ class Api
      * TODO: Should accept userModel
      *
      * @access public
-     * @param  array $values basic user values
-     * @return boolean|array returns new user id on success, false on failure
+     * @param array $values basic user values
+     * @return bool|array returns new user id on success, false on failure
+     * @throws Exception
      */
     public function createAPIKey(array $values): bool|array
     {
@@ -94,7 +103,7 @@ class Api
      * @access public
      * @return array|false
      */
-    public function getAPIKeys()
+    public function getAPIKeys(): false|array
     {
         $keys =  $this->userRepo->getAllBySource("api");
 
@@ -116,17 +125,18 @@ class Api
      * For PHP 7, random_int is a PHP core function
      * For PHP 5.x, depends on https://github.com/paragonie/random_compat
      *
-     * @param integer $length   How many characters do we want?
-     * @param string  $keyspace A string of all possible characters
+     * @param int    $length   How many characters do we want?
+     * @param string $keyspace A string of all possible characters
      *                          to select from
      * @return string
+     * @throws Exception
      */
     public function random_str(
         int $length = 64,
         string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     ): string {
         if ($length < 1) {
-            throw new \RangeException("Length must be a positive integer");
+            throw new RangeException("Length must be a positive integer");
         }
         $pieces = [];
         $max = mb_strlen($keyspace, '8bit') - 1;
@@ -136,7 +146,14 @@ class Api
         return implode('', $pieces);
     }
 
-    public function setError($code, $message, $data)
+
+    /**
+     * @param $code
+     * @param $message
+     * @param $data
+     * @return void
+     */
+    public function setError($code, $message, $data): void
     {
         $this->error = array(
             "code" => $code,
@@ -145,7 +162,12 @@ class Api
         );
     }
 
-    public function jsonResponse(int $id, ?array $result)
+    /**
+     * @param int        $id
+     * @param array|null $result
+     * @return void
+     */
+    public function jsonResponse(int $id, ?array $result): void
     {
 
         $jsonRPCArray = array(

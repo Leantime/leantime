@@ -3,9 +3,13 @@
 namespace Leantime\Core;
 
 use ArrayAccess;
+use Dotenv\Dotenv;
+use Exception;
 use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Leantime\Config\Config;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * environment - class To handle environment variables
@@ -17,9 +21,9 @@ class Environment implements ArrayAccess, ConfigContract
 {
     # Config Files ===============================================================================
     /**
-     * @var \Dotenv\Dotenv
+     * @var Dotenv
      */
-    public \Dotenv\Dotenv $dotenv;
+    public Dotenv $dotenv;
 
     /**
      * @var ?object
@@ -27,9 +31,9 @@ class Environment implements ArrayAccess, ConfigContract
     public ?object $yaml;
 
     /**
-     * @var \Leantime\Config\Config
+     * @var Config|null
      */
-    public ?\Leantime\Config\Config $phpConfig;
+    public ?Config $phpConfig;
 
     # Config ======================================================================================
     /**
@@ -72,8 +76,8 @@ class Environment implements ArrayAccess, ConfigContract
 
     /**
      * environment constructor.
-     * @param \Leantime\Core\DefaultConfig $defaultConfiguration
-     * @return self
+     * @param DefaultConfig $defaultConfiguration
+     * @throws Exception
      */
     public function __construct(DefaultConfig $defaultConfiguration)
     {
@@ -90,21 +94,21 @@ class Environment implements ArrayAccess, ConfigContract
         if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
             require_once $phpConfigFile;
 
-            if (! class_exists(\Leantime\Config\Config::class)) {
-                throw new \Exception("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/leantime/leantime/releases/tag/v2.4-beta-2 for more details.");
+            if (! class_exists(Config::class)) {
+                throw new Exception("We found a php configuration file but the class cannot be instantiated. Please check the configuration file for namespace and class name. You can use the configuration.sample.php as a template. See https://github.com/leantime/leantime/releases/tag/v2.4-beta-2 for more details.");
             }
 
-            $this->phpConfig = new \Leantime\Config\Config();
+            $this->phpConfig = new Config();
         }
 
         /* Dotenv */
-        $this->dotenv = \Dotenv\Dotenv::createImmutable(APP_ROOT . "/config");
+        $this->dotenv = Dotenv::createImmutable(APP_ROOT . "/config");
         $this->dotenv->safeLoad();
 
         /* YAML */
         $this->yaml = null;
         if (file_exists(APP_ROOT . "/config/config.yaml")) {
-            $this->yaml = \Symfony\Component\Yaml\Yaml::parseFile(APP_ROOT . "/config/config.yaml");
+            $this->yaml = Yaml::parseFile(APP_ROOT . "/config/config.yaml");
         }
 
         $defaultConfigurationProperties = get_class_vars($defaultConfiguration::class);
@@ -131,9 +135,9 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * getBool - get a boolean value from the environment
      *
-     * @param string  $envVar
-     * @param boolean $default
-     * @return boolean
+     * @param string $envVar
+     * @param bool   $default
+     * @return bool
      */
     private function getBool(string $envVar, bool $default): bool
     {
@@ -160,7 +164,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param string $dataType
      * @return mixed
      */
-    private function environmentHelper(string $envVar, $default, $dataType = "string")
+    private function environmentHelper(string $envVar, mixed $default, string $dataType = "string"): mixed
     {
         /**
          * Basically, here, we are doing the fetch order of
@@ -175,19 +179,24 @@ class Environment implements ArrayAccess, ConfigContract
         // we need to check to see if we need to convert the found data
         return match ($dataType) {
             "string" => $found,
-            "boolean" => $found == "true" ? true : false,
+            "boolean" => $found == "true",
             "number" => intval($found),
             default => $found,
         };
     }
 
+    /**
+     * @param string $envVar
+     * @param mixed  $currentValue
+     * @return mixed
+     */
     private function tryGetFromPhp(string $envVar, mixed $currentValue): mixed
     {
 
         if ($this->phpConfig) {
             $key = array_search($envVar, self::LEGACY_MAPPINGS) ?: Str::of($envVar)->replace('LEAN_', '')->lower()->camel()->toString();
 
-            return isset($this->phpConfig->$key) ? $this->phpConfig->$key : $currentValue;
+            return $this->phpConfig->$key ?? $currentValue;
         }
 
         return null;
@@ -218,7 +227,7 @@ class Environment implements ArrayAccess, ConfigContract
 
         if ($this->yaml) {
             $key = strtolower(preg_replace('/^LEAN_/', '', $envVar));
-            return isset($this->yaml[$key]) ? $this->yaml[$key] : $currentValue;
+            return $this->yaml[$key] ?? $currentValue;
         }
 
         return null;
@@ -228,11 +237,11 @@ class Environment implements ArrayAccess, ConfigContract
      * Determine if the given configuration value exists.
      *
      * @param  string $key
-     * @return boolean
+     * @return bool
      */
-    public function has($key)
+    public function has($key): bool
     {
-        return Arr::has($_SESSION['mainconfig'] ?? [], $key) ?: Arr::has($this->config, $key);
+        return Arr::has($_SESSION['mainconfig'] ?? [], $key) || Arr::has($this->config, $key);
     }
 
     /**
@@ -242,7 +251,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed        $default
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get($key, $default = null): mixed
     {
         if (is_array($key)) {
             return $this->getMany($key);
@@ -258,10 +267,10 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * Get many configuration values.
      *
-     * @param  array $keys
+     * @param array $keys
      * @return array
      */
-    public function getMany($keys)
+    public function getMany(array $keys): array
     {
         $config = [];
 
@@ -283,7 +292,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed        $value
      * @return void
      */
-    public function set($key, $value = null)
+    public function set($key, $value = null): void
     {
         $keys = is_array($key) ? $key : [$key => $value];
 
@@ -304,7 +313,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed  $value
      * @return void
      */
-    public function prepend($key, $value)
+    public function prepend($key, $value): void
     {
         $array = $this->get($key, []);
 
@@ -320,7 +329,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed  $value
      * @return void
      */
-    public function push($key, $value)
+    public function push($key, $value): void
     {
         $array = $this->get($key, []);
 
@@ -334,7 +343,7 @@ class Environment implements ArrayAccess, ConfigContract
      *
      * @return array
      */
-    public function all()
+    public function all(): array
     {
         return $this->items;
     }
@@ -343,7 +352,7 @@ class Environment implements ArrayAccess, ConfigContract
      * Determine if the given configuration option exists.
      *
      * @param  string $key
-     * @return boolean
+     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -368,7 +377,7 @@ class Environment implements ArrayAccess, ConfigContract
      * @param  mixed  $value
      * @return void
      */
-    public function offsetSet($key, $value): void
+    public function offsetSet($key, mixed $value): void
     {
         $this->set($key, $value);
     }
@@ -388,6 +397,7 @@ class Environment implements ArrayAccess, ConfigContract
      * Dynamically access the configuration using object syntax.
      *
      * @param string $key
+     * @return mixed
      */
     public function __get(string $key): mixed
     {
@@ -412,7 +422,7 @@ class Environment implements ArrayAccess, ConfigContract
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function __isset(string $key): bool
     {

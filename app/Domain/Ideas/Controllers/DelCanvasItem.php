@@ -7,6 +7,9 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class DelCanvasItem extends Controller
     {
         private IdeaRepository $ideasRepo;

@@ -6,7 +6,10 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
-    class Valuecanvas extends api\canvas
+    /**
+     *
+     */
+    class Valuecanvas extends Canvas
     {
         protected const CANVAS_NAME = 'value';
     }

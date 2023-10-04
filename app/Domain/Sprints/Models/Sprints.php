@@ -2,6 +2,9 @@
 
 namespace Leantime\Domain\Sprints\Models {
 
+    /**
+     *
+     */
     class Sprints
     {
         public $id;

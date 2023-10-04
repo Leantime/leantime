@@ -1,12 +1,15 @@
 <?php
+
+use Leantime\Core\Fileupload;
+use Leantime\Core\Frontcontroller;
+
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-/** @var Leantime\Auth\Services\Auth $login */
-/** @var Leantime\Core\Language $language */
+
 $module = "project";
-$action = \Leantime\Core\Frontcontroller::getActionName('');
-$maxSize = \Leantime\Core\Fileupload::getMaximumFileUploadSize();
+$action = Frontcontroller::getActionName('');
+$maxSize = Fileupload::getMaximumFileUploadSize();
 $moduleId = $_SESSION['currentProject'];
 ?>
 <div class="pageheader">

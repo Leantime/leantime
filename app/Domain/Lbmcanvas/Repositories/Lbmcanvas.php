@@ -6,7 +6,12 @@
 
 namespace Leantime\Domain\Lbmcanvas\Repositories {
 
-    class Lbmcanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+    class Lbmcanvas extends Canvas
     {
         /**
          * Constant that must be redefined

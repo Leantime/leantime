@@ -4,6 +4,8 @@
  * Template
  */
 
+use Leantime\Domain\Comments\Repositories\Comments;
+
 defined('RESTRICTED') or die('Restricted access');
 
 foreach ($__data as $var => $val) {
@@ -33,7 +35,7 @@ $elementName = 'goal';
                                 $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                 $filterRelates == $row['relates'])
                             ) {
-                                $comments = app()->make(\Leantime\Domain\Comments\Repositories\Comments::class);
+                                $comments = app()->make(Comments::class);
                                 $nbcomments = $comments->countComments(moduleId: $row['id']);
                                 ?>
                             <div class="col-md-4">

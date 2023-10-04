@@ -12,6 +12,9 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class EditOwn extends Controller
     {
         protected LanguageCore $language;
@@ -46,14 +49,18 @@ namespace Leantime\Domain\Users\Controllers {
         }
 
 
-        public function get()
+        /**
+         * @return void
+         * @throws \Exception
+         */
+        public function get(): void
         {
 
             $row = $this->userRepo->getUser($this->userId);
 
             $userLang = $this->settingsService->getSetting("usersettings." . $this->userId . ".language");
 
-            if ($userLang == false) {
+            if (!$userLang) {
                 $userLang = $this->language->getCurrentLanguage();
             }
 
@@ -71,7 +78,7 @@ namespace Leantime\Domain\Users\Controllers {
                 'messagesfrequency' => $this->settingsService->getSetting("usersettings." . $row['id'] . ".messageFrequency"),
             );
 
-            if ($values['messagesfrequency'] == false) {
+            if (!$values['messagesfrequency']) {
                 $values['messagesfrequency'] = $this->settingsService->getSetting("companysettings.messageFrequency");
             }
 
@@ -91,7 +98,11 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->display('users.editOwn');
         }
 
-        public function post()
+        /**
+         * @return void
+         * @throws \Exception
+         */
+        public function post(): void
         {
 
             //Save Profile Info
@@ -223,7 +234,7 @@ namespace Leantime\Domain\Users\Controllers {
                         'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
-                    if (isset($_POST['notifications']) == true) {
+                    if (isset($_POST['notifications'])) {
                         $values["notifications"] = 1;
                     } else {
                         $values["notifications"] = 0;

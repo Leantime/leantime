@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Menu\Composers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
@@ -9,9 +10,12 @@ use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 
+/**
+ *
+ */
 class HeadMenu extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'menu::headMenu',
     ];
 
@@ -20,19 +24,33 @@ class HeadMenu extends Composer
     private UserService $userService;
     private AuthService $authService;
 
+    /**
+     * @param NotificationService $notificationService
+     * @param TimesheetService    $timesheets
+     * @param UserService         $userService
+     * @param AuthService         $authService
+     * @return void
+     */
     public function init(
         NotificationService $notificationService,
         TimesheetService $timesheets,
         UserService $userService,
         AuthService $authService
-    ) {
+    ): void {
         $this->notificationService = $notificationService;
         $this->timesheets = $timesheets;
         $this->userService = $userService;
         $this->authService = $authService;
     }
 
-    public function with()
+    /**
+     * @return array
+     */
+    /**
+     * @return array
+     * @throws BindingResolutionException
+     */
+    public function with(): array
     {
         $notificationService = $this->notificationService;
         $notifications = array();
@@ -67,7 +85,7 @@ class HeadMenu extends Composer
             $user = $this->userService->getUser($_SESSION['userdata']['id']);
         }
 
-        if ($user == false) {
+        if (!$user) {
             $this->authService->logout();
             FrontcontrollerCore::redirect(BASE_URL . '/auth/login');
         }

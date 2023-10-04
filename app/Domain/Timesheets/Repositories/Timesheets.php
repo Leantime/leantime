@@ -7,6 +7,9 @@ namespace Leantime\Domain\Timesheets\Repositories {
     use Leantime\Core\Repository;
     use PDO;
 
+    /**
+     *
+     */
     class Timesheets extends Repository
     {
         /**
@@ -19,7 +22,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @access public
          * @var    array
          */
-        public $kind = array(
+        public array $kind = array(
             'GENERAL_BILLABLE' => 'label.general_billable',
             'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
             'PROJECTMANAGEMENT' => 'label.projectmanagement',
@@ -43,8 +46,9 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1', $clientId = '-1')
+        public function getAll(int $id, ?string $kind, ?string $dateFrom, ?string $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
         {
+
             $query = "SELECT
                         zp_timesheets.id,
                         zp_timesheets.userId,
@@ -74,12 +78,12 @@ namespace Leantime\Domain\Timesheets\Repositories {
                     WHERE
                         ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
 
-            if ($clientId > 0) {
-                $query .= " AND (zp_projects.clientId = :clientId)";
+            if ($id > 0) {
+                $query .= " AND (zp_tickets.projectId = :projectId)";
             }
 
-            if ($projectId > 0) {
-                $query .= " AND (zp_tickets.projectId = :projectId)";
+            if ($clientId > 0) {
+                $query .= " AND (zp_projects.clientId = :clientId)";
             }
 
             if ($ticketFilter > 0) {
@@ -90,7 +94,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 $query .= " AND (zp_timesheets.kind = :kind)";
             }
 
-            if ($userId != 'all') {
+            if ($userId != 'all' && $userId != null) {
                 $query .= " AND (zp_timesheets.userId = :userId)";
             }
 
@@ -126,8 +130,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 $call->bindValue(':clientId', $clientId);
             }
 
-            if ($projectId > 0) {
-                $call->bindValue(':projectId', $projectId);
+            if ($id > 0) {
+                $call->bindValue(':projectId', $id);
             }
 
             if ($ticketFilter > 0) {
@@ -138,14 +142,22 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 $call->bindValue(':kind', $kind);
             }
 
-            if ($userId != 'all') {
+            if ($userId != 'all' && $userId != null) {
                 $call->bindValue(':userId', $userId);
             }
 
             return $call->fetchAll();
         }
 
-        public function export($values)
+        /**
+         * @param $values
+         * @return void
+         */
+        /**
+         * @param $values
+         * @return void
+         */
+        public function export($values): void
         {
 
             /*zp_timesheets.id,
@@ -203,7 +215,15 @@ namespace Leantime\Domain\Timesheets\Repositories {
             file_put_contents($file, $content);
         }
 
-        public function getUsersHours($id)
+        /**
+         * @param $id
+         * @return mixed
+         */
+        /**
+         * @param $id
+         * @return mixed
+         */
+        public function getUsersHours($id): mixed
         {
             $sql = "SELECT id, hours, description FROM zp_timesheets WHERE userId=:userId ORDER BY id DESC";
 
@@ -215,7 +235,13 @@ namespace Leantime\Domain\Timesheets\Repositories {
             return $call->fetchAll();
         }
 
-        public function getHoursBooked()
+        /**
+         * @return int|mixed
+         */
+        /**
+         * @return int|mixed
+         */
+        public function getHoursBooked(): mixed
         {
             $sql = "SELECT SUM(hours) AS hoursBooked
                     FROM zp_timesheets;";
@@ -235,7 +261,19 @@ namespace Leantime\Domain\Timesheets\Repositories {
             return $values;
         }
 
-        public function getWeeklyTimesheets($projectId = -1, $dateStart = '0000-01-01 00:00:00', $userId = 0)
+        /**
+         * @param $projectId
+         * @param $dateStart
+         * @param $userId
+         * @return mixed
+         */
+        /**
+         * @param int    $projectId
+         * @param string $dateStart
+         * @param int    $userId
+         * @return mixed
+         */
+        public function getWeeklyTimesheets(int $projectId = -1, string $dateStart = '0000-01-01 00:00:00', int $userId = 0): mixed
         {
 
             $query = "SELECT
@@ -370,7 +408,15 @@ namespace Leantime\Domain\Timesheets\Repositories {
             $call->execute();
         }
 
-        public function simpleInsert($values)
+        /**
+         * @param $values
+         * @return void
+         */
+        /**
+         * @param $values
+         * @return void
+         */
+        public function simpleInsert($values): void
         {
 
             $query = "INSERT INTO zp_timesheets
@@ -558,7 +604,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @param $ticketId
          * @return array
          */
-        public function getLoggedHoursForTicket($ticketId)
+        public function getLoggedHoursForTicket($ticketId): array
         {
 
             $query = "SELECT
@@ -606,13 +652,13 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * dateRange - returns every single day between two dates
          *
          * @access private
-         * @param $first first date
-         * @param $last last date
-         * @param string           $step   default 1 day, can be changed to get every other day, week etc.
-         * @param string           $format date format
+         * @param string $first  date
+         * @param string $last   date
+         * @param string $step   default 1 day, can be changed to get every other day, week etc.
+         * @param string $format date format
          * @return array
          */
-        private function dateRange($first, $last, $step = '+1 day', $format = 'Y-m-d')
+        private function dateRange(string $first, string $last, string $step = '+1 day', string $format = 'Y-m-d'): array
         {
 
             $dates = array();
@@ -628,7 +674,15 @@ namespace Leantime\Domain\Timesheets\Repositories {
             return $dates;
         }
 
-        public function deleteTime($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
+        public function deleteTime($id): void
         {
 
             $query = "DELETE FROM zp_timesheets WHERE id = :id LIMIT 1";
@@ -648,7 +702,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function updateInvoices($invEmpl, $invComp = '', $paid = '')
+        public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
         {
 
             if ($invEmpl != '' && is_array($invEmpl) === true) {
@@ -701,6 +755,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
                     unset($paidCol);
                 }
             }
+
+            return true;
         }
 
 
@@ -709,8 +765,9 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          * @param  $ticketId
+         * @return mixed
          */
-        public function punchIn($ticketId)
+        public function punchIn($ticketId): mixed
         {
 
             $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,:time)";
@@ -733,7 +790,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function punchOut($ticketId)
+        public function punchOut($ticketId): float|false|int
         {
 
             $query = "SELECT * FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1";
@@ -806,9 +863,10 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * isClocked - Checks to see whether a user is clocked in
          *
          * @access public
-         * @param  id
+         * @param int $id $id
+         * @return array|false
          */
-        public function isClocked($id)
+        public function isClocked(int $id): false|array
         {
 
             if (!isset($_SESSION['userdata'])) {
@@ -858,7 +916,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function getTicketHours($ticketId)
+        public function getTicketHours($ticketId): array
         {
 
             $query = "SELECT

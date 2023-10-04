@@ -19,6 +19,9 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class ShowProject extends Controller
     {
         //services
@@ -347,7 +350,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $this->tpl->assign("bookedHoursArray", $this->projectRepo->getProjectBookedHoursArray($id));
 
-                $comment = $this->commentsRepo->getComments('project', $_GET['id'], "");
+                $comment = $this->commentsRepo->getComments('project', $_GET['id'], 0);
                 $this->tpl->assign('comments', $comment);
                 $this->tpl->assign('numComments', $this->commentsRepo->countComments('project', $_GET['id']));
 

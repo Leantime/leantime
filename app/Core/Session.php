@@ -7,6 +7,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Eventhelpers;
 
 /**
@@ -20,19 +21,19 @@ class Session
     use Eventhelpers;
 
     /**
-     * @var static object
+     * @var static|null object
      */
-    private static $instance = null;
+    private static ?Session $instance = null;
 
     /**
-     * @var static string
+     * @var string|static|null string
      */
-    private static $sid = null;
+    private static string|Session|null $sid = null;
 
     /**
      * @var string
      */
-    private $sessionpassword = '';
+    private mixed $sessionpassword = '';
 
     /**
      * @var environment
@@ -93,6 +94,7 @@ class Session
      *
      * @access public
      * @return string
+     * @throws BindingResolutionException
      */
     public static function getSID(): string
     {
@@ -111,7 +113,7 @@ class Session
             ? $_SERVER['REMOTE_ADDR']
             : 'cli';
 
-        $tmp = hash('sha1', (string) mt_rand(32, 32) . $session_string . time());
+        $tmp = hash('sha1', mt_rand(32, 32) . $session_string . time());
 
         self::$sid = $tmp . '-' . hash('sha1', $tmp . $this->sessionpassword);
     }

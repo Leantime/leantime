@@ -2,21 +2,27 @@
 
 namespace Leantime\Core {
 
+    use Exception;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Events;
 
+    /**
+     *
+     */
     trait Eventhelpers
     {
-        private static $event_context = '';
+        private static string $event_context = '';
 
         /**
          * dispatches an event with context
          *
          * @access protected
          *
-         * @param string $hook
-         * @param mixed  $available_params
-         *
+         * @param string          $hook
+         * @param mixed           $available_params
+         * @param string|int|null $function
          * @return void
+         * @throws BindingResolutionException
          */
         public static function dispatch_event(string $hook, mixed $available_params = [], string|int $function = null): void
         {
@@ -28,11 +34,12 @@ namespace Leantime\Core {
          *
          * @access protected
          *
-         * @param string $hook
-         * @param mixed  $payload
-         * @param mixed  $available_params
-         *
+         * @param string          $hook
+         * @param mixed           $payload
+         * @param mixed           $available_params
+         * @param string|int|null $function
          * @return mixed
+         * @throws BindingResolutionException
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
         {
@@ -44,6 +51,7 @@ namespace Leantime\Core {
          *
          * @access private
          *
+         * @param $function
          * @return string
          */
         private static function get_event_context($function): string
@@ -79,6 +87,7 @@ namespace Leantime\Core {
          *
          * @access private
          *
+         * @param null $functionInt
          * @return string
          */
         private static function get_function_context($functionInt = null): string
@@ -86,7 +95,7 @@ namespace Leantime\Core {
             $tracePointer = is_int($functionInt) ? $functionInt : 3;
 
             // Create an exception
-            $ex = new \Exception();
+            $ex = new Exception();
 
             // Call getTrace() function
             $trace = $ex->getTrace();

@@ -10,6 +10,9 @@ namespace Leantime\Domain\Connector\Controllers {
     use Leantime\Domain\Connector\Repositories\LeantimeEntities;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class Integration extends Controller
     {
         private Providers $providerService;

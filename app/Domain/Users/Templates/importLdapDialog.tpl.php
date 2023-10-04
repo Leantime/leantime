@@ -12,7 +12,7 @@ foreach ($__data as $var => $val) {
 
     <?php echo $tpl->displayNotification(); ?>
 
-    <?php if ($tpl->get("confirmUsers") == true) { ?>
+    <?php if ($tpl->get("confirmUsers")) { ?>
         <form class="importModal userImportModal" method="post" action="<?=BASE_URL ?>/users/import">
             <?php foreach ($tpl->get("allLdapUsers") as $user) { ?>
                 <input type="checkbox" value="<?php $tpl->e($user['user']); ?>" id="<?php $tpl->e($user['user']) ?>" name="users[]" checked="checked"/>

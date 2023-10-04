@@ -2,25 +2,37 @@
 
 namespace Leantime\Domain\Files\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
 
+    /**
+     *
+     */
     class Files
     {
-        private $adminModules = array('project' => 'Projects','ticket' => 'Tickets','client' => 'Clients','lead' => 'Lead','private' => 'General'); // 'user'=>'Users',
+        private array $adminModules = array('project' => 'Projects','ticket' => 'Tickets','client' => 'Clients','lead' => 'Lead','private' => 'General'); // 'user'=>'Users',
 
-        private $userModules = array('project' => 'Projects','ticket' => 'Tickets','private' => 'General');
+        private array $userModules = array('project' => 'Projects','ticket' => 'Tickets','private' => 'General');
 
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
-        public function getModules($id)
+        /**
+         * @param $id
+         * @return string[]
+         * @throws BindingResolutionException
+         */
+        public function getModules($id): array
         {
             $users = app()->make(UserRepo::class);
 
@@ -32,7 +44,12 @@ namespace Leantime\Domain\Files\Repositories {
             return $modules;
         }
 
-        public function addFile($values, $module)
+        /**
+         * @param $values
+         * @param $module
+         * @return false|string
+         */
+        public function addFile($values, $module): false|string
         {
 
 
@@ -56,7 +73,11 @@ namespace Leantime\Domain\Files\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function getFile($id)
+        /**
+         * @param $id
+         * @return mixed
+         */
+        public function getFile($id): mixed
         {
 
             $sql = "SELECT
@@ -76,7 +97,11 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
-        public function getFiles($userId = 0)
+        /**
+         * @param int $userId
+         * @return array|false
+         */
+        public function getFiles(int $userId = 0): false|array
         {
 
             $sql = "SELECT
@@ -99,29 +124,23 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
-        public function getFolders($module)
+        /**
+         * @param $module
+         * @return array
+         */
+        public function getFolders($module): array
         {
 
             $folders = array();
-            $files = $this->getFiles($_SESSION['userdata']['id'], true);
+            $files = $this->getFiles($_SESSION['userdata']['id']);
 
-            switch ($module) {
-                case 'ticket':
-                    $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
-                    break;
-                case 'client':
-                    $sql = "SELECT name as title, id FROM zp_clients WHERE id=:moduleId LIMIT 1";
-                    break;
-                case 'project':
-                    $sql = "SELECT name as title, id FROM zp_projects WHERE id=:moduleId LIMIT 1";
-                    break;
-                case 'lead':
-                    $sql = "SELECT name as title, id FROM zp_lead WHERE id=:moduleId LIMIT 1";
-                    break;
-                default:
-                    $sql = "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1";
-                    break;
-            }
+            $sql = match ($module) {
+                'ticket' => "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1",
+                'client' => "SELECT name as title, id FROM zp_clients WHERE id=:moduleId LIMIT 1",
+                'project' => "SELECT name as title, id FROM zp_projects WHERE id=:moduleId LIMIT 1",
+                'lead' => "SELECT name as title, id FROM zp_lead WHERE id=:moduleId LIMIT 1",
+                default => "SELECT headline as title, id FROM zp_tickets WHERE id=:moduleId LIMIT 1",
+            };
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -140,7 +159,13 @@ namespace Leantime\Domain\Files\Repositories {
             return $folders;
         }
 
-        public function getFilesByModule($module = '', $moduleId = null, $userId = 0)
+        /**
+         * @param string   $module
+         * @param null     $moduleId
+         * @param int|null $userId
+         * @return array|false
+         */
+        public function getFilesByModule(string $module = '', $moduleId = null, ?int $userId = 0): false|array
         {
 
             $sql = "SELECT
@@ -193,7 +218,11 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
-        public function deleteFile($id)
+        /**
+         * @param $id
+         * @return bool
+         */
+        public function deleteFile($id): bool
         {
 
             $sql = "SELECT encName, extension FROM zp_file WHERE id=:id";
@@ -221,7 +250,14 @@ namespace Leantime\Domain\Files\Repositories {
             $stmn->closeCursor();
         }
 
-        public function upload($file, $module, $moduleId)
+        /**
+         * @param $file
+         * @param $module
+         * @param $moduleId
+         * @return array|false
+         * @throws BindingResolutionException
+         */
+        public function upload($file, $module, $moduleId): false|array
         {
 
             //Clean module mess
@@ -274,7 +310,14 @@ namespace Leantime\Domain\Files\Repositories {
             return $return;
         }
 
-        public function uploadCloud($name, $url, $module, $moduleId)
+        /**
+         * @param $name
+         * @param $url
+         * @param $module
+         * @param $moduleId
+         * @return void
+         */
+        public function uploadCloud($name, $url, $module, $moduleId): void
         {
 
            //Add cloud stuff ehre.

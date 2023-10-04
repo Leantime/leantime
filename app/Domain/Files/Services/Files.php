@@ -2,16 +2,26 @@
 
 namespace Leantime\Domain\Files\Services {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+
+    /**
+     *
+     */
     class Files
     {
-        private $fileRepository;
-        private $projectService;
+        private FileRepository $fileRepository;
+        private ProjectService $projectService;
         private LanguageCore $language;
 
+        /**
+         * @param FileRepository $fileRepository
+         * @param ProjectService $projectService
+         * @param LanguageCore   $language
+         */
         public function __construct(
             FileRepository $fileRepository,
             ProjectService $projectService,
@@ -23,12 +33,27 @@ namespace Leantime\Domain\Files\Services {
             $this->language = $language;
         }
 
-        public function getFilesByModule($module = '', $entityId = null, $userId = null)
+
+        /**
+         * @param string   $module
+         * @param $entityId
+         * @param $userId
+         * @return array|false
+         */
+        public function getFilesByModule(string $module = '', $entityId = null, $userId = null): false|array
         {
             return $this->fileRepository->getFilesByModule($module, $entityId, $userId);
         }
 
-        public function uploadFile($file, $module, $entityId, $entity)
+        /**
+         * @param $file
+         * @param $module
+         * @param $entityId
+         * @param $entity
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        public function uploadFile($file, $module, $entityId, $entity): bool
         {
 
             if (isset($file['file'])) {
@@ -70,7 +95,11 @@ namespace Leantime\Domain\Files\Services {
             return false;
         }
 
-        public function deleteFile($fileId)
+        /**
+         * @param $fileId
+         * @return bool
+         */
+        public function deleteFile($fileId): bool
         {
             return $this->fileRepository->deleteFile($fileId);
         }

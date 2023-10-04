@@ -5,12 +5,21 @@ namespace Leantime\Domain\Tags\Services {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Canvas\Repositories\Canvas as CanvaRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+
+    /**
+     *
+     */
     class Tags
     {
         private ProjectRepository $projectRepository;
         private CanvaRepository $canvasRepository;
         private TicketRepository $ticketRepository;
 
+        /**
+         * @param ProjectRepository $projectRepository
+         * @param CanvaRepository   $canvasRepository
+         * @param TicketRepository  $ticketRepository
+         */
         public function __construct(
             ProjectRepository $projectRepository,
             CanvaRepository $canvasRepository,
@@ -21,6 +30,11 @@ namespace Leantime\Domain\Tags\Services {
             $this->ticketRepository = $ticketRepository;
         }
 
+        /**
+         * @param int    $projectId
+         * @param string $term
+         * @return array
+         */
         public function getTags(int $projectId, string $term): array
         {
             $tags = array();
@@ -34,13 +48,18 @@ namespace Leantime\Domain\Tags\Services {
 
             $tagArray = [];
             foreach ($unique as $tag) {
-                if (strpos($tag, strip_tags($term)) !== false) {
+                if (str_contains($tag, strip_tags($term))) {
                     $tagArray[] = $tag;
                 }
             }
             return $tagArray;
         }
 
+        /**
+         * @param $dbTagValues
+         * @param array       $mergeInto
+         * @return array
+         */
         private function explodeAndMergeTags($dbTagValues, array $mergeInto): array
         {
             foreach ($dbTagValues as $tagGroup) {

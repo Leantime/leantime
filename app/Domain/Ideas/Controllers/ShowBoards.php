@@ -10,6 +10,9 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class ShowBoards extends Controller
     {
         private IdeaRepository $ideaRepo;
@@ -38,7 +41,7 @@ namespace Leantime\Domain\Ideas\Controllers {
         {
 
             $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
-            if ($allCanvas == false || count($allCanvas) == 0) {
+            if (!$allCanvas || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__("label.board"),
                     'author' => $_SESSION['userdata']['id'],

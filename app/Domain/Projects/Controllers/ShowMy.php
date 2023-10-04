@@ -8,6 +8,10 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Reports\Services\Reports as ReportService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
+
+    /**
+     *
+     */
     class ShowMy extends Controller
     {
         private ProjectService $projectService;
@@ -16,13 +20,21 @@ namespace Leantime\Domain\Projects\Controllers {
         private CommentService $commentService;
         private ClientRepository $clientRepo;
 
+        /**
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param ReportService    $reportService
+         * @param CommentService   $commentService
+         * @param ClientRepository $clientRepo
+         * @return void
+         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
             ReportService $reportService,
             CommentService $commentService,
             ClientRepository $clientRepo
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->reportService = $reportService;

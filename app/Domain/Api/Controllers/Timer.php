@@ -4,6 +4,10 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+
+    /**
+     *
+     */
     class Timer extends Controller
     {
         private TimesheetService $timesheetService;

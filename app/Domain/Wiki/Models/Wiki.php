@@ -2,6 +2,9 @@
 
 namespace Leantime\Domain\Wiki\Models {
 
+    /**
+     *
+     */
     class Wiki
     {
         public $id;

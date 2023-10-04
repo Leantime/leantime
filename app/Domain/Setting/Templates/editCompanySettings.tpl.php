@@ -79,7 +79,7 @@ $companySettings = $tpl->get('companySettings');
                                     <label><?=$tpl->__("label.send_telemetry")?></label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input type="checkbox" name="telemetryActive" id="telemetryActive"  <?=$companySettings['telemetryActive'] == true ? 'checked="checked"' : '';?> />
+                                    <input type="checkbox" name="telemetryActive" id="telemetryActive"  <?= $companySettings['telemetryActive'] ? 'checked="checked"' : '';?> />
 
                                     <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
                                     <div class="clearall"></div><br />

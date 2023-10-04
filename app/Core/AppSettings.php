@@ -10,9 +10,9 @@ namespace Leantime\Core;
  */
 class AppSettings
 {
-    public $appVersion = "2.4-beta-6";
+    public string $appVersion = "2.4-beta-7";
 
-    public $dbVersion = "2.1.22";
+    public string $dbVersion = "2.1.22";
 
     protected Environment $config;
 
@@ -29,7 +29,7 @@ class AppSettings
      * loadSettings - load all appSettings and set ini
      *
      */
-    public function loadSettings(Environment $config = null)
+    public function loadSettings(Environment $config = null): void
     {
         $config = $config ?? $this->config;
 
@@ -49,7 +49,7 @@ class AppSettings
 
         if ($config->useRedis == "true" || $config->useRedis === true) {
             ini_set('session.save_handler', 'redis');
-            ini_set('session.save_path', $config->redisURL);
+            ini_set('session.save_path', $config->redisUrl);
         }
 
         if (session_status() !== PHP_SESSION_ACTIVE) {

@@ -124,7 +124,7 @@ codesniffer:
 	./vendor/squizlabs/php_codesniffer/bin/phpcs app
 
 codesniffer-fix:
-	./vendor/squizlabs/php_codesniffer/bin/phpcfb app
+	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
 
 
 .PHONY: install-deps build package clean run-dev

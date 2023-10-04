@@ -8,6 +8,10 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Clients\Services\Clients as ClientService;
+
+    /**
+     *
+     */
     class RoadmapAll extends Controller
     {
         private ProjectRepository $projectsRepo;
@@ -45,7 +49,7 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function get($params)
         {
 
-            $clientId = "";
+            $clientId = 0;
             $currentClientName = "";
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
                 $clientId = (int)$_GET['client'];

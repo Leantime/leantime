@@ -3,32 +3,39 @@
 namespace Leantime\Domain\Tickets\Hxcontrollers;
 
 use Leantime\Core\HtmxController;
+use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
+/**
+ *
+ */
 class TimerButton extends HtmxController
 {
     /**
      * @var string
      */
-    protected static $view = 'tickets::partials.timerLink';
+    protected static string $view = 'tickets::partials.timerLink';
 
     /**
-     * @var \Leantime\Domain\Projects\Services\Timesheets
+     * @var Timesheets
      */
     private Timesheets $timesheetService;
 
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param Timesheets $timesheetService
      * @return void
      */
-    public function init(Timesheets $timesheetService)
+    public function init(Timesheets $timesheetService): void
     {
         $this->timesheetService = $timesheetService;
     }
 
-    public function getStatus()
+    /**
+     * @return void
+     */
+    public function getStatus(): void
     {
 
         $params =  $this->incomingRequest->query->all();

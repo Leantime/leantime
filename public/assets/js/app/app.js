@@ -17,9 +17,9 @@ jQuery.noConflict();
 
 leantime.replaceSVGColors = function () {
 
-    jQuery(document).ready(function(){
+    jQuery(document).ready(function () {
 
-        if(leantime.companyColor != "#1b75bb") {
+        if (leantime.companyColor != "#1b75bb") {
             jQuery("svg").children().each(function () {
                 if (jQuery(this).attr("fill") == "#1b75bb") {
                     jQuery(this).attr("fill", leantime.companyColor);
@@ -31,25 +31,24 @@ leantime.replaceSVGColors = function () {
 
 };
 
-leantime.handleAsyncResponse = function(response)  {
+leantime.handleAsyncResponse = function (response) {
 
-    if(response !== undefined) {
-        if(response.result !== undefined && response.result.html !== undefined){
-
+    if (response !== undefined) {
+        if (response.result !== undefined && response.result.html !== undefined) {
             var content = jQuery(response.result.html);
             jQuery("body").append(content);
         }
     }
 };
 
-jQuery(document).ready(function(){
+jQuery(document).ready(function () {
 
     leantime.replaceSVGColors();
 
     //Set moment locale early in app creation
     moment.locale(leantime.i18n.__("language.code"));
 
-    jQuery(".confetti").click(function(){
+    jQuery(".confetti").click(function () {
         confetti.start();
     });
 

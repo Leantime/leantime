@@ -2,6 +2,8 @@
 
 namespace Leantime\Plugins\CsvImport\Controllers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+use League\Csv\Exception;
 use League\Csv\Statement;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
@@ -26,9 +28,9 @@ class Upload extends Controller
      *
      * @access public
      * @param  CsvImportService $providerService
-     * @return self
+     * @return void
      */
-    public function init(CsvImportService $providerService)
+    public function init(CsvImportService $providerService): void
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
@@ -40,8 +42,10 @@ class Upload extends Controller
      *
      * @access public
      * @return void
+     * @throws \Exception
+     * @throws \Exception
      */
-    public function get()
+    public function get(): void
     {
         $this->tpl->displayPartial("csvImport.upload");
     }
@@ -50,8 +54,10 @@ class Upload extends Controller
      * post - process uploaded file
      *
      * @access public
-     * @param  array $params
+     * @param array $params
      * @return void
+     * @throws BindingResolutionException
+     * @throws Exception
      */
     public function post(array $params): void
     {

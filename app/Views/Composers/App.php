@@ -8,27 +8,49 @@ use Leantime\Core\Environment;
 use Leantime\Core\Controller;
 use Leantime\Core\Theme;
 use Exception;
+use Leantime\Domain\Menu\Repositories\Menu;
+use Leantime\Domain\Setting\Repositories\Setting;
 
+/**
+ *
+ */
 class App extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'global::layouts.app',
         'global::layouts.entry',
     ];
+    private Environment $config;
+    private Theme $themeCore;
+    private Setting $settingsRepo;
+    private Menu $menuRepo;
 
+    /**
+     * @param Menu        $menuRepo
+     * @param Setting     $settingsRepo
+     * @param Theme       $themeCore
+     * @param Environment $config
+     * @return void
+     */
     public function init(
-        \Leantime\Domain\Menu\Repositories\Menu $menuRepo,
-        \Leantime\Domain\Setting\Repositories\Setting $settingsRepo,
-        \Leantime\Core\Theme $themeCore,
-        \Leantime\Core\Environment $config
-    ) {
+        Menu $menuRepo,
+        Setting $settingsRepo,
+        Theme $themeCore,
+        Environment $config
+    ): void {
         $this->menuRepo = $menuRepo;
         $this->settingsRepo = $settingsRepo;
         $this->themeCore = $themeCore;
         $this->config = $config;
     }
 
-    public function with()
+    /**
+     * @return array
+     */
+    /**
+     * @return array
+     */
+    public function with(): array
     {
         if (! isset($_SESSION["userdata"]["id"])) {
             // This is a login session, we need to ensure the default theme and the default language (or the user's browser)

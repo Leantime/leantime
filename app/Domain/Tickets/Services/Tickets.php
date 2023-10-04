@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Tickets\Services {
 
     use DateTime;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Environment as EnvironmentCore;
@@ -16,6 +17,9 @@ namespace Leantime\Domain\Tickets\Services {
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 
+    /**
+     *
+     */
     class Tickets
     {
         private TemplateCore $tpl;
@@ -29,6 +33,18 @@ namespace Leantime\Domain\Tickets\Services {
         private TimesheetService $timesheetService;
         private SprintService $sprintService;
 
+        /**
+         * @param TemplateCore        $tpl
+         * @param LanguageCore        $language
+         * @param EnvironmentCore     $config
+         * @param ProjectRepository   $projectRepository
+         * @param TicketRepository    $ticketRepository
+         * @param TimesheetRepository $timesheetsRepo
+         * @param SettingRepository   $settingsRepo
+         * @param ProjectService      $projectService
+         * @param TimesheetService    $timesheetService
+         * @param SprintService       $sprintService
+         */
         public function __construct(
             TemplateCore $tpl,
             LanguageCore $language,
@@ -57,6 +73,7 @@ namespace Leantime\Domain\Tickets\Services {
          * getStatusLabels - Gets all status labels for the current set project
          *
          * @access public
+         * @param null $projectId
          * @return array
          */
         public function getStatusLabels($projectId = null): array
@@ -71,6 +88,7 @@ namespace Leantime\Domain\Tickets\Services {
          *
          * @access public
          * @params int $userId User Id
+         * @param $userId
          * @return array
          */
         public function getAllStatusLabelsByUserId($userId): array
@@ -108,7 +126,8 @@ namespace Leantime\Domain\Tickets\Services {
          *
          * @access public
          * @params array $params label information
-         * @return boolean
+         * @param $params
+         * @return bool
          */
         public function saveStatusLabels($params): bool
         {
@@ -135,7 +154,13 @@ namespace Leantime\Domain\Tickets\Services {
             }
         }
 
-        public function getKanbanColumns()
+        /**
+         * @return array
+         */
+        /**
+         * @return array
+         */
+        public function getKanbanColumns(): array
         {
 
             $statusList = $this->ticketRepository->getStateLabels();
@@ -151,31 +176,63 @@ namespace Leantime\Domain\Tickets\Services {
             return $visibleCols;
         }
 
-        public function getTypeIcons()
+        /**
+         * @return array|string[]
+         */
+        /**
+         * @return array|string[]
+         */
+        public function getTypeIcons(): array
         {
 
             return $this->ticketRepository->typeIcons;
         }
 
-        public function getEffortLabels()
+        /**
+         * @return array|string[]
+         */
+        /**
+         * @return array|string[]
+         */
+        public function getEffortLabels(): array
         {
 
             return $this->ticketRepository->efforts;
         }
 
-        public function getTicketTypes()
+        /**
+         * @return array|string[]
+         */
+        /**
+         * @return array|string[]
+         */
+        public function getTicketTypes(): array
         {
 
             return $this->ticketRepository->type;
         }
 
-        public function getPriorityLabels()
+        /**
+         * @return array|string[]
+         */
+        /**
+         * @return array|string[]
+         */
+        public function getPriorityLabels(): array
         {
 
             return $this->ticketRepository->priority;
         }
 
-        public function prepareTicketSearchArray(array $searchParams)
+        /**
+         * @param array $searchParams
+         * @return array
+         */
+        /**
+         * @param array $searchParams
+         * @return array
+         */
+        public function prepareTicketSearchArray(array $searchParams): array
         {
 
             $searchCriteria = array(
@@ -259,6 +316,10 @@ namespace Leantime\Domain\Tickets\Services {
             return $searchCriteria;
         }
 
+        /**
+         * @param array $searchCriteria
+         * @return int
+         */
         public function countSetFilters(array $searchCriteria): int
         {
             $count = 0;
@@ -283,6 +344,11 @@ namespace Leantime\Domain\Tickets\Services {
             return $count;
         }
 
+        /**
+         * @param array $searchCriteria
+         * @param bool  $includeGroup
+         * @return array
+         */
         public function getSetFilters(array $searchCriteria, bool $includeGroup = false): array
         {
             $setFilters = array();
@@ -307,13 +373,32 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         //GET
-        public function getAll($searchCriteria)
+
+        /**
+         * @param $searchCriteria
+         * @return array|bool
+         */
+        /**
+         * @param $searchCriteria
+         * @return array|bool
+         */
+        public function getAll($searchCriteria): bool|array
         {
 
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
-        public function getAllGrouped($searchCriteria)
+        /**
+         * @param $searchCriteria
+         * @return array
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $searchCriteria
+         * @return array
+         * @throws BindingResolutionException
+         */
+        public function getAllGrouped($searchCriteria): array
         {
             $ticketGroups = array();
 
@@ -367,11 +452,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 break;
                             case "storypoints":
                                 $efforts  =  $this->getEffortLabels();
-                                if (isset($efforts[$groupedFieldValue])) {
-                                    $label = $efforts[$groupedFieldValue];
-                                } else {
-                                    $label = "No Effort Set";
-                                }
+                                $label = $efforts[$groupedFieldValue] ?? "No Effort Set";
                                 break;
                             case "milestoneid":
                                 $label = "No Milestone Set";
@@ -433,7 +514,17 @@ namespace Leantime\Domain\Tickets\Services {
             return $ticketGroups;
         }
 
-        public function getAllPossibleParents(TicketModel $ticket, $projectId = 'currentProject'): array
+        /**
+         * @param TicketModel $ticket
+         * @param $projectId
+         * @return array
+         */
+        /**
+         * @param TicketModel $ticket
+         * @param string      $projectId
+         * @return array
+         */
+        public function getAllPossibleParents(TicketModel $ticket, string $projectId = 'currentProject'): array
         {
 
             if ($projectId == 'currentProject') {
@@ -449,7 +540,17 @@ namespace Leantime\Domain\Tickets\Services {
             }
         }
 
-        public function getTicket($id)
+        /**
+         * @param $id
+         * @return bool|TicketModel
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return bool|TicketModel
+         * @throws BindingResolutionException
+         */
+        public function getTicket($id): TicketModel|bool
         {
 
             $ticket = $this->ticketRepository->getTicket($id);
@@ -475,7 +576,21 @@ namespace Leantime\Domain\Tickets\Services {
             return false;
         }
 
-        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, $includeDoneTickets = false)
+        /**
+         * @param $userId
+         * @param $projectId
+         * @param $includeDoneTickets
+         * @return array
+         * @throws \Exception
+         */
+        /**
+         * @param $userId
+         * @param $projectId
+         * @param false     $includeDoneTickets
+         * @return array
+         * @throws \Exception
+         */
+        public function getOpenUserTicketsThisWeekAndLater($userId, $projectId, bool $includeDoneTickets = false): array
         {
 
             if ($includeDoneTickets === true) {
@@ -540,7 +655,17 @@ namespace Leantime\Domain\Tickets\Services {
             return $tickets;
         }
 
-        public function getLastTickets($projectId, $limit = 5)
+        /**
+         * @param $projectId
+         * @param $limit
+         * @return array|bool
+         */
+        /**
+         * @param $projectId
+         * @param int       $limit
+         * @return array|bool
+         */
+        public function getLastTickets($projectId, int $limit = 5): bool|array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => "", "status" => "not_done", "sprint" => "", "limit" => $limit));
@@ -549,7 +674,17 @@ namespace Leantime\Domain\Tickets\Services {
             return $allTickets;
         }
 
-        public function getOpenUserTicketsByProject($userId, $projectId)
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return array
+         */
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return array
+         */
+        public function getOpenUserTicketsByProject($userId, $projectId): array
         {
 
             $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "", "sprint" => ""));
@@ -576,7 +711,17 @@ namespace Leantime\Domain\Tickets\Services {
             return $tickets;
         }
 
-        public function getAllMilestones($searchCriteria, $sortBy = "duedate")
+        /**
+         * @param $searchCriteria
+         * @param $sortBy
+         * @return array|false
+         */
+        /**
+         * @param $searchCriteria
+         * @param string         $sortBy
+         * @return array|false
+         */
+        public function getAllMilestones($searchCriteria, string $sortBy = "duedate"): false|array
         {
             if ($searchCriteria['currentProject'] > 0) {
                 return $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy);
@@ -585,7 +730,14 @@ namespace Leantime\Domain\Tickets\Services {
             return false;
         }
 
-        public function getAllMilestonesOverview($includeArchived = false, $sortBy = "duedate", $includeTasks = false, $clientId = false)
+        /**
+         * @param bool   $includeArchived
+         * @param string $sortBy
+         * @param bool   $includeTasks
+         * @param int    $clientId
+         * @return array|false
+         */
+        public function getAllMilestonesOverview(bool $includeArchived = false, string $sortBy = "duedate", bool $includeTasks = false, int $clientId = 0): false|array
         {
 
             $allProjectMilestones = $this->ticketRepository->getAllMilestones(["sprint" => '', "type" => "milestone", "currentClient" => $clientId]);
@@ -594,7 +746,15 @@ namespace Leantime\Domain\Tickets\Services {
             return $allProjectMilestones;
         }
 
-        public function getAllMilestonesByUserProjects($userId)
+        /**
+         * @param $userId
+         * @return array
+         */
+        /**
+         * @param $userId
+         * @return array
+         */
+        public function getAllMilestonesByUserProjects($userId): array
         {
 
             $milestones = array();
@@ -627,20 +787,39 @@ namespace Leantime\Domain\Tickets\Services {
             return $milestones;
         }
 
-        public function getAllSubtasks($ticketId)
+        /**
+         * @param $ticketId
+         * @return array|false
+         */
+        /**
+         * @param int $ticketId
+         * @return array|false
+         */
+        public function getAllSubtasks(int $ticketId): false|array
         {
             $values = $this->ticketRepository->getAllSubtasks($ticketId);
             return $values;
         }
 
         //Add
-        public function quickAddTicket($params)
+
+        /**
+         * @param $params
+         * @return bool|string[]
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return bool|string[]
+         * @throws BindingResolutionException
+         */
+        public function quickAddTicket($params): array|bool
         {
 
             $values = array(
                 'headline' => $params['headline'],
                 'type' => 'Task',
-                'description' => isset($params['description']) ? $params['description'] : '',
+                'description' => $params['description'] ?? '',
                 'projectId' => $params['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
@@ -694,7 +873,15 @@ namespace Leantime\Domain\Tickets\Services {
             }
         }
 
-        public function quickAddMilestone($params)
+        /**
+         * @param $params
+         * @return bool|string[]
+         */
+        /**
+         * @param $params
+         * @return array|bool|int
+         */
+        public function quickAddMilestone($params): array|bool|int
         {
 
             $values = array(
@@ -729,6 +916,11 @@ namespace Leantime\Domain\Tickets\Services {
             return $this->ticketRepository->addTicket($values);
         }
 
+        /**
+         * @param $values
+         * @return bool|string[]|void
+         * @throws BindingResolutionException
+         */
         public function addTicket($values)
         {
 
@@ -819,7 +1011,20 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         //Update
-        public function updateTicket($id, $values)
+
+        /**
+         * @param $id
+         * @param $values
+         * @return array|bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @param $values
+         * @return array|bool
+         * @throws BindingResolutionException
+         */
+        public function updateTicket($id, $values): array|bool
         {
 
             $values = array(
@@ -905,9 +1110,21 @@ namespace Leantime\Domain\Tickets\Services {
                     return true;
                 }
             }
+
+            return false;
         }
 
-        public function patchTicket($id, $params)
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        public function patchTicket($id, $params): bool
         {
 
             //$params is an array of field names. Exclude id
@@ -919,9 +1136,10 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
          *
-         * @param integer $id
-         * @param integer $projectId
-         * @return boolean
+         * @param int $id
+         * @param int $projectId
+         * @return bool
+         * @throws BindingResolutionException
          */
         public function moveTicket(int $id, int $projectId): bool
         {
@@ -945,7 +1163,15 @@ namespace Leantime\Domain\Tickets\Services {
             return false;
         }
 
-        public function quickUpdateMilestone($params)
+        /**
+         * @param $params
+         * @return bool|string[]
+         */
+        /**
+         * @param $params
+         * @return bool|string[]
+         */
+        public function quickUpdateMilestone($params): array|bool
         {
 
             $values = array(
@@ -980,7 +1206,17 @@ namespace Leantime\Domain\Tickets\Services {
             return $this->ticketRepository->updateTicket($values, $params["id"]);
         }
 
-        public function upsertSubtask($values, $parentTicket)
+        /**
+         * @param $values
+         * @param $parentTicket
+         * @return bool
+         */
+        /**
+         * @param $values
+         * @param $parentTicket
+         * @return bool
+         */
+        public function upsertSubtask($values, $parentTicket): bool
         {
 
             $subtaskId = $values['subtaskId'];
@@ -1024,6 +1260,14 @@ namespace Leantime\Domain\Tickets\Services {
             return true;
         }
 
+        /**
+         * @param $params
+         * @return false|void
+         */
+        /**
+         * @param $params
+         * @return false|void
+         */
         public function updateTicketSorting($params)
         {
 
@@ -1035,7 +1279,19 @@ namespace Leantime\Domain\Tickets\Services {
             }
         }
 
-        public function updateTicketStatusAndSorting($params, $handler = null)
+        /**
+         * @param $params
+         * @param $handler
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @param $handler
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        public function updateTicketStatusAndSorting($params, $handler = null): bool
         {
 
             //Jquery sortable serializes the array for kanban in format
@@ -1091,7 +1347,18 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         //Delete
-        public function deleteTicket($id)
+
+        /**
+         * @param $id
+         * @return bool|string[]
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return bool|string[]
+         * @throws BindingResolutionException
+         */
+        public function deleteTicket($id): array|bool
         {
 
             $ticket = $this->getTicket($id);
@@ -1107,7 +1374,17 @@ namespace Leantime\Domain\Tickets\Services {
             return false;
         }
 
-        public function deleteMilestone($id)
+        /**
+         * @param $id
+         * @return bool|string[]
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return bool|string[]
+         * @throws BindingResolutionException
+         */
+        public function deleteMilestone($id): array|bool
         {
 
             $ticket = $this->getTicket($id);
@@ -1123,7 +1400,13 @@ namespace Leantime\Domain\Tickets\Services {
             return false;
         }
 
-        public function getLastTicketViewUrl()
+        /**
+         * @return mixed|string
+         */
+        /**
+         * @return mixed|string
+         */
+        public function getLastTicketViewUrl(): mixed
         {
 
             $url = BASE_URL . "/tickets/showAll";
@@ -1155,7 +1438,13 @@ namespace Leantime\Domain\Tickets\Services {
             }
         }
 
-        public function getGroupByFieldOptions()
+        /**
+         * @return array
+         */
+        /**
+         * @return array
+         */
+        public function getGroupByFieldOptions(): array
         {
             return [
                 "all" => [
@@ -1223,7 +1512,13 @@ namespace Leantime\Domain\Tickets\Services {
             ];
         }
 
-        public function getSortByFieldOptions()
+        /**
+         * @return array[]
+         */
+        /**
+         * @return array[]
+         */
+        public function getSortByFieldOptions(): array
         {
             return [
                 [
@@ -1281,7 +1576,13 @@ namespace Leantime\Domain\Tickets\Services {
             ];
         }
 
-        public function getNewFieldOptions()
+        /**
+         * @return array|array[]
+         */
+        /**
+         * @return array|array[]
+         */
+        public function getNewFieldOptions(): array
         {
             if (!defined('BASE_URL')) {
                 return [];
@@ -1307,7 +1608,16 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
 
-        public function getTicketTemplateAssignments($params)
+        /**
+         * @param $params
+         * @return array
+         */
+        /**
+         * @param $params
+         * @return array
+         * @throws BindingResolutionException
+         */
+        public function getTicketTemplateAssignments($params): array
         {
 
             $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);

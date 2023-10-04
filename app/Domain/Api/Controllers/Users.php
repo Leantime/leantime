@@ -6,6 +6,10 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
+
+    /**
+     *
+     */
     class Users extends Controller
     {
         private UserService $usersService;

@@ -12,6 +12,9 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class DelClient extends Controller
     {
         private ClientRepository $clientRepo;

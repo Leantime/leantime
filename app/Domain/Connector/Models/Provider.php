@@ -2,6 +2,9 @@
 
 namespace Leantime\Domain\Connector\Models {
 
+    /**
+     *
+     */
     class Provider
     {
         //Unique identifier of provider

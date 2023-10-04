@@ -4,6 +4,10 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
+
+    /**
+     *
+     */
     class Reactions extends Controller
     {
         private ReactionService $reactionsService;
@@ -45,6 +49,8 @@ namespace Leantime\Domain\Api\Controllers {
             if ($params["action"] == "remove") {
                 return $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
             }
+
+            return null;
         }
 
         /**

@@ -5,7 +5,11 @@ namespace Leantime\Domain\Cron\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Cron\Services\Cron;
     use PDO;
+    use PHPMailer\PHPMailer\Exception;
 
+    /**
+     *
+     */
     class Run extends Controller
     {
         private Cron $cronSvc;
@@ -20,7 +24,12 @@ namespace Leantime\Domain\Cron\Controllers {
             $this->cronSvc = $cronSvc;
         }
 
-        public function run()
+        /**
+         * @return void
+         * @throws Exception
+         * @throws Exception
+         */
+        public function run(): void
         {
             $this->cronSvc->runCron();
         }

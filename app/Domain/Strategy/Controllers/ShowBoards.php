@@ -4,16 +4,28 @@ namespace Leantime\Domain\Strategy\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
+
+    /**
+     *
+     */
     class ShowBoards extends Controller
     {
         private CanvaService $canvasService;
 
-        public function init(CanvaService $canvasService)
+        /**
+         * @param CanvaService $canvasService
+         * @return void
+         */
+        public function init(CanvaService $canvasService): void
         {
             $this->canvasService = $canvasService;
         }
 
-        public function run()
+        /**
+         * @return void
+         * @throws \Exception
+         */
+        public function run(): void
         {
 
 

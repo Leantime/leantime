@@ -24,7 +24,7 @@ class Quote
      *
      * @param string $quote
      * @param string $author
-     * @return self
+     * @return void
      */
     public function __construct(string $quote = "", string $author = "")
     {

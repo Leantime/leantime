@@ -5,6 +5,10 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
+
+    /**
+     *
+     */
     class Sessions extends Controller
     {
         private UserService $usersService;

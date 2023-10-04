@@ -5,6 +5,9 @@ namespace Leantime\Domain\Notifications\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
     class Notifications
     {
         private DbCore $db;
@@ -20,7 +23,23 @@ namespace Leantime\Domain\Notifications\Repositories {
         }
 
 
-        public function getAllNotifications($userId, $showNewOnly = false, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
+        /**
+         * @param $userId
+         * @param $showNewOnly
+         * @param $limitStart
+         * @param $limitEnd
+         * @param $filterOptions
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @param false  $showNewOnly
+         * @param int    $limitStart
+         * @param int    $limitEnd
+         * @param array  $filterOptions
+         * @return array|false
+         */
+        public function getAllNotifications($userId, bool $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
         {
 
             $query = "SELECT
@@ -71,6 +90,14 @@ namespace Leantime\Domain\Notifications\Repositories {
             return $userNotifications;
         }
 
+        /**
+         * @param array $notifications
+         * @return bool|void
+         */
+        /**
+         * @param array $notifications
+         * @return bool|void
+         */
         public function addNotifications(array $notifications)
         {
 
@@ -128,7 +155,15 @@ namespace Leantime\Domain\Notifications\Repositories {
             return $results;
         }
 
-        public function markNotificationRead($id)
+        /**
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @return bool
+         */
+        public function markNotificationRead($id): bool
         {
 
             $sql = "UPDATE zp_notifications SET `read` = 1 WHERE id = :id";
@@ -144,7 +179,15 @@ namespace Leantime\Domain\Notifications\Repositories {
             return $results;
         }
 
-        public function markAllNotificationRead($userId)
+        /**
+         * @param $userId
+         * @return bool
+         */
+        /**
+         * @param $userId
+         * @return bool
+         */
+        public function markAllNotificationRead($userId): bool
         {
 
             $sql = "UPDATE zp_notifications SET `read` = 1 WHERE userId = :id";

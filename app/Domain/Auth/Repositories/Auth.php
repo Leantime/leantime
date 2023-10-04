@@ -6,128 +6,137 @@ namespace Leantime\Domain\Auth\Repositories {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Core\Db as DbCore;
+
+    /**
+     *
+     */
     class Auth
     {
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    int|null user id from DB
          */
-        private $userId = null;
+        private ?int $userId = null;
 
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    int|null user id from DB
          */
-        private $clientId = null;
+        private ?int $clientId = null;
+
+        /**
+         * @access private
+         * @var    string|null username from db
+         */
+        private ?string $username = null;
 
         /**
          * @access private
          * @var    string username from db
          */
-        private $username = null;
-
-        /**
-         * @access private
-         * @var    string username from db
-         */
-        private $name = '';
+        private string $name = '';
 
         /**
          * @access private
          * @var    string profileid (image) from db
          */
-        private $profileId = '';
+        private string $profileId = '';
 
         /**
          * @access private
-         * @var    string
+         * @var    string|null
          */
-        private $password = null;
+        private ?string $password = null;
 
         /**
          * @access private
-         * @var    string username (emailaddress)
+         * @var    string|null username (emailaddress)
          */
-        private $user = null;
+        private ?string $user = null;
 
         /**
          * @access private
-         * @var    string username (emailaddress)
+         * @var    string|null username (emailaddress)
          */
-        private $mail = null;
+        private ?string $mail = null;
 
         /**
          * @access private
-         * @var    boolean $twoFAEnabled
+         * @var    bool $twoFAEnabled
          */
-        private $twoFAEnabled;
+        private bool $twoFAEnabled;
 
         /**
          * @access private
          * @var    string $twoFASecret
          */
-        private $twoFASecret;
+        private string $twoFASecret;
 
         /**
          * @access private
-         * @var    string
+         * @var    string|null
          */
-        private $session = null;
+        private ?string $session = null;
 
         /**
          * @access private
-         * @var    object - db connection
+         * @var    DbCore|null - db connection
          */
-        private $db = null;
+        private null|DbCore $db = null;
 
         /**
          * @access public
          * @var    string userrole (admin, client, employee)
          */
-        public $role = '';
+        public string $role = '';
 
-        public $settings = '';
-
-        /**
-         * @access public
-         * @var    integer time for cookie
-         */
-        public $cookieTime;
+        public string $settings = '';
 
         /**
          * @access public
-         * @var    string
+         * @var    int time for cookie
          */
-        public $error = "";
+        public int $cookieTime;
 
         /**
          * @access public
          * @var    string
          */
-        public $success = "";
+        public string $error = "";
 
         /**
          * @access public
          * @var    string
          */
-        public $resetInProgress = false;
+        public string $success = "";
+
+        /**
+         * @access public
+         * @var    string|bool
+         */
+        public string|bool $resetInProgress = false;
 
         /**
          * @access public
          * @var    object
          */
-        public $hasher;
+        public object $hasher;
 
-        private static $instance;
+        private static Auth $instance;
 
         /*
          * How often can a user reset a password before it has to be changed
          */
-        public $pwResetLimit = 5;
+        public int $pwResetLimit = 5;
 
         private EnvironmentCore $config;
         private UserRepository $userRepo;
 
+        /**
+         * @param DbCore          $db
+         * @param EnvironmentCore $config
+         * @param UserRepository  $userRepo
+         */
         public function __construct(
             DbCore $db,
             EnvironmentCore $config,
@@ -142,9 +151,10 @@ namespace Leantime\Domain\Auth\Repositories {
          * logout - destroy sessions and cookies
          *
          * @access private
-         * @return boolean
+         * @param $sessionId
+         * @return bool
          */
-        public function invalidateSession($sessionId)
+        public function invalidateSession($sessionId): bool
         {
 
             $query = "UPDATE zp_user SET session = ''
@@ -163,7 +173,7 @@ namespace Leantime\Domain\Auth\Repositories {
          * checkSessions - check all sessions in the database and unset them if necessary
          *
          * @access private
-         * @return void
+         * @return bool
          */
         private function invalidateExpiredUserSessions(): bool
         {
@@ -183,7 +193,7 @@ namespace Leantime\Domain\Auth\Repositories {
          * @access public
          * @param  $username
          * @param  $password
-         * @return boolean
+         * @return array|false
          */
         public function getUserByLogin($username, $password): array|false
         {
@@ -197,6 +207,10 @@ namespace Leantime\Domain\Auth\Repositories {
             return false;
         }
 
+        /**
+         * @param $username
+         * @return array|false
+         */
         public function getUserByEmail($username): array|false
         {
             return $this->userRepo->getUserByEmail($username);
@@ -206,11 +220,12 @@ namespace Leantime\Domain\Auth\Repositories {
          * updateSession - Update the session time by sessionId
          *
          * @access public
+         * @param $userId
          * @param  $sessionid
          * @param  $time
-         * @return
+         * @return bool
          */
-        public function updateUserSession($userId, $sessionid, $time)
+        public function updateUserSession($userId, $sessionid, $time): bool
         {
 
             $query = "UPDATE
@@ -242,9 +257,9 @@ namespace Leantime\Domain\Auth\Repositories {
          *
          * @access public
          * @param
-         * @return boolean
+         * @return bool
          */
-        public function validateResetLink($hash)
+        public function validateResetLink($hash): bool
         {
 
             $query = "SELECT id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'a' LIMIT 1";
@@ -268,9 +283,9 @@ namespace Leantime\Domain\Auth\Repositories {
          *
          * @access public
          * @param
-         * @return array|boolean
+         * @return array|bool
          */
-        public function getUserByInviteLink($hash)
+        public function getUserByInviteLink($hash): bool|array
         {
 
             $query = "SELECT firstname, lastname, id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'i' LIMIT 1";
@@ -285,6 +300,11 @@ namespace Leantime\Domain\Auth\Repositories {
             return $returnValues;
         }
 
+        /**
+         * @param $username
+         * @param $resetLink
+         * @return bool
+         */
         public function setPWResetLink($username, $resetLink): bool
         {
 
@@ -308,7 +328,12 @@ namespace Leantime\Domain\Auth\Repositories {
             return $result;
         }
 
-        public function changePW($password, $hash)
+        /**
+         * @param $password
+         * @param $hash
+         * @return bool
+         */
+        public function changePW($password, $hash): bool
         {
 
             $query = "UPDATE

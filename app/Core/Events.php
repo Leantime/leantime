@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Plugins;
 
 /**
@@ -17,21 +18,21 @@ class Events
      *
      * @var array
      */
-    private static $eventRegistry = [];
+    private static array $eventRegistry = [];
 
     /**
      * Registry of all filters added to a hook
      *
      * @var array
      */
-    private static $filterRegistry = [];
+    private static array $filterRegistry = [];
 
     /**
      * Registry of all hooks available
      *
      * @var array
      */
-    private static $available_hooks = [
+    private static array $available_hooks = [
         'filters' => [],
         'events' => [],
     ];
@@ -46,6 +47,7 @@ class Events
      * @param string $context
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public static function dispatch_event(
         string $eventName,
@@ -111,7 +113,6 @@ class Events
     }
 
 
-
     /**
      * Dispatches a filter to manipulate a variable somewhere
      *
@@ -123,6 +124,7 @@ class Events
      * @param mixed  $context
      *
      * @return mixed
+     * @throws BindingResolutionException
      */
     public static function dispatch_filter(
         string $filtername,
@@ -153,6 +155,7 @@ class Events
      * @access public
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public static function discover_listeners(): void
     {
@@ -210,7 +213,7 @@ class Events
      *
      * @param string                 $eventName
      * @param string|callable|object $handler
-     * @param integer                $priority
+     * @param int                    $priority
      *
      * @return void
      */
@@ -232,7 +235,7 @@ class Events
      *
      * @param string                 $filtername
      * @param string|callable|object $handler
-     * @param integer                $priority
+     * @param int                    $priority
      *
      * @return void
      */
@@ -317,6 +320,7 @@ class Events
      * @param mixed $paramAttr
      *
      * @return array|object
+     * @throws BindingResolutionException
      */
     private static function defineParams(mixed $paramAttr): array|object
     {
@@ -353,6 +357,7 @@ class Events
      * @access private
      *
      * @param array        $registry
+     * @param string       $registryType
      * @param string       $hookName
      * @param mixed        $payload
      * @param array|object $available_params
@@ -367,7 +372,7 @@ class Events
         array|object $available_params = []
     ): mixed {
 
-        $isEvent = $registryType == "events" ? true : false;
+        $isEvent = $registryType == "events";
         $filteredPayload = null;
 
         //sort matches by priority

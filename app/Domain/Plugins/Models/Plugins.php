@@ -2,19 +2,28 @@
 
 namespace Leantime\Domain\Plugins\Models {
 
+    /**
+     *
+     */
     class Plugins
     {
-        public $id;
-        public $name;
-        public $enabled;
-        public $description;
-        public $version;
-        public $installdate;
-        public $foldername;
-        public $homepage;
-        public $authors;
+        public int $id;
+        public string $name;
+        public bool $enabled;
+        public string $description;
+        public string $version;
+        public string $installdate;
+        public string $foldername;
+        public string $homepage;
+        public string|array $authors;
 
-        public function getPluginImageData()
+        /**
+         * @return string
+         */
+        /**
+         * @return string
+         */
+        public function getPluginImageData(): string
         {
             $image = APP_ROOT . '/plugins/' . str_replace(".", '', $this->foldername) . '/assets/screenshot.png';
 

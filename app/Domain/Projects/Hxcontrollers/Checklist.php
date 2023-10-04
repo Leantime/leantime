@@ -2,28 +2,33 @@
 
 namespace Leantime\Domain\Projects\Hxcontrollers;
 
+use Error;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\HtmxController;
 use Leantime\Domain\Projects\Services\Projects;
 
+/**
+ *
+ */
 class Checklist extends HtmxController
 {
     /**
      * @var string
      */
-    protected static $view = 'projects::partials.checklist';
+    protected static string $view = 'projects::partials.checklist';
 
     /**
-     * @var \Leantime\Domain\Projects\Services\Projects
+     * @var Projects
      */
     private Projects $projectService;
 
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param Projects $projectService The projects domain service.
      * @return void
      */
-    public function init(Projects $projectService)
+    public function init(Projects $projectService): void
     {
         $this->projectService = $projectService;
     }
@@ -32,11 +37,12 @@ class Checklist extends HtmxController
      * Updates subtask status
      *
      * @return void
+     * @throws BindingResolutionException
      */
-    public function updateSubtask()
+    public function updateSubtask(): void
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
-            throw new \Error('This endpoint only supports PATCH requests');
+            throw new Error('This endpoint only supports PATCH requests');
         }
 
         // update project progress

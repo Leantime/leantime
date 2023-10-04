@@ -15,14 +15,14 @@ class Application extends Container
     /**
      * Application bootstrap status
      *
-     * @var boolean
+     * @var bool
      */
     private static bool $bootstrapped = false;
 
     /**
      * Check if application has been bootstrapped
      *
-     * @return boolean
+     * @return bool
      */
     public static function hasBeenBootstrapped(): bool
     {
@@ -32,16 +32,19 @@ class Application extends Container
     /**
      * Set the application as having been bootstrapped
      *
-     * @return void
+     * @return Application
      */
-    public static function setHasBeenBootstrapped(): void
+    public static function setHasBeenBootstrapped(): self
     {
         self::$bootstrapped = true;
+
+        return self::getInstance();
     }
 
     /**
      * Get the application namespace
      *
+     * @param bool $includeSuffix
      * @return string
      *
      * @see \Illuminate\Contracts\Foundation\Application::getNamespace()

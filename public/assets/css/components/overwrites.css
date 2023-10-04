@@ -43,8 +43,8 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 
 .loginpanelinner,
 .leftpanel .leftmenu .nav-tabs ul.projectselector li.active a{
-	background-color: var(--primary-color) !important;
-	color:var(--main-action-color);
+    background-color: var(--primary-color) !important;
+    color:var(--main-action-color);
 }
 
 .header .logo {
@@ -52,7 +52,7 @@ div.tagsinput span.tag, .chosen-container .chosen-results .highlighted
 }
 
 .boxedHighlight{
-	background:var(--accent1);
+    background:var(--accent1);
 }
 
 /* color */
@@ -96,20 +96,20 @@ button,
 
 input[type='submit']:hover,
 button:hover {
-	background-color:  var(--main-action-hover-bg);
-	color:#fff;
+    background-color:  var(--main-action-hover-bg);
+    color:#fff;
 }
 
 .chosen-container-multi .chosen-choices .search-choice {
-	color:#fff;
+    color:#fff;
 }
 
 .btn-white {
-	background:#fff;
+    background:#fff;
 }
 
 span.btn-white:hover{
-	background:#fff;
+    background:#fff;
 }
 
 
@@ -179,44 +179,44 @@ div.tagsinput span.tag
 }
 
 .timesheetTable input {
-	width:70%;
+    width:70%;
 }
 
 .week-picker {
-	width:100px;
+    width:100px;
 }
 
 .timesheetTable select {
-	width:90%;
+    width:90%;
 }
 
 
 .ui-weekpicker td a.ui-state-hover{
-	background:#eee;
+    background:#eee;
 }
 
 .ui-weekpicker td a.ui-state-highlight {
-	background-color: var(--primary-color);
+    background-color: var(--primary-color);
 }
 
 
 .ui-state-highlight {
-	background:#eee;
+    background:#eee;
 }
 
 .companyProject,
 .companyProject a{
-	color:#999;
-	font-weight:normal
+    color:#999;
+    font-weight:normal
 }
 
 .filterBar {
 
-	border:0px solid var(--main-border-color);
-	padding:10px;
-	margin-bottom:5px;
-	padding-top:5px;
-	margin-top: 10px;
+    border:0px solid var(--main-border-color);
+    padding:10px;
+    margin-bottom:5px;
+    padding-top:5px;
+    margin-top: 10px;
     background:var(--secondary-background);
     border-radius:var(--box-radius);
     z-index: 10;
@@ -230,127 +230,127 @@ div.tagsinput span.tag
 }
 
 .headtitle {
-	background:var(--kanban-col-bg);
-	border:0px solid var(--main-border-color);
-	border-radius:var(--box-radius);
+    background:var(--kanban-col-bg);
+    border:0px solid var(--main-border-color);
+    border-radius:var(--box-radius);
 }
 
 .filterBar .filterBoxLeft {
-	float:left;
-	margin-right:15px;
+    float:left;
+    margin-right:15px;
     min-width:50px;
 }
 
 .filterBar .filterBoxLeft input,
 .filterBar .filterBoxLeft select {
-	float:left;
+    float:left;
 }
 
 label.inline {
-	float:left;
-	margin-right:5px;
-	padding-top:6px;
+    float:left;
+    margin-right:5px;
+    padding-top:6px;
 }
 
 .loading {
-	position:absolute;
-	width:100%;
-	height:40px;
+    position:absolute;
+    width:100%;
+    height:40px;
 }
 
 body .widgettitle.title-light {
-	color:var(--primary-color);
-	padding-left:0px;
-	background-color: transparent !important;
+    color:var(--primary-color);
+    padding-left:0px;
+    background-color: transparent !important;
     border-left:0px !important;
     border-top:0px !important;
     border-right:0px !important;
-	border-bottom:0px solid #ccc;
-	margin-bottom:15px;
-	font-size:var(--font-size-l);
+    border-bottom:0px solid #ccc;
+    margin-bottom:15px;
+    font-size:var(--font-size-l);
     box-shadow: none;
 
 }
 
 .nyroModalCont .widgettitle.title-light {
     padding-top: 5px;
-	font-size:var(--font-size-l);
+    font-size:var(--font-size-l);
 }
 
 div.tagsinput {
-	border:1px solid var(--main-border-color);
+    border:1px solid var(--main-border-color);
 }
 
 
 body .tox .tox-edit-area__iframe,
 body .tox .tox-toolbar-overlord{
-	background-color:var(--secondary-background);
+    background-color:var(--secondary-background);
 }
 
 
 .ui-datepicker-next {
-	cursor: pointer;
-	position: absolute;
-	top: 8px;
-	right: 5px;
-	background: url(~images/calarrow.png) no-repeat 3px 1px;
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    right: 5px;
+    background: url(~images/calarrow.png) no-repeat 3px 1px;
 }
 
 .ui-datepicker-prev {
-	cursor: pointer;
-	position: absolute;
-	top: 8px;
-	left: 5px;
-	background: url(~images/calarrow.png) no-repeat 3px -39px;
+    cursor: pointer;
+    position: absolute;
+    top: 8px;
+    left: 5px;
+    background: url(~images/calarrow.png) no-repeat 3px -39px;
 }
 
 .ui-datepicker-header {
-	position: relative;
-	text-align: center;
-	padding: 5px;
-	color: #fff;
-	background: var(--primary-color);
-	text-transform: uppercase;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
+    position: relative;
+    text-align: center;
+    padding: 5px;
+    color: #fff;
+    background: var(--primary-color);
+    text-transform: uppercase;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
 }
 
 .ui-datepicker {
-	border-radius:5px;
+    border-radius:5px;
 }
 
 
 div.growl,
 div.growl.growl-default,
 div.growl div.growl-closer {
-	background:var(--secondary-background);
-	color:var(--primary-font-color);
-	padding:20px;
-	font-size:var(--base-font-size);
-	width:250px;
-	opacity:1;
-	border-radius:var(--box-radius);
-	box-shadow: var(--regular-shadow);
-	border:0px;
+    background:var(--secondary-background);
+    color:var(--primary-font-color);
+    padding:20px;
+    font-size:var(--base-font-size);
+    width:250px;
+    opacity:1;
+    border-radius:var(--box-radius);
+    box-shadow: var(--regular-shadow);
+    border:0px;
 
 }
 
 div.growl growl-close {
-	color:var(--primary-font-color);
-	font-size:var(--base-font-size);
+    color:var(--primary-font-color);
+    font-size:var(--base-font-size);
 }
 
 div.growl.growl-default,
 div.growl.growl-success{
-	border-left:5px solid var(--green);
+    border-left:5px solid var(--green);
 }
 
 div.growl.growl-notice {
-	border-left:5px solid var(--blue);
+    border-left:5px solid var(--blue);
 }
 
 div.growl.growl-error {
-	border-left:5px solid var(--dark-red);
+    border-left:5px solid var(--dark-red);
 }
 
 div.growl .growl-title {

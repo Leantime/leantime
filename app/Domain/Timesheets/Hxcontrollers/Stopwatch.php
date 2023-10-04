@@ -2,28 +2,33 @@
 
 namespace Leantime\Domain\Timesheets\Hxcontrollers;
 
+use Error;
 use Leantime\Core\HtmxController;
+use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
+/**
+ *
+ */
 class Stopwatch extends HtmxController
 {
     /**
      * @var string
      */
-    protected static $view = 'timesheets::partials.stopwatch';
+    protected static string $view = 'timesheets::partials.stopwatch';
 
     /**
-     * @var \Leantime\Domain\Projects\Services\Timesheets
+     * @var Timesheets
      */
     private Timesheets $timesheetService;
 
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param Timesheets $timesheetService
      * @return void
      */
-    public function init(Timesheets $timesheetService)
+    public function init(Timesheets $timesheetService): void
     {
         $this->timesheetService = $timesheetService;
     }
@@ -33,7 +38,7 @@ class Stopwatch extends HtmxController
      *
      * @return void
      */
-    public function getStatus()
+    public function getStatus(): void
     {
 
         $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
@@ -45,10 +50,10 @@ class Stopwatch extends HtmxController
      *
      * @return void
      */
-    public function stopTimer()
+    public function stopTimer(): void
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
-            throw new \Error('This endpoint only supports PATCH requests');
+            throw new Error('This endpoint only supports PATCH requests');
         }
 
 
@@ -67,10 +72,13 @@ class Stopwatch extends HtmxController
         $this->tpl->assign("onTheClock", $onTheClock);
     }
 
-    public function startTimer()
+    /**
+     * @return void
+     */
+    public function startTimer(): void
     {
         if (! $this->incomingRequest->getMethod() == 'PATCH') {
-            throw new \Error('This endpoint only supports PATCH requests');
+            throw new Error('This endpoint only supports PATCH requests');
         }
 
         header("HX-Trigger:timerUpdate");

@@ -1,11 +1,13 @@
 <?php
 
+use Leantime\Core\Environment;
+
 foreach ($__data as $var => $val) {
     $$var = $val;
 } // necessary for blade refactor
 $calendars = $tpl->get('calendar');
 $eol = "\r\n";
-$env = app()->make(\Leantime\Core\Environment::class);
+$env = app()->make(Environment::class);
 $timezone = $env->defaultTimezone;
 $timezoneObject = new DateTimeZone($timezone);
 $tpl->dispatchTplEvent('beforeOutput', $calendars, ['eol' => $eol]);

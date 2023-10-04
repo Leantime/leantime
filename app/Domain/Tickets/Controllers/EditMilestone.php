@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -13,6 +14,9 @@ namespace Leantime\Domain\Tickets\Controllers {
     use DateTime;
     use DateInterval;
 
+    /**
+     *
+     */
     class EditMilestone extends Controller
     {
         private TicketService $ticketService;
@@ -153,7 +157,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 if (isset($params['headline']) === true) {
-                    if ($this->ticketService->quickUpdateMilestone($params) == true) {
+                    if ($this->ticketService->quickUpdateMilestone($params)) {
                         $this->tpl->setNotification($this->language->__("notification.milestone_edited_successfully"), "success");
 
                         $subject = $this->language->__("email_notifications.milestone_update_subject");
@@ -173,12 +177,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
-
-                        $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
-                        $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                     }
+                    $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                 }
 
                 $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);

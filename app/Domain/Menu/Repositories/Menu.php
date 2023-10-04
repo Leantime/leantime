@@ -14,6 +14,9 @@ namespace Leantime\Domain\Menu\Repositories {
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
     class Menu
     {
         use Eventhelpers;
@@ -109,6 +112,13 @@ namespace Leantime\Domain\Menu\Repositories {
         private TicketService $ticketsService;
         private AuthService $authService;
 
+        /**
+         * @param SettingRepository $settingsRepo
+         * @param LanguageCore      $language
+         * @param EnvironmentCore   $config
+         * @param TicketService     $ticketsService
+         * @param AuthService       $authService
+         */
         public function __construct(
             SettingRepository $settingsRepo,
             LanguageCore $language,
@@ -183,11 +193,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
             $_SESSION['submenuToggle'] = unserialize($subStructure);
 
-            if (isset($_SESSION['submenuToggle'][$submenu])) {
-                return $_SESSION['submenuToggle'][$submenu];
-            } else {
-                return false;
-            }
+            return $_SESSION['submenuToggle'][$submenu] ?? false;
         }
 
         /**
@@ -217,7 +223,7 @@ namespace Leantime\Domain\Menu\Repositories {
             }
 
             foreach ($menuStructure as $key => $element) {
-                $menuStructure[$key]['title'] = $language->__($menuStructure[$key]['title']);
+                $menuStructure[$key]['title'] = $language->__($element['title']);
 
                 switch ($element['type']) {
                     case 'header':
@@ -277,7 +283,12 @@ namespace Leantime\Domain\Menu\Repositories {
             return $menuStructure;
         }
 
-        public function processMenuItem($element, &$structure)
+        /**
+         * @param $element
+         * @param $structure
+         * @return void
+         */
+        public function processMenuItem($element, &$structure): void
         {
 
             //ModuleManager Check
@@ -288,7 +299,7 @@ namespace Leantime\Domain\Menu\Repositories {
 
             // Update security
             if (isset($element['role'])) {
-                $accessGranted = $this->authService::userIsAtLeast($element['role'], true);
+                $accessGranted = AuthService::userIsAtLeast($element['role'], true);
 
                 if (!$accessGranted) {
                     $structure['type'] = 'disabled';
@@ -304,7 +315,10 @@ namespace Leantime\Domain\Menu\Repositories {
             return;
         }
 
-        public function getTicketMenu()
+        /**
+         * @return array|mixed|string|string[]
+         */
+        public function getTicketMenu(): mixed
         {
 
             $ticketService = $this->ticketsService;
@@ -314,7 +328,10 @@ namespace Leantime\Domain\Menu\Repositories {
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
 
-        public function getIdeaMenu()
+        /**
+         * @return string
+         */
+        public function getIdeaMenu(): string
         {
             $url = "/ideas/showBoards";
             if (isset($_SESSION['lastIdeaView'])) {

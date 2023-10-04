@@ -2,6 +2,9 @@
 
 namespace Leantime\Domain\Reports\Models {
 
+    /**
+     *
+     */
     class Reports
     {
         public $sprintId;

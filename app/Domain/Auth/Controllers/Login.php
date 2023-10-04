@@ -7,6 +7,9 @@ namespace Leantime\Domain\Auth\Controllers {
     use Leantime\Core\Environment;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
 
+    /**
+     *
+     */
     class Login extends Controller
     {
         private AuthService $authService;

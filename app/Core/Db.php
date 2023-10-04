@@ -19,27 +19,27 @@ class Db
     /**
      * @var string database host default: localhost
      */
-    private $host = '';
+    private string $host = '';
 
     /**
      * @var string username for db
      */
-    private $user = '';
+    private string $user = '';
 
     /**
      * @var string password for db
      */
-    private $password = '';
+    private string $password = '';
 
     /**
      * @var string database name
      */
-    private $databaseName = '';
+    private string $databaseName = '';
 
     /**
-     * @var string database port default: 3306
+     * @var string|int database port default: 3306
      */
-    private $port = '3306';
+    private string|int $port = '3306';
 
     /**
      * @var PDO database connection
@@ -49,10 +49,10 @@ class Db
     /**
      * __construct - connect to database and select db
      *
-     * @param \Leantime\Core\Environment $config
-     * @return self
+     * @param Environment $config
+     * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config)
+    public function __construct(Environment $config)
     {
         $this->user = $config->dbUser;
         $this->password = $config->dbPassword;
@@ -103,11 +103,11 @@ class Db
      * A counted for loop is user rather than foreach with a key to avoid issues if the array passed has any
      * arbitrary keys
      *
-     * @param string  $name
-     * @param integer $count
+     * @param string $name
+     * @param int    $count
      * @return string
      */
-    public static function arrayToPdoBindingString($name, $count)
+    public static function arrayToPdoBindingString(string $name, int $count): string
     {
         $bindingStatement = "";
         for ($i = 0; $i < $count; $i++) {
@@ -128,7 +128,7 @@ class Db
      * @param string $string
      * @return string
      */
-    public static function sanitizeToColumnString(string $string)
+    public static function sanitizeToColumnString(string $string): string
     {
         return preg_replace("/[^a-zA-Z0-9_]/", "", $string);
     }

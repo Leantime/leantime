@@ -8,20 +8,24 @@
 namespace Leantime\Domain\Calendar\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Environment;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Auth\Services\Auth;
     use Ramsey\Uuid\Uuid;
 
+    /**
+     *
+     */
     class Export extends Controller
     {
-        private $config;
-        private $settingsRepo;
+        private Environment $config;
+        private SettingRepository $settingsRepo;
 
         /**
          * init - initialize private variables
          */
-        public function init(\Leantime\Core\Environment $config, SettingRepository $settingsRepo)
+        public function init(Environment $config, SettingRepository $settingsRepo)
         {
             $this->config = $config;
             $this->settingsRepo = $settingsRepo;
@@ -55,7 +59,7 @@ namespace Leantime\Domain\Calendar\Controllers {
             $icalHash = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret");
             $userHash = hash('sha1', $_SESSION['userdata']['id'] . $this->config->sessionpassword);
 
-            if ($icalHash == false) {
+            if (!$icalHash) {
                 $icalUrl = "";
             } else {
                 $icalUrl = BASE_URL . "/calendar/ical/" . $icalHash . "_" . $userHash;

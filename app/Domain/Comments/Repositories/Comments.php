@@ -5,16 +5,36 @@ namespace Leantime\Domain\Comments\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
     class Comments
     {
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
-        public function getComments($module, $moduleId, $parent = 0, $orderByState = "0")
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $parent
+         * @param $orderByState
+         * @return array|false
+         */
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param int      $parent
+         * @param string   $orderByState
+         * @return array|false
+         */
+        public function getComments($module, $moduleId, int $parent = 0, string $orderByState = "0"): false|array
         {
             $orderBy = "DESC";
 
@@ -52,7 +72,17 @@ namespace Leantime\Domain\Comments\Repositories {
             return $values;
         }
 
-        public function countComments($module = null, $moduleId = null)
+        /**
+         * @param $module
+         * @param $moduleId
+         * @return int|mixed
+         */
+        /**
+         * @param $module
+         * @param $moduleId
+         * @return int|mixed
+         */
+        public function countComments($module = null, $moduleId = null): mixed
         {
 
             $sql = "SELECT count(id) as count
@@ -85,14 +115,18 @@ namespace Leantime\Domain\Comments\Repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if (isset($values['count'])) {
-                return $values['count'];
-            } else {
-                return 0;
-            }
+            return $values['count'] ?? 0;
         }
 
-        public function getReplies($id)
+        /**
+         * @param $id
+         * @return array|false
+         */
+        /**
+         * @param $id
+         * @return array|false
+         */
+        public function getReplies($id): false|array
         {
 
             $sql = "SELECT
@@ -120,7 +154,15 @@ namespace Leantime\Domain\Comments\Repositories {
             return $values;
         }
 
-        public function getComment($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
+        public function getComment($id): void
         {
 
             $sql = "SELECT
@@ -137,7 +179,17 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->closeCursor();
         }
 
-        public function addComment($values, $module)
+        /**
+         * @param $values
+         * @param $module
+         * @return false|string
+         */
+        /**
+         * @param $values
+         * @param $module
+         * @return false|string
+         */
+        public function addComment($values, $module): false|string
         {
 
             $sql = "INSERT INTO zp_comment (
@@ -167,7 +219,15 @@ namespace Leantime\Domain\Comments\Repositories {
             }
         }
 
-        public function deleteComment($id)
+        /**
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @return bool
+         */
+        public function deleteComment($id): bool
         {
 
             $sql = "DELETE FROM zp_comment WHERE id = :id";
@@ -180,7 +240,17 @@ namespace Leantime\Domain\Comments\Repositories {
             return $result;
         }
 
-        public function editComment($text, $id)
+        /**
+         * @param $text
+         * @param $id
+         * @return bool
+         */
+        /**
+         * @param $text
+         * @param $id
+         * @return bool
+         */
+        public function editComment($text, $id): bool
         {
 
             $sql = "UPDATE zp_comment SET text = :text WHERE id = :id";

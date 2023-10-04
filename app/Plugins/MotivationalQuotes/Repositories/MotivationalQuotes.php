@@ -2,6 +2,7 @@
 
 namespace Leantime\Plugins\MotivationalQuotes\Repositories;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Plugins\MotivationalQuotes\Models\Quote;
 
 /**
@@ -12,7 +13,7 @@ class MotivationalQuotes
     /**
      * constructor
      *
-     * @return self
+     * @return void
      */
     public function __construct()
     {
@@ -23,7 +24,8 @@ class MotivationalQuotes
     /**
      * getAllQuotes
      *
-     * @return Quote[]
+     * @return array
+     * @throws BindingResolutionException
      */
     public function getAllQuotes(): array
     {

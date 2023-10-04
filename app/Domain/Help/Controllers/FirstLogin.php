@@ -8,6 +8,12 @@ namespace Leantime\Domain\Help\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Projects\Services\Projects;
+    use Leantime\Domain\Setting\Repositories\Setting;
+    use Leantime\Domain\Users\Services\Users;
+
+    /**
+     *
+     */
     class FirstLogin extends Controller
     {
         /**
@@ -38,7 +44,7 @@ namespace Leantime\Domain\Help\Controllers {
          */
         public function post($params)
         {
-            $settingsRepo = app()->make(\Leantime\Domain\Setting\Repositories\Setting::class);
+            $settingsRepo = app()->make(Setting::class);
 
             if (isset($_POST['step']) && $_POST['step'] == 1) {
                 if (isset($_POST['projectname'])) {
@@ -74,7 +80,7 @@ namespace Leantime\Domain\Help\Controllers {
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 3) {
-                $userService = app()->make(\Leantime\Domain\Users\Services\Users::class);
+                $userService = app()->make(Users::class);
                 $projectsRepo = app()->make(\Leantime\Domain\Projects\Repositories\Projects::class);
 
                 for ($i = 1; $i <= 3; $i++) {

@@ -3,23 +3,31 @@
 namespace Leantime\Domain\Goalcanvas\Services {
 
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
-    use Mpdf\Tag\P;
-    use Ramsey\Uuid\Uuid;
 
+    /**
+     *
+     */
     class Goalcanvas
     {
         private GoalcanvaRepository $goalRepository;
-        public $reportingSettings = [
+        public array $reportingSettings = [
             "linkonly",
             "linkAndReport",
             "nolink",
         ];
 
+        /**
+         * @param GoalcanvaRepository $goalRepository
+         */
         public function __construct(GoalcanvaRepository $goalRepository)
         {
             $this->goalRepository = $goalRepository;
         }
 
+        /**
+         * @param int $id
+         * @return array
+         */
         public function getCanvasItemsById(int $id): array
         {
 
@@ -52,7 +60,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
-        public function getChildGoalsForReporting($parentId)
+        /**
+         * @param $parentId
+         * @return int|mixed
+         */
+        /**
+         * @param $parentId
+         * @return int|mixed
+         */
+        public function getChildGoalsForReporting($parentId): mixed
         {
 
             //Goals come back as rows for levl1 and lvl2 being columns, so
@@ -73,7 +89,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $currentValueSum;
         }
 
-        public function getChildrenbyKPI($parentId)
+        /**
+         * @param $parentId
+         * @return array
+         */
+        /**
+         * @param $parentId
+         * @return array
+         */
+        public function getChildrenbyKPI($parentId): array
         {
 
             $goals = array();
@@ -120,7 +144,15 @@ namespace Leantime\Domain\Goalcanvas\Services {
             return $goals;
         }
 
-        public function getParentKPIs($projectId)
+        /**
+         * @param $projectId
+         * @return array
+         */
+        /**
+         * @param $projectId
+         * @return array
+         */
+        public function getParentKPIs($projectId): array
         {
 
             $kpis = $this->goalRepository->getAllAvailableKPIs($projectId);

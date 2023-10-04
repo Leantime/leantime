@@ -5,6 +5,9 @@ namespace Leantime\Domain\Sprints\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
     class Sprints
     {
         private DbCore $db;
@@ -23,9 +26,10 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getSprint - get single sprint
          *
          * @access public
-         * @return array
+         * @param int $id
+         * @return \Leantime\Domain\Sprints\Models\Sprints|false
          */
-        public function getSprint($id)
+        public function getSprint($id): \Leantime\Domain\Sprints\Models\Sprints|false
         {
 
             $query = "SELECT
@@ -53,9 +57,10 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getAllSprints - get all sprints for a project
          *
          * @access public
+         * @param $projectId
          * @return array
          */
-        public function getAllSprints($projectId)
+        public function getAllSprints($projectId): array
         {
 
 
@@ -84,9 +89,10 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getAllSprints - get all sprints for a project
          *
          * @access public
+         * @param $projectId
          * @return array
          */
-        public function getAllFutureSprints($projectId)
+        public function getAllFutureSprints($projectId): array
         {
 
 
@@ -115,9 +121,10 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getCurrentSprintId - get current sprint for a project
          *
          * @access public
+         * @param $projectId
          * @return mixed
          */
-        public function getCurrentSprint($projectId)
+        public function getCurrentSprint($projectId): mixed
         {
 
             $query = "SELECT
@@ -146,9 +153,10 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getUpcomingSprint - gets the next upcoming sprint
          *
          * @access public
+         * @param $projectId
          * @return array
          */
-        public function getUpcomingSprint($projectId)
+        public function getUpcomingSprint($projectId): array
         {
 
             $query = "SELECT
@@ -173,7 +181,15 @@ namespace Leantime\Domain\Sprints\Repositories {
             return $value;
         }
 
-        public function addSprint($sprint)
+        /**
+         * @param $sprint
+         * @return bool
+         */
+        /**
+         * @param $sprint
+         * @return bool
+         */
+        public function addSprint($sprint): bool
         {
 
             $query = "INSERT INTO zp_sprints (name, projectId, startDate, endDate) VALUES (:name, :projectId, :startDate, :endDate)";
@@ -191,7 +207,15 @@ namespace Leantime\Domain\Sprints\Repositories {
             return $execution;
         }
 
-        public function editSprint($sprint)
+        /**
+         * @param $sprint
+         * @return bool
+         */
+        /**
+         * @param $sprint
+         * @return bool
+         */
+        public function editSprint($sprint): bool
         {
 
             $query = "UPDATE zp_sprints
@@ -216,7 +240,15 @@ namespace Leantime\Domain\Sprints\Repositories {
             return $execution;
         }
 
-        public function delSprint($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        /**
+         * @param $id
+         * @return void
+         */
+        public function delSprint($id): void
         {
 
             $query = "UPDATE zp_tickets

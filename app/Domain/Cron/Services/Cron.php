@@ -6,21 +6,35 @@ namespace Leantime\Domain\Cron\Services {
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
     use PDO;
+    use PHPMailer\PHPMailer\Exception;
 
+    /**
+     *
+     */
     class Cron
     {
-        private Audit $AuditRepo;
+        private Audit $auditRepo;
         private Queue $queueSvc;
         private Environment $Environment;
+        private Environment $environment;
 
+        /**
+         * @param Audit       $auditRepo
+         * @param Queue       $queueSvc
+         * @param Environment $environment
+         */
         public function __construct(Audit $auditRepo, Queue $queueSvc, Environment $environment)
         {
-            $this->auditRepo = $auditRepo;
+            $this->auditRepo =  $auditRepo;
             $this->queueSvc = $queueSvc;
             $this->environment = $environment;
         }
 
-        public function runCron()
+        /**
+         * @return bool
+         * @throws Exception
+         */
+        public function runCron(): bool
         {
 
             $lastEvent = $this->auditRepo->getLastEvent('cron');
@@ -35,8 +49,8 @@ namespace Leantime\Domain\Cron\Services {
             $nowDate = time();
             $timeSince = abs($nowDate - $lastCronEvent);
 
-            if ($timeSince < 300) {
-                if ($this->environment->debug == true) {
+            if ($timeSince < 60) {
+                if ($this->environment->debug) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
                 }
 
@@ -45,13 +59,13 @@ namespace Leantime\Domain\Cron\Services {
 
             $this->auditRepo->storeEvent("cron", "Cron started");
 
-            if ($this->environment->debug == true) {
+            if ($this->environment->debug) {
                 error_log("cron start");
             }
 
             $this->queueSvc->processQueue();
 
-            if ($this->environment->debug == true) {
+            if ($this->environment->debug) {
                 error_log("cron end");
             }
 

@@ -3,12 +3,16 @@
 namespace Leantime\Domain\Notifications\Services {
 
     use DOMDocument;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Domain\Notifications\Repositories\Notifications as NotificationRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
+    /**
+     *
+     */
     class Notifications
     {
         private DbCore $db;
@@ -33,20 +37,54 @@ namespace Leantime\Domain\Notifications\Services {
             $this->language = $language;
         }
 
-        public function getAllNotifications($userId, $showNewOnly = 0, $limitStart = 0, $limitEnd = 100, $filterOptions = array())
+        /**
+         * @param $userId
+         * @param $showNewOnly
+         * @param $limitStart
+         * @param $limitEnd
+         * @param $filterOptions
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @param int    $showNewOnly
+         * @param int    $limitStart
+         * @param int    $limitEnd
+         * @param array  $filterOptions
+         * @return array|false
+         */
+        public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
         {
 
             return $this->notificationsRepo->getAllNotifications($userId, $showNewOnly, $limitStart, $limitEnd, $filterOptions);
         }
 
 
-        public function addNotifications(array $notifications)
+        /**
+         * @param array $notifications
+         * @return bool|null
+         */
+        /**
+         * @param array $notifications
+         * @return bool|null
+         */
+        public function addNotifications(array $notifications): ?bool
         {
 
             return $this->notificationsRepo->addNotifications($notifications);
         }
 
-        public function markNotificationRead($id, $userId)
+        /**
+         * @param $id
+         * @param $userId
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $userId
+         * @return bool
+         */
+        public function markNotificationRead($id, $userId): bool
         {
 
             if ($id == "all") {
@@ -56,6 +94,15 @@ namespace Leantime\Domain\Notifications\Services {
             }
         }
 
+        /**
+         * @param string $content
+         * @param string $module
+         * @param int    $moduleId
+         * @param int    $authorId
+         * @param string $url
+         * @return void
+         * @throws BindingResolutionException
+         */
         public function processMentions(string $content, string $module, int $moduleId, int $authorId, string $url): void
         {
 
@@ -66,11 +113,7 @@ namespace Leantime\Domain\Notifications\Services {
             $links = $dom->getElementsByTagName("a");
 
             $author = $this->userRepository->getUser($authorId);
-            if (isset($author['firstname'])) {
-                $authorName = $author['firstname'];
-            } else {
-                $authorName = $this->language->__('label.team_mate');
-            }
+            $authorName = $author['firstname'] ?? $this->language->__('label.team_mate');
 
             for ($i = 0; $i < $links->count(); $i++) {
                 $taggedUser = $links->item($i)->getAttribute('data-tagged-user-id');

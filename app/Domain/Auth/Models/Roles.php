@@ -4,18 +4,21 @@ namespace Leantime\Domain\Auth\Models {
 
     use Leantime\Core\Eventhelpers;
 
+    /**
+     *
+     */
     class Roles
     {
         use Eventhelpers;
 
-        public static $readonly = 'readonly';
-        public static $commenter = 'commenter';
-        public static $editor = 'editor';
-        public static $manager = 'manager';
-        public static $admin = 'admin';
-        public static $owner = 'owner';
+        public static string $readonly = 'readonly';
+        public static string $commenter = 'commenter';
+        public static string $editor = 'editor';
+        public static string $manager = 'manager';
+        public static string $admin = 'admin';
+        public static string $owner = 'owner';
 
-        private static $roleKeys = array(
+        private static array $roleKeys = array(
             5 => 'readonly',      //prev: none
             10 => 'commenter',    //prev: client
             20 => 'editor',       //prev: developer
@@ -24,17 +27,27 @@ namespace Leantime\Domain\Auth\Models {
             50 => 'owner',         //prev: admin
         );
 
-        private static function getFilteredRoles()
+        /**
+         * @return mixed
+         */
+        private static function getFilteredRoles(): mixed
         {
             return self::dispatch_filter('available_roles', self::$roleKeys);
         }
 
-        public static function getRoleString($key)
+        /**
+         * @param $key
+         * @return false|mixed
+         */
+        public static function getRoleString($key): mixed
         {
             return self::getFilteredRoles()[$key] ?? false;
         }
 
-        public static function getRoles()
+        /**
+         * @return mixed
+         */
+        public static function getRoles(): mixed
         {
             return self::getFilteredRoles();
         }

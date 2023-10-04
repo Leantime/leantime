@@ -2,8 +2,11 @@
 
 namespace Leantime\Domain\Dashboard\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Reactions\Models\Reactions;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -15,6 +18,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
 
+    /**
+     *
+     */
     class Show extends Controller
     {
         private ProjectService $projectService;
@@ -24,6 +30,18 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private CommentService $commentService;
         private ReactionService $reactionsService;
 
+        /**
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param UserService      $userService
+         * @param TimesheetService $timesheetService
+         * @param CommentService   $commentService
+         * @param ReactionService  $reactionsService
+         * @param ReportService    $reportsService
+         * @return void
+         * @throws BindingResolutionException
+         * @throws BindingResolutionException
+         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
@@ -32,7 +50,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             CommentService $commentService,
             ReactionService $reactionsService,
             ReportService $reportsService
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->userService = $userService;
@@ -47,8 +65,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
         /**
          * @return void
+         * @throws BindingResolutionException
          */
-        public function get()
+        public function get(): void
         {
 
             if (!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
@@ -73,7 +92,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
             $this->tpl->assign('project', $project);
 
-            $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $_SESSION['currentProject'], \Leantime\Domain\Reactions\Models\Reactions::$favorite);
+            $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $_SESSION['currentProject'], Reactions::$favorite);
             if ($userReaction && is_array($userReaction) && count($userReaction) > 0) {
                 $this->tpl->assign("isFavorite", true);
             } else {
@@ -107,7 +126,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $comment = array_map(function ($comment) use ($comments) {
                 $comment['replies'] = $comments->getReplies($comment['id']);
                 return $comment;
-            }, $comments->getComments('project', $_SESSION['currentProject'], ""));
+            }, $comments->getComments('project', $_SESSION['currentProject'], 0));
 
 
             $url = parse_url(CURRENT_URL);
@@ -127,11 +146,17 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->display('dashboard.show');
         }
 
-        public function post($params)
+
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function post($params): void
         {
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
-                if (isset($params['quickadd']) == true) {
+                if (isset($params['quickadd'])) {
                     $result = $this->ticketService->quickAddTicket($params);
 
                     if (isset($result["status"])) {

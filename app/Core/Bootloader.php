@@ -2,8 +2,10 @@
 
 namespace Leantime\Core;
 
+use Exception;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
-use Illumiante\Contracts\Foundation\Application as IlluminateApplicationContract;
 use Psr\Container\ContainerInterface as PsrContainerContract;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
@@ -13,6 +15,7 @@ use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Audit\Repositories\Audit as AuditRepository;
+use Symfony\Component\ErrorHandler\Debug;
 
 /**
  * Bootloader
@@ -29,21 +32,21 @@ class Bootloader
      *
      * @var static
      */
-    protected static $instance;
+    protected static Bootloader $instance;
 
     /**
      * Application instance
      *
-     * @var \Leantime\Core\Application
+     * @var Application|PsrContainerContract|null
      */
-    protected $app;
+    protected Application|null|PsrContainerContract $app;
 
     /**
      * Public actions
      *
      * @var array
      */
-    private $publicActions = array(
+    private array $publicActions = array(
         "auth.login",
         "auth.resetPw",
         "auth.userInvite",
@@ -61,14 +64,14 @@ class Bootloader
     /**
      * Telemetry response
      *
-     * @var array
+     * @var bool|PromiseInterface
      */
-    private $telemetryResponse;
+    private bool|PromiseInterface $telemetryResponse;
 
     /**
      * Set the Bootloader instance
      *
-     * @param \Leantime\Core\Bootloader $instance
+     * @param Bootloader|null $instance
      * @return void
      */
     public static function setInstance(?self $instance): void
@@ -79,8 +82,8 @@ class Bootloader
     /**
      * Get the Bootloader instance
      *
-     * @param \Psr\Container\ContainerInterface $app
-     * @return \Leantime\Core\Bootloader
+     * @param PsrContainerContract|null $app
+     * @return Bootloader
      */
     public static function getInstance(?PsrContainerContract $app = null): self
     {
@@ -90,8 +93,7 @@ class Bootloader
     /**
      * Constructor
      *
-     * @param \Psr\Container\ContainerInterface $app
-     * @return self
+     * @param PsrContainerContract|null $app
      */
     public function __construct(?PsrContainerContract $app = null)
     {
@@ -104,6 +106,7 @@ class Bootloader
      * Boot the Application.
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public function __invoke(): void
     {
@@ -114,6 +117,7 @@ class Bootloader
      * Boot the Application.
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public function boot(): void
     {
@@ -123,7 +127,7 @@ class Bootloader
 
         $app = $this->getApplication();
 
-        if ($app->hasBeenBootstrapped()) {
+        if ($app::hasBeenBootstrapped()) {
             return;
         }
 
@@ -131,7 +135,7 @@ class Bootloader
 
         $this->setErrorHandler($config->debug ?? 0);
 
-        $app->make(AppSettings::class)->loadSettings();
+
 
         $request = $app->make(IncomingRequest::class);
 
@@ -155,31 +159,23 @@ class Bootloader
 
         $this->checkIfUpdated();
 
-        /**
-         * The beginning of the application
-         *
-         * @param Leantime\Core\Bootloader $bootloader The bootloader object.
-         */
+
         self::dispatch_event("beginning", ['bootloader' => $this]);
 
         $this->handleRequest();
 
-        $app->setHasBeenBootstrapped(true);
+        $app::setHasBeenBootstrapped();
 
         $this->handleTelemetryResponse();
 
-        /**
-         * The end of the application
-         *
-         * @param Leantime\Core\Bootloader $bootloader The bootloader object.
-         */
         self::dispatch_event("end", ['bootloader' => $this]);
     }
 
     /**
      * Get the Application instance.
      *
-     * @return \Leantime\Core\Application
+     * @return Application
+     * @throws BindingResolutionException
      */
     public function getApplication(): Application
     {
@@ -197,6 +193,9 @@ class Bootloader
         $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
         $this->app->alias(Environment::class, alias: "config");
 
+        $this->app->singleton(AppSettings::class, AppSettings::class);
+        $this->app->make(AppSettings::class)->loadSettings();
+
         Events::discover_listeners();
 
         self::dispatch_event('config_initialized');
@@ -213,12 +212,6 @@ class Bootloader
         $this->app->singleton(OidcService::class, OidcService::class);
         $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
 
-        /**
-         * Filter on container right after initial bindings.
-         *
-         * @param Leantime\Core\Bootloader $bootloader The bootloader object.
-         * @return \Illuminate\Contracts\Container\Container $container The container object.
-         */
         $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
 
         Application::setInstance($this->app);
@@ -230,6 +223,7 @@ class Bootloader
      * Load headers
      *
      * @return void
+     * @throws BindingResolutionException
      */
     private function loadHeaders(): void
     {
@@ -248,7 +242,8 @@ class Bootloader
     /**
      * Check if Leantime is installed
      *
-     * @return boolean
+     * @return bool
+     * @throws BindingResolutionException
      */
     private function checkIfInstalled(): bool
     {
@@ -304,6 +299,7 @@ class Bootloader
      * Redirect to install
      *
      * @return void
+     * @throws BindingResolutionException
      */
     private function redirectToInstall(): void
     {
@@ -318,6 +314,7 @@ class Bootloader
      * Redirect to update
      *
      * @return void
+     * @throws BindingResolutionException
      */
     private function redirectToUpdate(): void
     {
@@ -331,7 +328,8 @@ class Bootloader
     /**
      * Check if Leantime is updated
      *
-     * @return boolean
+     * @return bool
+     * @throws BindingResolutionException
      */
     private function checkIfUpdated(): bool
     {
@@ -356,8 +354,9 @@ class Bootloader
     /**
      * Handle the request
      *
-     * @todo Refactor into middleware and then dispatch
      * @return void
+     * @throws BindingResolutionException
+     * @todo Refactor into middleware and then dispatch
      */
     private function handleRequest(): void
     {
@@ -426,6 +425,7 @@ class Bootloader
      * @param string $route
      * @param string $origin
      * @return void
+     * @throws BindingResolutionException
      */
     public function redirectWithOrigin(string $route, string $origin): void
     {
@@ -444,6 +444,7 @@ class Bootloader
      * Cron exec
      *
      * @return void
+     * @throws BindingResolutionException
      */
     private function cronExec(): void
     {
@@ -483,18 +484,22 @@ class Bootloader
 
         try {
             $this->telemetryResponse->wait();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             error_log($e);
         }
     }
 
+    /**
+     * @param int $debug
+     * @return void
+     */
     private function setErrorHandler(int $debug): void
     {
         if ($debug == 0) {
             return;
         }
 
-        \Symfony\Component\ErrorHandler\Debug::enable();
+        Debug::enable();
     }
 
     /**

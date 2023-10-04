@@ -11,6 +11,9 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
     class DelCanvasItem extends Controller
     {
         /**
@@ -18,7 +21,7 @@ namespace Leantime\Domain\Canvas\Controllers {
          */
         protected const CANVAS_NAME = '??';
 
-        private $canvasRepo;
+        private mixed $canvasRepo;
 
         /**
          * init - initialize private variables

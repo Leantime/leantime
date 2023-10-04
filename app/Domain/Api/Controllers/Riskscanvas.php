@@ -6,7 +6,10 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
-    class Riskscanvas extends api\canvas
+    /**
+     *
+     */
+    class Riskscanvas extends Canvas
     {
         protected const CANVAS_NAME = 'risks';
     }

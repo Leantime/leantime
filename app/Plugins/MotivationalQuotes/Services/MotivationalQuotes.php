@@ -2,6 +2,7 @@
 
 namespace Leantime\Plugins\MotivationalQuotes\Services;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Plugins\MotivationalQuotes\Repositories\MotivationalQuotes as MotivationalQuotesRepository;
 use Leantime\Plugins\MotivationalQuotes\Models\Quote as QuoteModel;
 
@@ -10,11 +11,13 @@ use Leantime\Plugins\MotivationalQuotes\Models\Quote as QuoteModel;
  */
 class MotivationalQuotes
 {
+    private MotivationalQuotesRepository $quotesRepo;
+
     /**
      * constructor
      *
      * @param MotivationalQuotesRepository $quotesRepo
-     * @return self
+     * @return void
      */
     public function __construct(MotivationalQuotesRepository $quotesRepo)
     {
@@ -25,6 +28,7 @@ class MotivationalQuotes
      * get random quote
      *
      * @return QuoteModel
+     * @throws BindingResolutionException
      */
     public function getRandomQuote(): QuoteModel
     {

@@ -3,20 +3,26 @@
 namespace Leantime\Domain\Wiki\Repositories {
 
     use Leantime\Core\Db as DbCore;
-    use leantime\domain\repositories\canvas;
+    use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Wiki\Models\Article;
     use PDO;
 
-    class Wiki extends \Leantime\Domain\Canvas\Repositories\Canvas
+    /**
+     *
+     */
+    class Wiki extends Canvas
     {
         /**
          * Constant that must be redefined
          */
         protected const CANVAS_NAME = 'wiki';
 
-
-
-        public function getArticle($id, $projectId)
+        /**
+         * @param $id
+         * @param $projectId
+         * @return mixed
+         */
+        public function getArticle($id, $projectId): mixed
         {
             $query = "SELECT
 					zp_canvas_items.id,
@@ -85,7 +91,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $value;
         }
 
-        public function getAllProjectWikis($projectId)
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        public function getAllProjectWikis($projectId): false|array
         {
             $query = "SELECT
 
@@ -112,7 +122,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
-        public function getWiki($id)
+        /**
+         * @param $id
+         * @return mixed
+         */
+        public function getWiki($id): mixed
         {
             $query = "SELECT
 
@@ -140,7 +154,12 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
-        public function getAllWikiHeadlines($canvasId, $userId)
+        /**
+         * @param $canvasId
+         * @param $userId
+         * @return array|false
+         */
+        public function getAllWikiHeadlines($canvasId, $userId): false|array
         {
             $query = "SELECT
 
@@ -172,7 +191,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
-        public function createWiki($wiki)
+        /**
+         * @param $wiki
+         * @return false|string
+         */
+        public function createWiki($wiki): false|string
         {
 
             $query = "INSERT INTO zp_canvas
@@ -201,8 +224,12 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-
-        public function updateWiki($wiki, $wikiId)
+        /**
+         * @param $wiki
+         * @param $wikiId
+         * @return bool
+         */
+        public function updateWiki($wiki, $wikiId): bool
         {
 
             $query = "UPDATE zp_canvas
@@ -223,7 +250,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $execution;
         }
 
-        public function createArticle(Article $article)
+        /**
+         * @param Article $article
+         * @return false|string
+         */
+        public function createArticle(Article $article): false|string
         {
 
             $query = "INSERT INTO zp_canvas_items
@@ -275,7 +306,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function updateArticle(Article $article)
+        /**
+         * @param Article $article
+         * @return bool
+         */
+        public function updateArticle(Article $article): bool
         {
 
             $query = "UPDATE zp_canvas_items
@@ -308,7 +343,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $execution;
         }
 
-        public function delArticle($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        public function delArticle($id): void
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
 
@@ -321,7 +360,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             $stmn->closeCursor();
         }
 
-        public function delWiki($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        public function delWiki($id): void
         {
 
             $query = "DELETE FROM zp_canvas_items WHERE canvasId = :id";
@@ -339,7 +382,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             $stmn->closeCursor();
         }
 
-        public function getNumberOfBoards($projectId = null)
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        public function getNumberOfBoards($projectId = null): mixed
         {
 
             $sql = "SELECT
@@ -369,7 +416,11 @@ namespace Leantime\Domain\Wiki\Repositories {
             return 0;
         }
 
-        public function getNumberOfCanvasItems($projectId = null)
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        public function getNumberOfCanvasItems($projectId = null): mixed
         {
 
             $sql = "SELECT

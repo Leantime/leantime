@@ -7,6 +7,9 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class DelArticle extends Controller
     {
         private WikiRepository $wikiRepo;

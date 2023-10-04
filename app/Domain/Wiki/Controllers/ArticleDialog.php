@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Wiki\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Models\Article;
@@ -10,18 +12,31 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class ArticleDialog extends Controller
     {
         private WikiService $wikiService;
         private TicketService $ticketService;
 
-        public function init(WikiService $wikiService, TicketService $ticketService)
+        /**
+         * @param WikiService   $wikiService
+         * @param TicketService $ticketService
+         * @return void
+         */
+        public function init(WikiService $wikiService, TicketService $ticketService): void
         {
             $this->wikiService = $wikiService;
             $this->ticketService = $ticketService;
         }
 
-        public function get($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function get($params): void
         {
 
             $article = app()->make(Article::class);
@@ -55,7 +70,12 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->displayPartial("wiki.articleDialog");
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function post($params): void
         {
 
             $article = app()->make(Article::class);
@@ -93,12 +113,6 @@ namespace Leantime\Domain\Wiki\Controllers {
                 if ($results) {
                     $this->tpl->setNotification("notification.article_updated_successfully", "success");
                 }
-
-                if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
-                } else {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
-                }
             } else {
                 //New
                 $article->title = $params['title'];
@@ -115,12 +129,11 @@ namespace Leantime\Domain\Wiki\Controllers {
                 if ($id) {
                     $this->tpl->setNotification("notification.article_created_successfully", "success");
                 }
-
-                if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
-                } else {
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
-                }
+            }
+            if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
+                $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
+            } else {
+                $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
             }
         }
     }

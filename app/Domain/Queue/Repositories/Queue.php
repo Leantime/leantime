@@ -6,18 +6,32 @@ namespace Leantime\Domain\Queue\Repositories {
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
 
+    /**
+     *
+     */
     class Queue
     {
         private DbCore $db;
         private UserRepo $users;
 
+        /**
+         * @param DbCore   $db
+         * @param UserRepo $users
+         */
         public function __construct(DbCore $db, UserRepo $users)
         {
             $this->db = $db;
             $this->users = $users;
         }
 
-        public function queueMessageToUsers($recipients, $message, $subject = "", $projectId = 0)
+        /**
+         * @param $recipients
+         * @param $message
+         * @param string     $subject
+         * @param int        $projectId
+         * @return void
+         */
+        public function queueMessageToUsers($recipients, $message, string $subject = "", int $projectId = 0): void
         {
 
             $sql = 'INSERT INTO zp_queue (msghash,channel,userId,subject,message,thedate,projectId) VALUES (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
@@ -56,7 +70,14 @@ namespace Leantime\Domain\Queue\Repositories {
         }
 
         // TODO later : lists messages per user or per project ?
-        public function listMessageInQueue($channel = 'email', $recipients = null, $projectId = 0)
+
+        /**
+         * @param string     $channel
+         * @param $recipients
+         * @param int        $projectId
+         * @return array|false
+         */
+        public function listMessageInQueue(string $channel = 'email', $recipients = null, int $projectId = 0): false|array
         {
             $sql = 'SELECT * from zp_queue WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
 
@@ -70,7 +91,11 @@ namespace Leantime\Domain\Queue\Repositories {
             return $values;
         }
 
-        public function deleteMessageInQueue($msghashes)
+        /**
+         * @param $msghashes
+         * @return bool
+         */
+        public function deleteMessageInQueue($msghashes): bool
         {
             // NEW : Allowing one hash or an array of them
             if (is_string($msghashes)) {

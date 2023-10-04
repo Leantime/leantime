@@ -5,6 +5,10 @@ namespace Leantime\Domain\Install\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Install\Repositories\Install as InstallRepository;
+
+    /**
+     *
+     */
     class Index extends Controller
     {
         private InstallRepository $installRepo;
@@ -34,7 +38,11 @@ namespace Leantime\Domain\Install\Controllers {
             $this->tpl->display("install.new", "entry");
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         */
+        public function post($params): void
         {
 
             $values = array(
@@ -53,19 +61,19 @@ namespace Leantime\Domain\Install\Controllers {
                     'company' => ($params['company']),
                 );
 
-                if (isset($params['email']) == false || $params['email'] == '') {
+                if (!isset($params['email']) || $params['email'] == '') {
                     $this->tpl->setNotification("notification.enter_email", "error");
                 } else {
-                    if (isset($params['password']) == false || $params['password'] == '') {
+                    if (!isset($params['password']) || $params['password'] == '') {
                         $this->tpl->setNotification("notification.enter_password", "error");
                     } else {
-                        if (isset($params['firstname']) == false || $params['firstname'] == '') {
+                        if (!isset($params['firstname']) || $params['firstname'] == '') {
                             $this->tpl->setNotification("notification.enter_firstname", "error");
                         } else {
-                            if (isset($params['lastname']) == false || $params['lastname'] == '') {
+                            if (!isset($params['lastname']) || $params['lastname'] == '') {
                                 $this->tpl->setNotification("notification.enter_lastname", "error");
                             } else {
-                                if (isset($params['company']) == false || $params['company'] == '') {
+                                if (!isset($params['company']) || $params['company'] == '') {
                                     $this->tpl->setNotification("notification.enter_company", "error");
                                     ;
                                 } else {

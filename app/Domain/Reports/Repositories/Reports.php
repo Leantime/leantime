@@ -2,11 +2,15 @@
 
 namespace Leantime\Domain\Reports\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db as DbCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use PDO;
 
+    /**
+     *
+     */
     class Reports
     {
         private DbCore $db;
@@ -25,9 +29,12 @@ namespace Leantime\Domain\Reports\Repositories {
          * getSprint - get single sprint
          *
          * @access public
+         * @param $projectId
+         * @param $sprintId
          * @return array
+         * @throws BindingResolutionException
          */
-        public function runTicketReport($projectId, $sprintId)
+        public function runTicketReport($projectId, $sprintId): array
         {
 
             $ticketRepo = app()->make(TicketRepository::class);
@@ -154,7 +161,15 @@ namespace Leantime\Domain\Reports\Repositories {
             return $values;
         }
 
-        public function checkLastReportEntries($projectId)
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        public function checkLastReportEntries($projectId): false|array
         {
 
             $query = "SELECT * FROM zp_stats WHERE DATE(date) = DATE(NOW() - INTERVAL 1 DAY) AND projectId = :projectId LIMIT 2";
@@ -171,7 +186,15 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
-        public function addReport($report)
+        /**
+         * @param $report
+         * @return void
+         */
+        /**
+         * @param $report
+         * @return void
+         */
+        public function addReport($report): void
         {
             $report = (object)$report;
 
@@ -275,6 +298,14 @@ namespace Leantime\Domain\Reports\Repositories {
             $stmn->closeCursor();
         }
 
+        /**
+         * @param $sprint
+         * @return array
+         */
+        /**
+         * @param $sprint
+         * @return array
+         */
         public function getSprintReport($sprint): array
         {
 
@@ -292,7 +323,15 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
-        public function getBacklogReport($project)
+        /**
+         * @param $project
+         * @return array|false
+         */
+        /**
+         * @param $project
+         * @return array|false
+         */
+        public function getBacklogReport($project): false|array
         {
 
             $query = "SELECT * FROM zp_stats WHERE projectId = :project AND sprintId = 0 ORDER BY date ASC LIMIT 95 ";
@@ -309,7 +348,15 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
-        public function getFullReport($project)
+        /**
+         * @param $project
+         * @return array|false
+         */
+        /**
+         * @param $project
+         * @return array|false
+         */
+        public function getFullReport($project): false|array
         {
 
             $query = "SELECT

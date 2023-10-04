@@ -7,6 +7,10 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+
+    /**
+     *
+     */
     class ShowAll extends Controller
     {
         private ProjectService $projectService;
@@ -14,12 +18,19 @@ namespace Leantime\Domain\Tickets\Controllers {
         private SprintService $sprintService;
         private TimesheetService $timesheetService;
 
+        /**
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param SprintService    $sprintService
+         * @param TimesheetService $timesheetService
+         * @return void
+         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
             SprintService $sprintService,
             TimesheetService $timesheetService
-        ) {
+        ): void {
 
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
@@ -31,7 +42,17 @@ namespace Leantime\Domain\Tickets\Controllers {
             $_SESSION['lastFilterdTicketTableView'] = CURRENT_URL;
         }
 
-        public function get($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
+        public function get($params): void
         {
 
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);

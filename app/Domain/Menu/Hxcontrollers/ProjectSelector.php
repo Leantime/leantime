@@ -2,20 +2,25 @@
 
 namespace Leantime\Domain\Menu\Hxcontrollers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
+use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
+/**
+ *
+ */
 class ProjectSelector extends HtmxController
 {
     /**
      * @var string
      */
-    protected static $view = 'menu::partials.projectSelector';
+    protected static string $view = 'menu::partials.projectSelector';
 
     /**
-     * @var \Leantime\Domain\Projects\Services\Timesheets
+     * @var Timesheets
      */
     private Timesheets $timesheetService;
     private Menu $menuService;
@@ -24,17 +29,23 @@ class ProjectSelector extends HtmxController
     /**
      * Controller constructor
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param Timesheets                              $timesheetService
+     * @param Menu                                    $menuService
+     * @param \Leantime\Domain\Menu\Repositories\Menu $menuRepo
      * @return void
      */
-    public function init(Timesheets $timesheetService, Menu $menuService, \Leantime\Domain\Menu\Repositories\Menu $menuRepo)
+    public function init(Timesheets $timesheetService, Menu $menuService, \Leantime\Domain\Menu\Repositories\Menu $menuRepo): void
     {
         $this->timesheetService = $timesheetService;
         $this->menuService = $menuService;
         $this->menuRepo = $menuRepo;
     }
 
-    public function updateMenu()
+    /**
+     * @return void
+     * @throws BindingResolutionException
+     */
+    public function updateMenu(): void
     {
 
         $allAssignedprojects =
@@ -98,7 +109,10 @@ class ProjectSelector extends HtmxController
         $this->tpl->assign('clients', $clients);
     }
 
-    public function filter()
+    /**
+     * @return void
+     */
+    public function filter(): void
     {
     }
 }

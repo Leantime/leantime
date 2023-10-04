@@ -2,26 +2,32 @@
 
 namespace Leantime\Domain\Canvas\Services {
 
+    use DOMDocument;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Canvas\Repositories\Canvas as CanvaRepository;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
     class Canvas
     {
         /**
          * import - Import canvas from XML file
          *
          * @access public
-         * @param  string  $filename    File to import
-         * @param  string  $canvcasName Canvas name
-         * @param  integer $projectId   Project identifier
-         * @param  integer $auhtorId    Author identifier
-         * @return boolean|integer False if import failed and the id of the newly created canvas otherwise
+         * @param string $filename   File to import
+         * @param string $canvasName
+         * @param int    $projectId  Project identifier
+         * @param int    $authorId
+         * @return bool|int False if import failed and the id of the newly created canvas otherwise
+         * @throws BindingResolutionException
          */
         public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
         {
 
-            $dom = new \DOMDocument('1.0', 'UTF-8');
+            $dom = new DOMDocument('1.0', 'UTF-8');
             $users = app()->make(UserRepository::class);
 
             // Read file
@@ -183,11 +189,12 @@ namespace Leantime\Domain\Canvas\Services {
          * getBoardProgress - gets the progress of canvas types. counts items in each box-type and calculates percent done if each box type has at least 1 item.
          *
          * @access public
-         * @param  string $projectId projectId (optional)
-         * @param  array  $boards    Array of project board types
+         * @param string $projectId projectId (optional)
+         * @param array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
+         * @throws BindingResolutionException
          */
-        public function getBoardProgress($projectId = '', $boards = array()): array
+        public function getBoardProgress(string $projectId = '', array $boards = array()): array
         {
 
             $canvasRepo = app()->make(CanvaRepository::class);
@@ -256,11 +263,12 @@ namespace Leantime\Domain\Canvas\Services {
          * getLastUpdatedCanvas - gets the list of canvas boards ordered by last updated item
          *
          * @access public
-         * @param  string $projectId projectId (optional)
-         * @param  array  $boards    Array of project board types
+         * @param string $projectId projectId (optional)
+         * @param array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
+         * @throws BindingResolutionException
          */
-        public function getLastUpdatedCanvas($projectId = '', $boards = array())
+        public function getLastUpdatedCanvas(string $projectId = '', array $boards = array()): array
         {
             $canvasRepo = app()->make(CanvaRepository::class);
             return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);

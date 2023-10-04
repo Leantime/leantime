@@ -2,12 +2,14 @@
 
 namespace Leantime\Domain\Projects\Services {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Core\Events as EventCore;
     use Leantime\Core\Eventhelpers;
     use Leantime\Domain\Canvas\Repositories\Canvas;
+    use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -24,6 +26,9 @@ namespace Leantime\Domain\Projects\Services {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Repositories\Wiki;
 
+    /**
+     *
+     */
     class Projects
     {
         use Eventhelpers;
@@ -37,6 +42,16 @@ namespace Leantime\Domain\Projects\Services {
         private NotificationService $notificationService;
         private FileRepository $filesRepository;
 
+        /**
+         * @param TemplateCore        $tpl
+         * @param ProjectRepository   $projectRepository
+         * @param TicketRepository    $ticketRepository
+         * @param SettingRepository   $settingsRepo
+         * @param FileRepository      $filesRepository
+         * @param LanguageCore        $language
+         * @param Messengers          $messengerService
+         * @param NotificationService $notificationService
+         */
         public function __construct(
             TemplateCore $tpl,
             ProjectRepository $projectRepository,
@@ -57,7 +72,13 @@ namespace Leantime\Domain\Projects\Services {
             $this->notificationService = $notificationService;
         }
 
-        public function getProjectTypes()
+        /**
+         * @return mixed
+         */
+        /**
+         * @return mixed
+         */
+        public function getProjectTypes(): mixed
         {
 
             $types = array("project" => "label.project");
@@ -76,13 +97,32 @@ namespace Leantime\Domain\Projects\Services {
             return $filtered;
         }
 
-        public function getProject($id)
+        /**
+         * @param $id
+         * @return array|bool
+         */
+        /**
+         * @param $id
+         * @return array|bool
+         */
+        public function getProject($id): bool|array
         {
             return $this->projectRepository->getProject($id);
         }
 
         //Gets project progress
-        public function getProjectProgress($projectId)
+
+        /**
+         * @param $projectId
+         * @return array
+         * @throws \Exception
+         */
+        /**
+         * @param $projectId
+         * @return array
+         * @throws \Exception
+         */
+        public function getProjectProgress($projectId): array
         {
             $returnValue = array("percent" => 0, "estimatedCompletionDate" => "We need more data to determine that.", "plannedCompletionDate" => "");
 
@@ -160,7 +200,15 @@ namespace Leantime\Domain\Projects\Services {
             return $returnValue;
         }
 
-        public function getUsersToNotify($projectId)
+        /**
+         * @param $projectId
+         * @return array
+         */
+        /**
+         * @param $projectId
+         * @return array
+         */
+        public function getUsersToNotify($projectId): array
         {
 
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
@@ -177,7 +225,15 @@ namespace Leantime\Domain\Projects\Services {
             return $to;
         }
 
-        public function getAllUserInfoToNotify($projectId)
+        /**
+         * @param $projectId
+         * @return array
+         */
+        /**
+         * @param $projectId
+         * @return array
+         */
+        public function getAllUserInfoToNotify($projectId): array
         {
 
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
@@ -195,7 +251,13 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         //TODO Split and move to notifications
-        public function notifyProjectUsers(\Leantime\Domain\Notifications\Models\Notification $notification)
+
+        /**
+         * @param Notification $notification
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function notifyProjectUsers(Notification $notification): void
         {
 
             //Email
@@ -282,6 +344,14 @@ namespace Leantime\Domain\Projects\Services {
             EventCore::dispatch_event("notifyProjectUsers", array("type" => "projectUpdate", "module" => $notification->module, "moduleId" => $entityId, "message" => $notification->message, "subject" => $notification->subject, "users" => $this->getAllUserInfoToNotify($notification->projectId), "url" => $notification->url['url']), "domain.services.projects");
         }
 
+        /**
+         * @param $projectId
+         * @return mixed|void
+         */
+        /**
+         * @param $projectId
+         * @return mixed|void
+         */
         public function getProjectName($projectId)
         {
 
@@ -291,7 +361,15 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function getProjectIdAssignedToUser($userId)
+        /**
+         * @param $userId
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @return array|false
+         */
+        public function getProjectIdAssignedToUser($userId): false|array
         {
 
             $projects = $this->projectRepository->getUserProjectRelation($userId);
@@ -304,8 +382,19 @@ namespace Leantime\Domain\Projects\Services {
         }
 
 
-
-        public function getProjectsAssignedToUser($userId, $projectStatus = "open", $clientId = null)
+        /**
+         * @param $userId
+         * @param $projectStatus
+         * @param $clientId
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @param string   $projectStatus
+         * @param $clientId
+         * @return array|false
+         */
+        public function getProjectsAssignedToUser($userId, string $projectStatus = "open", $clientId = null): false|array
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
@@ -320,7 +409,17 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function findMyChildren($currentParentId, array $projects)
+        /**
+         * @param $currentParentId
+         * @param array $projects
+         * @return array
+         */
+        /**
+         * @param $currentParentId
+         * @param array           $projects
+         * @return array
+         */
+        public function findMyChildren($currentParentId, array $projects): array
         {
 
             $branch = [];
@@ -366,7 +465,19 @@ namespace Leantime\Domain\Projects\Services {
         }
 
 
-        public function getProjectHierarchyAssignedToUser($userId, $projectStatus = "open", $clientId = null)
+        /**
+         * @param $userId
+         * @param $projectStatus
+         * @param $clientId
+         * @return array
+         */
+        /**
+         * @param $userId
+         * @param string   $projectStatus
+         * @param $clientId
+         * @return array
+         */
+        public function getProjectHierarchyAssignedToUser($userId, string $projectStatus = "open", $clientId = null): array
         {
 
             //Load all projects user is assigned to
@@ -400,7 +511,19 @@ namespace Leantime\Domain\Projects\Services {
             ];
         }
 
-        public function getProjectHierarchyAvailableToUser($userId, $projectStatus = "open", $clientId = null)
+        /**
+         * @param $userId
+         * @param $projectStatus
+         * @param $clientId
+         * @return array
+         */
+        /**
+         * @param $userId
+         * @param string   $projectStatus
+         * @param $clientId
+         * @return array
+         */
+        public function getProjectHierarchyAvailableToUser($userId, string $projectStatus = "open", $clientId = null): array
         {
 
             //Load all projects user is assigned to
@@ -427,6 +550,10 @@ namespace Leantime\Domain\Projects\Services {
             ];
         }
 
+        /**
+         * @param array $projects
+         * @return array
+         */
         public function getClientsFromProjectList(array $projects): array
         {
 
@@ -443,7 +570,17 @@ namespace Leantime\Domain\Projects\Services {
             return $clients;
         }
 
-        public function getProjectRole($userId, $projectId)
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return mixed|string
+         */
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return mixed|string
+         */
+        public function getProjectRole($userId, $projectId): mixed
         {
 
             $project = $this->projectRepository->getUserProjectRelation($userId, $projectId);
@@ -459,7 +596,15 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function getProjectsUserHasAccessTo($userId)
+        /**
+         * @param $userId
+         * @return array|false
+         */
+        /**
+         * @param $userId
+         * @return array|false
+         */
+        public function getProjectsUserHasAccessTo($userId): false|array
         {
             $projects = $this->projectRepository->getUserProjects(userId: $userId, accessStatus: "all");
 
@@ -470,7 +615,11 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function setCurrentProject()
+        /**
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function setCurrentProject(): void
         {
 
             //If projectId in URL use that as the project
@@ -510,7 +659,17 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function changeCurrentSessionProject($projectId)
+        /**
+         * @param $projectId
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $projectId
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        public function changeCurrentSessionProject($projectId): bool
         {
 
             if (isset($_SESSION["currentProjectName"]) === false) {
@@ -595,7 +754,11 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function resetCurrentProject()
+        /**
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function resetCurrentProject(): void
         {
 
             $_SESSION["currentProject"] = "";
@@ -626,6 +789,14 @@ namespace Leantime\Domain\Projects\Services {
             $this->setCurrentProject();
         }
 
+        /**
+         * @param $projectId
+         * @return array
+         */
+        /**
+         * @param $projectId
+         * @return array
+         */
         public function getUsersAssignedToProject($projectId): array
         {
             $users = $this->projectRepository->getUsersAssignedToProject($projectId);
@@ -645,7 +816,19 @@ namespace Leantime\Domain\Projects\Services {
          * @return bool
          *
          */
-        public function isUserAssignedToProject(int $userId, int $projectId)
+        /**
+         * @param int $userId
+         * @param int $projectId
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param int $userId
+         * @param int $projectId
+         * @return bool
+         * @throws BindingResolutionException
+         */
+        public function isUserAssignedToProject(int $userId, int $projectId): bool
         {
 
             return $this->projectRepository->isUserAssignedToProject($userId, $projectId);
@@ -655,19 +838,37 @@ namespace Leantime\Domain\Projects\Services {
          * Checks if a user is directly assigned to a project.
          * Client assignments or projects available to entire organization are not considered true.
          *
-         * @param $userId
-         * @param $projectId
-         * @return boolean
+         * @param int $userId
+         * @param int $projectId
+         * @return bool
+         * @throws BindingResolutionException
          */
-        public function isUserMemberOfProject(int $userId, int $projectId)
+        public function isUserMemberOfProject(int $userId, int $projectId): bool
         {
 
             return $this->projectRepository->isUserMemberOfProject($userId, $projectId);
         }
 
 
-
-        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers)
+        /**
+         * @param int $projectId
+         * @param int $clientId
+         * @param string $projectName
+         * @param string $userStartDate
+         * @param bool $assignSameUsers
+         * @return bool|int
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param int    $projectId
+         * @param int    $clientId
+         * @param string $projectName
+         * @param string $userStartDate
+         * @param bool   $assignSameUsers
+         * @return bool|int
+         * @throws BindingResolutionException
+         */
+        public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers): bool|int
         {
 
             $startDate = datetime::createFromFormat($this->language->__("language.dateformat"), $userStartDate);
@@ -691,7 +892,7 @@ namespace Leantime\Domain\Projects\Services {
                 'assignedUsers' => array(),
             );
 
-            if ($assignSameUsers == true) {
+            if ($assignSameUsers) {
                 $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
 
                 foreach ($projectUsers as $user) {
@@ -874,6 +1075,14 @@ namespace Leantime\Domain\Projects\Services {
             return $newProjectId;
         }
 
+        /**
+         * @param string $repository
+         * @param int    $originalProjectId
+         * @param int    $newProjectId
+         * @param string $canvasTypeName
+         * @return bool
+         * @throws BindingResolutionException
+         */
         private function duplicateCanvas(string $repository, int $originalProjectId, int $newProjectId, string $canvasTypeName = ''): bool
         {
 
@@ -894,7 +1103,7 @@ namespace Leantime\Domain\Projects\Services {
 
                 $canvasItems = $canvasRepo->getCanvasItemsById($canvas['id']);
 
-                if ($canvasItems != false && count($canvasItems) > 0) {
+                if ($canvasItems && count($canvasItems) > 0) {
                     //Build parent Array
                     //oldId => newId
                     $idMap = array();
@@ -962,29 +1171,73 @@ namespace Leantime\Domain\Projects\Services {
             return true;
         }
 
-        public function getProjectUserRelation($id)
+        /**
+         * @param $id
+         * @return array
+         */
+        /**
+         * @param $id
+         * @return array
+         */
+        public function getProjectUserRelation($id): array
         {
             return $this->projectRepository->getProjectUserRelation($id);
         }
 
-        public function patch($id, $params)
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        public function patch($id, $params): bool
         {
             return $this->projectRepository->patch($id, $params);
         }
 
-        public function getProjectAvatar($id)
+        /**
+         * @param $id
+         * @return mixed
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return mixed
+         * @throws BindingResolutionException
+         */
+        public function getProjectAvatar($id): mixed
         {
             $avatar = $this->projectRepository->getProjectAvatar($id);
             $avatar = static::dispatch_filter("afterGettingAvatar", $avatar, array("projectId" => $id));
             return $avatar;
         }
 
-        public function setProjectAvatar($file, $project)
+        /**
+         * @param $file
+         * @param $project
+         * @return null
+         * @throws BindingResolutionException
+         */
+        public function setProjectAvatar($file, $project): bool
         {
             return $this->projectRepository->setPicture($file, $project);
         }
 
-        public function getProjectSetupChecklist($projectId)
+        /**
+         * @param $projectId
+         * @return array
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $projectId
+         * @return array
+         * @throws BindingResolutionException
+         */
+        public function getProjectSetupChecklist($projectId): array
         {
             $progressSteps = array(
                 "define" => array(
@@ -1129,7 +1382,17 @@ namespace Leantime\Domain\Projects\Services {
             ];
         }
 
-        public function updateProjectProgress($stepsComplete, $projectId)
+        /**
+         * @param $stepsComplete
+         * @param $projectId
+         * @return void
+         */
+        /**
+         * @param $stepsComplete
+         * @param $projectId
+         * @return void
+         */
+        public function updateProjectProgress($stepsComplete, $projectId): void
         {
             if (empty($stepsComplete)) {
                 return;
@@ -1148,6 +1411,14 @@ namespace Leantime\Domain\Projects\Services {
             );
         }
 
+        /**
+         * @param $params
+         * @return false|void
+         */
+        /**
+         * @param $params
+         * @return false|void
+         */
         public function updateProjectSorting($params)
         {
 
@@ -1159,7 +1430,17 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function updateProjectStatusAndSorting($params, $handler = null)
+        /**
+         * @param $params
+         * @param $handler
+         * @return true
+         */
+        /**
+         * @param $params
+         * @param $handler
+         * @return bool
+         */
+        public function updateProjectStatusAndSorting($params, $handler = null): bool
         {
 
             //Jquery sortable serializes the array for kanban in format
@@ -1217,8 +1498,8 @@ namespace Leantime\Domain\Projects\Services {
          * Gets all the projects a company manager has access to.
          * Includes all projects within a client + all assigned projects
          *
-         * @param integer $userId
-         * @param integer $clientId
+         * @param int $userId
+         * @param int $clientId
          * @return array
          */
         public function getClientManagerProjects(int $userId, int $clientId): array
@@ -1245,7 +1526,7 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
-         * @param boolean $showClosedProjects
+         * @param bool $showClosedProjects
          * @return array
          */
         public function getAll(bool $showClosedProjects = false): array

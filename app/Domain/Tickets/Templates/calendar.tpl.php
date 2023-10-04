@@ -125,9 +125,15 @@ echo $tpl->displayNotification();
 
             title: <?php echo json_encode($headline); ?>,
 
-            start: <?php echo "'" . (($mlst->editFrom != '0000-00-00 00:00:00' && substr($mlst->editFrom, 0, 10) != '1969-12-31') ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',"; ?>
+            start: <?php echo "'" . (($mlst->editFrom != '0000-00-00 00:00:00' && !str_starts_with(
+                $mlst->editFrom,
+                '1969-12-31'
+            )) ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',"; ?>
             <?php if (isset($mlst->editTo)) : ?>
-            end: <?php echo "'" . (($mlst->editTo != '0000-00-00 00:00:00' && substr($mlst->editTo, 0, 10) != '1969-12-31') ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time()))) . "',"; ?>
+            end: <?php echo "'" . (($mlst->editTo != '0000-00-00 00:00:00' && !str_starts_with(
+                $mlst->editTo,
+                '1969-12-31'
+            )) ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time()))) . "',"; ?>
             <?php endif; ?>
             enitityId: <?php echo $mlst->id ?>,
             <?php if ($mlst->type == "milestone") { ?>

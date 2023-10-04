@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -10,6 +11,10 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Leantime\Domain\Users\Services\Users as UserService;
+
+    /**
+     *
+     */
     class ShowTicket extends Controller
     {
         private ProjectService $projectService;
@@ -20,6 +25,16 @@ namespace Leantime\Domain\Tickets\Controllers {
         private TimesheetService $timesheetService;
         private UserService $userService;
 
+        /**
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param SprintService    $sprintService
+         * @param FileService      $fileService
+         * @param CommentService   $commentService
+         * @param TimesheetService $timesheetService
+         * @param UserService      $userService
+         * @return void
+         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
@@ -28,7 +43,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             CommentService $commentService,
             TimesheetService $timesheetService,
             UserService $userService
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->sprintService = $sprintService;
@@ -42,7 +57,17 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
         }
 
-        public function get($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function get($params): void
         {
 
             header("HX-Trigger:ticketUpdate");
@@ -151,7 +176,17 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function post($params): void
         {
 
             $tab = "";

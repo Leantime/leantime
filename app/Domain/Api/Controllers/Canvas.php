@@ -10,6 +10,9 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
     class Canvas extends Controller
     {
         /**
@@ -17,7 +20,11 @@ namespace Leantime\Domain\Api\Controllers {
          */
         protected const CANVAS_NAME = '??';
 
-        private $projects;
+        private ProjectRepository $projects;
+        /**
+         * @var \Closure|mixed|object|null
+         */
+        private mixed $canvasRepo;
 
         /**
          * constructor - initialize private variables

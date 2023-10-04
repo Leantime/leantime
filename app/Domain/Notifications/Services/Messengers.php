@@ -2,19 +2,24 @@
 
 namespace Leantime\Domain\Notifications\Services;
 
+use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use League\HTMLToMarkdown\HtmlConverter;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 
+/**
+ *
+ */
 class Messengers
 {
     private Client $httpClient;
     private SettingRepository $settingsRepo;
     private LanguageCore $language;
     private array $supportedMessengers = array("slack", "discord", "mattermost", "zulip");
-    private $projectName = '';
+    private string $projectName = '';
 
     /**
      * __construct - get database connection
@@ -31,6 +36,18 @@ class Messengers
         $this->language = $language;
     }
 
+    /**
+     * @param NotificationModel $notification
+     * @param $projectName
+     * @param array|string $messengers
+     * @return void
+     */
+    /**
+     * @param NotificationModel $notification
+     * @param $projectName
+     * @param array|string      $messengers
+     * @return void
+     */
     public function sendNotificationToMessengers(NotificationModel $notification, $projectName, array|string $messengers = "all"): void
     {
         $this->projectName = $projectName;
@@ -56,7 +73,7 @@ class Messengers
      *
      * @access public
      */
-    private function slackWebhook(NotificationModel $notification)
+    private function slackWebhook(NotificationModel $notification): bool
     {
 
         $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".slackWebhookURL");
@@ -78,7 +95,7 @@ class Messengers
                 ]);
 
                 return true;
-            } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            } catch (GuzzleException $e) {
                 error_log($e);
                 return false;
             }
@@ -92,7 +109,7 @@ class Messengers
      *
      * @access public
      */
-    private function mattermostWebhook(NotificationModel $notification)
+    private function mattermostWebhook(NotificationModel $notification): bool
     {
 
         $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".mattermostWebhookURL");
@@ -116,7 +133,7 @@ class Messengers
                 ]);
 
                 return true;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e);
 
                 return false;
@@ -131,7 +148,7 @@ class Messengers
      *
      * @access public
      */
-    private function zulipWebhook(NotificationModel $notification)
+    private function zulipWebhook(NotificationModel $notification): bool
     {
 
         $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".zulipHook");
@@ -170,7 +187,7 @@ class Messengers
                 ]);
 
                 return true;
-            } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            } catch (GuzzleException $e) {
                 error_log($e);
 
                 return false;
@@ -185,7 +202,7 @@ class Messengers
      *
      * @access public
      */
-    public function discordWebhook(NotificationModel $notification)
+    public function discordWebhook(NotificationModel $notification): bool
     {
         $converter = false;
 
@@ -242,7 +259,7 @@ class Messengers
                         'body' => $data_string,
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
-                } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+                } catch (GuzzleException $e) {
                     error_log($e);
                 }
             }
@@ -251,6 +268,10 @@ class Messengers
         return true;
     }
 
+    /**
+     * @param NotificationModel $notification
+     * @return array[]
+     */
     public function prepareMessage(NotificationModel $notification): array
     {
 

@@ -1,14 +1,19 @@
 <?php
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
+use Leantime\Core\Language;
 
 if (! function_exists('app')) {
     /**
      * Returns the application instance.
      *
      * @param string $abstract
-     * @return mixed|\Leantime\Core\Application
+     * @param array  $parameters
+     * @return mixed|Application
+     * @throws BindingResolutionException
      */
     function app(string $abstract = '', array $parameters = []): mixed
     {
@@ -35,11 +40,12 @@ if (! function_exists('bootstrap_minimal_app')) {
     /**
      * Bootstrap a new IoC container instance.
      *
-     * @return \Leantime\Core\Application
+     * @return Application
+     * @throws BindingResolutionException
      */
     function bootstrap_minimal_app(): Application
     {
-        $app = app()->setInstance(new Application())->setHasBeenBootstrapped();
+        $app = app()::setInstance(new Application())::setHasBeenBootstrapped();
         return Bootloader::getInstance($app)->getApplication();
     }
 }
@@ -50,10 +56,11 @@ if (! function_exists('__')) {
      *
      * @param string $index
      * @return string
+     * @throws BindingResolutionException
      */
     function __(string $index): string
     {
-        return app()->make(\Leantime\Core\Language::class)->__($index);
+        return app()->make(Language::class)->__($index);
     }
 }
 
@@ -61,13 +68,12 @@ if (! function_exists('view')) {
     /**
      * Get the view factory instance.
      *
-     * @param string $view
-     * @param array  $data
-     * @return \Illuminate\View\Factory
+     * @return Factory
+     * @throws BindingResolutionException
      */
-    function view(): \Illuminate\View\Factory
+    function view(): Factory
     {
-        return app()->make(\Illuminate\View\Factory::class);
+        return app()->make(Factory::class);
     }
 }
 
@@ -79,7 +85,7 @@ if (! function_exists('array_sort')) {
      * @param string $sortyBy
      * @return array
      */
-    function array_sort($array, $sortyBy): array
+    function array_sort(array $array, string $sortyBy): array
     {
         $collection = collect($array);
 

@@ -8,9 +8,12 @@ use Leantime\Core\Environment;
 use Leantime\Core\AppSettings;
 use Leantime\Core\Theme;
 
+/**
+ *
+ */
 class Header extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'global::sections.header',
     ];
 
@@ -18,20 +21,36 @@ class Header extends Composer
     private Environment $config;
     private AppSettings $AppSettings;
     private Theme $ThemeCore;
+    private Theme $themeCore;
+    private AppSettings $appSettings;
+    private Setting $settingsRepo;
 
+    /**
+     * @param Setting     $settingsRepo
+     * @param Environment $config
+     * @param AppSettings $appSettings
+     * @param Theme       $themeCore
+     * @return void
+     */
     public function init(
         Setting $settingsRepo,
         Environment $config,
         AppSettings $appSettings,
         Theme $themeCore
-    ) {
+    ): void {
         $this->settingsRepo = $settingsRepo;
         $this->config = $config;
         $this->appSettings = $appSettings;
         $this->themeCore = $themeCore;
     }
 
-    public function with()
+    /**
+     * @return array
+     */
+    /**
+     * @return array
+     */
+    public function with(): array
     {
         return [
             'sitename' => $_SESSION['companysettings.sitename'] ?? '',

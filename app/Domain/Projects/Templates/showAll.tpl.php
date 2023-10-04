@@ -1,5 +1,7 @@
 <?php
 
+use Leantime\Domain\Menu\Repositories\Menu;
+
 defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -89,7 +91,7 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                         <?php echo $tpl->displayLink('clients.showClient', $tpl->escape($row['clientName']), array('id' => $row['clientId']), null, true) ?>
                     </td>
                     <?php if ($config->enableMenuType) {
-                        ?><td><?php echo $menuTypes[$row['menuType']] ?? \Leantime\Domain\Menu\Repositories\Menu::DEFAULT_MENU ?><?php
+                        ?><td><?php echo $menuTypes[$row['menuType']] ?? Menu::DEFAULT_MENU ?><?php
                     } ?>
                     <td><?php if ($row['state'] == -1) {
                         echo $tpl->__('label.closed');

@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Menu\Composers;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\IncomingRequest as IncomingRequestCore;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
@@ -10,9 +11,12 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
+/**
+ *
+ */
 class Menu extends Composer
 {
-    public static $views = [
+    public static array $views = [
         'menu::menu',
     ];
 
@@ -23,6 +27,15 @@ class Menu extends Composer
     private IncomingRequestCore $incomingRequest;
     private \Leantime\Domain\Menu\Services\Menu $menuService;
 
+    /**
+     * @param ProjectService                      $projectService
+     * @param TicketService                       $ticketService
+     * @param SettingService                      $settingSvc
+     * @param MenuRepository                      $menuRepo
+     * @param \Leantime\Domain\Menu\Services\Menu $menuService
+     * @param IncomingRequestCore                 $request
+     * @return void
+     */
     public function init(
         ProjectService $projectService,
         TicketService $ticketService,
@@ -30,7 +43,7 @@ class Menu extends Composer
         MenuRepository $menuRepo,
         \Leantime\Domain\Menu\Services\Menu $menuService,
         IncomingRequestCore $request
-    ) {
+    ): void {
         $this->projectService = $projectService;
         $this->ticketService = $ticketService;
         $this->settingSvc = $settingSvc;
@@ -39,21 +52,25 @@ class Menu extends Composer
         $this->incomingRequest = $request;
     }
 
-    public function with()
+    /**
+     * @return array
+     * @throws BindingResolutionException
+     */
+    /**
+     * @return array
+     * @throws BindingResolutionException
+     */
+    public function with(): array
     {
         $allAssignedprojects =
         $allAvailableProjects =
         $recentProjects =
         $returnVars = [];
 
-        if (isset($_SESSION['userdata']["projectSelectFilter"])) {
-            $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"];
-        } else {
-            $projectSelectFilter = array(
-                "groupBy" => "none",
-                "clients" => '',
-            );
-        }
+        $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"] ?? array(
+            "groupBy" => "none",
+            "clients" => '',
+        );
 
         if (isset($_SESSION['userdata'])) {
             $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);

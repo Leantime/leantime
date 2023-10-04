@@ -6,7 +6,12 @@
 
 namespace Leantime\Domain\Smcanvas\Repositories {
 
-    class Smcanvas extends \Leantime\Domain\Canvas\Repositories\Canvas
+    use Leantime\Domain\Canvas\Repositories\Canvas;
+
+    /**
+     *
+     */
+    class Smcanvas extends Canvas
     {
         /**
          * Constant that must be redefined

@@ -9,6 +9,8 @@
  * - $filter      Array on which to filter
  */
 
+use Leantime\Domain\Comments\Repositories\Comments;
+
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -33,7 +35,7 @@ $canvasItems = $tpl->get('canvasItems');
                                             $filterStatus == $row['status']) && ($filterRelates == 'all' ||
                                                                                  $filterRelates == $row['relates'])
         ) {
-            $comments = app()->make(\Leantime\Domain\Comments\Repositories\Comments::class);
+            $comments = app()->make(Comments::class);
             $nbcomments = $comments->countComments(moduleId: $row['id']);
             ?>
 

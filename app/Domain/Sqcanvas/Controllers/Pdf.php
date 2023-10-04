@@ -8,6 +8,9 @@ namespace Leantime\Domain\Sqcanvas\Controllers {
 
     use Leantime\Domain\Canvas\Controllers\Pdf as PdfController;
 
+    /**
+     *
+     */
     class Pdf extends PdfController
     {
         protected const CANVAS_NAME = 'sq';
@@ -16,9 +19,9 @@ namespace Leantime\Domain\Sqcanvas\Controllers {
          * reportGenerate - Generate report for module
          *
          * @access public
-         * @param  integer $id      Canvas identifier
-         * @param  string  $filter  Filter value
-         * @param  string  $options Options
+         * @param int   $id      Canvas identifier
+         * @param array $filter  Filter value
+         * @param array $options Options
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string

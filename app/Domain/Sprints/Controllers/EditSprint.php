@@ -10,6 +10,9 @@ namespace Leantime\Domain\Sprints\Controllers {
     use DateInterval;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class EditSprint extends Controller
     {
         private SprintService $sprintService;
@@ -72,13 +75,13 @@ namespace Leantime\Domain\Sprints\Controllers {
             if (isset($_GET['id']) && $_GET['id'] > 0) {
                 $params['id'] = (int)$_GET['id'];
 
-                if ($this->sprintService->editSprint($params) == true) {
+                if ($this->sprintService->editSprint($params)) {
                     $this->tpl->setNotification("Sprint edited successfully", "success");
                 } else {
                     $this->tpl->setNotification("There was a problem saving the sprint", "error");
                 }
             } else {
-                if ($this->sprintService->addSprint($params) == true) {
+                if ($this->sprintService->addSprint($params)) {
                     $this->tpl->setNotification("Sprint created successfully. <br /> Go to the <a href='" . BASE_URL . "/tickets/showAll'>Backlog</a> to add To-Dos", "success");
                 } else {
                     $this->tpl->setNotification("There was a problem saving the sprint", "error");

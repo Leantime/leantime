@@ -9,16 +9,27 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class Templates extends Controller
     {
         private WikiService $wikiService;
         private CommentService $commentService;
 
-        public function init()
+        /**
+         * @return void
+         */
+        public function init(): void
         {
         }
 
-        public function get($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
+        public function get($params): void
         {
             $this->tpl->displayPartial("wiki.templates");
         }

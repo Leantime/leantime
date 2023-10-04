@@ -27,7 +27,7 @@ class ApiSession
      * @param array $requiredCreds
      * @param array $creds
      * @param array $optionalCreds (optional)
-     * @return boolean
+     * @return bool
      */
     private static function checkCreds(
         array $requiredCreds,
@@ -53,10 +53,10 @@ class ApiSession
      * Creates a Guzzle Client with an oAuth2 connection
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber#client-credentials-example
-     * @param string                  $baseUri
-     * @param GuzzleHttp\HandlerStack $stack
-     * @param array                   $requestDefualts (optional)
-     * @return GuzzleHttp\Client
+     * @param string       $baseUri
+     * @param HandlerStack $stack
+     * @param array        $requestDefaults
+     * @return Client
      */
     public static function oAuth2(
         string $baseUri,
@@ -79,11 +79,11 @@ class ApiSession
      * Creates a handler for oAuth2 Client
      *
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber
-     * @param string                                        $baseUri
-     * @param array                                         $creds           Just pass an empty array if you supply $customGrantType.
-     * @param boolean                                       $usesRefresh     (optional)
-     * @param kamermans\OAuth2\GrantType\GrantTypeInterface $customGrantType (optional)
-     * @return GuzzleHttp\HandlerStack
+     * @param string                  $baseUri
+     * @param array                   $creds           Just pass an empty array if you supply $customGrantType.
+     * @param bool                    $usesRefresh     (optional)
+     * @param GrantTypeInterface|null $customGrantType (optional)
+     * @return HandlerStack
      */
     public static function oAuth2Grants(
         string $baseUri,
@@ -106,7 +106,7 @@ class ApiSession
             ];
 
             if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
-                throw new Error(
+                throw new \Error(
                     "oAuth2 credentials were incorrectly provided"
                 );
             }
@@ -142,7 +142,7 @@ class ApiSession
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
-     * @return GuzzleHttp\Client
+     * @return Client
      */
     public static function oAuth1(
         string $baseUri,
@@ -162,7 +162,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds, $optionalCreds)) {
-            throw new Error(
+            throw new \Error(
                 "oAuth1 credentials were incorrectly provided"
             );
         }
@@ -190,7 +190,7 @@ class ApiSession
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
-     * @return GuzzleHttp\Client
+     * @return Client
      */
     public static function basicAuth(
         string $baseUri,
@@ -203,7 +203,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "basic auth credentials must match exactly: ['username' => ..., 'password' => ...]"
             );
         }
@@ -226,7 +226,7 @@ class ApiSession
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
-     * @return GuzzleHttp\Client
+     * @return Client
      */
     public static function digest(
         string $baseUri,
@@ -240,7 +240,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "basic auth credentials must match exactly: ['username' => ..., 'password' => ..., 'digest' => ...]"
             );
         }
@@ -263,7 +263,7 @@ class ApiSession
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
-     * @return GuzzleHttp\Client
+     * @return Client
      */
     public static function ntlm(
         string $baseUri,
@@ -277,7 +277,7 @@ class ApiSession
         ];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "basic auth credentials must match exactly: ['username' => ..., 'password' => ..., 'ntlm' => ...]"
             );
         }
@@ -299,7 +299,7 @@ class ApiSession
      * @param string $baseUri
      * @param array  $creds
      * @param array  $requestDefaults (optional)
-     * @return GuzzleHttp\Client
+     * @return Client
      */
     public static function bearerToken(
         string $baseUri,
@@ -309,7 +309,7 @@ class ApiSession
         $requiredCreds = ['token'];
 
         if (!self::checkCreds($requiredCreds, $creds)) {
-            throw new Error(
+            throw new \Error(
                 "bearer token credentials must match exactly: ['token' => ...]"
             );
         }

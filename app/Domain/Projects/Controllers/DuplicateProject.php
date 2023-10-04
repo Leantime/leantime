@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Projects\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -9,13 +10,26 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class DuplicateProject extends Controller
     {
+        private ProjectService $projectService;
+        private ClientRepository $clientRepo;
+        private ProjectRepository $projectRepo;
+
+        /**
+         * @param ProjectRepository $projectRepo
+         * @param ClientRepository  $clientRepo
+         * @param ProjectService    $projectService
+         * @return void
+         */
         public function init(
             ProjectRepository $projectRepo,
             ClientRepository $clientRepo,
             ProjectService $projectService
-        ) {
+        ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             $this->projectRepo = $projectRepo;
@@ -23,7 +37,11 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->projectService = $projectService;
         }
 
-        public function get()
+        /**
+         * @return void
+         * @throws \Exception
+         */
+        public function get(): void
         {
 
             //Only admins
@@ -46,7 +64,16 @@ namespace Leantime\Domain\Projects\Controllers {
             }
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function post($params): void
         {
 
             //Only admins

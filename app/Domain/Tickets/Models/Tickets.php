@@ -2,49 +2,65 @@
 
 namespace Leantime\Domain\Tickets\Models {
 
+    /**
+     *
+     */
     class Tickets
     {
-        public $id;
-        public $headline;
-        public $type;
-        public $description;
-        public $projectId;
-        public $editorId;
-        public $userId;
-        public $priority;
-        public $sortIndex;
+        public mixed $id = null;
+        public ?string $headline = '';
+        public mixed $type = null;
+        public ?string $description = '';
+        public mixed $projectId = null;
+        public mixed $editorId = null;
+        public mixed $userId = null;
+        public mixed $priority = null;
+        public mixed $sortIndex = null;
 
-        public $date;
-        public $timelineDate;
-        public $timelineDateToFinish;
-        public $dateToFinish;
-        public $timeToFinish;
-        public $status;
-        public $storypoints;
-        public $hourRemaining;
-        public $planHours;
-        public $sprint;
-        public $acceptanceCriteria;
-        public $tags;
-        public $url;
-        public $editFrom;
-        public $timeFrom;
-        public $editTo;
-        public $timeTo;
-        public $dependingTicketId;
-        public $parentHeadline;
-        public $milestoneid;
+        public mixed $date = null;
+        public mixed $timelineDate = null;
+        public mixed $timelineDateToFinish = null;
+        public mixed $dateToFinish = null;
+        public mixed $timeToFinish = null;
+        public mixed $status = null;
+        public mixed $storypoints = null;
+        public mixed $hourRemaining = null;
+        public mixed $planHours = null;
+        public mixed $sprint = null;
+        public ?string $acceptanceCriteria = '';
+        public mixed $tags = null;
+        public mixed $url = null;
+        public mixed $editFrom = null;
+        public mixed $timeFrom  = null;
+        public mixed $editTo  = null;
+        public mixed $timeTo = null;
+        public mixed $dependingTicketId = null;
+        public ?string $parentHeadline = '';
+        public mixed $milestoneid = null;
 
-        public $projectName;
-        public $clientName;
-        public $userFirstname;
-        public $userLastname;
-        public $editorFirstname;
-        public $editorLastname;
+        public ?string $projectName = '';
+        public ?string $clientName = '';
+        public ?string $userFirstname = '';
+        public ?string $userLastname = '';
+        public ?string $editorFirstname = '';
+        public ?string $editorLastname = '';
 
-        public $doneTickets;
+        public mixed $doneTickets = null;
 
-        public function __construct($values = false)
+        public mixed $allTickets = null;
+        public mixed $percentDone = null;
+        public mixed $milestoneHeadline = null;
+        public mixed $milestoneColor = null;
+        public mixed $editorProfileId = null;
+        public mixed $bookedHours = null;
+
+        /**
+         * @param $values
+         */
+        /**
+         * @param false $values
+         */
+        public function __construct(bool $values = false)
         {
 
             if ($values !== false) {

@@ -6,27 +6,30 @@ namespace Leantime\Domain\Ideas\Repositories {
     use Leantime\Core\Language as LanguageCore;
     use PDO;
 
+    /**
+     *
+     */
     class Ideas
     {
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
-        public $result = null;
+        public ?object $result = null;
 
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
-        public $tickets = null;
+        public ?object $tickets = null;
 
         /**
          * @access private
-         * @var    DbCore
+         * @var    DbCore|null
          */
         private ?DbCore $db = null;
 
-        public $canvasTypes = array(
+        public array $canvasTypes = array(
             "idea" => "status.ideation",
             "research" => "status.discovery",
             "prototype" => "status.delivering",
@@ -35,7 +38,7 @@ namespace Leantime\Domain\Ideas\Repositories {
             "deferred" => "status.deferred",
         );
 
-        public $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
+        public array $statusClasses = array('idea' => 'label-info', 'validation' => 'label-warning', 'prototype' => 'label-warning', 'research' => 'label-warning', 'implemented' => 'label-success', "deferred" => "label-default");
 
         private LanguageCore $language;
 
@@ -43,7 +46,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          * __construct - get db connection
          *
          * @access public
-         * @return unknown_type
+         * @return void
          */
         public function __construct(DbCore $db, LanguageCore $language)
         {
@@ -51,7 +54,10 @@ namespace Leantime\Domain\Ideas\Repositories {
             $this->language = $language;
         }
 
-        public function getCanvasLabels()
+        /**
+         * @return array|mixed
+         */
+        public function getCanvasLabels(): mixed
         {
             if (isset($_SESSION["projectsettings"]["idealabels"])) {
                 return $_SESSION["projectsettings"]["idealabels"];
@@ -93,7 +99,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             }
         }
 
-        public function getAllCanvas($projectId)
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        public function getAllCanvas($projectId): false|array
         {
 
             $sql = "SELECT
@@ -120,7 +130,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $values;
         }
 
-        public function deleteCanvas($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        public function deleteCanvas($id): void
         {
 
             $query = "DELETE FROM zp_canvas_items WHERE canvasId = :id";
@@ -138,7 +152,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->closeCursor();
         }
 
-        public function addCanvas($values)
+        /**
+         * @param $values
+         * @return false|string
+         */
+        public function addCanvas($values): false|string
         {
 
             $query = "INSERT INTO zp_canvas (
@@ -169,7 +187,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-        public function updateCanvas($values)
+        /**
+         * @param $values
+         * @return mixed
+         */
+        public function updateCanvas($values): mixed
         {
 
             $query = "UPDATE zp_canvas SET
@@ -188,7 +210,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $result;
         }
 
-        public function editCanvasItem($values)
+        /**
+         * @param $values
+         * @return void
+         */
+        public function editCanvasItem($values): void
         {
             $sql = "UPDATE zp_canvas_items SET
 					description = :description,
@@ -217,7 +243,12 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->closeCursor();
         }
 
-        public function patchCanvasItem($id, $params)
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        public function patchCanvasItem($id, $params): bool
         {
 
             $sql = "UPDATE zp_canvas_items SET ";
@@ -241,7 +272,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $return;
         }
 
-        public function updateIdeaSorting($sortingArray)
+        /**
+         * @param $sortingArray
+         * @return bool
+         */
+        public function updateIdeaSorting($sortingArray): bool
         {
 
             $sql = "INSERT INTO zp_canvas_items (id, sortindex) VALUES ";
@@ -263,7 +298,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $return;
         }
 
-        public function getCanvasItemsById($id)
+        /**
+         * @param $id
+         * @return array|false
+         */
+        public function getCanvasItemsById($id): false|array
         {
 
             $sql = "SELECT
@@ -328,7 +367,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $values;
         }
 
-        public function getSingleCanvasItem($id)
+        /**
+         * @param $id
+         * @return mixed
+         */
+        public function getSingleCanvasItem($id): mixed
         {
 
             $sql = "SELECT
@@ -386,7 +429,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $values;
         }
 
-        public function addCanvasItem($values)
+        /**
+         * @param $values
+         * @return false|string
+         */
+        public function addCanvasItem($values): false|string
         {
 
             $query = "INSERT INTO zp_canvas_items (
@@ -435,7 +482,11 @@ namespace Leantime\Domain\Ideas\Repositories {
         }
 
 
-        public function delCanvasItem($id)
+        /**
+         * @param $id
+         * @return void
+         */
+        public function delCanvasItem($id): void
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
 
@@ -449,7 +500,12 @@ namespace Leantime\Domain\Ideas\Repositories {
         }
 
 
-        public function updateIdeaStatus($ideaId, $status)
+        /**
+         * @param $ideaId
+         * @param $status
+         * @return bool
+         */
+        public function updateIdeaStatus($ideaId, $status): bool
         {
 
             $query = "UPDATE zp_canvas_items SET
@@ -468,7 +524,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $result;
         }
 
-        public function getNumberOfIdeas($projectId = null)
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        public function getNumberOfIdeas($projectId = null): mixed
         {
 
             $sql = "SELECT
@@ -499,7 +559,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             }
         }
 
-        public function getNumberOfBoards($projectId = null)
+        /**
+         * @param $projectId
+         * @return int|mixed
+         */
+        public function getNumberOfBoards($projectId = null): mixed
         {
 
             $sql = "SELECT
@@ -530,7 +594,11 @@ namespace Leantime\Domain\Ideas\Repositories {
             return 0;
         }
 
-        public function bulkUpdateIdeaStatus($params)
+        /**
+         * @param $params
+         * @return bool
+         */
+        public function bulkUpdateIdeaStatus($params): bool
         {
 
 

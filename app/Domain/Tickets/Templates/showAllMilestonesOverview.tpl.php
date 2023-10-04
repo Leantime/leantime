@@ -55,15 +55,6 @@ foreach ($__data as $var => $val) {
 
                         <div id="tableButtons" style="display:inline-block"></div>
 
-                        <div class="btn-group viewDropDown">
-                            <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" data-tippy-content="<?=$tpl->__("popover.view") ?>"><i class=" fas fa-columns"></i></button>
-                            <ul class="dropdown-menu">
-                                <li><a href="<?=BASE_URL ?>/tickets/roadmapAll"><?=$tpl->__("menu.milestone_gantt") ?></a></li>
-                                <li><a href="<?=BASE_URL ?>/projects/showMy"><?=$tpl->__("menu.card_view") ?></a></li>
-                                <li class="active"><a href="<?=BASE_URL ?>/tickets/showAllMilestonesOverview"><?=$tpl->__("menu.table_view") ?></a></li>
-                            </ul>
-                        </div>
-
                         <?php $tpl->dispatchTplEvent('filters.beforeRighthandSectionClose'); ?>
 
                     </div>
@@ -126,7 +117,7 @@ foreach ($__data as $var => $val) {
                         <tr>
                             <td><h4><?= $row->projectName; ?> </h4></td>
                             <?php $tpl->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                            <td data-order="<?=$tpl->e($row->headline); ?>"><a href="<?=BASE_URL ?>/tickets/editMilestone/<?=$tpl->e($row->id); ?>" class="milestoneModal"><?=$tpl->e($row->headline); ?></a></td>
+                            <td data-order="<?=$tpl->e($row->headline); ?>"><a href="#/tickets/editMilestone/<?=$tpl->e($row->id); ?>"><?=$tpl->e($row->headline); ?></a></td>
                             <?php
                             if ($row->milestoneid != "" && $row->milestoneid != 0) {
                                 $milestoneHeadline = $tpl->escape($row->milestoneHeadline);
@@ -246,9 +237,9 @@ foreach ($__data as $var => $val) {
                                         </a>
                                         <ul class="dropdown-menu">
                                             <li class="nav-header"><?php echo $tpl->__("subtitles.todo"); ?></li>
-                                            <li><a href="<?=BASE_URL ?>/tickets/editMilestone/<?php echo $row->id; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_milestone"); ?></a></li>
-                                            <li><a href="<?=BASE_URL ?>/tickets/moveTicket/<?php echo $row->id; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_milestone"); ?></a></li>
-                                            <li><a href="<?=BASE_URL ?>/tickets/delMilestone/<?php echo $row->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
+                                            <li><a href="#/tickets/editMilestone/<?php echo $row->id; ?>" class='ticketModal'><i class="fa fa-edit"></i> <?php echo $tpl->__("links.edit_milestone"); ?></a></li>
+                                            <li><a href="#/tickets/moveTicket/<?php echo $row->id; ?>" class="moveTicketModal sprintModal"><i class="fa-solid fa-arrow-right-arrow-left"></i> <?php echo $tpl->__("links.move_milestone"); ?></a></li>
+                                            <li><a href="#/tickets/delMilestone/<?php echo $row->id; ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
                                             <li class="nav-header border"></li>
                                             <li><a href="<?=BASE_URL?>/tickets/showAll?search=true&milestone=<?=$row->id?>"><?=$tpl->__("links.view_todos")?></a></li>
                                         </ul>

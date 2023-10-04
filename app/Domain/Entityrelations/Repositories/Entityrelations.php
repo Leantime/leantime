@@ -2,14 +2,18 @@
 
 namespace Leantime\Domain\Entityrelations\Repositories {
 
+    use Exception;
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
     class Entityrelations
     {
-        private $db;
+        private DbCore $db;
 
-        public $applications = array(
+        public array $applications = array(
             'general' => 'General',
         );
 
@@ -17,14 +21,22 @@ namespace Leantime\Domain\Entityrelations\Repositories {
          * __construct - neu db connection
          *
          * @access public
-         * @return
+         * @param DbCore $db
          */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
-        public function getSetting($type)
+        /**
+         * @param $type
+         * @return false|mixed
+         */
+        /**
+         * @param $type
+         * @return false|mixed
+         */
+        public function getSetting($type): mixed
         {
             if ($this->checkIfInstalled() === false) {
                 return false;
@@ -42,7 +54,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 $stmn->execute();
                 $values = $stmn->fetch();
                 $stmn->closeCursor();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e);
                 return false;
             }
@@ -55,7 +67,17 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 return false;
         }
 
-        public function saveSetting($type, $value)
+        /**
+         * @param $type
+         * @param $value
+         * @return bool
+         */
+        /**
+         * @param $type
+         * @param $value
+         * @return bool
+         */
+        public function saveSetting($type, $value): bool
         {
 
             if ($this->checkIfInstalled() === false) {
@@ -77,7 +99,15 @@ namespace Leantime\Domain\Entityrelations\Repositories {
             return $return;
         }
 
-        public function deleteSetting($type)
+        /**
+         * @param $type
+         * @return void
+         */
+        /**
+         * @param $type
+         * @return void
+         */
+        public function deleteSetting($type): void
         {
 
             $sql = "DELETE FROM zp_settings WHERE `key` = :key LIMIT 1";
@@ -93,12 +123,12 @@ namespace Leantime\Domain\Entityrelations\Repositories {
          * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
          *
          * @access public
-         * @return boolean
+         * @return bool
          */
-        public function checkIfInstalled()
+        public function checkIfInstalled(): bool
         {
 
-            if (isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] == true) {
+            if (isset($_SESSION['isInstalled']) && $_SESSION['isInstalled']) {
                 return true;
             }
 
@@ -122,7 +152,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
 
                 $_SESSION['isInstalled'] = true;
                 return true;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e);
                 $_SESSION['isInstalled'] = false;
                 return false;

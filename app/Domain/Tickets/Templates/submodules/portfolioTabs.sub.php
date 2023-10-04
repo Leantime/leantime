@@ -1,9 +1,20 @@
 
 <?php
 
-function findActive($route)
+use Leantime\Core\Frontcontroller;
+
+/**
+ * @param $route
+ * @return string
+ */
+/**
+ * @param $route
+ * @return string
+ * @throws \Illuminate\Contracts\Container\BindingResolutionException
+ */
+function findActive($route): string
 {
-    if (str_contains(\Leantime\Core\Frontcontroller::getCurrentRoute(), $route)) {
+    if (str_contains(Frontcontroller::getCurrentRoute(), $route)) {
         return "active";
     }
     return "";

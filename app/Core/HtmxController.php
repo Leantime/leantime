@@ -2,10 +2,13 @@
 
 namespace Leantime\Core;
 
+use Error;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Template;
 use Leantime\Core\Events;
 use Leantime\Core\Language;
 use Illuminate\Support\Str;
+use LogicException;
 
 /**
  * HtmxController Class - Base class For all htmx controllers
@@ -27,8 +30,7 @@ abstract class HtmxController
      *
      * @param IncomingRequest $incomingRequest The request to be initialized.
      * @param template        $tpl             The template to be initialized.
-     * @param language        $language        The language to be initialized.
-     * @return self
+     * @throws BindingResolutionException
      */
     public function __construct(
         IncomingRequest $incomingRequest,
@@ -50,10 +52,8 @@ abstract class HtmxController
      *
      * @access private
      *
-     * @param string       $method
-     * @param array|object $params
-     *
      * @return void
+     * @throws BindingResolutionException
      */
     private function executeActions(): void
     {
@@ -65,13 +65,13 @@ abstract class HtmxController
         self::dispatch_event('before_action', ['controller' => $this]);
 
         if (! property_exists($this, 'view')) {
-            throw new \LogicException('HTMX Controllers must include the "$view" static property');
+            throw new LogicException('HTMX Controllers must include the "$view" static property');
         }
 
         $action = Str::camel($this->incomingRequest->query->get('id', 'run'));
 
         if (! method_exists($this, $action)) {
-            throw new \Error("Method $action doesn't exist.");
+            throw new Error("Method $action doesn't exist.");
         }
 
         $fragment = $this->$action();

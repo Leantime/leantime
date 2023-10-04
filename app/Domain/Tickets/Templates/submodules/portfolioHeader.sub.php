@@ -1,6 +1,8 @@
 <?php
 
-$currentUrlPath = BASE_URL . "/" . str_replace(".", "/", \Leantime\Core\Frontcontroller::getCurrentRoute());
+use Leantime\Core\Frontcontroller;
+
+$currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
 
 $clients = $tpl->get('clients');
 $currentClient = $tpl->get("currentClient");

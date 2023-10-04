@@ -20,11 +20,9 @@ namespace Leantime\Domain\Menu\Services;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Users\Services\Users;
 
-    use function Leantime\Domain\Tickets\Services\app;
-    use function Leantime\Domain\Tickets\Services\array_sort;
-
-    use const Leantime\Domain\Tickets\Services\BASE_URL;
-
+    /**
+     *
+     */
 class Menu
 {
     use Eventhelpers;
@@ -42,6 +40,20 @@ class Menu
     private Users $userService;
     private Setting $settingSvc;
 
+    /**
+     * @param TemplateCore        $tpl
+     * @param LanguageCore        $language
+     * @param EnvironmentCore     $config
+     * @param ProjectRepository   $projectRepository
+     * @param TicketRepository    $ticketRepository
+     * @param TimesheetRepository $timesheetsRepo
+     * @param SettingRepository   $settingsRepo
+     * @param ProjectService      $projectService
+     * @param TimesheetService    $timesheetService
+     * @param SprintService       $sprintService
+     * @param Users               $userService
+     * @param Setting             $settingSvc
+     */
     public function __construct(
         TemplateCore $tpl,
         LanguageCore $language,
@@ -70,6 +82,10 @@ class Menu
         $this->settingSvc = $settingSvc;
     }
 
+    /**
+     * @param int $userId
+     * @return array
+     */
     public function getUserProjectList(int $userId): array
     {
 
@@ -148,6 +164,9 @@ class Menu
         ];
     }
 
+    /**
+     * @return array
+     */
     public function getProjectTypeAvatars(): array
     {
 
@@ -160,6 +179,9 @@ class Menu
         return self::dispatch_filter('projectTypeAvatars', $projectTypeAvatars);
     }
 
+    /**
+     * @return array
+     */
     public function getProjectSelectorGroupingOptions(): array
     {
 

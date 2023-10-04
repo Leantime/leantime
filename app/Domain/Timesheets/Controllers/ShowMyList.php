@@ -7,11 +7,18 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class ShowMyList extends Controller
     {
         private TimesheetService $timesheetService;
 
-        public function init(TimesheetService $timesheetService)
+        /**
+         * @param TimesheetService $timesheetService
+         * @return void
+         */
+        public function init(TimesheetService $timesheetService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 

@@ -5,11 +5,19 @@ namespace Leantime\Plugins\CsvImport\Services;
 use Leantime\Core\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
 use Leantime\Domain\Connector\Models\Provider;
-use Leantime\Domain\Connector\Services\Connector\providerIntegration;
+use Leantime\Domain\Connector\Services\ProviderIntegration;
 
+/**
+ *
+ */
 class CsvImport extends Provider implements ProviderIntegration
 {
     private array $fields;
+    /**
+     * @var array|array[]
+     */
+    private array $entities;
+    private array $methods;
 
     public function __construct()
     {
@@ -33,7 +41,10 @@ class CsvImport extends Provider implements ProviderIntegration
     //Logic to connect to provider goes here.
     //Needs to manage new connection as well as existing connections.
     //Should return bool so we can drive logic in the frontend.
-    public function connect()
+    /**
+     * @return void
+     */
+    public function connect(): void
     {
 
 
@@ -43,31 +54,62 @@ class CsvImport extends Provider implements ProviderIntegration
     }
 
     //Sync the entities from the db
-    public function sync(Entity $Entity)
+
+    /**
+     * @param Entity $Entity
+     * @return true
+     */
+    /**
+     * @param Entity $Entity
+     * @return true
+     */
+    public function sync(Entity $Entity): bool
     {
 
         return true;
     }
 
     //Get available fields
-    public function getFields()
+
+    /**
+     * @return array|mixed
+     */
+    /**
+     * @return array|mixed
+     */
+    public function getFields(): mixed
     {
         return $_SESSION['csvImporter']['headers'] ?? array();
     }
 
-    public function setFields(array $fields)
+    /**
+     * @param array $fields
+     * @return void
+     */
+    public function setFields(array $fields): void
     {
 
         //$_SESSION['csvImporter']['headers'] = json_encode($fields);
     }
 
     //Get available entities
-    public function getEntities()
+
+    /**
+     * @return array
+     */
+    /**
+     * @return array
+     */
+    public function getEntities(): array
     {
         return $this->entities;
     }
 
-    public function getValues(Entity $Entity)
+    /**
+     * @param Entity $Entity
+     * @return void
+     */
+    public function getValues(Entity $Entity): void
     {
     }
 }

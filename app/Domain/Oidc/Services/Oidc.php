@@ -4,6 +4,8 @@ namespace Leantime\Domain\Oidc\Services;
 
 //This class Handles authentication via OpenID Connect (OIDC)
 
+use GuzzleHttp\Exception\GuzzleException;
+
 use Leantime\Core\Environment;
 use GuzzleHttp\Client;
 use Leantime\Core\Frontcontroller;
@@ -11,7 +13,11 @@ use Leantime\Core\Language;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use OpenSSLAsymmetricKey;
 
+/**
+ *
+ */
 class Oidc
 {
     private Environment $config;
@@ -36,6 +42,12 @@ class Oidc
     private string $fieldLastName = '';
     private Language $language;
 
+    /**
+     * @param Environment    $config
+     * @param Language       $language
+     * @param AuthService    $authService
+     * @param UserRepository $userRepo
+     */
     public function __construct(
         Environment $config,
         Language $language,
@@ -65,6 +77,10 @@ class Oidc
         $this->fieldLastName = $this->config->get('oidcFieldLastName', '');
     }
 
+    /**
+     * @param string $str
+     * @return string
+     */
     private function trimTrailingSlash(string $str): string
     {
         $almost = strlen($str) - 1;
@@ -74,6 +90,10 @@ class Oidc
         return $str;
     }
 
+    /**
+     * @return string
+     * @throws GuzzleException
+     */
     public function buildLoginUrl(): string
     {
         return $this->getAuthUrl() . '?' . http_build_query([
@@ -85,13 +105,23 @@ class Oidc
         ]);
     }
 
+    /**
+     * @return string
+     * @throws GuzzleException
+     */
     private function getAuthUrl(): string
     {
         $this->loadEndpoints();
         return $this->authUrl;
     }
 
-    public function callback(string $code, string $state)
+    /**
+     * @param string $code
+     * @param string $state
+     * @return void
+     * @throws GuzzleException
+     */
+    public function callback(string $code, string $state): void
     {
         if (!$this->verifyState($state)) {
             $this->displayError('oidc.error.invalidState');
@@ -118,11 +148,20 @@ class Oidc
         }
     }
 
+    /**
+     * @param string $token
+     * @return array
+     * @throws GuzzleException
+     */
     private function pollUserInfo(string $token): array
     {
         return $this->getMultiUrl($this->userInfoUrl, $token);
     }
 
+    /**
+     * @param array $userInfo
+     * @return void
+     */
     private function login(array $userInfo): void
     {
         // echo '<pre>' . print_r($idToken, true) . '</pre>';
@@ -171,11 +210,21 @@ class Oidc
         Frontcontroller::redirect(BASE_URL . "/dashboard/home");
     }
 
+    /**
+     * @param array $userInfo
+     * @param array $user
+     * @return string
+     */
     private function getUserRole(array $userInfo, array $user = []): string
     {
         return $user['role'] ?? 'reader';
     }
 
+    /**
+     * @param string $code
+     * @return array
+     * @throws GuzzleException
+     */
     private function requestTokens(string $code): array
     {
         $httpClient = new Client();
@@ -204,6 +253,11 @@ class Oidc
         }
     }
 
+    /**
+     * @param array  $topic
+     * @param string $key
+     * @return string
+     */
     private function readMultilayerKey(array $topic, string $key): string
     {
         $keyList = explode('.', $key);
@@ -217,6 +271,11 @@ class Oidc
         return $layer;
     }
 
+    /**
+     * @param string $jwt
+     * @return array|null
+     * @throws GuzzleException
+     */
     private function decodeJWT(string $jwt): array|null
     {
         list($header, $content, $signature) = explode('.', $jwt);
@@ -245,6 +304,10 @@ class Oidc
         return null;
     }
 
+    /**
+     * @param string $header
+     * @return int
+     */
     private function getAlgorythm(string $header): int
     {
         $algorythmName = json_decode($this->decodeBase64Url($header), true)['alg'];
@@ -261,7 +324,12 @@ class Oidc
         return $map[$algorythmName];
     }
 
-    private function getPublicKey(string $kid): \OpenSSLAsymmetricKey
+    /**
+     * @param string $kid
+     * @return OpenSSLAsymmetricKey|false
+     * @throws GuzzleException
+     */
+    private function getPublicKey(string $kid): OpenSSLAsymmetricKey|false
     {
         if ($this->certificateString) {
             return openssl_pkey_get_public($this->certificateString);
@@ -304,18 +372,30 @@ class Oidc
         return false;
     }
 
+    /**
+     * @return string
+     * @throws GuzzleException
+     */
     private function getJwksUrl(): string
     {
         $this->loadEndpoints();
         return $this->jwksUrl;
     }
 
+    /**
+     * @return string
+     * @throws GuzzleException
+     */
     private function getTokenUrl(): string
     {
         $this->loadEndpoints();
         return $this->tokenUrl;
     }
 
+    /**
+     * @return void
+     * @throws GuzzleException
+     */
     private function loadEndpoints(): void
     {
 
@@ -352,6 +432,12 @@ class Oidc
         }
     }
 
+    /**
+     * @param string $urls
+     * @param string $token
+     * @return array
+     * @throws GuzzleException
+     */
     private function getMultiUrl(string $urls, string $token = ''): array
     {
         $urlList = explode(',', $urls);
@@ -377,32 +463,56 @@ class Oidc
         return $combinedArray;
     }
 
+    /**
+     * @return string
+     */
     private function buildRedirectUrl(): string
     {
         return $this->trimTrailingSlash(BASE_URL) . '/oidc/callback';
     }
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
     private function generateState(): string
     {
         return bin2hex(random_bytes(16));
     }
 
+    /**
+     * @param string $state
+     * @return bool
+     */
     private function verifyState(string $state): bool
     {
         //TODO
         return true;
     }
 
+    /**
+     * @param string $value
+     * @return string
+     */
     private function encodeBase64Url(string $value): string
     {
         return strtr(base64_encode($value), '+/', '-_');
     }
 
+    /**
+     * @param string $value
+     * @return string
+     */
     private function decodeBase64Url(string $value): string
     {
         return base64_decode(strtr($value, '-_', '+/'));
     }
 
+    /**
+     * @param string $translationKey
+     * @param string ...$values
+     * @return void
+     */
     private function displayError(string $translationKey, string ...$values): void
     {
         die(sprintf($this->language->__($translationKey), ...$values));

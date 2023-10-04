@@ -2,15 +2,14 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use phpmailerException;
 use Leantime\Core\Eventhelpers;
 
 /**
  * Mail class - mails with php mail()
  *
- * @author  Marcel Folaron <marcel.folaron@gmail.com>
  * @version 1.0
  * @license GNU/AGPL-3.0, see license.txt
  * @package leantime
@@ -23,27 +22,27 @@ class Mailer
     /**
      * @var string
      */
-    public $cc;
+    public string $cc;
 
     /**
      * @var string
      */
-    public $bcc;
+    public string $bcc;
 
     /**
      * @var string
      */
-    public $text = '';
+    public string $text = '';
 
     /**
      * @var string
      */
-    public $subject;
+    public string $subject;
 
     /**
      * @var string
      */
-    public $context;
+    public string $context;
 
     /**
      * @var PHPMailer
@@ -53,12 +52,12 @@ class Mailer
     /**
      * @var string
      */
-    private $emailDomain;
+    private mixed $emailDomain;
 
     /**
      * @var language
      */
-    private $language;
+    private Language $language;
 
     /**
      * @var string
@@ -76,12 +75,12 @@ class Mailer
     private string $html;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private bool $hideWrapper = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public bool $nl2br = true;
 
@@ -91,7 +90,7 @@ class Mailer
      * @access public
      * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config, Language $language)
+    public function __construct(Environment $config, Language $language)
     {
         if ($config->email != '') {
             $this->emailDomain = $config->email;
@@ -158,7 +157,7 @@ class Mailer
      * @param  $context
      * @return void
      */
-    public function setContext($context)
+    public function setContext($context): void
     {
         $this->context = $context;
     }
@@ -170,7 +169,7 @@ class Mailer
      * @param  $text
      * @return void
      */
-    public function setText($text)
+    public function setText($text): void
     {
         $this->text = $text;
     }
@@ -180,10 +179,10 @@ class Mailer
      *
      * @access public
      * @param  $html
-     * @param  $hideWrapper
+     * @param false $hideWrapper
      * @return void
      */
-    public function setHtml($html, $hideWrapper = false)
+    public function setHtml($html, bool $hideWrapper = false): void
     {
         $this->hideWrapper = $hideWrapper;
         $this->html = $html;
@@ -196,7 +195,7 @@ class Mailer
      * @param  $subject
      * @return void
      */
-    public function setSubject($subject)
+    public function setSubject($subject): void
     {
         $this->subject = $subject;
     }
@@ -206,10 +205,10 @@ class Mailer
      *
      * @param  $hookname
      * @param  $payload
-     * @param  $additional_params
+     * @param array    $additional_params
      * @return void
      */
-    private function dispatchMailerEvent($hookname, $payload, $additional_params = [])
+    private function dispatchMailerEvent($hookname, $payload, array $additional_params = []): void
     {
         $this->dispatchMailerHook('event', $hookname, $payload, $additional_params);
     }
@@ -219,10 +218,10 @@ class Mailer
      *
      * @param  $hookname
      * @param  $payload
-     * @param  $additional_params
+     * @param array    $additional_params
      * @return void
      */
-    private function dispatchMailerFilter($hookname, $payload, $additional_params = [])
+    private function dispatchMailerFilter($hookname, $payload, array $additional_params = [])
     {
         return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
     }
@@ -233,10 +232,11 @@ class Mailer
      * @param  $type
      * @param  $hookname
      * @param  $payload
-     * @param  $additional_params
+     * @param array    $additional_params
      * @return void|mixed
+     * @throws BindingResolutionException
      */
-    private function dispatchMailerHook($type, $hookname, $payload, $additional_params = [])
+    private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = [])
     {
         if ($type !== 'filter' && $type !== 'event') {
             return false;
@@ -266,12 +266,12 @@ class Mailer
      * sendMail - send the mail with mail()
      *
      * @access public
-     * @param  array $to
+     * @param array $to
      * @param  $from
      * @return void
-     * @throws phpmailerException
+     * @throws Exception
      */
-    public function sendMail(array $to, $from)
+    public function sendMail(array $to, $from): void
     {
 
         $this->dispatchMailerEvent('beforeSendMail', []);

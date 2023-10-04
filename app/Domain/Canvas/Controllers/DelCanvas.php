@@ -11,6 +11,9 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Illuminate\Support\Str;
 
+    /**
+     *
+     */
     class DelCanvas extends Controller
     {
         /**
@@ -18,7 +21,7 @@ namespace Leantime\Domain\Canvas\Controllers {
          */
         protected const CANVAS_NAME = '??';
 
-        private $canvasRepo;
+        private mixed $canvasRepo;
 
         /**
          * init - initialize private variables
@@ -52,7 +55,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
                 //Create default canvas.
-                if ($allCanvas == false || count($allCanvas) == 0) {
+                if (!$allCanvas || count($allCanvas) == 0) {
                     $this->tpl->redirect(BASE_URL . '/strategy/showBoards');
                 } else {
                     $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');

@@ -10,21 +10,29 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Calendar\Services\Calendar;
 
+    /**
+     *
+     */
     class AddEvent extends Controller
     {
-        private \Leantime\Domain\Calendar\Services\Calendar $calendarService;
+        private Calendar $calendarService;
 
         /**
          * init - initialize private variables
          */
-        public function init(\Leantime\Domain\Calendar\Services\Calendar $calendarService)
+        public function init(Calendar $calendarService)
         {
             $this->calendarService = $calendarService;
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
         }
 
-        public function get()
+        /**
+         * @return void
+         * @throws \Exception
+         */
+        public function get(): void
         {
             $values = array(
                 'description' => '',
@@ -37,7 +45,12 @@ namespace Leantime\Domain\Calendar\Controllers {
             $this->tpl->displayPartial('calendar.addEvent');
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws \Exception
+         */
+        public function post($params): void
         {
             $result = $this->calendarService->addEvent($params);
 

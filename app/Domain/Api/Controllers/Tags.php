@@ -4,6 +4,10 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Tags\Services\Tags as TagService;
+
+    /**
+     *
+     */
     class Tags extends Controller
     {
         private TagService $tagService;

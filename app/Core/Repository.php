@@ -2,12 +2,14 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use PDO;
 use PDOStatement;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
- * repository
+ * Repository
  *
  * @package    leantime
  * @subpackage core
@@ -46,7 +48,7 @@ abstract class Repository
             private array $args;
 
             /**
-             * @var repository
+             * @var Repository
              */
             private Repository $caller_class;
 
@@ -54,14 +56,18 @@ abstract class Repository
              * @var db
              */
             private Db $Db;
+            /**
+             * @var \Closure|mixed|object|null
+             */
+            private mixed $db;
 
             /**
              * constructor
              *
-             * @param array  $args         - usually the value of func_get_args(), gives events/filters values to work with
-             * @param object $caller_class - the class object that was called
+             * @param array      $args         - usually the value of func_get_args(), gives events/filters values to work with
+             * @param Repository $caller_class - the class object that was called
              */
-            public function __construct(array $args, repository $caller_class)
+            public function __construct(array $args, Repository $caller_class)
             {
                 $this->args = $args;
                 $this->caller_class = $caller_class;
@@ -74,7 +80,7 @@ abstract class Repository
              * @param string $sql
              * @param array  $args - additional arguments to pass along to prepare function
              */
-            public function prepare($sql, $args = []): void
+            public function prepare(string $sql, array $args = []): void
             {
                 $sql = $this->caller_class::dispatch_filter(
                     "sql",
@@ -91,9 +97,9 @@ abstract class Repository
              *
              * @param string $needle  - placeholder to replace
              * @param string $replace - value to replace with
-             * @param mixed  $type    - type of value being replaced
+             * @param int    $type    - type of value being replaced
              */
-            public function bindValue($needle, $replace, $type = PDO::PARAM_STR): void
+            public function bindValue(string $needle, string $replace, int $type = PDO::PARAM_STR): void
             {
                 $replace = $this->caller_class::dispatch_filter(
                     'binding.' . str_replace(':', '', $needle),
@@ -117,11 +123,11 @@ abstract class Repository
             /**
              * executes the sql call - uses \PDO
              *
-             * @param string $fetchtype - the type of fetch to do (optional)
-             *
-             * @return mixed
+             * @param $mode
+             * @param $class
+             * @return bool
              */
-            public function setFetchMode($mode, $class)
+            public function setFetchMode($mode, $class): bool
             {
                 return $this->stmn->setFetchMode($mode, $class);
             }
@@ -133,7 +139,7 @@ abstract class Repository
              *
              * @return array
              */
-            private function getArgs($additions = []): array
+            private function getArgs(array $additions = []): array
             {
                 $args = array_merge($this->args, ['self' => $this]);
 
@@ -149,18 +155,18 @@ abstract class Repository
             /**
              * executes the sql call - uses \PDO
              *
-             * @param string $fetchtype - the type of fetch to do (optional)
-             *
+             * @param string    $method
+             * @param $arguments
              * @return mixed
              */
             public function __call(string $method, $arguments): mixed
             {
                 if (!isset($this->stmn)) {
-                    throw new Error("You must run the 'prepare' method first!");
+                    throw new \Error("You must run the 'prepare' method first!");
                 }
 
                 if (!in_array($method, ['execute', 'fetch', 'fetchAll'])) {
-                    throw new Error("Method does not exist");
+                    throw new \Error("Method does not exist");
                 }
 
                 $this->caller_class::dispatch_event("beforeExecute", $this->getArgs(), 4);
@@ -186,9 +192,9 @@ abstract class Repository
     /**
      * patch - updates a record in the database
      *
-     * @param integer $id     - the id of the record to update
-     * @param array   $params - the parameters to update
-     * @return boolean
+     * @param int   $id     - the id of the record to update
+     * @param array $params - the parameters to update
+     * @return bool
      */
     public function patch(int $id, array $params): bool
     {
@@ -218,6 +224,11 @@ abstract class Repository
         return $call->execute();
     }
 
+    /**
+     * @param object $objectToInsert
+     * @return false|int
+     * @throws \ReflectionException
+     */
     public function insert(object $objectToInsert): false|int
     {
 
@@ -266,18 +277,21 @@ abstract class Repository
     /**
      * delete - deletes a record from the database
      *
-     * @param integer $id - the id of the record to delete
+     * @param int $id - the id of the record to delete
      */
-    public function delete($id)
+    public function delete(int $id): void
     {
     }
 
     /**
      * get - gets a record from the database
      *
-     * @param integer $id - the id of the record to get
+     * @param int $id - the id of the record to get
+     * @return mixed
+     * @throws BindingResolutionException
+     * @throws \ReflectionException
      */
-    public function get($id)
+    public function get(int $id): mixed
     {
         if ($this->entity == '' || $this->model == '') {
             error_log("Get not implemented for this entity");
@@ -306,25 +320,17 @@ abstract class Repository
          return $call->fetch();
     }
 
-    /**
-     * getAll - gets all records from the database
-     *
-     * @param integer $id - the id of the record to get
-     * @todo - implement
-     */
-    public function getAll($id)
-    {
-    }
 
     /**
      * getFieldAttribute - gets the field attribute for a given property
      *
-     * @param string  $class     - the class to get the attribute from
-     * @param string  $property  - the property to get the attribute from
-     * @param boolean $includeId - whether or not to include the id attribute
+     * @param string $class     - the class to get the attribute from
+     * @param string $property  - the property to get the attribute from
+     * @param bool   $includeId - whether or not to include the id attribute
      * @return array|false
+     * @throws \ReflectionException
      */
-    protected function getFieldAttribute($class, $property, $includeId = false): array|false
+    protected function getFieldAttribute(string $class, string $property, bool $includeId = false): array|false
     {
         //Don't create or update id attributes
         if ($includeId === false && $property == "id") {
@@ -349,10 +355,11 @@ abstract class Repository
      *
      * @param object|string $class - the class to get the fields from
      * @return array
+     * @throws \ReflectionException
      */
     protected function getDbFields(object|string $class): array
     {
-        $property = new \ReflectionClass($class);
+        $property = new ReflectionClass($class);
 
         $properties = $property->getProperties();
 

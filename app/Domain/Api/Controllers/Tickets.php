@@ -9,6 +9,9 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
     class Tickets extends Controller
     {
         private ProjectRepository $projects;
@@ -62,7 +65,7 @@ namespace Leantime\Domain\Api\Controllers {
             if (AuthService::userIsAtLeast(Roles::$editor)) {
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
-                    if (isset($params["handler"]) == true) {
+                    if (isset($params["handler"])) {
                         $handler = $params["handler"];
                     }
 

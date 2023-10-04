@@ -13,6 +13,9 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class NewClient extends Controller
     {
         private ClientRepository $clientRepo;

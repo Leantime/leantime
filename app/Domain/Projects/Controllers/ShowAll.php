@@ -9,6 +9,9 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class ShowAll extends Controller
     {
         private ProjectRepository $projectRepo;

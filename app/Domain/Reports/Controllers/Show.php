@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Reports\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Dashboard\Repositories\Dashboard as DashboardRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -13,6 +15,9 @@ namespace Leantime\Domain\Reports\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
 
+    /**
+     *
+     */
     class Show extends Controller
     {
         private DashboardRepository $dashboardRepo;
@@ -23,6 +28,18 @@ namespace Leantime\Domain\Reports\Controllers {
         private TimesheetService $timesheetService;
         private ReportService $reportService;
 
+        /**
+         * @param DashboardRepository $dashboardRepo
+         * @param ProjectService      $projectService
+         * @param SprintService       $sprintService
+         * @param TicketService       $ticketService
+         * @param UserService         $userService
+         * @param TimesheetService    $timesheetService
+         * @param ReportService       $reportService
+         * @return void
+         * @throws BindingResolutionException
+         * @throws BindingResolutionException
+         */
         public function init(
             DashboardRepository $dashboardRepo,
             ProjectService $projectService,
@@ -31,7 +48,7 @@ namespace Leantime\Domain\Reports\Controllers {
             UserService $userService,
             TimesheetService $timesheetService,
             ReportService $reportService
-        ) {
+        ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->dashboardRepo = $dashboardRepo;
@@ -49,8 +66,9 @@ namespace Leantime\Domain\Reports\Controllers {
 
         /**
          * @return void
+         * @throws BindingResolutionException
          */
-        public function get()
+        public function get(): void
         {
 
             //Project Progress
@@ -107,7 +125,15 @@ namespace Leantime\Domain\Reports\Controllers {
             $this->tpl->display('reports.show');
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         */
+        public function post($params): void
         {
 
             $this->tpl->redirect(BASE_URL . "/dashboard/show");

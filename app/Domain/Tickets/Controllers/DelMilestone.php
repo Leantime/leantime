@@ -2,16 +2,24 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class DelMilestone extends Controller
     {
         private TicketService $ticketService;
 
-        public function init(TicketService $ticketService)
+        /**
+         * @param TicketService $ticketService
+         * @return void
+         */
+        public function init(TicketService $ticketService): void
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
@@ -19,7 +27,11 @@ namespace Leantime\Domain\Tickets\Controllers {
         }
 
 
-        public function get()
+        /**
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function get(): void
         {
 
             //Only admins
@@ -35,7 +47,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function post($params): void
         {
 
             if (isset($_GET['id'])) {

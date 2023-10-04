@@ -22,70 +22,70 @@ class Fileupload
     /**
      * @var    string path on the server
      */
-    private $path;
+    private mixed $path;
 
     /**
-     * @var integer max filesize in kb
+     * @var int max filesize in kb
      */
-    public $max_size = 10000;
+    public int $max_size = 10000;
 
     /**
      * @var string filename in a temporary variable
      */
-    private $file_tmp_name;
+    private string $file_tmp_name;
 
     /**
-     * @var integer
+     * @var int
      */
-    public $file_size;
+    public int $file_size;
 
     /**
      * @var string give the file-type (not extension)
      */
-    public $file_type;
+    public string $file_type;
 
     /**
      * @var string - Name of file after renaming and on server
      */
-    public $file_name;
+    public string $file_name;
 
     /**
      * @var string
      */
-    public $error = '';
+    public string $error = '';
 
     /**
      * @var string name of file after by upload
      */
-    public $real_name = '';
+    public string $real_name = '';
 
     /**
      * @var array parts of the path
      */
-    public $path_parts = array();
+    public array $path_parts = array();
 
     /**
-     * @var \Leantime\Core\Environment configuration object
+     * @var Environment configuration object
      */
-    public \Leantime\Core\Environment $config;
+    public Environment $config;
 
     /**
      * @var S3Client|string
      */
-    public $s3Client = "";
+    public string|S3Client $s3Client = "";
 
     /**
      * fileupload constructor.
      *
-     * @param \Leantime\Core\Environment $config
-     * @return self
+     * @param Environment $config
+     * @return void
      */
-    public function __construct(\Leantime\Core\Environment $config)
+    public function __construct(Environment $config)
     {
         $this->config = $config;
         $this->path = $this->config->userFilePath;
 
-        if ($this->config->useS3 == true) {
+        if ($this->config->useS3) {
             $s3Config = [
                 'version' => 'latest',
                 'region' => $this->config->s3Region,
@@ -112,7 +112,7 @@ class Fileupload
     /**
      * This function returns the maximum files size that can be uploaded in PHP
      *
-     * @return integer File size in bytes
+     * @return int File size in bytes
      */
     public static function getMaximumFileUploadSize(): int
     {
@@ -123,9 +123,9 @@ class Fileupload
      * This function transforms the php.ini notation for numbers (like '2M') to an integer (2*1024*1024 in this case)
      *
      * @param string $sSize
-     * @return integer The value in bytes
+     * @return int The value in bytes
      */
-    private static function convertPHPSizeToBytes($sSize)
+    private static function convertPHPSizeToBytes(string $sSize): int
     {
         $sSuffix = strtoupper(substr($sSize, -1));
         if (!in_array($sSuffix, array('P','T','G','M','K'))) {
@@ -160,7 +160,7 @@ class Fileupload
      * @return string
      * @throws Exception
      */
-    public function getAbsolutePath()
+    public function getAbsolutePath(): string
     {
         $path = realpath(__DIR__ . "/../../" . $this->path);
         if ($path === false) {
@@ -174,7 +174,7 @@ class Fileupload
      * @return string
      * @throws Exception
      */
-    public function getPublicFilesPath()
+    public function getPublicFilesPath(): string
     {
         $relative_path = self::dispatch_filter('relative_path', "/../../public/userfiles");
 
@@ -193,7 +193,7 @@ class Fileupload
      * @access public
      * @param  $file $file from Post
      */
-    public function initFile($file)
+    public function initFile($file): void
     {
         $this->file_tmp_name = $file['tmp_name'];
         $this->file_size = $file['size'];
@@ -206,9 +206,9 @@ class Fileupload
      * checkFileSize - Checks if filesize is ok
      *
      * @access public
-     * @return boolean
+     * @return bool
      */
-    public function checkFileSize()
+    public function checkFileSize(): bool
     {
         if ($this->file_size <= $this->max_size * 1024) {
             return true;
@@ -221,7 +221,7 @@ class Fileupload
      * renameFile
      *
      * @param  $name
-     * @return boolean
+     * @return bool
      */
     public function renameFile($name): bool
     {
@@ -244,12 +244,12 @@ class Fileupload
      * upload - move file from tmp-folder to S3
      *
      * @access public
-     * @return boolean
+     * @return bool
      */
-    public function upload()
+    public function upload(): bool
     {
         //S3 upload
-        if ($this->config->useS3 == true) {
+        if ($this->config->useS3) {
             return $this->uploadToS3();
         }
 
@@ -263,9 +263,9 @@ class Fileupload
      * @access public
      * @return string|false
      */
-    public function uploadPublic()
+    public function uploadPublic(): false|string
     {
-        if ($this->config->useS3 == true) {
+        if ($this->config->useS3) {
             try {
                 // Upload data.
 
@@ -304,9 +304,9 @@ class Fileupload
      * uploadToS3 - move file from tmp-folder to S3
      *
      * @access private
-     * @return boolean
+     * @return bool
      */
-    private function uploadToS3()
+    private function uploadToS3(): bool
     {
         try {
             // Upload data.
@@ -327,7 +327,13 @@ class Fileupload
         }
     }
 
-    private function uploadLocal()
+    /**
+     * @return bool
+     */
+    /**
+     * @return bool
+     */
+    private function uploadLocal(): bool
     {
 
         try {
@@ -345,11 +351,11 @@ class Fileupload
     /**
      * displayImageFile - display image file
      *
-     * @param  string $imageName
-     * @param  string $fullPath
+     * @param string $imageName
+     * @param string $fullPath
      * @return void
      */
-    public function displayImageFile($imageName, $fullPath = '')
+    public function displayImageFile(string $imageName, string $fullPath = ''): void
     {
         $mimes = array(
             'jpg' => 'image/jpg',
@@ -358,7 +364,7 @@ class Fileupload
             'png' => 'image/png',
         );
 
-        if ($this->config->useS3 == true && $fullPath == '') {
+        if ($this->config->useS3 && $fullPath == '') {
             try {
                 // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash
@@ -377,7 +383,7 @@ class Fileupload
                 $body = $result->get('Body');
 
                 echo $body->getContents();
-            } catch (Aws\S3\Exception\S3Exception $e) {
+            } catch (S3Exception $e) {
                 echo $e->getMessage() . "\n";
             }
         } else {

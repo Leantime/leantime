@@ -5,16 +5,28 @@ namespace Leantime\Domain\Read\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
     class Read
     {
         private DbCore $db;
 
+        /**
+         * @param DbCore $db
+         */
         public function __construct(DbCore $db)
         {
             $this->db = $db;
         }
 
-        public function markAsRead($module, $moduleId, $userId)
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return void
+         */
+        public function markAsRead($module, $moduleId, $userId): void
         {
 
             $sql = 'INSERT INTO zp_read (module,moduleId,userId) VALUES (:module,:moduleId,:userId)';
@@ -28,7 +40,13 @@ namespace Leantime\Domain\Read\Repositories {
             $stmn->closeCursor();
         }
 
-        public function isRead($module, $moduleId, $userId)
+        /**
+         * @param $module
+         * @param $moduleId
+         * @param $userId
+         * @return bool
+         */
+        public function isRead($module, $moduleId, $userId): bool
         {
 
             $sql = "SELECT * FROM zp_read

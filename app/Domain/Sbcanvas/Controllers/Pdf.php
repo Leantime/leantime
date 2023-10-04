@@ -8,6 +8,9 @@ namespace Leantime\Domain\Sbcanvas\Controllers {
 
     use Leantime\Domain\Canvas\Controllers\Pdf as PdfController;
 
+    /**
+     *
+     */
     class Pdf extends PdfController
     {
         protected const CANVAS_NAME = 'sb';
@@ -46,8 +49,9 @@ namespace Leantime\Domain\Sbcanvas\Controllers {
          * reportGenerate - Generate report for module  / Porter's Startegy Questions
          *
          * @access public
-         * @param  integer $id     Canvas identifier
-         * @param  string  $filter Filter value
+         * @param int   $id      Canvas identifier
+         * @param array $filter  Filter value
+         * @param array $options
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string

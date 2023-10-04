@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Wiki\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Models\Wiki;
@@ -9,18 +11,31 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class Show extends Controller
     {
         private WikiService $wikiService;
         private CommentService $commentService;
 
-        public function init(WikiService $wikiService, CommentService $commentService)
+        /**
+         * @param WikiService    $wikiService
+         * @param CommentService $commentService
+         * @return void
+         */
+        public function init(WikiService $wikiService, CommentService $commentService): void
         {
             $this->wikiService = $wikiService;
             $this->commentService = $commentService;
         }
 
-        public function get($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function get($params): void
         {
 
             $currentArticle = '';
@@ -28,7 +43,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
 
             $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
-            if ($wikis == false || count($wikis) == 0) {
+            if (!$wikis || count($wikis) == 0) {
                 $wiki = app()->make(Wiki::class);
                 $wiki->title = $this->language->__("label.default");
                 $wiki->projectId = $_SESSION['currentProject'];
@@ -180,7 +195,12 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->display("wiki.show");
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function post($params): void
         {
 
             if (isset($_GET['id']) === true) {

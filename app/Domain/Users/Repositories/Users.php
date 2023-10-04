@@ -2,78 +2,85 @@
 
 namespace Leantime\Domain\Users\Repositories {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+    use LasseRafn\InitialAvatarGenerator\InitialAvatar;
+    use Leantime\Core\Environment;
     use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Core\Db as DbCore;
     use PDO;
+    use SVG\SVG;
 
+    /**
+     *
+     */
     class Users
     {
         /**
          * @access public
          * @var    string
          */
-        public $user;
+        public string $user;
 
         /**
          * @access public
          * @var    string
          */
-        public $lastname;
+        public string $lastname;
 
         /**
          * @access public
          * @var    string
          */
-        public $firstname;
+        public string $firstname;
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
-        public $role;
+        public int $role;
 
         /**
         * @access public
         * @var    string
         */
-        public $jobTitle;
+        public string $jobTitle;
 
         /**
          * @access public
          * @var    string
          */
-        public $jobLevel;
+        public string $jobLevel;
 
         /**
          * @access public
          * @var    string
          */
-        public $department;
+        public string $department;
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
-        public $id;
+        public int $id;
 
         /**
          * @access public
          * @var    array
          */
-        public $adminRoles = array(2, 4);
+        public array $adminRoles = array(2, 4);
 
         /**
          * @access public
          * @var    array
          */
-        public $status = array('active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited');
+        public array $status = array('active' => 'label.active', 'inactive' => 'label.inactive', 'invited' => 'label.invited');
 
         /**
          * @access public
-         * @var    object
+         * @var    DbCore|null
          */
-        private $db;
+        private ?DbCore $db;
 
-        public \Leantime\Core\Environment $config;
+        public Environment $config;
 
         /**
          * __construct - neu db connection
@@ -81,8 +88,8 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          */
         public function __construct(
-            \Leantime\Core\Environment $config,
-            \Leantime\Core\Db $db
+            Environment $config,
+            DbCore $db
         ) {
 
             $this->db = $db;
@@ -94,7 +101,7 @@ namespace Leantime\Domain\Users\Repositories {
          *
          * @access public
          * @param  $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getUser($id): array|bool
         {
@@ -115,10 +122,10 @@ namespace Leantime\Domain\Users\Repositories {
          * getUser - get on user from db
          *
          * @access public
-         * @param  $id
+         * @param $hash
          * @return array
          */
-        public function getUserBySha($hash)
+        public function getUserBySha($hash): array
         {
 
 
@@ -139,7 +146,6 @@ namespace Leantime\Domain\Users\Repositories {
          * getLastLogin - get the date of the last login of any user
          *
          * @access public
-         * @param  $id
          * @return string|null returns datetime string with last login or null if nothing could be found
          */
         public function getLastLogin(): string|null
@@ -163,8 +169,8 @@ namespace Leantime\Domain\Users\Repositories {
          * getUserByEmail - get on user from db
          *
          * @access public
-         * @param  $id
-         * @return array
+         * @param $email
+         * @return array|false
          */
         public function getUserByEmail($email): array | false
         {
@@ -181,6 +187,9 @@ namespace Leantime\Domain\Users\Repositories {
             return $values;
         }
 
+        /**
+         * @return int
+         */
         public function getNumberOfUsers(): int
         {
 
@@ -205,7 +214,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @return array
          */
-        public function getEmployees()
+        public function getEmployees(): array
         {
 
             $sql = "SELECT
@@ -232,9 +241,10 @@ namespace Leantime\Domain\Users\Repositories {
          * getAll - get all user
          *
          * @access public
+         * @param bool $activeOnly
          * @return array
          */
-        public function getAll($activeOnly = false)
+        public function getAll($activeOnly = false): array
         {
 
             $query = "SELECT
@@ -256,7 +266,7 @@ namespace Leantime\Domain\Users\Repositories {
                     LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
                     WHERE !(source <=> 'api')";
 
-            if ($activeOnly == true) {
+            if ($activeOnly) {
                     $query .= " AND status LIKE 'a' ";
             }
 
@@ -271,7 +281,11 @@ namespace Leantime\Domain\Users\Repositories {
             return $values;
         }
 
-        public function getAllBySource($source)
+        /**
+         * @param $source
+         * @return array|false
+         */
+        public function getAllBySource($source): false|array
         {
 
             $query = "SELECT
@@ -306,9 +320,10 @@ namespace Leantime\Domain\Users\Repositories {
          * getAll - get all user
          *
          * @access public
+         * @param $clientId
          * @return array
          */
-        public function getAllClientUsers($clientId)
+        public function getAllClientUsers($clientId): array
         {
 
             $query = "SELECT
@@ -340,6 +355,14 @@ namespace Leantime\Domain\Users\Repositories {
             return $values;
         }
 
+        /**
+         * @param $userId
+         * @return bool
+         */
+        /**
+         * @param $userId
+         * @return bool
+         */
         public function isAdmin($userId): bool
         {
 
@@ -364,10 +387,11 @@ namespace Leantime\Domain\Users\Repositories {
          * editUSer - edit user
          *
          * @access public
-         * @param  array $values
+         * @param array $values
          * @param  $id
+         * @return bool
          */
-        public function editUser(array $values, $id)
+        public function editUser(array $values, $id): bool
         {
             if (isset($values['password']) && $values['password'] != '') {
                 $chgPW = " password = :password, ";
@@ -424,10 +448,10 @@ namespace Leantime\Domain\Users\Repositories {
          *
          * @access public
          * @param  $username
-         * @param  $userId
-         * @return boolean
+         * @param string   $userId
+         * @return bool
          */
-        public function usernameExist($username, $userId = ''): bool
+        public function usernameExist($username, string $userId = ''): bool
         {
 
             if ($userId != '') {
@@ -464,7 +488,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @param  $values
          * @param  $id
          */
-        public function editOwn($values, $id)
+        public function editOwn($values, $id): void
         {
 
             if (isset($values['password']) && $values['password'] != '') {
@@ -505,7 +529,8 @@ namespace Leantime\Domain\Users\Repositories {
          * addUser - add User to db
          *
          * @access public
-         * @param  array $values
+         * @param array $values
+         * @return false|string
          */
         public function addUser(array $values): false|string
         {
@@ -586,7 +611,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @param  $id
          */
-        public function deleteUser($id)
+        public function deleteUser($id): void
         {
 
             $query = "DELETE FROM `zp_user` WHERE zp_user.id = :id";
@@ -602,9 +627,11 @@ namespace Leantime\Domain\Users\Repositories {
          * setPicture - set the profile picture for an individual
          *
          * @access public
-         * @param  string
+         * @param string $_FILE
+         * @param $id
+         * @throws BindingResolutionException
          */
-        public function setPicture($_FILE, $id)
+        public function setPicture(string $_FILE, $id): void
         {
 
             $sql = "SELECT * FROM `zp_user` WHERE id=:id";
@@ -646,7 +673,17 @@ namespace Leantime\Domain\Users\Repositories {
             }
         }
 
-        public function getProfilePicture($id)
+        /**
+         * @param $id
+         * @return string[]|SVG
+         * @throws BindingResolutionException
+         */
+        /**
+         * @param $id
+         * @return string[]|SVG
+         * @throws BindingResolutionException
+         */
+        public function getProfilePicture($id): array|SVG
         {
 
             $value = false;
@@ -679,7 +716,7 @@ namespace Leantime\Domain\Users\Repositories {
                 if (file_exists(APP_ROOT . "/cache/avatars/" . $imagename . ".png")) {
                     return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
                 } else {
-                    $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                    $avatar = new InitialAvatar();
                     $image = $avatar
                         ->name($value['firstname'] . " " . $value['lastname'])
                         ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
@@ -696,7 +733,7 @@ namespace Leantime\Domain\Users\Repositories {
                 }
             } else {
                 //USer doesn't exist for whatever reason. Return ghost. Boo
-                $avatar = new \LasseRafn\InitialAvatarGenerator\InitialAvatar();
+                $avatar = new InitialAvatar();
                 $image = $avatar
                     ->name("👻")
                     ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')
@@ -708,7 +745,17 @@ namespace Leantime\Domain\Users\Repositories {
             }
         }
 
-        public function patchUser($id, $params)
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        /**
+         * @param $id
+         * @param $params
+         * @return bool
+         */
+        public function patchUser($id, $params): bool
         {
 
             $sql = "UPDATE zp_user SET ";
@@ -744,9 +791,9 @@ namespace Leantime\Domain\Users\Repositories {
          * getUserIdByName - Get Author/User Id by first- and lastname
          *
          * @access public
-         * @param  string $firstnam Firstname
-         * @param  string $lastname Lastname
-         * @return integer|boolean Identifier of user or false, if not found
+         * @param string $firstname
+         * @param string $lastname  Lastname
+         * @return int|bool Identifier of user or false, if not found
          */
         public function getUserIdByName(string $firstname, string $lastname): int|bool
         {

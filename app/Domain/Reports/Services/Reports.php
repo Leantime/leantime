@@ -2,8 +2,12 @@
 
 namespace Leantime\Domain\Reports\Services {
 
+    use DateTime;
+    use DateTimeZone;
+    use Exception;
     use GuzzleHttp\Client;
     use GuzzleHttp\Promise\PromiseInterface;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\AppSettings as AppSettingCore;
     use Leantime\Core\Environment as EnvironmentCore;
@@ -32,6 +36,9 @@ namespace Leantime\Domain\Reports\Services {
     use Ramsey\Uuid\Uuid;
     use Leantime\Core\Eventhelpers;
 
+    /**
+     *
+     */
     class Reports
     {
         use Eventhelpers;
@@ -45,6 +52,16 @@ namespace Leantime\Domain\Reports\Services {
         private SettingRepository $settings;
         private TicketRepository $ticketRepository;
 
+        /**
+         * @param TemplateCore      $tpl
+         * @param AppSettingCore    $appSettings
+         * @param EnvironmentCore   $config
+         * @param ProjectRepository $projectRepository
+         * @param SprintRepository  $sprintRepository
+         * @param ReportRepository  $reportRepository
+         * @param SettingRepository $settings
+         * @param TicketRepository  $ticketRepository
+         */
         public function __construct(
             TemplateCore $tpl,
             AppSettingCore $appSettings,
@@ -65,7 +82,11 @@ namespace Leantime\Domain\Reports\Services {
             $this->ticketRepository = $ticketRepository;
         }
 
-        public function dailyIngestion()
+        /**
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function dailyIngestion(): void
         {
 
             if (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
@@ -101,16 +122,75 @@ namespace Leantime\Domain\Reports\Services {
             }
         }
 
-        public function getFullReport($projectId)
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        /**
+         * @param $projectId
+         * @return array|false
+         */
+        public function getFullReport($projectId): false|array
         {
             return $this->reportRepository->getFullReport($projectId);
         }
 
-        public function getRealtimeReport($projectId, $sprintId)
+        /**
+         * @param $projectId
+         * @param $sprintId
+         * @return array
+         */
+        /**
+         * @param $projectId
+         * @param $sprintId
+         * @return array
+         * @throws BindingResolutionException
+         */
+        public function getRealtimeReport($projectId, $sprintId): array
         {
             return $this->reportRepository->runTicketReport($projectId, $sprintId);
         }
 
+        /**
+         * @param IdeaRepository $ideaRepository
+         * @param UserRepository $userRepository
+         * @param ClientRepository $clientRepository
+         * @param CommentRepository $commentsRepository
+         * @param TimesheetRepository $timesheetRepo
+         * @param EacanvaRepository $eaCanvasRepo
+         * @param InsightscanvaRepository $insightsCanvasRepo
+         * @param LeancanvaRepository $leanCanvasRepo
+         * @param ObmcanvaRepository $obmCanvasRepo
+         * @param RetroscanvaRepository $retrosCanvasRepo
+         * @param GoalcanvaRepository $goalCanvasRepo
+         * @param ValuecanvaRepository $valueCanvasRepo
+         * @param MinempathycanvaRepository $minEmpathyCanvasRepo
+         * @param RiskscanvaRepository $risksCanvasRepo
+         * @param SbcanvaRepository $sbCanvasRepo
+         * @param SwotcanvaRepository $swotCanvasRepo
+         * @param WikiRepository $wikiRepo
+         * @return array
+         */
+        /**
+         * @param IdeaRepository            $ideaRepository
+         * @param UserRepository            $userRepository
+         * @param ClientRepository          $clientRepository
+         * @param CommentRepository         $commentsRepository
+         * @param TimesheetRepository       $timesheetRepo
+         * @param EacanvaRepository         $eaCanvasRepo
+         * @param InsightscanvaRepository   $insightsCanvasRepo
+         * @param LeancanvaRepository       $leanCanvasRepo
+         * @param ObmcanvaRepository        $obmCanvasRepo
+         * @param RetroscanvaRepository     $retrosCanvasRepo
+         * @param GoalcanvaRepository       $goalCanvasRepo
+         * @param ValuecanvaRepository      $valueCanvasRepo
+         * @param MinempathycanvaRepository $minEmpathyCanvasRepo
+         * @param RiskscanvaRepository      $risksCanvasRepo
+         * @param SbcanvaRepository         $sbCanvasRepo
+         * @param SwotcanvaRepository       $swotCanvasRepo
+         * @param WikiRepository            $wikiRepo
+         * @return array
+         */
         public function getAnonymousTelemetry(
             IdeaRepository $ideaRepository,
             UserRepository $userRepository,
@@ -129,7 +209,7 @@ namespace Leantime\Domain\Reports\Services {
             SbcanvaRepository $sbCanvasRepo,
             SwotcanvaRepository $swotCanvasRepo,
             WikiRepository $wikiRepo
-        ) {
+        ): array {
 
             //Get anonymous company guid
             $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");
@@ -211,6 +291,10 @@ namespace Leantime\Domain\Reports\Services {
             return $telemetry;
         }
 
+        /**
+         * @return bool|PromiseInterface
+         * @throws BindingResolutionException
+         */
         public function sendAnonymousTelemetry(): bool|PromiseInterface
         {
 
@@ -222,7 +306,7 @@ namespace Leantime\Domain\Reports\Services {
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
 
             if ($allowTelemetry === true) {
-                $date_utc = new \DateTime("now", new \DateTimeZone("UTC"));
+                $date_utc = new DateTime("now", new DateTimeZone("UTC"));
                 $today = $date_utc->format("Y-m-d");
                 $lastUpdate = $this->settings->getSetting("companysettings.telemetry.lastUpdate");
 
@@ -248,7 +332,7 @@ namespace Leantime\Domain\Reports\Services {
                                 });
 
                         return $promise;
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         error_log($e);
 
                         $_SESSION['skipTelemetry'] = true;
@@ -261,9 +345,17 @@ namespace Leantime\Domain\Reports\Services {
             return false;
         }
 
+        /**
+         * @return false|void
+         * @throws Exception
+         */
+        /**
+         * @return false|void
+         * @throws Exception
+         */
         public function optOutTelemetry()
         {
-            $date_utc = new \DateTime("now", new \DateTimeZone("UTC"));
+            $date_utc = new DateTime("now", new DateTimeZone("UTC"));
             $today = $date_utc->format("Y-m-d");
 
             $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");
@@ -342,7 +434,7 @@ namespace Leantime\Domain\Reports\Services {
                     $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
                     $_SESSION['skipTelemetry'] = true;
                 });
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e);
 
                 $_SESSION['skipTelemetry'] = true;
@@ -355,7 +447,7 @@ namespace Leantime\Domain\Reports\Services {
 
             try {
                 $promise->wait();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 error_log($e);
             }
 

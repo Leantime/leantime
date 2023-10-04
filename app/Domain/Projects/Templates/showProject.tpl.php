@@ -442,7 +442,7 @@ foreach ($__data as $var => $val) {
                                         </div>
                                         <div class="col-md-2">
                                             <label for=""><?=$tpl->__('label.showInKanban'); ?></label>
-                                            <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?=($ticketStatus['kanbanCol'] == true) ? 'checked="checked"' : ""; ?>/>
+                                            <input type="checkbox" name="labelKanbanCol-<?=$key?>" id="labelKanbanCol-<?=$key?>" <?= $ticketStatus['kanbanCol'] ? 'checked="checked"' : ""; ?>/>
                                         </div>
                                         <div class="remove">
                                             <br />

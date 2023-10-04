@@ -2,11 +2,17 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
+
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+
+    /**
+     *
+     */
     class ShowKanban extends Controller
     {
         private ProjectService $projectService;
@@ -14,12 +20,19 @@ namespace Leantime\Domain\Tickets\Controllers {
         private SprintService $sprintService;
         private TimesheetService $timesheetService;
 
+        /**
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param SprintService    $sprintService
+         * @param TimesheetService $timesheetService
+         * @return void
+         */
         public function init(
             ProjectService $projectService,
             TicketService $ticketService,
             SprintService $sprintService,
             TimesheetService $timesheetService
-        ) {
+        ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->sprintService = $sprintService;
@@ -30,7 +43,12 @@ namespace Leantime\Domain\Tickets\Controllers {
             $_SESSION['lastFilterdTicketKanbanView'] = CURRENT_URL;
         }
 
-        public function get(array $params)
+        /**
+         * @param array $params
+         * @return void
+         * @throws \Exception
+         */
+        public function get(array $params): void
         {
 
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
@@ -41,11 +59,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->display('tickets.showKanban');
         }
 
-        public function post(array $params)
+        /**
+         * @param array $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function post(array $params): void
         {
 
             //QuickAdd
-            if (isset($_POST['quickadd']) == true) {
+            if (isset($_POST['quickadd'])) {
                 $result = $this->ticketService->quickAddTicket($params);
 
                 if (is_array($result)) {

@@ -15,6 +15,10 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+
+    /**
+     *
+     */
     class ShowProjectCalendar extends Controller
     {
         private CalendarRepository $calendarRepo;

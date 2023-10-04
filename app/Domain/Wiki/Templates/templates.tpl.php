@@ -1,6 +1,7 @@
 <?php
 
 use Leantime\Core\Eventhelpers;
+use Leantime\Domain\Wiki\Models\Template;
 
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -13,7 +14,7 @@ $author = $_SESSION['userdata']['name'] . ' (' . $_SESSION['userdata']['mail'] .
 
     $templates = array();
 
-    $prdTpl = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+    $prdTpl = app()->make(Template::class);
 
     $prdTpl->title = $tpl->__("templates.prd.title");
     $prdTpl->description = $tpl->__("templates.prd.description");
@@ -157,7 +158,7 @@ $author = $_SESSION['userdata']['name'] . ' (' . $_SESSION['userdata']['mail'] .
 $templates[] = $prdTpl;
 
 //Project Outline
-$projectOutline = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$projectOutline = app()->make(Template::class);
 $projectOutline->title = "Project Outline";
 $projectOutline->category = $tpl->__("templates.documents");
 $projectOutline->description = "";
@@ -259,7 +260,7 @@ $templates[] = $projectOutline;
 
 
 //User Story
-$userStoryTpl = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$userStoryTpl = app()->make(Template::class);
 $userStoryTpl->title = "User Story";
 $userStoryTpl->category = $tpl->__("templates.todos");
 $userStoryTpl->description = "A template for an agile user story";
@@ -292,7 +293,7 @@ $userStoryTpl->content = '
 $templates[] = $userStoryTpl;
 
 
-$bugTpl = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$bugTpl = app()->make(Template::class);
 $bugTpl->title = "Bug";
 $bugTpl->category = $tpl->__("templates.todos");
 $bugTpl->description = "A template for a bug report";
@@ -337,7 +338,7 @@ $bugTpl->content = '<table style="border-collapse: collapse; width: 100.051%;" b
 $templates[] = $bugTpl;
 
 
-$featureTpl = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$featureTpl = app()->make(Template::class);
 $featureTpl->title = "Feature Request";
 $featureTpl->category = $tpl->__("templates.todos");
 $featureTpl->description = "A template for a feature request";
@@ -365,7 +366,7 @@ $featureTpl->content = '<table style="border-collapse: collapse; width: 100.051%
 $templates[] = $featureTpl;
 
 
-$layout48 = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$layout48 = app()->make(Template::class);
 $layout48->title = $tpl->__("templates.side_left");
 $layout48->category = $tpl->__("templates.layouts");
 $layout48->description = $tpl->__("templates.titles.side_left_description");
@@ -377,7 +378,7 @@ $layout48->content = '
 </div>';
 $templates[] = $layout48;
 
-$layout84 = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$layout84 = app()->make(Template::class);
 $layout84->title = $tpl->__("templates.side_right");
 $layout84->category = $tpl->__("templates.layouts");
 $layout84->description = $tpl->__("templates.titles.side_right_description");
@@ -388,7 +389,7 @@ $layout84->content = '
 </div>';
 $templates[] = $layout84;
 
-$layout363 = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$layout363 = app()->make(Template::class);
 $layout363->title = $tpl->__("templates.side_m_side");
 $layout363->category = $tpl->__("templates.layouts");
 $layout363->description = $tpl->__("templates.titles.side_m_side_description");
@@ -401,7 +402,7 @@ $layout363->content = '
 $templates[] = $layout363;
 
 
-$layout66 = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$layout66 = app()->make(Template::class);
 $layout66->title = $tpl->__("templates.titles.2_col");
 $layout66->category = $tpl->__("templates.layouts");
 $layout66->description = $tpl->__("templates.titles.2_col_description");
@@ -412,7 +413,7 @@ $layout66->content = '
 </div>';
 $templates[] = $layout66;
 
-$layout444 = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$layout444 = app()->make(Template::class);
 $layout444->title = $tpl->__("templates.titles.3_col");
 $layout444->category = $tpl->__("templates.layouts");
 $layout444->description = $tpl->__("templates.titles.3_col_description");
@@ -424,7 +425,7 @@ $layout444->content = '
 </div>';
 $templates[] = $layout444;
 
-$layout3333 = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$layout3333 = app()->make(Template::class);
 $layout3333->title = $tpl->__("templates.titles.4_col");
 $layout3333->category = $tpl->__("templates.layouts");
 $layout3333->description = $tpl->__("templates.titles.4_col_description");
@@ -437,28 +438,28 @@ $layout3333->content = '
 </div>';
 $templates[] = $layout3333;
 
-$labelGreen = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$labelGreen = app()->make(Template::class);
 $labelGreen->title = $tpl->__("templates.titles.green_status");
 $labelGreen->category = $tpl->__("templates.elements");
 $labelGreen->description = $tpl->__("templates.titles.green_status_description");
 $labelGreen->content = '<span class="label label-success">Green</span>';
 $templates[] = $labelGreen;
 
-$labelYellow = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$labelYellow = app()->make(Template::class);
 $labelYellow->title = $tpl->__("templates.titles.yellow_status");
 $labelYellow->category = $tpl->__("templates.elements");
 $labelYellow->description = $tpl->__("templates.titles.yellow_status_description");
 $labelYellow->content = '<span class="label label-warning">Yellow</span>';
 $templates[] = $labelYellow;
 
-$labelRed = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$labelRed = app()->make(Template::class);
 $labelRed->title = $tpl->__("templates.titles.red_status");
 $labelRed->category = $tpl->__("templates.elements");
 $labelRed->description = $tpl->__("templates.titles.red_status_description");
 $labelRed->content = '<span class="label label-danger">Red</span>';
 $templates[] = $labelRed;
 
-$labelGray = app()->make(\Leantime\Domain\Wiki\Models\Template::class);
+$labelGray = app()->make(Template::class);
 $labelGray->title = $tpl->__("templates.titles.gray_status");
 $labelGray->category = $tpl->__("templates.elements");
 $labelGray->description = $tpl->__("templates.titles.gray_status_description");

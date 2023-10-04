@@ -9,6 +9,9 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class EditUser extends Controller
     {
         private ProjectRepository $projectsRepo;

@@ -5,6 +5,10 @@ namespace Leantime\Domain\TwoFA\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
+
+    /**
+     *
+     */
     class Verify extends Controller
     {
         private AuthService $authService;
@@ -29,7 +33,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
         public function get($params)
         {
 
-            $redirectUrl = BASE_URL . "/dashboard/show";
+            $redirectUrl = BASE_URL . "/dashboard/home";
 
             if (isset($_GET['redirect'])) {
                 $redirectUrl = BASE_URL . urldecode($_GET['redirect']);
@@ -39,7 +43,11 @@ namespace Leantime\Domain\TwoFA\Controllers {
             $this->tpl->display("twofa.verify", "entry");
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         */
+        public function post($params): void
         {
 
             if (isset($_SESSION['userdata']) && $this->authService->use2FA()) {

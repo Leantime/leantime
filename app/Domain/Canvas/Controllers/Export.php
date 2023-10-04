@@ -6,6 +6,8 @@
 
 namespace Leantime\Domain\Canvas\Controllers {
 
+    use Exception;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Controller;
@@ -27,7 +29,7 @@ namespace Leantime\Domain\Canvas\Controllers {
         // Internal variables
         protected EnvironmentCore $config;
         protected LanguageCore $language;
-        protected $canvasRepo;
+        protected mixed $canvasRepo;
         protected array $canvasTypes;
         protected array $statusLabels;
         protected array $relatesLabels;
@@ -38,7 +40,7 @@ namespace Leantime\Domain\Canvas\Controllers {
          * Constructor
          */
         public function init(
-            \Leantime\Core\Environment $config,
+            EnvironmentCore $config,
             LanguageCore $language,
         ) {
 
@@ -84,20 +86,21 @@ namespace Leantime\Domain\Canvas\Controllers {
          * export - Generate XML file
          *
          * @access protected
-         * @param  integer $id Canvas identifier
+         * @param int $id Canvas identifier
          * @return string XML data
+         * @throws BindingResolutionException
          */
         protected function export(int $id): string
         {
 
             // Retrieve canvas data
             $canvasAry = $this->canvasRepo->getSingleCanvas($id);
-            !empty($canvasAry) || throw new \Exception("Cannot find canvas with id '$id'");
+            !empty($canvasAry) || throw new Exception("Cannot find canvas with id '$id'");
             $projectId = $canvasAry[0]['projectId'];
             $recordsAry = $this->canvasRepo->getCanvasItemsById($id);
             $projectsRepo = app()->make(ProjectRepository::class);
             $projectAry = $projectsRepo->getProject($projectId);
-            !empty($projectAry) || throw new \Exception("Cannot retrieve project id '$projectId'");
+            !empty($projectAry) || throw new Exception("Cannot retrieve project id '$projectId'");
 
             // Generate XML data
             $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>' . PHP_EOL . PHP_EOL;
@@ -109,10 +112,10 @@ namespace Leantime\Domain\Canvas\Controllers {
          * xmlExport - Generate XML for specific data
          *
          * @access protected
-         * @param  string  $canvasKey    Encoded canvas name
-         * @param  string  $canvcasTitle Canvas title
-         * @param  array   $recordsAry   Array of canvas entry records
-         * @param  integer $indent       Indent level to use;
+         * @param string $canvasKey   Encoded canvas name
+         * @param string $canvasTitle
+         * @param array  $recordsAry  Array of canvas entry records
+         * @param int    $indent      Indent level to use;
          * @return string XML data
          */
         protected function xmlExport(string $canvasKey, string $canvasTitle, array $recordsAry, int $indent = 0): string
@@ -129,17 +132,17 @@ namespace Leantime\Domain\Canvas\Controllers {
                 foreach ($recordsAry as $record) {
                     if ($record['box'] === $key) {
                         $xml .= $is . $tab . $tab . $tab . '<item>' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<created>' . (isset($record['created']) ? $record['created'] : '') . '</created>' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<modified>' . (isset($record['modified']) ? $record['modified'] : '') . '</modified>' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<author id="' . $record['author'] . '" firstname="' . (isset($record['authorFirstname']) ? $record['authorFirstname'] : '') . '" ' .
-                             'lastname="' . (isset($record['authorLastname']) ? $record['authorLastname'] : '') . '"/>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<created>' . ($record['created'] ?? '') . '</created>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<modified>' . ($record['modified'] ?? '') . '</modified>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<author id="' . $record['author'] . '" firstname="' . ($record['authorFirstname'] ?? '') . '" ' .
+                             'lastname="' . ($record['authorLastname'] ?? '') . '"/>' . PHP_EOL;
 
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<description>' . (isset($record['description']) ? $record['description'] : '') . '</description>' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<status key="' . (isset($record['status']) ? $record['status'] : '') . '" />' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<relates key="' . (isset($record['relates']) ? $record['relates'] : '') . '" />' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<assumptions>' . (isset($record['assumptions']) ? $record['assumptions'] : '') . '</assumptions>' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<data>' . (isset($record['data']) ? $record['data'] : '') . '</data>' . PHP_EOL;
-                        $xml .= $is . $tab . $tab . $tab . $tab . '<conclusion>' . (isset($record['conclusion']) ? $record['conclusion'] : '') . '</conclusion>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<description>' . ($record['description'] ?? '') . '</description>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<status key="' . ($record['status'] ?? '') . '" />' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<relates key="' . ($record['relates'] ?? '') . '" />' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<assumptions>' . ($record['assumptions'] ?? '') . '</assumptions>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<data>' . ($record['data'] ?? '') . '</data>' . PHP_EOL;
+                        $xml .= $is . $tab . $tab . $tab . $tab . '<conclusion>' . ($record['conclusion'] ?? '') . '</conclusion>' . PHP_EOL;
                         $xml .= $is . $tab . $tab . $tab . '</item>' . PHP_EOL;
                     }
                 }

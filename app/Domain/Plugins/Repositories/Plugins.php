@@ -5,6 +5,9 @@ namespace Leantime\Domain\Plugins\Repositories {
     use Leantime\Core\Db as DbCore;
     use PDO;
 
+    /**
+     *
+     */
     class Plugins
     {
         private DbCore $db;
@@ -19,7 +22,15 @@ namespace Leantime\Domain\Plugins\Repositories {
             $this->db = $db;
         }
 
-        public function getAllPlugins($enabledOnly = true)
+        /**
+         * @param $enabledOnly
+         * @return array|false
+         */
+        /**
+         * @param true $enabledOnly
+         * @return array|false
+         */
+        public function getAllPlugins(bool $enabledOnly = true): false|array
         {
 
             $query = "SELECT
@@ -56,6 +67,10 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $allPlugins;
         }
 
+        /**
+         * @param int $id
+         * @return \Leantime\Domain\Plugins\Models\Plugins|false
+         */
         public function getPlugin(int $id): \Leantime\Domain\Plugins\Models\Plugins|false
         {
 
@@ -82,7 +97,15 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $plugin;
         }
 
-        public function addPlugin(\Leantime\Domain\Plugins\Models\Plugins $plugin)
+        /**
+         * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
+         * @return false|string
+         */
+        /**
+         * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
+         * @return false|string
+         */
+        public function addPlugin(\Leantime\Domain\Plugins\Models\Plugins $plugin): false|string
         {
 
             $sql = "INSERT INTO zp_plugins (
@@ -123,7 +146,15 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $id;
         }
 
-        public function enablePlugin(int $id)
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param int $id
+         * @return bool
+         */
+        public function enablePlugin(int $id): bool
         {
 
             $sql = "UPDATE zp_plugins
@@ -141,7 +172,15 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $result;
         }
 
-        public function disablePlugin(int $id)
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param int $id
+         * @return bool
+         */
+        public function disablePlugin(int $id): bool
         {
 
             $sql = "UPDATE zp_plugins
@@ -159,7 +198,15 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $result;
         }
 
-        public function removePlugin(int $id)
+        /**
+         * @param int $id
+         * @return bool
+         */
+        /**
+         * @param int $id
+         * @return bool
+         */
+        public function removePlugin(int $id): bool
         {
 
             $sql = "DELETE FROM zp_plugins

@@ -2,6 +2,7 @@
 
 namespace Leantime\Command;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Users\Repositories\Users;
 use Symfony\Component\Console\Command\Command;
@@ -12,12 +13,18 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Leantime\Domain\Auth\Models\Roles;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+/**
+ *
+ */
 class AddUserCommand extends Command
 {
     protected static $defaultName = 'user:add';
     protected static $defaultDescription = 'Add a new User';
 
-    protected function configure()
+    /**
+     * @return void
+     */
+    protected function configure(): void
     {
         parent::configure();
         $this->addOption('email', null, InputOption::VALUE_REQUIRED, "User's Email")
@@ -40,9 +47,10 @@ class AddUserCommand extends Command
     /**
      * Execute the command
      *
-     * @param  InputInterface  $input
-     * @param  OutputInterface $output
-     * @return integer 0 if everything went fine, or an exit code.
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int 0 if everything went fine, or an exit code.
+     * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -121,7 +129,7 @@ class AddUserCommand extends Command
                 $io->error("Failed to Add User");
                 return Command::FAILURE;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $io->error($ex);
             return Command::FAILURE;
         }

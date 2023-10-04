@@ -9,6 +9,9 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use Leantime\Core\Controller;
 
+    /**
+     *
+     */
     class Submenu extends Controller
     {
         private MenuRepository $menu;

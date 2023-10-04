@@ -1,4 +1,7 @@
 <?php
+
+use Leantime\Core\Theme;
+
 defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -158,7 +161,7 @@ $user = $tpl->get('user');
                                     <span class='field span6'>
                                         <select name="theme" id="theme" style="width: 220px">
                                             <?php
-                                            $themeCore = app()->make(\Leantime\Core\Theme::class);
+                                            $themeCore = app()->make(Theme::class);
                                             $themeAll = $themeCore->getAll();
                                             foreach ($themeAll as $key => $name) {
                                                 ?>
@@ -193,6 +196,9 @@ $user = $tpl->get('user');
                                     <span class='field span6'>
                                         <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
                                             <option value="">--<?php echo $tpl->__('label.choose_option') ?>--</option>
+                                             <option value="60" <?php if ($values['messagesfrequency'] == "60") {
+                                                 echo " selected ";
+                                             } ?>><?php echo $tpl->__('label.1min') ?></option>
                                             <option value="300" <?php if ($values['messagesfrequency'] == "300") {
                                                 echo " selected ";
                                                                 } ?>><?php echo $tpl->__('label.5min') ?></option>

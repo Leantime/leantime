@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
@@ -9,22 +10,39 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
 
+    /**
+     *
+     */
     class MoveTicket extends Controller
     {
         private TicketService $ticketService;
         private ProjectService $projectService;
 
+        /**
+         * @param TicketService  $ticketService
+         * @param ProjectService $projectService
+         * @return void
+         */
         public function init(
             TicketService $ticketService,
             ProjectService $projectService
-        ) {
+        ): void {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->ticketService = $ticketService;
             $this->projectService = $projectService;
         }
 
-        public function get($params)
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         */
+        public function get($params): void
         {
             $ticketId = $params['id'] ?? '';
 
@@ -38,7 +56,17 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->displayPartial('tickets.moveTicket');
         }
 
-        public function post($params)
+        /**
+         * @param $params
+         * @return void
+         */
+        /**
+         * @param $params
+         * @return void
+         * @throws BindingResolutionException
+         * @throws BindingResolutionException
+         */
+        public function post($params): void
         {
             $ticketId = null;
             if (isset($_GET['id'])) {

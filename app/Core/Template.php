@@ -2,9 +2,24 @@
 
 namespace Leantime\Core;
 
+use Exception;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\View\Compilers\BladeCompiler;
+use Illuminate\View\Compilers\Compiler;
+use Illuminate\View\Compilers\CompilerInterface;
+use Illuminate\View\Engines\CompilerEngine;
+use Illuminate\View\Engines\EngineResolver;
+use Illuminate\View\Engines\PhpEngine;
+use Illuminate\View\FileViewFinder;
+use Illuminate\View\View;
+use Illuminate\View\ViewFinderInterface;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Illuminate\Support\Str;
+use ReflectionClass;
 
 /**
  * Template class - Template routing
@@ -19,53 +34,53 @@ class Template
     /**
      * @var array - vars that are set in the action
      */
-    private $vars = array();
+    private array $vars = array();
 
     /**
      *
-     * @var string
+     * @var string|Frontcontroller
      */
-    public $frontcontroller = '';
+    public string|Frontcontroller $frontcontroller = '';
 
     /**
      * @var string
      */
-    private $notifcation = '';
+    private string $notifcation = '';
 
     /**
      * @var string
      */
-    private $notifcationType = '';
+    private string $notifcationType = '';
 
     /**
      * @var string
      */
-    private $hookContext = '';
+    private string $hookContext = '';
 
     /**
      * @var string
      */
-    public $tmpError = '';
+    public string $tmpError = '';
 
     /**
      * @var IncomingRequest|string
      */
-    public $incomingRequest = '';
+    public string|IncomingRequest $incomingRequest = '';
 
     /**
      * @var language|string
      */
-    public $language = '';
+    public Language|string $language = '';
 
     /**
      * @var string
      */
-    public $template = '';
+    public string $template = '';
 
     /**
      * @var array
      */
-    public $picture = array(
+    public array $picture = array(
         'calendar' => 'fa-calendar',
         'clients' => 'fa-people-group',
         'dashboard' => 'fa-th-large',
@@ -88,27 +103,30 @@ class Template
     /**
      * @var \Illuminate\View\Factory
      */
-    public \Illuminate\Contracts\View\Factory $viewFactory;
+    public Factory $viewFactory;
     private AppSettings $settings;
     private Environment $config;
     private AuthService $login;
     private Roles $roles;
-    private \Illuminate\View\Compilers\CompilerInterface $bladeCompiler;
+    private CompilerInterface $bladeCompiler;
 
 
     /**
      * __construct - get instance of frontcontroller
      *
-     * @param  Theme           $theme
-     * @param  Language        $language
-     * @param  Frontcontroller $frontcontroller
-     * @param  IncomingRequest $incomingRequest
-     * @param  Environment     $config
-     * @param  AppSettings     $settings
-     * @param  AuthService     $login
-     * @param  Roles           $roles
+     * @param Theme           $theme
+     * @param Language        $language
+     * @param Frontcontroller $frontcontroller
+     * @param IncomingRequest $incomingRequest
+     * @param Environment     $config
+     * @param AppSettings     $settings
+     * @param AuthService     $login
+     * @param Roles           $roles
+     * @param Factory|null    $viewFactory
+     * @param Compiler|null   $bladeCompiler
+     * @throws BindingResolutionException
+     * @throws \ReflectionException
      * @access public
-     * @return self
      */
     public function __construct(
         Theme $theme,
@@ -119,8 +137,8 @@ class Template
         AppSettings $settings,
         AuthService $login,
         Roles $roles,
-        \Illuminate\Contracts\View\Factory $viewFactory = null,
-        \Illuminate\View\Compilers\Compiler $bladeCompiler = null
+        Factory $viewFactory = null,
+        Compiler $bladeCompiler = null
     ) {
         $this->theme = $theme;
         $this->language = $language;
@@ -145,15 +163,15 @@ class Template
     /**
      * Create View Factory capable of rendering PHP and Blade templates
      *
-     * @param \Leantime\Core\Application              $app
-     * @param \Illuminate\View\Engines\EngineResolver $viewResolver
-     *
+     * @param Application $app
+     * @param Dispatcher  $eventDispatcher
      * @return void
+     * @throws BindingResolutionException
      */
     public function setupBlade(
-        \Leantime\Core\Application $app,
-        \Illuminate\Events\Dispatcher $eventDispatcher
-    ) {
+        Application $app,
+        Dispatcher $eventDispatcher
+    ): void {
         // ComponentTagCompiler Expects the Foundation\Application Implmentation, let's trick it and give it the container.
         $app->instance(\Illuminate\Contracts\Foundation\Application::class, $app::getInstance());
 
@@ -173,7 +191,7 @@ class Template
             $pluginPaths = collect(glob(APP_ROOT . '/app/Plugins/*'))
                 ->mapWithKeys(function ($path) use ($domainPaths) {
                     if ($domainPaths->has($basename = strtolower(basename($path)))) {
-                        throw new \Exception("Plugin $basename conflicts with domain");
+                        throw new Exception("Plugin $basename conflicts with domain");
                     }
                     return [$basename => "$path/Templates"];
                 });
@@ -186,10 +204,10 @@ class Template
 
         // Setup Blade Compiler
         $app->singleton(
-            \Illuminate\View\Compilers\CompilerInterface::class,
+            CompilerInterface::class,
             function ($app) {
-                $bladeCompiler = new \Illuminate\View\Compilers\BladeCompiler(
-                    $app->make(\Illuminate\Filesystem\Filesystem::class),
+                $bladeCompiler = new BladeCompiler(
+                    $app->make(Filesystem::class),
                     $this->config->get('view.compiled'),
                 );
 
@@ -203,37 +221,37 @@ class Template
                 return $bladeCompiler;
             }
         );
-        $app->alias(\Illuminate\View\Compilers\CompilerInterface::class, 'blade.compiler');
+        $app->alias(CompilerInterface::class, 'blade.compiler');
 
         // Register Blade Engines
         $app->singleton(
-            \Illuminate\View\Engines\EngineResolver::class,
+            EngineResolver::class,
             function ($app) {
-                $viewResolver = new \Illuminate\View\Engines\EngineResolver();
-                $viewResolver->register('blade', fn () => $app->make(\Illuminate\View\Engines\CompilerEngine::class));
-                $viewResolver->register('php', fn () => $app->make(\Illuminate\View\Engines\PhpEngine::class));
+                $viewResolver = new EngineResolver();
+                $viewResolver->register('blade', fn () => $app->make(CompilerEngine::class));
+                $viewResolver->register('php', fn () => $app->make(PhpEngine::class));
                 return $viewResolver;
             }
         );
-        $app->alias(\Illuminate\View\Engines\EngineResolver::class, 'view.engine.resolver');
+        $app->alias(EngineResolver::class, 'view.engine.resolver');
 
         // Setup View Finder
         $app->singleton(
-            \Illuminate\View\ViewFinderInterface::class,
+            ViewFinderInterface::class,
             function ($app) {
-                $viewFinder = $app->make(\Illuminate\View\FileViewFinder::class, ['paths' => []]);
+                $viewFinder = $app->make(FileViewFinder::class, ['paths' => []]);
                 array_map([$viewFinder, 'addNamespace'], array_keys($_SESSION['template_paths']), array_values($_SESSION['template_paths']));
                 return $viewFinder;
             }
         );
-        $app->alias(\Illuminate\View\ViewFinderInterface::class, 'view.finder');
+        $app->alias(ViewFinderInterface::class, 'view.finder');
 
         // Setup Events Dispatcher
-        $app->bind(\Illuminate\Contracts\Events\Dispatcher::class, \Illuminate\Events\Dispatcher::class);
+        $app->bind(\Illuminate\Contracts\Events\Dispatcher::class, Dispatcher::class);
 
         // Setup View Factory
         $app->singleton(
-            \Illuminate\Contracts\View\Factory::class,
+            Factory::class,
             function ($app) {
                 $viewFactory = $app->make(\Illuminate\View\Factory::class);
                 array_map(fn ($ext) => $viewFactory->addExtension($ext, 'php'), ['inc.php', 'sub.php', 'tpl.php']);
@@ -243,18 +261,19 @@ class Template
                 return $viewFactory;
             }
         );
-        $app->alias(\Illuminate\Contracts\View\Factory::class, 'view');
+        $app->alias(Factory::class, 'view');
 
-        $this->bladeCompiler = $app->make(\Illuminate\View\Compilers\CompilerInterface::class);
-        $this->viewFactory = $app->make(\Illuminate\Contracts\View\Factory::class);
+        $this->bladeCompiler = $app->make(CompilerInterface::class);
+        $this->viewFactory = $app->make(Factory::class);
     }
 
     /**
      * attachComposers - attach view composers
      *
      * @return void
+     * @throws \ReflectionException
      */
-    public function attachComposers()
+    public function attachComposers(): void
     {
         if (empty($_SESSION['composers']) || $this->config->debug) {
             $customComposerClasses = collect(glob(APP_ROOT . '/custom/Views/Composers/*.php'))
@@ -280,7 +299,7 @@ class Template
         foreach ($_SESSION['composers'] as $composerClass) {
             if (
                 is_subclass_of($composerClass, Composer::class) &&
-                ! (new \ReflectionClass($composerClass))->isAbstract()
+                ! (new ReflectionClass($composerClass))->isAbstract()
             ) {
                 $this->viewFactory->composer($composerClass::$views, $composerClass);
             }
@@ -292,7 +311,7 @@ class Template
      *
      * @return void
      */
-    public function setupDirectives()
+    public function setupDirectives(): void
     {
         $this->bladeCompiler->directive(
             'dispatchEvent',
@@ -330,7 +349,7 @@ class Template
      *
      * @return void
      */
-    public function setupGlobalVars()
+    public function setupGlobalVars(): void
     {
         $this->viewFactory->share([
             'frontController' => $this->frontcontroller,
@@ -347,8 +366,8 @@ class Template
     /**
      * assign - assign variables in the action for template
      *
-     * @param $name
-     * @param $value
+     * @param string $name  Name of variable
+     * @param mixed  $value Value of variable
      * @return void
      */
     public function assign(string $name, mixed $value): void
@@ -361,10 +380,10 @@ class Template
     /**
      * setNotification - assign errors to the template
      *
-     * @param  string $msg
-     * @param  string $type
-     * @param  string $event_id as a string for further identification
-     * @return string
+     * @param string $msg
+     * @param string $type
+     * @param string $event_id as a string for further identification
+     * @return void
      */
     public function setNotification(string $msg, string $type, string $event_id = ''): void
     {
@@ -377,15 +396,15 @@ class Template
      * getTemplatePath - Find template in custom and src directories
      *
      * @access public
-     * @throws \Exception If template not found.
-     * @param  string $namespace The namespace the template is for.
-     * @param  string $path      The path to the template.
-     * @return string|boolean Full template path or false if file does not exist
+     * @param string $namespace The namespace the template is for.
+     * @param string $path      The path to the template.
+     * @return string Full template path or false if file does not exist
+     * @throws Exception If template not found.
      */
     public function getTemplatePath(string $namespace, string $path): string
     {
         if ($namespace == '' || $path == '') {
-            throw new \Exception("Both namespace and path must be provided");
+            throw new Exception("Both namespace and path must be provided");
         }
 
         $fullpath = self::dispatch_filter(
@@ -401,7 +420,7 @@ class Template
             return $fullpath;
         }
 
-        throw new \Exception("Template $fullpath not found");
+        throw new Exception("Template $fullpath not found");
     }
 
     /**
@@ -424,8 +443,10 @@ class Template
      * display - display template from folder template including main layout wrapper
      *
      * @access public
-     * @param  $template
+     * @param string $template
+     * @param string $layout
      * @return void
+     * @throws Exception
      */
     public function display(string $template, string $layout = "app"): void
     {
@@ -436,19 +457,19 @@ class Template
 
         $layout = $this->confirmLayoutName($layout, $template);
 
-        $action = $this->frontcontroller::getActionName($template);
-        $module = $this->frontcontroller::getModuleName($template);
+        $action = Frontcontroller::getActionName($template);
+        $module = Frontcontroller::getModuleName($template);
 
         $loadFile = $this->getTemplatePath($module, $action);
 
         $this->hookContext = "tpl.$module.$action";
         $this->viewFactory->share(['tpl' => $this]);
 
-        /** @var \Illuminate\View\View */
+        /** @var View $this */
         $view = $this->viewFactory->make($loadFile);
 
         /** @todo this can be reduced to just the 'if' code after removal of php template support */
-        if ($view->getEngine() instanceof \Illuminate\View\Engines\CompilerEngine) {
+        if ($view->getEngine() instanceof CompilerEngine) {
             $view->with(array_merge(
                 $this->vars,
                 ['layout' => $layout]
@@ -467,7 +488,19 @@ class Template
         echo $content;
     }
 
-    protected function confirmLayoutName($layoutName, $template)
+    /**
+     * @param $layoutName
+     * @param $template
+     * @return bool|string
+     * @throws Exception
+     */
+    /**
+     * @param $layoutName
+     * @param $template
+     * @return bool|string
+     * @throws Exception
+     */
+    protected function confirmLayoutName($layoutName, $template): bool|string
     {
         $layout = htmlspecialchars($layoutName);
         $layout = self::dispatch_filter("layout", $layout);
@@ -485,7 +518,7 @@ class Template
      * @param  $jsonContent
      * @return void
      */
-    public function displayJson($jsonContent)
+    public function displayJson($jsonContent): void
     {
         header('Content-Type: application/json; charset=utf-8');
         if ($jsonContent !== false) {
@@ -501,8 +534,9 @@ class Template
      * @access public
      * @param  $template
      * @return void
+     * @throws Exception
      */
-    public function displayPartial($template)
+    public function displayPartial($template): void
     {
         $this->display($template, 'blank');
     }
@@ -511,7 +545,7 @@ class Template
      * get - get assigned values
      *
      * @access public
-     * @param  $name
+     * @param string $name
      * @return array
      */
     public function get(string $name): mixed
@@ -532,11 +566,7 @@ class Template
     public function getNotification(): array
     {
         if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
-            if (isset($_SESSION['event_id'])) {
-                $event_id = $_SESSION['event_id'];
-            } else {
-                $event_id = '';
-            }
+            $event_id = $_SESSION['event_id'] ?? '';
             return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
         } else {
             return array('type' => "", 'msg' => "", 'event_id' => "");
@@ -547,13 +577,14 @@ class Template
      * displaySubmodule - display a submodule for a given module
      *
      * @access public
-     * @param  string $alias
+     * @param string $alias
      * @return void
+     * @throws Exception
      */
-    public function displaySubmodule(string $alias)
+    public function displaySubmodule(string $alias): void
     {
         if (! str_contains($alias, '-')) {
-            throw new \Exception("Submodule alias must be in the format module-submodule");
+            throw new Exception("Submodule alias must be in the format module-submodule");
         }
 
         [$module, $submodule] = explode("-", $alias);
@@ -568,8 +599,9 @@ class Template
      *
      * @access public
      * @return string
+     * @throws BindingResolutionException
      */
-    public function displayNotification()
+    public function displayNotification(): string
     {
         $notification = '';
         $note = $this->getNotification();
@@ -578,7 +610,7 @@ class Template
 
         $message = self::dispatch_filter(
             'message',
-            $language->__($message_id, false),
+            $language->__($message_id),
             $note
         );
         $message = self::dispatch_filter(
@@ -612,8 +644,9 @@ class Template
      *
      * @access public
      * @return string
+     * @throws BindingResolutionException
      */
-    public function displayInlineNotification()
+    public function displayInlineNotification(): string
     {
         $notification = '';
         $note = $this->getNotification();
@@ -622,7 +655,7 @@ class Template
 
         $message = self::dispatch_filter(
             'message',
-            $language->__($message_id, false),
+            $language->__($message_id),
             $note
         );
         $message = self::dispatch_filter(
@@ -697,7 +730,7 @@ class Template
     /**
      * e - echos and escapes content
      *
-     * @param  string $content
+     * @param string|null $content
      * @return void
      */
     public function e(?string $content): void
@@ -711,7 +744,7 @@ class Template
     /**
      * escape - escapes content
      *
-     * @param  string $content
+     * @param string|null $content
      * @return string
      */
     public function escape(?string $content): string
@@ -727,7 +760,7 @@ class Template
     /**
      * escapeMinimal - escapes content
      *
-     * @param  string $content
+     * @param string|null $content
      * @return string
      */
     public function escapeMinimal(?string $content): string
@@ -759,11 +792,15 @@ class Template
      * getFormattedDateString - returns a language specific formatted date string. wraps language class method
      *
      * @access public
-     * @param  string $date
+     * @param string|null $date
      * @return string
      */
-    public function getFormattedDateString($date): string
+    public function getFormattedDateString(?string $date): string
     {
+        if ($date == null) {
+            return '';
+        }
+
         return $this->language->getFormattedDateString($date);
     }
 
@@ -771,10 +808,10 @@ class Template
      * getFormattedTimeString - returns a language specific formatted time string. wraps language class method
      *
      * @access public
-     * @param $date string
+     * @param string $date
      * @return string
      */
-    public function getFormattedTimeString($date): string
+    public function getFormattedTimeString(string $date): string
     {
         return $this->language->getFormattedTimeString($date);
     }
@@ -783,7 +820,7 @@ class Template
      * getFormattedDateTimeString - returns a language specific formatted date and time string. wraps language class method
      *
      * @access public
-     * @param  string $date
+     * @param string $dateTime
      * @return string
      */
     public function get24HourTimestring(string $dateTime): string
@@ -797,14 +834,14 @@ class Template
      * @see https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
      * @author Søren Løvborg <https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg>
      * @access public
-     * @param  string  $html
-     * @param  integer $maxLength
-     * @param  string  $ending
-     * @param  boolean $exact
-     * @param  boolean $considerHtml
+     * @param string $html
+     * @param int    $maxLength
+     * @param string $ending
+     * @param bool   $exact
+     * @param bool   $considerHtml
      * @return string
      */
-    public function truncate($html, $maxLength = 100, $ending = '(...)', $exact = true, $considerHtml = false)
+    public function truncate(string $html, int $maxLength = 100, string $ending = '(...)', bool $exact = true, bool $considerHtml = false): string
     {
         $printedLength = 0;
         $position = 0;
@@ -881,10 +918,10 @@ class Template
      * convertRelativePaths - convert relative paths to absolute paths
      *
      * @access public
-     * @param  string $text
-     * @return string
+     * @param string|null $text
+     * @return string|null
      */
-    public function convertRelativePaths(?string $text)
+    public function convertRelativePaths(?string $text): ?string
     {
         if (is_null($text)) {
             return $text;
@@ -918,8 +955,9 @@ class Template
      *
      * @access public
      * @return string
+     * @throws BindingResolutionException
      */
-    public function getModulePicture()
+    public function getModulePicture(): string
     {
         $module = frontcontroller::getModuleName($this->template);
 
@@ -935,13 +973,13 @@ class Template
      * displayLink - display link
      *
      * @access public
-     * @param  string $module
-     * @param  string $name
-     * @param  array  $params
-     * @param  array  $attribute
-     * @return string
+     * @param string     $module
+     * @param string     $name
+     * @param array|null $params
+     * @param array|null $attribute
+     * @return false|string
      */
-    public function displayLink($module, $name, $params = null, $attribute = null)
+    public function displayLink(string $module, string $name, array $params = null, array $attribute = null): false|string
     {
 
         $mod = explode('.', $module);
@@ -1006,7 +1044,7 @@ class Template
      * @param string $hookName
      * @param mixed  $payload
      */
-    public function dispatchTplEvent($hookName, $payload = [])
+    public function dispatchTplEvent(string $hookName, mixed $payload = null): void
     {
         $this->dispatchTplHook('event', $hookName, $payload);
     }
@@ -1014,29 +1052,30 @@ class Template
     /**
      * @param string $hookName
      * @param mixed  $payload
-     * @param mixed  $available_params
+     * @param array  $available_params
      *
      * @return mixed
      */
-    public function dispatchTplFilter($hookName, $payload = [], $available_params = [])
+    public function dispatchTplFilter(string $hookName, mixed $payload, array $available_params = []): mixed
     {
+
         return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
     }
 
     /**
      * @param string $type
      * @param string $hookName
-     * @param mixed  $payload
-     * @param mixed  $available_params
+     * @param array  $payload
+     * @param array  $available_params
      *
      * @return null|mixed
      */
-    private function dispatchTplHook($type, $hookName, $payload = [], $available_params = [])
+    private function dispatchTplHook(string $type, string $hookName, mixed $payload, array $available_params = []): mixed
     {
         if (
             !is_string($type) || !in_array($type, ['event', 'filter'])
         ) {
-            return;
+            return null;
         }
 
         if ($type == 'filter') {
@@ -1044,5 +1083,7 @@ class Template
         }
 
         self::dispatch_event($hookName, $payload, $this->hookContext);
+
+        return null;
     }
 }

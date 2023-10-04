@@ -4,11 +4,19 @@ namespace Leantime\Domain\Timesheets\Services {
 
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+
+    /**
+     *
+     */
     class Timesheets
     {
         private TimesheetRepository $timesheetsRepo;
         private LanguageCore $language;
 
+        /**
+         * @param TimesheetRepository $timesheetsRepo
+         * @param LanguageCore        $language
+         */
         public function __construct(TimesheetRepository $timesheetsRepo, LanguageCore $language)
         {
             $this->timesheetsRepo = $timesheetsRepo;
@@ -18,24 +26,58 @@ namespace Leantime\Domain\Timesheets\Services {
         /*
         * isClocked - Checks to see whether a user is clocked in
         */
-        public function isClocked($sessionId)
+        /**
+         * @param $sessionId
+         * @return array|false
+         */
+        /**
+         * @param $sessionId
+         * @return array|false
+         */
+        public function isClocked($sessionId): false|array
         {
 
             return $this->timesheetsRepo->isClocked($sessionId);
         }
 
-        public function punchIn($ticketId)
+        /**
+         * @param $ticketId
+         * @return mixed
+         */
+        /**
+         * @param $ticketId
+         * @return mixed
+         */
+        public function punchIn($ticketId): mixed
         {
 
             return $this->timesheetsRepo->punchIn($ticketId);
         }
 
-        public function punchOut($ticketId)
+        /**
+         * @param $ticketId
+         * @return false|float|int
+         */
+        /**
+         * @param $ticketId
+         * @return false|float|int
+         */
+        public function punchOut($ticketId): float|false|int
         {
             return $this->timesheetsRepo->punchOut($ticketId);
         }
 
-        public function logTime($ticketId, $params)
+        /**
+         * @param $ticketId
+         * @param $params
+         * @return string[]|true
+         */
+        /**
+         * @param $ticketId
+         * @param $params
+         * @return array|bool
+         */
+        public function logTime($ticketId, $params): array|bool
         {
 
             $values = array(
@@ -86,13 +128,29 @@ namespace Leantime\Domain\Timesheets\Services {
             }
         }
 
-        public function getLoggedHoursForTicketByDate($ticketId)
+        /**
+         * @param $ticketId
+         * @return array
+         */
+        /**
+         * @param $ticketId
+         * @return array
+         */
+        public function getLoggedHoursForTicketByDate($ticketId): array
         {
 
             return $this->timesheetsRepo->getLoggedHoursForTicket($ticketId);
         }
 
-        public function getSumLoggedHoursForTicket($ticketId)
+        /**
+         * @param $ticketId
+         * @return int|mixed
+         */
+        /**
+         * @param $ticketId
+         * @return int|mixed
+         */
+        public function getSumLoggedHoursForTicket($ticketId): mixed
         {
 
             $result = $this->getLoggedHoursForTicketByDate($ticketId);
@@ -107,7 +165,15 @@ namespace Leantime\Domain\Timesheets\Services {
             return $allHours;
         }
 
-        public function getRemainingHours($ticket)
+        /**
+         * @param $ticket
+         * @return int|mixed
+         */
+        /**
+         * @param $ticket
+         * @return int|mixed
+         */
+        public function getRemainingHours($ticket): mixed
         {
 
             $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticket->id);
@@ -122,32 +188,82 @@ namespace Leantime\Domain\Timesheets\Services {
             return $remaining;
         }
 
-        public function getUsersTicketHours($ticketId, $userId)
+        /**
+         * @param $ticketId
+         * @param $userId
+         * @return int|mixed
+         */
+        /**
+         * @param $ticketId
+         * @param $userId
+         * @return int|mixed
+         */
+        public function getUsersTicketHours($ticketId, $userId): mixed
         {
             return  $this->timesheetsRepo->getUsersTicketHours($ticketId, $userId);
         }
 
-        public function getLoggableHourTypes()
+        /**
+         * @return array|string[]
+         */
+        /**
+         * @return array|string[]
+         */
+        public function getLoggableHourTypes(): array
         {
             return $this->timesheetsRepo->kind;
         }
 
-        public function getAll($projectId = -1, $kind = 'all', $dateFrom = '0000-01-01 00:00:00', $dateTo = '9999-12-24 00:00:00', $userId = 'all', $invEmpl = '1', $invComp = '1', $ticketFilter = '-1', $paid = '1', $clientId = '-1')
+
+        /**
+         * @param int      $projectId
+         * @param string   $kind
+         * @param string   $dateFrom
+         * @param string   $dateTo
+         * @param int|null $userId
+         * @param string   $invEmpl
+         * @param string   $invComp
+         * @param string   $ticketFilter
+         * @param string   $paid
+         * @param string   $clientId
+         * @return array|false
+         */
+        public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
         {
             return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid, $clientId);
         }
 
+        /**
+         * @param $values
+         * @return null
+         */
+        /**
+         * @param $values
+         * @return null
+         */
         public function export($values)
         {
             return $this->timesheetsRepo->export($values);
         }
 
-        public function updateInvoices($invEmpl, $invComp = '', $paid = '')
+        /**
+         * @param array $invEmpl
+         * @param array  $invComp
+         * @param array  $paid
+         * @return bool
+         */
+        public function updateInvoices($invEmpl, array $invComp = [], array $paid = []): bool
         {
             return $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
         }
 
-        public function getBookedHourTypes()
+        /**
+         * @return array|string[]
+         */
+        /**
+         * @return array|string[]
+         */
+        public function getBookedHourTypes(): array
         {
             return $this->timesheetsRepo->kind;
         }
