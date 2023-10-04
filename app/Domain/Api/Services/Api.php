@@ -35,10 +35,6 @@ class Api
      * @param $apiKey
      * @return bool|array
      */
-    /**
-     * @param $apiKey
-     * @return bool|array
-     */
     public function getAPIKeyUser($apiKey): bool|array
     {
 
@@ -150,12 +146,7 @@ class Api
         return implode('', $pieces);
     }
 
-    /**
-     * @param $code
-     * @param $message
-     * @param $data
-     * @return void
-     */
+
     /**
      * @param $code
      * @param $message

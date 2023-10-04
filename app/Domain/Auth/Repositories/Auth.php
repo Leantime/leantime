@@ -14,13 +14,13 @@ namespace Leantime\Domain\Auth\Repositories {
     {
         /**
          * @access private
-         * @var    integer|null user id from DB
+         * @var    int|null user id from DB
          */
         private ?int $userId = null;
 
         /**
          * @access private
-         * @var    integer|null user id from DB
+         * @var    int|null user id from DB
          */
         private ?int $clientId = null;
 
@@ -62,7 +62,7 @@ namespace Leantime\Domain\Auth\Repositories {
 
         /**
          * @access private
-         * @var    boolean $twoFAEnabled
+         * @var    bool $twoFAEnabled
          */
         private bool $twoFAEnabled;
 
@@ -94,7 +94,7 @@ namespace Leantime\Domain\Auth\Repositories {
 
         /**
          * @access public
-         * @var    integer time for cookie
+         * @var    int time for cookie
          */
         public int $cookieTime;
 

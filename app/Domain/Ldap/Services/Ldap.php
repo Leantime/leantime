@@ -41,12 +41,12 @@ class Ldap
     private Environment $config;
 
     /**
-     * @var array|boolean|integer|mixed|string
+     * @var array|bool|int|mixed|string
      */
     public mixed $useLdap;
 
     /**
-     * @var array|boolean|integer|mixed|string
+     * @var array|bool|int|mixed|string
      */
     public mixed $autoCreateUser;
 

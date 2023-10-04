@@ -23,7 +23,7 @@ namespace Leantime\Domain\Clients\Repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public int $id;
 

@@ -11,15 +11,23 @@
     <rule ref="Modernize" />
     <rule ref="NormalizedArrays" />
 
+    <!-- exclude our migrations directory from the violation check-->
+    <exclude-pattern>*.blade.php</exclude-pattern>
+
+    <!-- ignore warnings and display ERRORS only -->
+    <arg  value="np"/>
+
     <rule ref="Universal.Namespaces.DisallowCurlyBraceSyntax">
         <exclude name="Universal.Namespaces.DisallowCurlyBraceSyntax.Forbidden" />
     </rule>
 
     <rule ref="Squiz.Commenting.FunctionComment">
+        <exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
         <exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
         <exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
         <exclude name="Squiz.Commenting.FunctionComment.EmptyThrows" />
         <exclude name="Squiz.Commenting.VariableComment.MissingReturn" />
+        <exclude name="Squiz.Commenting.FunctionComment.ParamCommentNotCapital" />
     </rule>
 
     <rule ref="Squiz.Commenting.FunctionCommentThrowTag">

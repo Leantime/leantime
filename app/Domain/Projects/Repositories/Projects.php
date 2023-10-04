@@ -30,13 +30,13 @@ namespace Leantime\Domain\Projects\Repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public int $id = 0; // WAS: '';
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public int $clientId = 0;
 

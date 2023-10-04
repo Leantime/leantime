@@ -35,7 +35,7 @@ namespace Leantime\Domain\Users\Repositories {
 
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public int $role;
 
@@ -58,7 +58,7 @@ namespace Leantime\Domain\Users\Repositories {
         public string $department;
         /**
          * @access public
-         * @var    integer
+         * @var    int
          */
         public int $id;
 

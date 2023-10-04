@@ -25,7 +25,7 @@ class Fileupload
     private mixed $path;
 
     /**
-     * @var integer max filesize in kb
+     * @var int max filesize in kb
      */
     public int $max_size = 10000;
 
@@ -35,7 +35,7 @@ class Fileupload
     private string $file_tmp_name;
 
     /**
-     * @var integer
+     * @var int
      */
     public int $file_size;
 

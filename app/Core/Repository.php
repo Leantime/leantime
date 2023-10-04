@@ -9,7 +9,7 @@ use ReflectionClass;
 use ReflectionProperty;
 
 /**
- * repository
+ * Repository
  *
  * @package    leantime
  * @subpackage core
@@ -48,7 +48,7 @@ abstract class Repository
             private array $args;
 
             /**
-             * @var repository
+             * @var Repository
              */
             private Repository $caller_class;
 
@@ -67,7 +67,7 @@ abstract class Repository
              * @param array      $args         - usually the value of func_get_args(), gives events/filters values to work with
              * @param Repository $caller_class - the class object that was called
              */
-            public function __construct(array $args, repository $caller_class)
+            public function __construct(array $args, Repository $caller_class)
             {
                 $this->args = $args;
                 $this->caller_class = $caller_class;

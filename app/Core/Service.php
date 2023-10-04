@@ -13,8 +13,8 @@ interface Service
     /**
      * patches the object by key.
      *
-     * @param int   $id     id of the object to be patched
-     * @param  array $params key=>value array where key represents the object field name and value the value.
+     * @param int   $id         Id of the object to be patched
+     * @param  array $params    Key=>value array where key represents the object field name and value the value.
      * @access public
      *
      * @return bool returns true on success, false on failure
@@ -27,7 +27,7 @@ interface Service
      * @param  object|array $object expects the entire object to be updated as object or array
      * @access public
      *
-     * @return bool returns true on success, false on failure
+     * @return bool                 Returns true on success, false on failure
      */
     public function update(object|array $object): bool;
 
@@ -35,8 +35,8 @@ interface Service
      * Creates a new object
      *
      * @access public
-     * @param  object|array $object object or array to be created
-     * @return int|false returns id of new element or false
+     * @param  object|array $object     Object or array to be created
+     * @return int|false                Returns id of new element or false
      */
     public function create(object|array $object): int|false;
 
@@ -44,8 +44,8 @@ interface Service
      * Deletes object
      *
      * @access public
-     * @param int $id id of the object to be deleted
-     * @return bool returns id of new element or false
+     * @param int $id   Id of the object to be deleted
+     * @return bool     Returns id of new element or false
      */
     public function delete(int $id): bool;
 
@@ -53,8 +53,8 @@ interface Service
      * Gets 1 specific item
      *
      * @access public
-     * @param int $id id of the object to be retrieved
-     * @return object|array|false returns object or array. False on failure or if item cannot be found
+     * @param int $id   Id of the object to be retrieved
+     * @return object|array|false Returns object or array. False on failure or if item cannot be found
      */
     public function get(int $id): object|array|false;
 
@@ -62,8 +62,8 @@ interface Service
      * Get all items
      *
      * @access public
-     * @param array|null $searchparams search parameters
-     * @return array|false returns array on success, false on failure. No results should return empty array
+     * @param array|null $searchparams Search parameters
+     * @return array|false Returns array on success, false on failure. No results should return empty array
      */
     public function getAll(array $searchparams = null): array|false;
 }

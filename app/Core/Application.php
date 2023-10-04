@@ -15,7 +15,7 @@ class Application extends Container
     /**
      * Application bootstrap status
      *
-     * @var boolean
+     * @var bool
      */
     private static bool $bootstrapped = false;
 

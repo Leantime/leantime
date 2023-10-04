@@ -75,12 +75,12 @@ class Mailer
     private string $html;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private bool $hideWrapper = false;
 
     /**
-     * @var boolean
+     * @var bool
      */
     public bool $nl2br = true;
 
