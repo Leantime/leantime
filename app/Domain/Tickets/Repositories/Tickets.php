@@ -22,13 +22,13 @@ namespace Leantime\Domain\Tickets\Repositories {
 
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
         public ?object $result = null;
 
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
         public ?object $tickets = null;
 
@@ -119,13 +119,13 @@ namespace Leantime\Domain\Tickets\Repositories {
 
         /**
          * @access private
-         * @var    boolean
+         * @var    bool
          */
         private int|bool $page = 0;
 
         /**
          * @access public
-         * @var    boolean
+         * @var    bool
          */
         public int|bool $rowsPerPage = 10;
 
@@ -418,7 +418,7 @@ namespace Leantime\Domain\Tickets\Repositories {
          * getAllBySearchCriteria - get Tickets by a serach term and/or a filter
          *
          * @access public
-         * @param array $searchCriteria
+         * @param array  $searchCriteria
          * @param string $sort
          * @param null   $limit
          * @return array | bool
@@ -764,7 +764,7 @@ namespace Leantime\Domain\Tickets\Repositories {
          *
          * @access public
          * @param  $id
-         * @return \Leantime\Domain\Tickets\Models\Tickets|boolean
+         * @return \Leantime\Domain\Tickets\Models\Tickets|bool
          */
         public function getTicket($id): \Leantime\Domain\Tickets\Models\Tickets|bool
         {
@@ -1567,8 +1567,8 @@ namespace Leantime\Domain\Tickets\Repositories {
          * addTicket - add a Ticket with postback test
          *
          * @access public
-         * @param  array $values
-         * @return boolean
+         * @param array $values
+         * @return bool|int
          */
         public function addTicket(array $values): bool|int
         {
@@ -1657,9 +1657,11 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             $stmn->closeCursor();
 
-            if($this->db->database->lastInsertId()) {
+            if ($this->db->database->lastInsertId() !== false) {
                 return intval($this->db->database->lastInsertId());
             }
+
+            return false;
         }
 
 
@@ -1681,7 +1683,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         /**
          * @param $id
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function patchTicket($id, $params): bool
         {
@@ -1720,7 +1722,7 @@ namespace Leantime\Domain\Tickets\Repositories {
          * @access public
          * @param array $values
          * @param  $id
-         * @return boolean
+         * @return bool
          */
         public function updateTicket(array $values, $id): bool
         {
@@ -1803,9 +1805,9 @@ namespace Leantime\Domain\Tickets\Repositories {
         /**
          * @param $ticketId
          * @param $status
-         * @param int $ticketSorting
+         * @param int      $ticketSorting
          * @param $handler
-         * @return boolean
+         * @return bool
          */
         public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null): bool
         {
@@ -1943,7 +1945,7 @@ namespace Leantime\Domain\Tickets\Repositories {
          *
          * @access public
          * @param  $id
-         * @return boolean
+         * @return bool
          */
         public function delticket($id): bool
         {

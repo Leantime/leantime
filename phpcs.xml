@@ -4,6 +4,8 @@
     <rule ref="PSR12">
         <exclude name="Squiz.Classes.ValidClassName" />
         <exclude name="Generic.Files.LineLength" />
+        <exclude name="Squiz.Commenting.FunctionComment.IncorrectParamVarName" />
+        <exclude name="Squiz.Commenting.FunctionComment.InvalidReturn" />
     </rule>
     <rule ref="Modernize" />
     <rule ref="NormalizedArrays" />

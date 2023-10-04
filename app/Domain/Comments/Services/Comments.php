@@ -42,7 +42,7 @@ namespace Leantime\Domain\Comments\Services {
         /**
          * @param $module
          * @param $entityId
-         * @param int $commentOrder
+         * @param int      $commentOrder
          * @return array|false
          */
         public function getComments($module, $entityId, int $commentOrder = 0): false|array
@@ -126,7 +126,7 @@ namespace Leantime\Domain\Comments\Services {
          */
         /**
          * @param $commentId
-         * @return boolean
+         * @return bool
          */
         public function deleteComment($commentId): bool
         {

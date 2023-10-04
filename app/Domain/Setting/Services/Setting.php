@@ -85,7 +85,7 @@ namespace Leantime\Domain\Setting\Services {
         /**
          * @param $key
          * @param $value
-         * @return boolean
+         * @return bool
          */
         public function saveSetting($key, $value): bool
         {

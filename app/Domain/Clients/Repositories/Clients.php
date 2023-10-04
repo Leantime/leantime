@@ -133,7 +133,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @return int|mixed
          */
         /**
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfClients(): mixed
         {
@@ -159,7 +159,7 @@ namespace Leantime\Domain\Clients\Repositories {
          */
         /**
          * @param $values
-         * @return boolean
+         * @return bool
          */
         public function isClient($values): bool
         {
@@ -311,7 +311,7 @@ namespace Leantime\Domain\Clients\Repositories {
          *
          * @access public
          * @param  $id
-         * @return boolean
+         * @return bool
          */
         public function hasTickets($id): bool
         {

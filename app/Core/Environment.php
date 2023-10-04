@@ -135,9 +135,9 @@ class Environment implements ArrayAccess, ConfigContract
     /**
      * getBool - get a boolean value from the environment
      *
-     * @param string  $envVar
-     * @param boolean $default
-     * @return boolean
+     * @param string $envVar
+     * @param bool   $default
+     * @return bool
      */
     private function getBool(string $envVar, bool $default): bool
     {
@@ -237,7 +237,7 @@ class Environment implements ArrayAccess, ConfigContract
      * Determine if the given configuration value exists.
      *
      * @param  string $key
-     * @return boolean
+     * @return bool
      */
     public function has($key): bool
     {
@@ -352,7 +352,7 @@ class Environment implements ArrayAccess, ConfigContract
      * Determine if the given configuration option exists.
      *
      * @param  string $key
-     * @return boolean
+     * @return bool
      */
     public function offsetExists($key): bool
     {
@@ -422,7 +422,7 @@ class Environment implements ArrayAccess, ConfigContract
      *
      * @param string $key
      *
-     * @return boolean
+     * @return bool
      */
     public function __isset(string $key): bool
     {

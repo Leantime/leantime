@@ -85,7 +85,7 @@ class Fileupload
         $this->config = $config;
         $this->path = $this->config->userFilePath;
 
-        if ($this->config->useS3 == true) {
+        if ($this->config->useS3) {
             $s3Config = [
                 'version' => 'latest',
                 'region' => $this->config->s3Region,
@@ -112,7 +112,7 @@ class Fileupload
     /**
      * This function returns the maximum files size that can be uploaded in PHP
      *
-     * @return integer File size in bytes
+     * @return int File size in bytes
      */
     public static function getMaximumFileUploadSize(): int
     {
@@ -123,7 +123,7 @@ class Fileupload
      * This function transforms the php.ini notation for numbers (like '2M') to an integer (2*1024*1024 in this case)
      *
      * @param string $sSize
-     * @return integer The value in bytes
+     * @return int The value in bytes
      */
     private static function convertPHPSizeToBytes(string $sSize): int
     {
@@ -206,7 +206,7 @@ class Fileupload
      * checkFileSize - Checks if filesize is ok
      *
      * @access public
-     * @return boolean
+     * @return bool
      */
     public function checkFileSize(): bool
     {
@@ -221,7 +221,7 @@ class Fileupload
      * renameFile
      *
      * @param  $name
-     * @return boolean
+     * @return bool
      */
     public function renameFile($name): bool
     {
@@ -244,12 +244,12 @@ class Fileupload
      * upload - move file from tmp-folder to S3
      *
      * @access public
-     * @return boolean
+     * @return bool
      */
     public function upload(): bool
     {
         //S3 upload
-        if ($this->config->useS3 == true) {
+        if ($this->config->useS3) {
             return $this->uploadToS3();
         }
 
@@ -265,7 +265,7 @@ class Fileupload
      */
     public function uploadPublic(): false|string
     {
-        if ($this->config->useS3 == true) {
+        if ($this->config->useS3) {
             try {
                 // Upload data.
 
@@ -304,7 +304,7 @@ class Fileupload
      * uploadToS3 - move file from tmp-folder to S3
      *
      * @access private
-     * @return boolean
+     * @return bool
      */
     private function uploadToS3(): bool
     {
@@ -331,7 +331,7 @@ class Fileupload
      * @return bool
      */
     /**
-     * @return boolean
+     * @return bool
      */
     private function uploadLocal(): bool
     {
@@ -364,7 +364,7 @@ class Fileupload
             'png' => 'image/png',
         );
 
-        if ($this->config->useS3 == true && $fullPath == '') {
+        if ($this->config->useS3 && $fullPath == '') {
             try {
                 // implode all non-empty elements to allow s3FolderName to be empty.
                 // otherwise you will get an error as the key starts with a slash

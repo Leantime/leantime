@@ -17,11 +17,11 @@ namespace Leantime\Domain\Canvas\Services {
          * import - Import canvas from XML file
          *
          * @access public
-         * @param string  $filename   File to import
-         * @param string  $canvasName
-         * @param integer $projectId  Project identifier
-         * @param integer $authorId
-         * @return boolean|integer False if import failed and the id of the newly created canvas otherwise
+         * @param string $filename   File to import
+         * @param string $canvasName
+         * @param int    $projectId  Project identifier
+         * @param int    $authorId
+         * @return bool|int False if import failed and the id of the newly created canvas otherwise
          * @throws BindingResolutionException
          */
         public function import(string $filename, string $canvasName, int $projectId, int $authorId): bool|int
@@ -190,7 +190,7 @@ namespace Leantime\Domain\Canvas\Services {
          *
          * @access public
          * @param string $projectId projectId (optional)
-         * @param array $boards    Array of project board types
+         * @param array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          * @throws BindingResolutionException
          */
@@ -264,7 +264,7 @@ namespace Leantime\Domain\Canvas\Services {
          *
          * @access public
          * @param string $projectId projectId (optional)
-         * @param array $boards    Array of project board types
+         * @param array  $boards    Array of project board types
          * @return array List of boards with a progress percentage
          * @throws BindingResolutionException
          */

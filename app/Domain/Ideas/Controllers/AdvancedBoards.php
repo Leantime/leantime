@@ -13,6 +13,9 @@ namespace Leantime\Domain\Ideas\Controllers {
      */
     class AdvancedBoards extends Controller
     {
+        private ProjectService $projectService;
+        private IdeaRepository $ideaRepo;
+
         /**
          * init - initialize private variables
          *

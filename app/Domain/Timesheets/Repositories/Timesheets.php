@@ -239,7 +239,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @return int|mixed
          */
         /**
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getHoursBooked(): mixed
         {
@@ -268,9 +268,9 @@ namespace Leantime\Domain\Timesheets\Repositories {
          * @return mixed
          */
         /**
-         * @param int $projectId
+         * @param int    $projectId
          * @param string $dateStart
-         * @param int $userId
+         * @param int    $userId
          * @return mixed
          */
         public function getWeeklyTimesheets(int $projectId = -1, string $dateStart = '0000-01-01 00:00:00', int $userId = 0): mixed

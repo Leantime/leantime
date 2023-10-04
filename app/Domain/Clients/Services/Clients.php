@@ -38,7 +38,7 @@ class Clients
     }
 
     /**
-     * @param integer $userId
+     * @param int $userId
      * @return array
      */
     public function getUserClients(int $userId): array

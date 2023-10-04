@@ -20,7 +20,6 @@ namespace Leantime\Domain\Menu\Services;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Users\Services\Users;
 
-
     /**
      *
      */
@@ -84,7 +83,7 @@ class Menu
     }
 
     /**
-     * @param integer $userId
+     * @param int $userId
      * @return array
      */
     public function getUserProjectList(int $userId): array

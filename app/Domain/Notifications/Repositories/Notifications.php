@@ -33,10 +33,10 @@ namespace Leantime\Domain\Notifications\Repositories {
          */
         /**
          * @param $userId
-         * @param false $showNewOnly
-         * @param int $limitStart
-         * @param int $limitEnd
-         * @param array $filterOptions
+         * @param false  $showNewOnly
+         * @param int    $limitStart
+         * @param int    $limitEnd
+         * @param array  $filterOptions
          * @return array|false
          */
         public function getAllNotifications($userId, bool $showNewOnly = false, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
@@ -96,7 +96,7 @@ namespace Leantime\Domain\Notifications\Repositories {
          */
         /**
          * @param array $notifications
-         * @return boolean|void
+         * @return bool|void
          */
         public function addNotifications(array $notifications)
         {
@@ -161,7 +161,7 @@ namespace Leantime\Domain\Notifications\Repositories {
          */
         /**
          * @param $id
-         * @return boolean
+         * @return bool
          */
         public function markNotificationRead($id): bool
         {
@@ -185,7 +185,7 @@ namespace Leantime\Domain\Notifications\Repositories {
          */
         /**
          * @param $userId
-         * @return boolean
+         * @return bool
          */
         public function markAllNotificationRead($userId): bool
         {

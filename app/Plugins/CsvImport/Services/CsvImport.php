@@ -17,6 +17,11 @@ use Leantime\Domain\Connector\Services\ProviderIntegration;
 class CsvImport extends Provider implements ProviderIntegration
 {
     private array $fields;
+    /**
+     * @var array|array[]
+     */
+    private array $entities;
+    private array $methods;
 
     public function __construct()
     {

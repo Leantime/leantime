@@ -82,7 +82,7 @@ if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param array $array
+     * @param array  $array
      * @param string $sortyBy
      * @return array
      */

@@ -54,7 +54,7 @@ class HtmxRequest extends IncomingRequest
     /**
      * Indicates that the request is via an element using hx-boost
      *
-     * @return boolean
+     * @return bool
      */
     public function isBoosted(): bool
     {
@@ -77,7 +77,7 @@ class HtmxRequest extends IncomingRequest
     /**
      * Indicates if the request is for history restoration after a miss in the local history cache
      *
-     * @return boolean
+     * @return bool
      */
     public function isHistoryRestoreRequest(): bool
     {

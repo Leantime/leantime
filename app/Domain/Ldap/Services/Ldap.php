@@ -107,7 +107,7 @@ class Ldap
      * @return bool|void
      */
     /**
-     * @return boolean|void
+     * @return bool|void
      */
     public function connect()
     {
@@ -145,7 +145,7 @@ class Ldap
     /**
      * @param string $username
      * @param string $password
-     * @return boolean
+     * @return bool
      */
     public function bind(string $username = '', string $password = ''): bool
     {

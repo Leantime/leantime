@@ -60,7 +60,7 @@ namespace Leantime\Domain\Users\Controllers {
 
             $userLang = $this->settingsService->getSetting("usersettings." . $this->userId . ".language");
 
-            if ($userLang == false) {
+            if (!$userLang) {
                 $userLang = $this->language->getCurrentLanguage();
             }
 
@@ -78,7 +78,7 @@ namespace Leantime\Domain\Users\Controllers {
                 'messagesfrequency' => $this->settingsService->getSetting("usersettings." . $row['id'] . ".messageFrequency"),
             );
 
-            if ($values['messagesfrequency'] == false) {
+            if (!$values['messagesfrequency']) {
                 $values['messagesfrequency'] = $this->settingsService->getSetting("companysettings.messageFrequency");
             }
 
@@ -234,7 +234,7 @@ namespace Leantime\Domain\Users\Controllers {
                         'twoFAEnabled' => $row['twoFAEnabled'],
                     );
 
-                    if (isset($_POST['notifications']) == true) {
+                    if (isset($_POST['notifications'])) {
                         $values["notifications"] = 1;
                     } else {
                         $values["notifications"] = 0;

@@ -35,7 +35,7 @@ namespace Leantime\Domain\Entityrelations\Services {
          * @param $relationship
          * @param $entityB
          * @param $entityBType
-         * @param string $meta
+         * @param string       $meta
          * @return mixed
          */
         public function saveRelationship($entityA, $entityAType, $relationship, $entityB, $entityBType, string $meta = ""): mixed
@@ -51,10 +51,10 @@ namespace Leantime\Domain\Entityrelations\Services {
          * @return mixed
          */
         /**
-         * @param string  $entitySide
-         * @param integer $entity
-         * @param string  $entityType
-         * @param string  $relationship
+         * @param string $entitySide
+         * @param int    $entity
+         * @param string $entityType
+         * @param string $relationship
          * @return mixed
          */
         public function getRelationshipByEntity(string $entitySide, int $entity, string $entityType, string $relationship): mixed

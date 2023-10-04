@@ -59,7 +59,7 @@ namespace Leantime\Domain\Calendar\Controllers {
             $icalHash = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret");
             $userHash = hash('sha1', $_SESSION['userdata']['id'] . $this->config->sessionpassword);
 
-            if ($icalHash == false) {
+            if (!$icalHash) {
                 $icalUrl = "";
             } else {
                 $icalUrl = BASE_URL . "/calendar/ical/" . $icalHash . "_" . $userHash;

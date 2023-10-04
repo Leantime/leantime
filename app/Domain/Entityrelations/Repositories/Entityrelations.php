@@ -75,7 +75,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
         /**
          * @param $type
          * @param $value
-         * @return boolean
+         * @return bool
          */
         public function saveSetting($type, $value): bool
         {
@@ -123,12 +123,12 @@ namespace Leantime\Domain\Entityrelations\Repositories {
          * checkIfInstalled checks if zp user table exists (and assumes that leantime is installed)
          *
          * @access public
-         * @return boolean
+         * @return bool
          */
         public function checkIfInstalled(): bool
         {
 
-            if (isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'] == true) {
+            if (isset($_SESSION['isInstalled']) && $_SESSION['isInstalled']) {
                 return true;
             }
 

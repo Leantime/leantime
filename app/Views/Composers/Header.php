@@ -25,6 +25,9 @@ class Header extends Composer
     private Environment $config;
     private AppSettings $AppSettings;
     private Theme $ThemeCore;
+    private Theme $themeCore;
+    private AppSettings $appSettings;
+    private Setting $settingsRepo;
 
     /**
      * @param Setting     $settingsRepo

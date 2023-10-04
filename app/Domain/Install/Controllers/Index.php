@@ -65,19 +65,19 @@ namespace Leantime\Domain\Install\Controllers {
                     'company' => ($params['company']),
                 );
 
-                if (isset($params['email']) == false || $params['email'] == '') {
+                if (!isset($params['email']) || $params['email'] == '') {
                     $this->tpl->setNotification("notification.enter_email", "error");
                 } else {
-                    if (isset($params['password']) == false || $params['password'] == '') {
+                    if (!isset($params['password']) || $params['password'] == '') {
                         $this->tpl->setNotification("notification.enter_password", "error");
                     } else {
-                        if (isset($params['firstname']) == false || $params['firstname'] == '') {
+                        if (!isset($params['firstname']) || $params['firstname'] == '') {
                             $this->tpl->setNotification("notification.enter_firstname", "error");
                         } else {
-                            if (isset($params['lastname']) == false || $params['lastname'] == '') {
+                            if (!isset($params['lastname']) || $params['lastname'] == '') {
                                 $this->tpl->setNotification("notification.enter_lastname", "error");
                             } else {
-                                if (isset($params['company']) == false || $params['company'] == '') {
+                                if (!isset($params['company']) || $params['company'] == '') {
                                     $this->tpl->setNotification("notification.enter_company", "error");
                                     ;
                                 } else {

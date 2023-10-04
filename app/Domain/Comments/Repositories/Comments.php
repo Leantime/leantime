@@ -30,8 +30,8 @@ namespace Leantime\Domain\Comments\Repositories {
         /**
          * @param $module
          * @param $moduleId
-         * @param int $parent
-         * @param string $orderByState
+         * @param int      $parent
+         * @param string   $orderByState
          * @return array|false
          */
         public function getComments($module, $moduleId, int $parent = 0, string $orderByState = "0"): false|array
@@ -80,7 +80,7 @@ namespace Leantime\Domain\Comments\Repositories {
         /**
          * @param $module
          * @param $moduleId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function countComments($module = null, $moduleId = null): mixed
         {
@@ -225,7 +225,7 @@ namespace Leantime\Domain\Comments\Repositories {
          */
         /**
          * @param $id
-         * @return boolean
+         * @return bool
          */
         public function deleteComment($id): bool
         {
@@ -248,7 +248,7 @@ namespace Leantime\Domain\Comments\Repositories {
         /**
          * @param $text
          * @param $id
-         * @return boolean
+         * @return bool
          */
         public function editComment($text, $id): bool
         {

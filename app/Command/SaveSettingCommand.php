@@ -37,7 +37,7 @@ class SaveSettingCommand extends Command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
-     * @return integer 0 if everything went fine, or an exit code.
+     * @return int 0 if everything went fine, or an exit code.
      * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int

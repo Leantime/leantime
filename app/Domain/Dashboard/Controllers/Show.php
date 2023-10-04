@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Dashboard\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use JetBrains\PhpStorm\NoReturn;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Reactions\Models\Reactions;
@@ -30,13 +31,13 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private ReactionService $reactionsService;
 
         /**
-         * @param ProjectService $projectService
-         * @param TicketService $ticketService
-         * @param UserService $userService
+         * @param ProjectService   $projectService
+         * @param TicketService    $ticketService
+         * @param UserService      $userService
          * @param TimesheetService $timesheetService
-         * @param CommentService $commentService
-         * @param ReactionService $reactionsService
-         * @param ReportService $reportsService
+         * @param CommentService   $commentService
+         * @param ReactionService  $reactionsService
+         * @param ReportService    $reportsService
          * @return void
          * @throws BindingResolutionException
          * @throws BindingResolutionException
@@ -151,11 +152,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        #[NoReturn] public function post($params): void
         {
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
-                if (isset($params['quickadd']) == true) {
+                if (isset($params['quickadd'])) {
                     $result = $this->ticketService->quickAddTicket($params);
 
                     if (isset($result["status"])) {

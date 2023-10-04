@@ -11,6 +11,8 @@ use Leantime\Plugins\MotivationalQuotes\Models\Quote as QuoteModel;
  */
 class MotivationalQuotes
 {
+    private MotivationalQuotesRepository $quotesRepo;
+
     /**
      * constructor
      *

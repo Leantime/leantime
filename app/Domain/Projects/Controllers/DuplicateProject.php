@@ -15,6 +15,10 @@ namespace Leantime\Domain\Projects\Controllers {
      */
     class DuplicateProject extends Controller
     {
+        private ProjectService $projectService;
+        private ClientRepository $clientRepo;
+        private ProjectRepository $projectRepo;
+
         /**
          * @param ProjectRepository $projectRepo
          * @param ClientRepository  $clientRepo
@@ -35,6 +39,8 @@ namespace Leantime\Domain\Projects\Controllers {
 
         /**
          * @return void
+         * @throws \Exception
+         * @throws \Exception
          */
         public function get(): void
         {

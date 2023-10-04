@@ -83,14 +83,14 @@ class Plugins
      *
      * @param string $plugin_name
      *
-     * @return boolean
+     * @return bool
      */
     public function isPluginEnabled(string $plugin_name): bool
     {
         $plugin_name = strtolower($plugin_name);
 
         if (
-            in_array($plugin_name, array_keys($this->enabledPlugins)) && $this->enabledPlugins[$plugin_name] == true
+            in_array($plugin_name, array_keys($this->enabledPlugins)) && $this->enabledPlugins[$plugin_name]
         ) {
             return true;
         }

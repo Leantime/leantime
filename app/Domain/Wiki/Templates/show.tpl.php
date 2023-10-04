@@ -20,9 +20,9 @@ foreach ($__data as $var => $val) {
 /**
  * @param $array
  * @param $currentParent
- * @param int $currLevel
- * @param int $prevLevel
- * @param string $tplObject
+ * @param int                          $currLevel
+ * @param int                          $prevLevel
+ * @param \Leantime\Core\Template|null $tplObject
  * @return void
  */
 function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLevel = -1, ?\Leantime\Core\Template $tplObject = null): void
@@ -121,7 +121,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
         <div class="row">
 
-            <?php if (($currentArticle == false || $currentArticle->id != null) && ($wikis == false || count($wikis) == 0)) { ?>
+            <?php if ((!$currentArticle || $currentArticle->id != null) && (!$wikis || count($wikis) == 0)) { ?>
                 <div class="col-md-12">
                     <div class="maincontentinner">
                         <?php
@@ -141,7 +141,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
             <?php } ?>
 
-            <?php if ($wikis != false && count($wikis) > 0) {?>
+            <?php if ($wikis && count($wikis) > 0) {?>
                 <div class="col-lg-12">
 
                     <?php
@@ -167,7 +167,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                        */?>
                                         </div>
-                                            <?php if ($wikis != false && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
+                                            <?php if ($wikis && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
                                             <div class="creationLinks">
                                                 <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
                                             </div>

@@ -58,7 +58,7 @@ class Frontcontroller
      *
      * @access public
      * @param string $action
-     * @param integer $httpResponseCode
+     * @param int    $httpResponseCode
      * @return void
      * @throws BindingResolutionException
      */
@@ -127,7 +127,7 @@ class Frontcontroller
      *
      * @access public
      * @param string $completeName
-     * @param array $params
+     * @param array  $params
      * @return void
      * @throws BindingResolutionException
      */
@@ -204,8 +204,8 @@ class Frontcontroller
     /**
      * redirect - redirects to a given url
      *
-     * @param string  $url
-     * @param integer $http_response_code
+     * @param string $url
+     * @param int    $http_response_code
      * @return never
      */
     public static function redirect(string $url, int $http_response_code = 303): never
@@ -217,7 +217,7 @@ class Frontcontroller
     /**
      * setResponseCode - sets the response code
      *
-     * @param integer $responseCode
+     * @param int $responseCode
      * @return void
      */
     public static function setResponseCode(int $responseCode): void

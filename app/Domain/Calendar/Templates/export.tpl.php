@@ -24,7 +24,7 @@ echo $tpl->displayNotification();
     ?>
 
     <?php
-    if ($url != false) {
+    if ($url) {
         echo $tpl->__('text.you_ical_url');
         echo "<br /><input type='text' value='" . $url . "' style='width:100%;'/>";
     } else {
@@ -41,7 +41,7 @@ echo $tpl->displayNotification();
 
         </div>
         <div class="col-md-6 align-right">
-            <?php  if ($url != false) { ?>
+            <?php  if ($url) { ?>
                  <a href="<?=BASE_URL ?>/calendar/export?remove=1" class="delete formModal"><i class="fa fa-trash"></i> <?=$tpl->__('links.remove_access') ?></a>
             <?php } ?>
         </div>

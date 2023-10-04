@@ -25,12 +25,12 @@ namespace Leantime\Domain\Reactions\Services {
          * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
          * @access public
          *
-         * @param string  $module
-         * @param integer $moduleId
-         * @param integer $userId
-         * @param string  $reaction
+         * @param string $module
+         * @param int    $moduleId
+         * @param int    $userId
+         * @param string $reaction
          *
-         * @return boolean
+         * @return bool
          */
         public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {
@@ -79,9 +79,9 @@ namespace Leantime\Domain\Reactions\Services {
          * @access public
          *
          * @param string $module
-         * @param integer $moduleId
+         * @param int    $moduleId
          *
-         * @return array|boolean returns the array on success or false on failure
+         * @return array|bool returns the array on success or false on failure
          */
         public function getGroupedEntityReactions(string $module, int $moduleId): array|false
         {
@@ -92,10 +92,10 @@ namespace Leantime\Domain\Reactions\Services {
          * getMyReactions - gets user reactions. Can be very broad or very targeted
          * @access public
          *
-         * @param integer      $userId
-         * @param string       $module
-         * @param integer|null $moduleId
-         * @param string       $reaction
+         * @param int      $userId
+         * @param string   $module
+         * @param int|null $moduleId
+         * @param string   $reaction
          *
          * @return array|false
          */
@@ -109,12 +109,12 @@ namespace Leantime\Domain\Reactions\Services {
          * addReaction - adds a reaction to an entity, checks if a user has already reacted the same way
          * @access public
          *
-         * @param string  $module
-         * @param integer $moduleId
-         * @param integer $userId
-         * @param string  $reaction
+         * @param string $module
+         * @param int    $moduleId
+         * @param int    $userId
+         * @param string $reaction
          *
-         * @return boolean
+         * @return bool
          */
         public function removeReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {

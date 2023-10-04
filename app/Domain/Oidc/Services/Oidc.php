@@ -310,7 +310,7 @@ class Oidc
 
     /**
      * @param string $header
-     * @return integer
+     * @return int
      */
     private function getAlgorythm(string $header): int
     {
@@ -486,7 +486,7 @@ class Oidc
 
     /**
      * @param string $state
-     * @return boolean
+     * @return bool
      */
     private function verifyState(string $state): bool
     {

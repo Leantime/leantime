@@ -42,6 +42,8 @@ class Upload extends Controller
      *
      * @access public
      * @return void
+     * @throws \Exception
+     * @throws \Exception
      */
     public function get(): void
     {

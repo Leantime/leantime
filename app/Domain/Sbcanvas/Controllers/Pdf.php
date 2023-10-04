@@ -49,9 +49,9 @@ namespace Leantime\Domain\Sbcanvas\Controllers {
          * reportGenerate - Generate report for module  / Porter's Startegy Questions
          *
          * @access public
-         * @param integer $id      Canvas identifier
-         * @param array   $filter  Filter value
-         * @param array   $options
+         * @param int   $id      Canvas identifier
+         * @param array $filter  Filter value
+         * @param array $options
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string

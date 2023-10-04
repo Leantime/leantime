@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Leantime\Core\Eventhelpers;
@@ -9,7 +10,6 @@ use Leantime\Core\Eventhelpers;
 /**
  * Mail class - mails with php mail()
  *
- * @author  Marcel Folaron <marcel.folaron@gmail.com>
  * @version 1.0
  * @license GNU/AGPL-3.0, see license.txt
  * @package leantime
@@ -205,7 +205,7 @@ class Mailer
      *
      * @param  $hookname
      * @param  $payload
-     * @param array $additional_params
+     * @param array    $additional_params
      * @return void
      */
     private function dispatchMailerEvent($hookname, $payload, array $additional_params = []): void
@@ -218,7 +218,7 @@ class Mailer
      *
      * @param  $hookname
      * @param  $payload
-     * @param array $additional_params
+     * @param array    $additional_params
      * @return void
      */
     private function dispatchMailerFilter($hookname, $payload, array $additional_params = [])
@@ -232,8 +232,9 @@ class Mailer
      * @param  $type
      * @param  $hookname
      * @param  $payload
-     * @param array $additional_params
+     * @param array    $additional_params
      * @return void|mixed
+     * @throws BindingResolutionException
      */
     private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = [])
     {

@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use JetBrains\PhpStorm\NoReturn;
     use Leantime\Core\Controller;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -108,7 +109,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @access public
          *
          */
-        public function post($params)
+        #[NoReturn] public function post($params)
         {
             //If ID is set its an update
             if (isset($_GET['id']) && (int) $_GET['id'] > 0) {
@@ -156,7 +157,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 if (isset($params['headline']) === true) {
-                    if ($this->ticketService->quickUpdateMilestone($params) == true) {
+                    if ($this->ticketService->quickUpdateMilestone($params)) {
                         $this->tpl->setNotification($this->language->__("notification.milestone_edited_successfully"), "success");
 
                         $subject = $this->language->__("email_notifications.milestone_update_subject");

@@ -292,7 +292,7 @@ namespace Leantime\Domain\Reports\Services {
         }
 
         /**
-         * @return boolean|PromiseInterface
+         * @return bool|PromiseInterface
          * @throws BindingResolutionException
          */
         public function sendAnonymousTelemetry(): bool|PromiseInterface

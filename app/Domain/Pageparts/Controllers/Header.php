@@ -18,6 +18,8 @@ namespace Leantime\Domain\Pageparts\Controllers {
         private Environment $config;
         private AppSettings $AppSettings;
         private Theme $ThemeCore;
+        private Theme $themeCore;
+        private AppSettings $appSettings;
 
         /**
          * @param Setting     $settingsRepo
@@ -40,6 +42,8 @@ namespace Leantime\Domain\Pageparts\Controllers {
 
         /**
          * @return void
+         * @throws Exception
+         * @throws Exception
          */
         public function run(): void
         {

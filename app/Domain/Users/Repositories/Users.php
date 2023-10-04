@@ -76,7 +76,7 @@ namespace Leantime\Domain\Users\Repositories {
 
         /**
          * @access public
-         * @var    object
+         * @var    DbCore|null
          */
         private ?DbCore $db;
 
@@ -101,7 +101,7 @@ namespace Leantime\Domain\Users\Repositories {
          *
          * @access public
          * @param  $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getUser($id): array|bool
         {
@@ -188,7 +188,7 @@ namespace Leantime\Domain\Users\Repositories {
         }
 
         /**
-         * @return integer
+         * @return int
          */
         public function getNumberOfUsers(): int
         {
@@ -241,6 +241,7 @@ namespace Leantime\Domain\Users\Repositories {
          * getAll - get all user
          *
          * @access public
+         * @param bool $activeOnly
          * @return array
          */
         public function getAll($activeOnly = false): array
@@ -265,7 +266,7 @@ namespace Leantime\Domain\Users\Repositories {
                     LEFT JOIN zp_clients ON zp_clients.id = zp_user.clientId
                     WHERE !(source <=> 'api')";
 
-            if ($activeOnly == true) {
+            if ($activeOnly) {
                     $query .= " AND status LIKE 'a' ";
             }
 
@@ -323,6 +324,7 @@ namespace Leantime\Domain\Users\Repositories {
          * getAll - get all user
          *
          * @access public
+         * @param $clientId
          * @return array
          */
         public function getAllClientUsers($clientId): array
@@ -363,7 +365,7 @@ namespace Leantime\Domain\Users\Repositories {
          */
         /**
          * @param $userId
-         * @return boolean
+         * @return bool
          */
         public function isAdmin($userId): bool
         {
@@ -391,7 +393,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @param array $values
          * @param  $id
-         * @return boolean
+         * @return bool
          */
         public function editUser(array $values, $id): bool
         {
@@ -450,8 +452,8 @@ namespace Leantime\Domain\Users\Repositories {
          *
          * @access public
          * @param  $username
-         * @param string $userId
-         * @return boolean
+         * @param string   $userId
+         * @return bool
          */
         public function usernameExist($username, string $userId = ''): bool
         {
@@ -755,7 +757,7 @@ namespace Leantime\Domain\Users\Repositories {
         /**
          * @param $id
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function patchUser($id, $params): bool
         {
@@ -795,7 +797,7 @@ namespace Leantime\Domain\Users\Repositories {
          * @access public
          * @param string $firstname
          * @param string $lastname  Lastname
-         * @return integer|boolean Identifier of user or false, if not found
+         * @return int|bool Identifier of user or false, if not found
          */
         public function getUserIdByName(string $firstname, string $lastname): int|bool
         {

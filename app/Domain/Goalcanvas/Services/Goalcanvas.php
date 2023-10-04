@@ -25,7 +25,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
         }
 
         /**
-         * @param integer $id
+         * @param int $id
          * @return array
          */
         public function getCanvasItemsById(int $id): array
@@ -66,7 +66,7 @@ namespace Leantime\Domain\Goalcanvas\Services {
          */
         /**
          * @param $parentId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getChildGoalsForReporting($parentId): mixed
         {

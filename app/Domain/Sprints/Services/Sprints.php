@@ -74,7 +74,7 @@ namespace Leantime\Domain\Sprints\Services {
          * getCurrentSprintId returns the ID of the current sprint in the project provided
          *
          * @param $projectId
-         * @return integer|boolean
+         * @return int|bool
          */
         public function getCurrentSprintId($projectId): bool|int
         {

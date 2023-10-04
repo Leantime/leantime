@@ -36,7 +36,7 @@ foreach ($__data as $var => $val) {
                 <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
 
-                            <h5 class="subtitle"><?=$tpl->__("subtitles.summary")?> <?php if ($fullReportLatest != false) {
+                            <h5 class="subtitle"><?=$tpl->__("subtitles.summary")?> <?php if ($fullReportLatest) {
                                 ?>(<?=$tpl->getFormattedDateString($fullReportLatest['date']) ?>)<?php
                                                  } ?> </h5>
                             <div class="row">

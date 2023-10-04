@@ -41,7 +41,7 @@ class Api
      */
     /**
      * @param $apiKey
-     * @return boolean|array
+     * @return bool|array
      */
     public function getAPIKeyUser($apiKey): bool|array
     {
@@ -79,7 +79,7 @@ class Api
      *
      * @access public
      * @param array $values basic user values
-     * @return boolean|array returns new user id on success, false on failure
+     * @return bool|array returns new user id on success, false on failure
      * @throws Exception
      */
     public function createAPIKey(array $values): bool|array
@@ -133,9 +133,9 @@ class Api
      * For PHP 7, random_int is a PHP core function
      * For PHP 5.x, depends on https://github.com/paragonie/random_compat
      *
-     * @param integer $length   How many characters do we want?
-     * @param string  $keyspace A string of all possible characters
-     *                           to select from
+     * @param int    $length   How many characters do we want?
+     * @param string $keyspace A string of all possible characters
+     *                          to select from
      * @return string
      * @throws Exception
      */
@@ -176,7 +176,7 @@ class Api
     }
 
     /**
-     * @param integer    $id
+     * @param int        $id
      * @param array|null $result
      * @return void
      */

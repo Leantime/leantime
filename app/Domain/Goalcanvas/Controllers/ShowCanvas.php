@@ -51,7 +51,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
             //Create default canvas.
-            if ($allCanvas == false || count($allCanvas) == 0) {
+            if (!$allCanvas || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__("label.board"),
                     'author' => $_SESSION['userdata']['id'],
@@ -73,7 +73,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     }
                 }
 
-                if ($found == false) {
+                if (!$found) {
                     $currentCanvasId = -1;
                     $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = '';
                 }

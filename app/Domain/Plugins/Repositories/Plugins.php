@@ -68,7 +68,7 @@ namespace Leantime\Domain\Plugins\Repositories {
         }
 
         /**
-         * @param integer $id
+         * @param int $id
          * @return \Leantime\Domain\Plugins\Models\Plugins|false
          */
         public function getPlugin(int $id): \Leantime\Domain\Plugins\Models\Plugins|false
@@ -151,8 +151,8 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @return bool
          */
         /**
-         * @param integer $id
-         * @return boolean
+         * @param int $id
+         * @return bool
          */
         public function enablePlugin(int $id): bool
         {
@@ -177,8 +177,8 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @return bool
          */
         /**
-         * @param integer $id
-         * @return boolean
+         * @param int $id
+         * @return bool
          */
         public function disablePlugin(int $id): bool
         {
@@ -203,8 +203,8 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @return bool
          */
         /**
-         * @param integer $id
-         * @return boolean
+         * @param int $id
+         * @return bool
          */
         public function removePlugin(int $id): bool
         {

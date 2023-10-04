@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Projects\Controllers {
 
+    use JetBrains\PhpStorm\NoReturn;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -30,7 +31,7 @@ namespace Leantime\Domain\Projects\Controllers {
          *
          * @access public
          */
-        public function get($params)
+        #[NoReturn] public function get($params)
         {
             if (isset($params['id'])) {
                 $id = filter_var($params['id'], FILTER_SANITIZE_NUMBER_INT);

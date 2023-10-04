@@ -22,7 +22,7 @@ class Application extends Container
     /**
      * Check if application has been bootstrapped
      *
-     * @return boolean
+     * @return bool
      */
     public static function hasBeenBootstrapped(): bool
     {
@@ -44,7 +44,7 @@ class Application extends Container
     /**
      * Get the application namespace
      *
-     * @param boolean $includeSuffix
+     * @param bool $includeSuffix
      * @return string
      *
      * @see \Illuminate\Contracts\Foundation\Application::getNamespace()

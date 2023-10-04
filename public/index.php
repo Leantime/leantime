@@ -1,8 +1,8 @@
 <?php
 
-define('RESTRICTED', TRUE);
-define('ROOT', dirname(__FILE__));
-define('APP_ROOT', dirname(__FILE__, 2));
+define('RESTRICTED', true);
+define('ROOT', __DIR__);
+define('APP_ROOT', dirname(__DIR__, 1));
 define('LEAN_CLI', false);
 
 if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {

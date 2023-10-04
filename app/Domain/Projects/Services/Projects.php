@@ -103,7 +103,7 @@ namespace Leantime\Domain\Projects\Services {
          */
         /**
          * @param $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getProject($id): bool|array
         {
@@ -390,7 +390,7 @@ namespace Leantime\Domain\Projects\Services {
          */
         /**
          * @param $userId
-         * @param string $projectStatus
+         * @param string   $projectStatus
          * @param $clientId
          * @return array|false
          */
@@ -473,7 +473,7 @@ namespace Leantime\Domain\Projects\Services {
          */
         /**
          * @param $userId
-         * @param string $projectStatus
+         * @param string   $projectStatus
          * @param $clientId
          * @return array
          */
@@ -519,7 +519,7 @@ namespace Leantime\Domain\Projects\Services {
          */
         /**
          * @param $userId
-         * @param string $projectStatus
+         * @param string   $projectStatus
          * @param $clientId
          * @return array
          */
@@ -666,7 +666,7 @@ namespace Leantime\Domain\Projects\Services {
          */
         /**
          * @param $projectId
-         * @return boolean
+         * @return bool
          * @throws BindingResolutionException
          */
         public function changeCurrentSessionProject($projectId): bool
@@ -823,9 +823,9 @@ namespace Leantime\Domain\Projects\Services {
          * @throws BindingResolutionException
          */
         /**
-         * @param integer $userId
-         * @param integer $projectId
-         * @return boolean
+         * @param int $userId
+         * @param int $projectId
+         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserAssignedToProject(int $userId, int $projectId): bool
@@ -838,9 +838,9 @@ namespace Leantime\Domain\Projects\Services {
          * Checks if a user is directly assigned to a project.
          * Client assignments or projects available to entire organization are not considered true.
          *
-         * @param integer $userId
-         * @param integer $projectId
-         * @return boolean
+         * @param int $userId
+         * @param int $projectId
+         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserMemberOfProject(int $userId, int $projectId): bool
@@ -860,12 +860,12 @@ namespace Leantime\Domain\Projects\Services {
          * @throws BindingResolutionException
          */
         /**
-         * @param integer $projectId
-         * @param integer $clientId
-         * @param string  $projectName
-         * @param string  $userStartDate
-         * @param boolean $assignSameUsers
-         * @return boolean|integer
+         * @param int    $projectId
+         * @param int    $clientId
+         * @param string $projectName
+         * @param string $userStartDate
+         * @param bool   $assignSameUsers
+         * @return bool|int
          * @throws BindingResolutionException
          */
         public function duplicateProject(int $projectId, int $clientId, string $projectName, string $userStartDate, bool $assignSameUsers): bool|int
@@ -892,7 +892,7 @@ namespace Leantime\Domain\Projects\Services {
                 'assignedUsers' => array(),
             );
 
-            if ($assignSameUsers == true) {
+            if ($assignSameUsers) {
                 $projectUsers = $this->projectRepository->getUsersAssignedToProject($projectId);
 
                 foreach ($projectUsers as $user) {
@@ -1076,11 +1076,11 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
-         * @param string  $repository
-         * @param integer $originalProjectId
-         * @param integer $newProjectId
-         * @param string  $canvasTypeName
-         * @return boolean
+         * @param string $repository
+         * @param int    $originalProjectId
+         * @param int    $newProjectId
+         * @param string $canvasTypeName
+         * @return bool
          * @throws BindingResolutionException
          */
         private function duplicateCanvas(string $repository, int $originalProjectId, int $newProjectId, string $canvasTypeName = ''): bool
@@ -1103,7 +1103,7 @@ namespace Leantime\Domain\Projects\Services {
 
                 $canvasItems = $canvasRepo->getCanvasItemsById($canvas['id']);
 
-                if ($canvasItems != false && count($canvasItems) > 0) {
+                if ($canvasItems && count($canvasItems) > 0) {
                     //Build parent Array
                     //oldId => newId
                     $idMap = array();
@@ -1192,7 +1192,7 @@ namespace Leantime\Domain\Projects\Services {
         /**
          * @param $id
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function patch($id, $params): bool
         {
@@ -1503,8 +1503,8 @@ namespace Leantime\Domain\Projects\Services {
          * Gets all the projects a company manager has access to.
          * Includes all projects within a client + all assigned projects
          *
-         * @param integer $userId
-         * @param integer $clientId
+         * @param int $userId
+         * @param int $clientId
          * @return array
          */
         public function getClientManagerProjects(int $userId, int $clientId): array
@@ -1531,7 +1531,7 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
-         * @param boolean $showClosedProjects
+         * @param bool $showClosedProjects
          * @return array
          */
         public function getAll(bool $showClosedProjects = false): array

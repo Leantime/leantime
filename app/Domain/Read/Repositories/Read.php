@@ -56,7 +56,7 @@ namespace Leantime\Domain\Read\Repositories {
          * @param $module
          * @param $moduleId
          * @param $userId
-         * @return boolean
+         * @return bool
          */
         public function isRead($module, $moduleId, $userId): bool
         {

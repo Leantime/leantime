@@ -34,9 +34,9 @@ namespace Leantime\Domain\Audit\Repositories {
          * @param string $action
          * @param string $values
          * @param string $entity
-         * @param int $entityId
-         * @param int $userId
-         * @param int $projectId
+         * @param int    $entityId
+         * @param int    $userId
+         * @param int    $projectId
          * @param string $thedate
          * @return void
          */

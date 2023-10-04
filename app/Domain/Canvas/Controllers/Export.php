@@ -86,7 +86,7 @@ namespace Leantime\Domain\Canvas\Controllers {
          * export - Generate XML file
          *
          * @access protected
-         * @param integer $id Canvas identifier
+         * @param int $id Canvas identifier
          * @return string XML data
          * @throws BindingResolutionException
          */
@@ -112,10 +112,10 @@ namespace Leantime\Domain\Canvas\Controllers {
          * xmlExport - Generate XML for specific data
          *
          * @access protected
-         * @param string  $canvasKey   Encoded canvas name
-         * @param string  $canvasTitle
-         * @param array   $recordsAry  Array of canvas entry records
-         * @param integer $indent      Indent level to use;
+         * @param string $canvasKey   Encoded canvas name
+         * @param string $canvasTitle
+         * @param array  $recordsAry  Array of canvas entry records
+         * @param int    $indent      Indent level to use;
          * @return string XML data
          */
         protected function xmlExport(string $canvasKey, string $canvasTitle, array $recordsAry, int $indent = 0): string

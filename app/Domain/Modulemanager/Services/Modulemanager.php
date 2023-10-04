@@ -52,7 +52,7 @@ namespace Leantime\Domain\Modulemanager\Services {
          */
         /**
          * @param $module
-         * @return boolean
+         * @return bool
          */
         public static function isModuleEnabled($module): bool
         {

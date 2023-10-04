@@ -35,7 +35,7 @@ namespace Leantime\Domain\Files\Services {
 
 
         /**
-         * @param string $module
+         * @param string   $module
          * @param $entityId
          * @param $userId
          * @return array|false
@@ -58,7 +58,7 @@ namespace Leantime\Domain\Files\Services {
          * @param $module
          * @param $entityId
          * @param $entity
-         * @return boolean
+         * @return bool
          * @throws BindingResolutionException
          */
         public function uploadFile($file, $module, $entityId, $entity): bool
@@ -109,7 +109,7 @@ namespace Leantime\Domain\Files\Services {
          */
         /**
          * @param $fileId
-         * @return boolean
+         * @return bool
          */
         public function deleteFile($fileId): bool
         {

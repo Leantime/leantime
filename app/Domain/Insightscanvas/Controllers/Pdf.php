@@ -46,9 +46,9 @@ namespace Leantime\Domain\Insightscanvas\Controllers {
          * reportGenerate - Generate report for module
          *
          * @access public
-         * @param integer $id      Canvas identifier
-         * @param array   $filter  Filter value
-         * @param array   $options
+         * @param int   $id      Canvas identifier
+         * @param array $filter  Filter value
+         * @param array $options
          * @return string PDF filename
          */
         public function reportGenerate(int $id, array $filter = [], array $options = []): string

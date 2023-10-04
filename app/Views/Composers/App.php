@@ -24,6 +24,10 @@ class App extends Composer
         'global::layouts.app',
         'global::layouts.entry',
     ];
+    private Environment $config;
+    private Theme $themeCore;
+    private Setting $settingsRepo;
+    private Menu $menuRepo;
 
     /**
      * @param Menu        $menuRepo

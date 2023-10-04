@@ -76,7 +76,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * getAll - get all projects open and closed
          *
          * @access public
-         * @param boolean $showClosedProjects
+         * @param bool $showClosedProjects
          * @return array
          */
         public function getAll(bool $showClosedProjects = false): array
@@ -126,7 +126,7 @@ namespace Leantime\Domain\Projects\Repositories {
          *
          * @access public
          * @param  $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getUsersAssignedToProject($id): array|bool
         {
@@ -166,10 +166,10 @@ namespace Leantime\Domain\Projects\Repositories {
          * @return array|false
          */
         /**
-         * @param integer      $userId
-         * @param string       $projectStatus
-         * @param integer|null $clientId
-         * @param string $accessStatus
+         * @param int      $userId
+         * @param string   $projectStatus
+         * @param int|null $clientId
+         * @param string   $accessStatus
          * @return array|false
          */
         public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, string $accessStatus = "assigned"): false|array
@@ -347,7 +347,7 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * @param $clientId
          * @param $type
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfProjects($clientId = null, $type = null): mixed
         {
@@ -467,7 +467,7 @@ namespace Leantime\Domain\Projects\Repositories {
          *
          * @access public
          * @param  $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getProject($id): array|bool
         {
@@ -524,7 +524,7 @@ namespace Leantime\Domain\Projects\Repositories {
          */
         /**
          * @param $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getProjectBookedHours($id): array|bool
         {
@@ -552,7 +552,7 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * @param $needle
          * @param $haystack
-         * @return false|integer|string
+         * @return false|int|string
          */
         public function recursive_array_search($needle, $haystack): false|int|string
         {
@@ -571,7 +571,7 @@ namespace Leantime\Domain\Projects\Repositories {
          */
         /**
          * @param $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getProjectBookedHoursArray($id): array|bool
         {
@@ -659,8 +659,8 @@ namespace Leantime\Domain\Projects\Repositories {
          * addProject - add a project to a client
          *
          * @access public
-         * @param boolean|array $values
-         * @return integer|boolean returns new project id on success, false on failure.
+         * @param bool|array $values
+         * @return int|bool returns new project id on success, false on failure.
          */
         public function addProject(bool|array $values): int|bool
         {
@@ -854,7 +854,7 @@ namespace Leantime\Domain\Projects\Repositories {
          *
          * @access public
          * @param  $id
-         * @return boolean
+         * @return bool
          */
         public function hasTickets($id): bool
         {
@@ -924,7 +924,7 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * @param $userId
          * @param $projectId
-         * @return boolean
+         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserAssignedToProject($userId, $projectId): bool
@@ -993,7 +993,7 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * @param $userId
          * @param $projectId
-         * @return boolean
+         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserMemberOfProject($userId, $projectId): bool
@@ -1095,7 +1095,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @access public
          * @param  $id
          * @param $projects
-         * @return boolean
+         * @return bool
          */
         public function editUserProjectRelations($id, $projects): bool
         {
@@ -1252,7 +1252,7 @@ namespace Leantime\Domain\Projects\Repositories {
         /**
          * @param $id
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function patch($id, $params): bool
         {

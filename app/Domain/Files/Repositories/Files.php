@@ -188,8 +188,8 @@ namespace Leantime\Domain\Files\Repositories {
          * @return array|false
          */
         /**
-         * @param string $module
-         * @param null $moduleId
+         * @param string   $module
+         * @param null     $moduleId
          * @param int|null $userId
          * @return array|false
          */
@@ -252,7 +252,7 @@ namespace Leantime\Domain\Files\Repositories {
          */
         /**
          * @param $id
-         * @return boolean
+         * @return bool
          */
         public function deleteFile($id): bool
         {

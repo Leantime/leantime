@@ -59,7 +59,7 @@ foreach ($__data as $var => $val) {
                         }?>
                     >
                         <span class="fa fa-stop"></span>
-                        <?php if (is_array($clockedIn) == true) {
+                        <?php if (is_array($clockedIn)) {
                             echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), $clockedIn["since"]));
                         } else {
                             echo sprintf($tpl->__("links.stop_work_started_at"), date($tpl->__("language.timeformat"), time()));

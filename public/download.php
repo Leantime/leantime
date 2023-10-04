@@ -1,4 +1,5 @@
 <?php
+
 /**
  * downloads.php - For Handling Downloads.
  *
@@ -8,9 +9,9 @@ use Leantime\Core\AppSettings;
 use Leantime\Core\Environment;
 use Leantime\Domain\Auth\Services\Auth;
 
-define('RESTRICTED', TRUE);
-define('ROOT', dirname(__FILE__));
-define('APP_ROOT', dirname(__FILE__, 2));
+define('RESTRICTED', true);
+define('ROOT', __DIR__);
+define('APP_ROOT', dirname(__DIR__, 1));
 
 if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
     throw new RuntimeException('Please run "composer install".');
@@ -25,31 +26,23 @@ $settings->loadSettings($config);
 
 $login = $app->make(Auth::class);
 
-if ($login->logged_in()!==true) {
-
+if ($login->logged_in() !== true) {
     header('Pragma: public');
     header('Cache-Control: max-age=86400');
-    header('Expires: '. gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
+    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
     header('Content-Type: image/jpeg');
 
     ob_end_clean();
     clearstatcache();
-    readfile(__DIR__.'/dist/images/leantime-no-access.jpg');
+    readfile(__DIR__ . '/dist/images/leantime-no-access.jpg');
 
     exit();
-
 } else {
-
-    if($config->useS3 == true){
-
+    if ($config->useS3) {
         getFileFromS3();
-
-    }else{
-
+    } else {
         getFileLocally();
-
     }
-
 }
 
 /**
@@ -58,67 +51,56 @@ if ($login->logged_in()!==true) {
  */
 function getFileLocally(): void
 {
-	$config = app()->make(Environment::class);
+    $config = app()->make(Environment::class);
 
-	$encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
- 	$realName = $_GET['realName'];
- 	$ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
- 	$module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
+    $encName = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['encName']);
+    $realName = $_GET['realName'];
+    $ext = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['ext']);
+    $module = preg_replace("/[^a-zA-Z0-9]+/", "", $_GET['module']);
 
-	$mimes = array
-    (
+    $mimes = array(
         'jpg' => 'image/jpg',
         'jpeg' => 'image/jpg',
         'gif' => 'image/gif',
-        'png' => 'image/png'
+        'png' => 'image/png',
     );
 
-	//TODO: Replace with ROOT
-  	$path = realpath(__DIR__."/../".$config->userFilePath."/");
+    //TODO: Replace with ROOT
+    $path = realpath(__DIR__ . "/../" . $config->userFilePath . "/");
 
-  	$fullPath = $path."/".$encName.'.'.$ext;
+    $fullPath = $path . "/" . $encName . '.' . $ext;
 
-	if (file_exists(realpath($fullPath))) {
-
-		if ($fd = fopen(realpath($fullPath), 'rb')) {
-
+    if (file_exists(realpath($fullPath))) {
+        if ($fd = fopen(realpath($fullPath), 'rb')) {
             $path_parts = pathinfo($fullPath);
 
-            if($ext == 'pdf'){
-
+            if ($ext == 'pdf') {
                 header('Content-type: application/pdf');
-                header("Content-Disposition: inline; filename=\"".$realName.".".$ext."\"");
-
-            }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+                header("Content-Disposition: inline; filename=\"" . $realName . "." . $ext . "\"");
+            } elseif ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
                 header('Content-type: ' . $mimes[$ext]);
                 header('Content-disposition: inline; filename="' . $realName . "." . $ext . '";');
-            }elseif($ext == 'svg') {
+            } elseif ($ext == 'svg') {
                 header('Content-type: image/svg+xml');
                 header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
-
-
-            }else{
-
+            } else {
                 header("Content-type: application/octet-stream");
-                header("Content-Disposition: filename=\"".$realName.".".$ext."\"");
-
+                header("Content-Disposition: filename=\"" . $realName . "." . $ext . "\"");
             }
 
-            if(ob_get_length() > 0) {
+            if (ob_get_length() > 0) {
                 ob_end_clean();
             }
 
-            $chunkSize = 1024*1024;
+            $chunkSize = 1024 * 1024;
 
             while (!feof($fd)) {
                 $buffer = fread($fd, $chunkSize);
                 echo $buffer;
             }
             fclose($fd);
-
         }
-
-    }else{
+    } else {
         http_response_code(404);
         die();
     }
@@ -139,12 +121,11 @@ function getFileFromS3(): void
 
     $config = app()->make(Environment::class);
 
-    $mimes = array
-    (
+    $mimes = array(
         'jpg' => 'image/jpg',
         'jpeg' => 'image/jpg',
         'gif' => 'image/gif',
-        'png' => 'image/png'
+        'png' => 'image/png',
     );
 
     // Instantiate the client.
@@ -156,43 +137,36 @@ function getFileFromS3(): void
         'use_path_style_endpoint' => !($config->s3UsePathStyleEndpoint == "false"),
         'credentials' => [
             'key'    => $config->s3Key,
-            'secret' => $config->s3Secret
-        ]
+            'secret' => $config->s3Secret,
+        ],
     ]);
 
     try {
         // implode all non-empty elements to allow s3FolderName to be empty.
         // otherwise you will get an error as the key starts with a slash
-        $fileName = implode('/', array_filter(array($config->s3FolderName, $encName.".".$ext)));
+        $fileName = implode('/', array_filter(array($config->s3FolderName, $encName . "." . $ext)));
         $result = $s3Client->getObject([
             'Bucket' => $config->s3Bucket,
             'Key' => $fileName,
-            'Body'   => 'this is the body!'
+            'Body'   => 'this is the body!',
         ]);
 
-        if($ext == 'pdf'){
+        if ($ext == 'pdf') {
             header('Content-type: application/pdf');
-            header("Content-Disposition: inline; filename=\"".$realName.".".$ext."\"");
-
-        }elseif($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png'){
-
+            header("Content-Disposition: inline; filename=\"" . $realName . "." . $ext . "\"");
+        } elseif ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
             header('Content-Type: ' . $result['ContentType']);
-            header("Content-Disposition: inline; filename=\"".$fileName."\"");
-        }elseif($ext == 'svg') {
+            header("Content-Disposition: inline; filename=\"" . $fileName . "\"");
+        } elseif ($ext == 'svg') {
             header('Content-type: image/svg+xml');
             header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
-        }else {
+        } else {
             header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
         }
 
         $body = $result->get('Body');
         echo $body->getContents();
-
-
-
     } catch (Aws\S3\Exception\S3Exception $e) {
-
-        echo $e->getMessage()."\n";
-
+        echo $e->getMessage() . "\n";
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Setting\Controllers {
 
+    use JetBrains\PhpStorm\NoReturn;
     use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
@@ -130,7 +131,7 @@ namespace Leantime\Domain\Setting\Controllers {
          * @access public
          *
          */
-        public function post($params)
+        #[NoReturn] public function post($params)
         {
 
             //Look & feel updates

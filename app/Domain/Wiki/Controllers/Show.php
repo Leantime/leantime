@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use JetBrains\PhpStorm\NoReturn;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Models\Wiki;
@@ -47,7 +48,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
 
             $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
-            if ($wikis == false || count($wikis) == 0) {
+            if (!$wikis || count($wikis) == 0) {
                 $wiki = app()->make(Wiki::class);
                 $wiki->title = $this->language->__("label.default");
                 $wiki->projectId = $_SESSION['currentProject'];
@@ -208,7 +209,7 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        #[NoReturn] public function post($params): void
         {
 
             if (isset($_GET['id']) === true) {

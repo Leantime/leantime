@@ -127,7 +127,7 @@ namespace Leantime\Domain\Tickets\Services {
          * @access public
          * @params array $params label information
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function saveStatusLabels($params): bool
         {
@@ -318,7 +318,7 @@ namespace Leantime\Domain\Tickets\Services {
 
         /**
          * @param array $searchCriteria
-         * @return integer
+         * @return int
          */
         public function countSetFilters(array $searchCriteria): int
         {
@@ -345,8 +345,8 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         /**
-         * @param array   $searchCriteria
-         * @param boolean $includeGroup
+         * @param array $searchCriteria
+         * @param bool  $includeGroup
          * @return array
          */
         public function getSetFilters(array $searchCriteria, bool $includeGroup = false): array
@@ -380,7 +380,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $searchCriteria
-         * @return array|boolean
+         * @return array|bool
          */
         public function getAll($searchCriteria): bool|array
         {
@@ -521,7 +521,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param TicketModel $ticket
-         * @param string $projectId
+         * @param string      $projectId
          * @return array
          */
         public function getAllPossibleParents(TicketModel $ticket, string $projectId = 'currentProject'): array
@@ -547,7 +547,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $id
-         * @return boolean|TicketModel
+         * @return bool|TicketModel
          * @throws BindingResolutionException
          */
         public function getTicket($id): TicketModel|bool
@@ -586,7 +586,7 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @param $userId
          * @param $projectId
-         * @param false $includeDoneTickets
+         * @param false     $includeDoneTickets
          * @return array
          * @throws \Exception
          */
@@ -662,8 +662,8 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $projectId
-         * @param int $limit
-         * @return array|boolean
+         * @param int       $limit
+         * @return array|bool
          */
         public function getLastTickets($projectId, int $limit = 5): bool|array
         {
@@ -718,7 +718,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $searchCriteria
-         * @param string $sortBy
+         * @param string         $sortBy
          * @return array|false
          */
         public function getAllMilestones($searchCriteria, string $sortBy = "duedate"): false|array
@@ -731,10 +731,10 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         /**
-         * @param bool $includeArchived
+         * @param bool   $includeArchived
          * @param string $sortBy
-         * @param bool $includeTasks
-         * @param bool $clientId
+         * @param bool   $includeTasks
+         * @param int    $clientId
          * @return array|false
          */
         public function getAllMilestonesOverview(bool $includeArchived = false, string $sortBy = "duedate", bool $includeTasks = false, int $clientId = 0): false|array
@@ -810,7 +810,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $params
-         * @return boolean|string[]
+         * @return bool|string[]
          * @throws BindingResolutionException
          */
         public function quickAddTicket($params): array|bool
@@ -879,7 +879,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $params
-         * @return boolean|string[]
+         * @return array|bool|int
          */
         public function quickAddMilestone($params): array|bool|int
         {
@@ -918,7 +918,7 @@ namespace Leantime\Domain\Tickets\Services {
 
         /**
          * @param $values
-         * @return boolean|string[]|void
+         * @return bool|string[]|void
          * @throws BindingResolutionException
          */
         public function addTicket($values)
@@ -1120,7 +1120,7 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @param $id
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function patchTicket($id, $params): bool
         {
@@ -1134,9 +1134,9 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
          *
-         * @param integer $id
-         * @param integer $projectId
-         * @return boolean
+         * @param int $id
+         * @param int $projectId
+         * @return bool
          * @throws BindingResolutionException
          */
         public function moveTicket(int $id, int $projectId): bool
@@ -1167,7 +1167,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $params
-         * @return boolean|string[]
+         * @return bool|string[]
          */
         public function quickUpdateMilestone($params): array|bool
         {
@@ -1212,7 +1212,7 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @param $values
          * @param $parentTicket
-         * @return boolean
+         * @return bool
          */
         public function upsertSubtask($values, $parentTicket): bool
         {
@@ -1286,7 +1286,7 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @param $params
          * @param $handler
-         * @return boolean
+         * @return bool
          * @throws BindingResolutionException
          */
         public function updateTicketStatusAndSorting($params, $handler = null): bool
@@ -1353,7 +1353,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $id
-         * @return boolean|string[]
+         * @return bool|string[]
          * @throws BindingResolutionException
          */
         public function deleteTicket($id): array|bool
@@ -1379,7 +1379,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         /**
          * @param $id
-         * @return boolean|string[]
+         * @return bool|string[]
          * @throws BindingResolutionException
          */
         public function deleteMilestone($id): array|bool

@@ -15,6 +15,9 @@ use Leantime\Domain\Files\Services\Files as FileService;
  */
 class Browse extends Controller
 {
+    private FileService $filesService;
+    private FileRepository $filesRepo;
+
     /**
      * @param FileRepository $filesRepo
      * @param FileService    $filesService

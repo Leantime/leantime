@@ -104,7 +104,7 @@ class Db
      * arbitrary keys
      *
      * @param string $name
-     * @param integer $count
+     * @param int    $count
      * @return string
      */
     public static function arrayToPdoBindingString(string $name, int $count): string

@@ -38,8 +38,8 @@ abstract class Controller
      * @access public
      *
      * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param template $tpl The template to be initialized.
-     * @param language $language The language to be initialized.
+     * @param template        $tpl             The template to be initialized.
+     * @param language        $language        The language to be initialized.
      * @throws BindingResolutionException
      */
     public function __construct(
@@ -67,7 +67,7 @@ abstract class Controller
      *
      * @access private
      *
-     * @param string $method
+     * @param string       $method
      * @param object|array $params
      *
      * @return void

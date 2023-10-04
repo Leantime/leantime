@@ -39,7 +39,7 @@ class Template
 
     /**
      *
-     * @var string
+     * @var string|Frontcontroller
      */
     public string|Frontcontroller $frontcontroller = '';
 
@@ -367,8 +367,8 @@ class Template
     /**
      * assign - assign variables in the action for template
      *
-     * @param string $name
-     * @param $value
+     * @param string $name  Name of variable
+     * @param mixed  $value Value of variable
      * @return void
      */
     public function assign(string $name, mixed $value): void
@@ -498,7 +498,7 @@ class Template
     /**
      * @param $layoutName
      * @param $template
-     * @return boolean|string
+     * @return bool|string
      * @throws Exception
      */
     protected function confirmLayoutName($layoutName, $template): bool|string
@@ -793,7 +793,7 @@ class Template
      * getFormattedDateString - returns a language specific formatted date string. wraps language class method
      *
      * @access public
-     * @param string $date
+     * @param string|null $date
      * @return string
      */
     public function getFormattedDateString(?string $date): string
@@ -835,11 +835,11 @@ class Template
      * @see https://stackoverflow.com/questions/1193500/truncate-text-containing-html-ignoring-tags
      * @author Søren Løvborg <https://stackoverflow.com/users/136796/s%c3%b8ren-l%c3%b8vborg>
      * @access public
-     * @param string  $html
-     * @param integer $maxLength
-     * @param string  $ending
-     * @param boolean $exact
-     * @param boolean $considerHtml
+     * @param string $html
+     * @param int    $maxLength
+     * @param string $ending
+     * @param bool   $exact
+     * @param bool   $considerHtml
      * @return string
      */
     public function truncate(string $html, int $maxLength = 100, string $ending = '(...)', bool $exact = true, bool $considerHtml = false): string
@@ -956,6 +956,8 @@ class Template
      *
      * @access public
      * @return string
+     * @throws BindingResolutionException
+     * @throws BindingResolutionException
      */
     public function getModulePicture(): string
     {

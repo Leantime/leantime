@@ -228,7 +228,7 @@ class Language
      *
      * @access public
      * @param  $langCode
-     * @return boolean
+     * @return bool
      */
     public function isValidLanguage($langCode): bool
     {
@@ -298,9 +298,9 @@ class Language
      * includeOverrides - include overrides from ini file
      *
      * @access public
-     * @param array   $language
-     * @param string  $filepath
-     * @param boolean $foreignLanguage
+     * @param array  $language
+     * @param string $filepath
+     * @param bool   $foreignLanguage
      * @return array
      * @throws Exception
      */
@@ -331,7 +331,7 @@ class Language
      * getLanguageList - gets the list of possible languages
      *
      * @access public
-     * @return array|boolean
+     * @return array|bool
      */
     public function getLanguageList(): bool|array
     {
@@ -479,7 +479,7 @@ class Language
      *
      * @access public
      * @param string $date
-     * @return string|boolean
+     * @return string|bool
      */
     public function getISODateString(string $date): bool|string
     {
@@ -504,7 +504,8 @@ class Language
      *
      * @access public
      * @param string $date
-     * @return string|boolean
+     * @param $time
+     * @return string|bool
      */
     public function getISODateTimeString(string $date, $time): bool|string
     {
@@ -530,7 +531,7 @@ class Language
      *
      * @access public
      * @param string $time
-     * @return string|boolean
+     * @return string|bool
      */
     public function getISOTimeString(string $time): bool|string
     {
@@ -550,7 +551,7 @@ class Language
      *
      * @access public
      * @param string $dateTime
-     * @return string|boolean
+     * @return string|bool
      */
     public function extractTime(string $dateTime): bool|string
     {

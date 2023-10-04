@@ -71,7 +71,7 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @param $values
          * @param $id
-         * @return boolean
+         * @return bool
          */
         public function editUser($values, $id): bool
         {
@@ -86,7 +86,7 @@ namespace Leantime\Domain\Users\Services {
          * @return int
          */
         /**
-         * @return integer
+         * @return int
          */
         public function getNumberOfUsers(): int
         {
@@ -116,7 +116,7 @@ namespace Leantime\Domain\Users\Services {
          */
         /**
          * @param $id
-         * @return array|boolean
+         * @return array|bool
          */
         public function getUser($id): array|bool
         {
@@ -178,7 +178,7 @@ namespace Leantime\Domain\Users\Services {
          * @param $category
          * @param $setting
          * @param $value
-         * @return boolean
+         * @return bool
          */
         public function updateUserSettings($category, $setting, $value): bool
         {
@@ -203,7 +203,7 @@ namespace Leantime\Domain\Users\Services {
          *
          * @access public
          * @param  string $password The string to be checked
-         * @return boolean returns true if password meets requirements
+         * @return bool returns true if password meets requirements
          */
         public function checkPasswordStrength(string $password): bool
         {
@@ -233,7 +233,7 @@ namespace Leantime\Domain\Users\Services {
          *
          * @access public
          * @param array $values basic user values
-         * @return boolean|integer returns new user id on success, false on failure
+         * @return bool|int returns new user id on success, false on failure
          * @throws BindingResolutionException
          */
         public function createUserInvite(array $values): bool|int
@@ -282,7 +282,7 @@ namespace Leantime\Domain\Users\Services {
          *
          * @access public
          * @param  array $values basic user values
-         * @return boolean|integer returns new user id on success, false on failure
+         * @return bool|int returns new user id on success, false on failure
          */
         public function addUser(array $values): bool|int
         {
@@ -296,9 +296,9 @@ namespace Leantime\Domain\Users\Services {
          * TODO: Should accept userModel
          *
          * @access public
-         * @param string $username  username
-         * @param integer|string $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
-         * @return boolean returns true or false
+         * @param string     $username  username
+         * @param int|string $notUserId optional userId to skip. (used when changing email addresses to a new one, skips checking the old one)
+         * @return bool returns true or false
          */
         public function usernameExist(string $username, int|string $notUserId = ''): bool
         {
@@ -311,8 +311,8 @@ namespace Leantime\Domain\Users\Services {
          * TODO: Should return usermodel
          *
          * @access public
-         * @param integer $currentUser user who is trying to access the project
-         * @param integer $projectId project id
+         * @param int $currentUser user who is trying to access the project
+         * @param int $projectId   project id
          * @return array returns array of users
          * @throws BindingResolutionException
          */

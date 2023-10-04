@@ -30,6 +30,8 @@ namespace Leantime\Domain\Calendar\Controllers {
 
         /**
          * @return void
+         * @throws \Exception
+         * @throws \Exception
          */
         public function get(): void
         {
@@ -51,6 +53,8 @@ namespace Leantime\Domain\Calendar\Controllers {
         /**
          * @param $params
          * @return void
+         * @throws \Exception
+         * @throws \Exception
          */
         public function post($params): void
         {

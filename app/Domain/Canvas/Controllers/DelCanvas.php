@@ -55,7 +55,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
 
                 //Create default canvas.
-                if ($allCanvas == false || count($allCanvas) == 0) {
+                if (!$allCanvas || count($allCanvas) == 0) {
                     $this->tpl->redirect(BASE_URL . '/strategy/showBoards');
                 } else {
                     $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');

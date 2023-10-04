@@ -95,7 +95,7 @@ foreach ($__data as $var => $val) {
                                 </div>
                                 <div class="row" style="border-top:1px solid var(--main-border-color);">
                                     <div class="col-md-8" style="padding-top:10px;">
-                                        <?php if ($installedPlugins->enabled == false) {?>
+                                        <?php if (!$installedPlugins->enabled) {?>
                                             <a href="<?=BASE_URL ?>/plugins/show?enable=<?=$installedPlugins->id ?>" class=""><i class="fa-solid fa-plug-circle-check"></i> <?=$tpl->__('buttons.enable') ?></a> |
                                             <a href="<?=BASE_URL ?>/plugins/show?remove=<?=$installedPlugins->id ?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('buttons.remove') ?></a>
                                         <?php } else { ?>

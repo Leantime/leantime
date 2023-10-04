@@ -34,8 +34,8 @@ namespace Leantime\Domain\Queue\Repositories {
         /**
          * @param $recipients
          * @param $message
-         * @param string $subject
-         * @param int $projectId
+         * @param string     $subject
+         * @param int        $projectId
          * @return void
          */
         public function queueMessageToUsers($recipients, $message, string $subject = "", int $projectId = 0): void
@@ -85,9 +85,9 @@ namespace Leantime\Domain\Queue\Repositories {
          * @return array|false
          */
         /**
-         * @param string $channel
+         * @param string     $channel
          * @param $recipients
-         * @param int $projectId
+         * @param int        $projectId
          * @return array|false
          */
         public function listMessageInQueue(string $channel = 'email', $recipients = null, int $projectId = 0): false|array
@@ -110,7 +110,7 @@ namespace Leantime\Domain\Queue\Repositories {
          */
         /**
          * @param $msghashes
-         * @return boolean
+         * @return bool
          */
         public function deleteMessageInQueue($msghashes): bool
         {

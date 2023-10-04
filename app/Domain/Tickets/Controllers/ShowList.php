@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use JetBrains\PhpStorm\NoReturn;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -69,11 +70,11 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        public function post(array $params): void
+        #[NoReturn] public function post(array $params): void
         {
 
             //QuickAdd
-            if (isset($_POST['quickadd']) == true) {
+            if (isset($_POST['quickadd'])) {
                 $result = $this->ticketService->quickAddTicket($params);
 
                 if (is_array($result)) {

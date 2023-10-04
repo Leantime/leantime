@@ -63,6 +63,8 @@ namespace Leantime\Domain\Tickets\Controllers {
         /**
          * @param $params
          * @return void
+         * @throws BindingResolutionException
+         * @throws BindingResolutionException
          */
         public function post($params): void
         {

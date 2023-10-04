@@ -56,6 +56,10 @@ abstract class Repository
              * @var db
              */
             private Db $Db;
+            /**
+             * @var \Closure|mixed|object|null
+             */
+            private mixed $db;
 
             /**
              * constructor
@@ -74,7 +78,7 @@ abstract class Repository
              * prepares sql for entry; wrapper for PDO\prepare()
              *
              * @param string $sql
-             * @param array $args - additional arguments to pass along to prepare function
+             * @param array  $args - additional arguments to pass along to prepare function
              */
             public function prepare(string $sql, array $args = []): void
             {
@@ -93,7 +97,7 @@ abstract class Repository
              *
              * @param string $needle  - placeholder to replace
              * @param string $replace - value to replace with
-             * @param int $type    - type of value being replaced
+             * @param int    $type    - type of value being replaced
              */
             public function bindValue(string $needle, string $replace, int $type = PDO::PARAM_STR): void
             {
@@ -188,9 +192,9 @@ abstract class Repository
     /**
      * patch - updates a record in the database
      *
-     * @param integer $id     - the id of the record to update
-     * @param array   $params - the parameters to update
-     * @return boolean
+     * @param int   $id     - the id of the record to update
+     * @param array $params - the parameters to update
+     * @return bool
      */
     public function patch(int $id, array $params): bool
     {
@@ -222,7 +226,7 @@ abstract class Repository
 
     /**
      * @param object $objectToInsert
-     * @return false|integer
+     * @return false|int
      * @throws \ReflectionException
      */
     public function insert(object $objectToInsert): false|int
@@ -273,7 +277,7 @@ abstract class Repository
     /**
      * delete - deletes a record from the database
      *
-     * @param integer $id - the id of the record to delete
+     * @param int $id - the id of the record to delete
      */
     public function delete(int $id): void
     {
@@ -282,7 +286,7 @@ abstract class Repository
     /**
      * get - gets a record from the database
      *
-     * @param integer $id - the id of the record to get
+     * @param int $id - the id of the record to get
      * @return mixed
      * @throws BindingResolutionException
      * @throws \ReflectionException
@@ -322,7 +326,7 @@ abstract class Repository
      *
      * @param string $class     - the class to get the attribute from
      * @param string $property  - the property to get the attribute from
-     * @param boolean $includeId - whether or not to include the id attribute
+     * @param bool   $includeId - whether or not to include the id attribute
      * @return array|false
      * @throws \ReflectionException
      */

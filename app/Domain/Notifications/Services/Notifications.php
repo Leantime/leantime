@@ -47,10 +47,10 @@ namespace Leantime\Domain\Notifications\Services {
          */
         /**
          * @param $userId
-         * @param int $showNewOnly
-         * @param int $limitStart
-         * @param int $limitEnd
-         * @param array $filterOptions
+         * @param int    $showNewOnly
+         * @param int    $limitStart
+         * @param int    $limitEnd
+         * @param array  $filterOptions
          * @return array|false
          */
         public function getAllNotifications($userId, int $showNewOnly = 0, int $limitStart = 0, int $limitEnd = 100, array $filterOptions = array()): false|array
@@ -66,7 +66,7 @@ namespace Leantime\Domain\Notifications\Services {
          */
         /**
          * @param array $notifications
-         * @return boolean|null
+         * @return bool|null
          */
         public function addNotifications(array $notifications): ?bool
         {
@@ -82,7 +82,7 @@ namespace Leantime\Domain\Notifications\Services {
         /**
          * @param $id
          * @param $userId
-         * @return boolean
+         * @return bool
          */
         public function markNotificationRead($id, $userId): bool
         {
@@ -95,11 +95,11 @@ namespace Leantime\Domain\Notifications\Services {
         }
 
         /**
-         * @param string  $content
-         * @param string  $module
-         * @param integer $moduleId
-         * @param integer $authorId
-         * @param string  $url
+         * @param string $content
+         * @param string $module
+         * @param int    $moduleId
+         * @param int    $authorId
+         * @param string $url
          * @return void
          * @throws BindingResolutionException
          */

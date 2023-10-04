@@ -16,6 +16,8 @@ namespace Leantime\Domain\Cron\Services {
         private Audit $AuditRepo;
         private Queue $queueSvc;
         private Environment $Environment;
+        private Environment $environment;
+        private Audit $auditRepo;
 
         /**
          * @param Audit       $auditRepo
@@ -33,7 +35,7 @@ namespace Leantime\Domain\Cron\Services {
          * @return bool
          */
         /**
-         * @return boolean
+         * @return bool
          * @throws Exception
          */
         public function runCron(): bool
@@ -52,7 +54,7 @@ namespace Leantime\Domain\Cron\Services {
             $timeSince = abs($nowDate - $lastCronEvent);
 
             if ($timeSince < 300) {
-                if ($this->environment->debug == true) {
+                if ($this->environment->debug) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
                 }
 
@@ -61,13 +63,13 @@ namespace Leantime\Domain\Cron\Services {
 
             $this->auditRepo->storeEvent("cron", "Cron started");
 
-            if ($this->environment->debug == true) {
+            if ($this->environment->debug) {
                 error_log("cron start");
             }
 
             $this->queueSvc->processQueue();
 
-            if ($this->environment->debug == true) {
+            if ($this->environment->debug) {
                 error_log("cron end");
             }
 

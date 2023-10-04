@@ -47,7 +47,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         /**
          * @param $pluginFolder
-         * @return boolean
+         * @return bool
          * @throws BindingResolutionException
          */
         public function isPluginEnabled($pluginFolder): bool
@@ -203,8 +203,8 @@ namespace Leantime\Domain\Plugins\Services {
          * @return bool
          */
         /**
-         * @param integer $id
-         * @return boolean
+         * @param int $id
+         * @return bool
          */
         public function enablePlugin(int $id): bool
         {
@@ -217,8 +217,8 @@ namespace Leantime\Domain\Plugins\Services {
          * @return bool
          */
         /**
-         * @param integer $id
-         * @return boolean
+         * @param int $id
+         * @return bool
          */
         public function disablePlugin(int $id): bool
         {
@@ -232,8 +232,8 @@ namespace Leantime\Domain\Plugins\Services {
          * @throws BindingResolutionException
          */
         /**
-         * @param integer $id
-         * @return boolean
+         * @param int $id
+         * @return bool
          * @throws BindingResolutionException
          */
         public function removePlugin(int $id): bool

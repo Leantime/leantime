@@ -26,9 +26,10 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getSprint - get single sprint
          *
          * @access public
-         * @return array
+         * @param int $id
+         * @return \Leantime\Domain\Sprints\Models\Sprints|false
          */
-        public function getSprint($id): array
+        public function getSprint($id): \Leantime\Domain\Sprints\Models\Sprints|false
         {
 
             $query = "SELECT
@@ -56,6 +57,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getAllSprints - get all sprints for a project
          *
          * @access public
+         * @param $projectId
          * @return array
          */
         public function getAllSprints($projectId): array
@@ -87,6 +89,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getAllSprints - get all sprints for a project
          *
          * @access public
+         * @param $projectId
          * @return array
          */
         public function getAllFutureSprints($projectId): array
@@ -118,6 +121,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getCurrentSprintId - get current sprint for a project
          *
          * @access public
+         * @param $projectId
          * @return mixed
          */
         public function getCurrentSprint($projectId): mixed
@@ -149,6 +153,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * getUpcomingSprint - gets the next upcoming sprint
          *
          * @access public
+         * @param $projectId
          * @return array
          */
         public function getUpcomingSprint($projectId): array
@@ -182,7 +187,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          */
         /**
          * @param $sprint
-         * @return boolean
+         * @return bool
          */
         public function addSprint($sprint): bool
         {
@@ -208,7 +213,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          */
         /**
          * @param $sprint
-         * @return boolean
+         * @return bool
          */
         public function editSprint($sprint): bool
         {

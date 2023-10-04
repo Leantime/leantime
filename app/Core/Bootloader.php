@@ -37,7 +37,7 @@ class Bootloader
     /**
      * Application instance
      *
-     * @var Application
+     * @var Application|PsrContainerContract|null
      */
     protected Application|null|PsrContainerContract $app;
 
@@ -220,6 +220,7 @@ class Bootloader
      * Load headers
      *
      * @return void
+     * @throws BindingResolutionException
      */
     private function loadHeaders(): void
     {
@@ -238,7 +239,7 @@ class Bootloader
     /**
      * Check if Leantime is installed
      *
-     * @return boolean
+     * @return bool
      * @throws BindingResolutionException
      */
     private function checkIfInstalled(): bool
@@ -324,7 +325,7 @@ class Bootloader
     /**
      * Check if Leantime is updated
      *
-     * @return boolean
+     * @return bool
      * @throws BindingResolutionException
      */
     private function checkIfUpdated(): bool
@@ -486,7 +487,7 @@ class Bootloader
     }
 
     /**
-     * @param integer $debug
+     * @param int $debug
      * @return void
      */
     private function setErrorHandler(int $debug): void

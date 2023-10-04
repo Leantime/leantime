@@ -109,7 +109,7 @@ namespace Leantime\Domain\Wiki\Services {
         /**
          * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
          * @param $wikiId
-         * @return boolean
+         * @return bool
          */
         public function updateWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki, $wikiId): bool
         {
@@ -135,7 +135,7 @@ namespace Leantime\Domain\Wiki\Services {
          */
         /**
          * @param Article $article
-         * @return boolean
+         * @return bool
          */
         public function updateArticle(Article $article): bool
         {

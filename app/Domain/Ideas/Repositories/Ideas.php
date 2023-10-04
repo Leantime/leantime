@@ -274,7 +274,7 @@ namespace Leantime\Domain\Ideas\Repositories {
         /**
          * @param $id
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function patchCanvasItem($id, $params): bool
         {
@@ -306,7 +306,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         /**
          * @param $sortingArray
-         * @return boolean
+         * @return bool
          */
         public function updateIdeaSorting($sortingArray): bool
         {
@@ -556,7 +556,7 @@ namespace Leantime\Domain\Ideas\Repositories {
         /**
          * @param $ideaId
          * @param $status
-         * @return boolean
+         * @return bool
          */
         public function updateIdeaStatus($ideaId, $status): bool
         {
@@ -583,7 +583,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         /**
          * @param $projectId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfIdeas($projectId = null): mixed
         {
@@ -622,7 +622,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         /**
          * @param $projectId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfBoards($projectId = null): mixed
         {
@@ -661,7 +661,7 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         /**
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function bulkUpdateIdeaStatus($params): bool
         {

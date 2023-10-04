@@ -91,19 +91,19 @@ namespace Leantime\Domain\Canvas\Repositories {
 
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
         public ?object $result = null;
 
         /**
          * @access public
-         * @var    object
+         * @var    object|null
          */
         public ?object $tickets = null;
 
         /**
          * @access private
-         * @var    DbCore
+         * @var    DbCore|null
          */
         protected ?DbCore $db = null;
 
@@ -496,7 +496,7 @@ namespace Leantime\Domain\Canvas\Repositories {
         /**
          * @param $id
          * @param $params
-         * @return boolean
+         * @return bool
          */
         public function patchCanvasItem($id, $params): bool
         {
@@ -1038,7 +1038,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          */
         /**
          * @param $projectId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfCanvasItems($projectId = null): mixed
         {
@@ -1077,7 +1077,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          */
         /**
          * @param $projectId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfBoards($projectId = null): mixed
         {
@@ -1112,9 +1112,9 @@ namespace Leantime\Domain\Canvas\Repositories {
          * existCanvas - return if a canvas exists with a given title in the specified project
          *
          * @access public
-         * @param integer $projectId   Project identifier
-         * @param  string  $canvasTitle Canvas title
-         * @return boolean   True if canvas exists
+         * @param int    $projectId   Project identifier
+         * @param  string $canvasTitle Canvas title
+         * @return bool   True if canvas exists
          */
         public function existCanvas(int $projectId, string $canvasTitle): bool
         {
@@ -1138,11 +1138,11 @@ namespace Leantime\Domain\Canvas\Repositories {
          * copyCanvas - create a copy of an existing canvas
          *
          * @access public
-         * @param integer $projectId   Project identifier
-         * @param integer $canvasId    Original canvas identifier
-         * @param integer $authorId    Author identifier
-         * @param  string  $canvasTitle New canvas title
-         * @return integer    Identifier of new Canvas
+         * @param int    $projectId   Project identifier
+         * @param int    $canvasId    Original canvas identifier
+         * @param int    $authorId    Author identifier
+         * @param  string $canvasTitle New canvas title
+         * @return int    Identifier of new Canvas
          */
         public function copyCanvas(int $projectId, int $canvasId, int $authorId, string $canvasTitle): int
         {
@@ -1194,9 +1194,9 @@ namespace Leantime\Domain\Canvas\Repositories {
          * mergeCanvas - merge canvas into existing canvas
          *
          * @access public
-         * @param integer $canvasId Original canvas identifier
-         * @param string  $mergeId  Canvas to perge into existing one
-         * @return boolean Status of merge
+         * @param int    $canvasId Original canvas identifier
+         * @param string $mergeId  Canvas to perge into existing one
+         * @return bool Status of merge
          */
         public function mergeCanvas(int $canvasId, string $mergeId): bool
         {
@@ -1244,8 +1244,8 @@ namespace Leantime\Domain\Canvas\Repositories {
          * getCanvasProgressCount - gets canvases by type and counts number of items per box
          *
          * @access public
-         * @param integer $projectId Project od
-         * @param  array   $boards    List of board types to pull
+         * @param int   $projectId Project od
+         * @param  array $boards    List of board types to pull
          * @return array|bool list of boards or false
          */
         public function getCanvasProgressCount(int $projectId, array $boards): array|bool
@@ -1302,8 +1302,8 @@ namespace Leantime\Domain\Canvas\Repositories {
          * getLastUpdateCanvas - gets the list of canvas that have been updated recently
          *
          * @access public
-         * @param integer $projectId Project od
-         * @param  array   $boards    List of board types to pull
+         * @param int   $projectId Project od
+         * @param  array $boards    List of board types to pull
          * @return array    array of canvas boards sorted by last update date
          */
         public function getLastUpdatedCanvas(int $projectId, array $boards): array
@@ -1359,7 +1359,7 @@ namespace Leantime\Domain\Canvas\Repositories {
          * getTags - gets the list of tags across all canvas items in a given project
          *
          * @access public
-         * @param integer $projectId Project od
+         * @param int $projectId Project od
          * @return array    array of canvas boards sorted by last update date
          */
         public function getTags(int $projectId): array

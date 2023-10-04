@@ -22,7 +22,7 @@ namespace Leantime\Domain\Connector\Services {
         }
 
         /**
-         * @param integer $id
+         * @param int $id
          * @return object|array|false
          * @throws BindingResolutionException
          * @throws \ReflectionException
@@ -34,7 +34,7 @@ namespace Leantime\Domain\Connector\Services {
 
         /**
          * @param object|array $object
-         * @return boolean
+         * @return bool
          */
         public function update(object|array $object): bool
         {
@@ -44,7 +44,7 @@ namespace Leantime\Domain\Connector\Services {
 
         /**
          * @param object|array $object
-         * @return integer|false
+         * @return int|false
          * @throws \ReflectionException
          * @throws \ReflectionException
          */
@@ -54,8 +54,8 @@ namespace Leantime\Domain\Connector\Services {
         }
 
         /**
-         * @param integer $id
-         * @return boolean
+         * @param int $id
+         * @return bool
          */
         public function delete(int $id): bool
         {
@@ -74,9 +74,9 @@ namespace Leantime\Domain\Connector\Services {
         }
 
         /**
-         * @param integer $id
-         * @param array   $params
-         * @return boolean
+         * @param int   $id
+         * @param array $params
+         * @return bool
          */
         public function patch(int $id, array $params): bool
         {

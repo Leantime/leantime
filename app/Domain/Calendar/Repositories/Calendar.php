@@ -143,16 +143,16 @@ namespace Leantime\Domain\Calendar\Repositories {
                         'y' => date('Y', $dateFrom),
                         'm' => date('m', $dateFrom),
                         'd' => date('d', $dateFrom),
-                        'h' => $allDay == true ? "00" : date('H', $dateFrom),
-                        'i' => $allDay == true ? "00" : date('i', $dateFrom),
+                        'h' => $allDay ? "00" : date('H', $dateFrom),
+                        'i' => $allDay ? "00" : date('i', $dateFrom),
                     'ical' => date('Ymd\THis', $dateFrom),
                     ),
                     'dateTo' => array(
                         'y' => date('Y', $dateTo),
                         'm' => date('m', $dateTo),
-                        'd' => $allDay == true ? date('d', ($dateFrom + (60 * 60 * 24))) : date('d', $dateTo),
-                        'h' => $allDay == true ? "00" : date('H', $dateTo),
-                        'i' => $allDay == true ? "00" : date('i', $dateTo),
+                        'd' => $allDay ? date('d', ($dateFrom + (60 * 60 * 24))) : date('d', $dateTo),
+                        'h' => $allDay ? "00" : date('H', $dateTo),
+                        'i' => $allDay ? "00" : date('i', $dateTo),
                         'ical' => date('Ymd\THis', $dateTo),
                     ),
                     'id' => $value['id'],
@@ -535,7 +535,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          */
         /**
          * @param $id
-         * @return boolean
+         * @return bool
          */
         public function delPersonalEvent($id): bool
         {

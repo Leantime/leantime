@@ -27,7 +27,7 @@ class ApiSession
      * @param array $requiredCreds
      * @param array $creds
      * @param array $optionalCreds (optional)
-     * @return boolean
+     * @return bool
      */
     private static function checkCreds(
         array $requiredCreds,
@@ -81,7 +81,7 @@ class ApiSession
      * @see https://github.com/kamermans/guzzle-oauth2-subscriber
      * @param string                  $baseUri
      * @param array                   $creds           Just pass an empty array if you supply $customGrantType.
-     * @param boolean                 $usesRefresh     (optional)
+     * @param bool                    $usesRefresh     (optional)
      * @param GrantTypeInterface|null $customGrantType (optional)
      * @return HandlerStack
      */

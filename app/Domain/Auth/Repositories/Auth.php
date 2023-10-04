@@ -14,19 +14,19 @@ namespace Leantime\Domain\Auth\Repositories {
     {
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    integer|null user id from DB
          */
         private ?int $userId = null;
 
         /**
          * @access private
-         * @var    integer user id from DB
+         * @var    integer|null user id from DB
          */
         private ?int $clientId = null;
 
         /**
          * @access private
-         * @var    string username from db
+         * @var    string|null username from db
          */
         private ?string $username = null;
 
@@ -44,19 +44,19 @@ namespace Leantime\Domain\Auth\Repositories {
 
         /**
          * @access private
-         * @var    string
+         * @var    string|null
          */
         private ?string $password = null;
 
         /**
          * @access private
-         * @var    string username (emailaddress)
+         * @var    string|null username (emailaddress)
          */
         private ?string $user = null;
 
         /**
          * @access private
-         * @var    string username (emailaddress)
+         * @var    string|null username (emailaddress)
          */
         private ?string $mail = null;
 
@@ -74,13 +74,13 @@ namespace Leantime\Domain\Auth\Repositories {
 
         /**
          * @access private
-         * @var    string
+         * @var    string|null
          */
         private ?string $session = null;
 
         /**
          * @access private
-         * @var    DbCore - db connection
+         * @var    DbCore|null - db connection
          */
         private null|DbCore $db = null;
 
@@ -112,7 +112,7 @@ namespace Leantime\Domain\Auth\Repositories {
 
         /**
          * @access public
-         * @var    string
+         * @var    string|bool
          */
         public string|bool $resetInProgress = false;
 
@@ -151,7 +151,8 @@ namespace Leantime\Domain\Auth\Repositories {
          * logout - destroy sessions and cookies
          *
          * @access private
-         * @return boolean
+         * @param $sessionId
+         * @return bool
          */
         public function invalidateSession($sessionId): bool
         {
@@ -172,7 +173,7 @@ namespace Leantime\Domain\Auth\Repositories {
          * checkSessions - check all sessions in the database and unset them if necessary
          *
          * @access private
-         * @return boolean
+         * @return bool
          */
         private function invalidateExpiredUserSessions(): bool
         {
@@ -226,7 +227,7 @@ namespace Leantime\Domain\Auth\Repositories {
          * @param $userId
          * @param  $sessionid
          * @param  $time
-         * @return boolean
+         * @return bool
          */
         public function updateUserSession($userId, $sessionid, $time): bool
         {
@@ -260,7 +261,7 @@ namespace Leantime\Domain\Auth\Repositories {
          *
          * @access public
          * @param
-         * @return boolean
+         * @return bool
          */
         public function validateResetLink($hash): bool
         {
@@ -286,7 +287,7 @@ namespace Leantime\Domain\Auth\Repositories {
          *
          * @access public
          * @param
-         * @return array|boolean
+         * @return array|bool
          */
         public function getUserByInviteLink($hash): bool|array
         {
@@ -311,7 +312,7 @@ namespace Leantime\Domain\Auth\Repositories {
         /**
          * @param $username
          * @param $resetLink
-         * @return boolean
+         * @return bool
          */
         public function setPWResetLink($username, $resetLink): bool
         {
@@ -344,7 +345,7 @@ namespace Leantime\Domain\Auth\Repositories {
         /**
          * @param $password
          * @param $hash
-         * @return boolean
+         * @return bool
          */
         public function changePW($password, $hash): bool
         {

@@ -43,7 +43,7 @@ class Events
      * @access public
      *
      * @param string $eventName
-     * @param mixed $payload
+     * @param mixed  $payload
      * @param string $context
      *
      * @return void
@@ -120,9 +120,9 @@ class Events
      * @access public
      *
      * @param string $filtername
-     * @param mixed $payload
-     * @param mixed $available_params
-     * @param mixed $context
+     * @param mixed  $payload
+     * @param mixed  $available_params
+     * @param mixed  $context
      *
      * @return mixed
      * @throws BindingResolutionException
@@ -215,7 +215,7 @@ class Events
      *
      * @param string                 $eventName
      * @param string|callable|object $handler
-     * @param integer                $priority
+     * @param int                    $priority
      *
      * @return void
      */
@@ -237,7 +237,7 @@ class Events
      *
      * @param string                 $filtername
      * @param string|callable|object $handler
-     * @param integer                $priority
+     * @param int                    $priority
      *
      * @return void
      */

@@ -3,6 +3,7 @@
 namespace Leantime\Core {
 
     use Exception;
+    use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Events;
 
     /**
@@ -17,10 +18,11 @@ namespace Leantime\Core {
          *
          * @access protected
          *
-         * @param string              $hook
-         * @param mixed               $available_params
-         * @param string|integer|null $function
+         * @param string          $hook
+         * @param mixed           $available_params
+         * @param string|int|null $function
          * @return void
+         * @throws BindingResolutionException
          */
         public static function dispatch_event(string $hook, mixed $available_params = [], string|int $function = null): void
         {
@@ -32,11 +34,12 @@ namespace Leantime\Core {
          *
          * @access protected
          *
-         * @param string              $hook
-         * @param mixed               $payload
-         * @param mixed               $available_params
-         * @param string|integer|null $function
+         * @param string          $hook
+         * @param mixed           $payload
+         * @param mixed           $available_params
+         * @param string|int|null $function
          * @return mixed
+         * @throws BindingResolutionException
          */
         public static function dispatch_filter(string $hook, mixed $payload, mixed $available_params = [], string|int $function = null): mixed
         {

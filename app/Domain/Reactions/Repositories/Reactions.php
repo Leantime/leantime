@@ -28,12 +28,12 @@ namespace Leantime\Domain\Reactions\Repositories {
          * addReaction - adds a reaction to an entity
          * @access public
          *
-         * @param string  $module
-         * @param integer $moduleId
-         * @param integer $userId
-         * @param string  $reaction
+         * @param string $module
+         * @param int    $moduleId
+         * @param int    $userId
+         * @param string $reaction
          *
-         * @return boolean
+         * @return bool
          */
         public function addReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {
@@ -61,9 +61,9 @@ namespace Leantime\Domain\Reactions\Repositories {
          * @access public
          *
          * @param string $module
-         * @param integer $moduleId
+         * @param int    $moduleId
          *
-         * @return array|boolean returns the array on success or false on failure
+         * @return array|bool returns the array on success or false on failure
          */
         public function getGroupedEntityReactions(string $module, int $moduleId): array|false
         {
@@ -90,10 +90,10 @@ namespace Leantime\Domain\Reactions\Repositories {
          * getMyReactions - gets user reactions. Can be very broad or very targeted
          * @access public
          *
-         * @param integer      $userId
-         * @param string       $module
-         * @param integer|null $moduleId
-         * @param string       $reaction
+         * @param int      $userId
+         * @param string   $module
+         * @param int|null $moduleId
+         * @param string   $reaction
          *
          * @return array|false
          */
@@ -147,9 +147,9 @@ namespace Leantime\Domain\Reactions\Repositories {
          * removeReactionById - removes a reaction by reaction id
          * @access public
          *
-         * @param integer $id
+         * @param int $id
          *
-         * @return boolean
+         * @return bool
          */
         public function removeReactionById(int $id): bool
         {
@@ -169,11 +169,11 @@ namespace Leantime\Domain\Reactions\Repositories {
          * removeUserReaction - removes a users reaction to an entity
          * @access public
          *
-         * @param integer $userId
-         * @param string  $module
-         * @param integer $moduleId
-         * @param string  $reaction
-         * @return boolean
+         * @param int    $userId
+         * @param string $module
+         * @param int    $moduleId
+         * @param string $reaction
+         * @return bool
          */
         public function removeUserReaction(int $userId, string $module, int $moduleId, string $reaction): bool
         {

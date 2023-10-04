@@ -60,7 +60,7 @@ namespace Leantime\Domain\Timesheets\Services {
          */
         /**
          * @param $ticketId
-         * @return false|float|integer
+         * @return false|float|int
          */
         public function punchOut($ticketId): float|false|int
         {
@@ -77,7 +77,7 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $params
          * @return string[]|true
          */
-        public function logTime($ticketId, $params): array|true
+        public function logTime($ticketId, $params): array | true
         {
 
             $values = array(
@@ -148,7 +148,7 @@ namespace Leantime\Domain\Timesheets\Services {
          */
         /**
          * @param $ticketId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getSumLoggedHoursForTicket($ticketId): mixed
         {
@@ -171,7 +171,7 @@ namespace Leantime\Domain\Timesheets\Services {
          */
         /**
          * @param $ticket
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getRemainingHours($ticket): mixed
         {
@@ -196,7 +196,7 @@ namespace Leantime\Domain\Timesheets\Services {
         /**
          * @param $ticketId
          * @param $userId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getUsersTicketHours($ticketId, $userId): mixed
         {
@@ -216,17 +216,17 @@ namespace Leantime\Domain\Timesheets\Services {
 
 
         /**
-         * @param int $projectId
-         * @param string $kind
-         * @param string $dateFrom
-         * @param string $dateTo
-         * @param string $userId
-         * @param string $invEmpl
-         * @param string $invComp
-         * @param string $ticketFilter
-         * @param string $paid
-         * @param string $clientId
-         * @return void
+         * @param int      $projectId
+         * @param string   $kind
+         * @param string   $dateFrom
+         * @param string   $dateTo
+         * @param int|null $userId
+         * @param string   $invEmpl
+         * @param string   $invComp
+         * @param string   $ticketFilter
+         * @param string   $paid
+         * @param string   $clientId
+         * @return array|false
          */
         public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
         {
@@ -254,8 +254,8 @@ namespace Leantime\Domain\Timesheets\Services {
          */
         /**
          * @param $invEmpl
-         * @param string $invComp
-         * @param string $paid
+         * @param string  $invComp
+         * @param string  $paid
          * @return null
          */
         public function updateInvoices($invEmpl, string $invComp = '', string $paid = ''): null

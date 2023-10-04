@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Reports\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use JetBrains\PhpStorm\NoReturn;
     use Leantime\Core\Controller;
     use Leantime\Domain\Dashboard\Repositories\Dashboard as DashboardRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -36,6 +37,8 @@ namespace Leantime\Domain\Reports\Controllers {
          * @param TimesheetService    $timesheetService
          * @param ReportService       $reportService
          * @return void
+         * @throws BindingResolutionException
+         * @throws BindingResolutionException
          */
         public function init(
             DashboardRepository $dashboardRepo,
@@ -130,7 +133,7 @@ namespace Leantime\Domain\Reports\Controllers {
          * @param $params
          * @return void
          */
-        public function post($params): void
+        #[NoReturn] public function post($params): void
         {
 
             $this->tpl->redirect(BASE_URL . "/dashboard/show");

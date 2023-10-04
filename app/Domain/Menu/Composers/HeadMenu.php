@@ -89,7 +89,7 @@ class HeadMenu extends Composer
             $user = $this->userService->getUser($_SESSION['userdata']['id']);
         }
 
-        if ($user == false) {
+        if (!$user) {
             $this->authService->logout();
             FrontcontrollerCore::redirect(BASE_URL . '/auth/login');
         }

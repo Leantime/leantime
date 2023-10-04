@@ -82,7 +82,7 @@ namespace Leantime\Domain\Api\Controllers {
 
             if (isset($params['action']) && $params['action'] == "sortIndex" && isset($params["payload"]) === true) {
                 $handler = null;
-                if (isset($params["handler"]) == true) {
+                if (isset($params["handler"])) {
                     $handler = $params["handler"];
                 }
 

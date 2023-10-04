@@ -376,7 +376,7 @@ class Theme
      * @access private
      * @param string $fileName  Filename of asset without extension.
      * @param string $assetType Asset type either js or css.
-     * @return string|boolean returns file path to asset. false if file does not exist
+     * @return string|bool returns file path to asset. false if file does not exist
      */
     private function getAssetPath(string $fileName, string $assetType): string|bool
     {

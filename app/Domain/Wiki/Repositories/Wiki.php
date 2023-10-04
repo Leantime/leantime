@@ -256,7 +256,7 @@ namespace Leantime\Domain\Wiki\Repositories {
         /**
          * @param $wiki
          * @param $wikiId
-         * @return boolean
+         * @return bool
          */
         public function updateWiki($wiki, $wikiId): bool
         {
@@ -345,7 +345,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          */
         /**
          * @param Article $article
-         * @return boolean
+         * @return bool
          */
         public function updateArticle(Article $article): bool
         {
@@ -433,7 +433,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          */
         /**
          * @param $projectId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfBoards($projectId = null): mixed
         {
@@ -471,7 +471,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          */
         /**
          * @param $projectId
-         * @return integer|mixed
+         * @return int|mixed
          */
         public function getNumberOfCanvasItems($projectId = null): mixed
         {

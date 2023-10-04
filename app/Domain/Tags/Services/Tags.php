@@ -31,8 +31,8 @@ namespace Leantime\Domain\Tags\Services {
         }
 
         /**
-         * @param integer $projectId
-         * @param string  $term
+         * @param int    $projectId
+         * @param string $term
          * @return array
          */
         public function getTags(int $projectId, string $term): array

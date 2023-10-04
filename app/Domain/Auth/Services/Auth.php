@@ -169,8 +169,8 @@ namespace Leantime\Domain\Auth\Services {
         }
 
         /**
-         * @param boolean $forceGlobalRoleCheck
-         * @return string|boolean returns role as string or false on failure
+         * @param bool $forceGlobalRoleCheck
+         * @return string|bool returns role as string or false on failure
          */
         public static function getRoleToCheck(bool $forceGlobalRoleCheck): string|bool
         {
@@ -206,7 +206,7 @@ namespace Leantime\Domain\Auth\Services {
          * @access private
          * @param $username
          * @param $password
-         * @return boolean
+         * @return bool
          * @throws BindingResolutionException
          */
         public function login($username, $password): bool
@@ -236,7 +236,7 @@ namespace Leantime\Domain\Auth\Services {
                     }
 
                     //If user does not exist create user
-                    if ($user == false) {
+                    if (!$user) {
                         $userArray = array(
                             'firstname' => $ldapUser['firstname'],
                             'lastname' => $ldapUser['lastname'],
@@ -308,11 +308,6 @@ namespace Leantime\Domain\Auth\Services {
 
         /**
          * @param $user
-         * @param $isLdap
-         * @return false|void
-         */
-        /**
-         * @param $user
          * @param false $isLdap
          * @return false|void
          */
@@ -360,7 +355,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @param $userId
          * @param $sessionID
-         * @return boolean
+         * @return bool
          */
         public function updateUserSessionDB($userId, $sessionID): bool
         {
@@ -371,7 +366,7 @@ namespace Leantime\Domain\Auth\Services {
          * logged_in - Check if logged in and Update sessions
          *
          * @access public
-         * @return boolean
+         * @return bool
          */
         public function logged_in(): bool
         {
@@ -435,7 +430,7 @@ namespace Leantime\Domain\Auth\Services {
          *
          * @access public
          * @param string $hash invite link hash
-         * @return boolean
+         * @return bool
          */
         public function validateResetLink(string $hash): bool
         {
@@ -448,7 +443,7 @@ namespace Leantime\Domain\Auth\Services {
          *
          * @access public
          * @param string $hash invite link hash
-         * @return array|boolean
+         * @return array|bool
          */
         public function getUserByInviteLink(string $hash): bool|array
         {
@@ -460,7 +455,7 @@ namespace Leantime\Domain\Auth\Services {
          *
          * @access public
          * @param string $username new user to be invited (email)
-         * @return boolean returns true on success, false on failure
+         * @return bool returns true on success, false on failure
          * @throws BindingResolutionException
          */
         public function generateLinkAndSendEmail(string $username): bool
@@ -505,7 +500,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @param $password
          * @param $hash
-         * @return boolean
+         * @return bool
          */
         public function changePw($password, $hash): bool
         {
@@ -518,9 +513,9 @@ namespace Leantime\Domain\Auth\Services {
          * @return bool
          */
         /**
-         * @param string               $role
-         * @param false $forceGlobalRoleCheck
-         * @return boolean
+         * @param string $role
+         * @param false  $forceGlobalRoleCheck
+         * @return bool
          */
         public static function userIsAtLeast(string $role, bool $forceGlobalRoleCheck = false): bool
         {
@@ -552,7 +547,7 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @param $role
          * @param bool $forceGlobalRoleCheck
-         * @return boolean
+         * @return bool
          */
         public static function authOrRedirect($role, bool $forceGlobalRoleCheck = false): bool
         {
@@ -567,9 +562,9 @@ namespace Leantime\Domain\Auth\Services {
         }
 
         /**
-         * @param string|array         $role
-         * @param false $forceGlobalRoleCheck
-         * @return boolean
+         * @param string|array $role
+         * @param false        $forceGlobalRoleCheck
+         * @return bool
          */
         public static function userHasRole(string|array $role, bool $forceGlobalRoleCheck = false): bool
         {
@@ -629,7 +624,7 @@ namespace Leantime\Domain\Auth\Services {
 
         /**
          * @param string $code
-         * @return boolean
+         * @return bool
          */
         public function verify2FA(string $code): bool
         {

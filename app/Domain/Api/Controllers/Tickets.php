@@ -65,7 +65,7 @@ namespace Leantime\Domain\Api\Controllers {
             if (AuthService::userIsAtLeast(Roles::$editor)) {
                 if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
                     $handler = null;
-                    if (isset($params["handler"]) == true) {
+                    if (isset($params["handler"])) {
                         $handler = $params["handler"];
                     }
 
