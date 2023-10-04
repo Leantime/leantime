@@ -78,14 +78,14 @@ namespace Leantime\Domain\Timesheets\Repositories {
                     WHERE
                         ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
 
-            if ($clientId > 0) {
-                $query .= " AND (zp_projects.clientId = :clientId)";
-            }
-
             if ($id > 0) {
                 $query .= " AND (zp_tickets.projectId = :projectId)";
             }
 
+            if ($clientId > 0) {
+                $query .= " AND (zp_projects.clientId = :clientId)";
+            }
+            
             if ($ticketFilter > 0) {
                 $query .= " AND (zp_tickets.id = :ticketFilter)";
             }

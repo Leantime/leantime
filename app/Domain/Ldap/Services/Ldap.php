@@ -55,14 +55,10 @@ class Ldap
     public mixed $autoCreateUser;
 
     /**
-     * @param $differentConfig
-     * @throws BindingResolutionException
-     */
-    /**
      * @param false $differentConfig
      * @throws BindingResolutionException
      */
-    public function __construct(false $differentConfig = false)
+    public function __construct(bool|Environment $differentConfig = false)
     {
 
         $this->settingsRepo = app()->make(SettingRepository::class);

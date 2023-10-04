@@ -7,45 +7,45 @@ namespace Leantime\Domain\Tickets\Models {
      */
     class Tickets
     {
-        public mixed $id;
-        public mixed $headline;
-        public mixed $type;
-        public mixed $description;
-        public mixed $projectId;
-        public mixed $editorId;
-        public mixed $userId;
-        public mixed $priority;
-        public $sortIndex;
+        public mixed $id = null;
+        public mixed $headline = null;
+        public mixed $type = null;
+        public mixed $description = null;
+        public mixed $projectId = null;
+        public mixed $editorId = null;
+        public mixed $userId = null;
+        public mixed $priority = null;
+        public $sortIndex = null;
 
-        public mixed $date;
-        public $timelineDate;
-        public $timelineDateToFinish;
-        public mixed $dateToFinish;
-        public $timeToFinish;
-        public mixed $status;
-        public mixed $storypoints;
-        public mixed $hourRemaining;
-        public mixed $planHours;
-        public mixed $sprint;
-        public mixed $acceptanceCriteria;
-        public mixed $tags;
-        public $url;
-        public mixed $editFrom;
-        public $timeFrom;
-        public mixed $editTo;
-        public $timeTo;
-        public mixed $dependingTicketId;
-        public $parentHeadline;
-        public mixed $milestoneid;
+        public mixed $date = null;
+        public $timelineDate = null;
+        public $timelineDateToFinish = null;
+        public mixed $dateToFinish = null;
+        public $timeToFinish = null;
+        public mixed $status = null;
+        public mixed $storypoints = null;
+        public mixed $hourRemaining = null;
+        public mixed $planHours = null;
+        public mixed $sprint = null;
+        public mixed $acceptanceCriteria = null;
+        public mixed $tags = null;
+        public $url = null;
+        public mixed $editFrom = null;
+        public $timeFrom  = null;
+        public mixed $editTo  = null;
+        public $timeTo = null;
+        public mixed $dependingTicketId = null;
+        public $parentHeadline = null;
+        public mixed $milestoneid = null;
 
-        public mixed $projectName;
-        public mixed $clientName;
-        public mixed $userFirstname;
-        public mixed $userLastname;
-        public mixed $editorFirstname;
-        public mixed $editorLastname;
+        public mixed $projectName = null;
+        public mixed $clientName = null;
+        public mixed $userFirstname = null;
+        public mixed $userLastname = null;
+        public mixed $editorFirstname = null;
+        public mixed $editorLastname = null;
 
-        public $doneTickets;
+        public $doneTickets = null;
 
         /**
          * @param $values
@@ -53,7 +53,7 @@ namespace Leantime\Domain\Tickets\Models {
         /**
          * @param false $values
          */
-        public function __construct(false $values = false)
+        public function __construct(bool $values = false)
         {
 
             if ($values !== false) {

@@ -182,7 +182,7 @@ class Mailer
      * @param false $hideWrapper
      * @return void
      */
-    public function setHtml($html, false $hideWrapper = false): void
+    public function setHtml($html, bool $hideWrapper = false): void
     {
         $this->hideWrapper = $hideWrapper;
         $this->html = $html;

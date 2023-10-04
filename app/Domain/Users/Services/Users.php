@@ -101,7 +101,7 @@ namespace Leantime\Domain\Users\Services {
          * @param false $activeOnly
          * @return mixed
          */
-        public function getAll(false $activeOnly = false): mixed
+        public function getAll(bool $activeOnly = false): mixed
         {
             $users =  $this->userRepo->getAll($activeOnly);
 

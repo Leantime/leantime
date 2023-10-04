@@ -966,8 +966,8 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':ticketId', $ticket->id, PDO::PARAM_INT);
-            $stmn->bindValue(':dependingId', $ticket->dependingTicketId, PDO::PARAM_INT);
+            $stmn->bindValue(':ticketId', $ticket->id ?? 0, PDO::PARAM_INT);
+            $stmn->bindValue(':dependingId', $ticket->dependingTicketId ?? null, PDO::PARAM_INT);
 
             if ($projectId !== 0) {
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);

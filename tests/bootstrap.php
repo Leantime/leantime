@@ -91,7 +91,7 @@ $bootstrapper = get_class(new class {
 
         try {
             $this->seleniumProcess->stop();
-        // we want the script to continue even if failure
+            // we want the script to continue even if failure
         } catch (Throwable $e) {
             return;
         }
@@ -115,7 +115,7 @@ $bootstrapper = get_class(new class {
         ) {
             try {
                 $shutdown();
-            // we want the script to continue even if failure
+                // we want the script to continue even if failure
             } catch (Throwable $e) {
                 if ($count === 1) {
                     return;
@@ -142,6 +142,8 @@ $bootstrapper = get_class(new class {
                     'docker',
                     'compose',
                     '-f',
+                    'docker-compose.yaml',
+                    '-f',
                     'docker-compose.tests.yaml',
                     $hasLocalOverride ? '-f' : null,
                     $hasLocalOverride ? 'docker-compose.local.yaml' : null,
@@ -161,7 +163,10 @@ $bootstrapper = get_class(new class {
         $this->dockerProcess->waitUntil(function ($type, $buffer) {
             if (! isset($started)) {
                 static $started = [
+                    'dev-maildev-1' => false,
                     'dev-db-1' => false,
+                    'dev-s3ninja-1' => false,
+                    'dev-phpmyadmin-1' => false,
                     'dev-leantime-dev-1' => false,
                 ];
             }
