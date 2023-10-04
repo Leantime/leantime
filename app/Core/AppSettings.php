@@ -49,7 +49,7 @@ class AppSettings
 
         if ($config->useRedis == "true" || $config->useRedis === true) {
             ini_set('session.save_handler', 'redis');
-            ini_set('session.save_path', $config->redisURL);
+            ini_set('session.save_path', $config->redisUrl);
         }
 
         if (session_status() !== PHP_SESSION_ACTIVE) {
