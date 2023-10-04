@@ -890,9 +890,7 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        /**
-         * @return array|true
-         */
+
         /**
          * @return array|true
          */
@@ -924,9 +922,6 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        /**
-         * @return array|true
-         */
         /**
          * @return array|true
          */
@@ -984,9 +979,6 @@ namespace Leantime\Domain\Install\Repositories {
         /**
          * @return array|true
          */
-        /**
-         * @return array|true
-         */
         private function update_sql_20102(): true | array
         {
             $errors = array();
@@ -1012,10 +1004,7 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        /**
-         * @return array|true
-         */
-        /**
+          /**
          * @return array|true
          */
         private function update_sql_20103(): true | array
