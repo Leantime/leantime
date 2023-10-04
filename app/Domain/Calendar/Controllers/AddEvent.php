@@ -49,10 +49,6 @@ namespace Leantime\Domain\Calendar\Controllers {
         /**
          * @param $params
          * @return void
-         */
-        /**
-         * @param $params
-         * @return void
          * @throws \Exception
          * @throws \Exception
          */

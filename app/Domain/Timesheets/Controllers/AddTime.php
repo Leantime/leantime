@@ -14,20 +14,35 @@ namespace Leantime\Domain\Timesheets\Controllers {
      */
     class AddTime extends Controller
     {
+        /**
+         * @var TimesheetRepository $timesheetsRepo
+         */
         private TimesheetRepository $timesheetsRepo;
+
+        /**
+         * @var ProjectRepository $projects
+         */
         private ProjectRepository $projects;
+
+        /**
+         * @var TicketRepository $tickets
+         */
         private TicketRepository $tickets;
 
         /**
          * init - initialize private variables
          *
+         * @param TimesheetRepository $timesheetsRepo
+         * @param ProjectRepository   $projects
+         * @param TicketRepository    $tickets
          * @access public
+         * @return void
          */
         public function init(
             TimesheetRepository $timesheetsRepo,
             ProjectRepository $projects,
             TicketRepository $tickets
-        ) {
+        ): void {
             $this->timesheetsRepo = $timesheetsRepo;
             $this->projects = $projects;
             $this->tickets = $tickets;
@@ -37,8 +52,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
          * run - display template and edit data
          *
          * @access public
+         * @return void
          */
-        public function run()
+        public function run(): void
         {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
