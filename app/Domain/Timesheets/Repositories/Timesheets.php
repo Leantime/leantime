@@ -46,7 +46,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function getAll(int $id = -1, ?string $kind, ?string $dateFrom, ?string $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
+        public function getAll(int $id, ?string $kind, ?string $dateFrom, ?string $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
         {
 
             $query = "SELECT

@@ -8,44 +8,51 @@ namespace Leantime\Domain\Tickets\Models {
     class Tickets
     {
         public mixed $id = null;
-        public mixed $headline = null;
+        public ?string $headline = '';
         public mixed $type = null;
-        public mixed $description = null;
+        public ?string $description = '';
         public mixed $projectId = null;
         public mixed $editorId = null;
         public mixed $userId = null;
         public mixed $priority = null;
-        public $sortIndex = null;
+        public mixed $sortIndex = null;
 
         public mixed $date = null;
-        public $timelineDate = null;
-        public $timelineDateToFinish = null;
+        public mixed $timelineDate = null;
+        public mixed $timelineDateToFinish = null;
         public mixed $dateToFinish = null;
-        public $timeToFinish = null;
+        public mixed $timeToFinish = null;
         public mixed $status = null;
         public mixed $storypoints = null;
         public mixed $hourRemaining = null;
         public mixed $planHours = null;
         public mixed $sprint = null;
-        public mixed $acceptanceCriteria = null;
+        public ?string $acceptanceCriteria = '';
         public mixed $tags = null;
-        public $url = null;
+        public mixed $url = null;
         public mixed $editFrom = null;
-        public $timeFrom  = null;
+        public mixed $timeFrom  = null;
         public mixed $editTo  = null;
-        public $timeTo = null;
+        public mixed $timeTo = null;
         public mixed $dependingTicketId = null;
-        public $parentHeadline = null;
+        public ?string $parentHeadline = '';
         public mixed $milestoneid = null;
 
-        public mixed $projectName = null;
-        public mixed $clientName = null;
-        public mixed $userFirstname = null;
-        public mixed $userLastname = null;
-        public mixed $editorFirstname = null;
-        public mixed $editorLastname = null;
+        public ?string $projectName = '';
+        public ?string $clientName = '';
+        public ?string $userFirstname = '';
+        public ?string $userLastname = '';
+        public ?string $editorFirstname = '';
+        public ?string $editorLastname = '';
 
-        public $doneTickets = null;
+        public mixed $doneTickets = null;
+
+        public mixed $allTickets = null;
+        public mixed $percentDone = null;
+        public mixed $milestoneHeadline = null;
+        public mixed $milestoneColor = null;
+        public mixed $editorProfileId = null;
+        public mixed $bookedHours = null;
 
         /**
          * @param $values
