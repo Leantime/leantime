@@ -67,7 +67,7 @@ class CsvImport extends Provider implements ProviderIntegration
      * @param Entity $Entity
      * @return true
      */
-    public function sync(Entity $Entity): true
+    public function sync(Entity $Entity): bool
     {
 
         return true;

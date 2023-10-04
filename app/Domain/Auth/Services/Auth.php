@@ -322,8 +322,8 @@ namespace Leantime\Domain\Auth\Services {
             $this->userId = $user['id'];
             $this->settings = $user['settings'] ? unserialize($user['settings']) : array();
             $this->clientId = $user['clientId'];
-            $this->twoFAEnabled = $user['twoFAEnabled'];
-            $this->twoFASecret = $user['twoFASecret'];
+            $this->twoFAEnabled = $user['twoFAEnabled'] ?? false;
+            $this->twoFASecret = $user['twoFASecret'] ?? '';
             $this->role = Roles::getRoleString($user['role']);
             $this->profileId = $user['profileId'];
 

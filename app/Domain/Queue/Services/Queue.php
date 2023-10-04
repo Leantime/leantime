@@ -74,7 +74,7 @@ namespace Leantime\Domain\Queue\Services {
          * @return true
          * @throws Exception
          */
-        public function processQueue(): true
+        public function processQueue(): bool
         {
 
             $messages = $this->queue->listMessageInQueue('email');

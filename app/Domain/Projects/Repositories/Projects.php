@@ -1287,9 +1287,10 @@ namespace Leantime\Domain\Projects\Repositories {
          * @access public
          * @param string $_FILE
          * @param $id
+         * @return bool
          * @throws BindingResolutionException
          */
-        public function setPicture(string $_FILE, $id): void
+        public function setPicture(string $_FILE, $id): bool
         {
 
             $project = $this->getProject($id);
@@ -1319,9 +1320,13 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
                 $stmn->bindValue(':modified', date("Y-m-d H:i:s"), PDO::PARAM_STR);
 
-                $stmn->execute();
+                $result = $stmn->execute();
                 $stmn->closeCursor();
+
+                return $result;
             }
+
+            return false;
         }
 
         /**

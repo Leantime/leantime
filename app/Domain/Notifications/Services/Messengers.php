@@ -206,7 +206,7 @@ class Messengers
      *
      * @access public
      */
-    public function discordWebhook(NotificationModel $notification): true
+    public function discordWebhook(NotificationModel $notification): bool
     {
         $converter = false;
 

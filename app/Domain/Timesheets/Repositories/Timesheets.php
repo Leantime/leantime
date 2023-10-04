@@ -702,7 +702,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
          *
          * @access public
          */
-        public function updateInvoices($invEmpl, $invComp = '', $paid = '')
+        public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
         {
 
             if ($invEmpl != '' && is_array($invEmpl) === true) {
@@ -755,6 +755,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
                     unset($paidCol);
                 }
             }
+
+            return true;
         }
 
 

@@ -241,24 +241,18 @@ namespace Leantime\Domain\Timesheets\Services {
          * @param $values
          * @return null
          */
-        public function export($values): null
+        public function export($values)
         {
             return $this->timesheetsRepo->export($values);
         }
 
         /**
-         * @param $invEmpl
-         * @param $invComp
-         * @param $paid
-         * @return null
+         * @param array $invEmpl
+         * @param array  $invComp
+         * @param array  $paid
+         * @return bool
          */
-        /**
-         * @param $invEmpl
-         * @param string  $invComp
-         * @param string  $paid
-         * @return null
-         */
-        public function updateInvoices($invEmpl, string $invComp = '', string $paid = ''): null
+        public function updateInvoices($invEmpl, array $invComp = [], array $paid = []): bool
         {
             return $this->timesheetsRepo->updateInvoices($invEmpl, $invComp, $paid);
         }

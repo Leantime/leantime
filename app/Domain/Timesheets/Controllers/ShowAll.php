@@ -49,9 +49,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $_SESSION['lastPage'] = BASE_URL . "/timesheets/showAll";
 
             if (isset($_POST['saveInvoice']) === true) {
-                $invEmpl = '';
-                $invComp = '';
-                $paid = '';
+                $invEmpl = [];
+                $invComp = [];
+                $paid = [];
 
                 if (isset($_POST['invoicedEmpl']) === true) {
                     $invEmpl = $_POST['invoicedEmpl'];

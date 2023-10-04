@@ -1220,14 +1220,9 @@ namespace Leantime\Domain\Projects\Services {
          * @param $file
          * @param $project
          * @return null
-         */
-        /**
-         * @param $file
-         * @param $project
-         * @return null
          * @throws BindingResolutionException
          */
-        public function setProjectAvatar($file, $project): null
+        public function setProjectAvatar($file, $project): bool
         {
             return $this->projectRepository->setPicture($file, $project);
         }

@@ -38,6 +38,16 @@
         >{!! __("menu.my_timesheets") !!}</a>
     </li>
 
+    <li>
+        <a
+            href='{{ BASE_URL }}/calendar/showMyCalendar'
+            @if ($activePath == 'calendar.showMyCalendar')
+                class="active"
+            @endif
+            data-tippy-content="{{ __('popover.my_calendar') }}"
+        >{!! __("menu.my_calendar") !!}</a>
+    </li>
+
     </li>
     <li class="notificationDropdown">
 

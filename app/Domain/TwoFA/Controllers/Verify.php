@@ -33,7 +33,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
         public function get($params)
         {
 
-            $redirectUrl = BASE_URL . "/dashboard/show";
+            $redirectUrl = BASE_URL . "/dashboard/home";
 
             if (isset($_GET['redirect'])) {
                 $redirectUrl = BASE_URL . urldecode($_GET['redirect']);
