@@ -78,7 +78,11 @@ namespace Leantime\Domain\Plugins\Services {
                 return $_SESSION['enabledPlugins'];
             }
 
-            $_SESSION['enabledPlugins'] = $this->pluginRepository->getAllPlugins(true);
+            try {
+                $_SESSION['enabledPlugins'] = $this->pluginRepository->getAllPlugins(true);
+            } catch (\Exception $e) {
+                $_SESSION['enabledPlugins'] = [];
+            }
 
             // Gets plugins from the config, which are automatically enabled
             if (
@@ -252,8 +256,8 @@ namespace Leantime\Domain\Plugins\Services {
 
             if (method_exists($newPluginSvc, "uninstall")) {
                 try {
-                    $newPluginSvc->install();
-                } catch (Exception $e) {
+                    $newPluginSvc->uninstall();
+                } catch (\Exception $e) {
                     error_log($e);
                     return false;
                 }

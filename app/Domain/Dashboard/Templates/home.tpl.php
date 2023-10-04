@@ -2,18 +2,18 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $states = $tpl->get('states');
-    $projectProgress = $tpl->get('projectProgress');
-    $projectProgress = $tpl->get('projectProgress');
-    $sprintBurndown = $tpl->get('sprintBurndown');
-    $backlogBurndown = $tpl->get('backlogBurndown');
-    $efforts = $tpl->get('efforts');
-    $statusLabels = $tpl->get('statusLabels');
-    $currentUser = $tpl->get('currentUser');
-    $allProjects = $tpl->get('allProjects');
-    $projectFilter = $_SESSION['userHomeProjectFilter'] ?? '';
-    $groupBy = $_SESSION['userHomeGroupBy'] ?? '';
-    $milestones = $tpl->get('milestones');
+$states = $tpl->get('states');
+$projectProgress = $tpl->get('projectProgress');
+$projectProgress = $tpl->get('projectProgress');
+$sprintBurndown = $tpl->get('sprintBurndown');
+$backlogBurndown = $tpl->get('backlogBurndown');
+$efforts = $tpl->get('efforts');
+$statusLabels = $tpl->get('statusLabels');
+$currentUser = $tpl->get('currentUser');
+$allProjects = $tpl->get('allProjects');
+$projectFilter = $_SESSION['userHomeProjectFilter'] ?? '';
+$groupBy = $_SESSION['userHomeGroupBy'] ?? '';
+$milestones = $tpl->get('milestones');
 ?>
 
 <?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>
@@ -29,37 +29,37 @@ foreach ($__data as $var => $val) {
 
 <div class="maincontent">
 
-        <?php echo $tpl->displayNotification(); ?>
+    <?php echo $tpl->displayNotification(); ?>
 
 
-        <div class="row">
-            <div class="col-md-8">
-                <div class="maincontentinner">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="maincontentinner">
 
-                    <?php
-                        echo"<div class='pull-right' style='max-width:200px; padding:20px'>";
-                        echo"<div  style='width:100%' class='svgContainer'>";
-                        echo file_get_contents(ROOT . "/dist/images/svg/" . $tpl->get("randomImage"));
-                        echo"</div></div>";
+                <?php
+                echo"<div class='pull-right' style='max-width:200px; padding:20px'>";
+                echo"<div  style='width:100%' class='svgContainer'>";
+                echo file_get_contents(ROOT . "/dist/images/svg/" . $tpl->get("randomImage"));
+                echo"</div></div>";
 
-                    ?>
+                ?>
 
-                    <h1 class="articleHeadline" style="padding-bottom:5px; padding-top:10px;">Welcome <strong><?php $tpl->e($currentUser['firstname']) ?></strong></h1>
-                    <?php
-                    $totalTickets = 0;
-                    foreach ($tpl->get('tickets') as $ticketGroup) {
-                        $totalTickets = $totalTickets + count($ticketGroup["tickets"]);
-                    } ?>
+                <h1 class="articleHeadline" style="padding-bottom:5px; padding-top:10px;">Welcome <strong><?php $tpl->e($currentUser['firstname']) ?></strong></h1>
+                <?php
+                $totalTickets = 0;
+                foreach ($tpl->get('tickets') as $ticketGroup) {
+                    $totalTickets = $totalTickets + count($ticketGroup["tickets"]);
+                } ?>
 
-                    <p>You have <strong><?=$totalTickets?> To-Dos</strong> across <strong><?=count($allProjects) ?> projects</strong> assigned to you.</p>
-                    <?php $tpl->dispatchTplEvent('afterWelcomeMessage'); ?>
-                    <div class="clear"></div>
-                </div>
+                <p>You have <strong><?=$totalTickets?> To-Dos</strong> across <strong><?=count($allProjects) ?> projects</strong> assigned to you.</p>
+                <?php $tpl->dispatchTplEvent('afterWelcomeMessage'); ?>
+                <div class="clear"></div>
+            </div>
 
-                <?php $tpl->dispatchTplEvent('afterWelcomeMessageBox'); ?>
+            <?php $tpl->dispatchTplEvent('afterWelcomeMessageBox'); ?>
 
-                <div class="maincontentinner">
-                    <div class="row" id="yourToDoContainer">
+            <div class="maincontentinner">
+                <div class="row" id="yourToDoContainer">
                     <div class="col-md-12">
                         <?php /*
                         if($login::userIsAtLeast($roles::$editor)) { ?>
@@ -88,21 +88,24 @@ foreach ($__data as $var => $val) {
 
                             <form method="get" >
                                 <div class="pull-left">
-                                <h5 class="subtitle"><?=$tpl->__('headlines.your_todos'); ?></h5>
+                                    <h5 class="subtitle"><?=$tpl->__('headlines.your_todos'); ?></h5>
                                 </div>
 
-                                <div class="btn-group viewDropDown right">
+                                <div class="right">
+                                    <?php $tpl->dispatchTplEvent('afterGroupByDropdown'); ?>
+                                </div>
+                                <div class="btn-group viewDropDown right disableOnPrioritizedList">
                                     <button class="btn dropdown-toggle " type="button" data-toggle="dropdown"><?=$tpl->__("links.group_by") ?></button>
                                     <ul class="dropdown-menu">
                                         <li><span class="radio"><input type="radio" name="groupBy" <?php if ($groupBy == "time") {
-                                            echo "checked='checked'";
-                                                                                                   }?> value="time" id="groupByDate" onclick="form.submit();"/><label for="groupByDate"><?=$tpl->__("label.dates") ?></label></span></li>
+                                                    echo "checked='checked'";
+                                                }?> value="time" id="groupByDate" onclick="form.submit();"/><label for="groupByDate"><?=$tpl->__("label.dates") ?></label></span></li>
                                         <li><span class="radio"><input type="radio" name="groupBy" <?php if ($groupBy == "project") {
-                                            echo "checked='checked'";
-                                                                                                   }?> value="project" id="groupByProject" onclick="form.submit();"/><label for="groupByProject"><?=$tpl->__("label.project") ?></label></span></li>
+                                                    echo "checked='checked'";
+                                                }?> value="project" id="groupByProject" onclick="form.submit();"/><label for="groupByProject"><?=$tpl->__("label.project") ?></label></span></li>
                                     </ul>
                                 </div>
-                                <div class="right">
+                                <div class="right disableOnPrioritizedList">
                                     <label class="inline"><?=$tpl->__('label.show') ?></label>
                                     <select name="projectFilter" onchange="form.submit();">
                                         <option value=""><?=$tpl->__('labels.all_projects')?></option>
@@ -167,20 +170,19 @@ foreach ($__data as $var => $val) {
                             <div id="accordion_<?=$i ?>" class="yourToDoContainer simpleAccordionContainer">
                                 <ul class="sortableTicketList" >
 
-                                <?php if (count($ticketGroup['tickets']) == 0) {?>
-                                    <em>Nothing to see here. Move on.</em><br /><br />
-                                <?php } ?>
+                                    <?php if (count($ticketGroup['tickets']) == 0) {?>
+                                        <em>Nothing to see here. Move on.</em><br /><br />
+                                    <?php } ?>
 
-                            <?php foreach ($ticketGroup['tickets'] as $row) {
-                                if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
-                                    $date = $tpl->__("text.anytime");
-                                } else {
-                                    $date = new DateTime($row['dateToFinish']);
-                                    $date = $date->format($tpl->__("language.dateformat"));
-                                }
+                                    <?php foreach ($ticketGroup['tickets'] as $row) {
+                                        if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
+                                            $date = $tpl->__("text.anytime");
+                                        } else {
+                                            $date = new DateTime($row['dateToFinish']);
+                                            $date = $date->format($tpl->__("language.dateformat"));
+                                        }
 
-
-                                ?>
+                                        ?>
                                         <li class="ui-state-default" id="ticket_<?php echo $row['id']; ?>" >
                                             <div class="ticketBox fixed priority-border-<?=$row['priority']?>" data-val="<?php echo $row['id']; ?>">
                                                 <div class="row">
@@ -190,6 +192,7 @@ foreach ($__data as $var => $val) {
                                                                                         "ticket" => $ticket,
                                                                                         "onTheClock" => $onTheClock
                                                                                     ])', ['ticket' => $row, 'onTheClock' => $tpl->get("onTheClock")]); ?>
+
 
                                                         <small><?=$tpl->e($row['projectName']) ?></small><br />
                                                         <?php if ($row['dependingTicketId'] > 0) { ?>
@@ -209,11 +212,11 @@ foreach ($__data as $var => $val) {
                                                             <div class="dropdown ticketDropdown effortDropdown show">
                                                                 <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                    echo $efforts["" . $row['storypoints']];
-                                                                } else {
-                                                                    echo $tpl->__("label.story_points_unkown");
-                                                                }?>
+                                                                    if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
+                                                                        echo $efforts["" . $row['storypoints']];
+                                                                    } else {
+                                                                        echo $tpl->__("label.story_points_unkown");
+                                                                    }?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                                 </a>
@@ -231,11 +234,11 @@ foreach ($__data as $var => $val) {
                                                             <div class="dropdown ticketDropdown milestoneDropdown colorized show">
                                                                 <a style="background-color:<?=$tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
-                                                                    $tpl->e($row['milestoneHeadline']);
-                                                                } else {
-                                                                    echo $tpl->__("label.no_milestone");
-                                                                }?>
+                                                                    if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
+                                                                        $tpl->e($row['milestoneHeadline']);
+                                                                    } else {
+                                                                        echo $tpl->__("label.no_milestone");
+                                                                    }?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                                 </a>
@@ -249,14 +252,14 @@ foreach ($__data as $var => $val) {
                                                                             if ($milestone != null && is_object($milestone)) {
                                                                                 echo "<li class='dropdown-item'>
                                                                                     <a href='javascript:void(0);' data-label='" . $tpl->escape(
-                                                                                    $milestone->headline
-                                                                                ) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape(
-                                                                                    $milestone->tags
-                                                                                ) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape(
-                                                                                    $milestone->tags
-                                                                                ) . "'>" . $tpl->escape(
-                                                                                    $milestone->headline
-                                                                                ) . "</a>";
+                                                                                        $milestone->headline
+                                                                                    ) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape(
+                                                                                        $milestone->tags
+                                                                                    ) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape(
+                                                                                        $milestone->tags
+                                                                                    ) . "'>" . $tpl->escape(
+                                                                                        $milestone->headline
+                                                                                    ) . "</a>";
                                                                                 echo "</li>";
                                                                             }
                                                                         }
@@ -268,12 +271,12 @@ foreach ($__data as $var => $val) {
                                                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                                                 <a class="dropdown-toggle f-left status <?=$statusLabels[$row['projectId']][$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                if (isset($statusLabels[$row['projectId']][$row['status']])) {
-                                                                    echo $statusLabels[$row['projectId']][$row['status']]["name"];
-                                                                } else {
-                                                                    echo "unknown";
-                                                                }
-                                                                ?>
+                                                                    if (isset($statusLabels[$row['projectId']][$row['status']])) {
+                                                                        echo $statusLabels[$row['projectId']][$row['status']]["name"];
+                                                                    } else {
+                                                                        echo "unknown";
+                                                                    }
+                                                                    ?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                                 </a>
@@ -294,112 +297,112 @@ foreach ($__data as $var => $val) {
                                             </div>
                                         </li>
                                         <?php
-                            } ?>
+                                    } ?>
                                 </ul>
                             </div>
                         <?php } ?>
 
                     </div>
                 </div>
-                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+            <?php $tpl->dispatchTplEvent('beforeCalendar'); ?>
+
+            <div class="maincontentinner minCalendar">
+
+                <button class="fc-next-button btn btn-default right" type="button" style="position:relative; z-index:9;">
+                    <span class="fc-icon fc-icon-chevron-right"></span>
+                </button>
+                <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px; position:relative; z-index:9;">
+                    <span class="fc-icon fc-icon-chevron-left"></span>
+                </button>
+
+                <button class="fc-today-button btn btn-default right" style="margin-right:5px; position:relative; z-index:9;">today</button>
+
+                <div class="clear"></div>
+
+                <div id="calendar"></div>
             </div>
 
-            <div class="col-md-4">
-
-                <?php $tpl->dispatchTplEvent('beforeCalendar'); ?>
-
-                <div class="maincontentinner minCalendar">
-
-                    <button class="fc-next-button btn btn-default right" type="button" style="position:relative; z-index:9;">
-                        <span class="fc-icon fc-icon-chevron-right"></span>
-                    </button>
-                    <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px; position:relative; z-index:9;">
-                        <span class="fc-icon fc-icon-chevron-left"></span>
-                    </button>
-
-                    <button class="fc-today-button btn btn-default right" style="margin-right:5px; position:relative; z-index:9;">today</button>
-
-                    <div class="clear"></div>
-
-                    <div id="calendar"></div>
-                </div>
-
-                <div class="maincontentinner">
-                    <a href="<?=BASE_URL . "/projects/showMy" ?>" class="pull-right"><?=$tpl->__('links.my_portfolio') ?></a>
-                    <h5 class="subtitle"><?=$tpl->__("headline.your_projects") ?></h5>
-                    <br/>
-                    <?php if (count($allProjects) == 0) {
-                        echo "<div class='col-md-12'><br /><br /><div class='center'>";
-                        echo"<div style='width:70%' class='svgContainer'>";
-                         echo $tpl->__('notifications.not_assigned_to_any_project');
-                        if ($login::userIsAtLeast($roles::$manager)) {
-                            echo"<br /><br /><a href='" . BASE_URL . "/projects/newProject' class='btn btn-primary'>" . $tpl->__('link.new_project') . "</a>";
-                        }
-                        echo"</div></div>";
-                    }?>
-                    <ul class="sortableTicketList" id="projectProgressContainer">
-                        <?php foreach ($allProjects as $project) {
-                            $percentDone = round($project['progress']['percent']);
-                            ?>
-                            <li>
-                                <div class="col-md-12">
+            <div class="maincontentinner">
+                <a href="<?=BASE_URL . "/projects/showMy" ?>" class="pull-right"><?=$tpl->__('links.my_portfolio') ?></a>
+                <h5 class="subtitle">Assigned to you</h5>
+                <br/>
+                <?php if (count($allProjects) == 0) {
+                    echo "<div class='col-md-12'><br /><br /><div class='center'>";
+                    echo"<div style='width:70%' class='svgContainer'>";
+                    echo $tpl->__('notifications.not_assigned_to_any_project');
+                    if ($login::userIsAtLeast($roles::$manager)) {
+                        echo"<br /><br /><a href='" . BASE_URL . "/projects/newProject' class='btn btn-primary'>" . $tpl->__('link.new_project') . "</a>";
+                    }
+                    echo"</div></div>";
+                }?>
+                <ul class="sortableTicketList" id="projectProgressContainer">
+                    <?php foreach ($allProjects as $project) {
+                        $percentDone = round($project['progress']['percent']);
+                        ?>
+                        <li>
+                            <div class="col-md-12">
 
                                 <div class="row" >
                                     <div class="col-md-12 ticketBox fixed">
 
-                                            <div class="row" style="padding-bottom:10px;">
+                                        <div class="row" style="padding-bottom:10px;">
 
-                                                <div class="col-md-8">
-                                                    <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>">
+                                            <div class="col-md-8">
+                                                <a href="<?=BASE_URL?>/dashboard/show?projectId=<?=$project['id']?>">
                                                         <span class="projectAvatar">
                                                             <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']?>&v=<?=strtotime($project['modified'] ?? '0') ?>" />
                                                         </span>
-                                                        <small><?php $tpl->e($project['clientName'])?></small><br />
-                                                        <strong><?php $tpl->e($project['name'])?></strong>
-                                                    </a>
-                                                </div>
-                                                <div class="col-md-4" style="text-align:right">
-                                                    <?php if ($project['status'] !== null && $project['status'] != '') {?>
-                                                        <span class="label label-<?php $tpl->e($project['status'])?>"><?=$tpl->__("label.project_status_" . $project['status']) ?></span><br />
-
-                                                    <?php } else { ?>
-                                                        <span class="label label-grey"><?=$tpl->__("label.no_status")?></span><br />
-                                                    <?php } ?>
-
-                                                </div>
+                                                    <small><?php $tpl->e($project['clientName'])?></small><br />
+                                                    <strong><?php $tpl->e($project['name'])?></strong>
+                                                </a>
                                             </div>
-                                            <div class="row">
+                                            <div class="col-md-4" style="text-align:right">
+                                                <?php if ($project['status'] !== null && $project['status'] != '') {?>
+                                                    <span class="label label-<?php $tpl->e($project['status'])?>"><?=$tpl->__("label.project_status_" . $project['status']) ?></span><br />
 
-                                                <div class="col-md-7">
-                                                    <?=$tpl->__("subtitles.project_progress") ?>
-                                                </div>
-                                                <div class="col-md-5" style="text-align:right">
-                                                    <?=sprintf($tpl->__("text.percent_complete"), round($percentDone))?>
-                                                </div>
+                                                <?php } else { ?>
+                                                    <span class="label label-grey"><?=$tpl->__("label.no_status")?></span><br />
+                                                <?php } ?>
+
                                             </div>
-                                            <div class="progress">
-                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percentDone; ?>%">
-                                                    <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $percentDone)?></span>
-                                                </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-md-7">
+                                                <?=$tpl->__("subtitles.project_progress") ?>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-12">
+                                            <div class="col-md-5" style="text-align:right">
+                                                <?=sprintf($tpl->__("text.percent_complete"), round($percentDone))?>
+                                            </div>
+                                        </div>
+                                        <div class="progress">
+                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $percentDone; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $percentDone; ?>%">
+                                                <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $percentDone)?></span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
 
 
-                                                </div>
                                             </div>
+                                        </div>
 
                                     </div>
                                 </div>
 
                             </div>
-                            </li>
-                        <?php }?>
-                    </ul>
-                </div>
-
+                        </li>
+                    <?php }?>
+                </ul>
             </div>
+
         </div>
+    </div>
 
 </div>
 
@@ -421,9 +424,9 @@ foreach ($__data as $var => $val) {
             '<input type="hidden" name="projectId" value="'+projectId+'" />'+
             '<input type="hidden" name="sprint" value="<?php echo $_SESSION['currentSprint']; ?>" />&nbsp;'+
             '<a href="javascript:void(0);" onclick="jQuery(\'#ticket_new_'+index+'\').toggle(\'fast\');">'+
-        '<?php echo $tpl->__("links.cancel"); ?>'+
-        '</a>'+
-        '</form></div></li>');
+            '<?php echo $tpl->__("links.cancel"); ?>'+
+            '</a>'+
+            '</form></div></li>');
 
     }
 
@@ -431,58 +434,58 @@ foreach ($__data as $var => $val) {
 
         let currentLink = jQuery("#accordion_toggle_"+id).find("i.fa");
 
-            if(currentLink.hasClass("fa-angle-right")){
-                currentLink.removeClass("fa-angle-right");
-                currentLink.addClass("fa-angle-down");
-                jQuery('#accordion_'+id).slideDown("fast");
-            }else{
+        if(currentLink.hasClass("fa-angle-right")){
+            currentLink.removeClass("fa-angle-right");
+            currentLink.addClass("fa-angle-down");
+            jQuery('#accordion_'+id).slideDown("fast");
+        }else{
 
-                currentLink.removeClass("fa-angle-down");
-                currentLink.addClass("fa-angle-right");
+            currentLink.removeClass("fa-angle-down");
+            currentLink.addClass("fa-angle-right");
 
-                jQuery('#accordion_'+id).slideUp("fast");
-            }
+            jQuery('#accordion_'+id).slideUp("fast");
+        }
 
     }
 
-   jQuery(document).ready(function() {
+    jQuery(document).ready(function() {
 
-       jQuery('.todaysDate').text(moment().format('LLLL'));
+        jQuery('.todaysDate').text(moment().format('LLLL'));
 
-       <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-           leantime.dashboardController.prepareHiddenDueDate();
-           leantime.ticketsController.initEffortDropdown();
-           leantime.ticketsController.initMilestoneDropdown();
-           leantime.ticketsController.initStatusDropdown();
-           leantime.ticketsController.initDueDateTimePickers();
-       <?php } else { ?>
-            leantime.authController.makeInputReadonly(".maincontentinner");
-       <?php } ?>
+        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+        leantime.dashboardController.prepareHiddenDueDate();
+        leantime.ticketsController.initEffortDropdown();
+        leantime.ticketsController.initMilestoneDropdown();
+        leantime.ticketsController.initStatusDropdown();
+        leantime.ticketsController.initDueDateTimePickers();
+        <?php } else { ?>
+        leantime.authController.makeInputReadonly(".maincontentinner");
+        <?php } ?>
 
-       <?php if ($tpl->get('completedOnboarding') === false) { ?>
-           leantime.helperController.firstLoginModal();
-       <?php } ?>
+        <?php if ($tpl->get('completedOnboarding') === false) { ?>
+        leantime.helperController.firstLoginModal();
+        <?php } ?>
 
 
-       <?php
+        <?php
         if ($tpl->get('completedOnboarding') == "1" && (isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0)) {  ?>
-            leantime.helperController.showHelperModal("dashboard", 500, 700);
+        leantime.helperController.showHelperModal("dashboard", 500, 700);
 
-             <?php
-            //Only show once per session
-                if (!isset($_SESSION['userdata']['settings']["modals"])) {
-                      $_SESSION['userdata']['settings']["modals"] = array();
-                }
+        <?php
+        //Only show once per session
+        if (!isset($_SESSION['userdata']['settings']["modals"])) {
+            $_SESSION['userdata']['settings']["modals"] = array();
+        }
 
-                if (!isset($_SESSION['userdata']['settings']["modals"]["dashboard"])) {
-                      $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
-                }
+        if (!isset($_SESSION['userdata']['settings']["modals"]["dashboard"])) {
+            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
+        }
         } ?>
 
 
 
 
-   });
+    });
 
     var events = [<?php foreach ($tpl->get('calendar') as $calendar) : ?>
         {
@@ -519,7 +522,7 @@ foreach ($__data as $var => $val) {
             enitityType: "ticket",
             <?php endif; ?>
         },
-                  <?php endforeach; ?>];
+        <?php endforeach; ?>];
 
 
 
