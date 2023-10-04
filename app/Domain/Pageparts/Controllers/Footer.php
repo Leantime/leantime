@@ -24,7 +24,6 @@ namespace Leantime\Domain\Pageparts\Controllers {
         /**
          * @return void
          * @throws \Exception
-         * @throws \Exception
          */
         public function run(): void
         {

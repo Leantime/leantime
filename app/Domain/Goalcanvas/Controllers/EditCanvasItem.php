@@ -58,7 +58,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          * @param $params
          * @return void
          * @throws \Exception
-         * @throws \Exception
          */
         public function get($params): void
         {

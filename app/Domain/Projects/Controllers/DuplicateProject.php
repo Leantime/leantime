@@ -40,7 +40,6 @@ namespace Leantime\Domain\Projects\Controllers {
         /**
          * @return void
          * @throws \Exception
-         * @throws \Exception
          */
         public function get(): void
         {

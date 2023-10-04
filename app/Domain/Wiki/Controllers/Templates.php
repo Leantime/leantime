@@ -32,7 +32,6 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @param $params
          * @return void
          * @throws \Exception
-         * @throws \Exception
          */
         public function get($params): void
         {
