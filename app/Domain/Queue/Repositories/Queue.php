@@ -27,13 +27,6 @@ namespace Leantime\Domain\Queue\Repositories {
         /**
          * @param $recipients
          * @param $message
-         * @param $subject
-         * @param $projectId
-         * @return void
-         */
-        /**
-         * @param $recipients
-         * @param $message
          * @param string     $subject
          * @param int        $projectId
          * @return void
@@ -79,12 +72,6 @@ namespace Leantime\Domain\Queue\Repositories {
         // TODO later : lists messages per user or per project ?
 
         /**
-         * @param $channel
-         * @param $recipients
-         * @param $projectId
-         * @return array|false
-         */
-        /**
          * @param string     $channel
          * @param $recipients
          * @param int        $projectId
@@ -104,10 +91,6 @@ namespace Leantime\Domain\Queue\Repositories {
             return $values;
         }
 
-        /**
-         * @param $msghashes
-         * @return bool
-         */
         /**
          * @param $msghashes
          * @return bool

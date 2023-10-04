@@ -32,11 +32,6 @@ namespace Leantime\Domain\Files\Repositories {
          * @return string[]
          * @throws BindingResolutionException
          */
-        /**
-         * @param $id
-         * @return string[]
-         * @throws BindingResolutionException
-         */
         public function getModules($id): array
         {
             $users = app()->make(UserRepo::class);
@@ -49,11 +44,6 @@ namespace Leantime\Domain\Files\Repositories {
             return $modules;
         }
 
-        /**
-         * @param $values
-         * @param $module
-         * @return false|string
-         */
         /**
          * @param $values
          * @param $module
@@ -87,10 +77,6 @@ namespace Leantime\Domain\Files\Repositories {
          * @param $id
          * @return mixed
          */
-        /**
-         * @param $id
-         * @return mixed
-         */
         public function getFile($id): mixed
         {
 
@@ -111,10 +97,6 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
-        /**
-         * @param $userId
-         * @return array|false
-         */
         /**
          * @param int $userId
          * @return array|false
@@ -142,10 +124,6 @@ namespace Leantime\Domain\Files\Repositories {
             return $values;
         }
 
-        /**
-         * @param $module
-         * @return array
-         */
         /**
          * @param $module
          * @return array
@@ -181,12 +159,6 @@ namespace Leantime\Domain\Files\Repositories {
             return $folders;
         }
 
-        /**
-         * @param $module
-         * @param $moduleId
-         * @param $userId
-         * @return array|false
-         */
         /**
          * @param string   $module
          * @param null     $moduleId
@@ -250,10 +222,6 @@ namespace Leantime\Domain\Files\Repositories {
          * @param $id
          * @return bool
          */
-        /**
-         * @param $id
-         * @return bool
-         */
         public function deleteFile($id): bool
         {
 
@@ -282,13 +250,6 @@ namespace Leantime\Domain\Files\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $file
-         * @param $module
-         * @param $moduleId
-         * @return array|false
-         * @throws BindingResolutionException
-         */
         /**
          * @param $file
          * @param $module
@@ -349,13 +310,6 @@ namespace Leantime\Domain\Files\Repositories {
             return $return;
         }
 
-        /**
-         * @param $name
-         * @param $url
-         * @param $module
-         * @param $moduleId
-         * @return void
-         */
         /**
          * @param $name
          * @param $url

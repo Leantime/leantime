@@ -59,10 +59,6 @@ namespace Leantime\Domain\Users\Controllers {
          * @param $params
          * @return void
          */
-        /**
-         * @param $params
-         * @return void
-         */
         public function post($params): void
         {
         }

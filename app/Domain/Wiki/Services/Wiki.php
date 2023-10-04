@@ -25,11 +25,6 @@ namespace Leantime\Domain\Wiki\Services {
          * @param $projectId
          * @return mixed
          */
-        /**
-         * @param $id
-         * @param $projectId
-         * @return mixed
-         */
         public function getArticle($id, $projectId = null): mixed
         {
 
@@ -51,20 +46,11 @@ namespace Leantime\Domain\Wiki\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllProjectWikis($projectId): false|array
         {
             return $this->wikiRepository->getAllProjectWikis($projectId);
         }
 
-        /**
-         * @param $wikiId
-         * @param $userId
-         * @return array|false
-         */
         /**
          * @param $wikiId
          * @param $userId
@@ -79,19 +65,11 @@ namespace Leantime\Domain\Wiki\Services {
          * @param $id
          * @return mixed
          */
-        /**
-         * @param $id
-         * @return mixed
-         */
         public function getWiki($id): mixed
         {
             return $this->wikiRepository->getWiki($id);
         }
 
-        /**
-         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
-         * @return false|string
-         */
         /**
          * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
          * @return false|string
@@ -106,11 +84,6 @@ namespace Leantime\Domain\Wiki\Services {
          * @param $wikiId
          * @return bool
          */
-        /**
-         * @param \Leantime\Domain\Wiki\Models\Wiki $wiki
-         * @param $wikiId
-         * @return bool
-         */
         public function updateWiki(\Leantime\Domain\Wiki\Models\Wiki $wiki, $wikiId): bool
         {
             return $this->wikiRepository->updateWiki($wiki, $wikiId);
@@ -120,19 +93,11 @@ namespace Leantime\Domain\Wiki\Services {
          * @param Article $article
          * @return false|string
          */
-        /**
-         * @param Article $article
-         * @return false|string
-         */
         public function createArticle(Article $article): false|string
         {
             return $this->wikiRepository->createArticle($article);
         }
 
-        /**
-         * @param Article $article
-         * @return bool
-         */
         /**
          * @param Article $article
          * @return bool

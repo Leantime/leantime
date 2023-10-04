@@ -30,9 +30,6 @@ namespace Leantime\Domain\Auth\Models {
         /**
          * @return mixed
          */
-        /**
-         * @return mixed
-         */
         private static function getFilteredRoles(): mixed
         {
             return self::dispatch_filter('available_roles', self::$roleKeys);
@@ -42,18 +39,11 @@ namespace Leantime\Domain\Auth\Models {
          * @param $key
          * @return false|mixed
          */
-        /**
-         * @param $key
-         * @return false|mixed
-         */
         public static function getRoleString($key): mixed
         {
             return self::getFilteredRoles()[$key] ?? false;
         }
 
-        /**
-         * @return mixed
-         */
         /**
          * @return mixed
          */

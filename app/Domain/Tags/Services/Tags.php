@@ -57,11 +57,6 @@ namespace Leantime\Domain\Tags\Services {
 
         /**
          * @param $dbTagValues
-         * @param array $mergeInto
-         * @return array
-         */
-        /**
-         * @param $dbTagValues
          * @param array       $mergeInto
          * @return array
          */

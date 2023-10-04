@@ -64,11 +64,6 @@ namespace Leantime\Domain\Users\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
         public function post($params): void
         {
             $this->tpl = app()->make(TemplateCore::class);

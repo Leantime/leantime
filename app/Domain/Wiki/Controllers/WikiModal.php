@@ -28,11 +28,6 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
         public function get($params): void
         {
             $wiki = app()->make(Wiki::class);
@@ -45,11 +40,6 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->displayPartial("wiki.wikiDialog");
         }
 
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
         /**
          * @param $params
          * @return void

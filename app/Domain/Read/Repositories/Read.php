@@ -26,12 +26,6 @@ namespace Leantime\Domain\Read\Repositories {
          * @param $userId
          * @return void
          */
-        /**
-         * @param $module
-         * @param $moduleId
-         * @param $userId
-         * @return void
-         */
         public function markAsRead($module, $moduleId, $userId): void
         {
 
@@ -46,12 +40,6 @@ namespace Leantime\Domain\Read\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $module
-         * @param $moduleId
-         * @param $userId
-         * @return bool
-         */
         /**
          * @param $module
          * @param $moduleId

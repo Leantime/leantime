@@ -347,11 +347,7 @@ namespace Leantime\Domain\Auth\Services {
             $this->updateUserSessionDB($this->userId, $this->session);
         }
 
-        /**
-         * @param $userId
-         * @param $sessionID
-         * @return bool
-         */
+
         /**
          * @param $userId
          * @param $sessionID
@@ -381,9 +377,6 @@ namespace Leantime\Domain\Auth\Services {
             }
         }
 
-        /**
-         * @return string
-         */
         /**
          * @return string|null
          */
@@ -497,21 +490,11 @@ namespace Leantime\Domain\Auth\Services {
          * @param $hash
          * @return bool
          */
-        /**
-         * @param $password
-         * @param $hash
-         * @return bool
-         */
         public function changePw($password, $hash): bool
         {
             return $this->authRepo->changePW($password, $hash);
         }
 
-        /**
-         * @param string $role
-         * @param $forceGlobalRoleCheck
-         * @return bool
-         */
         /**
          * @param string $role
          * @param false  $forceGlobalRoleCheck
@@ -591,9 +574,6 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return mixed
          */
-        /**
-         * @return mixed
-         */
         public static function getUserClientId(): mixed
         {
             return $_SESSION['userdata']['clientId'];
@@ -602,17 +582,11 @@ namespace Leantime\Domain\Auth\Services {
         /**
          * @return mixed
          */
-        /**
-         * @return mixed
-         */
         public static function getUserId(): mixed
         {
             return $_SESSION['userdata']['id'];
         }
 
-        /**
-         * @return mixed
-         */
         /**
          * @return mixed
          */

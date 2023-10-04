@@ -117,19 +117,12 @@ namespace Leantime\Domain\TwoFA\Controllers {
         /**
          * @return string
          */
-        /**
-         * @return string
-         */
         public function getMimeType(): string
         {
             return 'image/png';
         }
 
-        /**
-         * @param $qrtext
-         * @param $size
-         * @return string
-         */
+
         /**
          * @param $qrtext
          * @param $size

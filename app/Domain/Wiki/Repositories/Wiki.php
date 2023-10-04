@@ -17,12 +17,6 @@ namespace Leantime\Domain\Wiki\Repositories {
          */
         protected const CANVAS_NAME = 'wiki';
 
-
-        /**
-         * @param $id
-         * @param $projectId
-         * @return mixed
-         */
         /**
          * @param $id
          * @param $projectId
@@ -101,10 +95,6 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllProjectWikis($projectId): false|array
         {
             $query = "SELECT
@@ -132,10 +122,6 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
-        /**
-         * @param $id
-         * @return mixed
-         */
         /**
          * @param $id
          * @return mixed
@@ -168,11 +154,6 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $values;
         }
 
-        /**
-         * @param $canvasId
-         * @param $userId
-         * @return array|false
-         */
         /**
          * @param $canvasId
          * @param $userId
@@ -214,10 +195,6 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $wiki
          * @return false|string
          */
-        /**
-         * @param $wiki
-         * @return false|string
-         */
         public function createWiki($wiki): false|string
         {
 
@@ -247,12 +224,6 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $this->db->database->lastInsertId();
         }
 
-
-        /**
-         * @param $wiki
-         * @param $wikiId
-         * @return bool
-         */
         /**
          * @param $wiki
          * @param $wikiId
@@ -279,10 +250,6 @@ namespace Leantime\Domain\Wiki\Repositories {
             return $execution;
         }
 
-        /**
-         * @param Article $article
-         * @return false|string
-         */
         /**
          * @param Article $article
          * @return false|string
@@ -343,10 +310,6 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param Article $article
          * @return bool
          */
-        /**
-         * @param Article $article
-         * @return bool
-         */
         public function updateArticle(Article $article): bool
         {
 
@@ -384,10 +347,6 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $id
          * @return void
          */
-        /**
-         * @param $id
-         * @return void
-         */
         public function delArticle($id): void
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
@@ -401,10 +360,6 @@ namespace Leantime\Domain\Wiki\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $id
-         * @return void
-         */
         /**
          * @param $id
          * @return void
@@ -427,10 +382,6 @@ namespace Leantime\Domain\Wiki\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $projectId
-         * @return int|mixed
-         */
         /**
          * @param $projectId
          * @return int|mixed
@@ -465,10 +416,6 @@ namespace Leantime\Domain\Wiki\Repositories {
             return 0;
         }
 
-        /**
-         * @param $projectId
-         * @return int|mixed
-         */
         /**
          * @param $projectId
          * @return int|mixed

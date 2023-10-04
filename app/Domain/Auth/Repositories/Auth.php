@@ -211,10 +211,6 @@ namespace Leantime\Domain\Auth\Repositories {
          * @param $username
          * @return array|false
          */
-        /**
-         * @param $username
-         * @return array|false
-         */
         public function getUserByEmail($username): array|false
         {
             return $this->userRepo->getUserByEmail($username);
@@ -309,11 +305,6 @@ namespace Leantime\Domain\Auth\Repositories {
          * @param $resetLink
          * @return bool
          */
-        /**
-         * @param $username
-         * @param $resetLink
-         * @return bool
-         */
         public function setPWResetLink($username, $resetLink): bool
         {
 
@@ -337,11 +328,6 @@ namespace Leantime\Domain\Auth\Repositories {
             return $result;
         }
 
-        /**
-         * @param $password
-         * @param $hash
-         * @return bool
-         */
         /**
          * @param $password
          * @param $hash

@@ -288,11 +288,6 @@ namespace Leantime\Domain\Menu\Repositories {
          * @param $structure
          * @return void
          */
-        /**
-         * @param $element
-         * @param $structure
-         * @return void
-         */
         public function processMenuItem($element, &$structure): void
         {
 
@@ -323,9 +318,6 @@ namespace Leantime\Domain\Menu\Repositories {
         /**
          * @return array|mixed|string|string[]
          */
-        /**
-         * @return array|mixed|string|string[]
-         */
         public function getTicketMenu(): mixed
         {
 
@@ -336,9 +328,6 @@ namespace Leantime\Domain\Menu\Repositories {
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
 
-        /**
-         * @return string
-         */
         /**
          * @return string
          */

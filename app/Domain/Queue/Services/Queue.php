@@ -50,10 +50,6 @@ namespace Leantime\Domain\Queue\Services {
          * @param $messageToSendToUser
          * @return string
          */
-        /**
-         * @param $messageToSendToUser
-         * @return string
-         */
         private function doFormatMail($messageToSendToUser): string
         {
             $outputHTML = $this->language->__('text.here_are_news') . "<br/>\n";
@@ -67,9 +63,6 @@ namespace Leantime\Domain\Queue\Services {
             return $outputHTML;
         }
 
-        /**
-         * @return true
-         */
         /**
          * @return true
          * @throws Exception

@@ -33,9 +33,6 @@ namespace Leantime\Domain\Cron\Services {
 
         /**
          * @return bool
-         */
-        /**
-         * @return bool
          * @throws Exception
          */
         public function runCron(): bool

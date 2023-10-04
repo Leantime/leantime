@@ -47,10 +47,6 @@ namespace Leantime\Domain\TwoFA\Controllers {
          * @param $params
          * @return void
          */
-        /**
-         * @param $params
-         * @return void
-         */
         public function post($params): void
         {
 

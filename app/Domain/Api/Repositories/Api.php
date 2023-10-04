@@ -24,10 +24,6 @@ namespace Leantime\Domain\Api\Repositories {
          * @param $apiKeyUser
          * @return mixed
          */
-        /**
-         * @param $apiKeyUser
-         * @return mixed
-         */
         public function getAPIKeyUser($apiKeyUser): mixed
         {
 

@@ -52,10 +52,6 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @param $id
          * @return string[]|SVG
-         */
-        /**
-         * @param $id
-         * @return string[]|SVG
          * @throws BindingResolutionException
          */
         public function getProfilePicture($id): array|SVG
@@ -63,11 +59,7 @@ namespace Leantime\Domain\Users\Services {
             return $this->userRepo->getProfilePicture($id);
         }
 
-        /**
-         * @param $values
-         * @param $id
-         * @return bool
-         */
+
         /**
          * @param $values
          * @param $id
@@ -85,18 +77,11 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @return int
          */
-        /**
-         * @return int
-         */
         public function getNumberOfUsers(): int
         {
             return $this->userRepo->getNumberOfUsers();
         }
 
-        /**
-         * @param $activeOnly
-         * @return mixed
-         */
         /**
          * @param false $activeOnly
          * @return mixed
@@ -114,10 +99,6 @@ namespace Leantime\Domain\Users\Services {
          * @param $id
          * @return array|bool
          */
-        /**
-         * @param $id
-         * @return array|bool
-         */
         public function getUser($id): array|bool
         {
             return $this->userRepo->getUser($id);
@@ -127,19 +108,11 @@ namespace Leantime\Domain\Users\Services {
          * @param $email
          * @return array|false
          */
-        /**
-         * @param $email
-         * @return array|false
-         */
         public function getUserByEmail($email): false|array
         {
             return $this->userRepo->getUserByEmail($email);
         }
 
-        /**
-         * @param $source
-         * @return array|false
-         */
         /**
          * @param $source
          * @return array|false
@@ -156,11 +129,6 @@ namespace Leantime\Domain\Users\Services {
          * @param $photo
          * @param $id
          * @return void
-         */
-        /**
-         * @param $photo
-         * @param $id
-         * @return void
          * @throws BindingResolutionException
          */
         public function setProfilePicture($photo, $id): void
@@ -168,12 +136,6 @@ namespace Leantime\Domain\Users\Services {
             $this->userRepo->setPicture($photo, $id);
         }
 
-        /**
-         * @param $category
-         * @param $setting
-         * @param $value
-         * @return bool
-         */
         /**
          * @param $category
          * @param $setting
@@ -353,11 +315,6 @@ namespace Leantime\Domain\Users\Services {
             return [];
         }
 
-        /**
-         * @param $values
-         * @param $id
-         * @return void
-         */
         /**
          * @param $values
          * @param $id

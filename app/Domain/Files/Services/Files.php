@@ -53,14 +53,6 @@ namespace Leantime\Domain\Files\Services {
          * @return bool
          * @throws BindingResolutionException
          */
-        /**
-         * @param $file
-         * @param $module
-         * @param $entityId
-         * @param $entity
-         * @return bool
-         * @throws BindingResolutionException
-         */
         public function uploadFile($file, $module, $entityId, $entity): bool
         {
 
@@ -103,10 +95,6 @@ namespace Leantime\Domain\Files\Services {
             return false;
         }
 
-        /**
-         * @param $fileId
-         * @return bool
-         */
         /**
          * @param $fileId
          * @return bool

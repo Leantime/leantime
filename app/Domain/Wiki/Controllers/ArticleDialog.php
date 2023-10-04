@@ -36,11 +36,6 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
         public function get($params): void
         {
 
@@ -75,11 +70,6 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->displayPartial("wiki.articleDialog");
         }
 
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
         /**
          * @param $params
          * @return void

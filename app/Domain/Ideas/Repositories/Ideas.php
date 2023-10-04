@@ -57,9 +57,6 @@ namespace Leantime\Domain\Ideas\Repositories {
         /**
          * @return array|mixed
          */
-        /**
-         * @return array|mixed
-         */
         public function getCanvasLabels(): mixed
         {
             if (isset($_SESSION["projectsettings"]["idealabels"])) {
@@ -106,10 +103,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllCanvas($projectId): false|array
         {
 
@@ -141,10 +134,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $id
          * @return void
          */
-        /**
-         * @param $id
-         * @return void
-         */
         public function deleteCanvas($id): void
         {
 
@@ -163,10 +152,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->closeCursor();
         }
 
-        /**
-         * @param $values
-         * @return false|string
-         */
         /**
          * @param $values
          * @return false|string
@@ -206,10 +191,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $values
          * @return mixed
          */
-        /**
-         * @param $values
-         * @return mixed
-         */
         public function updateCanvas($values): mixed
         {
 
@@ -229,10 +210,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $result;
         }
 
-        /**
-         * @param $values
-         * @return void
-         */
         /**
          * @param $values
          * @return void
@@ -271,11 +248,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $params
          * @return bool
          */
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         public function patchCanvasItem($id, $params): bool
         {
 
@@ -304,10 +276,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $sortingArray
          * @return bool
          */
-        /**
-         * @param $sortingArray
-         * @return bool
-         */
         public function updateIdeaSorting($sortingArray): bool
         {
 
@@ -330,10 +298,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $return;
         }
 
-        /**
-         * @param $id
-         * @return array|false
-         */
         /**
          * @param $id
          * @return array|false
@@ -407,10 +371,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $id
          * @return mixed
          */
-        /**
-         * @param $id
-         * @return mixed
-         */
         public function getSingleCanvasItem($id): mixed
         {
 
@@ -473,10 +433,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $values
          * @return false|string
          */
-        /**
-         * @param $values
-         * @return false|string
-         */
         public function addCanvasItem($values): false|string
         {
 
@@ -530,10 +486,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $id
          * @return void
          */
-        /**
-         * @param $id
-         * @return void
-         */
         public function delCanvasItem($id): void
         {
             $query = "DELETE FROM zp_canvas_items WHERE id = :id LIMIT 1";
@@ -548,11 +500,6 @@ namespace Leantime\Domain\Ideas\Repositories {
         }
 
 
-        /**
-         * @param $ideaId
-         * @param $status
-         * @return bool
-         */
         /**
          * @param $ideaId
          * @param $status
@@ -577,10 +524,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             return $result;
         }
 
-        /**
-         * @param $projectId
-         * @return int|mixed
-         */
         /**
          * @param $projectId
          * @return int|mixed
@@ -620,10 +563,6 @@ namespace Leantime\Domain\Ideas\Repositories {
          * @param $projectId
          * @return int|mixed
          */
-        /**
-         * @param $projectId
-         * @return int|mixed
-         */
         public function getNumberOfBoards($projectId = null): mixed
         {
 
@@ -655,10 +594,6 @@ namespace Leantime\Domain\Ideas\Repositories {
             return 0;
         }
 
-        /**
-         * @param $params
-         * @return bool
-         */
         /**
          * @param $params
          * @return bool

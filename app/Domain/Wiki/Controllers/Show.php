@@ -35,11 +35,6 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
         public function get($params): void
         {
 
@@ -200,10 +195,6 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->display("wiki.show");
         }
 
-        /**
-         * @param $params
-         * @return void
-         */
         /**
          * @param $params
          * @return void

@@ -128,10 +128,6 @@ namespace Leantime\Domain\Clients\Repositories {
             return $values;
         }
 
-
-        /**
-         * @return int|mixed
-         */
         /**
          * @return int|mixed
          */
@@ -153,10 +149,6 @@ namespace Leantime\Domain\Clients\Repositories {
             }
         }
 
-        /**
-         * @param $values
-         * @return bool
-         */
         /**
          * @param $values
          * @return bool
@@ -183,10 +175,6 @@ namespace Leantime\Domain\Clients\Repositories {
             return $flag;
         }
 
-        /**
-         * @param $clientId
-         * @return array|false
-         */
         /**
          * @param $clientId
          * @return array|false

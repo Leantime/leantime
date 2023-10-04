@@ -285,10 +285,6 @@ namespace Leantime\Domain\Users\Repositories {
          * @param $source
          * @return array|false
          */
-        /**
-         * @param $source
-         * @return array|false
-         */
         public function getAllBySource($source): false|array
         {
 

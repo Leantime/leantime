@@ -21,16 +21,6 @@ namespace Leantime\Domain\Audit\Repositories {
         }
 
         /**
-         * @param $action
-         * @param $values
-         * @param $entity
-         * @param $entityId
-         * @param $userId
-         * @param $projectId
-         * @param $thedate
-         * @return void
-         */
-        /**
          * @param string $action
          * @param string $values
          * @param string $entity
@@ -65,10 +55,6 @@ namespace Leantime\Domain\Audit\Repositories {
         }
 
         /**
-         * @param $action
-         * @return mixed|void
-         */
-        /**
          * @param string $action
          * @return mixed|void
          */
@@ -97,10 +83,6 @@ namespace Leantime\Domain\Audit\Repositories {
             }
         }
 
-        /**
-         * @param $ageDays
-         * @return void
-         */
         /**
          * @param int $ageDays
          * @return void
