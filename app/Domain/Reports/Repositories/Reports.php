@@ -31,10 +31,10 @@ namespace Leantime\Domain\Reports\Repositories {
          * @access public
          * @param $projectId
          * @param $sprintId
-         * @return array
+         * @return array|bool
          * @throws BindingResolutionException
          */
-        public function runTicketReport($projectId, $sprintId): array
+        public function runTicketReport($projectId, $sprintId): array|bool
         {
 
             $ticketRepo = app()->make(TicketRepository::class);
@@ -302,11 +302,7 @@ namespace Leantime\Domain\Reports\Repositories {
          * @param $sprint
          * @return array
          */
-        /**
-         * @param $sprint
-         * @return array
-         */
-        public function getSprintReport($sprint): array
+        public function getSprintReport($sprint): array|false
         {
 
             $query = "SELECT * FROM zp_stats WHERE sprintId = :sprint ORDER BY date ASC";
@@ -323,10 +319,6 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
-        /**
-         * @param $project
-         * @return array|false
-         */
         /**
          * @param $project
          * @return array|false
@@ -348,10 +340,6 @@ namespace Leantime\Domain\Reports\Repositories {
             return $value;
         }
 
-        /**
-         * @param $project
-         * @return array|false
-         */
         /**
          * @param $project
          * @return array|false

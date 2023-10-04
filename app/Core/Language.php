@@ -5,6 +5,7 @@ namespace Leantime\Core;
 use DateTime;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Date;
 use Leantime\Domain\Reports\Repositories\Reports;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Core\Eventhelpers;
@@ -401,7 +402,7 @@ class Language
      * @param string $date
      * @return string
      */
-    public function getFormattedDateString(string $date): string
+    public function getFormattedDateString(string|DateTime $date): string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
             //If datetime object

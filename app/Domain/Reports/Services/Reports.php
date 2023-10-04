@@ -126,10 +126,6 @@ namespace Leantime\Domain\Reports\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getFullReport($projectId): false|array
         {
             return $this->reportRepository->getFullReport($projectId);
@@ -138,39 +134,14 @@ namespace Leantime\Domain\Reports\Services {
         /**
          * @param $projectId
          * @param $sprintId
-         * @return array
-         */
-        /**
-         * @param $projectId
-         * @param $sprintId
-         * @return array
+         * @return array|bool
          * @throws BindingResolutionException
          */
-        public function getRealtimeReport($projectId, $sprintId): array
+        public function getRealtimeReport($projectId, $sprintId): array|bool
         {
             return $this->reportRepository->runTicketReport($projectId, $sprintId);
         }
 
-        /**
-         * @param IdeaRepository $ideaRepository
-         * @param UserRepository $userRepository
-         * @param ClientRepository $clientRepository
-         * @param CommentRepository $commentsRepository
-         * @param TimesheetRepository $timesheetRepo
-         * @param EacanvaRepository $eaCanvasRepo
-         * @param InsightscanvaRepository $insightsCanvasRepo
-         * @param LeancanvaRepository $leanCanvasRepo
-         * @param ObmcanvaRepository $obmCanvasRepo
-         * @param RetroscanvaRepository $retrosCanvasRepo
-         * @param GoalcanvaRepository $goalCanvasRepo
-         * @param ValuecanvaRepository $valueCanvasRepo
-         * @param MinempathycanvaRepository $minEmpathyCanvasRepo
-         * @param RiskscanvaRepository $risksCanvasRepo
-         * @param SbcanvaRepository $sbCanvasRepo
-         * @param SwotcanvaRepository $swotCanvasRepo
-         * @param WikiRepository $wikiRepo
-         * @return array
-         */
         /**
          * @param IdeaRepository            $ideaRepository
          * @param UserRepository            $userRepository
@@ -321,15 +292,15 @@ namespace Leantime\Domain\Reports\Services {
                         $data_string = json_encode($telemetry);
 
                         $promise = $httpClient->postAsync("https://telemetry.leantime.io", [
-                                    'form_params' => [
-                                        'telemetry' => $data_string,
-                                    ],
-                                    'timeout' => 5,
-                                ])->then(function ($response) use ($today) {
+                            'form_params' => [
+                                'telemetry' => $data_string,
+                            ],
+                            'timeout' => 5,
+                        ])->then(function ($response) use ($today) {
 
-                                    $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
-                                    $_SESSION['skipTelemetry'] = true;
-                                });
+                            $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
+                            $_SESSION['skipTelemetry'] = true;
+                        });
 
                         return $promise;
                     } catch (Exception $e) {
@@ -345,10 +316,6 @@ namespace Leantime\Domain\Reports\Services {
             return false;
         }
 
-        /**
-         * @return false|void
-         * @throws Exception
-         */
         /**
          * @return false|void
          * @throws Exception

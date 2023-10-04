@@ -643,7 +643,11 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
             }
 
-            $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            if(isset($_SESSION['userdata'])) {
+                $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            }else{
+                $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
+            }
 
             $stmn->execute();
 

@@ -57,8 +57,10 @@ class Api
 
         $apiUser = $this->apiRepository->getAPIKeyUser($user);
 
-        if (password_verify($key, $apiUser['password'])) {
-            return $apiUser;
+        if($apiUser) {
+            if (password_verify($key, $apiUser['password'])) {
+                return $apiUser;
+            }
         }
 
         return false;

@@ -3,7 +3,7 @@
 @endphp
 <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }}">
     @foreach($projects as $project)
-        <li class="projectLineItem hasSubtitle {{ $currentProject['id'] == $project['id'] ? "active" : '' }}" >
+        <li class="projectLineItem hasSubtitle {{ $currentProject['id'] ?? 0 == $project['id'] ? "active" : '' }}" >
             @php
                 $parentState = isset($_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['id']]) ? $_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['id']] : 'closed';
             @endphp

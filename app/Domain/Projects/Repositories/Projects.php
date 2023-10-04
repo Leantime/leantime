@@ -226,7 +226,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
 				)";
 
-            //All projects the user is assigned to OR the users client is assigned to
+                //All projects the user is assigned to OR the users client is assigned to
             } elseif ($accessStatus == "clients") {
                 $query .= " AND
 				(
@@ -234,7 +234,7 @@ namespace Leantime\Domain\Projects\Repositories {
                     OR (project.psettings = 'clients' AND project.clientId = requestingUser.clientId)
 				)";
 
-            //Only assigned
+                //Only assigned
             } else {
                 $query .= " AND
 				(relation.userId = :id)";
@@ -753,6 +753,8 @@ namespace Leantime\Domain\Projects\Repositories {
         public function editProject(array $values, $id): void
         {
 
+            $oldProject = $this->getProject($id);
+
             $query = "UPDATE zp_projects SET
 				name = :name,
 				details = :details,
@@ -803,7 +805,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event("editProject", array("values" => $values));
+            static::dispatch_event("editProject", array("values" => $values, "oldProject" => $oldProject));
         }
 
         /**
@@ -1220,6 +1222,7 @@ namespace Leantime\Domain\Projects\Repositories {
          */
         public function addProjectRelation($userId, $projectId, $projectRole): void
         {
+            $oldProject = $this->getProject($projectId);
 
             $sql = "INSERT INTO zp_relationuserproject (
 					userId,
@@ -1241,7 +1244,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->closeCursor();
 
-            static::dispatch_event("userAddedToProject", array("userId" => $userId, "projectId" => $projectId, "projectRole" => $projectRole));
+            static::dispatch_event("userAddedToProject", array("userId" => $userId, "projectId" => $projectId, "projectRole" => $projectRole, "oldProject" => $oldProject));
         }
 
         /**

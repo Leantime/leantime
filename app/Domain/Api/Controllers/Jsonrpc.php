@@ -71,7 +71,7 @@ class Jsonrpc extends Controller
                     echo ",";
                 }
             }
-        // normal requests
+            // normal requests
         } else {
             $this->executeApiRequest($params);
         }
@@ -131,7 +131,7 @@ class Jsonrpc extends Controller
                     echo ",";
                 }
             }
-        // normal requests
+            // normal requests
         } else {
             $this->executeApiRequest($params);
         }
@@ -300,8 +300,32 @@ class Jsonrpc extends Controller
                     continue;
                 }
 
+                //If it's a nullable type and the parameter is null, set the value to null
+                if($type->allowsNull()){
+                    if($params[$name] == null || $params[$name] == "null"){
+
+                        $filtered_parameters[$position] = $params[$name];
+                        continue;
+
+                    }else{
+
+                        //GetName will return base types even if the type is nullable.
+                        $typeName = $type->getName();
+
+                        if (settype($params[$name], $typeName)) {
+
+                            $filtered_parameters[$position] = $typeName == "bool" ? $this->castBoolValue($params[$name]) : $params[$name];
+                            continue;
+
+                        }
+
+                    }
+
+                }
+
                 if (settype($params[$name], $type)) {
-                    $filtered_parameters[$position] = $params[$name];
+
+                    $filtered_parameters[$position] = $type->getName() == "bool" ? $this->castBoolValue($params[$name]) : $params[$name];
                     continue;
                 }
 
@@ -315,6 +339,35 @@ class Jsonrpc extends Controller
         ksort($filtered_parameters);
 
         return $filtered_parameters;
+    }
+
+    private function castBoolValue($value) {
+
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_string($value)) {
+            if (strtolower($value) === 'true') {
+                return true;
+            }
+
+            if (strtolower($value) === 'false') {
+                return false;
+            }
+        }
+
+        if (is_numeric($value)) {
+            if ($value == 1) {
+                return true;
+            }
+
+            if ($value == 0) {
+                return false;
+            }
+        }
+
+        return $value;
     }
 
     /**
