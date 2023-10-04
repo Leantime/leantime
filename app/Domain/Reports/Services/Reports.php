@@ -121,7 +121,7 @@ namespace Leantime\Domain\Reports\Services {
                 }
             }
         }
-        
+
         /**
          * @param $projectId
          * @return array|false
