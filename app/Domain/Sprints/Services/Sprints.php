@@ -8,6 +8,7 @@ namespace Leantime\Domain\Sprints\Services {
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
+    use Leantime\Domain\Sprints\Models;
     use DatePeriod;
     use DateTime;
     use DateInterval;
@@ -56,7 +57,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $id
          * @return array|false
          */
-        public function getSprint($id): false|array
+        public function getSprint($id): false|Models\Sprints
         {
 
             $sprint = $this->sprintRepository->getSprint($id);
