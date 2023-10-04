@@ -14,10 +14,6 @@ use Leantime\Core\Mailer;
 /**
  *
  */
-
-/**
- *
- */
 class TestEmailCommand extends Command
 {
     protected static $defaultName = 'email:test';

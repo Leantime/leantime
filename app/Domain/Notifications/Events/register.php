@@ -9,10 +9,6 @@ use Leantime\Domain\Notifications\Services\Notifications;
 /**
  *
  */
-
-/**
- *
- */
 class AddNotification
 {
     /**

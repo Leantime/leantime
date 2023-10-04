@@ -16,10 +16,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  *
  */
-
-/**
- *
- */
 class AddUserCommand extends Command
 {
     protected static $defaultName = 'user:add';

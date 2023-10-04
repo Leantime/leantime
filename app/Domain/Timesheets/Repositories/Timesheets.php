@@ -85,7 +85,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
             if ($clientId > 0) {
                 $query .= " AND (zp_projects.clientId = :clientId)";
             }
-            
+
             if ($ticketFilter > 0) {
                 $query .= " AND (zp_tickets.id = :ticketFilter)";
             }

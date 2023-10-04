@@ -7,10 +7,6 @@ use Leantime\Core\Controller;
 /**
  *
  */
-
-/**
- *
- */
 class I18n extends Controller
 {
     /**

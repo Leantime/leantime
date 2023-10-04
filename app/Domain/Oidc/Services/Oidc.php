@@ -18,10 +18,6 @@ use OpenSSLAsymmetricKey;
 /**
  *
  */
-
-/**
- *
- */
 class Oidc
 {
     private Environment $config;

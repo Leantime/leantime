@@ -10,10 +10,6 @@ use Leantime\Domain\Oidc\Services\Oidc as OidcService;
 /**
  *
  */
-
-/**
- *
- */
 class Callback extends Controller
 {
     private OidcService $oidc;

@@ -10,10 +10,6 @@ use Leantime\Core\Frontcontroller;
 /**
  *
  */
-
-/**
- *
- */
 class Login extends Controller
 {
     private OidcService $oidc;

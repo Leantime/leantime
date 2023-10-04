@@ -15,10 +15,6 @@ use Leantime\Domain\Users\Repositories\Users;
 /**
  *
  */
-
-/**
- *
- */
 class MigrateCommand extends Command
 {
     protected static $defaultName = 'db:migrate';

@@ -13,10 +13,6 @@ use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 /**
  *
  */
-
-/**
- *
- */
 class Messengers
 {
     private Client $httpClient;

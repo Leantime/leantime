@@ -7,10 +7,6 @@ namespace Leantime\Core;
 /**
  *
  */
-
-/**
- *
- */
 class HtmxRequest extends IncomingRequest
 {
     /**

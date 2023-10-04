@@ -9,10 +9,6 @@ use Illuminate\Support\Fluent;
 /**
  *
  */
-
-/**
- *
- */
 abstract class Composer
 {
     /**

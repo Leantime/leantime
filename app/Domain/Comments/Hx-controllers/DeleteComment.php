@@ -7,10 +7,6 @@ use Leantime\Domain\Tickets\Services\Tickets;
 /**
  *
  */
-
-/**
- *
- */
 class DeleteComment extends HTMXController
 {
     public static string $view = 'Comments::components.reply';

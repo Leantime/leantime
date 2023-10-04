@@ -11,10 +11,6 @@ use Leantime\Domain\Users\Repositories\Users as UserRepository;
 /**
  *
  */
-
-/**
- *
- */
 class Ldap
 {
     private false|Connection $ldapConnection;

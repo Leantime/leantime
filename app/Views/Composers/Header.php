@@ -11,10 +11,6 @@ use Leantime\Core\Theme;
 /**
  *
  */
-
-/**
- *
- */
 class Header extends Composer
 {
     public static array $views = [

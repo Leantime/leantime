@@ -8,10 +8,6 @@ use Leantime\Core\Composer;
 /**
  *
  */
-
-/**
- *
- */
 class Footer extends Composer
 {
     public static array $views = [

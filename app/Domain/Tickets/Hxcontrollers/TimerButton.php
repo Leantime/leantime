@@ -9,10 +9,6 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 /**
  *
  */
-
-/**
- *
- */
 class TimerButton extends HtmxController
 {
     /**

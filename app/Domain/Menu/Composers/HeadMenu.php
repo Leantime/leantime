@@ -13,10 +13,6 @@ use Leantime\Domain\Auth\Services\Auth as AuthService;
 /**
  *
  */
-
-/**
- *
- */
 class HeadMenu extends Composer
 {
     public static array $views = [

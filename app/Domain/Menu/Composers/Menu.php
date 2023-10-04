@@ -14,10 +14,6 @@ use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 /**
  *
  */
-
-/**
- *
- */
 class Menu extends Composer
 {
     public static array $views = [

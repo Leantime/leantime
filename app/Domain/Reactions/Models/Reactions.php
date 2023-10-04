@@ -7,10 +7,6 @@ use Leantime\Core\Eventhelpers;
 /**
  *
  */
-
-/**
- *
- */
 class Reactions
 {
     use Eventhelpers;

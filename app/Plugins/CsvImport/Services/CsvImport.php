@@ -10,10 +10,6 @@ use Leantime\Domain\Connector\Services\ProviderIntegration;
 /**
  *
  */
-
-/**
- *
- */
 class CsvImport extends Provider implements ProviderIntegration
 {
     private array $fields;

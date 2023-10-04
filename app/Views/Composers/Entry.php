@@ -7,10 +7,6 @@ use Leantime\Core\Composer;
 /**
  *
  */
-
-/**
- *
- */
 class Entry extends Composer
 {
     public static array $views = [

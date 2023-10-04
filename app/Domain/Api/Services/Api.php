@@ -13,10 +13,6 @@ use RangeException;
 /**
  *
  */
-
-/**
- *
- */
 class Api
 {
     use Eventhelpers;

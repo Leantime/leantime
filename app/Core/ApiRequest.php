@@ -5,10 +5,6 @@ namespace Leantime\Core;
 /**
  *
  */
-
-/**
- *
- */
 class ApiRequest extends IncomingRequest
 {
     /**

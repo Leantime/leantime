@@ -16,10 +16,6 @@ use ReflectionParameter;
 /**
  *
  */
-
-/**
- *
- */
 class Jsonrpc extends Controller
 {
     /**

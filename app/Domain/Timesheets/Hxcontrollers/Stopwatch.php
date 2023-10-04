@@ -10,10 +10,6 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 /**
  *
  */
-
-/**
- *
- */
 class Stopwatch extends HtmxController
 {
     /**

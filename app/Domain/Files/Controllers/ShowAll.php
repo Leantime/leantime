@@ -10,10 +10,6 @@ use Leantime\Domain\Files\Services\Files as FileService;
 /**
  *
  */
-
-/**
- *
- */
 class ShowAll extends Controller
 {
     private FileRepository $filesRepo;

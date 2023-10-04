@@ -12,10 +12,6 @@ use Leantime\Domain\Projects\Repositories\Projects;
 /**
  *
  */
-
-/**
- *
- */
 class Clients
 {
     private TemplateCore $tpl;

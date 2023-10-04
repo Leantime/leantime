@@ -14,10 +14,6 @@ use Leantime\Domain\Setting\Repositories\Setting;
 /**
  *
  */
-
-/**
- *
- */
 class App extends Composer
 {
     public static array $views = [

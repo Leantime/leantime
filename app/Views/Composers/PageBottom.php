@@ -8,10 +8,6 @@ use Leantime\Core\Composer;
 /**
  *
  */
-
-/**
- *
- */
 class PageBottom extends Composer
 {
     /**

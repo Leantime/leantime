@@ -10,10 +10,6 @@ use Leantime\Domain\Projects\Services\Projects;
 /**
  *
  */
-
-/**
- *
- */
 class Checklist extends HtmxController
 {
     /**

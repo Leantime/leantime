@@ -13,10 +13,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  *
  */
-
-/**
- *
- */
 class SaveSettingCommand extends Command
 {
     protected static $defaultName = 'setting:save';

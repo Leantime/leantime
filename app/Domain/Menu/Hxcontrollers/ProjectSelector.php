@@ -12,10 +12,6 @@ use Leantime\Domain\Timesheets\Services\Timesheets;
 /**
  *
  */
-
-/**
- *
- */
 class ProjectSelector extends HtmxController
 {
     /**

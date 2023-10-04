@@ -12,10 +12,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  *
  */
-
-/**
- *
- */
 class RunCronCommand extends Command
 {
     protected static $defaultName = 'cron:run';
