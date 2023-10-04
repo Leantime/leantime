@@ -29,15 +29,10 @@ namespace Leantime\Domain\Setting\Services {
 
         /**
          * @param $file
-         * @return true|void
+         * @return bool
          * @throws BindingResolutionException
          */
-        /**
-         * @param $file
-         * @return true|void
-         * @throws BindingResolutionException
-         */
-        public function setLogo($file)
+        public function setLogo($file): bool
         {
 
             $upload = app()->make(FileuploadCore::class);
@@ -62,6 +57,8 @@ namespace Leantime\Domain\Setting\Services {
                     return true;
                 }
             }
+
+            return false;
         }
 
         /**

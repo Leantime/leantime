@@ -1443,9 +1443,9 @@ namespace Leantime\Domain\Projects\Services {
         /**
          * @param $params
          * @param $handler
-         * @return true
+         * @return bool
          */
-        public function updateProjectStatusAndSorting($params, $handler = null): true
+        public function updateProjectStatusAndSorting($params, $handler = null): bool
         {
 
             //Jquery sortable serializes the array for kanban in format

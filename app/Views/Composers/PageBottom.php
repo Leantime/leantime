@@ -14,6 +14,9 @@ use Leantime\Core\Composer;
  */
 class PageBottom extends Composer
 {
+    /**
+     * @var array|string[]
+     */
     public static array $views = [
         'global::sections.pageBottom',
     ];

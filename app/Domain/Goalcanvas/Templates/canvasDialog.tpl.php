@@ -278,7 +278,7 @@ if (isset($_GET['canvasId'])) {
         </div>
 
         <?php if ($id != '') {?>
-            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="<?=$canvasName ?>CanvasModal delete right"><i class='fa fa-trash-can'></i> <?php echo $tpl->__("links.delete") ?></a>
+            <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $id;?>" class="formModal delete right"><i class='fa fa-trash-can'></i> <?php echo $tpl->__("links.delete") ?></a>
         <?php } ?>
 
     </form>

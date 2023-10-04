@@ -355,10 +355,10 @@ class Ldap
      */
     /**
      * @param $ldapUsers
-     * @return true
+     * @return bool
      * @throws BindingResolutionException
      */
-    public function upsertUsers($ldapUsers): true
+    public function upsertUsers($ldapUsers): bool
     {
 
         $userRepo = app()->make(UserRepository::class);

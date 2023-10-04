@@ -1015,16 +1015,16 @@ namespace Leantime\Domain\Tickets\Services {
         /**
          * @param $id
          * @param $values
-         * @return string[]|true|void
+         * @return array|bool
          * @throws BindingResolutionException
          */
         /**
          * @param $id
          * @param $values
-         * @return string[]|true|void
+         * @return array|bool
          * @throws BindingResolutionException
          */
-        public function updateTicket($id, $values)
+        public function updateTicket($id, $values): array|bool
         {
 
             $values = array(
@@ -1110,6 +1110,8 @@ namespace Leantime\Domain\Tickets\Services {
                     return true;
                 }
             }
+
+            return false;
         }
 
         /**

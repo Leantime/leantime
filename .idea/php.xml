@@ -12,6 +12,7 @@
   <component name="PHPCodeSnifferOptionsConfiguration">
     <option name="codingStandard" value="Custom" />
     <option name="customRuleset" value="$PROJECT_DIR$/phpcs.xml" />
+    <option name="showSniffs" value="true" />
     <option name="transferred" value="true" />
   </component>
   <component name="PhpCodeSniffer">

@@ -1974,9 +1974,9 @@ namespace Leantime\Domain\Tickets\Repositories {
          */
         /**
          * @param $id
-         * @return true
+         * @return bool
          */
-        public function delMilestone($id): true
+        public function delMilestone($id): bool
         {
 
             $query = "UPDATE zp_tickets

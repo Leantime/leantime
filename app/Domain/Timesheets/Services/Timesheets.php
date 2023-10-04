@@ -75,9 +75,9 @@ namespace Leantime\Domain\Timesheets\Services {
         /**
          * @param $ticketId
          * @param $params
-         * @return string[]|true
+         * @return array|bool
          */
-        public function logTime($ticketId, $params): array | true
+        public function logTime($ticketId, $params): array|bool
         {
 
             $values = array(
