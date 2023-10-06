@@ -8,6 +8,9 @@ namespace Leantime\Domain\Plugins\Services {
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
     use Leantime\Domain\Plugins\Models\Plugins as PluginModel;
     use Ramsey\Uuid\Uuid;
+    use Illuminate\Support\Facades\Http;
+    use Illuminate\Http\Client\Response;
+    use Illuminate\Support\Collection;
 
     /**
      *
@@ -17,7 +20,6 @@ namespace Leantime\Domain\Plugins\Services {
         private PluginRepository $pluginRepository;
         private string $pluginDirectory =  ROOT . "/../app/Plugins/";
         private EnvironmentCore $config;
-
 
         /**
          * @param PluginRepository $pluginRepository
@@ -273,11 +275,6 @@ namespace Leantime\Domain\Plugins\Services {
          * @return string
          * @throws BindingResolutionException
          */
-        /**
-         * @param PluginModel $plugin
-         * @return string
-         * @throws BindingResolutionException
-         */
         public function getPluginClassName(PluginModel $plugin): string
         {
             return app()->getNamespace()
@@ -285,6 +282,35 @@ namespace Leantime\Domain\Plugins\Services {
                 . htmlspecialchars(ucfirst($plugin->foldername))
                 . '\\Services\\'
                 . htmlspecialchars(ucfirst($plugin->foldername));
+        }
+
+        /**
+         * @param int $page
+         * @param string $query
+         * @return Collection
+         */
+        public function getMarketplacePlugins(int $page, string $query = ''): Collection
+        {
+            $baseUrl = 'http://marketplace.leantime.local:8888/ltmp-api';
+            #$baseUrl = 'https://marketplace.leantime.io/ltmp-api';
+
+            $plugins = ! empty($query)
+                ? Http::get("$baseUrl/search/$query/$page")
+                : Http::get("$baseUrl/index/$page");
+
+            return $plugins->collect();
+        }
+
+        /**
+         * @param string $identifier
+         * @return Collection
+         */
+        public function getMarketplacePlugin(string $identifier): Collection
+        {
+            $baseUrl = 'http://marketplace.leantime.local:8888/ltmp-api';
+            #$baseUrl = 'https://marketplace.leantime.io/ltmp-api';
+
+            return Http::get("$baseUrl/versions/$identifier")->collect();
         }
     }
 }

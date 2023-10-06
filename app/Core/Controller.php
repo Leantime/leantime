@@ -87,14 +87,8 @@ abstract class Controller
         }
 
         self::dispatch_event('before_action', $available_params);
-        if (method_exists($this, $method)) {
-            /**
-             * @todo non GET requests should only be accessible from HTMX and API requests
-             * if ($method !== 'get') && ! $incomingRequest instanceof HtmxRequest|ApiRequest) {
-             *    self::redirect(BASE_URL . "/errors/error400", 400);
-             * }
-             */
 
+        if (method_exists($this, $method)) {
             $this->$method($params);
         } else {
             $this->run();

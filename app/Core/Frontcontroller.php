@@ -88,12 +88,8 @@ class Frontcontroller
         $namespace = app()->getNamespace(false);
         $actionName = Str::studly(self::getActionName($completeName));
         $moduleName = Str::studly(self::getModuleName($completeName));
-
         $controllerNs = "Domain";
         $controllerType = self::$incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
-
-        $incomingRequest = app()->make(IncomingRequest::class);
-        $controllerType = $incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
 
         //Setting default response code to 200, can be changed in controller
         self::setResponseCode(200);

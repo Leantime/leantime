@@ -181,12 +181,12 @@ class Template
         // Find Template Paths
         if (empty($_SESSION['template_paths']) || $this->config->debug) {
             $domainPaths = collect(glob(APP_ROOT . '/app/Domain/*'))
-            ->mapWithKeys(fn ($path) => [
-                $basename = strtolower(basename($path)) => [
-                    APP_ROOT . '/custom/Domain/' . $basename . '/Templates',
-                    "$path/Templates",
-                ],
-            ]);
+                ->mapWithKeys(fn ($path) => [
+                    $basename = strtolower(basename($path)) => [
+                        APP_ROOT . '/custom/Domain/' . $basename . '/Templates',
+                        "$path/Templates",
+                    ],
+                ]);
 
             $pluginPaths = collect(glob(APP_ROOT . '/app/Plugins/*'))
                 ->mapWithKeys(function ($path) use ($domainPaths) {
@@ -407,6 +407,7 @@ class Template
             throw new Exception("Both namespace and path must be provided");
         }
 
+        $namespace = strtolower($namespace);
         $fullpath = self::dispatch_filter(
             "template_path__{$namespace}_{$path}",
             "$namespace::$path",
@@ -477,7 +478,7 @@ class Template
         } else {
             $view = $this->viewFactory->make($layout, array_merge(
                 $this->vars,
-                ['module' => $module, 'action' => $action]
+                ['module' => strtolower($module), 'action' => $action]
             ));
         }
 
@@ -792,10 +793,10 @@ class Template
      * getFormattedDateString - returns a language specific formatted date string. wraps language class method
      *
      * @access public
-     * @param string|null $date
+     * @param $date
      * @return string
      */
-    public function getFormattedDateString(?string $date): string
+    public function getFormattedDateString($date): string
     {
         if ($date == null) {
             return '';
@@ -1018,17 +1019,17 @@ class Template
     }
 
     /**
-    * patchDownloadUrlToFilenameOrAwsUrl - Replace all local download.php references in <img src=""> tags
-    * by either local filenames or AWS URLs that can be accesse without being authenticated
-    *
-    * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
-    * authenticated
-    *
-    * @access public
-    * @param  string $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
-    * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
-    *                 local filenames or AWS URLs
-    */
+     * patchDownloadUrlToFilenameOrAwsUrl - Replace all local download.php references in <img src=""> tags
+     * by either local filenames or AWS URLs that can be accesse without being authenticated
+     *
+     * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
+     * authenticated
+     *
+     * @access public
+     * @param  string $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
+     * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
+     *                 local filenames or AWS URLs
+     */
 
     public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
     {
@@ -1072,9 +1073,7 @@ class Template
      */
     private function dispatchTplHook(string $type, string $hookName, mixed $payload, array $available_params = []): mixed
     {
-        if (
-            !is_string($type) || !in_array($type, ['event', 'filter'])
-        ) {
+        if (! is_string($type) || ! in_array($type, ['event', 'filter'])) {
             return null;
         }
 

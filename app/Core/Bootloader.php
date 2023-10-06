@@ -16,6 +16,7 @@ use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Audit\Repositories\Audit as AuditRepository;
 use Symfony\Component\ErrorHandler\Debug;
+use Illuminate\Support\Facades\Facade;
 
 /**
  * Bootloader
@@ -185,6 +186,8 @@ class Bootloader
         $this->app->bind(Application::class, fn () => Application::getInstance());
         $this->app->alias(Application::class, IlluminateContainerContract::class);
         $this->app->alias(Application::class, PsrContainerContract::class);
+
+        Facade::setFacadeApplication($this->app);
 
         $this->bindRequest();
 
@@ -516,13 +519,14 @@ class Bootloader
             getallheaders()
         );
 
-        if (isset($headers['Hx-Request'])) {
-            $incomingRequest = $this->app->instance(IncomingRequest::class, HtmxRequest::createFromGlobals());
-        } elseif (isset($headers['X-Api-Key'])) {
-            $incomingRequest = $this->app->instance(IncomingRequest::class, ApiRequest::createFromGlobals());
-        } else {
-            $incomingRequest = $this->app->instance(IncomingRequest::class, IncomingRequest::createFromGlobals());
-        }
+        $incomingRequest = $this->app->instance(
+            IncomingRequest::class,
+            ${match (true) {
+                isset($headers['Hx-Request']) => HtmxRequest::class,
+                isset($headers['X-Api-Key']) => ApiRequest::class,
+                default => IncomingRequest::class
+            }}::createFromGlobals(),
+        );
 
         $incomingRequest->overrideGlobals();
     }

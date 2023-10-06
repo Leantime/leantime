@@ -51,10 +51,11 @@
         "illuminate/events": "^9.0",
         "illuminate/filesystem": "^9.0",
         "metasyntactical/composer-plugin-license-check": "^2.1",
-        "symfony/http-foundation": "^5.4",
+        "symfony/http-foundation": "^6.3",
         "symfony/error-handler": "^6.3",
         "vedmant/laravel-feed-reader": "^1.6",
-        "ext-fileinfo": "*"
+        "ext-fileinfo": "*",
+        "illuminate/http": "^9.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",
