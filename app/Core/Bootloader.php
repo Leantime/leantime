@@ -521,11 +521,11 @@ class Bootloader
 
         $incomingRequest = $this->app->instance(
             IncomingRequest::class,
-            ${match (true) {
-                isset($headers['Hx-Request']) => HtmxRequest::class,
-                isset($headers['X-Api-Key']) => ApiRequest::class,
-                default => IncomingRequest::class
-            }}::createFromGlobals(),
+            match (true) {
+                isset($headers['Hx-Request']) => HtmxRequest::createFromGlobals(),
+                isset($headers['X-Api-Key']) => ApiRequest::createFromGlobals(),
+                default => IncomingRequest::createFromGlobals(),
+            },
         );
 
         $incomingRequest->overrideGlobals();
