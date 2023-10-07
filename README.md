@@ -143,8 +143,8 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 
 ## ☁️ Not interested in hosting yourself? Let us do it for you ##
 
-We offer managed hosting plans as well as a SaaS product so you can get all the benefits of Leantime without the hassle.
-Head to [leantime.io](https://leantime.io/managed-hosting/) for more information.
+We offer [managed hosting plans](https://leantime.io/managed-hosting/) as well as a [SaaS product](https://leantime.io/pricing/) so you can get all the benefits of Leantime without the hassle.
+Head to [leantime.io](https://leantime.io/) for more information.
 <br /><br />
 ## 🤙 Need technical support? ##
 
