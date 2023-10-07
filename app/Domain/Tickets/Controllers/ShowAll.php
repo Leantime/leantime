@@ -47,11 +47,6 @@ namespace Leantime\Domain\Tickets\Controllers {
          * @return void
          * @throws \Exception
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws \Exception
-         */
         public function get($params): void
         {
 
