@@ -30,7 +30,7 @@ Leantime is an open source project management system for non-project manager.<br
 |                                                                      | ... and more                                 | Comments/discussions on everything      | Available in 19 languages                                                |
 
 *yes, all of theses features are included in the OSS version
-
+<br /><br />
 ### 📸 Screenshots ###
 
 | ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Project Dashboard") |       ![alt text](public/assets/images/Screenshots/Kanban2.png "Kanban Board")       |   ![alt text](public/assets/images/Screenshots/Tasks-table.png "Grouped To-Dos")    |
@@ -39,7 +39,7 @@ Leantime is an open source project management system for non-project manager.<br
 | ![alt text](public/assets/images/Screenshots/Goals.png "Goals")                        |      ![alt text](public/assets/images/Screenshots/Leancanvas.png "Lean Canvas")      |     ![alt text](public/assets/images/Screenshots/Reports.png "Report Screens")      |
 | ![alt text](public/assets/images/Screenshots/Docs.png "Documents & Wikis")             |      ![alt text](public/assets/images/Screenshots/Blueprints.png "Blueprints")       |        ![alt text](public/assets/images/Screenshots/Confetti.png "Confetti")        |
 | ![alt text](public/assets/images/Screenshots/Files.png "Files & Screenrecording")      |       ![alt text](public/assets/images/Screenshots/Timesheets.png "Timsheets")       |        ![alt text](public/assets/images/Screenshots/Task.png "Task details")        |
-
+<br /><br />
 ### ❗System Requirements ###
 
 * PHP 8.1+
@@ -47,7 +47,7 @@ Leantime is an open source project management system for non-project manager.<br
 * Apache or Nginx (IIS works with some modifications)
 * PHP Extensions: 
 * * mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap
-
+<br /><br />
 ### ️⚡️ Installation (Production) ###
 
 There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the offically supported Docker image.
@@ -81,7 +81,7 @@ docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
 Unless you have a database defined somewhere else you should use our [docker-compose file](https://github.com/Leantime/docker-leantime/blob/master/docker-compose.yml). 
 
 Once started you can go to `<yourdomain.com>/install` and run the installation script.
-
+<br /><br />
 ### 🤓 Installation (Development) ###
 
 There are two ways to install a development setup of LeanTime. The first (but most techical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
@@ -125,7 +125,7 @@ The dev environment provides a mysql server, mail server, s3 server, and should 
 
 Additionally, XDebug is enabled, but you will have to modify your 
 IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connection
-
+<br /><br />
 ###  🏗 Update ###
 
 #### Manual
@@ -145,18 +145,18 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 
 We offer managed hosting plans as well as a SaaS product so you can get all the benefits of Leantime without the hassle.
 Head to [leantime.io](https://leantime.io/managed-hosting/) for more information.
-
+<br /><br />
 ## 🤙 Need technical support? ##
 
 We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/)
 
-## Support ##
+## Community Support ##
 
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Chat [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
 * Translations [https://crowdin.com/project/leantime](https://crowdin.com/project/leantime)
-
+<br /><br />
 ## ⚖️ LICENSE Exceptions ##
 
 Leantime is licensed under AGPLv3.
