@@ -310,7 +310,7 @@ namespace Leantime\Domain\Tickets\Services {
                     && $key != "currentProject"
                     && $key != "orderBy"
                     && $key != "currentUser"
-                    && $key != "clients"
+                    && $key != "currentClient"
                     && $key != "sprint"
                     && $key != "orderDirection"
                 ) {

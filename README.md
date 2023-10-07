@@ -2,10 +2,9 @@
 <div align="center">
 <a href="https://leantime.io"><img src="https://leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
 
-
 ### Leantime&reg; ###
 
-Leantime is a strategic open source project management system for innovative companies and teams looking to go from start to finish. Built for the non-project manager, we combine the plans and the work while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+Leantime is an open source project management system for non-project manager. We combine strategy, planning and executing while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
@@ -15,20 +14,20 @@ Leantime is a strategic open source project management system for innovative com
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/leantime)
 <br />
 
-  ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Dashboard")
+  ![alt text](public/assets/images/Screenshots/Home.png "Home Screen")
 
 </div>
 <br /><br />
 
-## Features: ##
+## 🚀 Features: ##
 
-* Task management using kanban boards, table and calendar views + sprint management
+* Task management using kanban boards, table, list and calendar views + sprint management
 * Subtask management & dependencies
 * Idea boards & idea kanban boards
 * Various research and strategy boards such as SWOT, Lean Canvas, Business Model Canvas, Empathy Maps & more
 * Milestone management using Gantt charts
 * Timesheet management + time tracking on tasks
-* Manage goals
+* Manage goals & metrics
 * Retrospectives
 * Project dashboards and project updates
 * Project reports
@@ -38,36 +37,40 @@ Leantime is a strategic open source project management system for innovative com
 * Wikis (Docs) with the ability to embed documents
 * Multiple user roles
 * Two-Factor Authentication
-* LDAP integration
+* LDAP, OIDC integration
 * Integrations with Mattermost, Slack, Zulip, Discord
 * Export timesheets, tasks and milestones to CSV
 * File storage with AWS S3 or local file system 
+* Screen and webcam recording
 * Adjust color scheme and logo
 * Easy installation
 * Available in 19 languages
 
 
-### Screenshots ###
+### 📸 Screenshots ###
 
-| ![alt text](public/assets/images/Screenshots/UserDashboard.png "My Dashboard")   | ![alt text](public/assets/images/Screenshots/ToDoKanban.png "Kanban Board") | ![alt text](public/assets/images/Screenshots/ToDoTable.png "Grouped To-Dos") |
-|---------------------------------------------------------------------|:--------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-| ![alt text](public/assets/images/Screenshots/Timesheets.png "My Timesheets") | ![alt text](public/assets/images/Screenshots/Milestones.png "Milestone Gantt Charts") |     ![alt text](public/assets/images/Screenshots/Ideas.png "Idea Board")     |
-| ![alt text](public/assets/images/Screenshots/Goals.png "Calendar")      |  ![alt text](public/assets/images/Screenshots/Strategy.png "Lean Canvas")   |  ![alt text](public/assets/images/Screenshots/Reports.png "Report Screens")                                                                     |
-| ![alt text](public/assets/images/Screenshots/DocsEmbed.png "Documents")      |  ![alt text](public/assets/images/Screenshots/Blueprints.png "Blueprints")   |  ![alt text](public/assets/images/Screenshots/Confetti.png "Confetti")                                                                     |
+| ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Project Dashboard") |       ![alt text](public/assets/images/Screenshots/Kanban2.png "Kanban Board")       |   ![alt text](public/assets/images/Screenshots/Tasks-table.png "Grouped To-Dos")    |
+|----------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
+| ![alt text](public/assets/images/Screenshots/Tasks-list.png "Task Lists")              | ![alt text](public/assets/images/Screenshots/Tasks-timeline.png "Tasks on timeline") | ![alt text](public/assets/images/Screenshots/Tasks-calendar.png "Project Calendar") |
+| ![alt text](public/assets/images/Screenshots/Goals.png "Goals")                        |      ![alt text](public/assets/images/Screenshots/Leancanvas.png "Lean Canvas")      |     ![alt text](public/assets/images/Screenshots/Reports.png "Report Screens")      |
+| ![alt text](public/assets/images/Screenshots/Docs.png "Documents & Wikis")             |      ![alt text](public/assets/images/Screenshots/Blueprints.png "Blueprints")       |        ![alt text](public/assets/images/Screenshots/Confetti.png "Confetti")        |
+| ![alt text](public/assets/images/Screenshots/Files.png "Files & Screenrecording")      |       ![alt text](public/assets/images/Screenshots/Timesheets.png "Timsheets")       |        ![alt text](public/assets/images/Screenshots/Task.png "Task details")        |
 
-### System Requirements ###
+### ❗System Requirements ###
 
-* PHP 8+
+* PHP 8.1+
 * MySQL 5.7+
 * Apache or Nginx (IIS works with some modifications)
+* PHP Extensions: 
+* * mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap
 
-### Installation (Production) ###
+### ️⚡️ Installation (Production) ###
 
 There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the offically supported Docker image.
 
 #### Local Production Installation ####
 
-* Download latest release package
+* Download latest release package from our <a href="https://leantime.io/download-leantime/">Website</a> or <a href="https://github.com/Leantime/docker-leantime/releases">Github</a>
 * Create an empty MySQL database
 * Upload entire directory to your server 
 * Point your domain root to the `public/` directory
@@ -91,11 +94,11 @@ docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
 --name leantime leantime/leantime:latest
 ```
 
-You can set any of the config variables in `config/configuration.php` when running the docker command.
+Unless you have a database defined somewhere else you should use our [docker-compose file](https://github.com/Leantime/docker-leantime/blob/master/docker-compose.yml). 
 
 Once started you can go to `<yourdomain.com>/install` and run the installation script.
 
-### Installation (Development) ###
+### 🤓 Installation (Development) ###
 
 There are two ways to install a development setup of LeanTime. The first (but most techical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
 
@@ -139,8 +142,7 @@ The dev environment provides a mysql server, mail server, s3 server, and should 
 Additionally, XDebug is enabled, but you will have to modify your 
 IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connection
 
-
-### Update ###
+###  🏗 Update ###
 
 #### Manual
 * Make sure to take a backup of your database and files
@@ -155,14 +157,24 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 * Delete/Stop existing container
 * Pull the latest docker image and rebuild using your compose file
 
-## LICENSE Exceptions ##
+## ☁️ Not interested in hosting yourself? Let us do it for you ##
 
-This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which merely make function calls to the Leantime Software, and for that purpose include it by reference shall not be considered modifications of the software.
+We offer managed hosting plans as well as a SaaS product so you can get all the benefits of Leantime without the hassle.
+Head to [leantime.io](https://leantime.io/managed-hosting/) for more information.
 
-### Support ###
+## 🤙 Need technical support? ##
+
+We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/)
+
+## Support ##
 
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
-* Community Forum [https://community.leantime.io](https://community.leantime.io)
-* Discussions on [Discord](https://discord.gg/4zMzJtAq9z)
+* Community Chat [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
 * Translations [https://crowdin.com/project/leantime](https://crowdin.com/project/leantime)
+
+## ⚖️ LICENSE Exceptions ##
+
+Leantime is licensed under AGPLv3.
+This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
+
