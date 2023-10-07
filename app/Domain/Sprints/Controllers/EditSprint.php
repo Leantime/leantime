@@ -82,7 +82,7 @@ namespace Leantime\Domain\Sprints\Controllers {
                 }
             } else {
                 if ($this->sprintService->addSprint($params)) {
-                    $this->tpl->setNotification("Sprint created successfully. <br /> Go to the <a href='" . BASE_URL . "/tickets/showAll'>Backlog</a> to add To-Dos", "success");
+                    $this->tpl->setNotification("Sprint created successfully.", "success");
                 } else {
                     $this->tpl->setNotification("There was a problem saving the sprint", "error");
                 }
