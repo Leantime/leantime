@@ -1030,7 +1030,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
 
-            if (isset($searchCriteria["clients"]) && $searchCriteria["clients"]  != "") {
+            if (isset($searchCriteria["clients"]) && $searchCriteria["clients"]  != 0 && $searchCriteria["clients"]  != "" && $searchCriteria["clients"] != "") {
                 $clientIdIn = DbCore::arrayToPdoBindingString("clients", count(explode(",", $searchCriteria["clients"])));
                 $query .= " AND zp_projects.clientId IN(" . $clientIdIn . ")";
             }
@@ -1123,7 +1123,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 }
             }
 
-            if (isset($searchCriteria["clients"]) && $searchCriteria["clients"]  != "") {
+            if (isset($searchCriteria["clients"]) && $searchCriteria["clients"]  != 0 && $searchCriteria["clients"]  != "" && $searchCriteria["clients"] != "") {
                 foreach (explode(",", $searchCriteria["clients"]) as $key => $client) {
                     $stmn->bindValue(":clients" . $key, $client, PDO::PARAM_STR);
                 }
