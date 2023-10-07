@@ -150,7 +150,7 @@ Head to [leantime.io](https://leantime.io/managed-hosting/) for more information
 
 We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/)
 
-## Community Support ##
+### Community Support ##
 
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Chat [Discord](https://discord.gg/4zMzJtAq9z)
