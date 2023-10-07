@@ -101,6 +101,7 @@ $moduleId = $_GET['id'] ?? '';
         jQuery(document).ready(function(){
 
             let modalTypes = ["jpg", "jpeg", "png", "gif", "apng", "webp", "avif"];
+
             jQuery(".imageLink").each(function(i) {
                 let ext = jQuery(this).attr("data-ext");
                 if(modalTypes.includes(ext)) {
@@ -117,6 +118,7 @@ $moduleId = $_GET['id'] ?? '';
             //jQuery("#medialist a").colorbox();
 
             <?php if (isset($_GET['modalPopUp'])) { ?>
+
                 jQuery('#medialist a.imageLink').on("click", function(event){
 
                     event.preventDefault();

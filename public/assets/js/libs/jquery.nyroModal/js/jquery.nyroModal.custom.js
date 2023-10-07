@@ -87,7 +87,7 @@ jQuery(function($, undefined) {
                 initH: undefined,	// Initial height
                 w: undefined,		// width
                 h: undefined,		// height
-                minW: 200,	// minimum Width
+                minW: 370,	// minimum Width
                 minH: 200,	// minimum height
                 wMargin: undefined,	// Horizontal margin
                 hMargin: undefined	// Vertical margin
@@ -1382,27 +1382,17 @@ jQuery(function($, undefined) {
             },
             load: function(nm) {
                 var url = nm.opener.attr('href');
-                $('<img />')
-                    .load(function() {
-                        nm.elts.cont.addClass('nyroModalImg');
-                        nm.elts.hidden.addClass('nyroModalImg');
-                        nm._setCont(this);
-                    }).error(function() {
-                    nm._error();
-                })
-                    .attr('src', url);
+
+                var element = $('<img />').attr({
+                    'src': url,
+                    'width':"400px"
+                });
+                console.log(element[0]);
+                nm._setCont(element[0]);
+
             },
             size: function(nm) {
-                if (nm.sizes.w != nm.sizes.initW || nm.sizes.h != nm.sizes.initH) {
-                    var ratio = Math.min(nm.sizes.w/nm.sizes.initW, nm.sizes.h/nm.sizes.initH);
-                    nm.sizes.w = nm.sizes.initW * ratio;
-                    nm.sizes.h = nm.sizes.initH * ratio;
-                }
-                var img = nm.loading ? nm.elts.hidden.find('img') : nm.elts.cont.find('img');
-                img.attr({
-                    width: nm.sizes.w,
-                    height: nm.sizes.h
-                });
+
             },
             close: function(nm) {
                 if (nm.elts.cont) {
