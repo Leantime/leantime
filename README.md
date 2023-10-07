@@ -28,7 +28,7 @@ Leantime is an open source project management system for non-project manager.<br
 | Sprint Management                                                    | SWOT Analysis canvas                         | File Storage via S3 or local filesystem | LDAP, OIDC integration                                                   |
 | Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Integration with mattermost, slack, discord and zulip (more coming soon) |
 |                                                                      | ... and more                                 | Comments/discussions on everything      | Available in 19 languages                                                |
-* yes, all of theses features are included in the OSS version
+*yes, all of theses features are included in the OSS version
 
 ### 📸 Screenshots ###
 
