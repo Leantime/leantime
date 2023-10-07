@@ -121,11 +121,11 @@ foreach ($__data as $var => $val) {
                     <tr>
                         <td data-order="<?=$tpl->e($row['id']); ?>"> <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
                         <td data-order="<?php echo $tpl->getFormattedDateString($row['workDate']); ?>">
-                            <?php echo $tpl->getFormattedDateString($row['workDate']); ?>
+                                            <?php echo $tpl->getFormattedDateString($row['workDate']); ?>
                         </td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours'] ?: 0); ?></td>
                         <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours'] ?: 0); ?></td>
-                        <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
+                                        <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
                         <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
                         <td data-order="<?=$tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
 

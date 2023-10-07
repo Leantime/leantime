@@ -222,7 +222,7 @@ class Messengers
                     //],
                 ];
                 $url_link = (
-                empty($notification->url['url'])
+                    empty($notification->url['url'])
                     ? ''
                     : $notification->url['url']
                 );

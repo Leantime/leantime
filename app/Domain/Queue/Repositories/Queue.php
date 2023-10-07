@@ -40,8 +40,8 @@ namespace Leantime\Domain\Queue\Repositories {
 
             foreach ($recipients as $recipient) {
                 $thedate = date('Y-m-d H:i:s');
-            // NEW : Allowing recipients to be emails or userIds
-            // TODO : Accept a list of \user objects too ?
+                // NEW : Allowing recipients to be emails or userIds
+                // TODO : Accept a list of \user objects too ?
                 if (is_int($recipient)) {
                     $theuser = $this->users->getUser($recipient);
                 } elseif (filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
@@ -49,8 +49,8 @@ namespace Leantime\Domain\Queue\Repositories {
                 } else {
                     return;
                 }
-        // TODO : exit if no user was found ?
-        // Low risk but still it could be deleted in the meantime
+                // TODO : exit if no user was found ?
+                // Low risk but still it could be deleted in the meantime
                 $userId = $theuser['id'];
                 $userEmail = $theuser['username'];
                 $msghash = md5($thedate . $message . $userEmail);

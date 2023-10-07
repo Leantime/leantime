@@ -42,13 +42,13 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 return false;
             }
 
-                $sql = "SELECT
+            $sql = "SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
-                $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindvalue(':key', $type, PDO::PARAM_STR);
 
             try {
                 $stmn->execute();

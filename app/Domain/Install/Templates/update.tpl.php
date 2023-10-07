@@ -1,6 +1,6 @@
 <?php foreach ($__data as $var => $val) {
     $$var = $val;
-} // necessary for blade refactor ?>
+} // necessary for blade refactor?>
 <div class="pageheader">
     <div class="pagetitle">
         <h1><?php echo $tpl->language->__("headlines.update_database"); ?></h1>

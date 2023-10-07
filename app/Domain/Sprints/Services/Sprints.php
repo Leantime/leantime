@@ -282,7 +282,7 @@ namespace Leantime\Domain\Sprints\Services {
             $burnDown = [];
             $i = 0;
             foreach ($period as $key => $value) {
-                    $burnDown[$i]['date'] = $value->format('Y-m-d');
+                $burnDown[$i]['date'] = $value->format('Y-m-d');
 
                 if ($i == 0) {
                     $burnDown[$i]["plannedHours"] = $plannedHoursStart;
@@ -318,7 +318,7 @@ namespace Leantime\Domain\Sprints\Services {
                     }
                 }
 
-                    $i++;
+                $i++;
             }
 
             return $burnDown;

@@ -241,18 +241,18 @@ foreach ($__data as $var => $val) {
         $sum = $sum + $row['hours'];?>
         <tr>
             <td data-order="<?=$tpl->e($row['id']); ?>">
-                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
+                    <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id'] . " - " . $tpl->__('label.edit'); ?> </a>
-                <?php } else { ?>
+                    <?php } else { ?>
                     #<?=$row['id']?>
-                <?php } ?>
+                    <?php } ?>
             </td>
             <td data-order="<?=$tpl->escape($row['workDate']); ?>>">
-                <?php echo$tpl->getFormattedDateString($row['workDate']); ?>
+                    <?php echo$tpl->getFormattedDateString($row['workDate']); ?>
             </td>
             <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours']); ?></td>
             <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours']); ?></td>
-            <?php $diff = $row['planHours'] - $row['hours']; ?>
+                <?php $diff = $row['planHours'] - $row['hours']; ?>
             <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
             <td data-order="<?=$tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
 

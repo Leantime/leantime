@@ -19,7 +19,7 @@ $canvasName = 'sb';
 
 <?php
     $stakeholderStatusLabels = $statusLabels;
-    $varsToPass = array_merge($__data, ['statusLabels' => []]);
+$varsToPass = array_merge($__data, ['statusLabels' => []]);
 ?>
     <?php if (count($tpl->get('allCanvas')) > 0) { ?>
         <div id="sortableCanvasKanban" class="sortableTicketList disabled">

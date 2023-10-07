@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $currentLabel = $tpl->get('currentLabel');
+$currentLabel = $tpl->get('currentLabel');
 ?>
 
 <h4 class="widgettitle title-light"><?=$tpl->__("headlines.edit_label")?></h4>

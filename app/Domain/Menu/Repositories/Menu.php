@@ -222,6 +222,8 @@ namespace Leantime\Domain\Menu\Repositories {
                 $_SESSION['submenuToggle'] = array();
             }
 
+            ksort($menuStructure);
+
             foreach ($menuStructure as $key => $element) {
                 $menuStructure[$key]['title'] = $language->__($element['title']);
 
