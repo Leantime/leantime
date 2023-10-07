@@ -2,10 +2,9 @@
 <div align="center">
 <a href="https://leantime.io"><img src="https://leantime.io/wp-content/uploads/2023/03/leantime_logo.png" alt="Leantime Logo" width="300"/></a>
 
-
 ### Leantime&reg; ###
 
-Leantime is a strategic open source project management system for innovative companies and teams looking to go from start to finish. Built for the non-project manager, we combine the plans and the work while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+Leantime is an open source project management system for non-project manager. We combine strategy, planning and executing while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
@@ -48,7 +47,7 @@ Leantime is a strategic open source project management system for innovative com
 * Available in 19 languages
 
 
-### 🖥️ Screenshots ###
+### 📸 Screenshots ###
 
 | ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Project Dashboard") |       ![alt text](public/assets/images/Screenshots/Kanban2.png "Kanban Board")       |   ![alt text](public/assets/images/Screenshots/Tasks-table.png "Grouped To-Dos")    |
 |----------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
@@ -65,7 +64,7 @@ Leantime is a strategic open source project management system for innovative com
 * PHP Extensions: 
 * * mysql, mbstring, GD, exif, pcntl, bcmath, opcache, ldap
 
-### 🏗️ Installation (Production) ###
+### ️⚡️ Installation (Production) ###
 
 There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the offically supported Docker image.
 
@@ -143,7 +142,7 @@ The dev environment provides a mysql server, mail server, s3 server, and should 
 Additionally, XDebug is enabled, but you will have to modify your 
 IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connection
 
-### Update ###
+###  🏗 Update ###
 
 #### Manual
 * Make sure to take a backup of your database and files
@@ -167,15 +166,15 @@ Head to [leantime.io](https://leantime.io/managed-hosting/) for more information
 
 We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/)
 
-
-## ⚖️ LICENSE Exceptions ##
-
-Leantime is licensed under AGPLv3. 
-This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
-
 ## Support ##
 
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)
 * Community Chat [Discord](https://discord.gg/4zMzJtAq9z)
 * File a bug report [https://github.com/Leantime/leantime/issues/new](https://github.com/Leantime/leantime/issues/new)
 * Translations [https://crowdin.com/project/leantime](https://crowdin.com/project/leantime)
+
+## ⚖️ LICENSE Exceptions ##
+
+Leantime is licensed under AGPLv3.
+This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
+
