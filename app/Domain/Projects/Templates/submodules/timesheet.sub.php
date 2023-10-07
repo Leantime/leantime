@@ -132,7 +132,7 @@ $bookedHours = $tpl->get('bookedHours');
             <td><?php echo $tpl->getFormattedDateString($row['workDate']); ?></td>
             <td><?php echo $row['hours']; ?></td>
             <td><?php echo $row['planHours']; ?></td>
-            <?php $diff = $row['planHours'] - $row['hours']; ?>
+                <?php $diff = $row['planHours'] - $row['hours']; ?>
             <td <?php if ($diff < 0) {
                 echo'class="new" ';
                 }?>><?php echo $diff; ?></td>

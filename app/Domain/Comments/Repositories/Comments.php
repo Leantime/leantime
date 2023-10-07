@@ -166,7 +166,7 @@ namespace Leantime\Domain\Comments\Repositories {
         {
 
             $sql = "SELECT
-					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent, comment.status
+					comment.id, comment.text, comment.date, comment.moduleId, comment.userId, comment.commentParent, comment.status,
 					user.firstname, user.lastname
 				FROM zp_comment as comment
 				INNER JOIN zp_user as user ON comment.userId = user.id

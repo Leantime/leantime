@@ -432,7 +432,7 @@ class Language
      * @param string $date
      * @return string
      */
-    public function getFormattedTimeString(string $date): string
+    public function getFormattedTimeString(?string $date): string
     {
         if (
             is_null($date) === false
@@ -457,7 +457,7 @@ class Language
      * @param string $date
      * @return false|string
      */
-    public function get24HourTimestring(string $date): false|string
+    public function get24HourTimestring(?string $date): false|string
     {
         if (
             is_null($date) === false
@@ -482,7 +482,7 @@ class Language
      * @param string $date
      * @return string|bool
      */
-    public function getISODateString(string $date): bool|string
+    public function getISODateString(?string $date): bool|string
     {
         if (
             is_null($date) === false
@@ -508,7 +508,7 @@ class Language
      * @param $time
      * @return string|bool
      */
-    public function getISODateTimeString(string $date, $time): bool|string
+    public function getISODateTimeString(?string $date, $time): bool|string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
             $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
@@ -534,7 +534,7 @@ class Language
      * @param string $time
      * @return string|bool
      */
-    public function getISOTimeString(string $time): bool|string
+    public function getISOTimeString(?string $time): bool|string
     {
         if (is_null($time) === false && $time != "" && $time != "1969-12-31 00:00:00" && $time != "0000-00-00 00:00:00") {
             $timestamp = date_create_from_format($this->__("language.timeformat"), $time);
@@ -554,7 +554,7 @@ class Language
      * @param string $dateTime
      * @return string|bool
      */
-    public function extractTime(string $dateTime): bool|string
+    public function extractTime(?string $dateTime): bool|string
     {
         if (is_null($dateTime) === false && $dateTime != "" && $dateTime != "1969-12-31 00:00:00" && $dateTime != "0000-00-00 00:00:00") {
             $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime);

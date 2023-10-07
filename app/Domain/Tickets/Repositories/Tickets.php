@@ -184,23 +184,23 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $projectId = $_SESSION['currentProject'];
             }
 
-                $sql = "SELECT
+            $sql = "SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
-                $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings." . $projectId . ".ticketlabels", PDO::PARAM_STR);
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindvalue(':key', "projectsettings." . $projectId . ".ticketlabels", PDO::PARAM_STR);
 
-                $stmn->execute();
-                $values = $stmn->fetch();
-                $stmn->closeCursor();
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
 
-                $labels = array();
+            $labels = array();
 
-                $statusList = $this->statusListSeed;
+            $statusList = $this->statusListSeed;
 
-                //Override the state values that are in the db
+            //Override the state values that are in the db
             if ($values !== false) {
                 $statusList = array();
 
@@ -227,14 +227,14 @@ namespace Leantime\Domain\Tickets\Repositories {
                 }
             }
 
-                //Sort by order number
-                uasort($statusList, function ($a, $b) {
-                    return $a['sortKey'] <=> $b['sortKey'];
-                });
+            //Sort by order number
+            uasort($statusList, function ($a, $b) {
+                return $a['sortKey'] <=> $b['sortKey'];
+            });
 
-                $_SESSION["projectsettings"]["ticketlabels"] = $statusList;
+            $_SESSION["projectsettings"]["ticketlabels"] = $statusList;
 
-                return $statusList;
+            return $statusList;
         }
 
         /**
@@ -926,7 +926,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
 
-                    $query .= " GROUP BY
+            $query .= " GROUP BY
 						zp_tickets.id ORDER BY zp_tickets.date DESC";
 
             $stmn = $this->db->database->prepare($query);

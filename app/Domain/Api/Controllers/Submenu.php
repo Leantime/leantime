@@ -1,8 +1,8 @@
 <?php
 
-  /**
-   * AJAX class - Save menu state in a persistent way
-   */
+/**
+ * AJAX class - Save menu state in a persistent way
+ */
 
 namespace Leantime\Domain\Api\Controllers {
 

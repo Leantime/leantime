@@ -716,6 +716,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         public function getAllMilestones($searchCriteria, string $sortBy = "duedate"): false|array
         {
+
             if (is_array($searchCriteria) && $searchCriteria['currentProject'] > 0) {
                 return $this->ticketRepository->getAllMilestones($searchCriteria, $sortBy);
             }

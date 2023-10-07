@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $redirectUrl = $tpl->get('redirectUrl');
+$redirectUrl = $tpl->get('redirectUrl');
 ?>
 
 <?php $tpl->dispatchTplEvent('beforePageHeaderOpen'); ?>

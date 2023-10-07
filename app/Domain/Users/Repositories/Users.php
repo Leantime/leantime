@@ -627,11 +627,11 @@ namespace Leantime\Domain\Users\Repositories {
          * setPicture - set the profile picture for an individual
          *
          * @access public
-         * @param string $_FILE
+         * @param array $_FILE
          * @param $id
          * @throws BindingResolutionException
          */
-        public function setPicture(string $_FILE, $id): void
+        public function setPicture(array $_FILE, $id): void
         {
 
             $sql = "SELECT * FROM `zp_user` WHERE id=:id";

@@ -793,8 +793,8 @@ namespace Leantime\Domain\Canvas\Repositories {
 
 
             // project
-                //boards
-                   //goals
+            //boards
+            //goals
 
 
             $stmn = $this->db->database->prepare($sql);
@@ -1277,7 +1277,7 @@ namespace Leantime\Domain\Canvas\Repositories {
 
 
 
-                $sql .= "
+            $sql .= "
                 GROUP BY
                     zp_canvas.id,
                     zp_canvas.type,

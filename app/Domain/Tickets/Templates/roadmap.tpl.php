@@ -4,6 +4,7 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $milestones = $tpl->get('milestones');
+$timelineTasks = $tpl->get("timelineTasks");
 
 echo $tpl->displayNotification();
 
@@ -64,7 +65,7 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
         </div>
 
         <?php
-        if (count($milestones) == 0) {
+        if (count($timelineTasks) == 0) {
             echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
             echo"<div style='width:30%' class='svgContainer'>";
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
@@ -101,7 +102,11 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
 
 });
 
-    <?php if (count($milestones) > 0) {?>
+
+    <?php
+
+
+    if (count($timelineTasks) > 0) {?>
         var tasks = [
 
             <?php
@@ -111,13 +116,13 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
             //Sort is milestone sorting first with the milestone sort id as first index
             //Then sort by task as second index
 
-            foreach ($milestones as $mlst) {
+            foreach ($timelineTasks as $mlst) {
                 if ($mlst->type == "milestone") {
                     $lastMilestoneSortIndex[$mlst->id] = $mlst->sortIndex != '' ? $mlst->sortIndex : 999;
                 }
             }
 
-            foreach ($milestones as $mlst) {
+            foreach ($timelineTasks as $mlst) {
                 $headline = $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
                 if ($mlst->type == "milestone") {
                     $headline .= " (" . $mlst->percentDone . "% Done)";

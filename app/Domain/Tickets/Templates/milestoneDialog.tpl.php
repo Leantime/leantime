@@ -89,7 +89,7 @@ $statusLabels = $tpl->get('statusLabels');
         </div>
         <div class="col-md-6 align-right padding-top-sm">
             <?php if (
-            isset($currentMilestone->id) && $currentMilestone->id != ''
+                isset($currentMilestone->id) && $currentMilestone->id != ''
 ) { ?>
                 <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__("buttons.delete"); ?></a>
             <?php } ?>
