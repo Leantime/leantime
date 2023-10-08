@@ -1,0 +1,54 @@
+name: release
+
+on:
+  workflow_dispatch: 
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build_release:
+    name: build_release
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: build
+        run: make build
+      - name: version
+        run: echo "::set-output name=version::$(shell grep 'appVersion' ./app/Core/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')"
+        id: version
+      - name: build artifacts
+        run: make package
+      - name: release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.version }}
+          generateReleaseNotes: true
+          makeLatest: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: upload zip
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/target/Leantime-v${{ steps.version.outputs.version }}.zip
+          asset_name: Leantime-v${{ steps.version.outputs.version }}.zip
+          asset_content_type: application/gzip
+      - name: upload tar
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/target/Leantime-v${{ steps.version.outputs.version }}.tar.gz
+          asset_name: Leantime-v${{ steps.version.outputs.version }}.tar.gz
+          asset_content_type: application/gzip
