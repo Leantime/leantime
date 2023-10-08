@@ -21,13 +21,13 @@ jobs:
       - name: build artifacts
         run: make package
       - name: release
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1
         id: create_release
         with:
           draft: false
           prerelease: false
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: v${{ steps.version.outputs.version }}-${{ github.ref }}
+          name: ${{ steps.version.outputs.version }}
+          tag: v${{ steps.version.outputs.version }}-${{ github.ref }}
           generateReleaseNotes: true
           makeLatest: true
         env:
