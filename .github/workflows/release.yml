@@ -27,7 +27,7 @@ jobs:
           draft: false
           prerelease: false
           name: ${{ steps.version.outputs.version }}
-          tag: v${{ steps.version.outputs.version }}-${{ github.ref }}
+          tag: v${{ steps.version.outputs.version }}-${{ github.sha }}
           generateReleaseNotes: true
           makeLatest: true
         env:
