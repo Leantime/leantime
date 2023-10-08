@@ -18,6 +18,9 @@ jobs:
       - name: version
         run: echo "version=$(make get-version)" >> $GITHUB_OUTPUT
         id: version
+      - name: lastcommit
+        run: echo "lastcommit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        id: lastcommit  
       - name: build artifacts
         run: make package
       - name: release
@@ -27,7 +30,7 @@ jobs:
           draft: false
           prerelease: false
           release_name: ${{ steps.version.outputs.version }}
-          tag_name: v${{ steps.version.outputs.version }}-$(git rev-parse --short HEAD)
+          tag_name: v${{ steps.version.outputs.version }}-${{ steps.version.outputs.lastcommit }}
           generateReleaseNotes: true
           makeLatest: true
         env:
