@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: version
-        run: "version=$(shell grep 'appVersion' ./app/Core/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')" >> "$GITHUB_OUTPUT"
+        run: make get-version >> $GITHUB_OUTPUT
         id: version
       - name: build artifacts
         run: make package
