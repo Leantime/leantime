@@ -38,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/target/Leantime-v${{ steps.version.outputs.version }}.zip
+          asset_path: ./target/Leantime-v${{ steps.version.outputs.version }}.zip
           asset_name: Leantime-v${{ steps.version.outputs.version }}.zip
           asset_content_type: application/gzip
       - name: upload tar
@@ -47,6 +47,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/target/Leantime-v${{ steps.version.outputs.version }}.tar.gz
+          asset_path: ./target/Leantime-v${{ steps.version.outputs.version }}.tar.gz
           asset_name: Leantime-v${{ steps.version.outputs.version }}.tar.gz
           asset_content_type: application/gzip
