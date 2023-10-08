@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: version
-        run: make get-version >> $GITHUB_OUTPUT
+        run: echo "version=${make get-version}" >> $GITHUB_OUTPUT
         id: version
       - name: build artifacts
         run: make package
