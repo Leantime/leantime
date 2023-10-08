@@ -18,6 +18,9 @@ jobs:
       - name: version
         run: echo "version=$(make get-version)" >> $GITHUB_OUTPUT
         id: version
+      - name: Get Hash
+        id: hash
+        run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_HASH
       - name: build artifacts
         run: make package
       - name: release
@@ -26,8 +29,8 @@ jobs:
         with:
           draft: false
           prerelease: false
-          name: ${{ steps.version.outputs.version }}
-          tag: v${{ steps.version.outputs.version }}-${{ github.sha }}
+          name: Leantime v${{ steps.version.outputs.version }}
+          tag: v${{ steps.version.outputs.version }}-${{ env.hash }}
           generateReleaseNotes: true
           makeLatest: true
         env:
