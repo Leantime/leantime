@@ -15,10 +15,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: build
-        run: make build
       - name: version
-        run: echo "::set-output name=version::$(shell grep 'appVersion' ./app/Core/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')"
+        run: "version=$(shell grep 'appVersion' ./app/Core/AppSettings.php |awk -F' = ' '{print substr($$2,2,length($$2)-3)}')" >> "$GITHUB_OUTPUT"
         id: version
       - name: build artifacts
         run: make package
