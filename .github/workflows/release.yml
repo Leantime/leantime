@@ -27,7 +27,7 @@ jobs:
           draft: false
           prerelease: false
           release_name: ${{ steps.version.outputs.version }}
-          tag_name: v${{ steps.version.outputs.version }}
+          tag_name: v${{ steps.version.outputs.version }}-$(git rev-parse --short HEAD)
           generateReleaseNotes: true
           makeLatest: true
         env:
