@@ -307,7 +307,7 @@ class Mailer
                         <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc; border-radius:5px;">
                             <tr>
                                 <td style="padding:20px 10px; text-align:center;">
-                                   <img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;">
+                                   <img alt="Logo" src="{!! $inlineLogoContent !!}" width="150" style="width:150px;">
                                 </td>
                             </tr>
                             <tr>
@@ -330,6 +330,7 @@ class Mailer
             $this->dispatchMailerFilter(
                 'mailBodyParams',
                 [
+                    'inlineLogoContent' => $inlineLogoContent,
                     'headline' => $this->language->__('email_notifications.hi'),
                     'content' => $this->nl2br ? nl2br($this->html) : $this->html,
                     'unsub_link' => sprintf($this->language->__('email_notification.unsubscribe'), BASE_URL . '/users/editOwn/'),
