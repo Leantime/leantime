@@ -289,7 +289,7 @@ class Mailer
             $this->logo = "/dist/images/logo.png";
         }
 
-            $logoParts = parse_url($this->logo);
+        $logoParts = parse_url($this->logo);
 
         if (isset($logoParts['scheme'])) {
             //Logo is URL
