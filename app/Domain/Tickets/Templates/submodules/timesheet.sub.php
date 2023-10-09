@@ -2,14 +2,14 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $values = $tpl->get('timesheetValues');
-    $ticket = $tpl->get('ticket');
-    $userInfo = $tpl->get('userInfo');
-    $remainingHours = $tpl->get('remainingHours');
+$values = $tpl->get('timesheetValues');
+$ticket = $tpl->get('ticket');
+$userInfo = $tpl->get('userInfo');
+$remainingHours = $tpl->get('remainingHours');
 if ($remainingHours < 0) {
     $remainingHours = 0;
 }
-    $currentPay = $tpl->get('userHours') * $userInfo['wage'];
+$currentPay = $tpl->get('userHours') * $userInfo['wage'];
 ?>
 
         <div class="row-fluid">

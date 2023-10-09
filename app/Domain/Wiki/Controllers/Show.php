@@ -125,7 +125,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 //Last Article is set
 
 
-            //Nothing is set
+                //Nothing is set
             } else {
                 if (is_array($wikis) && count($wikis) > 0) {
                     $_SESSION['currentWiki'] = $wikis[0]->id;

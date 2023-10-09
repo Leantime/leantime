@@ -126,6 +126,8 @@ codesniffer:
 codesniffer-fix:
 	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
 
+get-version:
+	@echo $(VERSION) 
 
 .PHONY: install-deps build package clean run-dev
 

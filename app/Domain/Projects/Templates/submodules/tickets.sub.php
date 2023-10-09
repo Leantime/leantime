@@ -1,6 +1,6 @@
 <?php foreach ($__data as $var => $val) {
     $$var = $val;
-} // necessary for blade refactor ?>
+} // necessary for blade refactor?>
 
 <script type="text/javascript">
 var ganttData = [

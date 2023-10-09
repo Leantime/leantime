@@ -51,7 +51,7 @@ if (str_contains($formUrl, '?delComment=')) {
                     <strong>
                     <?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
                     </strong><br/>
-                    <div style="margin-left:60px;"><?php echo ($row['text']); ?></div>
+                    <div style="margin-left:60px;"><?php echo($row['text']); ?></div>
                     <div class="clear"></div>
                     <div style="padding-left:60px">
                         <a href="javascript:void(0);" class="replyButton"

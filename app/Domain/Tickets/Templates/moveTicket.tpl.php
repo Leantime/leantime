@@ -1,9 +1,9 @@
 <?php
-    defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $ticket = $tpl->get("ticket");
+$ticket = $tpl->get("ticket");
 ?>
 
 <?php if ($ticket->type == "milestone") {?>

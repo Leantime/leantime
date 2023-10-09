@@ -2,15 +2,15 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $states = $tpl->get('states');
-    $projectProgress = $tpl->get('projectProgress');
-    $projectProgress = $tpl->get('projectProgress');
-    $sprintBurndown = $tpl->get('sprintBurndown');
-    $backlogBurndown = $tpl->get('backlogBurndown');
-    $efforts = $tpl->get('efforts');
-    $statusLabels = $tpl->get('statusLabels');
-    $fullReport = $tpl->get('fullReport');
-    $fullReportLatest = $tpl->get('fullReportLatest');
+$states = $tpl->get('states');
+$projectProgress = $tpl->get('projectProgress');
+$projectProgress = $tpl->get('projectProgress');
+$sprintBurndown = $tpl->get('sprintBurndown');
+$backlogBurndown = $tpl->get('backlogBurndown');
+$efforts = $tpl->get('efforts');
+$statusLabels = $tpl->get('statusLabels');
+$fullReport = $tpl->get('fullReport');
+$fullReportLatest = $tpl->get('fullReportLatest');
 ?>
 
 <div class="pageheader">
@@ -104,17 +104,17 @@ foreach ($__data as $var => $val) {
                                         <?php
                                         $dates = "";
                                         foreach ($tpl->get('allSprints') as $sprintRow) {    ?>
-                                            <?php echo"<option value='" . $sprintRow->id . "'";
+                                                <?php echo"<option value='" . $sprintRow->id . "'";
 
-                                            if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint")) {
-                                                echo " selected='selected' ";
+                                                if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint")) {
+                                                    echo " selected='selected' ";
 
-                                                $dates = sprintf($tpl->__("label.date_from_date_to"), $tpl->getFormattedDateString($sprintRow->startDate), $tpl->getFormattedDateString($sprintRow->endDate));
-                                            }
-                                            echo ">";
-                                            $tpl->e($sprintRow->name);
-                                            echo "</option>";
-                                            ?>
+                                                    $dates = sprintf($tpl->__("label.date_from_date_to"), $tpl->getFormattedDateString($sprintRow->startDate), $tpl->getFormattedDateString($sprintRow->endDate));
+                                                }
+                                                echo ">";
+                                                $tpl->e($sprintRow->name);
+                                                echo "</option>";
+                                                ?>
 
                                         <?php }     ?>
                                     </select>
@@ -250,7 +250,7 @@ foreach ($__data as $var => $val) {
            var sprintBurndownChart = leantime.dashboardController.initBurndown([<?php foreach ($sprintBurndown as $value) {
                 echo "'" . $value['date'] . "',";
                                                                                 } ?>], [<?php foreach ($sprintBurndown as $value) {
-                                                                                echo "'" . round($value['plannedNum'], 2) . "',";
+    echo "'" . round($value['plannedNum'], 2) . "',";
                                                                                 } ?>], [ <?php foreach ($sprintBurndown as $value) {
     if ($value['actualNum'] !== '') {
         echo "'" . $value['actualNum'] . "',";
@@ -297,7 +297,7 @@ foreach ($__data as $var => $val) {
             }
             echo"]};";
 
-               echo "
+            echo "
                statusBurnupNum['progress'] = {
                             'label': 'Progress',
                             'data':
@@ -309,7 +309,7 @@ foreach ($__data as $var => $val) {
             }
             echo"]};";
 
-               echo "
+            echo "
                statusBurnupNum['done'] = {
                                     'label': 'Done',
                                     'data':

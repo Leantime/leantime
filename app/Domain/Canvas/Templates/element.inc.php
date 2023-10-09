@@ -173,7 +173,7 @@ $canvasItems = $tpl->get('canvasItems');
                     <div class="row">
                         <div class="col-md-5" >
                             <?php strlen($row['milestoneHeadline']) > 60 ?
-                            $tpl->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") :  $tpl->e($row['milestoneHeadline']); ?>
+                            $tpl->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") : $tpl->e($row['milestoneHeadline']); ?>
                         </div>
                         <div class="col-md-7" style="text-align:right">
                             <?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?>

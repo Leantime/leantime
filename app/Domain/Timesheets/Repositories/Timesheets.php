@@ -813,7 +813,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
             $inTimestamp = $result['punchIn'];
             $outTimestamp = time();
 
-            $seconds =  ( $outTimestamp - $inTimestamp );
+            $seconds =  ($outTimestamp - $inTimestamp);
 
             $totalMinutesWorked = $seconds / 60;
 

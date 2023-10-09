@@ -1,11 +1,11 @@
 <?php
-    defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $project = $tpl->get('project');
-    $bookedHours = $tpl->get('bookedHours');
-    $state = $tpl->get('state');
+$project = $tpl->get('project');
+$bookedHours = $tpl->get('bookedHours');
+$state = $tpl->get('state');
 ?>
 
 <div class="pageheader">
@@ -368,7 +368,7 @@ foreach ($__data as $var => $val) {
                     </div>
                 </div>
 
-                <?php // Slack webhook ?>
+                <?php // Slack webhook?>
                 <h4 class='widgettitle title-light'><span class='fa fa-leaf'></span>Discord</h4>
                 <div class='row'>
                     <div class='col-md-3'>

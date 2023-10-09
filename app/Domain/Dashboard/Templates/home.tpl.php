@@ -450,6 +450,10 @@ $milestones = $tpl->get('milestones');
 
     jQuery(document).ready(function() {
 
+        leantime.dashboardController.initDueDateTimePickers();
+
+
+
         jQuery('.todaysDate').text(moment().format('LLLL'));
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>

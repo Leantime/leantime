@@ -45,7 +45,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
             $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
-            $this->tpl->assign('milestones', $allProjectMilestones);
+            $this->tpl->assign('timelineTasks', $allProjectMilestones);
 
             $this->tpl->display('tickets.roadmap');
         }
@@ -59,8 +59,12 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function post($params)
         {
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
-            $this->tpl->assign('milestones', $allProjectMilestones);
+            $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+            array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
+
+            $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
+
+            $this->tpl->assign('timelineTasks', $allProjectMilestones);
 
             $this->tpl->display('tickets.roadmap');
         }

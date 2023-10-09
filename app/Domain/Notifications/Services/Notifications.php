@@ -90,7 +90,7 @@ namespace Leantime\Domain\Notifications\Services {
             if ($id == "all") {
                 return $this->notificationsRepo->markAllNotificationRead($userId);
             } else {
-                return $this->notificationsRepo->markAllNotificationRead($id);
+                return $this->notificationsRepo->markNotificationRead($id);
             }
         }
 

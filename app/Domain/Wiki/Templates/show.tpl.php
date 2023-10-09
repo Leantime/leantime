@@ -2,11 +2,11 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $wikis = $tpl->get('wikis');
-    $wikiHeadlines = $tpl->get('wikiHeadlines');
+$wikis = $tpl->get('wikis');
+$wikiHeadlines = $tpl->get('wikiHeadlines');
 
-    $currentWiki = $tpl->get('currentWiki');
-    $currentArticle = $tpl->get('currentArticle');
+$currentWiki = $tpl->get('currentWiki');
+$currentArticle = $tpl->get('currentArticle');
 
 
 /**
@@ -37,19 +37,19 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
             if ($currLevel == $prevLevel) {
                 echo "  ";
             }
-                echo '
+            echo '
                <li data-jstree=\'{"icon":"' . $headline->data . '"}\' id="treenode_' . $headline->id . '">&nbsp;<a href="' . BASE_URL . '/wiki/show/' . $headline->id . '">' . $tplObject->escape($headline->title) . '';
             if ($headline->status == "draft") {
                 echo" <em>" . $tplObject->__('label.draft_parenth') . "</em> ";
             }
-               echo'</a>';
+            echo'</a>';
 
             if ($currLevel > $prevLevel) {
                 $prevLevel = $currLevel;
             }
-                $currLevel++;
-                createTreeView($array, $headline->id, $currLevel, $prevLevel, $tplObject);
-                $currLevel--;
+            $currLevel++;
+            createTreeView($array, $headline->id, $currLevel, $prevLevel, $tplObject);
+            $currLevel--;
         }
     }
     if ($currLevel == $prevLevel) {
@@ -132,7 +132,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                         echo"<br /><h3>" . $tpl->__("headlines.no_articles_yet") . "</h3><br />";
 
 
-                            echo "" . $tpl->__("text.create_new_wiki") . "<br /><br />
+                        echo "" . $tpl->__("text.create_new_wiki") . "<br /><br />
                                             <a href='#/wiki/wikiModal/' class='inlineEdit btn btn-primary'>" . $tpl->__("links.icon.create_new_board") . "</a><br/><br/>";
                         echo"</div>";
                         ?>
@@ -279,16 +279,16 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                     <div class="maincontentinner">
                                     <?php
                                     echo"<div class='center'>";
-                                        echo"<div  style='width:30%' class='svgContainer'>";
-                                            echo file_get_contents(ROOT . "/dist/images/svg/undraw_book_reading_re_fu2c.svg");
-                                            echo"</div>";
-                                        echo"<br /><h3>" . $tpl->__("headlines.no_articles_yet") . "</h3>";
+                                    echo"<div  style='width:30%' class='svgContainer'>";
+                                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_book_reading_re_fu2c.svg");
+                                    echo"</div>";
+                                    echo"<br /><h3>" . $tpl->__("headlines.no_articles_yet") . "</h3>";
 
-                                            echo "" . $tpl->__("text.create_new_content") . "<br /><br />
+                                    echo "" . $tpl->__("text.create_new_content") . "<br /><br />
                                             <a href='#/wiki/articleDialog/' class='inlineEdit btn btn-primary'><i class='fa fa-plus'></i> " . $tpl->__("link.create_article") . "</a><br/><br/>";
 
 
-                                        echo"</div>";
+                                    echo"</div>";
                                     ?>
                                     </div>
                                 </div>

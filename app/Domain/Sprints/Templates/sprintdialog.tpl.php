@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $currentSprint = $tpl->get('sprint');
+$currentSprint = $tpl->get('sprint');
 ?>
 
 <h4 class="widgettitle title-light"><i class="fa fa-rocket"></i> <?=$tpl->__('label.sprint') ?> <?php echo $currentSprint->name?></h4>

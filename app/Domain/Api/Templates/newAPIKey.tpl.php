@@ -2,10 +2,10 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $status = $tpl->get('status');
-    $values = $tpl->get('values');
-    $projects = $tpl->get('relations');
-    $apiKeyValues = $tpl->get('apiKeyValues');
+$status = $tpl->get('status');
+$values = $tpl->get('values');
+$projects = $tpl->get('relations');
+$apiKeyValues = $tpl->get('apiKeyValues');
 ?>
 
 <div style="min-width:700px;">
@@ -102,7 +102,7 @@ foreach ($__data as $var => $val) {
                             /><label for="project_<?php echo $row['id'] ?>"><?php $tpl->e($row['name']); ?></label>
                             <div class="clearall"></div>
                         </div>
-                        <?php $i++; ?>
+                                    <?php $i++; ?>
                     <?php } ?>
 
 
