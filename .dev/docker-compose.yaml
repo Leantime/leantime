@@ -1,16 +1,18 @@
 version: "3.9"
 networks:
   leantime:
-    external: false
+      external: false
+      driver: bridge
 volumes:
   mysql:
   s3ninja-data:
 
 services:
   leantime-dev:
+    privileged: true
     build: .
     ports:
-      - "8080:8080"
+      - "8090:8080"
     volumes:
      - "../:/var/www/html"
      - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
@@ -18,19 +20,29 @@ services:
      - ".env:/var/www/html/config/.env"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - leantime
   db:
     image: mysql:8.0
+    ports:
+      - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=leantime
-      - MYSQL_USER=leantime
-      - MYSQL_PASSWORD=leantime
-      - MYSQL_DATABASE=leantime
+      MYSQL_ROOT_PASSWORD: leantime
+      MYSQL_USER: leantime
+      MYSQL_PASSWORD: leantime
+      MYSQL_DATABASE: leantime
     networks:
       - leantime
     volumes:
       - mysql:/var/lib/mysql:rw
+    healthcheck:
+      test: "mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD -e 'SELECT 1'"
+      interval: 5s
+      timeout: 5s
+      retries: 20
   maildev:
     image: maildev/maildev
     environment:
@@ -38,8 +50,8 @@ services:
       - MAILDEV_WEB_PORT=8081
     ports:
       - 8081:8081
-    networks: 
-      - leantime  
+    networks:
+      - leantime
   phpmyadmin:
     image: phpmyadmin
     ports:
@@ -52,10 +64,8 @@ services:
   s3ninja:
     image: scireum/s3-ninja
     ports:
-      - 8083:9000 
+      - 8083:9000
     networks:
       - leantime
     volumes:
       - s3ninja-data:/home/sirius/data
-
-

@@ -1,0 +1,47 @@
+<?php
+
+namespace Leantime\Domain\Tickets\Hxcontrollers;
+
+use Leantime\Core\HtmxController;
+use Leantime\Domain\Projects\Services\Projects;
+use Leantime\Domain\Timesheets\Services\Timesheets;
+
+/**
+ *
+ */
+class TimerButton extends HtmxController
+{
+    /**
+     * @var string
+     */
+    protected static string $view = 'tickets::partials.timerLink';
+
+    /**
+     * @var Timesheets
+     */
+    private Timesheets $timesheetService;
+
+    /**
+     * Controller constructor
+     *
+     * @param Timesheets $timesheetService
+     * @return void
+     */
+    public function init(Timesheets $timesheetService): void
+    {
+        $this->timesheetService = $timesheetService;
+    }
+
+    /**
+     * @return void
+     */
+    public function getStatus(): void
+    {
+
+        $params =  $this->incomingRequest->query->all();
+
+        $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
+        $this->tpl->assign("onTheClock", $onTheClock);
+        $this->tpl->assign("parentTicketId", $params['request_parts'] ?? false);
+    }
+}

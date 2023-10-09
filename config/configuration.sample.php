@@ -1,27 +1,24 @@
 <?php
 
-
-namespace leantime\core;
+namespace Leantime\Config;
 
 /***
  *
  * Config class
- *
- * @deprecated 2.3.15 Please do not use this configuration file anymore. It is only here for backwards compatibility.
- * All configurations should be written into a .env file. Please use the sample.env file as an example.
+ * This class is included for backwards compatibility and to be used with subfolder installations
  *
  * @see config/sample.env
  */
-class config
+class Config
 {
     /* General */
 
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
     public $language = 'en-US';                           //Default language
     public $logoPath = '/dist/images/logo.svg';                //Default logo path, can be changed later
-    public $printLogoURL = '/dist/images/logo.jpg';            //Default logo URL use for printing (must be jpg or png format)
+    public $printLogoURL = '/dist/images/logo.png';            //Default logo URL use for printing (must be jpg or png format)
     public $appUrl = '';                                  //Base URL, trailing slash not needed
-    public $appUrlRoot = '';                              //Base of application withotu trailing slash (used for cookies), e.g, /leantime
+    public $appDir = '';                              //Base of application withotu trailing slash (used for cookies), e.g, /leantime
     public $defaultTheme = 'default';                     //Default theme
     public $primarycolor = '#1b75bb';                     //Primary Theme color
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
@@ -82,7 +79,10 @@ class config
         "email":"mail",
         "firstname":"displayname",
         "lastname":"",
-        "phonenumber":""
+        "phone":"",
+        "jobTitle":"title",
+        "jobLevel":"level",
+        "department":"department"
         }';
     //For AD use
     /*

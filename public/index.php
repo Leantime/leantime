@@ -1,26 +1,14 @@
 <?php
 
-define('RESTRICTED', TRUE);
-define('ROOT', dirname(__FILE__));
-define('APP_ROOT', dirname(__FILE__, 2));
+define('RESTRICTED', true);
+define('ROOT', __DIR__);
+define('APP_ROOT', dirname(__DIR__, 1));
+define('LEAN_CLI', false);
 
-require_once APP_ROOT . '/app/core/class.autoload.php';
-require_once APP_ROOT . '/config/appSettings.php';
-
-$config = \leantime\core\environment::getInstance();
-$settings = new leantime\core\appSettings();
-$settings->loadSettings($config);
-$incomingRequest = new leantime\core\IncomingRequest();
-
-if(isset($config->appUrl) && $config->appUrl != ""){
-    define('BASE_URL', $config->appUrl);
-    define('CURRENT_URL', $config->appUrl.$settings->getRequestURI($config->appUrl));
-} else{
-    define('BASE_URL', $incomingRequest->getBaseURL());
-    define('CURRENT_URL', $incomingRequest->getFullURL());
+if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
+    throw new RuntimeException('Please run "composer install".');
 }
 
-//Bootstrap application
-$application = new leantime\core\application($incomingRequest);
+require $composer;
 
-$application->start();
+Leantime\Core\Bootloader::getInstance()->boot();

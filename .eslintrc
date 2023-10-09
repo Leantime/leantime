@@ -1,0 +1,62 @@
+{
+  "parser": "@babel/eslint-parser",
+  "env": {
+    "browser": true,
+    "jquery": true,
+    "mocha": true
+  },
+  "globals": {
+    "jQuery": true
+  },
+  "rules": {
+    "no-bitwise": 0, //Update to 2
+    "camelcase": 0,
+    "curly": 0,
+    "eqeqeq": 0,
+    "guard-for-in": 0, //Update to 2
+    "no-extend-native": 0, //Update to 2
+    "wrap-iife": 0,
+    "no-use-before-define": 0,
+    "new-cap": 0,
+    "no-caller": 2,
+    "no-empty": 0,
+    "no-irregular-whitespace": 2,
+    "no-new": 0,
+    "no-plusplus": 0,
+    "quotes": 0,
+    "no-undef": 0,
+    "no-unused-vars": 0, //Update to 2
+    "strict": 0,
+    "max-params": 0,
+    "max-depth": 0,
+    "max-statements": 0,
+    "complexity": 0,
+    "max-len": 0,
+    "no-var": 0,
+    "semi": 0,
+    "no-cond-assign": 0,
+    "no-debugger": 0,
+    "no-eq-null": 0, //Update to 2
+    "no-eval": 0,
+    "no-unused-expressions": 0,
+    "block-scoped-var": 0,
+    "no-iterator": 0,
+    "linebreak-style": 0,
+    "no-delete-var": 0,
+    "comma-style": [
+      2,
+      "last"
+    ],
+    "no-loop-func": 0,
+    "no-multi-str": 0,
+    "require-yield": 0,
+    "valid-typeof": 0,
+    "no-proto": 0,
+    "no-script-url": 0,
+    "no-shadow": 0, //Update to 2
+    "dot-notation": 2,
+    "no-new-func": 0,
+    "no-new-wrappers": 0,
+    "no-invalid-this": 0
+  }
+}
