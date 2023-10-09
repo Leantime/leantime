@@ -300,45 +300,46 @@ class Mailer
             $inlineLogoContent = "cid:companylogo";
         }
 
-        if ($this->hideWrapper === true) {
-            $bodyTemplate = $this->html;
-        } else {
-            $bodyTemplate = '
-                    <table width="100%" style="background:#fefefe; padding:15px; ">
-                    <tr>
-                        <td align="center" valign="top">
-                            <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc; border-radius:5px;">
-                                <tr>
-                                    <td style="padding:20px 10px; text-align:center;">
-                                       <img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:16px; line-height:1.7;\'>
-                                        ' . $this->language->__('email_notifications.hi') . '
-                                        <br />';
-            if ($this->nl2br === true) {
-                $bodyTemplate .= nl2br($this->html);
-            } else {
-                $bodyTemplate .= $this->html;
-            }
-                                    $bodyTemplate .= '<br /><br />
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td align="center" style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:14px; line-height:1.7;\'>
-                        ' . sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/') . '
-                        </td>
-                    </tr>
-                    </table>';
-        }
+        $mailBody = $this->hideWrapper ? $this->html : app('blade.compiler')::render(
+            $this->dispatchMailerFilter('bodyTemplate', '<table width="100%" style="background:#fefefe; padding:15px; ">
+                <tr>
+                    <td align="center" valign="top">
+                        <table width="600"  style="width:600px; background-color:#ffffff; border:1px solid #ccc; border-radius:5px;">
+                            <tr>
+                                <td style="padding:20px 10px; text-align:center;">
+                                   <img alt="Logo" src="' . $inlineLogoContent . '" width="150" style="width:150px;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:16px; line-height:1.7;\'>
+                                    {!! $headline !!}
+                                    <br/>
+                                    {!! $content !!}
+                                    <br/><br/>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center" style=\'padding:10px; font-family:"Lato","Helvetica Neue",helvetica,sans-serif; color:#666; font-size:14px; line-height:1.7;\'>
+                        {!! $unsub_link !!}
+                    </td>
+                </tr>
+            </table>'),
+            $this->dispatchMailerFilter(
+                'mailBodyParams',
+                [
+                    'headline' => $this->language->__('email_notifications.hi'),
+                    'content' => $this->nl2br ? nl2br($this->html) : $this->html,
+                    'unsub_link' => sprintf($this->language->__('email_notification.unsubscribe'), BASE_URL . '/users/editOwn/'),
+                ]
+            )
+        );
 
         $bodyTemplate = $this->dispatchMailerFilter(
-            'bodyTemplate',
-            $bodyTemplate,
+            'bodyContent',
+            $mailBody,
             [
                     [
                         'companyColor' => $this->companyColor,
@@ -350,7 +351,7 @@ class Mailer
                 ]
         );
 
-        $this->mailAgent->Body = $bodyTemplate;
+        $this->mailAgent->Body = $mailBody;
 
         $altBody = $this->dispatchMailerFilter(
             'altBody',
