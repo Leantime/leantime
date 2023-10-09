@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $tpl->dispatchTplEvent('beforePageHeaderOpen');
+$tpl->dispatchTplEvent('beforePageHeaderOpen');
 ?>
 <div class="pageheader">
     <?php $tpl->dispatchTplEvent('afterPageHeaderOpen'); ?>

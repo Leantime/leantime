@@ -99,7 +99,7 @@ abstract class Repository
              * @param string $replace - value to replace with
              * @param int    $type    - type of value being replaced
              */
-            public function bindValue(string $needle, string $replace, int $type = PDO::PARAM_STR): void
+            public function bindValue(string $needle, mixed $replace, int $type = PDO::PARAM_STR): void
             {
                 $replace = $this->caller_class::dispatch_filter(
                     'binding.' . str_replace(':', '', $needle),
@@ -311,13 +311,13 @@ abstract class Repository
 
         $call->prepare($sql);
 
-         $call->bindValue(':id', $id, PDO::PARAM_STR);
+        $call->bindValue(':id', $id, PDO::PARAM_STR);
 
-         $call->execute();
+        $call->execute();
 
-         $call->setFetchMode(PDO::FETCH_CLASS, $this->model);
+        $call->setFetchMode(PDO::FETCH_CLASS, $this->model);
 
-         return $call->fetch();
+        return $call->fetch();
     }
 
 

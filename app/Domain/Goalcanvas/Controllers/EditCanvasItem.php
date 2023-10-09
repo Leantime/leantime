@@ -103,7 +103,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     'relates' => '',
                     'startValue' => '',
                     'currentValue' => '',
-                    'canvasId' => (int)$_GET["canvasId"] ?? (int)$_SESSION['currentGOALCanvas'],
+                    'canvasId' => $_GET["canvasId"] ?? (int)$_SESSION['currentGOALCanvas'],
                     'endValue' => '',
                     'kpi' => '',
                     'startDate' => '',
@@ -119,9 +119,12 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
             $this->tpl->assign('comments', $comments);
 
+
+
             $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
+            $this->tpl->assign('currentCanvas', $canvasItem['canvasId']);
             $this->tpl->assign('canvasItem', $canvasItem);
             $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
@@ -135,15 +138,11 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          * @return void
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
         public function post($params): void
         {
 
             if (isset($params['comment'])) {
+
                 $values = array(
                     'text' => $params['text'],
                     'date' => date('Y-m-d H:i:s'),

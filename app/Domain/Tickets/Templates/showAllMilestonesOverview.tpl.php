@@ -1,22 +1,22 @@
 <?php
 
-    defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $sprints        = $tpl->get("sprints");
-    $searchCriteria = $tpl->get("searchCriteria");
-    $currentSprint  = $tpl->get("currentSprint");
+$sprints        = $tpl->get("sprints");
+$searchCriteria = $tpl->get("searchCriteria");
+$currentSprint  = $tpl->get("currentSprint");
 
-    $todoTypeIcons  = $tpl->get("ticketTypeIcons");
+$todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
-    $efforts        = $tpl->get('efforts');
-    $statusLabels   = $tpl->get('allTicketStates');
-    $allTickets     = $tpl->get('allTickets');
+$efforts        = $tpl->get('efforts');
+$statusLabels   = $tpl->get('allTicketStates');
+$allTickets     = $tpl->get('allTickets');
 
-    //All states >0 (<1 is archive)
-    $numberofColumns = count($tpl->get('allTicketStates')) - 1;
-    $size = floor(100 / $numberofColumns);
+//All states >0 (<1 is archive)
+$numberofColumns = count($tpl->get('allTicketStates')) - 1;
+$size = floor(100 / $numberofColumns);
 
 ?>
 
@@ -44,8 +44,8 @@ foreach ($__data as $var => $val) {
 
                 <div class="col-md-2 center">
                 <?php
-                    $tpl->dispatchTplEvent('filters.afterCenterSectionOpen');
-                    $tpl->dispatchTplEvent('filters.beforeCenterSectionClose');
+                $tpl->dispatchTplEvent('filters.afterCenterSectionOpen');
+                $tpl->dispatchTplEvent('filters.beforeCenterSectionClose');
                 ?>
                 </div>
                 <div class="col-md-5">
@@ -176,7 +176,7 @@ foreach ($__data as $var => $val) {
                                 </div>
                             </td>
 
-                            <td class="dropdown-cell" data-order="<?=$row->editorFirstname != "" ?  $tpl->escape($row->editorFirstname) : $tpl->__("dropdown.not_assigned")?>">
+                            <td class="dropdown-cell" data-order="<?=$row->editorFirstname != "" ? $tpl->escape($row->editorFirstname) : $tpl->__("dropdown.not_assigned")?>">
                                 <div class="dropdown ticketDropdown userDropdown noBg show ">
                                     <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row->id?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">

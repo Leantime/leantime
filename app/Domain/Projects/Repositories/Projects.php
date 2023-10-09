@@ -1288,12 +1288,12 @@ namespace Leantime\Domain\Projects\Repositories {
          * setPicture - set the profile picture for an individual
          *
          * @access public
-         * @param string $_FILE
+         * @param array $_FILE
          * @param $id
          * @return bool
          * @throws BindingResolutionException
          */
-        public function setPicture(string $_FILE, $id): bool
+        public function setPicture(array $_FILE, $id): bool
         {
 
             $project = $this->getProject($id);

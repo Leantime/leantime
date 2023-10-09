@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $url = $tpl->get('url');
+$url = $tpl->get('url');
 ?>
 
 <h4 class="widgettitle title-light"><i class="fa fa-file-export"></i> <?=$tpl->__('label.ical_export'); ?></h4>

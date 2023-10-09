@@ -30,7 +30,7 @@ foreach ($__data as $var => $val) {
                         </div>
                         <span class="userName">
                             <?=$provider->name ?>
-                            <br /><small>Things you can sync: <?php //implode(", ", $provider->entities); ?></small>
+                            <br /><small>Things you can sync: <?php //implode(", ", $provider->entities);?></small>
                             <br /><small>Available methods: <?=implode(", ", $provider->methods); ?></small>
                         </span>
                         <br />

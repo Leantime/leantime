@@ -47,7 +47,6 @@ namespace Leantime\Domain\Api\Controllers {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
             //Only admins
-
             if (isset($_GET['id']) === true) {
                 $id = (int)($_GET['id']);
                 $row = $this->userRepo->getUser($id);

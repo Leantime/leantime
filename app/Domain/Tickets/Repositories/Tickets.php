@@ -184,23 +184,23 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $projectId = $_SESSION['currentProject'];
             }
 
-                $sql = "SELECT
+            $sql = "SELECT
 						value
 				FROM zp_settings WHERE `key` = :key
 				LIMIT 1";
 
-                $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings." . $projectId . ".ticketlabels", PDO::PARAM_STR);
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindvalue(':key', "projectsettings." . $projectId . ".ticketlabels", PDO::PARAM_STR);
 
-                $stmn->execute();
-                $values = $stmn->fetch();
-                $stmn->closeCursor();
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
 
-                $labels = array();
+            $labels = array();
 
-                $statusList = $this->statusListSeed;
+            $statusList = $this->statusListSeed;
 
-                //Override the state values that are in the db
+            //Override the state values that are in the db
             if ($values !== false) {
                 $statusList = array();
 
@@ -227,14 +227,14 @@ namespace Leantime\Domain\Tickets\Repositories {
                 }
             }
 
-                //Sort by order number
-                uasort($statusList, function ($a, $b) {
-                    return $a['sortKey'] <=> $b['sortKey'];
-                });
+            //Sort by order number
+            uasort($statusList, function ($a, $b) {
+                return $a['sortKey'] <=> $b['sortKey'];
+            });
 
-                $_SESSION["projectsettings"]["ticketlabels"] = $statusList;
+            $_SESSION["projectsettings"]["ticketlabels"] = $statusList;
 
-                return $statusList;
+            return $statusList;
         }
 
         /**
@@ -415,7 +415,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 
 
         /**
-         * getAllBySearchCriteria - get Tickets by a serach term and/or a filter
+         * getAllBySearchCriteria - get Tickets by search criteria array
          *
          * @access public
          * @param array  $searchCriteria
@@ -489,7 +489,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             $query .= " AND zp_tickets.type <> 'milestone'";
 
-
+            //Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"]  != "") {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
@@ -582,6 +582,8 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
             }
 
+            //Current client is only used for authorization as it represents the current client Id assigned to a user.
+            // Do not attempt to filter tickets using this value.
             if (isset($searchCriteria["currentClient"])) {
                 $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
             } else {
@@ -592,7 +594,6 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"] != "") {
                 $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
             }
-
 
             if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
                 foreach (explode(",", $searchCriteria["milestone"]) as $key => $milestone) {
@@ -926,7 +927,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
 
-                    $query .= " GROUP BY
+            $query .= " GROUP BY
 						zp_tickets.id ORDER BY zp_tickets.date DESC";
 
             $stmn = $this->db->database->prepare($query);
@@ -1029,8 +1030,9 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
 
-            if (isset($searchCriteria["currentClient"]) && $searchCriteria["currentClient"]  != "" && $searchCriteria["currentClient"]  != 0) {
-                $query .= " AND zp_projects.clientId = :clientId";
+            if (isset($searchCriteria["clients"]) && $searchCriteria["clients"]  != 0 && $searchCriteria["clients"]  != "" && $searchCriteria["clients"] != "") {
+                $clientIdIn = DbCore::arrayToPdoBindingString("clients", count(explode(",", $searchCriteria["clients"])));
+                $query .= " AND zp_projects.clientId IN(" . $clientIdIn . ")";
             }
 
             if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
@@ -1115,13 +1117,15 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
             }
 
-            if (isset($searchCriteria["currentClient"]) && $searchCriteria["currentClient"]  != "" && $searchCriteria["currentClient"]  != 0) {
-                $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
-            }
-
             if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
                 foreach (explode(",", $searchCriteria["users"]) as $key => $user) {
                     $stmn->bindValue(":users" . $key, $user, PDO::PARAM_STR);
+                }
+            }
+
+            if (isset($searchCriteria["clients"]) && $searchCriteria["clients"]  != 0 && $searchCriteria["clients"]  != "" && $searchCriteria["clients"] != "") {
+                foreach (explode(",", $searchCriteria["clients"]) as $key => $client) {
+                    $stmn->bindValue(":clients" . $key, $client, PDO::PARAM_STR);
                 }
             }
 

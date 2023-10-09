@@ -4,8 +4,8 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
     $ticket = $tpl->get('ticket');
-    $statusLabels  = $tpl->get('statusLabels');
-    $efforts = $tpl->get('efforts');
+$statusLabels  = $tpl->get('statusLabels');
+$efforts = $tpl->get('efforts');
 
 ?>
 
@@ -120,7 +120,7 @@ foreach ($tpl->get('allSubTasks') as $subticket) {
                         <div class="dropdown ticketDropdown statusDropdown colorized show">
                             <a class="dropdown-toggle f-left status <?=$class ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$subticket['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    echo $name;
+                                                                echo $name;
                                                                 ?>
                                                                 </span>
                                 &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>

@@ -141,7 +141,7 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
                                 <div class="dropdown ticketDropdown statusDropdown show firstDropdown colorized">
                                     <a class="dropdown-toggle f-left status <?=$canvasLabels[$row['box']]['class'] ?> " href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                     <span class="text"><?php
-                                                                        echo $canvasLabels[$row['box']]['name'];
+                                                                    echo $canvasLabels[$row['box']]['name'];
                                                                     ?>
                                                                     </span>
                                         &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>

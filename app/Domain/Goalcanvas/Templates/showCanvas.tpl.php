@@ -213,7 +213,7 @@ $elementName = 'goal';
                                         <div class="row">
                                             <div class="col-md-5" >
                                                 <?php strlen($row['milestoneHeadline']) > 60 ?
-                                                    $tpl->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") :  $tpl->e($row['milestoneHeadline']); ?>
+                                                    $tpl->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") : $tpl->e($row['milestoneHeadline']); ?>
                                             </div>
                                             <div class="col-md-7" style="text-align:right">
                                                 <?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?>
@@ -248,15 +248,15 @@ $elementName = 'goal';
         <?php if (count($canvasItems) == 0) {
             echo "<br /><br /><div class='center'>";
 
-                echo "<div class='svgContainer'>";
-                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
-                    echo "</div>";
+            echo "<div class='svgContainer'>";
+            echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
+            echo "</div>";
 
-                echo"<h3>" . $tpl->__("headlines.goal.analysis") . "</h3>";
-                echo "<br />" . $tpl->__("text.goal.helper_content");
+            echo"<h3>" . $tpl->__("headlines.goal.analysis") . "</h3>";
+            echo "<br />" . $tpl->__("text.goal.helper_content");
 
 
-                echo"</div>";
+            echo"</div>";
         } ?>
 
 

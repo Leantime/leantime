@@ -2,7 +2,7 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $currentWiki = $tpl->get('wiki');
+$currentWiki = $tpl->get('wiki');
 ?>
 
 <h4 class="widgettitle title-light"><i class="fa fa-book"></i> <?=$tpl->__('label.wiki') ?> <?php echo $tpl->escape($currentWiki->title) ?></h4>

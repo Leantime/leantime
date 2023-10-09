@@ -23,6 +23,6 @@ namespace Leantime\Domain\Dashboard\Events {
         }
     }
 
-    Events::add_event_listener("core.application.start.beginning", app()->make(dashboardTest::class));
+    Events::add_event_listener("leantime.core.application.start.beginning", app()->make(dashboardTest::class));
 
 }

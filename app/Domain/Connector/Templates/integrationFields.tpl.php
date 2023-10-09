@@ -2,10 +2,10 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $providerFields = $tpl->get("providerFields");
-    $provider = $tpl->get("provider");
-    $leantimeFields = $tpl->get("leantimeFields");
-    $numberOfFields = $tpl->get("maxFields");
+$providerFields = $tpl->get("providerFields");
+$provider = $tpl->get("provider");
+$leantimeFields = $tpl->get("leantimeFields");
+$numberOfFields = $tpl->get("maxFields");
 ?>
 
 <div class="pageheader">
