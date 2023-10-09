@@ -1,0 +1,86 @@
+.tw-float-right {
+    float: right
+}
+.tw-mb-\[10px\] {
+    margin-bottom: 10px
+}
+.tw-mb-l {
+    margin-bottom: 20px
+}
+.tw-mb-m {
+    margin-bottom: 15px
+}
+.tw-ml-\[10px\] {
+    margin-left: 10px
+}
+.tw-ml-m {
+    margin-left: 15px
+}
+.tw-ml-sm {
+    margin-left: 5px
+}
+.tw-mr-\[5px\] {
+    margin-right: 5px
+}
+.tw-mr-m {
+    margin-right: 15px
+}
+.tw-mt-\[20px\] {
+    margin-top: 20px
+}
+.tw-mt-\[3px\] {
+    margin-top: 3px
+}
+.tw-block {
+    display: block
+}
+.tw-inline {
+    display: inline
+}
+.tw-hidden {
+    display: none
+}
+.tw-h-\[250px\] {
+    height: 250px
+}
+.tw-max-h-\[200px\] {
+    max-height: 200px
+}
+.tw-w-full {
+    width: 100%
+}
+.tw-bg-\[\#b0b0b0\] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(176 176 176 / var(--tw-bg-opacity))
+}
+.tw-px-\[15px\] {
+    padding-left: 15px;
+    padding-right: 15px
+}
+.tw-py-\[5px\] {
+    padding-top: 5px;
+    padding-bottom: 5px
+}
+.tw-pt-l {
+    padding-top: 20px
+}
+.tw-text-right {
+    text-align: right
+}
+.tw-text-\[14px\] {
+    font-size: 14px
+}
+.tw-leading-\[25px\] {
+    line-height: 25px
+}
+.tw-leading-\[50px\] {
+    line-height: 50px
+}
+.htmx-indicator {
+    display: none
+}
+.htmx-request .my-indicator,
+.htmx-request.my-indicator {
+    display: inline
+}
+
