@@ -338,7 +338,7 @@ class Mailer
             )
         );
 
-        $bodyTemplate = $this->dispatchMailerFilter(
+        $mailBody = $this->dispatchMailerFilter(
             'bodyContent',
             $mailBody,
             [
