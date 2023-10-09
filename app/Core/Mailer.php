@@ -342,14 +342,14 @@ class Mailer
             'bodyContent',
             $mailBody,
             [
-                    [
-                        'companyColor' => $this->companyColor,
-                        'logoUrl' => $inlineLogoContent,
-                        'languageHiText' => $this->language->__('email_notifications.hi'),
-                        'emailContentsHtml' => nl2br($this->html),
-                        'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/'),
-                    ],
-                ]
+                [
+                    'companyColor' => $this->companyColor,
+                    'logoUrl' => $inlineLogoContent,
+                    'languageHiText' => $this->language->__('email_notifications.hi'),
+                    'emailContentsHtml' => nl2br($this->html),
+                    'unsubLink' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/'),
+                ],
+            ]
         );
 
         $this->mailAgent->Body = $mailBody;
