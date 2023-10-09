@@ -75,15 +75,17 @@ class Upload extends Controller
             $rows[] = $record;
         }
 
-        $integration = app()->make(IntegrationModel::class);
+        $integration = new models\connector\integration();
         $integration->fields = implode(",", $header);
 
         //Temporarily store results in meta
-        $integration->meta = serialize($rows);
 
-        $integrationService = app()->make(IntegrationService::class);
+        $_SESSION['csv_records'] = iterator_to_array($records);
+
+        $integrationService = new services\connector\integrations();
         $id = $integrationService->create($integration);
 
-        $this->tpl->displayJson(json_encode(array("id" => $id)));
+        $this->tpl->displayJson(json_encode(array("id"=>$id)));
+
     }
 }

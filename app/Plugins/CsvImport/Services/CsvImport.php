@@ -109,7 +109,25 @@ class CsvImport extends Provider implements ProviderIntegration
      * @param Entity $Entity
      * @return void
      */
-    public function getValues(Entity $Entity): void
+    public function getValues(Entity $Entity)
     {
+        $integrationMeta = $_SESSION['csvImporter']['meta'] ?? '';
+
+        if (!empty($integrationMeta)) {
+            $rows = unserialize($integrationMeta);
+
+            // Removing the first row if it contains headers
+            // can be returned or dealt with later on for field matching
+            if (count($rows) > 0) {
+                $headers = array_shift($rows);
+            }
+            return $rows;
+        }
+    }
+
+    public function geValues(){
+
+        return $_SESSION['csv_records'] ?? [];
+
     }
 }
