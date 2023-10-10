@@ -15,15 +15,15 @@ class Config
 
     public $sitename = 'Leantime';                        //Name of your site, can be changed later
     public $language = 'en-US';                           //Default language
-    public $logoPath = '/dist/images/logo.svg';                //Default logo path, can be changed later
-    public $printLogoURL = '/dist/images/logo.png';            //Default logo URL use for printing (must be jpg or png format)
+    public $logoPath = '/dist/images/logo.svg';           //Default logo path, can be changed later
+    public $printLogoURL = '/dist/images/logo.png';       //Default logo URL use for printing (must be jpg or png format)
     public $appUrl = '';                                  //Base URL, trailing slash not needed
-    public $appDir = '';                              //Base of application withotu trailing slash (used for cookies), e.g, /leantime
+    public $appDir = '';                                  //Base of application without trailing slash (used for cookies), e.g, /leantime
     public $defaultTheme = 'default';                     //Default theme
     public $primarycolor = '#1b75bb';                     //Primary Theme color
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
     public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
-    public $enableMenuType = false;                       //Enable to specifiy menu on aproject by project basis
+    public $enableMenuType = false;                       //Enable to specify menu on a project-by-project basis
     public $keepTheme = true;                             //Keep theme and language from previous user for login screen
     public $debug = 0;                                    //Debug flag
 
@@ -47,7 +47,7 @@ class Config
     public $s3UsePathStyleEndpoint = false;               // false => https://[bucket].[endpoint] ; true => https://[endpoint]/[bucket]
     public $s3Region = '';                                //S3 region
     public $s3FolderName = '';                            //Foldername within S3 (can be emtpy)
-    public $s3EndPoint = null;                              //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
+    public $s3EndPoint = null;                            //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
 
     /* Sessions */
     public $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  //Salting sessions. Replace with a strong password
@@ -65,13 +65,13 @@ class Config
     public $smtpSSLNoverify = false;                      //SMTP Allow insecure SSL: Don't verify certificate, accept self-signed, etc.
     public $smtpPort = '';                                //Port (usually one of 25, 465, 587, 2526)
 
-    /* ldap default settings (can be changed in company settings) */
+    /* LDAP default settings (can be changed in company settings) */
     public $useLdap = false;                              //Set to true if you want to use LDAP
     public $ldapType = 'OL';                              //Select the correct directory type. Currently Supported: OL - OpenLdap, AD - Active Directory
     public $ldapHost = '';                                //FQDN
     public $ldapPort = 389;                               //Default Port
     public $ldapDn = '';                                  //Location of users, example: CN=users,DC=example,DC=com
-    //Default ldap keys in your directory.
+    //Default LDAP keys in your directory.
     //Works for OL
     public $ldapKeys = '{
         "username":"uid",
@@ -124,5 +124,5 @@ class Config
             "ldapRole":"administrators"
           }
         }';
-    public $ldapDefaultRoleKey = 20;           //Default Leantime Role on creation. (set to editor)
+    public $ldapDefaultRoleKey = 20;                      //Default Leantime Role on creation. (set to editor)
 }
