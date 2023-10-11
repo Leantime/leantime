@@ -41,17 +41,17 @@ class Ldap
     private Environment $config;
 
     /**
-     * @var array|bool|int|mixed|string
+     * @var mixed
      */
     public mixed $useLdap;
 
     /**
-     * @var array|bool|int|mixed|string
+     * @var mixed
      */
     public mixed $autoCreateUser;
 
     /**
-     * @param false $differentConfig
+     * @param bool|Environment $differentConfig
      * @throws BindingResolutionException
      */
     public function __construct(bool|Environment $differentConfig = false)
@@ -98,9 +98,6 @@ class Ldap
     /**
      * @return bool|void
      */
-    /**
-     * @return bool|void
-     */
     public function connect()
     {
 
@@ -129,11 +126,6 @@ class Ldap
         }
     }
 
-    /**
-     * @param $username
-     * @param $password
-     * @return bool
-     */
     /**
      * @param string $username
      * @param string $password
@@ -180,10 +172,6 @@ class Ldap
      * @param $username
      * @return mixed|string|void
      */
-    /**
-     * @param $username
-     * @return mixed|string|void
-     */
     public function getEmail($username)
     {
         if (!$this->ldapConnection) {
@@ -205,10 +193,6 @@ class Ldap
         return $mail;
     }
 
-    /**
-     * @param $username
-     * @return array|false|void
-     */
     /**
      * @param $username
      * @return array|false|void
@@ -288,10 +272,6 @@ class Ldap
      * @param $username
      * @return mixed|string
      */
-    /**
-     * @param $username
-     * @return mixed|string
-     */
     public function extractLdapFromUsername($username): mixed
     {
 
@@ -340,11 +320,6 @@ class Ldap
         }
     }
 
-    /**
-     * @param $ldapUsers
-     * @return true
-     * @throws BindingResolutionException
-     */
     /**
      * @param $ldapUsers
      * @return bool

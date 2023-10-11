@@ -375,7 +375,6 @@ div.growl.growl-medium {
 
 
 :not(pre)>code[class*=language-], pre[class*=language-] {
-    background: var(--kanban-col-bg);
 }
 
 code[class*=language-], pre[class*=language-] {

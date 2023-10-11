@@ -358,18 +358,18 @@
 
 .maincontentinner .dt-buttons .dt-button-collection button:before {
     font-family: "Font Awesome 6 Free";
-    content: "\f0c8";
+    content: "\f204";
     margin-right:5px;
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button.active{
+.maincontentinner .dt-buttons .dt-button-collection button. dt-button-active{
     text-decoration: none;
 }
 
-.maincontentinner .dt-buttons .dt-button-collection button.active:before {
+.maincontentinner .dt-buttons .dt-button-collection button.dt-button-active:before {
     font-family: "Font Awesome 6 Free";
-    content: " \f14a";
-
+    content: "\f205";
+    color:var(--accent1);
 }
 
 .maincontentinner .dt-buttons .dt-button-collection button:hover,

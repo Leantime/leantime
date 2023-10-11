@@ -99,6 +99,7 @@ mix
         "./node_modules/tinymce/plugins/advlist/plugin.js",
         "./node_modules/tinymce/plugins/autoresize/plugin.js",
         "./node_modules/tinymce/plugins/codesample/plugin.js",
+        "./node_modules/tinymce/plugins/textpattern/plugin.js",
         "./public/assets/js/libs/tinymce-plugins/helper.js",
         "./public/assets/js/libs/tinymce-plugins/checklist/index.js",
         "./public/assets/js/libs/tinymce-plugins/shortlink/index.js",
