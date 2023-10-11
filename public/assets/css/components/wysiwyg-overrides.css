@@ -460,6 +460,7 @@ body.mce-content-body .row .col-md-12 {
     border: 1px solid var(--main-border-color);
     display: block;
     padding: 0px 5px;
+    border-radius:var(--box-radius);
 }
 
 .mce-content-body pre code {
