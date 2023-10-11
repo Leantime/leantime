@@ -1186,6 +1186,10 @@ leantime.ticketsController = (function () {
 
     var initTicketsTable = function (groupBy) {
 
+        function isNumeric(n) {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+
         jQuery(document).ready(function () {
 
             var size = 100;
@@ -1254,25 +1258,47 @@ leantime.ticketsController = (function () {
                         .column(10)
                         .data()
                         .reduce(function (a, b) {
-                            let contentA = jQuery(a).val();
-                            let contentB = jQuery(b).val();
-                            return intVal(contentA) + intVal(contentB);
+
+                            if(isNumeric(a) === false){
+                                a = jQuery(a).val();
+                            }
+
+                            if(isNumeric(b) === false){
+                                b = jQuery(b).val();
+                            }
+
+                            if(isNaN(a)) { a =0; }
+                            if(isNaN(b)) { b =0; }
+
+
+                            return parseFloat(a) + parseFloat(b);
                         }, 0);
 
                     var hoursLeft = api
                         .column(11)
                         .data()
                         .reduce(function (a, b) {
-                            let contentA = jQuery(a).val();
-                            let contentB = jQuery(b).val();
-                            return intVal(contentA) + intVal(contentB);
+
+                            if(isNumeric(a) === false){
+                                a = jQuery(a).val();
+                            }
+
+                            if(isNumeric(b) === false){
+                                b = jQuery(b).val();
+                            }
+
+                            if(isNaN(a)) { a =0; }
+                            if(isNaN(b)) { b =0; }
+
+
+                            return parseFloat(a) + parseFloat(b);
                         }, 0);
 
                     var loggedHours = api
                         .column(12)
                         .data()
                         .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
+                            return parseFloat(a) + parseFloat(b);
                         }, 0);
 
 

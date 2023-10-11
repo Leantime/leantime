@@ -1891,3 +1891,90 @@
 [07-Oct-2023 10:25:30 America/Los_Angeles] cron end
 [07-Oct-2023 10:30:30 America/Los_Angeles] cron start
 [07-Oct-2023 10:30:30 America/Los_Angeles] cron end
+[11-Oct-2023 10:15:06 America/Los_Angeles] PDOException: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away in /Volumes/Source/Sites/leantime-oss/app/Domain/Setting/Repositories/Setting.php:54
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Domain/Setting/Repositories/Setting.php(54): PDOStatement->execute()
+#1 /Volumes/Source/Sites/leantime-oss/app/Domain/Reports/Services/Reports.php(278): Leantime\Domain\Setting\Repositories\Setting->getSetting('companysettings...')
+#2 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(413): Leantime\Domain\Reports\Services\Reports->sendAnonymousTelemetry()
+#3 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(165): Leantime\Core\Bootloader->handleRequest()
+#4 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#5 {main}
+[11-Oct-2023 10:15:06 America/Los_Angeles] 2023-10-11T10:15:06-07:00 [critical] Uncaught Exception: SQLSTATE[HY000]: General error: 2006 MySQL server has gone away
+[11-Oct-2023 10:15:08 America/Los_Angeles] cron start
+[11-Oct-2023 10:15:08 America/Los_Angeles] cron end
+[11-Oct-2023 10:15:14 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:21 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:22 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:23 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:24 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:24 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:25 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:25 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:26 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:26 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:26 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:27 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:27 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:27 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:28 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:28 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:28 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:28 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:29 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:29 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:29 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:29 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:30 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:30 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:30 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:30 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:31 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:31 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:31 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:32 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:32 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:32 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:33 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:33 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:33 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:33 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:34 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:34 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:34 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:35 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:35 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:35 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:35 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:35 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:36 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:36 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:15:36 America/Los_Angeles] Last cron execution was on 2023-10-11 10:15:08 plz come back later
+[11-Oct-2023 10:16:51 America/Los_Angeles] 2023-10-11T10:16:51-07:00 [info] Deprecated: Creation of dynamic property GuzzleHttp\Handler\CurlMultiHandler::$_mh is deprecated
+[11-Oct-2023 10:21:33 America/Los_Angeles] cron start
+[11-Oct-2023 10:21:33 America/Los_Angeles] cron end
+[11-Oct-2023 10:30:05 America/Los_Angeles] cron start
+[11-Oct-2023 10:30:05 America/Los_Angeles] cron end
+[11-Oct-2023 10:37:06 America/Los_Angeles] cron start
+[11-Oct-2023 10:37:06 America/Los_Angeles] cron end
+[11-Oct-2023 10:42:17 America/Los_Angeles] cron start
+[11-Oct-2023 10:42:17 America/Los_Angeles] cron end
+[11-Oct-2023 10:47:52 America/Los_Angeles] cron start
+[11-Oct-2023 10:47:53 America/Los_Angeles] cron end
+[11-Oct-2023 10:56:12 America/Los_Angeles] cron start
+[11-Oct-2023 10:56:12 America/Los_Angeles] cron end
+[11-Oct-2023 11:02:15 America/Los_Angeles] cron start
+[11-Oct-2023 11:02:15 America/Los_Angeles] cron end
+[11-Oct-2023 11:09:16 America/Los_Angeles] cron start
+[11-Oct-2023 11:09:16 America/Los_Angeles] cron end
+[11-Oct-2023 11:14:16 America/Los_Angeles] cron start
+[11-Oct-2023 11:14:16 America/Los_Angeles] cron end
+[11-Oct-2023 11:20:13 America/Los_Angeles] cron start
+[11-Oct-2023 11:20:13 America/Los_Angeles] cron end
+[11-Oct-2023 11:25:30 America/Los_Angeles] cron start
+[11-Oct-2023 11:25:30 America/Los_Angeles] cron end
+[11-Oct-2023 11:30:30 America/Los_Angeles] cron start
+[11-Oct-2023 11:30:30 America/Los_Angeles] cron end
+[11-Oct-2023 11:35:30 America/Los_Angeles] cron start
+[11-Oct-2023 11:35:30 America/Los_Angeles] cron end
+[11-Oct-2023 11:44:49 America/Los_Angeles] cron start
+[11-Oct-2023 11:44:49 America/Los_Angeles] cron end
