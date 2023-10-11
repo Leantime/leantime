@@ -1,26 +1,23 @@
 <?php
-$providerFields = $this->get("providerFields");
-$provider = $this->get("provider");
-$leantimeFields = $this->get("leantimeFields");
-$numberOfFields = $this->get("maxFields");
-$values = $this->get("values");
-$flags = $this->get("flags");
-$fields = $this->get("fields");
+foreach ($__data as $var => $val) {
+    $$var = $val; // necessary for blade refactor
+}
+?>
+
+<?php
+$providerFields = $tpl->get("providerFields");
+$provider = $tpl->get("provider");
+$leantimeFields = $tpl->get("leantimeFields");
+$numberOfFields = $tpl->get("maxFields");
+$values = $tpl->get("values");
+$flags = $tpl->get("flags");
+$fields = $tpl->get("fields");
 $urlAppend = '';
 if(isset($integrationId) && is_numeric($integrationId)) {
     $urlAppend = "&integrationId=".$integrationId;
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $this->__("headlines.integrations"); ?></title>
-    <link rel="stylesheet" href="styles.css">
-</head>
 
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-plug"></span></div>
@@ -28,10 +25,10 @@ if(isset($integrationId) && is_numeric($integrationId)) {
         <h1>Integrations</h1>
     </div>
 </div>
-<body>
+
 <div class="maincontent">
     <div class="maincontentinner">
-        <?php echo $this->displayNotification(); ?>
+        <?php echo $tpl->displayNotification(); ?>
 
         <h4><?=$provider->name ?></h4>
 
@@ -69,13 +66,7 @@ if(isset($integrationId) && is_numeric($integrationId)) {
         <?php } ?>
 
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-
-</html>
+</div>
 
 
 

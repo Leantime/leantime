@@ -4,11 +4,17 @@ namespace Leantime\Domain\Connector\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Connector\Services\Providers;
     use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
     use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
     use Leantime\Domain\Connector\Repositories\LeantimeEntities;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
+    use Leantime\Domain\Ideas\Repositories\Ideas;
+    use Leantime\Domain\Projects\Services\Projects;
+    use Leantime\Domain\Tickets\Services\Tickets;
+    use Leantime\Domain\Users\Services\Users;
 
     /**
      *
@@ -19,16 +25,16 @@ namespace Leantime\Domain\Connector\Controllers {
         private IntegrationService $integrationService;
         private LeantimeEntities $leantimeEntities;
 
-        private services\users $userService;
-        private services\tickets $ticketService;
+        private Users $userService;
+        private Tickets $ticketService;
 
-        private services\projects $projectService;
+        private Projects $projectService;
 
-        private $values = array();
-        private $fields = array();
-        private repositories\ideas $ideaRepository;
-        private repositories\canvas $canvasRepository;
-        private repositories\goalcanvas $goalRepository;
+        private array $values = array();
+        private array $fields = array();
+        private Ideas $ideaRepository;
+        private Canvas $canvasRepository;
+        private Goalcanvas $goalRepository;
 
         /**
          * constructor - initialize private variables
@@ -39,19 +45,25 @@ namespace Leantime\Domain\Connector\Controllers {
         public function init(
             Providers $providerService,
             IntegrationService $integrationService,
-            LeantimeEntities $leantimeEntities
+            LeantimeEntities $leantimeEntities,
+            Users $userService,
+            Tickets $ticketService,
+            Projects $projectService,
+            Ideas $ideaRepository,
+            Goalcanvas $goalRepository,
+            Canvas $canvasRepository
         ) {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->providerService = $providerService;
             $this->leantimeEntities = $leantimeEntities;
             $this->integrationService = $integrationService;
-            $this->userService = new services\users();
-            $this->ticketService = new services\tickets();
-            $this->projectService = new services\projects();
-            $this->ideaRepository = new repositories\ideas();
-            $this->goalRepository = new repositories\goalcanvas();
-            $this->canvasRepository = new repositories\canvas();
+            $this->userService = $userService;
+            $this->ticketService = $ticketService;
+            $this->projectService = $projectService;
+            $this->ideaRepository = $ideaRepository;
+            $this->goalRepository = $goalRepository;
+            $this->canvasRepository = $canvasRepository;
         }
 
 
@@ -65,6 +77,9 @@ namespace Leantime\Domain\Connector\Controllers {
         {
 
             $params = $_REQUEST;
+            if(!isset($_SESSION['currentImportEntity'])){
+                $_SESSION['currentImportEntity'] = '';
+            }
 
             if (isset($params["provider"])) {
                 //New integration with provider
@@ -77,6 +92,7 @@ namespace Leantime\Domain\Connector\Controllers {
 
                 if (!isset($params["step"])) {
                     $this->tpl->display('connector.newIntegration');
+                    return;
                 }
 
 

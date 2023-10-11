@@ -1,11 +1,12 @@
 <?php
 
-namespace Leantime\Plugins\CsvImport\Services;
+namespace  Leantime\Domain\CsvImport\Services;
 
 use Leantime\Core\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
 use Leantime\Domain\Connector\Models\Provider;
 use Leantime\Domain\Connector\Services\ProviderIntegration;
+
 
 /**
  *
@@ -16,8 +17,8 @@ class CsvImport extends Provider implements ProviderIntegration
     /**
      * @var array|array[]
      */
-    private array $entities;
-    private array $methods;
+    public array $entities;
+    public array $methods;
 
     public function __construct()
     {
@@ -44,7 +45,7 @@ class CsvImport extends Provider implements ProviderIntegration
     /**
      * @return void
      */
-    public function connect(): void
+    public function connect(): mixed
     {
 
 
@@ -109,7 +110,7 @@ class CsvImport extends Provider implements ProviderIntegration
      * @param Entity $Entity
      * @return void
      */
-    public function getValues(Entity $Entity)
+    public function getValues(Entity $Entity): mixed
     {
         $integrationMeta = $_SESSION['csvImporter']['meta'] ?? '';
 

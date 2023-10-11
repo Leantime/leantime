@@ -29,9 +29,7 @@ namespace Leantime\Domain\Plugins\Services {
             $this->config = $config;
         }
 
-        /**
-         * @return array|false
-         */
+       
         /**
          * @return array|false
          */
@@ -40,11 +38,7 @@ namespace Leantime\Domain\Plugins\Services {
             return $this->pluginRepository->getAllPlugins(false);
         }
 
-        /**
-         * @param $pluginFolder
-         * @return bool
-         * @throws BindingResolutionException
-         */
+
         /**
          * @param $pluginFolder
          * @return bool
@@ -64,10 +58,6 @@ namespace Leantime\Domain\Plugins\Services {
             return false;
         }
 
-        /**
-         * @return array|false|mixed
-         * @throws BindingResolutionException
-         */
         /**
          * @return array|false|mixed
          * @throws BindingResolutionException
@@ -104,10 +94,6 @@ namespace Leantime\Domain\Plugins\Services {
             return $_SESSION['enabledPlugins'];
         }
 
-        /**
-         * @return array
-         * @throws BindingResolutionException
-         */
         /**
          * @return array
          * @throws BindingResolutionException
@@ -158,11 +144,6 @@ namespace Leantime\Domain\Plugins\Services {
          * @return false|string
          * @throws BindingResolutionException
          */
-        /**
-         * @param $pluginFolder
-         * @return false|string
-         * @throws BindingResolutionException
-         */
         public function installPlugin($pluginFolder): false|string
         {
 
@@ -202,10 +183,7 @@ namespace Leantime\Domain\Plugins\Services {
             return false;
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         */
+
         /**
          * @param int $id
          * @return bool
@@ -216,10 +194,7 @@ namespace Leantime\Domain\Plugins\Services {
             return $this->pluginRepository->enablePlugin($id);
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         */
+
         /**
          * @param int $id
          * @return bool
@@ -230,11 +205,7 @@ namespace Leantime\Domain\Plugins\Services {
             return $this->pluginRepository->disablePlugin($id);
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         * @throws BindingResolutionException
-         */
+
         /**
          * @param int $id
          * @return bool
@@ -268,11 +239,7 @@ namespace Leantime\Domain\Plugins\Services {
             //TODO remove files savely
         }
 
-        /**
-         * @param PluginModel $plugin
-         * @return string
-         * @throws BindingResolutionException
-         */
+
         /**
          * @param PluginModel $plugin
          * @return string
