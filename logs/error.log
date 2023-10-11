@@ -1978,3 +1978,14 @@ Stack trace:
 [11-Oct-2023 11:35:30 America/Los_Angeles] cron end
 [11-Oct-2023 11:44:49 America/Los_Angeles] cron start
 [11-Oct-2023 11:44:49 America/Los_Angeles] cron end
+[11-Oct-2023 11:49:49 America/Los_Angeles] cron start
+[11-Oct-2023 11:49:49 America/Los_Angeles] cron end
+[11-Oct-2023 11:54:49 America/Los_Angeles] cron start
+[11-Oct-2023 11:54:49 America/Los_Angeles] cron end
+[11-Oct-2023 11:58:22 America/Los_Angeles] cron start
+[11-Oct-2023 11:58:22 America/Los_Angeles] cron end
+[11-Oct-2023 11:59:55 America/Los_Angeles] 2023-10-11T11:59:55-07:00 [critical] Uncaught Unable to locate a class or view for component [Users::profile-image]. (View: /Volumes/Source/Sites/leantime-oss/app/Domain/Comments/Templates/components/reply.blade.php)
+[11-Oct-2023 12:03:22 America/Los_Angeles] cron start
+[11-Oct-2023 12:03:22 America/Los_Angeles] cron end
+[11-Oct-2023 12:05:46 America/Los_Angeles] cron start
+[11-Oct-2023 12:05:46 America/Los_Angeles] cron end

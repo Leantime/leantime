@@ -3,7 +3,7 @@
 @section('content')
 <x-global::pageheader :icon="'fa fa-gauge-high'">
     @if (count($allUsers) == 1)
-        <a href="{{ BASE_URL }}/dashboard/show/#/users/newUser" class="headerCTA">
+        <a href="#/users/newUser" class="headerCTA">
             <i class="fa fa-users"></i>
             <span class="tw-text-[14px] tw-leading-[25px]">
                 {{ __('links.dont_do_it_alone') }}
@@ -249,7 +249,7 @@
                     @if ($login::userIsAtLeast($roles::$manager))
                         <div class="col-md-3">
                             <x-users::profile-box>
-                                <a href="{{ BASE_URL }}/dashboard/show#/users/newUser?preSelectProjectId={{ $project['id'] }}">
+                                <a href="#/users/newUser?preSelectProjectId={{ $project['id'] }}">
                                     {{ __('links.invite_user') }}
                                 </a><br/>&nbsp;
                             </x-users::profile-box>
