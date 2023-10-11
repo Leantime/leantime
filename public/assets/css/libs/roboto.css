@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'Roboto';
-    src: url('~fonts/roboto/Roboto-Regular.ttf') format('truetype'),
-    url('~fonts/roboto/Roboto-Regular.woff2') format('woff2');
+    src: url('~fonts/roboto/Roboto-Medium.ttf') format('truetype'),
+    url('~fonts/roboto/Roboto-Medium.woff2') format('woff2');
     font-weight: bold;
     font-style: normal;
 
@@ -14,6 +14,15 @@
 
     font-weight: bold;
     font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('~fonts/roboto/Roboto-Bold.ttf') format('truetype'),
+    url('~fonts/roboto/Roboto-Bold.woff2') format('woff2');
+    font-weight: bolder;
+    font-style: normal;
 
 }
 
