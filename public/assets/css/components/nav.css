@@ -744,6 +744,10 @@
     border-left:1px dotted var(--main-border-color);
 }
 
+.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup:hover {
+    border-left:1px dotted var(--col-hover-bg);
+}
+
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup[class*=level-] {
     margin-left: 13px;
     padding-left: 5px;
@@ -775,9 +779,14 @@
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a .projectName {
-    line-height:12px;
-    display:block;
+    display: block;
     float: left;
+    line-height: 12px;
+    width: 85%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 30px;
+    text-wrap: nowrap;
 }
 
 .leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a small {
