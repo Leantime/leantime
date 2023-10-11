@@ -517,11 +517,11 @@ $milestones = $tpl->get('milestones');
             <?php endif; ?>
             enitityId: <?php echo $calendar['id'] ?>,
             <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
-            url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
+            url: '#/calendar/editEvent/<?php echo $calendar['id'] ?>',
             color: 'var(--accent2)',
             enitityType: "event",
             <?php else : ?>
-            url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
+            url: '#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
             color: 'var(--accent1)',
             enitityType: "ticket",
             <?php endif; ?>
