@@ -1186,7 +1186,8 @@ leantime.ticketsController = (function () {
 
     var initTicketsTable = function (groupBy) {
 
-        function isNumeric(n) {
+        function isNumeric(n)
+        {
             return !isNaN(parseFloat(n)) && isFinite(n);
         }
 
@@ -1259,16 +1260,18 @@ leantime.ticketsController = (function () {
                         .data()
                         .reduce(function (a, b) {
 
-                            if(isNumeric(a) === false){
+                            if (isNumeric(a) === false) {
                                 a = jQuery(a).val();
                             }
 
-                            if(isNumeric(b) === false){
+                            if (isNumeric(b) === false) {
                                 b = jQuery(b).val();
                             }
 
-                            if(isNaN(a)) { a =0; }
-                            if(isNaN(b)) { b =0; }
+                            if (isNaN(a)) {
+                                a = 0; }
+                            if (isNaN(b)) {
+                                b = 0; }
 
 
                             return parseFloat(a) + parseFloat(b);
@@ -1279,16 +1282,18 @@ leantime.ticketsController = (function () {
                         .data()
                         .reduce(function (a, b) {
 
-                            if(isNumeric(a) === false){
+                            if (isNumeric(a) === false) {
                                 a = jQuery(a).val();
                             }
 
-                            if(isNumeric(b) === false){
+                            if (isNumeric(b) === false) {
                                 b = jQuery(b).val();
                             }
 
-                            if(isNaN(a)) { a =0; }
-                            if(isNaN(b)) { b =0; }
+                            if (isNaN(a)) {
+                                a = 0; }
+                            if (isNaN(b)) {
+                                b = 0; }
 
 
                             return parseFloat(a) + parseFloat(b);
