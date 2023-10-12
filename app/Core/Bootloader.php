@@ -519,14 +519,13 @@ class Bootloader
             getallheaders()
         );
 
-        $incomingRequest = $this->app->instance(
-            IncomingRequest::class,
-            match (true) {
-                isset($headers['Hx-Request']) => HtmxRequest::createFromGlobals(),
-                isset($headers['X-Api-Key']) => ApiRequest::createFromGlobals(),
-                default => IncomingRequest::createFromGlobals(),
-            },
-        );
+        if (isset($headers['Hx-Request'])) {
+            $incomingRequest = $this->app->instance(IncomingRequest::class, HtmxRequest::createFromGlobals());
+        } elseif (isset($headers['X-Api-Key'])) {
+            $incomingRequest = $this->app->instance(IncomingRequest::class, ApiRequest::createFromGlobals());
+        } else {
+            $incomingRequest = $this->app->instance(IncomingRequest::class, IncomingRequest::createFromGlobals());
+        }
 
         $incomingRequest->overrideGlobals();
     }
