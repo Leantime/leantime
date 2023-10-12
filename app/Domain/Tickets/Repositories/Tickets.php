@@ -587,7 +587,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($searchCriteria["currentClient"])) {
                 $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'], PDO::PARAM_INT);
+                $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'] ?? '-1', PDO::PARAM_INT);
             }
 
 
