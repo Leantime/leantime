@@ -146,8 +146,8 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone=<?php echo $canvasItem['milestoneId']; ?>"><?php $tpl->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>&removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
-                                       class="ideaModal delete"><i class="fa fa-close"></i> <?php echo $tpl->__("links.remove")?></a>
+                                    <a href="<?=BASE_URL ?>/ideas/ideaDialog/<?php echo $id; ?>?removeMilestone=<?php echo $canvasItem['milestoneId']; ?>"
+                                       class="ideaModal delete formModal"><i class="fa fa-close"></i> <?php echo $tpl->__("links.remove")?></a>
                                 </div>
                             </div>
                             <div class="row">
