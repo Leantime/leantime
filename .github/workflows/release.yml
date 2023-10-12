@@ -30,7 +30,7 @@ jobs:
           draft: false
           prerelease: false
           name: Leantime v${{ steps.version.outputs.version }}
-          tag: v${{ steps.version.outputs.version }}-${{ steps.hash.outputs.git_hash }}
+          tag: v${{ steps.version.outputs.version }}
           generateReleaseNotes: true
           makeLatest: true
         env:
