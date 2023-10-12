@@ -199,6 +199,7 @@ class Template
             $_SESSION['template_paths'] = $domainPaths
                 ->merge($pluginPaths)
                 ->merge(['global' => APP_ROOT . '/app/Views/Templates'])
+                ->merge(['__components' => $this->config->get('view.compiled')])
                 ->all();
         }
 
@@ -206,6 +207,7 @@ class Template
         $app->singleton(
             CompilerInterface::class,
             function ($app) {
+
                 $bladeCompiler = new BladeCompiler(
                     $app->make(Filesystem::class),
                     $this->config->get('view.compiled'),
@@ -218,7 +220,9 @@ class Template
                     $namespaces
                 );
 
-                return $bladeCompiler;
+                return tap($bladeCompiler, function ($blade) {
+                    $blade->component('dynamic-component', DynamicComponent::class);
+                });
             }
         );
         $app->alias(CompilerInterface::class, 'blade.compiler');
@@ -621,13 +625,11 @@ class Template
         );
 
         if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification = app('blade.compiler')::render(
-                '<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
+            $notification = app('blade.compiler')::render('<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
                 [
                     'message' => $message,
                     'style' => $note['type'],
-                ],
-                deleteCachedView: true
+                ]
             );
 
             self::dispatch_event("notification_displayed", $note);
