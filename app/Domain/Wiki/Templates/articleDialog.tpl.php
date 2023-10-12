@@ -2,8 +2,8 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $currentArticle = $tpl->get('article');
-    $wikiHeadlines = $tpl->get("wikiHeadlines");
+$currentArticle = $tpl->get('article');
+$wikiHeadlines = $tpl->get("wikiHeadlines");
 ?>
 
 

@@ -68,7 +68,7 @@ class Menu extends Composer
         $returnVars = [];
 
         $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"] ?? array(
-            "groupBy" => "none",
+            "groupBy" => "structure",
             "clients" => '',
         );
 

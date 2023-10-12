@@ -2,6 +2,7 @@
 
 namespace Leantime\Core;
 
+use Error;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;

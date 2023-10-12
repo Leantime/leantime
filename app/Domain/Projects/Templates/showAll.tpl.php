@@ -16,7 +16,8 @@ $showClosedProjects = $tpl->get('showClosedProjects');
 
     <div class="pageicon"><span class="fa fa-suitcase"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $tpl->__('label.administration');  $tpl->__("") ?></h5>
+        <h5><?php echo $tpl->__('label.administration');
+        $tpl->__("") ?></h5>
         <h1><?php echo $tpl->__('headline.all_projects') ?></h1>
     </div>
 

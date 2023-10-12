@@ -448,6 +448,31 @@ body.mce-content-body .row .col-md-12 {
     border-radius: var(--box-radius);
 }
 
+.mce-content-body code {
+    background: var(--col-title-bg);
+    border: 1px solid var(--main-border-color);
+    display: inline-block;
+    padding: 0px 5px;
+}
+
+.mce-content-body pre {
+    background: var(--col-title-bg);
+    border: 1px solid var(--main-border-color);
+    display: block;
+    padding: 0px 5px;
+    border-radius:var(--box-radius);
+}
+
+.mce-content-body pre code {
+    border:0px;
+    background:transparent;
+
+}
+
+.mce-content-body blockquote {
+    border-left: 5px solid var(--neutral);
+}
+
 @keyframes loadingTextAnimation {
     0% {
         background-position: 100% 50%;

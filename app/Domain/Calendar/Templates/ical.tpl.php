@@ -27,11 +27,11 @@ if ($calendars) {
     $dst = null;
     foreach ($transitions as $i => $trans) {
         $cmp = null;
-    // skip the first entry...
+        // skip the first entry...
         if ($i == 0) {
-// ... but remember the offset for the next TZOFFSETFROM value
+            // ... but remember the offset for the next TZOFFSETFROM value
             $tzfrom = $trans['offset'] / 3600;
-//Offsets need to be 4 characters long. Pad with 0
+            //Offsets need to be 4 characters long. Pad with 0
             if ($tzfrom < 0) {
                 $tzfrom = floor($tzfrom) * -1;
                 $tzfrom = "-" . str_pad($tzfrom, 2, "0", STR_PAD_LEFT);
@@ -64,7 +64,7 @@ if ($calendars) {
         echo "DTSTART:" . $dt->format('Ymd\THis') . $eol;
         echo "TZOFFSETFROM:" . sprintf('%s%s%02d', $tzfrom >= 0 ? '+' : '', $tzfrom, ($tzfrom - $tzfrom) * 60) . $eol;
         echo "TZOFFSETTO:" . sprintf('%s%s%02d', $offset >= 0 ? '+' : '', $offset, ($offset - $offset) * 60) . $eol;
-    // add abbreviated timezone name if available
+        // add abbreviated timezone name if available
         if (!empty($trans['abbr'])) {
             echo "TZNAME:" . $trans['abbr'] . $eol;
         }

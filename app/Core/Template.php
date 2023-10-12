@@ -793,7 +793,7 @@ class Template
      * getFormattedDateString - returns a language specific formatted date string. wraps language class method
      *
      * @access public
-     * @param $date
+     * @param
      * @return string
      */
     public function getFormattedDateString($date): string

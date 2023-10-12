@@ -1,6 +1,6 @@
 <div id="#{{ $comment['id'] }}">
     <div class="commentImage">
-        <x-Users::profile-image :user="array('id'=> $comment['userId'], 'modified' => $comment['userModified'])" />
+        <x-users::profile-image :user="array('id'=> $comment['userId'], 'modified' => $comment['userModified'])" />
     </div>
     <div class="commentMain">
         <div class="commentContent">
