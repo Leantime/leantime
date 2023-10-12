@@ -69,7 +69,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function get(): void
         {
-            $ticket = app()->make(TicketModel::class, [
+            $ticket = app()->make(TicketModel::class, [ "values" =>
                 [
                     "userLastname" => $_SESSION['userdata']["name"],
                     "status" => 3,
