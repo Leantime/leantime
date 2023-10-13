@@ -8,25 +8,17 @@
 
 <div class="maincontent">
 
-    <div class="maincontentinner">
+    @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
 
-        <div class="tw-p-4 tw-flex tw-flex-wrap tw-gap-4">
+   <div class="maincontentinner">
 
-            @if (empty($plugins))
+       <div class="tw-p-4 tw-flex tw-flex-wrap tw-gap-4">
 
-                <div class="tw-w-full tw-text-center">
-                    <h2 class="tw-text-2xl">No plugins found</h2>
-                </div>
+           @include('plugins::partials.pluginlist', [])
 
-            @else
+       </div>
 
-                @each('plugins::marketplace.plugin', $plugins['data'], 'plugin')
-
-            @endif
-
-        </div>
-
-    </div>
+   </div>
 
 </div>
 

@@ -26,15 +26,8 @@ class Marketplace extends Controller
      */
     public function get(): void
     {
-        /**
-         * @var \Illuminate\Support\Collection
-         */
-        $plugins = $this->pluginService->getMarketplacePlugins(
-            $this->incomingRequest->query->get('page', 1),
-            $this->incomingRequest->query->get('search', ''),
-        );
 
-        $this->tpl->assign('plugins', $plugins->toArray());
+        $this->tpl->assign('plugins', []);
 
         $this->tpl->display('plugins.marketplace');
     }
