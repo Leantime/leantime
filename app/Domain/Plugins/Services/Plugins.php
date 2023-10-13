@@ -17,9 +17,46 @@ namespace Leantime\Domain\Plugins\Services {
      */
     class Plugins
     {
+        /**
+         * @var PluginRepository
+         */
         private PluginRepository $pluginRepository;
+
+        /**
+         * @var string
+         */
+
         private string $pluginDirectory =  ROOT . "/../app/Plugins/";
+        /**
+         * @var EnvironmentCore
+         */
         private EnvironmentCore $config;
+
+        /**
+         * Plugin types
+         * custom: Plugin is loaded as a folder, available under discover plugins
+         * system: Plugin is defined in config and loaded on start. Cannot delete, or disable plugin
+         * marketplace: Plugin comes from maarketplace.
+         *
+         * @var array
+         */
+        private array $pluginTypes = [
+            'custom' => "custom",
+            'system' => "system",
+            'marketplace' => "marketplace",
+        ];
+
+        /**
+         * Plugin formats
+         * phar: Phar plugins (only from marketplace)
+         * folder: Folder plugins
+         *
+         * @var array
+         */
+        private array $pluginFormat = [
+            'phar' => 'phar',
+            'folder' => 'phar',
+        ];
 
         /**
          * @param PluginRepository $pluginRepository
@@ -34,19 +71,11 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * @return array|false
          */
-        /**
-         * @return array|false
-         */
         public function getAllPlugins(): false|array
         {
             return $this->pluginRepository->getAllPlugins(false);
         }
 
-        /**
-         * @param $pluginFolder
-         * @return bool
-         * @throws BindingResolutionException
-         */
         /**
          * @param $pluginFolder
          * @return bool
@@ -70,53 +99,71 @@ namespace Leantime\Domain\Plugins\Services {
          * @return array|false|mixed
          * @throws BindingResolutionException
          */
-        /**
-         * @return array|false|mixed
-         * @throws BindingResolutionException
-         */
         public function getEnabledPlugins(): mixed
         {
+
+            unset( $_SESSION['enabledPlugins']);
             if (isset($_SESSION['enabledPlugins'])) {
                 return $_SESSION['enabledPlugins'];
             }
 
             try {
-                $_SESSION['enabledPlugins'] = $this->pluginRepository->getAllPlugins(true);
+                $installedPlugins = $this->pluginRepository->getAllPlugins(true);
             } catch (\Exception $e) {
-                $_SESSION['enabledPlugins'] = [];
+                $installedPlugins = [];
             }
+
+            //Build array with pluginId as $key
+            foreach($installedPlugins as &$plugin) {
+                if($plugin->format === $this->pluginFormat["phar"]) {
+                    $plugin->type = $this->pluginTypes["marketplace"];
+                } else {
+                    $plugin->type = $this->pluginTypes["custom"];
+                }
+                $installedPluginsById[$plugin->foldername] = $plugin;
+            }
+
 
             // Gets plugins from the config, which are automatically enabled
             if (
                 isset($this->config->plugins)
                 && $configplugins = explode(',', $this->config->plugins)
             ) {
-                $configplugins = array_map(function ($pluginStr) {
-                    $pluginModel = app()->make(PluginModel::class);
-                    $pluginModel->foldername = $pluginStr;
-                    $pluginModel->name = $pluginStr;
-                    $pluginModel->enabled = true;
 
-                    return $pluginModel;
-                }, $configplugins);
 
-                $_SESSION['enabledPlugins'] = array_merge($_SESSION['enabledPlugins'], $configplugins);
+                foreach($configplugins as $plugin) {
+                    if($plugin != '') {
+                        $pluginModel = app()->make(PluginModel::class);
+                        $pluginModel->foldername = $plugin;
+                        $pluginModel->name = $plugin;
+                        $pluginModel->format = file_exists(
+                            $this->pluginDirectory . "/" . $plugin . "/." . $plugin . ".phar"
+                        ) ? 'phar' : 'folder';
+                        $pluginModel->type = $this->pluginTypes['system'];
+                        $pluginModel->enabled = true;
+
+                        $installedPluginsById[$plugin] = $pluginModel;
+                    }
+                }
+
+                $_SESSION['enabledPlugins'] = $installedPluginsById;
             }
 
             return $_SESSION['enabledPlugins'];
+        }
+
+        public function loadPharPlugins(array $plugins) {
+
+
+
         }
 
         /**
          * @return array
          * @throws BindingResolutionException
          */
-        /**
-         * @return array
-         * @throws BindingResolutionException
-         */
         public function discoverNewPlugins(): array
         {
-
             $installedPlugins = $this->getAllPlugins();
             //Simplify list of installed plugin for a quicker array_Search
             $installedPluginNames = array();
@@ -160,11 +207,6 @@ namespace Leantime\Domain\Plugins\Services {
          * @return false|string
          * @throws BindingResolutionException
          */
-        /**
-         * @param $pluginFolder
-         * @return false|string
-         * @throws BindingResolutionException
-         */
         public function installPlugin($pluginFolder): false|string
         {
 
@@ -181,6 +223,9 @@ namespace Leantime\Domain\Plugins\Services {
                 $plugin->description = $pluginFile['description'];
                 $plugin->version = $pluginFile['version'];
                 $plugin->installdate = date("Y-m-d");
+                $plugin->foldername = $pluginFolder;
+                $plugin->license = ''; //TODO: Add license to install routine
+                $plugin->format = file_exists($this->pluginDirectory . "/" . $pluginFolder . "/.".$pluginFolder.".phar") ? 'phar' : 'folder';
                 $plugin->foldername = $pluginFolder;
                 $plugin->homepage = $pluginFile['homepage'];
                 $plugin->authors = json_encode($pluginFile['authors']);
@@ -208,10 +253,6 @@ namespace Leantime\Domain\Plugins\Services {
          * @param int $id
          * @return bool
          */
-        /**
-         * @param int $id
-         * @return bool
-         */
         public function enablePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
@@ -222,21 +263,12 @@ namespace Leantime\Domain\Plugins\Services {
          * @param int $id
          * @return bool
          */
-        /**
-         * @param int $id
-         * @return bool
-         */
         public function disablePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
             return $this->pluginRepository->disablePlugin($id);
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         * @throws BindingResolutionException
-         */
         /**
          * @param int $id
          * @return bool

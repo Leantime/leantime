@@ -198,9 +198,26 @@ class Events
 
             foreach ($enabledPlugins as $plugin) {
                 if ($plugin != null) {
-                    if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
-                        include_once $pluginPath . $plugin->foldername . "/register.php";
+
+                    if($plugin->format == "phar") {
+
+                        $path = "phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar/register.php";
+
+                         if (file_exists("phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar/register.php")) {
+                             //If it's the first time loading the plugin, load phar
+                             include_once "phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar";
+                             include_once "phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar/register.php";
+                         }
+
+                    }else{
+
+                        if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
+                            include_once $pluginPath . $plugin->foldername . "/register.php";
+                        }
+
                     }
+
+
                 }
             }
         });

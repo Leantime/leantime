@@ -17,6 +17,12 @@ namespace Leantime\Domain\Plugins\Models {
         public string $homepage;
         public string|array $authors;
 
+        public ?string $format;
+
+        public ?string $license;
+
+        public ?string $type;
+
         /**
          * @return string
          */

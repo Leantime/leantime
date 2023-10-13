@@ -188,13 +188,22 @@ class Template
                     ],
                 ]);
 
-            $pluginPaths = collect(glob(APP_ROOT . '/app/Plugins/*'))
-                ->mapWithKeys(function ($path) use ($domainPaths) {
-                    if ($domainPaths->has($basename = strtolower(basename($path)))) {
-                        throw new Exception("Plugin $basename conflicts with domain");
-                    }
-                    return [$basename => "$path/Templates"];
-                });
+            $plugins = collect(app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins());
+
+            $pluginPaths = $plugins->mapWithKeys( function ($plugin) use ($domainPaths) {
+
+                if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
+                    throw new Exception("Plugin $basename conflicts with domain");
+                }
+
+                if($plugin->format == "phar"){
+                    $path = 'phar://' . APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/'. $plugin->foldername . '.phar/Templates';
+                } else {
+                    $path = APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Templates';
+                }
+
+                return [$basename => $path];
+            });
 
             $_SESSION['template_paths'] = $domainPaths
                 ->merge($pluginPaths)
@@ -489,12 +498,6 @@ class Template
         echo $content;
     }
 
-    /**
-     * @param $layoutName
-     * @param $template
-     * @return bool|string
-     * @throws Exception
-     */
     /**
      * @param $layoutName
      * @param $template
