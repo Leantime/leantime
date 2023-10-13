@@ -181,6 +181,8 @@ class Events
             isset(app(Environment::class)->plugins)
             && $configplugins = explode(',', app(Environment::class)->plugins)
         ) {
+
+            //TODO: Do phar plugins get to be system plugins? Right now they dont
             foreach ($configplugins as $plugin) {
                 if (file_exists(APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {
                     include_once APP_ROOT . "/app/Plugins/" . $plugin . "/register.php";
