@@ -107,7 +107,7 @@ class Menu extends Composer
             'projectHierarchy' => $allAssignedprojectsHierarchy,
             'recentProjects' => $recentProjects,
             'currentProject' => $currentProject,
-            'menuStructure' => $this->menuRepo->getMenuStructure($menuType) ?? [],
+            'menuStructure' => $this->menuRepo->getMenuStructure($menuType ?? '') ?? [],
             'settingsLink' => [
                 'label' => __('menu.project_settings'),
                 'module' => 'projects',

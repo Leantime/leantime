@@ -40,9 +40,9 @@ namespace Leantime\Domain\Users\Repositories {
         public int $role;
 
         /**
-        * @access public
-        * @var    string
-        */
+         * @access public
+         * @var    string
+         */
         public string $jobTitle;
 
         /**
@@ -123,9 +123,9 @@ namespace Leantime\Domain\Users\Repositories {
          *
          * @access public
          * @param $hash
-         * @return array
+         * @return mixed
          */
-        public function getUserBySha($hash): array
+        public function getUserBySha($hash): array|false
         {
 
 
@@ -267,7 +267,7 @@ namespace Leantime\Domain\Users\Repositories {
                     WHERE !(source <=> 'api')";
 
             if ($activeOnly) {
-                    $query .= " AND status LIKE 'a' ";
+                $query .= " AND status LIKE 'a' ";
             }
 
             $query .= " ORDER BY lastname";

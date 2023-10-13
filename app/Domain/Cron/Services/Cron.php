@@ -59,15 +59,7 @@ namespace Leantime\Domain\Cron\Services {
 
             $this->auditRepo->storeEvent("cron", "Cron started");
 
-            if ($this->environment->debug) {
-                error_log("cron start");
-            }
-
             $this->queueSvc->processQueue();
-
-            if ($this->environment->debug) {
-                error_log("cron end");
-            }
 
             $this->auditRepo->pruneEvents();
 
