@@ -27,13 +27,10 @@
     ],
     "require": {
         "php": "^8.1",
-        "ext-ldap": "*",
         "ext-pdo": "*",
+        "ext-gd": "*",
         "guzzlehttp/guzzle": "7.4.5",
-        "aws/aws-sdk-php": "3.219.0",
         "phpmailer/phpmailer": "6.6.0",
-        "robthree/twofactorauth": "1.8.2",
-        "endroid/qr-code": "3.9.7",
         "league/html-to-markdown": "5.1",
         "symfony/console": "^5.4",
         "ramsey/uuid": "^4.3",
@@ -41,8 +38,6 @@
         "vlucas/phpdotenv": "^5.5",
         "symfony/yaml": "^5.4",
         "lasserafn/php-initial-avatar-generator": "^4.2",
-        "guzzlehttp/oauth-subscriber": "^0.6.0",
-        "kamermans/guzzle-oauth2-subscriber": "^1.0",
         "league/csv": "^9.8",
         "dragonmantank/cron-expression": "^3.3",
         "illuminate/container": "^9.0",
@@ -55,6 +50,14 @@
         "symfony/error-handler": "^6.3",
         "vedmant/laravel-feed-reader": "^1.6",
         "ext-fileinfo": "*"
+    },
+    "optional": {
+        "ext-ldap": "*",
+        "robthree/twofactorauth": "1.8.2",
+        "endroid/qr-code": "3.9.7",
+        "aws/aws-sdk-php": "3.219.0",
+        "guzzlehttp/oauth-subscriber": "^0.6.0",
+        "kamermans/guzzle-oauth2-subscriber": "^1.0"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.7",
@@ -70,7 +73,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Leantime\\": ["custom/", "app/"]
+            "Leantime\\": [
+                "custom/",
+                "app/"
+            ]
         },
         "files": [
             "app/helpers.php"
