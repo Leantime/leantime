@@ -1,5 +1,5 @@
 @props([
-    'plugin' => new \Leantime\Domain\Plugins\Models\Plugins()
+    'plugin'
 ])
 
 <div class="col-md-4">

@@ -7,11 +7,12 @@ namespace Leantime\Domain\Plugins\Models {
      */
     class Plugins
     {
-        public int $id;
+        public ?int $id;
         public string $name;
         public bool $enabled;
         public string $description;
         public string $version;
+        public string $imageUrl = '';
         public string $installdate;
         public string $foldername;
         public string $homepage;
@@ -31,8 +32,12 @@ namespace Leantime\Domain\Plugins\Models {
          */
         public function getPluginImageData(): string
         {
-            $image = APP_ROOT . '/app/Plugins/' . str_replace(".", '', $this->foldername) . '/screenshot.png';
 
+            if(isset($this->imageUrl) && !empty($this->imageUrl) && $this->imageUrl != "false"){
+                return $imageUrl;
+            }
+
+            $image = APP_ROOT . '/app/Plugins/' . str_replace(".", '', $this->foldername) . '/screenshot.png';
             if (file_exists($image)) {
                 // Read image path, convert to base64 encoding
                 $imageData = base64_encode(file_get_contents($image));

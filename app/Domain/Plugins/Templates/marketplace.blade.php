@@ -14,12 +14,16 @@
 
        <div class="maincontentinner">
 
-           <div class="tw-p-4 tw-flex tw-flex-wrap tw-gap-4">
+           <div class="tw-w-full" hx-get="{{ BASE_URL }}/hx/plugins/marketplaceplugins/getlist" hx-trigger="load"
+                hx-target="#pluginList"
+                hx-indicator=".htmx-indicator, .htmx-loaded-content"
+                hx-swap="outerHTML">
 
-               @include('plugins::partials.pluginlist', [])
+
+                            @include('plugins::partials.pluginlist', [])
+               </div>
 
            </div>
-
        </div>
 
     </div>

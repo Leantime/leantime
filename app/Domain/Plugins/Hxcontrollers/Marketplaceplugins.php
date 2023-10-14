@@ -46,7 +46,7 @@ class Marketplaceplugins extends HtmxController
             $this->incomingRequest->query->get('search', ''),
         );
 
-        $this->tpl->assign('plugins', $plugins->toArray());
+        $this->tpl->assign('plugins', $plugins);
 
     }
 

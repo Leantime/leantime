@@ -67,7 +67,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
          * @var string
          */
-        private string $marketplaceUrl = "https://marketplace.leantime.io/ltmp-api";
+        private string $marketplaceUrl = "https://marketplace.localhost/ltmp-api";
 
         /**
          * @param PluginRepository $pluginRepository
@@ -344,18 +344,42 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * @param int    $page
          * @param string $query
-         * @return Collection
+         * @return array
          */
-        public function getMarketplacePlugins(int $page, string $query = ''): Collection
+        public function getMarketplacePlugins(int $page, string $query = ''): array
         {
-            $baseUrl = 'http://marketplace.leantime.local:8888/ltmp-api';
-            #$baseUrl = 'https://marketplace.leantime.io/ltmp-api';
 
             $plugins = ! empty($query)
-                ? Http::get("$baseUrl/search/$query/$page")
-                : Http::get("$baseUrl/index/$page");
+                ? Http::withoutVerifying()->get("$this->marketplaceUrl/search/$query/$page")
+                : Http::withoutVerifying()->get("$this->marketplaceUrl/index/$page");
 
-            return $plugins->collect();
+            $pluginArray = $plugins->collect()->toArray();
+
+            $plugins = [];
+
+            if(isset($pluginArray["data"] )) {
+
+                //TODO: Check if current version is installed and show correct links on card.
+                foreach ($pluginArray["data"] as &$plugin) {
+                    $pluginModel = app()->make(PluginModel::class);
+                    $pluginModel->id = -1;
+                    $pluginModel->foldername = $plugin['identifier'];
+                    $pluginModel->name = $plugin['post_title'];
+                    $pluginModel->format = $this->pluginFormat['phar'];
+                    $pluginModel->type = $this->pluginTypes['marketplace'];
+                    $pluginModel->enabled = false;
+                    $pluginModel->description = $plugin['excerpt'];
+                    $pluginModel->version = ''; //TODO Send from marketplace
+                    $pluginModel->installdate = '';
+                    $pluginModel->imageUrl = $plugin['featured_image'];
+                    $pluginModel->license = '';
+                    $pluginModel->homepage = ''; //TODO Send from marketplace
+                    $pluginModel->authors = ''; //TODO Send from marketplace
+                    $plugins[] = $pluginModel;
+                }
+            }
+
+            return $plugins;
         }
 
         /**
@@ -364,10 +388,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getMarketplacePlugin(string $identifier): Collection
         {
-            $baseUrl = 'http://marketplace.leantime.local:8888/ltmp-api';
-            #$baseUrl = 'https://marketplace.leantime.io/ltmp-api';
-
-            return Http::get("$baseUrl/versions/$identifier")->collect();
+            return Http::get("$this->marketplaceUrl/versions/$identifier")->collect();
         }
     }
 }
