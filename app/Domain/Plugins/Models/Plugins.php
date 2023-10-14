@@ -34,7 +34,7 @@ namespace Leantime\Domain\Plugins\Models {
         {
 
             if(isset($this->imageUrl) && !empty($this->imageUrl) && $this->imageUrl != "false"){
-                return $imageUrl;
+                return $this->imageUrl;
             }
 
             $image = APP_ROOT . '/app/Plugins/' . str_replace(".", '', $this->foldername) . '/screenshot.png';
