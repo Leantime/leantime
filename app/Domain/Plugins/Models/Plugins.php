@@ -31,7 +31,7 @@ namespace Leantime\Domain\Plugins\Models {
          */
         public function getPluginImageData(): string
         {
-            $image = APP_ROOT . '/plugins/' . str_replace(".", '', $this->foldername) . '/assets/screenshot.png';
+            $image = APP_ROOT . '/app/Plugins/' . str_replace(".", '', $this->foldername) . '/screenshot.png';
 
             if (file_exists($image)) {
                 // Read image path, convert to base64 encoding

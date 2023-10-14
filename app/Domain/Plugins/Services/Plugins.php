@@ -72,9 +72,54 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * @return array|false
          */
-        public function getAllPlugins(): false|array
+        public function getAllPlugins(bool $enabledOnly = false): false|array
         {
-            return $this->pluginRepository->getAllPlugins(false);
+            try {
+                $installedPlugins = $this->pluginRepository->getAllPlugins($enabledOnly);
+            } catch (\Exception $e) {
+                $installedPlugins = [];
+            }
+
+            //Build array with pluginId as $key
+            foreach ($installedPlugins as &$plugin) {
+                if ($plugin->format === $this->pluginFormat["phar"]) {
+                    $plugin->type = $this->pluginTypes["marketplace"];
+                } else {
+                    $plugin->type = $this->pluginTypes["custom"];
+                }
+                $installedPluginsById[$plugin->foldername] = $plugin;
+            }
+
+            // Gets plugins from the config, which are automatically enabled
+            if (
+                isset($this->config->plugins)
+                && $configplugins = explode(',', $this->config->plugins)
+            ) {
+                foreach ($configplugins as $plugin) {
+                    if ($plugin != '') {
+
+                        $pluginModel = app()->make(PluginModel::class);
+                        $pluginModel->foldername = $plugin;
+                        $pluginModel->name = $plugin;
+                        $pluginModel->format = file_exists(
+                            $this->pluginDirectory . "/" . $plugin . "/." . $plugin . ".phar"
+                        ) ? 'phar' : 'folder';
+                        $pluginModel->type = $this->pluginTypes['system'];
+                        $pluginModel->enabled = true;
+
+                        if(isset($installedPluginsById[$plugin])) {
+                            $installedPluginsById[$plugin]->enabled = true;
+                            $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
+                            $installedPluginsById[$plugin]->format = $pluginModel->format;
+                        }else{
+                            $installedPluginsById[$plugin] = $pluginModel;
+                        }
+
+                    }
+                }
+            }
+
+            return $installedPluginsById;
         }
 
         /**
@@ -103,61 +148,16 @@ namespace Leantime\Domain\Plugins\Services {
         public function getEnabledPlugins(): mixed
         {
 
-            unset( $_SESSION['enabledPlugins']);
+            unset($_SESSION['enabledPlugins']);
             if (isset($_SESSION['enabledPlugins'])) {
                 return $_SESSION['enabledPlugins'];
             }
 
-            try {
-                $installedPlugins = $this->pluginRepository->getAllPlugins(true);
-            } catch (\Exception $e) {
-                $installedPlugins = [];
-            }
-
-            //Build array with pluginId as $key
-            foreach($installedPlugins as &$plugin) {
-                if($plugin->format === $this->pluginFormat["phar"]) {
-                    $plugin->type = $this->pluginTypes["marketplace"];
-                } else {
-                    $plugin->type = $this->pluginTypes["custom"];
-                }
-                $installedPluginsById[$plugin->foldername] = $plugin;
-            }
-
-
-            // Gets plugins from the config, which are automatically enabled
-            if (
-                isset($this->config->plugins)
-                && $configplugins = explode(',', $this->config->plugins)
-            ) {
-
-
-                foreach($configplugins as $plugin) {
-                    if($plugin != '') {
-                        $pluginModel = app()->make(PluginModel::class);
-                        $pluginModel->foldername = $plugin;
-                        $pluginModel->name = $plugin;
-                        $pluginModel->format = file_exists(
-                            $this->pluginDirectory . "/" . $plugin . "/." . $plugin . ".phar"
-                        ) ? 'phar' : 'folder';
-                        $pluginModel->type = $this->pluginTypes['system'];
-                        $pluginModel->enabled = true;
-
-                        $installedPluginsById[$plugin] = $pluginModel;
-                    }
-                }
-
-                $_SESSION['enabledPlugins'] = $installedPluginsById;
-            }
+            $_SESSION['enabledPlugins'] = $this->getAllPlugins(enabledOnly: true);
 
             return $_SESSION['enabledPlugins'];
         }
 
-        public function loadPharPlugins(array $plugins) {
-
-
-
-        }
 
         /**
          * @return array
@@ -226,7 +226,7 @@ namespace Leantime\Domain\Plugins\Services {
                 $plugin->installdate = date("Y-m-d");
                 $plugin->foldername = $pluginFolder;
                 $plugin->license = ''; //TODO: Add license to install routine
-                $plugin->format = file_exists($this->pluginDirectory . "/" . $pluginFolder . "/.".$pluginFolder.".phar") ? 'phar' : 'folder';
+                $plugin->format = file_exists($this->pluginDirectory . "/" . $pluginFolder . "/." . $pluginFolder . ".phar") ? 'phar' : 'folder';
                 $plugin->foldername = $pluginFolder;
                 $plugin->homepage = $pluginFile['homepage'];
                 $plugin->authors = json_encode($pluginFile['authors']);
@@ -318,7 +318,7 @@ namespace Leantime\Domain\Plugins\Services {
         }
 
         /**
-         * @param int $page
+         * @param int    $page
          * @param string $query
          * @return Collection
          */
