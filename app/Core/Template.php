@@ -351,6 +351,11 @@ class Template
             'formatTime',
             fn ($args) => "<?php echo \$tpl->getFormattedTimeString($args); ?>",
         );
+
+        $this->bladeCompiler->directive(
+            'displayNotification',
+            fn ($args) => "<?php echo \$tpl->displayNotification(); ?>",
+        );
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Environment as EnvironmentCore;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
     use Leantime\Domain\Plugins\Models\Plugins as PluginModel;
     use Ramsey\Uuid\Uuid;
@@ -18,6 +19,8 @@ namespace Leantime\Domain\Plugins\Services {
      */
     class Plugins
     {
+
+        use Eventhelpers;
         /**
          * @var PluginRepository
          */
@@ -74,6 +77,8 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getAllPlugins(bool $enabledOnly = false): false|array
         {
+            $installedPluginsById = [];
+
             try {
                 $installedPlugins = $this->pluginRepository->getAllPlugins($enabledOnly);
             } catch (\Exception $e) {
@@ -119,7 +124,13 @@ namespace Leantime\Domain\Plugins\Services {
                 }
             }
 
-            return $installedPluginsById;
+            /**
+             * Filters array of plugins from database and config before returning
+             * @var array $allPlugins
+             */
+            $allPlugins = static::dispatch_filter("beforeReturnAllPlugins", $avatar, array("allPlugins" => $installedPluginsById));
+
+            return $allPlugins;
         }
 
         /**
@@ -148,14 +159,20 @@ namespace Leantime\Domain\Plugins\Services {
         public function getEnabledPlugins(): mixed
         {
 
-            unset($_SESSION['enabledPlugins']);
             if (isset($_SESSION['enabledPlugins'])) {
-                return $_SESSION['enabledPlugins'];
+
+                $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $avatar, array("enabledPlugins" => $_SESSION['enabledPlugins']));
+                return $enabledPlugins;
             }
 
             $_SESSION['enabledPlugins'] = $this->getAllPlugins(enabledOnly: true);
 
-            return $_SESSION['enabledPlugins'];
+            /**
+             * Filters session array of enabled plugins before returning
+             * @var array $enabledPlugins
+             */
+            $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $avatar, array("enabledPlugins" => $_SESSION['enabledPlugins']));
+            return $enabledPlugins;
         }
 
 

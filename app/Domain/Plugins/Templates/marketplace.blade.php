@@ -2,24 +2,26 @@
 
 @section('content')
 
-<x-global::pageheader :icon="'fa fa-plug'">
-    <h1>Plugin Marketplace</h1>
-</x-global::pageheader>
+    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
+        <h1>App Marketplace</h1>
+    </x-global::pageheader>
 
-<div class="maincontent">
+    @displayNotification()
 
-    @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
+    <div class="maincontent">
 
-   <div class="maincontentinner">
+        @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
 
-       <div class="tw-p-4 tw-flex tw-flex-wrap tw-gap-4">
+       <div class="maincontentinner">
 
-           @include('plugins::partials.pluginlist', [])
+           <div class="tw-p-4 tw-flex tw-flex-wrap tw-gap-4">
+
+               @include('plugins::partials.pluginlist', [])
+
+           </div>
 
        </div>
 
-   </div>
-
-</div>
+    </div>
 
 @endsection
