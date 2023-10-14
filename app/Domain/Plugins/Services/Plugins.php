@@ -63,6 +63,13 @@ namespace Leantime\Domain\Plugins\Services {
         ];
 
         /**
+         * Marketplace URL
+         *
+         * @var string
+         */
+        private string $marketplaceUrl = "https://marketplace.leantime.io/ltmp-api";
+
+        /**
          * @param PluginRepository $pluginRepository
          * @param EnvironmentCore  $config
          */
@@ -128,7 +135,7 @@ namespace Leantime\Domain\Plugins\Services {
              * Filters array of plugins from database and config before returning
              * @var array $allPlugins
              */
-            $allPlugins = static::dispatch_filter("beforeReturnAllPlugins", $avatar, array("allPlugins" => $installedPluginsById));
+            $allPlugins = static::dispatch_filter("beforeReturnAllPlugins", $installedPluginsById, array("enabledOnly" => $enabledOnly));
 
             return $allPlugins;
         }
@@ -161,7 +168,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             if (isset($_SESSION['enabledPlugins'])) {
 
-                $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $avatar, array("enabledPlugins" => $_SESSION['enabledPlugins']));
+                $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
                 return $enabledPlugins;
             }
 
@@ -171,7 +178,7 @@ namespace Leantime\Domain\Plugins\Services {
              * Filters session array of enabled plugins before returning
              * @var array $enabledPlugins
              */
-            $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $avatar, array("enabledPlugins" => $_SESSION['enabledPlugins']));
+            $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
             return $enabledPlugins;
         }
 
