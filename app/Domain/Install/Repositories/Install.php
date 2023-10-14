@@ -96,6 +96,7 @@ namespace Leantime\Domain\Install\Repositories {
             20120,
             20121,
             20122,
+            20401,
         );
 
         /**
@@ -729,6 +730,8 @@ namespace Leantime\Domain\Install\Repositories {
                   `foldername` VARCHAR(45),
                   `homepage` VARCHAR(255) NULL,
                   `authors` VARCHAR(255) NULL,
+                  `license` TEXT NULL DEFAULT NULL,
+                  `format` VARCHAR(45) NULL DEFAULT NULL,
                   PRIMARY KEY (`id`)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1729,6 +1732,43 @@ namespace Leantime\Domain\Install\Repositories {
                 return true;
             }
         }
+
+
+        /**
+         * @return bool|array
+         */
+        public function update_sql_20401(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_plugins`
+                ADD COLUMN `license` TEXT NULL DEFAULT NULL,
+                ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+
+
+
+
     }
 
 }

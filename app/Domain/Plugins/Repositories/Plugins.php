@@ -34,7 +34,7 @@ namespace Leantime\Domain\Plugins\Repositories {
         {
 
             $query = "SELECT
-                    id,
+                  id,
                   name,
                   enabled,
                   description,
@@ -42,10 +42,9 @@ namespace Leantime\Domain\Plugins\Repositories {
                   installdate,
                   foldername,
                   homepage,
-                  authors
-
-
-
+                  authors,
+                  format,
+                  license
                 FROM zp_plugins";
 
             if ($enabledOnly) {
@@ -83,7 +82,9 @@ namespace Leantime\Domain\Plugins\Repositories {
                   installdate,
                   foldername,
                   homepage,
-                  authors
+                  authors,
+                  license,
+                  format
 
                 FROM zp_plugins";
 
@@ -97,10 +98,6 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $plugin;
         }
 
-        /**
-         * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
-         * @return false|string
-         */
         /**
          * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
          * @return false|string

@@ -200,7 +200,7 @@
                                 class="active"
                             @endif
                         >
-                            <a href="{{ BASE_URL }}/plugins/show/">{!! __('menu.plugins') !!}</a>
+                            <a href="{{ BASE_URL }}/plugins/marketplace/">{!! __('menu.apps') !!}</a>
                         </li>
 
                         <li

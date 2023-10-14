@@ -2,32 +2,30 @@
 
 @section('content')
 
-<x-global::pageheader :icon="'fa fa-plug'">
-    <h1>Plugin Marketplace</h1>
-</x-global::pageheader>
+    <x-global::pageheader :icon="'fa fa-puzzle-piece'">
+        <h1>App Marketplace</h1>
+    </x-global::pageheader>
 
-<div class="maincontent">
+    @displayNotification()
 
-    <div class="maincontentinner">
+    <div class="maincontent">
 
-        <div class="tw-p-4 tw-flex tw-flex-wrap tw-gap-4">
+        @include('plugins::partials.plugintabs',  ["currentUrl" => "marketplace"])
 
-            @if (empty($plugins))
+       <div class="maincontentinner">
 
-                <div class="tw-w-full tw-text-center">
-                    <h2 class="tw-text-2xl">No plugins found</h2>
-                </div>
+           <div class="tw-w-full" hx-get="{{ BASE_URL }}/hx/plugins/marketplaceplugins/getlist" hx-trigger="load"
+                hx-target="#pluginList"
+                hx-indicator=".htmx-indicator, .htmx-loaded-content"
+                hx-swap="outerHTML">
 
-            @else
 
-                @each('plugins::marketplace.plugin', $plugins['data'], 'plugin')
+                            @include('plugins::partials.pluginlist', [])
+               </div>
 
-            @endif
-
-        </div>
+           </div>
+       </div>
 
     </div>
-
-</div>
 
 @endsection

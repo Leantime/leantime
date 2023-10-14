@@ -97,13 +97,17 @@ class Frontcontroller
         $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
 
         if (! class_exists($classname)) {
+
             $classname = "$namespace\\Plugins\\$moduleName\\$controllerType\\$actionName";
             $enabledPlugins = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins();
 
             $pluginEnabled = false;
             foreach ($enabledPlugins as $key => $obj) {
-                if ($obj->foldername == $moduleName) {
+                if (strtolower($obj->foldername) == strtolower($moduleName)) {
                     $pluginEnabled = true;
+                    if($obj->format == "phar") {
+                        include APP_ROOT."/app/Plugins/".$obj->foldername."/".$obj->foldername.".phar";
+                    }
                     break;
                 }
             }

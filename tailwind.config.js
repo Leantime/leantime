@@ -8,7 +8,7 @@ module.exports = {
             'primary': 'var(--primary-color)',
         },
         fontSize: {
-            'sm': 'var(--font-size-sm)',
+            'sm': 'var(--font-size-s)',
             'base': 'var(--base-font-size)',
             'l': 'var(--font-size-l)',
             'xl': 'var(--font-size-xl)',
