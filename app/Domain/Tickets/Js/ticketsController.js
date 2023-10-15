@@ -118,7 +118,7 @@ leantime.ticketsController = (function () {
                                      '<p>' + leantime.i18n.__("text.expected_to_finish_by") + ' <strong>' + dateTime + '</strong><br /> ' +
                                      '' + Math.round(task.progress) + '%</p> ' +
                                      '<a href="#/tickets/editMilestone/' + task.id + '" ><span class="fa fa-map"></span> ' + leantime.i18n.__("links.edit_milestone") + '</a> | ' +
-                                     '<a href="' + leantime.appUrl + '/tickets/showKanban&milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
+                                     '<a href="' + leantime.appUrl + '/tickets/showKanban?milestone=' + task.id + '"><span class="fa-pushpin"></span> ' + leantime.i18n.__("links.view_todos") + '</a> ';
                                 } else {
                                     popUpHTML += '<h4><a href="#/tickets/showTicket/' + task.id + '">' + htmlEntities(task.name) + '</a></h4><br /> ' +
                                      '<a href="#/tickets/showTicket/' + task.id + '"><span class="fa fa-thumb-tack"></span> ' + leantime.i18n.__("links.edit_todo") + '</a> ';
@@ -1186,6 +1186,11 @@ leantime.ticketsController = (function () {
 
     var initTicketsTable = function (groupBy) {
 
+        function isNumeric(n)
+        {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+
         jQuery(document).ready(function () {
 
             var size = 100;
@@ -1254,25 +1259,51 @@ leantime.ticketsController = (function () {
                         .column(10)
                         .data()
                         .reduce(function (a, b) {
-                            let contentA = jQuery(a).val();
-                            let contentB = jQuery(b).val();
-                            return intVal(contentA) + intVal(contentB);
+
+                            if (isNumeric(a) === false) {
+                                a = jQuery(a).val();
+                            }
+
+                            if (isNumeric(b) === false) {
+                                b = jQuery(b).val();
+                            }
+
+                            if (isNaN(a)) {
+                                a = 0; }
+                            if (isNaN(b)) {
+                                b = 0; }
+
+
+                            return parseFloat(a) + parseFloat(b);
                         }, 0);
 
                     var hoursLeft = api
                         .column(11)
                         .data()
                         .reduce(function (a, b) {
-                            let contentA = jQuery(a).val();
-                            let contentB = jQuery(b).val();
-                            return intVal(contentA) + intVal(contentB);
+
+                            if (isNumeric(a) === false) {
+                                a = jQuery(a).val();
+                            }
+
+                            if (isNumeric(b) === false) {
+                                b = jQuery(b).val();
+                            }
+
+                            if (isNaN(a)) {
+                                a = 0; }
+                            if (isNaN(b)) {
+                                b = 0; }
+
+
+                            return parseFloat(a) + parseFloat(b);
                         }, 0);
 
                     var loggedHours = api
                         .column(12)
                         .data()
                         .reduce(function (a, b) {
-                            return intVal(a) + intVal(b);
+                            return parseFloat(a) + parseFloat(b);
                         }, 0);
 
 

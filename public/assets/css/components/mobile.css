@@ -35,11 +35,6 @@ min-width: 1200px
         width:100%;
     }
 
-    .leftmenu .projectselector {
-        width:297px;
-        min-width: 297px;
-    }
-
     .leftmenu .projectselector .projectSelectorTabs .tabs li{
         width:auto;
     }
@@ -753,10 +748,6 @@ min-width: 1200px
 
     }
 
-    .leftmenu .projectselector {
-        width:297px;
-        min-width: 297px;
-    }
 
     .leftmenu .projectselector .projectSelectorTabs .tabs li{
         width:auto;

@@ -180,7 +180,6 @@ $moduleId = $_GET['id'] ?? '';
     uppy.use(Uppy.XHRUpload, {
         endpoint: '<?=BASE_URL ?>/api/files?module=<?=$module?>&moduleId=<?=$moduleId?>',
         formData: true,
-        fieldName: 'file',
     });
 
     uppy.use(Uppy.StatusBar, {

@@ -223,7 +223,7 @@ namespace Leantime\Domain\Auth\Services {
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
                 $ldap = app()->make(Ldap::class);
 
-                if ($ldap->connect() && $ldap::bind($username, $password)) {
+                if ($ldap->connect() && $ldap->bind($username, $password)) {
                     //Update username to include domain
                     $usernameWDomain = $ldap->getEmail($username);
                     //Get user
