@@ -163,3 +163,5 @@ We can help you set up Leantime in your environment and customize it to your nee
 Leantime is licensed under AGPLv3.
 This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
 
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=856e290f-a6e9-4fbd-9b95-a835e39a0492" />
+
