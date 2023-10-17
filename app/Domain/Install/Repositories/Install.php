@@ -798,6 +798,7 @@ namespace Leantime\Domain\Install\Repositories {
                       `meta` VARCHAR(45) NULL,
                       `createdOn` DATETIME NULL,
                       `createdBy` INT NULL,
+                      `lastSync` VARCHAR(45) NULL,
                       PRIMARY KEY (`id`)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1728,6 +1729,33 @@ namespace Leantime\Domain\Install\Repositories {
             } else {
                 return true;
             }
+        }
+
+        public function update_sql_20402(): bool|array {
+          ;
+
+             $errors = array();
+
+            $sql = [
+                "  ALTER TABLE `zp_integration`
+                    ADD COLUMN `lastSync` DATETIME NULL DEFAULT NULL",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+
         }
     }
 

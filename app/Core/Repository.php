@@ -324,13 +324,13 @@ abstract class Repository
     /**
      * getFieldAttribute - gets the field attribute for a given property
      *
-     * @param string $class     - the class to get the attribute from
+     * @param object|string $class     - the class to get the attribute from
      * @param string $property  - the property to get the attribute from
      * @param bool   $includeId - whether or not to include the id attribute
      * @return array|false
      * @throws \ReflectionException
      */
-    protected function getFieldAttribute(string $class, string $property, bool $includeId = false): array|false
+    protected function getFieldAttribute(object|string $class, string $property, bool $includeId = false): array|false
     {
         //Don't create or update id attributes
         if ($includeId === false && $property == "id") {
