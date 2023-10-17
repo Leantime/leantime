@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
