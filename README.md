@@ -51,7 +51,7 @@ Leantime is an open source project management system for non-project manager.<br
 <br /><br />
 ### ️⚡️ Installation (Production) ###
 
-There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the offically supported Docker image.
+There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the officially supported Docker image.
 
 #### Local Production Installation ####
 
@@ -85,7 +85,7 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 <br /><br />
 ### 🤓 Installation (Development) ###
 
-There are two ways to install a development setup of LeanTime. The first (but most techical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
+There are two ways to install a development setup of LeanTime. The first (but most technical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
 
 #### Local Development Installation ####
 
