@@ -285,7 +285,7 @@ foreach ($__data as $var => $val) {
                         <label class="control-label"><?php echo $tpl->__('label.ticket_date'); ?></label>
                         <div class="">
 
-                            <input type="text" class="dates" style="width:90px;" id="submittedDate" disabled="disabled"
+                            <input type="text" class="dates" style="width:200px;" id="submittedDate" disabled="disabled"
                                    value="<?php echo $ticket->date; ?>" name="date"/>
                         </div>
                     </div>
