@@ -175,9 +175,9 @@ $user = $tpl->get('user');
                                             $dateFormats = $tpl->get('dateTimeValues')['dates'];
                                             $dateTimeNow = date_create();
 
-                                            foreach ($dateFormats as $key => $format) {
+                                            foreach ($dateFormats as $format) {
                                             ?>
-                                                <option value="<?php echo ($key); ?>" <?php if ($tpl->get('dateFormat') == $key) {
+                                                <option value="<?php echo ($format); ?>" <?php if ($tpl->get('dateFormat') == $format) {
                                                                                             echo "selected='selected'";
                                                                                         } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
                                             <?php } ?>
@@ -192,9 +192,9 @@ $user = $tpl->get('user');
                                             $timeFormats = $tpl->get('dateTimeValues')['times'];
                                             $dateTimeNow = date_create();
 
-                                            foreach ($timeFormats as $key => $format) {
+                                            foreach ($timeFormats as $format) {
                                             ?>
-                                                <option value="<?php echo ($key); ?>" <?php if ($tpl->get('timeFormat') == $key) {
+                                                <option value="<?php echo ($format); ?>" <?php if ($tpl->get('timeFormat') == $format) {
                                                                                             echo "selected='selected'";
                                                                                         } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
                                             <?php } ?>
