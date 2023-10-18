@@ -6,8 +6,9 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Core\Eventhelpers;
+    use Leantime\Domain\Plugins\Models\MarketplacePlugin;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
-    use Leantime\Domain\Plugins\Models\Plugins as PluginModel;
+    use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Ramsey\Uuid\Uuid;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Http\Client\Response;
@@ -47,7 +48,6 @@ namespace Leantime\Domain\Plugins\Services {
         private array $pluginTypes = [
             'custom' => "custom",
             'system' => "system",
-            'marketplace' => "marketplace",
         ];
 
         /**
@@ -67,7 +67,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
          * @var string
          */
-        private string $marketplaceUrl = "https://marketplace.localhost/ltmp-api";
+        private string $marketplaceUrl = "http://marketplace.leantime.local:8888/ltmp-api";
 
         /**
          * @param PluginRepository $pluginRepository
@@ -110,7 +110,7 @@ namespace Leantime\Domain\Plugins\Services {
                 foreach ($configplugins as $plugin) {
                     if ($plugin != '') {
 
-                        $pluginModel = app()->make(PluginModel::class);
+                        $pluginModel = app()->make(InstalledPlugin::class);
                         $pluginModel->foldername = $plugin;
                         $pluginModel->name = $plugin;
                         $pluginModel->format = file_exists(
@@ -209,7 +209,7 @@ namespace Leantime\Domain\Plugins\Services {
                         $json = file_get_contents($pluginJsonFile);
 
                         $pluginFile = json_decode($json, true);
-                        $plugin = app()->make(PluginModel::class);
+                        $plugin = app()->make(InstalledPlugin::class);
                         $plugin->name = $pluginFile['name'];
                         $plugin->enabled = 0;
                         $plugin->description = $pluginFile['description'];
@@ -242,7 +242,7 @@ namespace Leantime\Domain\Plugins\Services {
                 $json = file_get_contents($pluginJsonFile);
 
                 $pluginFile = json_decode($json, true);
-                $plugin = app()->make(PluginModel::class);
+                $plugin = app()->make(InstalledPlugin::class);
                 $plugin->name = $pluginFile['name'];
                 $plugin->enabled = 0;
                 $plugin->description = $pluginFile['description'];
@@ -344,14 +344,15 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * @param int    $page
          * @param string $query
-         * @return array
+         * @return MarketplacePlugin[]
          */
         public function getMarketplacePlugins(int $page, string $query = ''): array
         {
-
-            $plugins = ! empty($query)
-                ? Http::withoutVerifying()->get("$this->marketplaceUrl/search/$query/$page")
-                : Http::withoutVerifying()->get("$this->marketplaceUrl/index/$page");
+            $plugins = Http::withoutVerifying()->get(
+                "$this->marketplaceUrl"
+                . (! empty($query) ? "/search/$query" : '/index')
+                . "/$page"
+            );
 
             $pluginArray = $plugins->collect()->toArray();
 
@@ -359,21 +360,12 @@ namespace Leantime\Domain\Plugins\Services {
 
             if(isset($pluginArray["data"] )) {
 
-                //TODO: Check if current version is installed and show correct links on card.
-                foreach ($pluginArray["data"] as &$plugin) {
-                    $pluginModel = app()->make(PluginModel::class);
-                    $pluginModel->id = -1;
-                    $pluginModel->foldername = $plugin['identifier'];
+                foreach ($pluginArray["data"] as $plugin) {
+                    $pluginModel = app()->make(MarketplacePlugin::class);
+                    $pluginModel->identifier = $plugin['identifier'];
                     $pluginModel->name = $plugin['post_title'];
-                    $pluginModel->format = $this->pluginFormat['phar'];
-                    $pluginModel->type = $this->pluginTypes['marketplace'];
-                    $pluginModel->enabled = false;
-                    $pluginModel->description = $plugin['excerpt'];
-                    $pluginModel->version = ''; //TODO Send from marketplace
-                    $pluginModel->installdate = '';
+                    $pluginModel->excerpt = $plugin['excerpt'];
                     $pluginModel->imageUrl = $plugin['featured_image'];
-                    $pluginModel->license = '';
-                    $pluginModel->homepage = ''; //TODO Send from marketplace
                     $pluginModel->authors = ''; //TODO Send from marketplace
                     $plugins[] = $pluginModel;
                 }
@@ -384,11 +376,33 @@ namespace Leantime\Domain\Plugins\Services {
 
         /**
          * @param string $identifier
-         * @return Collection
+         * @return MarketplacePlugin[]
          */
-        public function getMarketplacePlugin(string $identifier): Collection
+        public function getMarketplacePlugin(string $identifier): array
         {
-            return Http::get("$this->marketplaceUrl/versions/$identifier")->collect();
+            return Http::get("$this->marketplaceUrl/versions/$identifier")
+                ->collect()
+                ->mapWithKeys(function ($data, $version) use ($identifier) {
+                    static $count;
+                    $count ??= 0;
+
+                    $pluginModel = app()->make(MarketplacePlugin::class);
+                    $pluginModel->identifier = $identifier;
+                    $pluginModel->name = $data['name'];
+                    $pluginModel->excerpt = '';
+                    $pluginModel->description = $data['description'];
+                    $pluginModel->marketplaceUrl = $data['marketplace_url'];
+                    $pluginModel->thumbnailUrl = $data['thumbnail_url'] ?: '';
+                    $pluginModel->authors = $data['author'];
+                    $pluginModel->version = $version;
+                    $pluginModel->price = $data['price'];
+                    $pluginModel->license = $data['license'];
+                    $pluginModel->rating = $data['rating'];
+                    $pluginModel->marketplaceId = $data['product_id'];
+
+                    return [$count++ => $pluginModel];
+                })
+                ->all();
         }
     }
 }

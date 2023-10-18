@@ -21,7 +21,7 @@
                     </h5>
                     <div class="row sortableTicketList">
                         @foreach($tpl->get("installedPlugins") as $installedPlugins)
-                               @include('plugins::marketplace.plugin', ["plugin" => $installedPlugins])
+                               @include('plugins::partials.plugin', ["plugin" => $installedPlugins])
                         @endforeach
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
                                 {{ __("text.no_plugins_installed") }}

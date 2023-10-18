@@ -1,8 +1,9 @@
 <?php
 
+namespace Leantime\Plugins\MotivationalQuotes\CsvImport;
+
 use Leantime\Core\Events;
-use Leantime\Domain\Connector\Models\Provider;
-use Leantime\Plugins\CsvImport\Services\CsvImport as CsvImportService;
+use Leantime\Plugins\MotivationalQuotes\CsvImport\Services\CsvImport as CsvImportService;
 
 /**
  * MotivationalQuotes
@@ -10,7 +11,6 @@ use Leantime\Plugins\CsvImport\Services\CsvImport as CsvImportService;
  * Register Events here
  *
  */
-
 //Create function for the event
 class AddCSVImportProvider
 {

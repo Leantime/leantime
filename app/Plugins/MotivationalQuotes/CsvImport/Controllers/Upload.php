@@ -1,17 +1,17 @@
 <?php
 
-namespace Leantime\Plugins\CsvImport\Controllers;
+namespace Leantime\Plugins\MotivationalQuotes\CsvImport\Controllers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use League\Csv\Exception;
+use League\Csv\Reader;
 use League\Csv\Statement;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
-use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
 use Leantime\Domain\Auth\Services\Auth;
-use League\Csv\Reader;
-use Leantime\Plugins\CsvImport\Services\CsvImport as CsvImportService;
+use Leantime\Domain\Connector\Models\Integration as IntegrationModel;
+use Leantime\Domain\Connector\Services\Integrations as IntegrationService;
+use Leantime\Plugins\MotivationalQuotes\CsvImport\Services\CsvImport as CsvImportService;
 
 /**
  * upload controller for csvImport plugin

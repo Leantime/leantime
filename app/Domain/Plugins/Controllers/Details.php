@@ -31,13 +31,13 @@ class Details extends Controller
         }
 
         /**
-         * @var \Illuminate\Support\Collection
+         * @var \Leantime\Domain\Plugins\Models\MarketplacePlugin[] $versions
          */
         $versions = $this->pluginService->getMarketplacePlugin(
             $this->incomingRequest->query->get('id'),
         );
 
-        $this->tpl->assign('versions', $versions->toArray());
+        $this->tpl->assign('versions', $versions);
 
         $this->tpl->display('plugins.plugindetails', 'blank');
     }

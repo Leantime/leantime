@@ -76,6 +76,7 @@ abstract class HtmxController
 
         $fragment = $this->$action();
 
+
         $this->tpl->displayFragment($this::$view, $fragment ?? '');
     }
 }

@@ -191,36 +191,37 @@ class Events
         }
 
         Events::add_event_listener('leantime.core.bootloader.boot.after_install', function () {
-            $enabledPlugins = [];
-            $pluginPath = APP_ROOT . "/app/Plugins/";
-            if ($_SESSION['isInstalled'] === true) {
-                $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
-                $enabledPlugins = $pluginService->getEnabledPlugins();
+            if (! $_SESSION['isInstalled']) {
+                return;
             }
 
+            $pluginPath = APP_ROOT . "/app/Plugins/";
+            $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
+            $enabledPlugins = $pluginService->getEnabledPlugins();
+
             foreach ($enabledPlugins as $plugin) {
-                if ($plugin != null) {
+                if ($plugin == null) {
+                    continue;
+                }
 
-                    if($plugin->format == "phar") {
+                if ($plugin->format == "phar") {
+                    $pharPath = "phar://{$pluginPath}{$plugin->foldername}/{$plugin->foldername}.phar";
 
-                        $path = "phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar/register.php";
-
-                         if (file_exists("phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar/register.php")) {
-                             //If it's the first time loading the plugin, load phar
-                             include_once "phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar";
-                             include_once "phar://".$pluginPath . $plugin->foldername . "/". $plugin->foldername .".phar/register.php";
-                         }
-
-                    }else{
-
-                        if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
-                            include_once $pluginPath . $plugin->foldername . "/register.php";
-                        }
-
+                    if (! file_exists("$pharPath/register.php")) {
+                        continue;
                     }
 
+                    include_once $pharPath;
+                    include_once "$pharPath/register.php";
 
+                    continue;
                 }
+
+                if (! file_exists($registerPath = "{$pluginPath}{$plugin->foldername}/register.php")) {
+                    continue;
+                }
+
+                include_once $registerPath;
             }
         });
     }

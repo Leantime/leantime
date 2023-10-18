@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Plugins\Repositories {
 
     use Leantime\Core\Db as DbCore;
+    use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use PDO;
 
     /**
@@ -56,7 +57,7 @@ namespace Leantime\Domain\Plugins\Repositories {
             $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Plugins\Models\Plugins");
+            $stmn->setFetchMode(PDO::FETCH_CLASS, InstalledPlugin::class);
             $allPlugins = $stmn->fetchAll();
 
             foreach ($allPlugins as &$row) { // Use reference so we can modify in place
@@ -68,9 +69,9 @@ namespace Leantime\Domain\Plugins\Repositories {
 
         /**
          * @param int $id
-         * @return \Leantime\Domain\Plugins\Models\Plugins|false
+         * @return \Leantime\Domain\Plugins\Models\InstalledPlugin|false
          */
-        public function getPlugin(int $id): \Leantime\Domain\Plugins\Models\Plugins|false
+        public function getPlugin(int $id): InstalledPlugin|false
         {
 
             $query = "SELECT
@@ -92,17 +93,17 @@ namespace Leantime\Domain\Plugins\Repositories {
             $stmn = $this->db->database->prepare($query);
 
             $stmn->execute();
-            $stmn->setFetchMode(PDO::FETCH_CLASS, "Leantime\Domain\Plugins\Models\Plugins");
+            $stmn->setFetchMode(PDO::FETCH_CLASS, InstalledPlugin::class);
             $plugin = $stmn->fetch();
 
             return $plugin;
         }
 
         /**
-         * @param \Leantime\Domain\Plugins\Models\Plugins $plugin
+         * @param \Leantime\Domain\Plugins\Models\InstalledPlugin $plugin
          * @return false|string
          */
-        public function addPlugin(\Leantime\Domain\Plugins\Models\Plugins $plugin): false|string
+        public function addPlugin(\Leantime\Domain\Plugins\Models\InstalledPlugin $plugin): false|string
         {
 
             $sql = "INSERT INTO zp_plugins (

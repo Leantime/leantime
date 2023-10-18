@@ -1,6 +1,6 @@
 <?php
 
-namespace Leantime\Plugins\CsvImport\Services;
+namespace Leantime\Plugins\MotivationalQuotes\CsvImport\Services;
 
 use Leantime\Core\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
