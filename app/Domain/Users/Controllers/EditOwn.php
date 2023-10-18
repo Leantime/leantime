@@ -291,13 +291,13 @@ namespace Leantime\Domain\Users\Controllers {
         {
             return [
                 'dates' => [
-                    'default' => 'm/d/Y',
+                    'default' => $this->language->__("language.dateformat"),
                     'ATOM' => 'Y-m-d',
                     'RFC822' => 'D, d M y',
                     'RFC850' => 'l, d-M-y'
                 ],
                 'times' => [
-                    'default' => 'h:i A',
+                    'default' => $this->language->__("language.timeformat"),
                     'ATOM' => 'H:i:sP',
                     'RFC822' => 'H:i:s O',
                     'RFC850' => 'H:i:s T',
