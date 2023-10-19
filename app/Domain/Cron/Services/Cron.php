@@ -49,6 +49,7 @@ namespace Leantime\Domain\Cron\Services {
             $nowDate = time();
             $timeSince = abs($nowDate - $lastCronEvent);
 
+            //Run cron max every 60 seconds
             if ($timeSince < 60) {
                 if ($this->environment->debug) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
@@ -57,11 +58,16 @@ namespace Leantime\Domain\Cron\Services {
                 return false;
             }
 
-            $this->auditRepo->storeEvent("cron", "Cron started");
 
+
+            //Process Queue
             $this->queueSvc->processQueue();
 
+            //Process Audit Table
             $this->auditRepo->pruneEvents();
+
+            //Process other events
+            self::dispatchEvents("cronJob", $lastEvent);
 
             return true;
         }

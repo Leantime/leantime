@@ -36,6 +36,8 @@ namespace Leantime\Domain\Auth\Controllers {
             $userId = $_SESSION['userdata']['id'];
             $sessionId = $this->authService->getSessionId();
 
+            //TODO: Once we have a session table, check the session is valid in there as well as
+            // added security layer. If not we can log the user out.
             $return = $this->authService->updateUserSessionDB($userId, $sessionId);
 
             if ($return) {
