@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Cron\Services {
 
     use Leantime\Core\Environment;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
     use PDO;
@@ -13,6 +14,8 @@ namespace Leantime\Domain\Cron\Services {
      */
     class Cron
     {
+        use Eventhelpers;
+
         private Audit $auditRepo;
         private Queue $queueSvc;
         private Environment $Environment;
@@ -58,7 +61,8 @@ namespace Leantime\Domain\Cron\Services {
                 return false;
             }
 
-
+            //Process other events
+            self::dispatch_event("addJobToBeginning", $lastEvent);
 
             //Process Queue
             $this->queueSvc->processQueue();
@@ -67,7 +71,7 @@ namespace Leantime\Domain\Cron\Services {
             $this->auditRepo->pruneEvents();
 
             //Process other events
-            self::dispatchEvents("cronJob", $lastEvent);
+            self::dispatch_event("addJobToEnd", $lastEvent);
 
             return true;
         }

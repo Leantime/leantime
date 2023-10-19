@@ -197,12 +197,12 @@ $goalStats = $tpl->get("goalStats");
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header"><?=$tpl->__("subtitles.edit"); ?></li>
                                                                 <li><a
-                                                                        href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
+                                                                        href="#/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
                                                                         class="<?=$canvasName ?>CanvasModal"
                                                                         data="item_<?php echo $row["id"];?>"
                                                                     > <?=$tpl->__("links.edit_canvas_item"); ?></a></li>
                                                                 <li><a
-                                                                        href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
+                                                                        href="#/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
                                                                         class="delete <?=$canvasName ?>CanvasModal"
                                                                         data="item_<?php echo $row["id"];?>"
                                                                     > <?=$tpl->__("links.delete_canvas_item"); ?></a></li>
@@ -213,7 +213,7 @@ $goalStats = $tpl->get("goalStats");
                                                     <h4>
                                                         <strong>Goal:</strong>
                                                         <a
-                                                            href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
+                                                            href="#/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
                                                             class="<?=$canvasName ?>CanvasModal"
                                                             data="item_<?=$row['id'] ?>">
                                                             <?php $tpl->e($row["title"]);?>
