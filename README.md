@@ -87,13 +87,13 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 <br /><br />
 ### 🤓 Installation (Development) ###
 
-There are two ways to install a development setup of LeanTime. The first (but most technical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
+There are two ways to install a development setup of LeanTime. The first (but most technical) is to install all pieces of the system locally. The second (and preferred method) is to use a docker containerized development environment.
 
 #### Local Development Installation ####
 
 * Clone repository to your local server
 * Create MySQL database
-* Run wbepack builder via `make build-dev`
+* Run webpack builder via `make build-dev`
 * Point your local domain to the `public/` directory
 * Rename `config/.env.sample` to `config/.env`
 * Fill in your database credentials (username, password, host, dbname) in `config/.env`
@@ -107,7 +107,7 @@ For development, we use a dockerized development environment. You will need to h
 * Notes for Windows Environments:
     - Run all commands within the git bash terminal in order to utilize unix specific commands
     - If installing php from a zip file, make sure to configure php.ini
-    It does not exist initially, so copy C:\php\php.ini-development to C:\php\php.ini. You will also need to edit php.ini in a text editor and enable all needed extentions for the build process. You can find these by running the make commands and looking for any extensions that error out as missing. You can enable them by seaching php.ini for the extension that will look like: `;extension=gd` and removing the semicolon. 
+    It does not exist initially, so copy C:\php\php.ini-development to C:\php\php.ini. You will also need to edit php.ini in a text editor and enable all needed extensions for the build process. You can find these by running the make commands and looking for any extensions that error out as missing. You can enable them by searching php.ini for the extension that will look like: `;extension=gd` and removing the semicolon. 
 
 In order to build the development docker image, in the root of this repository, run a primer with
 
