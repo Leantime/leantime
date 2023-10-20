@@ -329,20 +329,21 @@ namespace Leantime\Domain\Auth\Services {
 
             //Set Sessions
             $_SESSION['userdata'] = self::dispatch_filter('user_session_vars', [
-                        'role' => $this->role,
-                        'id' => $this->userId,
-                        'name' => $this->name,
-                        'profileId' => $this->profileId,
-                        'mail' => $this->mail,
-                        'clientId' => $this->clientId,
-                        'settings' => $this->settings,
-                        'twoFAEnabled' => $this->twoFAEnabled,
-                        'twoFAVerified' => false,
-                        'twoFASecret' => $this->twoFASecret,
-                        'isLdap' => $isLdap,
-                        'createdOn' => $user['createdOn'] ?? '',
-                        'modified' => $user['modified'] ?? date("Y-m-d H:i:s"),
+                'role' => $this->role,
+                'id' => $this->userId,
+                'name' => $this->name,
+                'profileId' => $this->profileId,
+                'mail' => $this->mail,
+                'clientId' => $this->clientId,
+                'settings' => $this->settings,
+                'twoFAEnabled' => $this->twoFAEnabled,
+                'twoFAVerified' => false,
+                'twoFASecret' => $this->twoFASecret,
+                'isLdap' => $isLdap,
+                'createdOn' => $user['createdOn'] ?? '',
+                'modified' => $user['modified'] ?? date("Y-m-d H:i:s"),
             ]);
+            $_SESSION['usersettings.' .  $this->userId . '.timezone'] = $this->settingsRepo->getSetting("usersettings." . $this->userId . ".timezone") ?: date_default_timezone_get();
 
             $this->updateUserSessionDB($this->userId, $this->session);
         }
@@ -399,15 +400,15 @@ namespace Leantime\Domain\Auth\Services {
 
             if (isset($_SESSION)) {
                 $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
-                            'userdata',
-                            'template',
-                            'subdomainData',
-                            'currentProject',
-                            'currentSprint',
-                            'projectsettings',
-                            'currentSubscriptions',
-                            'lastTicketView',
-                            'lastFilterdTicketTableView',
+                    'userdata',
+                    'template',
+                    'subdomainData',
+                    'currentProject',
+                    'currentSprint',
+                    'projectsettings',
+                    'currentSubscriptions',
+                    'lastTicketView',
+                    'lastFilterdTicketTableView',
                 ]);
 
                 foreach ($sessionsToDestroy as $key) {
@@ -623,5 +624,4 @@ namespace Leantime\Domain\Auth\Services {
             $_SESSION['userdata']['twoFAVerified'] = true;
         }
     }
-
 }

@@ -70,7 +70,10 @@
     },
     "autoload": {
         "psr-4": {
-            "Leantime\\": ["custom/", "app/"]
+            "Leantime\\": [
+                "custom/",
+                "app/"
+            ]
         },
         "files": [
             "app/helpers.php"

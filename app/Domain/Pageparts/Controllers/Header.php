@@ -73,6 +73,22 @@ namespace Leantime\Domain\Pageparts\Controllers {
                 } else {
                     $theme = $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"];
                 }
+
+                /**
+                 * This is placed here because the session isn't started yet when
+                 * AppSettings::loadSettings() is called.  Plus, this is mostly cosmetic/UI
+                 * change and should not apply to things such as date/times stored in the DB.
+                 * 
+                 * This also doesn't effect JS date-time any, only PHP calls for date-time, as
+                 * they use incompatible formats.
+                 */
+                if (isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id'])) {
+                    $userId = $_SESSION['userdata']['id'];
+
+                    if (isset($_SESSION['usersettings.' . $userId . '.timezone'])) {
+                        date_default_timezone_set($_SESSION['usersettings.' . $userId . '.timezone']);
+                    }
+                }
             }
 
             try {
