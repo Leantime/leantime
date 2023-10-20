@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Date;
 use Leantime\Domain\Reports\Repositories\Reports;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Core\Eventhelpers;
-use Leantime\Domain\Setting\Services\Setting as ServicesSetting;
 
 /**
  * Language class - Internationilsation with ini-Files
@@ -86,11 +85,6 @@ class Language
     public string $theme;
 
     /**
-     * @var Setting
-     */
-    private Setting $settingsRepo;
-
-    /**
      * __construct - Check standard language otherwise get language from browser
      *
      * @param Environment $config
@@ -105,7 +99,6 @@ class Language
         $this->config = $config;
         $this->themeCore = app()->make(Theme::class);
         $this->theme = $this->themeCore->getActive();
-        $this->settingsRepo = $settingsRepo;
 
         //Get list of available languages
         if (isset($_SESSION['cache.langlist'])) {
@@ -145,7 +138,7 @@ class Language
         } else {
             // This is not a login session
             if (
-                !isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"])
+                ! isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"])
                 || empty($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"])
             ) {
                 // User has a saved language
@@ -195,7 +188,7 @@ class Language
         if (isset($this->config->keepTheme) && $this->config->keepTheme) {
             if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
                 setcookie('language', $lang, [
-                    'expires' => time() + 60 * 60 * 24 * 30,
+                'expires' => time() + 60 * 60 * 24 * 30,
                     'path' => $this->config->appDir . '/',
                     'samesite' => 'Strict',
                 ]);
@@ -210,7 +203,7 @@ class Language
         if (isset($this->config->keepTheme) && $this->config->keepTheme) {
             if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
                 setcookie('language', $lang, [
-                    'expires' => time() + 60 * 60 * 24 * 30,
+                'expires' => time() + 60 * 60 * 24 * 30,
                     'path' => $this->config->appDir . '/',
                     'samesite' => 'Strict',
                 ]);
@@ -318,13 +311,13 @@ class Language
             return $language;
         }
 
-        if (!file_exists($filepath)) {
+        if (! file_exists($filepath)) {
             return $language;
         }
 
         $ini_overrides = parse_ini_file($filepath, false, INI_SCANNER_RAW);
 
-        if (!is_array($ini_overrides)) {
+        if (! is_array($ini_overrides)) {
             throw new Exception("Could not parse ini file $filepath");
         }
 
@@ -412,13 +405,9 @@ class Language
     public function getFormattedDateString(string|DateTime $date): string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-            $formats = $this->getCustomDateTimeFormat();
-            $dateFormat = $formats['date'];
-            $timeFormat = $formats['time'];
-
             //If datetime object
             if ($date instanceof DateTime) {
-                return $date->format($dateFormat);
+                return $date->format($this->__("language.dateformat"));
             }
 
             //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
@@ -429,7 +418,7 @@ class Language
             }
 
             if (is_object($timestamp)) {
-                return date($dateFormat, $timestamp->getTimestamp());
+                return date($this->__("language.dateformat"), $timestamp->getTimestamp());
             }
         }
 
@@ -451,13 +440,10 @@ class Language
             && $date != "1969-12-31 00:00:00"
             && $date != "0000-00-00 00:00:00"
         ) {
-            $formats = $this->getCustomDateTimeFormat();
-            $timeFormat = $formats['time'];
-
             $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
 
             if (is_object($timestamp)) {
-                return date($timeFormat, $timestamp->getTimestamp());
+                return date($this->__("language.timeformat"), $timestamp->getTimestamp());
             }
         }
 
@@ -579,21 +565,5 @@ class Language
         }
 
         return false;
-    }
-
-    private function getCustomDateTimeFormat(): array
-    {
-        $settings = app()->make(ServicesSetting::class);
-
-        $results = ['date' => $this->__('language.dateformat'), 'time' => $this->__('language.timeformat')];
-
-        $userId = isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id']) ? $_SESSION['userdata']['id'] : 0;
-
-        if ($userId) {
-            $results['date'] = $settings->getSetting("usersettings." . $userId . ".date_format");
-            $results['time'] = $settings->getSetting("usersettings." . $userId . ".time_format");
-        }
-
-        return $results;
     }
 }
