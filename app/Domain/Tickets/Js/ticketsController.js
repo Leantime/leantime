@@ -819,7 +819,7 @@ leantime.ticketsController = (function () {
 
     var initDueDateTimePickers = function () {
 
-        jQuery(".quickDueDates").datepicker(
+        jQuery(".quickDueDates, .duedates").datepicker(
             {
                 dateFormat:  leantime.i18n.__("language.jsdateformat"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),

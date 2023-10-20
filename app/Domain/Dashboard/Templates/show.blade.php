@@ -83,8 +83,15 @@
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
                                 <div class="row">
                                     <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
-                                        <a href="#/tickets/showTicket/{!! $row['dependingTicketId'] > 0 ? $row['dependingTicketId'] : $row['id'] !!}">
-                                            {!! $row['dependingTicketId'] > 0 ? $row['parentHeadline'] : sprintf("<strong>%s</strong>", $row['headline']) !!}
+                                        @if($row['dependingTicketId'] > 0)
+                                        <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
+                                            {{ $row['parentHeadline'] }}
+                                        </a>
+                                            //
+                                        @endif
+
+                                        <a href="#/tickets/showTicket/{{ $row['id'] }}">
+                                           {!! sprintf("<strong>%s</strong>", $row['headline']) !!}
                                         </a>
 
                                         @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])

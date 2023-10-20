@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Cron\Services {
 
     use Leantime\Core\Environment;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
     use PDO;
@@ -13,6 +14,8 @@ namespace Leantime\Domain\Cron\Services {
      */
     class Cron
     {
+        use Eventhelpers;
+
         private Audit $auditRepo;
         private Queue $queueSvc;
         private Environment $Environment;
@@ -49,6 +52,7 @@ namespace Leantime\Domain\Cron\Services {
             $nowDate = time();
             $timeSince = abs($nowDate - $lastCronEvent);
 
+            //Run cron max every 60 seconds
             if ($timeSince < 60) {
                 if ($this->environment->debug) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
@@ -57,11 +61,17 @@ namespace Leantime\Domain\Cron\Services {
                 return false;
             }
 
-            $this->auditRepo->storeEvent("cron", "Cron started");
+            //Process other events
+            self::dispatch_event("addJobToBeginning", $lastEvent);
 
+            //Process Queue
             $this->queueSvc->processQueue();
 
+            //Process Audit Table
             $this->auditRepo->pruneEvents();
+
+            //Process other events
+            self::dispatch_event("addJobToEnd", $lastEvent);
 
             return true;
         }
