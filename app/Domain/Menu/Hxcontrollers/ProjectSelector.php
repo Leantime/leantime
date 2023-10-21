@@ -51,7 +51,16 @@ class ProjectSelector extends HtmxController
         $allAssignedprojects =
         $allAvailableProjects =
         $recentProjects =
+        $favoriteProjects =
+        $clients =
+        $allAvailableProjectsHierarchy =
+        $allAssignedprojectsHierarchy  =
         $returnVars = [];
+
+        $currentClient = '';
+        $currentProject = '';
+        $projectType = '';
+        $menuType = 'default';
 
         $projectSelectFilter = array(
             "groupBy" => $_POST['groupBy'] ?? "none",

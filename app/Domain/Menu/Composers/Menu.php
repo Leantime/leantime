@@ -65,7 +65,16 @@ class Menu extends Composer
         $allAssignedprojects =
         $allAvailableProjects =
         $recentProjects =
+        $favoriteProjects =
+        $clients =
+        $allAvailableProjectsHierarchy =
+        $allAssignedprojectsHierarchy  =
         $returnVars = [];
+
+        $currentClient = '';
+        $currentProject = '';
+        $projectType = '';
+        $menuType = 'default';
 
         $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"] ?? array(
             "groupBy" => "structure",

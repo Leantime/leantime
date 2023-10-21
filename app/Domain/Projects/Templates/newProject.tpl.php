@@ -61,7 +61,7 @@ $project = $tpl->get('project');
                                 </div>
                             </div>
                             <div class="padding-top">
-                                <?php if ($project['id'] != '') : ?>
+                                <?php if (isset($project['id']) && $project['id'] != '') : ?>
                                     <div class="pull-right padding-top">
                                         <a href="<?=BASE_URL?>/projects/delProject/<?php echo $project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a>
                                     </div>
