@@ -258,6 +258,7 @@ jQuery(document).ready(function(){
                       <col class="con0" >
                       <col class="con1">
                       <col class="con0">
+
                 </colgroup>
                 <thead>
                 <?php
@@ -338,7 +339,7 @@ jQuery(document).ready(function(){
                         ?>
 
                         <tr class="gradeA timesheetRow">
-                            <td width="14%"><?php $tpl->e($timeRow["name"]); ?></td>
+                            <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
                             <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
                             <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
                             <?php $currentDate = $dateFrom->format('Y-m-d'); ?>
