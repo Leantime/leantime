@@ -69,10 +69,12 @@ class Menu extends Composer
 
         $projectSelectFilter = $_SESSION['userdata']["projectSelectFilter"] ?? array(
             "groupBy" => "structure",
-            "clients" => '',
+            "client" => null,
         );
 
         if (isset($_SESSION['userdata'])) {
+
+            //Getting all projects (ignoring client filter, clients are filtered on the frontend)
             $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);
 
             $allAssignedprojects = $projectVars['assignedProjects'];

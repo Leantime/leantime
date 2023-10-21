@@ -484,7 +484,7 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects(
                 userId: $userId,
                 projectStatus: $projectStatus,
-                clientId: $clientId,
+                clientId: (int)$clientId,
                 accessStatus: "assigned"
             );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
@@ -530,7 +530,7 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects(
                 userId: $userId,
                 projectStatus: $projectStatus,
-                clientId: $clientId,
+                clientId: (int)$clientId,
                 accessStatus: "all"
             );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
