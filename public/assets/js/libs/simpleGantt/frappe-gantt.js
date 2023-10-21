@@ -343,6 +343,8 @@ var Gantt = (function () {
         return elem;
     }
 
+    /* Animations don't work well in firefox. Removing.
+
     function animateSVG(svgElement, attr, from, to) {
         const animatedSvgElement = getAnimationElement(svgElement, attr, from, to);
 
@@ -401,6 +403,7 @@ var Gantt = (function () {
             'ease-in-out': '.42 0 .58 1',
         }[name];
     }
+    */
 
     $.on = (element, event, selector, callback) => {
         if (!callback) {
@@ -554,7 +557,7 @@ var Gantt = (function () {
                 append_to: this.bar_group,
             });
 
-            animateSVG(this.$bar, 'width', 0, this.width);
+            //animateSVG(this.$bar, 'width', 0, this.width);
 
             if (this.invalid) {
                 this.$bar.classList.add('bar-invalid');
@@ -574,7 +577,7 @@ var Gantt = (function () {
                 append_to: this.bar_group,
             });
 
-            animateSVG(this.$bar_progress, 'width', 0, this.progress_width);
+            //animateSVG(this.$bar_progress, 'width', 0, this.progress_width);
         }
 
         draw_label() {
