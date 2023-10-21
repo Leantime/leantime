@@ -9,6 +9,8 @@ var Gantt = (function () {
     const SECOND = 'second';
     const MILLISECOND = 'millisecond';
 
+
+
     var date_utils = {
         parse(date, date_separator = '-', time_separator = /[.:]/) {
             if (date instanceof Date) {
