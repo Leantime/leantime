@@ -9,106 +9,7 @@ var Gantt = (function () {
     const SECOND = 'second';
     const MILLISECOND = 'millisecond';
 
-    const month_names = {
-        en: [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December',
-        ],
-        es: [
-            'Enero',
-            'Febrero',
-            'Marzo',
-            'Abril',
-            'Mayo',
-            'Junio',
-            'Julio',
-            'Agosto',
-            'Septiembre',
-            'Octubre',
-            'Noviembre',
-            'Diciembre',
-        ],
-        ru: [
-            'Январь',
-            'Февраль',
-            'Март',
-            'Апрель',
-            'Май',
-            'Июнь',
-            'Июль',
-            'Август',
-            'Сентябрь',
-            'Октябрь',
-            'Ноябрь',
-            'Декабрь',
-        ],
-        ptBr: [
-            'Janeiro',
-            'Fevereiro',
-            'Março',
-            'Abril',
-            'Maio',
-            'Junho',
-            'Julho',
-            'Agosto',
-            'Setembro',
-            'Outubro',
-            'Novembro',
-            'Dezembro',
-        ],
-        fr: [
-            'Janvier',
-            'Février',
-            'Mars',
-            'Avril',
-            'Mai',
-            'Juin',
-            'Juillet',
-            'Août',
-            'Septembre',
-            'Octobre',
-            'Novembre',
-            'Décembre',
-        ],
-        tr: [
-            'Ocak',
-            'Şubat',
-            'Mart',
-            'Nisan',
-            'Mayıs',
-            'Haziran',
-            'Temmuz',
-            'Ağustos',
-            'Eylül',
-            'Ekim',
-            'Kasım',
-            'Aralık',
-        ],
-        zh: [
-            '一月',
-            '二月',
-            '三月',
-            '四月',
-            '五月',
-            '六月',
-            '七月',
-            '八月',
-            '九月',
-            '十月',
-            '十一月',
-            '十二月',
-        ],
-    };
+
 
     var date_utils = {
         parse(date, date_separator = '-', time_separator = /[.:]/) {
@@ -164,7 +65,14 @@ var Gantt = (function () {
         },
 
         format(date, format_string = 'YYYY-MM-DD HH:mm:ss.SSS', lang = 'en') {
-            const values = this.get_date_values(date).map((d) => padStart(d, 2, 0));
+            const dateTimeFormat = new Intl.DateTimeFormat(lang, {
+                month: 'long'
+            });
+            const month_name = dateTimeFormat.format(date);
+            const month_name_capitalized =
+                month_name.charAt(0).toUpperCase() + month_name.slice(1);
+
+            const values = this.get_date_values(date).map(d => padStart(d, 2, 0));
             const format_map = {
                 YYYY: values[0],
                 MM: padStart(+values[1] + 1, 2, 0),
@@ -174,8 +82,8 @@ var Gantt = (function () {
                 ss: values[5],
                 SSS: values[6],
                 D: values[2],
-                MMMM: month_names[lang][+values[1]],
-                MMM: month_names[lang][+values[1]],
+                MMMM: month_name_capitalized,
+                MMM: month_name_capitalized,
             };
 
             let str = format_string;
@@ -343,6 +251,8 @@ var Gantt = (function () {
         return elem;
     }
 
+    /* Animations don't work well in firefox. Removing.
+
     function animateSVG(svgElement, attr, from, to) {
         const animatedSvgElement = getAnimationElement(svgElement, attr, from, to);
 
@@ -401,6 +311,7 @@ var Gantt = (function () {
             'ease-in-out': '.42 0 .58 1',
         }[name];
     }
+    */
 
     $.on = (element, event, selector, callback) => {
         if (!callback) {
@@ -554,7 +465,7 @@ var Gantt = (function () {
                 append_to: this.bar_group,
             });
 
-            animateSVG(this.$bar, 'width', 0, this.width);
+            //animateSVG(this.$bar, 'width', 0, this.width);
 
             if (this.invalid) {
                 this.$bar.classList.add('bar-invalid');
@@ -574,7 +485,7 @@ var Gantt = (function () {
                 append_to: this.bar_group,
             });
 
-            animateSVG(this.$bar_progress, 'width', 0, this.progress_width);
+            //animateSVG(this.$bar_progress, 'width', 0, this.progress_width);
         }
 
         draw_label() {
@@ -1662,7 +1573,7 @@ var Gantt = (function () {
                 // thick ticks for quarters
                 if (
                     this.view_is(VIEW_MODE.MONTH) &&
-                    (date.getMonth() + 1) % 3 === 0
+                    date.getMonth() % 3 === 0
                 ) {
                     tick_class += ' thick';
                 }

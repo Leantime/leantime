@@ -314,6 +314,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
                     } else {
+                        $id = "";
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
 

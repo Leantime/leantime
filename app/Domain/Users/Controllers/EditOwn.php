@@ -82,7 +82,7 @@ namespace Leantime\Domain\Users\Controllers {
                 $values['messagesfrequency'] = $this->settingsService->getSetting("companysettings.messageFrequency");
             }
 
-            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+            $permitted_chars = '123456789abcdefghijklmnopqrstuvwxyz';
             $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
             $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
@@ -108,7 +108,7 @@ namespace Leantime\Domain\Users\Controllers {
             //Save Profile Info
             $tab = '';
 
-            if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+            if (isset($_SESSION['formTokenName']) && isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                 $row = $this->userRepo->getUser($this->userId);
 
                 //profile Info

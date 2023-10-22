@@ -40,6 +40,7 @@ leantime.helperController = (function () {
 
         var tour = new Shepherd.Tour(
             {
+                useModalOverlay: true,
                 defaults: {
                     classes: 'shepherd-theme-arrows',
                     showCancelLink: true,
@@ -53,7 +54,7 @@ leantime.helperController = (function () {
             {
                 title: leantime.i18n.__("tour.left_navigation"),
                 text: leantime.i18n.__("tour.left_nav_text"),
-                attachTo: '.leftmenu ul right',
+                attachTo: { element: '.leftmenu ul', on: 'left' },
                 advanceOn: '.headmenu click',
                 buttons: [
                 {
@@ -74,7 +75,7 @@ leantime.helperController = (function () {
             {
                 title: leantime.i18n.__("tour.project_selection"),
                 text: leantime.i18n.__("tour.project_selection_text"),
-                attachTo: '.project-selector right',
+                attachTo: { element: '.project-selector', on: 'bottom' },
                 buttons: [
                 {
                     text: leantime.i18n.__("tour.back"),
@@ -94,8 +95,7 @@ leantime.helperController = (function () {
             {
                 title: leantime.i18n.__("tour.top_navigation"),
                 text: leantime.i18n.__("tour.top_navigation_text"),
-                attachTo: '.headmenu bottom',
-                advanceOn: '#sprintBurndownChart click',
+                attachTo: { element: '.headmenu', on: 'bottom' },
                 buttons: [
                     {
                         text: leantime.i18n.__("tour.back"),
@@ -111,12 +111,11 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Project Status',
+            'Your projects',
             {
                 title: leantime.i18n.__("tour.project_progress"),
-                text: leantime.i18n.__("tour.project_progress_text"),
-                attachTo: '#projectProgressContainer left',
-                advanceOn: '.headmenu click',
+                text: "These are the projects currently assigned to you. You can click on the headlines to get to those project quickly." ,
+                attachTo: { element: '#projectProgressContainer', on: 'left' },
                 buttons: [
                     {
                         text: leantime.i18n.__("tour.back"),
@@ -130,15 +129,13 @@ leantime.helperController = (function () {
                 ]
             }
         );
-
-
 
         tour.addStep(
             'Your Todos',
             {
                 title: leantime.i18n.__("tour.your_todos"),
                 text: leantime.i18n.__("tour.your_todos_text"),
-                attachTo: '#yourToDoContainer top',
+                attachTo: { element: '#yourToDoContainer', on: 'top' },
                 advanceOn: '.headmenu click',
                 buttons: [
                     {
@@ -165,10 +162,10 @@ leantime.helperController = (function () {
                     action:tour.cancel
                 },
                 {
-                    text: leantime.i18n.__("tour.goto_projects"),
+                    text: "Go to the welcome content",
                     events: {
                         'click': function () {
-                            window.location.href = leantime.appUrl + "/projects/newProject/";
+                            leantime.helperController.showHelperModal('dashboard', 300, 500);
                         }
                     }
                 }
@@ -214,11 +211,11 @@ leantime.helperController = (function () {
         );
 
         tour.addStep(
-            'Left Nav',
+            'Drag & Drop',
             {
                 title: leantime.i18n.__("tour.drag_drop"),
                 text: leantime.i18n.__("tour.drag_drop_text"),
-                attachTo: '.ticketBox h4 right',
+                attachTo: { element: '.ticketBox h4 ', on: 'right' },
                 advanceOn: '.ticketBox click',
                 buttons: [
                     {
@@ -238,8 +235,8 @@ leantime.helperController = (function () {
             'Change Views',
             {
                 title: leantime.i18n.__("tour.change_views"),
-                text: leantime.i18n.__("tour.change_views_text"),
-                attachTo: '.btn-group .fa-columns left',
+                text: "You can visualize your To-Dos in different ways. With these tabs you can switch between Kanban, Table, Timeline and Calendar views.",
+                attachTo: { element: '.maincontentinner.tabs ul li', on: 'bottom' },
                 advanceOn: '.ticketBox click',
                 buttons: [
                     {
@@ -251,6 +248,27 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
                 }
+                ]
+            }
+        );
+
+        tour.addStep(
+            'Filters And Groups',
+            {
+                title: "Filters & Grouping",
+                text: "You can use filters and grouping to organize your To-Dos in a way that makes sense to you and your team",
+                attachTo: '.filterWrapper bottom',
+                advanceOn: '.ticketBox click',
+                buttons: [
+                    {
+                        text: leantime.i18n.__("tour.back"),
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: leantime.i18n.__("tour.next"),
+                        action: tour.next
+                    }
                 ]
             }
         );

@@ -5,6 +5,7 @@ namespace Leantime\Domain\Menu\Composers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
+use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
@@ -23,6 +24,7 @@ class HeadMenu extends Composer
     private TimesheetService $timesheets;
     private UserService $userService;
     private AuthService $authService;
+    private Helper $helperService;
 
     /**
      * @param NotificationService $notificationService
@@ -35,12 +37,14 @@ class HeadMenu extends Composer
         NotificationService $notificationService,
         TimesheetService $timesheets,
         UserService $userService,
-        AuthService $authService
+        AuthService $authService,
+        Helper $helperService
     ): void {
         $this->notificationService = $notificationService;
         $this->timesheets = $timesheets;
         $this->userService = $userService;
         $this->authService = $authService;
+        $this->helperService = $helperService;
     }
 
     /**
@@ -90,33 +94,7 @@ class HeadMenu extends Composer
             FrontcontrollerCore::redirect(BASE_URL . '/auth/login');
         }
 
-        $modal = 'dashboard';
-        $requestParams = explode(BASE_URL, CURRENT_URL);
-        $urlParts = explode('/', $requestParams[1] ?? '');
-
-        if (count($urlParts) > 2) {
-            $urlKey =  $urlParts[1] . '/' . $urlParts[2];
-
-            $availableModals = [
-                "tickets/showAll" => "backlog",
-                "dashboard/show" => "dashboard",
-                "dashboard/home" => "dashboard",
-                "leancanvas/showCanvas" => "fullLeanCanvas",
-                "leancanvas/simpleCanvas" => "simpleLeanCanvas",
-                "ideas/showBoards" => "ideaBoard",
-                "ideas/advancedBoards" => "advancedBoards",
-                "tickets/roadmap" => "roadmap",
-                "retroscanvas/showBoards" => "retroscanvas",
-                "tickets/showKanban" => "kanban",
-                "timesheets/showMy" => "mytimesheets",
-                "projects/newProject" => "newProject",
-                "projects/showProject" => "projectSuccess",
-                "projects/showAll" => "showProjects",
-                "clients/showAll" => "showClients",
-            ];
-
-            $modal = $availableModals[$urlKey] ?? 'notfound';
-        }
+        $modal = $this->helperService->getHelperModalByRoute(FrontcontrollerCore::getCurrentRoute());
 
         return [
             'newNotificationCount' => $nCount,

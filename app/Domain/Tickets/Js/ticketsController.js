@@ -94,7 +94,7 @@ leantime.ticketsController = (function () {
                             padding:20,
                             view_mode: 'Month',
                             date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
+                            language: leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
                             additional_rows: 5,
                             custom_popup_html: function (task) {
 

@@ -3,7 +3,8 @@
 ])
 
 @if ($includeTitle)
-    <strong>Project Checklist</strong><br/><br/>
+    <h5 class="subtitle">Project Checklist <i class="fa fa-info-circle" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed."></i> </h5><br/>
+
 @endif
 
 <form name="progressForm" id="progressForm">
@@ -23,7 +24,7 @@
 
             @foreach ($progressSteps as $step)
                 <div class="step {{ $step['stepType'] }}" style="left: {{ $step['positionLeft'] }}%;">
-                    <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
+                    <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle" data-tippy-content="{{ __($step['description']) }}">
                         <span class="innerCircle"></span>
                         <span class="title">
                             @if ($step['status'] == 'done')
@@ -34,6 +35,7 @@
                         </span>
                     </a>
                     <ul class="dropdown-menu">
+
                         @foreach ($step['tasks'] as $key => $task)
                             <li @if ($task['status'] == 'done') class="done" @endif>
                                 <input
@@ -46,9 +48,23 @@
                                     @if ($task['status'] == 'done') checked @endif
                                     @if (! in_array($step['stepType'], ['complete', 'current']))
                                         disabled
+
                                     @endif
                                 />
-                                <label for="progress_{{ $key }}">{{ __($task['title'] ?? '') }}</label>
+                                <label for="progress_{{ $key }}"
+                                       @if (! in_array($step['stepType'], ['complete', 'current']))
+                                           data-tippy-content="Finish the previous steps first"
+
+                                       @endif
+
+                                >{{ __($task['title'] ?? '') }}</label>
+                                <span class="clearall"></span>
+                                <span class="taskDescription">
+                                {{ __($task['description'] ?? '') }}<br />
+                                <a href="{{ $task['link'] ?? '#' }}"><i class="fa fa-external-link"></i> Take me there</a>
+                                </span>
+
+
                             </li>
                         @endforeach
                     </ul>
