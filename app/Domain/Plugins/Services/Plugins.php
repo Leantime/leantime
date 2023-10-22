@@ -11,6 +11,8 @@ namespace Leantime\Domain\Plugins\Services {
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Ramsey\Uuid\Uuid;
     use Illuminate\Support\Facades\Http;
+    use Illuminate\Http\Client\RequestException;
+    use Leantime\Domain\Settings\Repositories\Settings as SettingsRepository;
     use Illuminate\Http\Client\Response;
     use Illuminate\Support\Collection;
     use Illuminate\Http\Client\Factory;
@@ -403,6 +405,64 @@ namespace Leantime\Domain\Plugins\Services {
                     return [$count++ => $pluginModel];
                 })
                 ->all();
+        }
+
+        /**
+         * @param MarketplacePlugin $plugin
+         * @return void
+         * @throws Illuminate\Http\Client\RequestException|Exception
+         */
+        public function installMarketplacePlugin(MarketplacePlugin $plugin): void
+        {
+            $response = Http::withHeaders([
+                    'X-License-Key' => $plugin->license,
+                    'X-Instance-Id' => app()
+                        ->make(SettingsRepository::class)
+                        ->getSetting('companysettings.telemetry.anonymousId')
+                ])
+                ->get("{$this->marketplaceUrl}/download/{$plugin->marketplaceId}");
+
+            $response->throwIf(in_array(true, [
+                ! $response->ok(),
+                $response->header('Content-Type') !== 'application/zip'
+            ]), fn () => new RequestException($response));
+
+            $filename = $response->header('Content-Disposition');
+            $filename = substr($filename, strpos($filename, 'filename=') + 1);
+
+            if (! str_starts_with($filename, $plugin->identifier)) {
+                throw new \Exception('Wrong file downloaded');
+            }
+
+            if (! file_put_contents(
+                $temporaryFile = sys_get_temp_dir() . '/' . $filename,
+                $response->body()
+            )) {
+                throw new \Exception('Could not download plugin');
+            }
+
+            if (! is_dir($pluginDir = APP_ROOT . '/app/Plugins/' . $plugin->identifier)) {
+                mkdir($pluginDir);
+            }
+
+            $zip = new \ZipArchive();
+            $zip->open($temporaryFile);
+            $zip->extractTo($pluginDir);
+            $zip->close();
+
+            unlink($temporaryFile);
+
+            $pluginModel = app()->make(InstalledPlugin::class);
+            $pluginModel->name = $plugin->name;
+            $pluginModel->enabled = 0;
+            $pluginModel->description = $plugin->excerpt;
+            $pluginModel->version = $plugin->version;
+            $pluginModel->installdate = date("Y-m-d");
+            $pluginModel->foldername = $plugin->identifier;
+            $pluginModel->license = $plugin->license;
+            $pluginModel->format = 'phar';
+
+            $this->pluginRepository->addPlugin($pluginModel);
         }
     }
 }

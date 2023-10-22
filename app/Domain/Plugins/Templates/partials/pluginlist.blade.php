@@ -21,6 +21,3 @@
 <div class="htmx-indicator tw-ml-m tw-mr-m tw-pt-l">
     <x-global::loadingText type="plugincard" count="5" includeHeadline="false"/>
 </div>
-
-
-

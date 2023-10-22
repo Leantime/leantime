@@ -498,7 +498,12 @@ class Bootloader
      */
     private function setErrorHandler(int $debug): void
     {
-        if ($debug == 0) {
+        $incomingRequest = app(IncomingRequest::class);
+
+        if ($debug == 0
+            || $incomingRequest instanceof HtmxRequest
+            || $incomingRequest instanceof ApiRequest
+        ) {
             return;
         }
 

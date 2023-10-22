@@ -5695,3 +5695,2476 @@ Stack trace:
 [18-Oct-2023 14:34:11 America/Los_Angeles] cron end
 [18-Oct-2023 14:39:06 America/Los_Angeles] cron start
 [18-Oct-2023 14:39:06 America/Los_Angeles] cron end
+[18-Oct-2023 14:44:06 America/Los_Angeles] cron start
+[18-Oct-2023 14:44:06 America/Los_Angeles] cron end
+[18-Oct-2023 14:49:07 America/Los_Angeles] cron start
+[18-Oct-2023 14:49:07 America/Los_Angeles] cron end
+[18-Oct-2023 14:54:07 America/Los_Angeles] cron start
+[18-Oct-2023 14:54:07 America/Los_Angeles] cron end
+[18-Oct-2023 14:59:08 America/Los_Angeles] cron start
+[18-Oct-2023 14:59:08 America/Los_Angeles] cron end
+[18-Oct-2023 15:04:08 America/Los_Angeles] cron start
+[18-Oct-2023 15:04:08 America/Los_Angeles] cron end
+[18-Oct-2023 15:09:09 America/Los_Angeles] cron start
+[18-Oct-2023 15:09:09 America/Los_Angeles] cron end
+[18-Oct-2023 15:14:10 America/Los_Angeles] cron start
+[18-Oct-2023 15:14:10 America/Los_Angeles] cron end
+[18-Oct-2023 15:19:11 America/Los_Angeles] cron start
+[18-Oct-2023 15:19:11 America/Los_Angeles] cron end
+[18-Oct-2023 15:24:12 America/Los_Angeles] cron start
+[18-Oct-2023 15:24:12 America/Los_Angeles] cron end
+[18-Oct-2023 15:29:13 America/Los_Angeles] cron start
+[18-Oct-2023 15:29:13 America/Los_Angeles] cron end
+[18-Oct-2023 15:34:13 America/Los_Angeles] cron start
+[18-Oct-2023 15:34:13 America/Los_Angeles] cron end
+[18-Oct-2023 15:39:14 America/Los_Angeles] cron start
+[18-Oct-2023 15:39:14 America/Los_Angeles] cron end
+[18-Oct-2023 15:44:15 America/Los_Angeles] cron start
+[18-Oct-2023 15:44:15 America/Los_Angeles] cron end
+[18-Oct-2023 15:49:16 America/Los_Angeles] cron start
+[18-Oct-2023 15:49:16 America/Los_Angeles] cron end
+[18-Oct-2023 15:54:17 America/Los_Angeles] cron start
+[18-Oct-2023 15:54:17 America/Los_Angeles] cron end
+[18-Oct-2023 15:59:18 America/Los_Angeles] cron start
+[18-Oct-2023 15:59:18 America/Los_Angeles] cron end
+[18-Oct-2023 16:04:18 America/Los_Angeles] cron start
+[18-Oct-2023 16:04:18 America/Los_Angeles] cron end
+[18-Oct-2023 16:09:19 America/Los_Angeles] cron start
+[18-Oct-2023 16:09:19 America/Los_Angeles] cron end
+[18-Oct-2023 16:14:20 America/Los_Angeles] cron start
+[18-Oct-2023 16:14:20 America/Los_Angeles] cron end
+[18-Oct-2023 16:19:21 America/Los_Angeles] cron start
+[18-Oct-2023 16:19:21 America/Los_Angeles] cron end
+[18-Oct-2023 16:24:21 America/Los_Angeles] cron start
+[18-Oct-2023 16:24:21 America/Los_Angeles] cron end
+[18-Oct-2023 16:29:21 America/Los_Angeles] cron start
+[18-Oct-2023 16:29:21 America/Los_Angeles] cron end
+[18-Oct-2023 16:34:22 America/Los_Angeles] cron start
+[18-Oct-2023 16:34:22 America/Los_Angeles] cron end
+[18-Oct-2023 16:39:23 America/Los_Angeles] cron start
+[18-Oct-2023 16:39:23 America/Los_Angeles] cron end
+[18-Oct-2023 16:44:24 America/Los_Angeles] cron start
+[18-Oct-2023 16:44:24 America/Los_Angeles] cron end
+[18-Oct-2023 16:49:24 America/Los_Angeles] cron start
+[18-Oct-2023 16:49:24 America/Los_Angeles] cron end
+[18-Oct-2023 16:54:25 America/Los_Angeles] cron start
+[18-Oct-2023 16:54:25 America/Los_Angeles] cron end
+[18-Oct-2023 16:59:26 America/Los_Angeles] cron start
+[18-Oct-2023 16:59:26 America/Los_Angeles] cron end
+[18-Oct-2023 17:04:27 America/Los_Angeles] cron start
+[18-Oct-2023 17:04:27 America/Los_Angeles] cron end
+[18-Oct-2023 17:09:27 America/Los_Angeles] cron start
+[18-Oct-2023 17:09:27 America/Los_Angeles] cron end
+[18-Oct-2023 17:14:28 America/Los_Angeles] cron start
+[18-Oct-2023 17:14:28 America/Los_Angeles] cron end
+[18-Oct-2023 17:19:29 America/Los_Angeles] cron start
+[18-Oct-2023 17:19:29 America/Los_Angeles] cron end
+[18-Oct-2023 17:24:29 America/Los_Angeles] cron start
+[18-Oct-2023 17:24:29 America/Los_Angeles] cron end
+[18-Oct-2023 17:29:30 America/Los_Angeles] cron start
+[18-Oct-2023 17:29:30 America/Los_Angeles] cron end
+[18-Oct-2023 17:34:30 America/Los_Angeles] cron start
+[18-Oct-2023 17:34:30 America/Los_Angeles] cron end
+[18-Oct-2023 17:39:31 America/Los_Angeles] cron start
+[18-Oct-2023 17:39:31 America/Los_Angeles] cron end
+[18-Oct-2023 17:44:31 America/Los_Angeles] cron start
+[18-Oct-2023 17:44:31 America/Los_Angeles] cron end
+[18-Oct-2023 17:49:32 America/Los_Angeles] cron start
+[18-Oct-2023 17:49:32 America/Los_Angeles] cron end
+[18-Oct-2023 17:54:32 America/Los_Angeles] cron start
+[18-Oct-2023 17:54:32 America/Los_Angeles] cron end
+[18-Oct-2023 17:59:33 America/Los_Angeles] cron start
+[18-Oct-2023 17:59:33 America/Los_Angeles] cron end
+[18-Oct-2023 18:04:34 America/Los_Angeles] cron start
+[18-Oct-2023 18:04:34 America/Los_Angeles] cron end
+[18-Oct-2023 18:09:35 America/Los_Angeles] cron start
+[18-Oct-2023 18:09:35 America/Los_Angeles] cron end
+[18-Oct-2023 18:14:36 America/Los_Angeles] cron start
+[18-Oct-2023 18:14:36 America/Los_Angeles] cron end
+[18-Oct-2023 18:19:36 America/Los_Angeles] cron start
+[18-Oct-2023 18:19:36 America/Los_Angeles] cron end
+[18-Oct-2023 18:24:36 America/Los_Angeles] cron start
+[18-Oct-2023 18:24:36 America/Los_Angeles] cron end
+[18-Oct-2023 18:29:37 America/Los_Angeles] cron start
+[18-Oct-2023 18:29:37 America/Los_Angeles] cron end
+[18-Oct-2023 18:34:38 America/Los_Angeles] cron start
+[18-Oct-2023 18:34:38 America/Los_Angeles] cron end
+[18-Oct-2023 18:39:39 America/Los_Angeles] cron start
+[18-Oct-2023 18:39:39 America/Los_Angeles] cron end
+[18-Oct-2023 18:44:40 America/Los_Angeles] cron start
+[18-Oct-2023 18:44:40 America/Los_Angeles] cron end
+[18-Oct-2023 18:49:40 America/Los_Angeles] cron start
+[18-Oct-2023 18:49:40 America/Los_Angeles] cron end
+[18-Oct-2023 18:54:41 America/Los_Angeles] cron start
+[18-Oct-2023 18:54:41 America/Los_Angeles] cron end
+[18-Oct-2023 18:59:41 America/Los_Angeles] cron start
+[18-Oct-2023 18:59:41 America/Los_Angeles] cron end
+[18-Oct-2023 19:04:42 America/Los_Angeles] cron start
+[18-Oct-2023 19:04:42 America/Los_Angeles] cron end
+[18-Oct-2023 19:09:43 America/Los_Angeles] cron start
+[18-Oct-2023 19:09:43 America/Los_Angeles] cron end
+[18-Oct-2023 19:14:44 America/Los_Angeles] cron start
+[18-Oct-2023 19:14:44 America/Los_Angeles] cron end
+[18-Oct-2023 19:19:44 America/Los_Angeles] cron start
+[18-Oct-2023 19:19:44 America/Los_Angeles] cron end
+[18-Oct-2023 19:24:45 America/Los_Angeles] cron start
+[18-Oct-2023 19:24:45 America/Los_Angeles] cron end
+[18-Oct-2023 19:29:46 America/Los_Angeles] cron start
+[18-Oct-2023 19:29:46 America/Los_Angeles] cron end
+[18-Oct-2023 19:34:46 America/Los_Angeles] cron start
+[18-Oct-2023 19:34:46 America/Los_Angeles] cron end
+[18-Oct-2023 19:39:47 America/Los_Angeles] cron start
+[18-Oct-2023 19:39:47 America/Los_Angeles] cron end
+[18-Oct-2023 19:44:48 America/Los_Angeles] cron start
+[18-Oct-2023 19:44:48 America/Los_Angeles] cron end
+[18-Oct-2023 19:49:48 America/Los_Angeles] cron start
+[18-Oct-2023 19:49:48 America/Los_Angeles] cron end
+[18-Oct-2023 19:54:48 America/Los_Angeles] cron start
+[18-Oct-2023 19:54:48 America/Los_Angeles] cron end
+[18-Oct-2023 19:59:49 America/Los_Angeles] cron start
+[18-Oct-2023 19:59:49 America/Los_Angeles] cron end
+[18-Oct-2023 20:04:50 America/Los_Angeles] cron start
+[18-Oct-2023 20:04:50 America/Los_Angeles] cron end
+[18-Oct-2023 20:09:50 America/Los_Angeles] cron start
+[18-Oct-2023 20:09:50 America/Los_Angeles] cron end
+[18-Oct-2023 20:14:51 America/Los_Angeles] cron start
+[18-Oct-2023 20:14:51 America/Los_Angeles] cron end
+[18-Oct-2023 20:19:52 America/Los_Angeles] cron start
+[18-Oct-2023 20:19:52 America/Los_Angeles] cron end
+[18-Oct-2023 20:24:53 America/Los_Angeles] cron start
+[18-Oct-2023 20:24:53 America/Los_Angeles] cron end
+[18-Oct-2023 20:29:53 America/Los_Angeles] cron start
+[18-Oct-2023 20:29:53 America/Los_Angeles] cron end
+[18-Oct-2023 20:34:54 America/Los_Angeles] cron start
+[18-Oct-2023 20:34:54 America/Los_Angeles] cron end
+[18-Oct-2023 20:39:55 America/Los_Angeles] cron start
+[18-Oct-2023 20:39:55 America/Los_Angeles] cron end
+[18-Oct-2023 20:44:56 America/Los_Angeles] cron start
+[18-Oct-2023 20:44:56 America/Los_Angeles] cron end
+[18-Oct-2023 20:49:56 America/Los_Angeles] cron start
+[18-Oct-2023 20:49:56 America/Los_Angeles] cron end
+[18-Oct-2023 20:54:57 America/Los_Angeles] cron start
+[18-Oct-2023 20:54:57 America/Los_Angeles] cron end
+[18-Oct-2023 20:59:58 America/Los_Angeles] cron start
+[18-Oct-2023 20:59:58 America/Los_Angeles] cron end
+[18-Oct-2023 21:04:59 America/Los_Angeles] cron start
+[18-Oct-2023 21:04:59 America/Los_Angeles] cron end
+[18-Oct-2023 21:09:59 America/Los_Angeles] cron start
+[18-Oct-2023 21:09:59 America/Los_Angeles] cron end
+[18-Oct-2023 21:15:00 America/Los_Angeles] cron start
+[18-Oct-2023 21:15:00 America/Los_Angeles] cron end
+[18-Oct-2023 21:20:00 America/Los_Angeles] cron start
+[18-Oct-2023 21:20:00 America/Los_Angeles] cron end
+[18-Oct-2023 21:25:01 America/Los_Angeles] cron start
+[18-Oct-2023 21:25:01 America/Los_Angeles] cron end
+[18-Oct-2023 21:30:01 America/Los_Angeles] cron start
+[18-Oct-2023 21:30:01 America/Los_Angeles] cron end
+[18-Oct-2023 21:35:02 America/Los_Angeles] cron start
+[18-Oct-2023 21:35:02 America/Los_Angeles] cron end
+[18-Oct-2023 21:40:02 America/Los_Angeles] cron start
+[18-Oct-2023 21:40:02 America/Los_Angeles] cron end
+[18-Oct-2023 21:45:02 America/Los_Angeles] cron start
+[18-Oct-2023 21:45:02 America/Los_Angeles] cron end
+[18-Oct-2023 21:50:03 America/Los_Angeles] cron start
+[18-Oct-2023 21:50:03 America/Los_Angeles] cron end
+[18-Oct-2023 21:55:04 America/Los_Angeles] cron start
+[18-Oct-2023 21:55:04 America/Los_Angeles] cron end
+[18-Oct-2023 22:00:04 America/Los_Angeles] cron start
+[18-Oct-2023 22:00:04 America/Los_Angeles] cron end
+[18-Oct-2023 22:05:05 America/Los_Angeles] cron start
+[18-Oct-2023 22:05:05 America/Los_Angeles] cron end
+[18-Oct-2023 22:10:05 America/Los_Angeles] cron start
+[18-Oct-2023 22:10:05 America/Los_Angeles] cron end
+[18-Oct-2023 22:15:06 America/Los_Angeles] cron start
+[18-Oct-2023 22:15:06 America/Los_Angeles] cron end
+[18-Oct-2023 22:20:06 America/Los_Angeles] cron start
+[18-Oct-2023 22:20:06 America/Los_Angeles] cron end
+[18-Oct-2023 22:25:07 America/Los_Angeles] cron start
+[18-Oct-2023 22:25:07 America/Los_Angeles] cron end
+[18-Oct-2023 22:30:08 America/Los_Angeles] cron start
+[18-Oct-2023 22:30:08 America/Los_Angeles] cron end
+[18-Oct-2023 22:35:08 America/Los_Angeles] cron start
+[18-Oct-2023 22:35:08 America/Los_Angeles] cron end
+[18-Oct-2023 22:40:09 America/Los_Angeles] cron start
+[18-Oct-2023 22:40:09 America/Los_Angeles] cron end
+[18-Oct-2023 22:45:10 America/Los_Angeles] cron start
+[18-Oct-2023 22:45:10 America/Los_Angeles] cron end
+[18-Oct-2023 22:50:10 America/Los_Angeles] cron start
+[18-Oct-2023 22:50:10 America/Los_Angeles] cron end
+[18-Oct-2023 22:55:11 America/Los_Angeles] cron start
+[18-Oct-2023 22:55:11 America/Los_Angeles] cron end
+[18-Oct-2023 23:00:12 America/Los_Angeles] cron start
+[18-Oct-2023 23:00:12 America/Los_Angeles] cron end
+[18-Oct-2023 23:05:13 America/Los_Angeles] cron start
+[18-Oct-2023 23:05:13 America/Los_Angeles] cron end
+[18-Oct-2023 23:10:14 America/Los_Angeles] cron start
+[18-Oct-2023 23:10:14 America/Los_Angeles] cron end
+[18-Oct-2023 23:15:14 America/Los_Angeles] cron start
+[18-Oct-2023 23:15:14 America/Los_Angeles] cron end
+[18-Oct-2023 23:20:15 America/Los_Angeles] cron start
+[18-Oct-2023 23:20:15 America/Los_Angeles] cron end
+[18-Oct-2023 23:25:15 America/Los_Angeles] cron start
+[18-Oct-2023 23:25:15 America/Los_Angeles] cron end
+[18-Oct-2023 23:30:16 America/Los_Angeles] cron start
+[18-Oct-2023 23:30:16 America/Los_Angeles] cron end
+[18-Oct-2023 23:35:17 America/Los_Angeles] cron start
+[18-Oct-2023 23:35:17 America/Los_Angeles] cron end
+[18-Oct-2023 23:40:18 America/Los_Angeles] cron start
+[18-Oct-2023 23:40:18 America/Los_Angeles] cron end
+[18-Oct-2023 23:45:18 America/Los_Angeles] cron start
+[18-Oct-2023 23:45:18 America/Los_Angeles] cron end
+[18-Oct-2023 23:50:19 America/Los_Angeles] cron start
+[18-Oct-2023 23:50:19 America/Los_Angeles] cron end
+[18-Oct-2023 23:55:20 America/Los_Angeles] cron start
+[18-Oct-2023 23:55:20 America/Los_Angeles] cron end
+[19-Oct-2023 00:00:21 America/Los_Angeles] cron start
+[19-Oct-2023 00:00:21 America/Los_Angeles] cron end
+[19-Oct-2023 00:05:21 America/Los_Angeles] cron start
+[19-Oct-2023 00:05:21 America/Los_Angeles] cron end
+[19-Oct-2023 00:10:22 America/Los_Angeles] cron start
+[19-Oct-2023 00:10:22 America/Los_Angeles] cron end
+[19-Oct-2023 00:15:23 America/Los_Angeles] cron start
+[19-Oct-2023 00:15:23 America/Los_Angeles] cron end
+[19-Oct-2023 00:20:23 America/Los_Angeles] cron start
+[19-Oct-2023 00:20:23 America/Los_Angeles] cron end
+[19-Oct-2023 00:25:24 America/Los_Angeles] cron start
+[19-Oct-2023 00:25:24 America/Los_Angeles] cron end
+[19-Oct-2023 00:30:25 America/Los_Angeles] cron start
+[19-Oct-2023 00:30:25 America/Los_Angeles] cron end
+[19-Oct-2023 00:35:25 America/Los_Angeles] cron start
+[19-Oct-2023 00:35:25 America/Los_Angeles] cron end
+[19-Oct-2023 00:40:26 America/Los_Angeles] cron start
+[19-Oct-2023 00:40:26 America/Los_Angeles] cron end
+[19-Oct-2023 00:45:27 America/Los_Angeles] cron start
+[19-Oct-2023 00:45:27 America/Los_Angeles] cron end
+[19-Oct-2023 00:50:27 America/Los_Angeles] cron start
+[19-Oct-2023 00:50:27 America/Los_Angeles] cron end
+[19-Oct-2023 00:55:28 America/Los_Angeles] cron start
+[19-Oct-2023 00:55:28 America/Los_Angeles] cron end
+[19-Oct-2023 01:00:29 America/Los_Angeles] cron start
+[19-Oct-2023 01:00:29 America/Los_Angeles] cron end
+[19-Oct-2023 01:05:30 America/Los_Angeles] cron start
+[19-Oct-2023 01:05:30 America/Los_Angeles] cron end
+[19-Oct-2023 01:10:31 America/Los_Angeles] cron start
+[19-Oct-2023 01:10:31 America/Los_Angeles] cron end
+[19-Oct-2023 01:15:31 America/Los_Angeles] cron start
+[19-Oct-2023 01:15:31 America/Los_Angeles] cron end
+[19-Oct-2023 01:20:32 America/Los_Angeles] cron start
+[19-Oct-2023 01:20:32 America/Los_Angeles] cron end
+[19-Oct-2023 01:25:33 America/Los_Angeles] cron start
+[19-Oct-2023 01:25:33 America/Los_Angeles] cron end
+[19-Oct-2023 01:30:34 America/Los_Angeles] cron start
+[19-Oct-2023 01:30:34 America/Los_Angeles] cron end
+[19-Oct-2023 01:35:34 America/Los_Angeles] cron start
+[19-Oct-2023 01:35:34 America/Los_Angeles] cron end
+[19-Oct-2023 01:40:35 America/Los_Angeles] cron start
+[19-Oct-2023 01:40:35 America/Los_Angeles] cron end
+[19-Oct-2023 01:45:36 America/Los_Angeles] cron start
+[19-Oct-2023 01:45:36 America/Los_Angeles] cron end
+[19-Oct-2023 01:50:37 America/Los_Angeles] cron start
+[19-Oct-2023 01:50:37 America/Los_Angeles] cron end
+[19-Oct-2023 01:55:38 America/Los_Angeles] cron start
+[19-Oct-2023 01:55:38 America/Los_Angeles] cron end
+[19-Oct-2023 02:00:38 America/Los_Angeles] cron start
+[19-Oct-2023 02:00:38 America/Los_Angeles] cron end
+[19-Oct-2023 02:05:39 America/Los_Angeles] cron start
+[19-Oct-2023 02:05:39 America/Los_Angeles] cron end
+[19-Oct-2023 02:10:40 America/Los_Angeles] cron start
+[19-Oct-2023 02:10:40 America/Los_Angeles] cron end
+[19-Oct-2023 02:15:40 America/Los_Angeles] cron start
+[19-Oct-2023 02:15:40 America/Los_Angeles] cron end
+[19-Oct-2023 02:20:41 America/Los_Angeles] cron start
+[19-Oct-2023 02:20:41 America/Los_Angeles] cron end
+[19-Oct-2023 02:25:42 America/Los_Angeles] cron start
+[19-Oct-2023 02:25:42 America/Los_Angeles] cron end
+[19-Oct-2023 02:30:42 America/Los_Angeles] cron start
+[19-Oct-2023 02:30:42 America/Los_Angeles] cron end
+[19-Oct-2023 02:35:43 America/Los_Angeles] cron start
+[19-Oct-2023 02:35:43 America/Los_Angeles] cron end
+[19-Oct-2023 02:40:44 America/Los_Angeles] cron start
+[19-Oct-2023 02:40:44 America/Los_Angeles] cron end
+[19-Oct-2023 02:45:44 America/Los_Angeles] cron start
+[19-Oct-2023 02:45:44 America/Los_Angeles] cron end
+[19-Oct-2023 02:50:45 America/Los_Angeles] cron start
+[19-Oct-2023 02:50:45 America/Los_Angeles] cron end
+[19-Oct-2023 02:55:46 America/Los_Angeles] cron start
+[19-Oct-2023 02:55:46 America/Los_Angeles] cron end
+[19-Oct-2023 03:00:47 America/Los_Angeles] cron start
+[19-Oct-2023 03:00:47 America/Los_Angeles] cron end
+[19-Oct-2023 03:05:47 America/Los_Angeles] cron start
+[19-Oct-2023 03:05:47 America/Los_Angeles] cron end
+[19-Oct-2023 03:10:48 America/Los_Angeles] cron start
+[19-Oct-2023 03:10:48 America/Los_Angeles] cron end
+[19-Oct-2023 03:15:49 America/Los_Angeles] cron start
+[19-Oct-2023 03:15:49 America/Los_Angeles] cron end
+[19-Oct-2023 03:20:50 America/Los_Angeles] cron start
+[19-Oct-2023 03:20:50 America/Los_Angeles] cron end
+[19-Oct-2023 03:25:50 America/Los_Angeles] cron start
+[19-Oct-2023 03:25:50 America/Los_Angeles] cron end
+[19-Oct-2023 03:30:51 America/Los_Angeles] cron start
+[19-Oct-2023 03:30:51 America/Los_Angeles] cron end
+[19-Oct-2023 03:35:51 America/Los_Angeles] cron start
+[19-Oct-2023 03:35:51 America/Los_Angeles] cron end
+[19-Oct-2023 03:40:52 America/Los_Angeles] cron start
+[19-Oct-2023 03:40:52 America/Los_Angeles] cron end
+[19-Oct-2023 03:45:53 America/Los_Angeles] cron start
+[19-Oct-2023 03:45:53 America/Los_Angeles] cron end
+[19-Oct-2023 03:50:54 America/Los_Angeles] cron start
+[19-Oct-2023 03:50:54 America/Los_Angeles] cron end
+[19-Oct-2023 03:55:54 America/Los_Angeles] cron start
+[19-Oct-2023 03:55:54 America/Los_Angeles] cron end
+[19-Oct-2023 04:00:55 America/Los_Angeles] cron start
+[19-Oct-2023 04:00:55 America/Los_Angeles] cron end
+[19-Oct-2023 04:05:56 America/Los_Angeles] cron start
+[19-Oct-2023 04:05:56 America/Los_Angeles] cron end
+[19-Oct-2023 04:10:57 America/Los_Angeles] cron start
+[19-Oct-2023 04:10:57 America/Los_Angeles] cron end
+[19-Oct-2023 04:15:57 America/Los_Angeles] cron start
+[19-Oct-2023 04:15:57 America/Los_Angeles] cron end
+[19-Oct-2023 04:20:57 America/Los_Angeles] cron start
+[19-Oct-2023 04:20:57 America/Los_Angeles] cron end
+[19-Oct-2023 04:25:58 America/Los_Angeles] cron start
+[19-Oct-2023 04:25:58 America/Los_Angeles] cron end
+[19-Oct-2023 04:30:59 America/Los_Angeles] cron start
+[19-Oct-2023 04:30:59 America/Los_Angeles] cron end
+[19-Oct-2023 04:35:59 America/Los_Angeles] cron start
+[19-Oct-2023 04:35:59 America/Los_Angeles] cron end
+[19-Oct-2023 04:41:00 America/Los_Angeles] cron start
+[19-Oct-2023 04:41:00 America/Los_Angeles] cron end
+[19-Oct-2023 04:46:01 America/Los_Angeles] cron start
+[19-Oct-2023 04:46:01 America/Los_Angeles] cron end
+[19-Oct-2023 04:51:02 America/Los_Angeles] cron start
+[19-Oct-2023 04:51:02 America/Los_Angeles] cron end
+[19-Oct-2023 04:56:03 America/Los_Angeles] cron start
+[19-Oct-2023 04:56:03 America/Los_Angeles] cron end
+[19-Oct-2023 05:01:04 America/Los_Angeles] cron start
+[19-Oct-2023 05:01:04 America/Los_Angeles] cron end
+[19-Oct-2023 05:06:04 America/Los_Angeles] cron start
+[19-Oct-2023 05:06:04 America/Los_Angeles] cron end
+[19-Oct-2023 05:11:04 America/Los_Angeles] cron start
+[19-Oct-2023 05:11:04 America/Los_Angeles] cron end
+[19-Oct-2023 05:16:05 America/Los_Angeles] cron start
+[19-Oct-2023 05:16:05 America/Los_Angeles] cron end
+[19-Oct-2023 05:21:06 America/Los_Angeles] cron start
+[19-Oct-2023 05:21:06 America/Los_Angeles] cron end
+[19-Oct-2023 05:26:07 America/Los_Angeles] cron start
+[19-Oct-2023 05:26:07 America/Los_Angeles] cron end
+[19-Oct-2023 05:31:08 America/Los_Angeles] cron start
+[19-Oct-2023 05:31:08 America/Los_Angeles] cron end
+[19-Oct-2023 05:36:08 America/Los_Angeles] cron start
+[19-Oct-2023 05:36:08 America/Los_Angeles] cron end
+[19-Oct-2023 05:41:09 America/Los_Angeles] cron start
+[19-Oct-2023 05:41:09 America/Los_Angeles] cron end
+[19-Oct-2023 05:46:09 America/Los_Angeles] cron start
+[19-Oct-2023 05:46:09 America/Los_Angeles] cron end
+[19-Oct-2023 05:51:10 America/Los_Angeles] cron start
+[19-Oct-2023 05:51:10 America/Los_Angeles] cron end
+[19-Oct-2023 05:56:13 America/Los_Angeles] cron start
+[19-Oct-2023 05:56:13 America/Los_Angeles] cron end
+[19-Oct-2023 06:01:14 America/Los_Angeles] cron start
+[19-Oct-2023 06:01:14 America/Los_Angeles] cron end
+[19-Oct-2023 06:06:14 America/Los_Angeles] cron start
+[19-Oct-2023 06:06:14 America/Los_Angeles] cron end
+[19-Oct-2023 06:11:14 America/Los_Angeles] cron start
+[19-Oct-2023 06:11:14 America/Los_Angeles] cron end
+[19-Oct-2023 06:16:15 America/Los_Angeles] cron start
+[19-Oct-2023 06:16:15 America/Los_Angeles] cron end
+[19-Oct-2023 06:21:15 America/Los_Angeles] cron start
+[19-Oct-2023 06:21:15 America/Los_Angeles] cron end
+[19-Oct-2023 06:26:16 America/Los_Angeles] cron start
+[19-Oct-2023 06:26:16 America/Los_Angeles] cron end
+[19-Oct-2023 06:31:16 America/Los_Angeles] cron start
+[19-Oct-2023 06:31:16 America/Los_Angeles] cron end
+[19-Oct-2023 06:36:16 America/Los_Angeles] cron start
+[19-Oct-2023 06:36:16 America/Los_Angeles] cron end
+[19-Oct-2023 06:41:17 America/Los_Angeles] cron start
+[19-Oct-2023 06:41:17 America/Los_Angeles] cron end
+[19-Oct-2023 06:46:23 America/Los_Angeles] cron start
+[19-Oct-2023 06:46:23 America/Los_Angeles] cron end
+[19-Oct-2023 06:51:19 America/Los_Angeles] cron start
+[19-Oct-2023 06:51:19 America/Los_Angeles] cron end
+[19-Oct-2023 06:56:20 America/Los_Angeles] cron start
+[19-Oct-2023 06:56:20 America/Los_Angeles] cron end
+[19-Oct-2023 07:01:20 America/Los_Angeles] cron start
+[19-Oct-2023 07:01:20 America/Los_Angeles] cron end
+[19-Oct-2023 07:06:20 America/Los_Angeles] cron start
+[19-Oct-2023 07:06:20 America/Los_Angeles] cron end
+[19-Oct-2023 07:11:20 America/Los_Angeles] cron start
+[19-Oct-2023 07:11:20 America/Los_Angeles] cron end
+[19-Oct-2023 07:16:20 America/Los_Angeles] cron start
+[19-Oct-2023 07:16:20 America/Los_Angeles] cron end
+[19-Oct-2023 07:21:42 America/Los_Angeles] cron start
+[19-Oct-2023 07:21:42 America/Los_Angeles] cron end
+[19-Oct-2023 07:26:37 America/Los_Angeles] cron start
+[19-Oct-2023 07:26:37 America/Los_Angeles] cron end
+[19-Oct-2023 07:31:21 America/Los_Angeles] cron start
+[19-Oct-2023 07:31:21 America/Los_Angeles] cron end
+[19-Oct-2023 07:36:22 America/Los_Angeles] cron start
+[19-Oct-2023 07:36:22 America/Los_Angeles] cron end
+[19-Oct-2023 07:41:23 America/Los_Angeles] cron start
+[19-Oct-2023 07:41:23 America/Los_Angeles] cron end
+[19-Oct-2023 07:46:23 America/Los_Angeles] cron start
+[19-Oct-2023 07:46:23 America/Los_Angeles] cron end
+[19-Oct-2023 07:51:23 America/Los_Angeles] cron start
+[19-Oct-2023 07:51:23 America/Los_Angeles] cron end
+[19-Oct-2023 07:56:23 America/Los_Angeles] cron start
+[19-Oct-2023 07:56:23 America/Los_Angeles] cron end
+[19-Oct-2023 08:01:24 America/Los_Angeles] cron start
+[19-Oct-2023 08:01:24 America/Los_Angeles] cron end
+[19-Oct-2023 08:06:24 America/Los_Angeles] cron start
+[19-Oct-2023 08:06:24 America/Los_Angeles] cron end
+[19-Oct-2023 08:11:24 America/Los_Angeles] cron start
+[19-Oct-2023 08:11:24 America/Los_Angeles] cron end
+[19-Oct-2023 08:16:25 America/Los_Angeles] cron start
+[19-Oct-2023 08:16:25 America/Los_Angeles] cron end
+[19-Oct-2023 08:21:26 America/Los_Angeles] cron start
+[19-Oct-2023 08:21:26 America/Los_Angeles] cron end
+[19-Oct-2023 08:26:27 America/Los_Angeles] cron start
+[19-Oct-2023 08:26:27 America/Los_Angeles] cron end
+[19-Oct-2023 08:31:27 America/Los_Angeles] cron start
+[19-Oct-2023 08:31:27 America/Los_Angeles] cron end
+[19-Oct-2023 08:36:27 America/Los_Angeles] cron start
+[19-Oct-2023 08:36:27 America/Los_Angeles] cron end
+[19-Oct-2023 08:41:27 America/Los_Angeles] cron start
+[19-Oct-2023 08:41:27 America/Los_Angeles] cron end
+[19-Oct-2023 08:46:27 America/Los_Angeles] cron start
+[19-Oct-2023 08:46:27 America/Los_Angeles] cron end
+[19-Oct-2023 08:51:27 America/Los_Angeles] cron start
+[19-Oct-2023 08:51:27 America/Los_Angeles] cron end
+[19-Oct-2023 08:56:28 America/Los_Angeles] cron start
+[19-Oct-2023 08:56:28 America/Los_Angeles] cron end
+[19-Oct-2023 09:01:28 America/Los_Angeles] cron start
+[19-Oct-2023 09:01:28 America/Los_Angeles] cron end
+[19-Oct-2023 09:06:28 America/Los_Angeles] cron start
+[19-Oct-2023 09:06:28 America/Los_Angeles] cron end
+[19-Oct-2023 09:11:28 America/Los_Angeles] cron start
+[19-Oct-2023 09:11:28 America/Los_Angeles] cron end
+[19-Oct-2023 09:16:29 America/Los_Angeles] cron start
+[19-Oct-2023 09:16:29 America/Los_Angeles] cron end
+[19-Oct-2023 09:21:29 America/Los_Angeles] cron start
+[19-Oct-2023 09:21:29 America/Los_Angeles] cron end
+[19-Oct-2023 09:26:29 America/Los_Angeles] cron start
+[19-Oct-2023 09:26:29 America/Los_Angeles] cron end
+[19-Oct-2023 09:31:30 America/Los_Angeles] cron start
+[19-Oct-2023 09:31:30 America/Los_Angeles] cron end
+[19-Oct-2023 09:36:31 America/Los_Angeles] cron start
+[19-Oct-2023 09:36:31 America/Los_Angeles] cron end
+[19-Oct-2023 09:41:31 America/Los_Angeles] cron start
+[19-Oct-2023 09:41:31 America/Los_Angeles] cron end
+[19-Oct-2023 09:46:31 America/Los_Angeles] cron start
+[19-Oct-2023 09:46:31 America/Los_Angeles] cron end
+[19-Oct-2023 09:51:31 America/Los_Angeles] cron start
+[19-Oct-2023 09:51:31 America/Los_Angeles] cron end
+[19-Oct-2023 09:56:32 America/Los_Angeles] cron start
+[19-Oct-2023 09:56:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:01:31 America/Los_Angeles] cron start
+[19-Oct-2023 10:01:31 America/Los_Angeles] cron end
+[19-Oct-2023 10:06:31 America/Los_Angeles] cron start
+[19-Oct-2023 10:06:31 America/Los_Angeles] cron end
+[19-Oct-2023 10:11:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:11:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:16:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:16:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:21:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:21:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:26:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:26:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:31:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:31:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:36:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:36:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:41:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:41:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:46:32 America/Los_Angeles] cron start
+[19-Oct-2023 10:46:32 America/Los_Angeles] cron end
+[19-Oct-2023 10:51:33 America/Los_Angeles] cron start
+[19-Oct-2023 10:51:33 America/Los_Angeles] cron end
+[19-Oct-2023 10:56:33 America/Los_Angeles] cron start
+[19-Oct-2023 10:56:33 America/Los_Angeles] cron end
+[19-Oct-2023 11:01:33 America/Los_Angeles] cron start
+[19-Oct-2023 11:01:33 America/Los_Angeles] cron end
+[19-Oct-2023 11:06:33 America/Los_Angeles] cron start
+[19-Oct-2023 11:06:33 America/Los_Angeles] cron end
+[19-Oct-2023 11:11:33 America/Los_Angeles] cron start
+[19-Oct-2023 11:11:33 America/Los_Angeles] cron end
+[19-Oct-2023 11:16:33 America/Los_Angeles] cron start
+[19-Oct-2023 11:16:33 America/Los_Angeles] cron end
+[19-Oct-2023 11:21:34 America/Los_Angeles] cron start
+[19-Oct-2023 11:21:34 America/Los_Angeles] cron end
+[19-Oct-2023 11:26:34 America/Los_Angeles] cron start
+[19-Oct-2023 11:26:34 America/Los_Angeles] cron end
+[19-Oct-2023 11:31:34 America/Los_Angeles] cron start
+[19-Oct-2023 11:31:34 America/Los_Angeles] cron end
+[19-Oct-2023 11:36:34 America/Los_Angeles] cron start
+[19-Oct-2023 11:36:34 America/Los_Angeles] cron end
+[19-Oct-2023 11:41:34 America/Los_Angeles] cron start
+[19-Oct-2023 11:41:34 America/Los_Angeles] cron end
+[19-Oct-2023 11:46:34 America/Los_Angeles] cron start
+[19-Oct-2023 11:46:34 America/Los_Angeles] cron end
+[19-Oct-2023 11:51:34 America/Los_Angeles] cron start
+[19-Oct-2023 11:51:34 America/Los_Angeles] cron end
+[19-Oct-2023 11:56:35 America/Los_Angeles] cron start
+[19-Oct-2023 11:56:35 America/Los_Angeles] cron end
+[19-Oct-2023 12:01:35 America/Los_Angeles] cron start
+[19-Oct-2023 12:01:35 America/Los_Angeles] cron end
+[19-Oct-2023 12:06:35 America/Los_Angeles] cron start
+[19-Oct-2023 12:06:35 America/Los_Angeles] cron end
+[19-Oct-2023 12:11:35 America/Los_Angeles] cron start
+[19-Oct-2023 12:11:35 America/Los_Angeles] cron end
+[19-Oct-2023 12:16:35 America/Los_Angeles] cron start
+[19-Oct-2023 12:16:35 America/Los_Angeles] cron end
+[19-Oct-2023 12:21:35 America/Los_Angeles] cron start
+[19-Oct-2023 12:21:35 America/Los_Angeles] cron end
+[19-Oct-2023 12:26:35 America/Los_Angeles] cron start
+[19-Oct-2023 12:26:35 America/Los_Angeles] cron end
+[19-Oct-2023 12:31:36 America/Los_Angeles] cron start
+[19-Oct-2023 12:31:36 America/Los_Angeles] cron end
+[19-Oct-2023 12:36:36 America/Los_Angeles] cron start
+[19-Oct-2023 12:36:36 America/Los_Angeles] cron end
+[19-Oct-2023 12:41:37 America/Los_Angeles] cron start
+[19-Oct-2023 12:41:37 America/Los_Angeles] cron end
+[19-Oct-2023 12:46:37 America/Los_Angeles] 2023-10-19T12:46:37-07:00 [critical] Uncaught Error: syntax error, unexpected token "}"
+[19-Oct-2023 12:46:39 America/Los_Angeles] 2023-10-19T12:46:39-07:00 [critical] Uncaught Error: syntax error, unexpected token "}"
+[19-Oct-2023 12:51:37 America/Los_Angeles] cron start
+[19-Oct-2023 12:51:37 America/Los_Angeles] cron end
+[19-Oct-2023 12:56:37 America/Los_Angeles] cron start
+[19-Oct-2023 12:56:37 America/Los_Angeles] cron end
+[19-Oct-2023 13:01:38 America/Los_Angeles] cron start
+[19-Oct-2023 13:01:38 America/Los_Angeles] cron end
+[19-Oct-2023 13:06:38 America/Los_Angeles] cron start
+[19-Oct-2023 13:06:38 America/Los_Angeles] cron end
+[19-Oct-2023 13:11:38 America/Los_Angeles] cron start
+[19-Oct-2023 13:11:38 America/Los_Angeles] cron end
+[19-Oct-2023 13:16:38 America/Los_Angeles] cron start
+[19-Oct-2023 13:16:38 America/Los_Angeles] cron end
+[19-Oct-2023 13:21:38 America/Los_Angeles] cron start
+[19-Oct-2023 13:21:38 America/Los_Angeles] cron end
+[19-Oct-2023 13:26:38 America/Los_Angeles] cron start
+[19-Oct-2023 13:26:38 America/Los_Angeles] cron end
+[19-Oct-2023 13:31:39 America/Los_Angeles] cron start
+[19-Oct-2023 13:31:39 America/Los_Angeles] cron end
+[19-Oct-2023 13:36:39 America/Los_Angeles] cron start
+[19-Oct-2023 13:36:39 America/Los_Angeles] cron end
+[19-Oct-2023 13:41:39 America/Los_Angeles] cron start
+[19-Oct-2023 13:41:39 America/Los_Angeles] cron end
+[19-Oct-2023 13:46:39 America/Los_Angeles] cron start
+[19-Oct-2023 13:46:39 America/Los_Angeles] cron end
+[19-Oct-2023 13:51:40 America/Los_Angeles] cron start
+[19-Oct-2023 13:51:40 America/Los_Angeles] cron end
+[19-Oct-2023 13:56:40 America/Los_Angeles] cron start
+[19-Oct-2023 13:56:40 America/Los_Angeles] cron end
+[19-Oct-2023 14:01:40 America/Los_Angeles] cron start
+[19-Oct-2023 14:01:40 America/Los_Angeles] cron end
+[19-Oct-2023 14:06:40 America/Los_Angeles] cron start
+[19-Oct-2023 14:06:40 America/Los_Angeles] cron end
+[19-Oct-2023 14:11:40 America/Los_Angeles] cron start
+[19-Oct-2023 14:11:40 America/Los_Angeles] cron end
+[19-Oct-2023 14:16:40 America/Los_Angeles] cron start
+[19-Oct-2023 14:16:40 America/Los_Angeles] cron end
+[19-Oct-2023 14:21:41 America/Los_Angeles] cron start
+[19-Oct-2023 14:21:41 America/Los_Angeles] cron end
+[19-Oct-2023 14:26:41 America/Los_Angeles] cron start
+[19-Oct-2023 14:26:41 America/Los_Angeles] cron end
+[19-Oct-2023 14:31:41 America/Los_Angeles] cron start
+[19-Oct-2023 14:31:41 America/Los_Angeles] cron end
+[19-Oct-2023 14:36:41 America/Los_Angeles] cron start
+[19-Oct-2023 14:36:41 America/Los_Angeles] cron end
+[19-Oct-2023 14:41:42 America/Los_Angeles] cron start
+[19-Oct-2023 14:41:42 America/Los_Angeles] cron end
+[19-Oct-2023 14:46:42 America/Los_Angeles] cron start
+[19-Oct-2023 14:46:42 America/Los_Angeles] cron end
+[19-Oct-2023 14:51:42 America/Los_Angeles] cron start
+[19-Oct-2023 14:51:42 America/Los_Angeles] cron end
+[19-Oct-2023 14:56:42 America/Los_Angeles] cron start
+[19-Oct-2023 14:56:42 America/Los_Angeles] cron end
+[19-Oct-2023 15:01:42 America/Los_Angeles] cron start
+[19-Oct-2023 15:01:42 America/Los_Angeles] cron end
+[19-Oct-2023 15:06:43 America/Los_Angeles] cron start
+[19-Oct-2023 15:06:43 America/Los_Angeles] cron end
+[19-Oct-2023 15:11:43 America/Los_Angeles] cron start
+[19-Oct-2023 15:11:43 America/Los_Angeles] cron end
+[19-Oct-2023 15:16:44 America/Los_Angeles] cron start
+[19-Oct-2023 15:16:44 America/Los_Angeles] cron end
+[19-Oct-2023 15:21:44 America/Los_Angeles] cron start
+[19-Oct-2023 15:21:44 America/Los_Angeles] cron end
+[20-Oct-2023 07:47:04 America/Los_Angeles] cron start
+[20-Oct-2023 07:47:04 America/Los_Angeles] cron end
+[20-Oct-2023 07:47:52 America/Los_Angeles] 2023-10-20T07:47:52-07:00 [critical] Uncaught Call to undefined function csrf_field() (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php)
+[20-Oct-2023 07:48:25 America/Los_Angeles] 2023-10-20T07:48:25-07:00 [critical] Uncaught Call to undefined function csrf_field() (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php)
+[20-Oct-2023 07:51:41 America/Los_Angeles] 2023-10-20T07:51:41-07:00 [critical] Uncaught Call to undefined function csrf_field() (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php)
+[20-Oct-2023 07:53:48 America/Los_Angeles] cron start
+[20-Oct-2023 07:53:48 America/Los_Angeles] cron end
+[20-Oct-2023 08:00:39 America/Los_Angeles] cron start
+[20-Oct-2023 08:00:39 America/Los_Angeles] cron end
+[20-Oct-2023 08:08:15 America/Los_Angeles] cron start
+[20-Oct-2023 08:08:15 America/Los_Angeles] cron end
+[20-Oct-2023 08:13:15 America/Los_Angeles] cron start
+[20-Oct-2023 08:13:15 America/Los_Angeles] cron end
+[20-Oct-2023 08:23:38 America/Los_Angeles] cron start
+[20-Oct-2023 08:23:38 America/Los_Angeles] cron end
+[20-Oct-2023 08:32:28 America/Los_Angeles] cron start
+[20-Oct-2023 08:32:28 America/Los_Angeles] cron end
+[20-Oct-2023 08:37:28 America/Los_Angeles] cron start
+[20-Oct-2023 08:37:28 America/Los_Angeles] cron end
+[20-Oct-2023 08:46:55 America/Los_Angeles] cron start
+[20-Oct-2023 08:46:55 America/Los_Angeles] cron end
+[20-Oct-2023 08:52:01 America/Los_Angeles] 2023-10-20T08:52:01-07:00 [info] Deprecated: strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated
+[20-Oct-2023 08:52:01 America/Los_Angeles] 2023-10-20T08:52:01-07:00 [info] Deprecated: strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated
+[20-Oct-2023 08:52:01 America/Los_Angeles] 2023-10-20T08:52:01-07:00 [info] Deprecated: strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated
+[20-Oct-2023 08:52:01 America/Los_Angeles] 2023-10-20T08:52:01-07:00 [info] Deprecated: strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated
+[20-Oct-2023 08:52:01 America/Los_Angeles] 2023-10-20T08:52:01-07:00 [info] Deprecated: strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated
+[20-Oct-2023 08:52:01 America/Los_Angeles] 2023-10-20T08:52:01-07:00 [info] Deprecated: strtotime(): Passing null to parameter #1 ($datetime) of type string is deprecated
+[20-Oct-2023 08:52:31 America/Los_Angeles] 2023-10-20T08:52:31-07:00 [critical] Uncaught Exception: cURL error 28: Operation timed out after 30078 milliseconds with 0 bytes received (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://marketplace.leantime.local:8888/ltmp-api/versions/motivational-quotes
+[20-Oct-2023 09:01:32 America/Los_Angeles] cron start
+[20-Oct-2023 09:01:32 America/Los_Angeles] cron end
+[20-Oct-2023 09:09:28 America/Los_Angeles] cron start
+[20-Oct-2023 09:09:28 America/Los_Angeles] cron end
+[20-Oct-2023 09:11:59 America/Los_Angeles] 2023-10-20T09:11:59-07:00 [critical] Uncaught Exception: Input value "plugin" contains a non-scalar value.
+[20-Oct-2023 09:14:12 America/Los_Angeles] 2023-10-20T09:14:12-07:00 [critical] Uncaught Exception: Input value "plugin" contains a non-scalar value.
+[20-Oct-2023 09:14:22 America/Los_Angeles] 2023-10-20T09:14:22-07:00 [critical] Uncaught Exception: Input value "plugin" contains a non-scalar value.
+[20-Oct-2023 09:16:44 America/Los_Angeles] cron start
+[20-Oct-2023 09:16:44 America/Los_Angeles] cron end
+[20-Oct-2023 09:18:55 America/Los_Angeles] PHP Fatal error:  Uncaught Symfony\Component\HttpFoundation\Exception\BadRequestException: Input value "plugin" contains a non-scalar value. in /Users/josephroberts/localdev/leantime/vendor/symfony/http-foundation/InputBag.php:37
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Hxcontrollers/Details.php(42): Symfony\Component\HttpFoundation\InputBag->get('plugin')
+#1 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(77): Leantime\Domain\Plugins\Hxcontrollers\Details->install()
+#2 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#3 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#7 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#9 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#10 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#11 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#12 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/symfony/http-foundation/InputBag.php on line 37
+[20-Oct-2023 09:21:44 America/Los_Angeles] cron start
+[20-Oct-2023 09:21:44 America/Los_Angeles] cron end
+[20-Oct-2023 09:23:40 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:23:40 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:23:40 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:23:40 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:23:40 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:23:40 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:26:44 America/Los_Angeles] cron start
+[20-Oct-2023 09:26:44 America/Los_Angeles] cron end
+[20-Oct-2023 09:31:44 America/Los_Angeles] cron start
+[20-Oct-2023 09:31:44 America/Los_Angeles] cron end
+[20-Oct-2023 09:36:26 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:36:26 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:36:26 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:36:26 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:36:26 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:36:26 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:36:44 America/Los_Angeles] cron start
+[20-Oct-2023 09:36:44 America/Los_Angeles] cron end
+[20-Oct-2023 09:37:37 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:37:37 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:37:37 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:37:37 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:37:37 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:37:37 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:40:28 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:40:28 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:40:28 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:40:28 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:40:28 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:40:28 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:40:47 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:40:47 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:40:47 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:40:47 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:40:47 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:40:47 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(80): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:41:45 America/Los_Angeles] cron start
+[20-Oct-2023 09:41:45 America/Los_Angeles] cron end
+[20-Oct-2023 09:42:01 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:42:01 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:42:01 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:42:01 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:42:01 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:42:01 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:44:12 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:44:12 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:44:12 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:44:12 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:44:12 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:44:12 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:46:44 America/Los_Angeles] cron start
+[20-Oct-2023 09:46:44 America/Los_Angeles] cron end
+[20-Oct-2023 09:49:06 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:49:06 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 09:49:06 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:49:06 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 09:49:06 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 09:49:06 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 09:51:40 America/Los_Angeles] PHP Fatal error:  Uncaught GuzzleHttp\Exception\ConnectException: cURL error 28: Operation timed out after 30074 milliseconds with 0 bytes received (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://marketplace.leantime.local:8888/ltmp-api/index/1 in /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php:210
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php(158): GuzzleHttp\Handler\CurlFactory::createRejection(Object(GuzzleHttp\Handler\EasyHandle), Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Handler/CurlFactory.php(110): GuzzleHttp\Handler\CurlFactory::finishError(Object(GuzzleHttp\Handler\CurlHandler), Object(GuzzleHttp\Handler\EasyHandle), Object(GuzzleHttp\Handler\CurlFactory))
+#2 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Handler/CurlHandler.php(47): GuzzleHttp\Handler\CurlFactory::finish(Object(GuzzleHttp\Handler\CurlHandler), Object(GuzzleHttp\Handler\EasyHandle), Object(GuzzleHttp\Handler\CurlFactory))
+#3 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Handler/Proxy.php(28): GuzzleHttp\Handler\CurlHandler->__invoke(Object(GuzzleHttp\Psr7\Request), Array)
+#4 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Handler/Proxy.php(48): GuzzleHttp\Handler\Proxy::GuzzleHttp\Handler\{closure}(Object(GuzzleHttp\Psr7\Request), Array)
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(1150): GuzzleHttp\Handler\Proxy::GuzzleHttp\Handler\{closure}(Object(GuzzleHttp\Psr7\Request), Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(1116): Illuminate\Http\Client\PendingRequest->Illuminate\Http\Client\{closure}(Object(GuzzleHttp\Psr7\Request), Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(1102): Illuminate\Http\Client\PendingRequest->Illuminate\Http\Client\{closure}(Object(GuzzleHttp\Psr7\Request), Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/PrepareBodyMiddleware.php(35): Illuminate\Http\Client\PendingRequest->Illuminate\Http\Client\{closure}(Object(GuzzleHttp\Psr7\Request), Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Middleware.php(37): GuzzleHttp\PrepareBodyMiddleware->__invoke(Object(GuzzleHttp\Psr7\Request), Array)
+#10 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/RedirectMiddleware.php(71): GuzzleHttp\Middleware::GuzzleHttp\{closure}(Object(GuzzleHttp\Psr7\Request), Array)
+#11 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Middleware.php(61): GuzzleHttp\RedirectMiddleware->__invoke(Object(GuzzleHttp\Psr7\Request), Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/HandlerStack.php(75): GuzzleHttp\Middleware::GuzzleHttp\{closure}(Object(GuzzleHttp\Psr7\Request), Array)
+#13 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Client.php(331): GuzzleHttp\HandlerStack->__invoke(Object(GuzzleHttp\Psr7\Request), Array)
+#14 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Client.php(168): GuzzleHttp\Client->transfer(Object(GuzzleHttp\Psr7\Request), Array)
+#15 /Users/josephroberts/localdev/leantime/vendor/guzzlehttp/guzzle/src/Client.php(187): GuzzleHttp\Client->requestAsync('GET', Object(GuzzleHttp\Psr7\Uri), Array)
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(962): GuzzleHttp\Client->request('GET', 'http://marketpl...', Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(823): Illuminate\Http\Client\PendingRequest->sendRequest('GET', 'http://marketpl...', Array)
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/support/helpers.php(247): Illuminate\Http\Client\PendingRequest->Illuminate\Http\Client\{closure}(1)
+#19 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(863): retry(0, Object(Closure), 100, Object(Closure))
+#20 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(700): Illuminate\Http\Client\PendingRequest->send('GET', 'http://marketpl...', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Services/Plugins.php(356): Illuminate\Http\Client\PendingRequest->get('http://marketpl...')
+#22 /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Hxcontrollers/Marketplaceplugins.php(42): Leantime\Domain\Plugins\Services\Plugins->getMarketplacePlugins(1, '')
+#23 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(77): Leantime\Domain\Plugins\Hxcontrollers\Marketplaceplugins->getlist()
+#24 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#25 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#26 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#27 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#28 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#29 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#30 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.marketp...', Array)
+#31 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#32 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#33 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#34 {main}
+
+Next Illuminate\Http\Client\ConnectionException: cURL error 28: Operation timed out after 30074 milliseconds with 0 bytes received (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://marketplace.leantime.local:8888/ltmp-api/index/1 in /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php:855
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/support/helpers.php(247): Illuminate\Http\Client\PendingRequest->Illuminate\Http\Client\{closure}(1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(863): retry(0, Object(Closure), 100, Object(Closure))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php(700): Illuminate\Http\Client\PendingRequest->send('GET', 'http://marketpl...', Array)
+#3 /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Services/Plugins.php(356): Illuminate\Http\Client\PendingRequest->get('http://marketpl...')
+#4 /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Hxcontrollers/Marketplaceplugins.php(42): Leantime\Domain\Plugins\Services\Plugins->getMarketplacePlugins(1, '')
+#5 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(77): Leantime\Domain\Plugins\Hxcontrollers\Marketplaceplugins->getlist()
+#6 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#7 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#11 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.marketp...', Array)
+#13 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#14 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#15 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#16 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/http/Client/PendingRequest.php on line 855
+[20-Oct-2023 09:52:11 America/Los_Angeles] 2023-10-20T09:52:11-07:00 [critical] Uncaught Exception: cURL error 28: Operation timed out after 30072 milliseconds with 0 bytes received (see https://curl.haxx.se/libcurl/c/libcurl-errors.html) for http://marketplace.leantime.local:8888/ltmp-api/versions/motivational-quotes
+[20-Oct-2023 09:52:57 America/Los_Angeles] PHP Warning:  Undefined array key "REMOTE_ADDR" in /Users/josephroberts/localdev/leantime/app/Core/Session.php on line 113
+[20-Oct-2023 09:52:57 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Users/josephroberts/localdev/leantime/app/Core/Db.php:65
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/Core/Db.php(65): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue), Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(254): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(157): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[20-Oct-2023 09:56:09 America/Los_Angeles] cron start
+[20-Oct-2023 09:56:09 America/Los_Angeles] cron end
+[20-Oct-2023 09:57:58 America/Los_Angeles] PHP Warning:  Undefined array key "REMOTE_ADDR" in /Users/josephroberts/localdev/leantime/app/Core/Session.php on line 113
+[20-Oct-2023 09:59:21 America/Los_Angeles] PHP Warning:  Undefined array key "REMOTE_ADDR" in /Users/josephroberts/localdev/leantime/app/Core/Session.php on line 113
+[20-Oct-2023 09:59:42 America/Los_Angeles] cron start
+[20-Oct-2023 09:59:42 America/Los_Angeles] cron end
+[20-Oct-2023 10:07:17 America/Los_Angeles] cron start
+[20-Oct-2023 10:07:17 America/Los_Angeles] cron end
+[20-Oct-2023 10:11:09 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 10:11:09 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 12
+[20-Oct-2023 10:11:09 America/Los_Angeles] PHP Warning:  Undefined variable $versions in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 10:11:09 America/Los_Angeles] PHP Warning:  foreach() argument must be of type array|object, null given in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 31
+[20-Oct-2023 10:11:09 America/Los_Angeles] PHP Warning:  Undefined variable $layout in /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php on line 142
+[20-Oct-2023 10:11:09 America/Los_Angeles] PHP Fatal error:  Uncaught InvalidArgumentException: View [] not found. in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php(79): Illuminate\View\FileViewFinder->findInPaths('', Array)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Factory.php(138): Illuminate\View\FileViewFinder->find('')
+#2 /Users/josephroberts/localdev/leantime/cache/views/effe35d570b1d791babecbb44eb9562c06d865b7.php(142): Illuminate\View\Factory->make('', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(109): require('/Users/josephro...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/filesystem/Filesystem.php(110): Illuminate\Filesystem\Filesystem::Illuminate\Filesystem\{closure}()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(58): Illuminate\Filesystem\Filesystem->getRequire('/Users/josephro...', Array)
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#12 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#14 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#15 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#16 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#17 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#18 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#19 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#20 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#21 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#22 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#23 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#24 {main}
+
+Next Illuminate\View\ViewException: View [] not found. (View: /Users/josephroberts/localdev/leantime/app/Domain/Plugins/Templates/plugindetails.blade.php) in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php:137
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/PhpEngine.php(60): Illuminate\View\Engines\CompilerEngine->handleViewException(Object(InvalidArgumentException), 1)
+#1 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/Engines/CompilerEngine.php(70): Illuminate\View\Engines\PhpEngine->evaluatePath('/Users/josephro...', Array)
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(195): Illuminate\View\Engines\CompilerEngine->get('/Users/josephro...', Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(178): Illuminate\View\View->getContents()
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(147): Illuminate\View\View->renderContents()
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(90): Illuminate\View\View->render(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/view/View.php(114): Illuminate\View\View->fragment('plugin-installa...')
+#7 /Users/josephroberts/localdev/leantime/app/Core/Template.php(453): Illuminate\View\View->fragmentIf(true, 'plugin-installa...')
+#8 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(79): Leantime\Core\Template->displayFragment('plugins::plugin...', 'plugin-installa...')
+#9 /Users/josephroberts/localdev/leantime/app/Core/HtmxController.php(45): Leantime\Core\HtmxController->executeActions()
+#10 [internal function]: Leantime\Core\HtmxController->__construct(Object(Leantime\Core\HtmxRequest), Object(Leantime\Core\Template))
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#12 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#14 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(120): Illuminate\Container\Container->make('Leantime\\Domain...')
+#15 /Users/josephroberts/localdev/leantime/app/Core/Frontcontroller.php(74): Leantime\Core\Frontcontroller::executeAction('plugins.details', Array)
+#16 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(422): Leantime\Core\Frontcontroller::dispatch()
+#17 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(166): Leantime\Core\Bootloader->handleRequest()
+#18 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#19 {main}
+  thrown in /Users/josephroberts/localdev/leantime/vendor/illuminate/view/FileViewFinder.php on line 137
+[20-Oct-2023 10:12:18 America/Los_Angeles] cron start
+[20-Oct-2023 10:12:18 America/Los_Angeles] cron end
+[20-Oct-2023 10:17:18 America/Los_Angeles] cron start
+[20-Oct-2023 10:17:18 America/Los_Angeles] cron end
+[20-Oct-2023 10:22:18 America/Los_Angeles] cron start
+[20-Oct-2023 10:22:18 America/Los_Angeles] cron end
+[20-Oct-2023 10:27:19 America/Los_Angeles] cron start
+[20-Oct-2023 10:27:19 America/Los_Angeles] cron end
+[20-Oct-2023 10:32:19 America/Los_Angeles] cron start
+[20-Oct-2023 10:32:19 America/Los_Angeles] cron end
+[20-Oct-2023 10:37:21 America/Los_Angeles] cron start
+[20-Oct-2023 10:37:21 America/Los_Angeles] cron end
+[20-Oct-2023 10:42:21 America/Los_Angeles] cron start
+[20-Oct-2023 10:42:21 America/Los_Angeles] cron end
+[20-Oct-2023 10:47:21 America/Los_Angeles] cron start
+[20-Oct-2023 10:47:21 America/Los_Angeles] cron end
+[20-Oct-2023 10:52:22 America/Los_Angeles] cron start
+[20-Oct-2023 10:52:22 America/Los_Angeles] cron end
+[20-Oct-2023 10:57:22 America/Los_Angeles] cron start
+[20-Oct-2023 10:57:22 America/Los_Angeles] cron end
+[20-Oct-2023 11:02:22 America/Los_Angeles] cron start
+[20-Oct-2023 11:02:22 America/Los_Angeles] cron end
+[20-Oct-2023 11:07:22 America/Los_Angeles] cron start
+[20-Oct-2023 11:07:22 America/Los_Angeles] cron end
+[20-Oct-2023 11:12:23 America/Los_Angeles] cron start
+[20-Oct-2023 11:12:23 America/Los_Angeles] cron end
+[20-Oct-2023 11:17:24 America/Los_Angeles] cron start
+[20-Oct-2023 11:17:24 America/Los_Angeles] cron end
+[20-Oct-2023 11:22:24 America/Los_Angeles] cron start
+[20-Oct-2023 11:22:24 America/Los_Angeles] cron end
+[20-Oct-2023 11:27:24 America/Los_Angeles] cron start
+[20-Oct-2023 11:27:24 America/Los_Angeles] cron end
+[20-Oct-2023 11:32:25 America/Los_Angeles] cron start
+[20-Oct-2023 11:32:25 America/Los_Angeles] cron end
+[20-Oct-2023 11:37:25 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Users/josephroberts/localdev/leantime/app/Core/Db.php:66
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/Core/Db.php(66): PDO->__construct('mysql:host=loca...', 'root', 'root', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(254): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(157): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[20-Oct-2023 11:37:26 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Users/josephroberts/localdev/leantime/app/Core/Db.php:66
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/Core/Db.php(66): PDO->__construct('mysql:host=loca...', 'root', 'root', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(254): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(157): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[20-Oct-2023 11:42:25 America/Los_Angeles] cron start
+[20-Oct-2023 11:42:25 America/Los_Angeles] cron end
+[20-Oct-2023 11:47:26 America/Los_Angeles] cron start
+[20-Oct-2023 11:47:26 America/Los_Angeles] cron end
+[20-Oct-2023 11:52:27 America/Los_Angeles] cron start
+[20-Oct-2023 11:52:27 America/Los_Angeles] cron end
+[20-Oct-2023 11:57:27 America/Los_Angeles] cron start
+[20-Oct-2023 11:57:27 America/Los_Angeles] cron end
+[20-Oct-2023 12:02:28 America/Los_Angeles] cron start
+[20-Oct-2023 12:02:28 America/Los_Angeles] cron end
+[20-Oct-2023 12:07:28 America/Los_Angeles] cron start
+[20-Oct-2023 12:07:28 America/Los_Angeles] cron end
+[20-Oct-2023 12:12:29 America/Los_Angeles] cron start
+[20-Oct-2023 12:12:29 America/Los_Angeles] cron end
+[20-Oct-2023 12:17:29 America/Los_Angeles] cron start
+[20-Oct-2023 12:17:29 America/Los_Angeles] cron end
+[20-Oct-2023 12:22:29 America/Los_Angeles] cron start
+[20-Oct-2023 12:22:29 America/Los_Angeles] cron end
+[20-Oct-2023 12:27:30 America/Los_Angeles] cron start
+[20-Oct-2023 12:27:30 America/Los_Angeles] cron end
+[20-Oct-2023 12:32:30 America/Los_Angeles] cron start
+[20-Oct-2023 12:32:30 America/Los_Angeles] cron end
+[20-Oct-2023 12:37:30 America/Los_Angeles] cron start
+[20-Oct-2023 12:37:30 America/Los_Angeles] cron end
+[20-Oct-2023 12:42:30 America/Los_Angeles] cron start
+[20-Oct-2023 12:42:30 America/Los_Angeles] cron end
+[20-Oct-2023 12:47:30 America/Los_Angeles] cron start
+[20-Oct-2023 12:47:30 America/Los_Angeles] cron end
+[20-Oct-2023 12:52:30 America/Los_Angeles] cron start
+[20-Oct-2023 12:52:30 America/Los_Angeles] cron end
+[20-Oct-2023 12:57:31 America/Los_Angeles] cron start
+[20-Oct-2023 12:57:31 America/Los_Angeles] cron end
+[20-Oct-2023 13:02:32 America/Los_Angeles] cron start
+[20-Oct-2023 13:02:32 America/Los_Angeles] cron end
+[20-Oct-2023 13:07:33 America/Los_Angeles] cron start
+[20-Oct-2023 13:07:33 America/Los_Angeles] cron end
+[20-Oct-2023 13:12:33 America/Los_Angeles] cron start
+[20-Oct-2023 13:12:33 America/Los_Angeles] cron end
+[20-Oct-2023 13:17:34 America/Los_Angeles] cron start
+[20-Oct-2023 13:17:34 America/Los_Angeles] cron end
+[20-Oct-2023 13:22:34 America/Los_Angeles] cron start
+[20-Oct-2023 13:22:34 America/Los_Angeles] cron end
+[20-Oct-2023 13:27:35 America/Los_Angeles] cron start
+[20-Oct-2023 13:27:35 America/Los_Angeles] cron end
+[20-Oct-2023 13:32:36 America/Los_Angeles] cron start
+[20-Oct-2023 13:32:36 America/Los_Angeles] cron end
+[20-Oct-2023 13:37:37 America/Los_Angeles] cron start
+[20-Oct-2023 13:37:37 America/Los_Angeles] cron end
+[20-Oct-2023 13:42:37 America/Los_Angeles] cron start
+[20-Oct-2023 13:42:37 America/Los_Angeles] cron end
+[20-Oct-2023 13:47:38 America/Los_Angeles] cron start
+[20-Oct-2023 13:47:38 America/Los_Angeles] cron end
+[20-Oct-2023 13:52:38 America/Los_Angeles] cron start
+[20-Oct-2023 13:52:38 America/Los_Angeles] cron end
+[20-Oct-2023 13:57:39 America/Los_Angeles] cron start
+[20-Oct-2023 13:57:39 America/Los_Angeles] cron end
+[20-Oct-2023 14:02:39 America/Los_Angeles] cron start
+[20-Oct-2023 14:02:39 America/Los_Angeles] cron end
+[20-Oct-2023 14:07:39 America/Los_Angeles] cron start
+[20-Oct-2023 14:07:39 America/Los_Angeles] cron end
+[20-Oct-2023 14:12:40 America/Los_Angeles] cron start
+[20-Oct-2023 14:12:40 America/Los_Angeles] cron end
+[20-Oct-2023 14:17:41 America/Los_Angeles] cron start
+[20-Oct-2023 14:17:41 America/Los_Angeles] cron end
+[20-Oct-2023 14:22:41 America/Los_Angeles] cron start
+[20-Oct-2023 14:22:41 America/Los_Angeles] cron end
+[20-Oct-2023 14:27:41 America/Los_Angeles] cron start
+[20-Oct-2023 14:27:41 America/Los_Angeles] cron end
+[20-Oct-2023 14:32:41 America/Los_Angeles] cron start
+[20-Oct-2023 14:32:41 America/Los_Angeles] cron end
+[20-Oct-2023 14:37:41 America/Los_Angeles] cron start
+[20-Oct-2023 14:37:41 America/Los_Angeles] cron end
+[20-Oct-2023 14:42:42 America/Los_Angeles] cron start
+[20-Oct-2023 14:42:42 America/Los_Angeles] cron end
+[20-Oct-2023 14:47:43 America/Los_Angeles] cron start
+[20-Oct-2023 14:47:43 America/Los_Angeles] cron end
+[20-Oct-2023 14:52:44 America/Los_Angeles] cron start
+[20-Oct-2023 14:52:44 America/Los_Angeles] cron end
+[20-Oct-2023 14:57:44 America/Los_Angeles] cron start
+[20-Oct-2023 14:57:44 America/Los_Angeles] cron end
+[20-Oct-2023 15:02:45 America/Los_Angeles] cron start
+[20-Oct-2023 15:02:45 America/Los_Angeles] cron end
+[20-Oct-2023 15:07:45 America/Los_Angeles] cron start
+[20-Oct-2023 15:07:45 America/Los_Angeles] cron end
+[20-Oct-2023 15:12:46 America/Los_Angeles] cron start
+[20-Oct-2023 15:12:46 America/Los_Angeles] cron end
+[20-Oct-2023 15:17:47 America/Los_Angeles] cron start
+[20-Oct-2023 15:17:47 America/Los_Angeles] cron end
+[20-Oct-2023 15:22:47 America/Los_Angeles] cron start
+[20-Oct-2023 15:22:47 America/Los_Angeles] cron end
+[20-Oct-2023 15:27:48 America/Los_Angeles] cron start
+[20-Oct-2023 15:27:48 America/Los_Angeles] cron end
+[20-Oct-2023 15:32:49 America/Los_Angeles] cron start
+[20-Oct-2023 15:32:49 America/Los_Angeles] cron end
+[20-Oct-2023 15:37:50 America/Los_Angeles] cron start
+[20-Oct-2023 15:37:50 America/Los_Angeles] cron end
+[20-Oct-2023 15:42:50 America/Los_Angeles] cron start
+[20-Oct-2023 15:42:50 America/Los_Angeles] cron end
+[20-Oct-2023 15:47:51 America/Los_Angeles] cron start
+[20-Oct-2023 15:47:51 America/Los_Angeles] cron end
+[20-Oct-2023 15:52:52 America/Los_Angeles] cron start
+[20-Oct-2023 15:52:52 America/Los_Angeles] cron end
+[20-Oct-2023 15:57:52 America/Los_Angeles] cron start
+[20-Oct-2023 15:57:52 America/Los_Angeles] cron end
+[20-Oct-2023 16:02:53 America/Los_Angeles] cron start
+[20-Oct-2023 16:02:53 America/Los_Angeles] cron end
+[20-Oct-2023 16:07:53 America/Los_Angeles] cron start
+[20-Oct-2023 16:07:53 America/Los_Angeles] cron end
+[20-Oct-2023 16:12:54 America/Los_Angeles] cron start
+[20-Oct-2023 16:12:54 America/Los_Angeles] cron end
+[20-Oct-2023 16:17:55 America/Los_Angeles] cron start
+[20-Oct-2023 16:17:55 America/Los_Angeles] cron end
+[20-Oct-2023 16:22:55 America/Los_Angeles] cron start
+[20-Oct-2023 16:22:55 America/Los_Angeles] cron end
+[20-Oct-2023 16:27:56 America/Los_Angeles] cron start
+[20-Oct-2023 16:27:56 America/Los_Angeles] cron end
+[20-Oct-2023 16:32:56 America/Los_Angeles] cron start
+[20-Oct-2023 16:32:56 America/Los_Angeles] cron end
+[20-Oct-2023 16:37:57 America/Los_Angeles] cron start
+[20-Oct-2023 16:37:57 America/Los_Angeles] cron end
+[20-Oct-2023 16:42:58 America/Los_Angeles] cron start
+[20-Oct-2023 16:42:58 America/Los_Angeles] cron end
+[20-Oct-2023 16:47:58 America/Los_Angeles] cron start
+[20-Oct-2023 16:47:58 America/Los_Angeles] cron end
+[20-Oct-2023 16:52:59 America/Los_Angeles] cron start
+[20-Oct-2023 16:52:59 America/Los_Angeles] cron end
+[20-Oct-2023 16:58:00 America/Los_Angeles] cron start
+[20-Oct-2023 16:58:00 America/Los_Angeles] cron end
+[20-Oct-2023 17:03:00 America/Los_Angeles] cron start
+[20-Oct-2023 17:03:00 America/Los_Angeles] cron end
+[20-Oct-2023 17:08:01 America/Los_Angeles] cron start
+[20-Oct-2023 17:08:01 America/Los_Angeles] cron end
+[20-Oct-2023 17:13:01 America/Los_Angeles] cron start
+[20-Oct-2023 17:13:01 America/Los_Angeles] cron end
+[20-Oct-2023 17:18:02 America/Los_Angeles] cron start
+[20-Oct-2023 17:18:02 America/Los_Angeles] cron end
+[20-Oct-2023 17:23:02 America/Los_Angeles] cron start
+[20-Oct-2023 17:23:02 America/Los_Angeles] cron end
+[20-Oct-2023 17:28:03 America/Los_Angeles] cron start
+[20-Oct-2023 17:28:03 America/Los_Angeles] cron end
+[20-Oct-2023 17:33:04 America/Los_Angeles] cron start
+[20-Oct-2023 17:33:04 America/Los_Angeles] cron end
+[20-Oct-2023 17:38:05 America/Los_Angeles] cron start
+[20-Oct-2023 17:38:05 America/Los_Angeles] cron end
+[20-Oct-2023 17:43:06 America/Los_Angeles] cron start
+[20-Oct-2023 17:43:06 America/Los_Angeles] cron end
+[20-Oct-2023 17:48:06 America/Los_Angeles] cron start
+[20-Oct-2023 17:48:06 America/Los_Angeles] cron end
+[20-Oct-2023 17:53:07 America/Los_Angeles] cron start
+[20-Oct-2023 17:53:07 America/Los_Angeles] cron end
+[20-Oct-2023 17:58:07 America/Los_Angeles] cron start
+[20-Oct-2023 17:58:07 America/Los_Angeles] cron end
+[20-Oct-2023 18:03:08 America/Los_Angeles] cron start
+[20-Oct-2023 18:03:08 America/Los_Angeles] cron end
+[20-Oct-2023 18:08:09 America/Los_Angeles] cron start
+[20-Oct-2023 18:08:09 America/Los_Angeles] cron end
+[20-Oct-2023 18:13:10 America/Los_Angeles] cron start
+[20-Oct-2023 18:13:10 America/Los_Angeles] cron end
+[20-Oct-2023 18:18:11 America/Los_Angeles] cron start
+[20-Oct-2023 18:18:11 America/Los_Angeles] cron end
+[20-Oct-2023 18:23:11 America/Los_Angeles] cron start
+[20-Oct-2023 18:23:11 America/Los_Angeles] cron end
+[20-Oct-2023 18:28:12 America/Los_Angeles] cron start
+[20-Oct-2023 18:28:12 America/Los_Angeles] cron end
+[20-Oct-2023 18:33:13 America/Los_Angeles] cron start
+[20-Oct-2023 18:33:13 America/Los_Angeles] cron end
+[20-Oct-2023 18:38:13 America/Los_Angeles] cron start
+[20-Oct-2023 18:38:13 America/Los_Angeles] cron end
+[20-Oct-2023 18:43:14 America/Los_Angeles] cron start
+[20-Oct-2023 18:43:14 America/Los_Angeles] cron end
+[20-Oct-2023 18:48:14 America/Los_Angeles] cron start
+[20-Oct-2023 18:48:14 America/Los_Angeles] cron end
+[20-Oct-2023 18:53:15 America/Los_Angeles] cron start
+[20-Oct-2023 18:53:15 America/Los_Angeles] cron end
+[20-Oct-2023 18:58:16 America/Los_Angeles] cron start
+[20-Oct-2023 18:58:16 America/Los_Angeles] cron end
+[20-Oct-2023 19:03:16 America/Los_Angeles] cron start
+[20-Oct-2023 19:03:16 America/Los_Angeles] cron end
+[20-Oct-2023 19:08:17 America/Los_Angeles] cron start
+[20-Oct-2023 19:08:17 America/Los_Angeles] cron end
+[20-Oct-2023 19:13:18 America/Los_Angeles] cron start
+[20-Oct-2023 19:13:18 America/Los_Angeles] cron end
+[20-Oct-2023 19:18:18 America/Los_Angeles] cron start
+[20-Oct-2023 19:18:18 America/Los_Angeles] cron end
+[20-Oct-2023 19:23:19 America/Los_Angeles] cron start
+[20-Oct-2023 19:23:19 America/Los_Angeles] cron end
+[20-Oct-2023 19:28:20 America/Los_Angeles] cron start
+[20-Oct-2023 19:28:20 America/Los_Angeles] cron end
+[20-Oct-2023 19:33:20 America/Los_Angeles] cron start
+[20-Oct-2023 19:33:20 America/Los_Angeles] cron end
+[20-Oct-2023 19:38:21 America/Los_Angeles] cron start
+[20-Oct-2023 19:38:21 America/Los_Angeles] cron end
+[20-Oct-2023 19:43:21 America/Los_Angeles] cron start
+[20-Oct-2023 19:43:21 America/Los_Angeles] cron end
+[20-Oct-2023 19:48:22 America/Los_Angeles] cron start
+[20-Oct-2023 19:48:22 America/Los_Angeles] cron end
+[20-Oct-2023 19:53:23 America/Los_Angeles] cron start
+[20-Oct-2023 19:53:23 America/Los_Angeles] cron end
+[20-Oct-2023 19:58:24 America/Los_Angeles] cron start
+[20-Oct-2023 19:58:24 America/Los_Angeles] cron end
+[20-Oct-2023 20:03:25 America/Los_Angeles] cron start
+[20-Oct-2023 20:03:25 America/Los_Angeles] cron end
+[20-Oct-2023 20:08:25 America/Los_Angeles] cron start
+[20-Oct-2023 20:08:25 America/Los_Angeles] cron end
+[20-Oct-2023 20:13:26 America/Los_Angeles] cron start
+[20-Oct-2023 20:13:26 America/Los_Angeles] cron end
+[20-Oct-2023 20:18:27 America/Los_Angeles] cron start
+[20-Oct-2023 20:18:27 America/Los_Angeles] cron end
+[20-Oct-2023 20:23:27 America/Los_Angeles] cron start
+[20-Oct-2023 20:23:27 America/Los_Angeles] cron end
+[20-Oct-2023 20:28:28 America/Los_Angeles] cron start
+[20-Oct-2023 20:28:28 America/Los_Angeles] cron end
+[20-Oct-2023 20:33:28 America/Los_Angeles] cron start
+[20-Oct-2023 20:33:28 America/Los_Angeles] cron end
+[20-Oct-2023 20:38:29 America/Los_Angeles] cron start
+[20-Oct-2023 20:38:29 America/Los_Angeles] cron end
+[20-Oct-2023 20:43:29 America/Los_Angeles] cron start
+[20-Oct-2023 20:43:29 America/Los_Angeles] cron end
+[20-Oct-2023 20:48:30 America/Los_Angeles] cron start
+[20-Oct-2023 20:48:30 America/Los_Angeles] cron end
+[20-Oct-2023 20:53:30 America/Los_Angeles] cron start
+[20-Oct-2023 20:53:31 America/Los_Angeles] cron end
+[20-Oct-2023 20:58:31 America/Los_Angeles] cron start
+[20-Oct-2023 20:58:31 America/Los_Angeles] cron end
+[20-Oct-2023 21:03:32 America/Los_Angeles] cron start
+[20-Oct-2023 21:03:32 America/Los_Angeles] cron end
+[20-Oct-2023 21:08:32 America/Los_Angeles] cron start
+[20-Oct-2023 21:08:32 America/Los_Angeles] cron end
+[20-Oct-2023 21:13:33 America/Los_Angeles] cron start
+[20-Oct-2023 21:13:33 America/Los_Angeles] cron end
+[20-Oct-2023 21:18:33 America/Los_Angeles] cron start
+[20-Oct-2023 21:18:33 America/Los_Angeles] cron end
+[20-Oct-2023 21:23:34 America/Los_Angeles] cron start
+[20-Oct-2023 21:23:34 America/Los_Angeles] cron end
+[20-Oct-2023 21:28:35 America/Los_Angeles] cron start
+[20-Oct-2023 21:28:35 America/Los_Angeles] cron end
+[20-Oct-2023 21:33:35 America/Los_Angeles] cron start
+[20-Oct-2023 21:33:35 America/Los_Angeles] cron end
+[20-Oct-2023 21:38:36 America/Los_Angeles] cron start
+[20-Oct-2023 21:38:36 America/Los_Angeles] cron end
+[20-Oct-2023 21:43:36 America/Los_Angeles] cron start
+[20-Oct-2023 21:43:36 America/Los_Angeles] cron end
+[20-Oct-2023 21:48:37 America/Los_Angeles] cron start
+[20-Oct-2023 21:48:37 America/Los_Angeles] cron end
+[20-Oct-2023 21:53:38 America/Los_Angeles] cron start
+[20-Oct-2023 21:53:38 America/Los_Angeles] cron end
+[20-Oct-2023 21:58:38 America/Los_Angeles] cron start
+[20-Oct-2023 21:58:38 America/Los_Angeles] cron end
+[20-Oct-2023 22:03:39 America/Los_Angeles] cron start
+[20-Oct-2023 22:03:39 America/Los_Angeles] cron end
+[20-Oct-2023 22:08:40 America/Los_Angeles] cron start
+[20-Oct-2023 22:08:40 America/Los_Angeles] cron end
+[20-Oct-2023 22:13:40 America/Los_Angeles] cron start
+[20-Oct-2023 22:13:40 America/Los_Angeles] cron end
+[20-Oct-2023 22:18:41 America/Los_Angeles] cron start
+[20-Oct-2023 22:18:41 America/Los_Angeles] cron end
+[20-Oct-2023 22:23:42 America/Los_Angeles] cron start
+[20-Oct-2023 22:23:42 America/Los_Angeles] cron end
+[20-Oct-2023 22:28:43 America/Los_Angeles] cron start
+[20-Oct-2023 22:28:43 America/Los_Angeles] cron end
+[20-Oct-2023 22:33:43 America/Los_Angeles] cron start
+[20-Oct-2023 22:33:43 America/Los_Angeles] cron end
+[20-Oct-2023 22:38:44 America/Los_Angeles] cron start
+[20-Oct-2023 22:38:44 America/Los_Angeles] cron end
+[20-Oct-2023 22:43:44 America/Los_Angeles] cron start
+[20-Oct-2023 22:43:44 America/Los_Angeles] cron end
+[20-Oct-2023 22:48:45 America/Los_Angeles] cron start
+[20-Oct-2023 22:48:45 America/Los_Angeles] cron end
+[20-Oct-2023 22:53:45 America/Los_Angeles] cron start
+[20-Oct-2023 22:53:45 America/Los_Angeles] cron end
+[20-Oct-2023 22:58:46 America/Los_Angeles] cron start
+[20-Oct-2023 22:58:46 America/Los_Angeles] cron end
+[20-Oct-2023 23:03:46 America/Los_Angeles] cron start
+[20-Oct-2023 23:03:46 America/Los_Angeles] cron end
+[20-Oct-2023 23:08:47 America/Los_Angeles] cron start
+[20-Oct-2023 23:08:47 America/Los_Angeles] cron end
+[20-Oct-2023 23:13:47 America/Los_Angeles] cron start
+[20-Oct-2023 23:13:47 America/Los_Angeles] cron end
+[20-Oct-2023 23:18:48 America/Los_Angeles] cron start
+[20-Oct-2023 23:18:48 America/Los_Angeles] cron end
+[20-Oct-2023 23:23:49 America/Los_Angeles] cron start
+[20-Oct-2023 23:23:49 America/Los_Angeles] cron end
+[20-Oct-2023 23:28:49 America/Los_Angeles] cron start
+[20-Oct-2023 23:28:49 America/Los_Angeles] cron end
+[20-Oct-2023 23:33:49 America/Los_Angeles] cron start
+[20-Oct-2023 23:33:49 America/Los_Angeles] cron end
+[20-Oct-2023 23:38:50 America/Los_Angeles] cron start
+[20-Oct-2023 23:38:50 America/Los_Angeles] cron end
+[20-Oct-2023 23:43:51 America/Los_Angeles] cron start
+[20-Oct-2023 23:43:51 America/Los_Angeles] cron end
+[20-Oct-2023 23:48:51 America/Los_Angeles] cron start
+[20-Oct-2023 23:48:51 America/Los_Angeles] cron end
+[20-Oct-2023 23:53:52 America/Los_Angeles] cron start
+[20-Oct-2023 23:53:52 America/Los_Angeles] cron end
+[20-Oct-2023 23:58:53 America/Los_Angeles] cron start
+[20-Oct-2023 23:58:53 America/Los_Angeles] cron end
+[21-Oct-2023 00:03:53 America/Los_Angeles] cron start
+[21-Oct-2023 00:03:53 America/Los_Angeles] cron end
+[21-Oct-2023 00:08:54 America/Los_Angeles] cron start
+[21-Oct-2023 00:08:54 America/Los_Angeles] cron end
+[21-Oct-2023 00:13:55 America/Los_Angeles] cron start
+[21-Oct-2023 00:13:55 America/Los_Angeles] cron end
+[21-Oct-2023 00:18:55 America/Los_Angeles] cron start
+[21-Oct-2023 00:18:55 America/Los_Angeles] cron end
+[21-Oct-2023 00:23:56 America/Los_Angeles] cron start
+[21-Oct-2023 00:23:56 America/Los_Angeles] cron end
+[21-Oct-2023 00:28:57 America/Los_Angeles] cron start
+[21-Oct-2023 00:28:57 America/Los_Angeles] cron end
+[21-Oct-2023 00:33:57 America/Los_Angeles] cron start
+[21-Oct-2023 00:33:57 America/Los_Angeles] cron end
+[21-Oct-2023 00:38:58 America/Los_Angeles] cron start
+[21-Oct-2023 00:38:58 America/Los_Angeles] cron end
+[21-Oct-2023 00:43:59 America/Los_Angeles] cron start
+[21-Oct-2023 00:43:59 America/Los_Angeles] cron end
+[21-Oct-2023 00:48:59 America/Los_Angeles] cron start
+[21-Oct-2023 00:48:59 America/Los_Angeles] cron end
+[21-Oct-2023 00:54:00 America/Los_Angeles] cron start
+[21-Oct-2023 00:54:00 America/Los_Angeles] cron end
+[21-Oct-2023 00:59:00 America/Los_Angeles] cron start
+[21-Oct-2023 00:59:00 America/Los_Angeles] cron end
+[21-Oct-2023 01:04:01 America/Los_Angeles] cron start
+[21-Oct-2023 01:04:01 America/Los_Angeles] cron end
+[21-Oct-2023 01:09:02 America/Los_Angeles] cron start
+[21-Oct-2023 01:09:02 America/Los_Angeles] cron end
+[21-Oct-2023 01:14:03 America/Los_Angeles] cron start
+[21-Oct-2023 01:14:03 America/Los_Angeles] cron end
+[21-Oct-2023 01:19:03 America/Los_Angeles] cron start
+[21-Oct-2023 01:19:03 America/Los_Angeles] cron end
+[21-Oct-2023 01:24:04 America/Los_Angeles] cron start
+[21-Oct-2023 01:24:04 America/Los_Angeles] cron end
+[21-Oct-2023 01:29:05 America/Los_Angeles] cron start
+[21-Oct-2023 01:29:05 America/Los_Angeles] cron end
+[21-Oct-2023 01:34:05 America/Los_Angeles] cron start
+[21-Oct-2023 01:34:05 America/Los_Angeles] cron end
+[21-Oct-2023 01:39:06 America/Los_Angeles] cron start
+[21-Oct-2023 01:39:06 America/Los_Angeles] cron end
+[21-Oct-2023 01:44:07 America/Los_Angeles] cron start
+[21-Oct-2023 01:44:07 America/Los_Angeles] cron end
+[21-Oct-2023 01:49:07 America/Los_Angeles] cron start
+[21-Oct-2023 01:49:07 America/Los_Angeles] cron end
+[21-Oct-2023 01:54:08 America/Los_Angeles] cron start
+[21-Oct-2023 01:54:08 America/Los_Angeles] cron end
+[21-Oct-2023 01:59:09 America/Los_Angeles] cron start
+[21-Oct-2023 01:59:09 America/Los_Angeles] cron end
+[21-Oct-2023 02:04:09 America/Los_Angeles] cron start
+[21-Oct-2023 02:04:09 America/Los_Angeles] cron end
+[21-Oct-2023 02:09:10 America/Los_Angeles] cron start
+[21-Oct-2023 02:09:10 America/Los_Angeles] cron end
+[21-Oct-2023 02:14:11 America/Los_Angeles] cron start
+[21-Oct-2023 02:14:11 America/Los_Angeles] cron end
+[21-Oct-2023 02:19:11 America/Los_Angeles] cron start
+[21-Oct-2023 02:19:11 America/Los_Angeles] cron end
+[21-Oct-2023 02:24:12 America/Los_Angeles] cron start
+[21-Oct-2023 02:24:12 America/Los_Angeles] cron end
+[21-Oct-2023 02:29:12 America/Los_Angeles] cron start
+[21-Oct-2023 02:29:12 America/Los_Angeles] cron end
+[21-Oct-2023 02:34:13 America/Los_Angeles] cron start
+[21-Oct-2023 02:34:13 America/Los_Angeles] cron end
+[21-Oct-2023 02:39:13 America/Los_Angeles] cron start
+[21-Oct-2023 02:39:13 America/Los_Angeles] cron end
+[21-Oct-2023 02:44:14 America/Los_Angeles] cron start
+[21-Oct-2023 02:44:14 America/Los_Angeles] cron end
+[21-Oct-2023 02:49:14 America/Los_Angeles] cron start
+[21-Oct-2023 02:49:14 America/Los_Angeles] cron end
+[21-Oct-2023 02:54:15 America/Los_Angeles] cron start
+[21-Oct-2023 02:54:15 America/Los_Angeles] cron end
+[21-Oct-2023 02:59:16 America/Los_Angeles] cron start
+[21-Oct-2023 02:59:16 America/Los_Angeles] cron end
+[21-Oct-2023 03:04:17 America/Los_Angeles] cron start
+[21-Oct-2023 03:04:17 America/Los_Angeles] cron end
+[21-Oct-2023 03:09:17 America/Los_Angeles] cron start
+[21-Oct-2023 03:09:17 America/Los_Angeles] cron end
+[21-Oct-2023 03:14:18 America/Los_Angeles] cron start
+[21-Oct-2023 03:14:18 America/Los_Angeles] cron end
+[21-Oct-2023 03:19:19 America/Los_Angeles] cron start
+[21-Oct-2023 03:19:19 America/Los_Angeles] cron end
+[21-Oct-2023 03:24:20 America/Los_Angeles] cron start
+[21-Oct-2023 03:24:20 America/Los_Angeles] cron end
+[21-Oct-2023 03:29:21 America/Los_Angeles] cron start
+[21-Oct-2023 03:29:21 America/Los_Angeles] cron end
+[21-Oct-2023 03:34:22 America/Los_Angeles] cron start
+[21-Oct-2023 03:34:22 America/Los_Angeles] cron end
+[21-Oct-2023 03:39:22 America/Los_Angeles] cron start
+[21-Oct-2023 03:39:22 America/Los_Angeles] cron end
+[21-Oct-2023 03:44:23 America/Los_Angeles] cron start
+[21-Oct-2023 03:44:23 America/Los_Angeles] cron end
+[21-Oct-2023 03:49:23 America/Los_Angeles] cron start
+[21-Oct-2023 03:49:23 America/Los_Angeles] cron end
+[21-Oct-2023 03:54:24 America/Los_Angeles] cron start
+[21-Oct-2023 03:54:24 America/Los_Angeles] cron end
+[21-Oct-2023 03:59:25 America/Los_Angeles] cron start
+[21-Oct-2023 03:59:25 America/Los_Angeles] cron end
+[21-Oct-2023 04:04:26 America/Los_Angeles] cron start
+[21-Oct-2023 04:04:26 America/Los_Angeles] cron end
+[21-Oct-2023 04:09:26 America/Los_Angeles] cron start
+[21-Oct-2023 04:09:26 America/Los_Angeles] cron end
+[21-Oct-2023 04:14:27 America/Los_Angeles] cron start
+[21-Oct-2023 04:14:27 America/Los_Angeles] cron end
+[21-Oct-2023 04:19:27 America/Los_Angeles] cron start
+[21-Oct-2023 04:19:27 America/Los_Angeles] cron end
+[21-Oct-2023 04:24:28 America/Los_Angeles] cron start
+[21-Oct-2023 04:24:28 America/Los_Angeles] cron end
+[21-Oct-2023 04:29:29 America/Los_Angeles] cron start
+[21-Oct-2023 04:29:29 America/Los_Angeles] cron end
+[21-Oct-2023 04:34:29 America/Los_Angeles] cron start
+[21-Oct-2023 04:34:29 America/Los_Angeles] cron end
+[21-Oct-2023 04:39:30 America/Los_Angeles] cron start
+[21-Oct-2023 04:39:30 America/Los_Angeles] cron end
+[21-Oct-2023 04:44:31 America/Los_Angeles] cron start
+[21-Oct-2023 04:44:31 America/Los_Angeles] cron end
+[21-Oct-2023 04:49:31 America/Los_Angeles] cron start
+[21-Oct-2023 04:49:31 America/Los_Angeles] cron end
+[21-Oct-2023 04:54:32 America/Los_Angeles] cron start
+[21-Oct-2023 04:54:32 America/Los_Angeles] cron end
+[21-Oct-2023 04:59:32 America/Los_Angeles] cron start
+[21-Oct-2023 04:59:32 America/Los_Angeles] cron end
+[21-Oct-2023 05:04:33 America/Los_Angeles] cron start
+[21-Oct-2023 05:04:33 America/Los_Angeles] cron end
+[21-Oct-2023 05:09:33 America/Los_Angeles] cron start
+[21-Oct-2023 05:09:33 America/Los_Angeles] cron end
+[21-Oct-2023 05:14:34 America/Los_Angeles] cron start
+[21-Oct-2023 05:14:34 America/Los_Angeles] cron end
+[21-Oct-2023 05:19:34 America/Los_Angeles] cron start
+[21-Oct-2023 05:19:34 America/Los_Angeles] cron end
+[21-Oct-2023 05:24:35 America/Los_Angeles] cron start
+[21-Oct-2023 05:24:35 America/Los_Angeles] cron end
+[21-Oct-2023 05:29:36 America/Los_Angeles] cron start
+[21-Oct-2023 05:29:36 America/Los_Angeles] cron end
+[21-Oct-2023 05:34:36 America/Los_Angeles] cron start
+[21-Oct-2023 05:34:36 America/Los_Angeles] cron end
+[21-Oct-2023 05:39:37 America/Los_Angeles] cron start
+[21-Oct-2023 05:39:37 America/Los_Angeles] cron end
+[21-Oct-2023 05:44:38 America/Los_Angeles] cron start
+[21-Oct-2023 05:44:38 America/Los_Angeles] cron end
+[21-Oct-2023 05:49:39 America/Los_Angeles] cron start
+[21-Oct-2023 05:49:39 America/Los_Angeles] cron end
+[21-Oct-2023 05:54:39 America/Los_Angeles] cron start
+[21-Oct-2023 05:54:39 America/Los_Angeles] cron end
+[21-Oct-2023 05:59:40 America/Los_Angeles] cron start
+[21-Oct-2023 05:59:40 America/Los_Angeles] cron end
+[21-Oct-2023 06:04:41 America/Los_Angeles] cron start
+[21-Oct-2023 06:04:41 America/Los_Angeles] cron end
+[21-Oct-2023 06:09:41 America/Los_Angeles] cron start
+[21-Oct-2023 06:09:41 America/Los_Angeles] cron end
+[21-Oct-2023 06:14:42 America/Los_Angeles] cron start
+[21-Oct-2023 06:14:42 America/Los_Angeles] cron end
+[21-Oct-2023 06:19:43 America/Los_Angeles] cron start
+[21-Oct-2023 06:19:43 America/Los_Angeles] cron end
+[21-Oct-2023 06:24:43 America/Los_Angeles] cron start
+[21-Oct-2023 06:24:43 America/Los_Angeles] cron end
+[21-Oct-2023 06:29:44 America/Los_Angeles] cron start
+[21-Oct-2023 06:29:44 America/Los_Angeles] cron end
+[21-Oct-2023 06:34:45 America/Los_Angeles] cron start
+[21-Oct-2023 06:34:45 America/Los_Angeles] cron end
+[21-Oct-2023 06:39:46 America/Los_Angeles] cron start
+[21-Oct-2023 06:39:46 America/Los_Angeles] cron end
+[21-Oct-2023 06:44:46 America/Los_Angeles] cron start
+[21-Oct-2023 06:44:46 America/Los_Angeles] cron end
+[21-Oct-2023 06:49:47 America/Los_Angeles] cron start
+[21-Oct-2023 06:49:47 America/Los_Angeles] cron end
+[21-Oct-2023 06:54:48 America/Los_Angeles] cron start
+[21-Oct-2023 06:54:48 America/Los_Angeles] cron end
+[21-Oct-2023 06:59:48 America/Los_Angeles] cron start
+[21-Oct-2023 06:59:48 America/Los_Angeles] cron end
+[21-Oct-2023 07:04:50 America/Los_Angeles] cron start
+[21-Oct-2023 07:04:50 America/Los_Angeles] cron end
+[21-Oct-2023 07:09:51 America/Los_Angeles] cron start
+[21-Oct-2023 07:09:51 America/Los_Angeles] cron end
+[21-Oct-2023 07:14:51 America/Los_Angeles] cron start
+[21-Oct-2023 07:14:51 America/Los_Angeles] cron end
+[21-Oct-2023 07:19:51 America/Los_Angeles] cron start
+[21-Oct-2023 07:19:51 America/Los_Angeles] cron end
+[21-Oct-2023 07:24:52 America/Los_Angeles] cron start
+[21-Oct-2023 07:24:52 America/Los_Angeles] cron end
+[21-Oct-2023 07:29:52 America/Los_Angeles] cron start
+[21-Oct-2023 07:29:52 America/Los_Angeles] cron end
+[21-Oct-2023 07:34:52 America/Los_Angeles] cron start
+[21-Oct-2023 07:34:52 America/Los_Angeles] cron end
+[21-Oct-2023 07:39:52 America/Los_Angeles] cron start
+[21-Oct-2023 07:39:52 America/Los_Angeles] cron end
+[21-Oct-2023 07:44:53 America/Los_Angeles] cron start
+[21-Oct-2023 07:44:53 America/Los_Angeles] cron end
+[21-Oct-2023 07:49:54 America/Los_Angeles] cron start
+[21-Oct-2023 07:49:54 America/Los_Angeles] cron end
+[21-Oct-2023 07:54:55 America/Los_Angeles] cron start
+[21-Oct-2023 07:54:55 America/Los_Angeles] cron end
+[21-Oct-2023 07:59:56 America/Los_Angeles] cron start
+[21-Oct-2023 07:59:56 America/Los_Angeles] cron end
+[21-Oct-2023 08:04:57 America/Los_Angeles] cron start
+[21-Oct-2023 08:04:57 America/Los_Angeles] cron end
+[21-Oct-2023 08:09:58 America/Los_Angeles] cron start
+[21-Oct-2023 08:09:58 America/Los_Angeles] cron end
+[21-Oct-2023 08:14:58 America/Los_Angeles] cron start
+[21-Oct-2023 08:14:58 America/Los_Angeles] cron end
+[21-Oct-2023 08:19:59 America/Los_Angeles] cron start
+[21-Oct-2023 08:19:59 America/Los_Angeles] cron end
+[21-Oct-2023 08:24:59 America/Los_Angeles] cron start
+[21-Oct-2023 08:24:59 America/Los_Angeles] cron end
+[21-Oct-2023 08:30:00 America/Los_Angeles] cron start
+[21-Oct-2023 08:30:00 America/Los_Angeles] cron end
+[21-Oct-2023 08:35:00 America/Los_Angeles] cron start
+[21-Oct-2023 08:35:00 America/Los_Angeles] cron end
+[21-Oct-2023 08:40:01 America/Los_Angeles] cron start
+[21-Oct-2023 08:40:01 America/Los_Angeles] cron end
+[21-Oct-2023 08:45:01 America/Los_Angeles] cron start
+[21-Oct-2023 08:45:01 America/Los_Angeles] cron end
+[21-Oct-2023 08:50:02 America/Los_Angeles] cron start
+[21-Oct-2023 08:50:02 America/Los_Angeles] cron end
+[21-Oct-2023 08:55:02 America/Los_Angeles] cron start
+[21-Oct-2023 08:55:02 America/Los_Angeles] cron end
+[21-Oct-2023 09:00:02 America/Los_Angeles] cron start
+[21-Oct-2023 09:00:02 America/Los_Angeles] cron end
+[21-Oct-2023 09:05:03 America/Los_Angeles] cron start
+[21-Oct-2023 09:05:03 America/Los_Angeles] cron end
+[21-Oct-2023 09:10:03 America/Los_Angeles] cron start
+[21-Oct-2023 09:10:03 America/Los_Angeles] cron end
+[21-Oct-2023 09:15:04 America/Los_Angeles] cron start
+[21-Oct-2023 09:15:04 America/Los_Angeles] cron end
+[21-Oct-2023 09:20:04 America/Los_Angeles] cron start
+[21-Oct-2023 09:20:04 America/Los_Angeles] cron end
+[21-Oct-2023 09:25:04 America/Los_Angeles] cron start
+[21-Oct-2023 09:25:04 America/Los_Angeles] cron end
+[21-Oct-2023 09:30:04 America/Los_Angeles] cron start
+[21-Oct-2023 09:30:04 America/Los_Angeles] cron end
+[21-Oct-2023 09:35:05 America/Los_Angeles] cron start
+[21-Oct-2023 09:35:05 America/Los_Angeles] cron end
+[21-Oct-2023 09:40:05 America/Los_Angeles] cron start
+[21-Oct-2023 09:40:05 America/Los_Angeles] cron end
+[21-Oct-2023 09:45:06 America/Los_Angeles] cron start
+[21-Oct-2023 09:45:06 America/Los_Angeles] cron end
+[21-Oct-2023 09:50:06 America/Los_Angeles] cron start
+[21-Oct-2023 09:50:06 America/Los_Angeles] cron end
+[21-Oct-2023 09:55:07 America/Los_Angeles] cron start
+[21-Oct-2023 09:55:07 America/Los_Angeles] cron end
+[21-Oct-2023 10:00:08 America/Los_Angeles] cron start
+[21-Oct-2023 10:00:08 America/Los_Angeles] cron end
+[21-Oct-2023 10:05:08 America/Los_Angeles] cron start
+[21-Oct-2023 10:05:08 America/Los_Angeles] cron end
+[21-Oct-2023 10:10:08 America/Los_Angeles] cron start
+[21-Oct-2023 10:10:08 America/Los_Angeles] cron end
+[21-Oct-2023 10:15:09 America/Los_Angeles] cron start
+[21-Oct-2023 10:15:09 America/Los_Angeles] cron end
+[21-Oct-2023 10:20:09 America/Los_Angeles] cron start
+[21-Oct-2023 10:20:09 America/Los_Angeles] cron end
+[21-Oct-2023 10:25:10 America/Los_Angeles] cron start
+[21-Oct-2023 10:25:10 America/Los_Angeles] cron end
+[21-Oct-2023 10:30:11 America/Los_Angeles] cron start
+[21-Oct-2023 10:30:11 America/Los_Angeles] cron end
+[21-Oct-2023 10:35:11 America/Los_Angeles] cron start
+[21-Oct-2023 10:35:11 America/Los_Angeles] cron end
+[21-Oct-2023 10:40:12 America/Los_Angeles] cron start
+[21-Oct-2023 10:40:12 America/Los_Angeles] cron end
+[21-Oct-2023 10:45:13 America/Los_Angeles] cron start
+[21-Oct-2023 10:45:13 America/Los_Angeles] cron end
+[21-Oct-2023 10:50:14 America/Los_Angeles] cron start
+[21-Oct-2023 10:50:14 America/Los_Angeles] cron end
+[21-Oct-2023 10:55:14 America/Los_Angeles] cron start
+[21-Oct-2023 10:55:14 America/Los_Angeles] cron end
+[21-Oct-2023 11:00:15 America/Los_Angeles] cron start
+[21-Oct-2023 11:00:15 America/Los_Angeles] cron end
+[21-Oct-2023 11:05:16 America/Los_Angeles] cron start
+[21-Oct-2023 11:05:16 America/Los_Angeles] cron end
+[21-Oct-2023 11:10:16 America/Los_Angeles] cron start
+[21-Oct-2023 11:10:16 America/Los_Angeles] cron end
+[21-Oct-2023 11:15:17 America/Los_Angeles] cron start
+[21-Oct-2023 11:15:17 America/Los_Angeles] cron end
+[21-Oct-2023 11:20:17 America/Los_Angeles] cron start
+[21-Oct-2023 11:20:17 America/Los_Angeles] cron end
+[21-Oct-2023 11:25:18 America/Los_Angeles] cron start
+[21-Oct-2023 11:25:18 America/Los_Angeles] cron end
+[21-Oct-2023 11:30:19 America/Los_Angeles] cron start
+[21-Oct-2023 11:30:19 America/Los_Angeles] cron end
+[21-Oct-2023 11:35:20 America/Los_Angeles] cron start
+[21-Oct-2023 11:35:20 America/Los_Angeles] cron end
+[21-Oct-2023 11:40:20 America/Los_Angeles] cron start
+[21-Oct-2023 11:40:20 America/Los_Angeles] cron end
+[21-Oct-2023 11:45:21 America/Los_Angeles] cron start
+[21-Oct-2023 11:45:21 America/Los_Angeles] cron end
+[21-Oct-2023 11:50:21 America/Los_Angeles] cron start
+[21-Oct-2023 11:50:21 America/Los_Angeles] cron end
+[21-Oct-2023 11:55:22 America/Los_Angeles] cron start
+[21-Oct-2023 11:55:22 America/Los_Angeles] cron end
+[21-Oct-2023 12:00:23 America/Los_Angeles] cron start
+[21-Oct-2023 12:00:23 America/Los_Angeles] cron end
+[21-Oct-2023 12:05:23 America/Los_Angeles] cron start
+[21-Oct-2023 12:05:23 America/Los_Angeles] cron end
+[21-Oct-2023 12:10:24 America/Los_Angeles] cron start
+[21-Oct-2023 12:10:24 America/Los_Angeles] cron end
+[21-Oct-2023 12:15:24 America/Los_Angeles] cron start
+[21-Oct-2023 12:15:24 America/Los_Angeles] cron end
+[21-Oct-2023 12:20:25 America/Los_Angeles] cron start
+[21-Oct-2023 12:20:25 America/Los_Angeles] cron end
+[21-Oct-2023 12:25:25 America/Los_Angeles] cron start
+[21-Oct-2023 12:25:25 America/Los_Angeles] cron end
+[21-Oct-2023 12:30:26 America/Los_Angeles] cron start
+[21-Oct-2023 12:30:26 America/Los_Angeles] cron end
+[21-Oct-2023 12:35:27 America/Los_Angeles] cron start
+[21-Oct-2023 12:35:27 America/Los_Angeles] cron end
+[21-Oct-2023 12:40:27 America/Los_Angeles] cron start
+[21-Oct-2023 12:40:27 America/Los_Angeles] cron end
+[21-Oct-2023 12:45:28 America/Los_Angeles] cron start
+[21-Oct-2023 12:45:28 America/Los_Angeles] cron end
+[21-Oct-2023 12:50:29 America/Los_Angeles] cron start
+[21-Oct-2023 12:50:29 America/Los_Angeles] cron end
+[21-Oct-2023 12:55:29 America/Los_Angeles] cron start
+[21-Oct-2023 12:55:29 America/Los_Angeles] cron end
+[21-Oct-2023 13:20:09 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Users/josephroberts/localdev/leantime/app/Core/Db.php:66
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/Core/Db.php(66): PDO->__construct('mysql:host=loca...', 'root', 'root', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(254): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(157): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[21-Oct-2023 13:20:10 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] No such file or directory in /Users/josephroberts/localdev/leantime/app/Core/Db.php:66
+Stack trace:
+#0 /Users/josephroberts/localdev/leantime/app/Core/Db.php(66): PDO->__construct('mysql:host=loca...', 'root', 'root', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Users/josephroberts/localdev/leantime/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(254): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Users/josephroberts/localdev/leantime/app/Core/Bootloader.php(157): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Users/josephroberts/localdev/leantime/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[21-Oct-2023 13:56:15 America/Los_Angeles] cron start
+[21-Oct-2023 13:56:15 America/Los_Angeles] cron end
+[21-Oct-2023 14:01:15 America/Los_Angeles] cron start
+[21-Oct-2023 14:01:15 America/Los_Angeles] cron end
+[21-Oct-2023 14:06:16 America/Los_Angeles] cron start
+[21-Oct-2023 14:06:16 America/Los_Angeles] cron end
+[21-Oct-2023 14:11:16 America/Los_Angeles] cron start
+[21-Oct-2023 14:11:16 America/Los_Angeles] cron end
+[21-Oct-2023 14:16:16 America/Los_Angeles] cron start
+[21-Oct-2023 14:16:16 America/Los_Angeles] cron end
+[21-Oct-2023 14:21:17 America/Los_Angeles] cron start
+[21-Oct-2023 14:21:17 America/Los_Angeles] cron end
+[21-Oct-2023 14:26:17 America/Los_Angeles] cron start
+[21-Oct-2023 14:26:17 America/Los_Angeles] cron end
+[21-Oct-2023 14:31:18 America/Los_Angeles] cron start
+[21-Oct-2023 14:31:18 America/Los_Angeles] cron end
+[21-Oct-2023 14:36:18 America/Los_Angeles] cron start
+[21-Oct-2023 14:36:18 America/Los_Angeles] cron end
+[21-Oct-2023 14:41:18 America/Los_Angeles] cron start
+[21-Oct-2023 14:41:18 America/Los_Angeles] cron end
+[21-Oct-2023 14:46:19 America/Los_Angeles] cron start
+[21-Oct-2023 14:46:19 America/Los_Angeles] cron end
+[21-Oct-2023 14:51:20 America/Los_Angeles] cron start
+[21-Oct-2023 14:51:20 America/Los_Angeles] cron end
+[21-Oct-2023 14:56:19 America/Los_Angeles] cron start
+[21-Oct-2023 14:56:19 America/Los_Angeles] cron end
+[21-Oct-2023 15:01:19 America/Los_Angeles] cron start
+[21-Oct-2023 15:01:19 America/Los_Angeles] cron end
+[21-Oct-2023 15:06:20 America/Los_Angeles] cron start
+[21-Oct-2023 15:06:20 America/Los_Angeles] cron end
+[21-Oct-2023 15:11:20 America/Los_Angeles] cron start
+[21-Oct-2023 15:11:20 America/Los_Angeles] cron end
+[21-Oct-2023 15:16:20 America/Los_Angeles] cron start
+[21-Oct-2023 15:16:20 America/Los_Angeles] cron end
+[21-Oct-2023 15:21:21 America/Los_Angeles] cron start
+[21-Oct-2023 15:21:21 America/Los_Angeles] cron end
+[21-Oct-2023 15:26:21 America/Los_Angeles] cron start
+[21-Oct-2023 15:26:21 America/Los_Angeles] cron end
+[21-Oct-2023 15:31:22 America/Los_Angeles] cron start
+[21-Oct-2023 15:31:22 America/Los_Angeles] cron end
+[21-Oct-2023 15:36:23 America/Los_Angeles] cron start
+[21-Oct-2023 15:36:23 America/Los_Angeles] cron end
+[21-Oct-2023 15:41:23 America/Los_Angeles] cron start
+[21-Oct-2023 15:41:23 America/Los_Angeles] cron end
+[21-Oct-2023 15:46:24 America/Los_Angeles] cron start
+[21-Oct-2023 15:46:24 America/Los_Angeles] cron end
+[21-Oct-2023 15:51:25 America/Los_Angeles] cron start
+[21-Oct-2023 15:51:25 America/Los_Angeles] cron end
+[21-Oct-2023 15:56:25 America/Los_Angeles] cron start
+[21-Oct-2023 15:56:25 America/Los_Angeles] cron end
+[21-Oct-2023 16:01:26 America/Los_Angeles] cron start
+[21-Oct-2023 16:01:26 America/Los_Angeles] cron end
+[21-Oct-2023 16:06:26 America/Los_Angeles] cron start
+[21-Oct-2023 16:06:26 America/Los_Angeles] cron end
+[21-Oct-2023 16:11:27 America/Los_Angeles] cron start
+[21-Oct-2023 16:11:27 America/Los_Angeles] cron end
+[21-Oct-2023 16:16:28 America/Los_Angeles] cron start
+[21-Oct-2023 16:16:28 America/Los_Angeles] cron end
+[21-Oct-2023 16:21:28 America/Los_Angeles] cron start
+[21-Oct-2023 16:21:28 America/Los_Angeles] cron end
+[21-Oct-2023 16:26:29 America/Los_Angeles] cron start
+[21-Oct-2023 16:26:29 America/Los_Angeles] cron end
+[21-Oct-2023 16:31:29 America/Los_Angeles] cron start
+[21-Oct-2023 16:31:29 America/Los_Angeles] cron end
+[21-Oct-2023 16:36:30 America/Los_Angeles] cron start
+[21-Oct-2023 16:36:30 America/Los_Angeles] cron end
+[21-Oct-2023 16:41:30 America/Los_Angeles] cron start
+[21-Oct-2023 16:41:30 America/Los_Angeles] cron end
+[21-Oct-2023 16:46:31 America/Los_Angeles] cron start
+[21-Oct-2023 16:46:31 America/Los_Angeles] cron end
+[21-Oct-2023 16:51:32 America/Los_Angeles] cron start
+[21-Oct-2023 16:51:32 America/Los_Angeles] cron end
+[21-Oct-2023 16:56:32 America/Los_Angeles] cron start
+[21-Oct-2023 16:56:32 America/Los_Angeles] cron end
+[21-Oct-2023 17:01:33 America/Los_Angeles] cron start
+[21-Oct-2023 17:01:33 America/Los_Angeles] cron end
+[21-Oct-2023 17:06:34 America/Los_Angeles] cron start
+[21-Oct-2023 17:06:34 America/Los_Angeles] cron end
+[21-Oct-2023 17:11:34 America/Los_Angeles] cron start
+[21-Oct-2023 17:11:34 America/Los_Angeles] cron end
+[21-Oct-2023 17:16:35 America/Los_Angeles] cron start
+[21-Oct-2023 17:16:35 America/Los_Angeles] cron end
+[21-Oct-2023 17:21:35 America/Los_Angeles] cron start
+[21-Oct-2023 17:21:35 America/Los_Angeles] cron end
+[21-Oct-2023 17:26:36 America/Los_Angeles] cron start
+[21-Oct-2023 17:26:36 America/Los_Angeles] cron end
+[21-Oct-2023 17:31:37 America/Los_Angeles] cron start
+[21-Oct-2023 17:31:37 America/Los_Angeles] cron end
+[21-Oct-2023 17:36:38 America/Los_Angeles] cron start
+[21-Oct-2023 17:36:38 America/Los_Angeles] cron end
+[21-Oct-2023 17:41:38 America/Los_Angeles] cron start
+[21-Oct-2023 17:41:38 America/Los_Angeles] cron end
+[21-Oct-2023 17:46:39 America/Los_Angeles] cron start
+[21-Oct-2023 17:46:39 America/Los_Angeles] cron end
+[21-Oct-2023 17:51:39 America/Los_Angeles] cron start
+[21-Oct-2023 17:51:39 America/Los_Angeles] cron end
+[21-Oct-2023 17:56:40 America/Los_Angeles] cron start
+[21-Oct-2023 17:56:40 America/Los_Angeles] cron end
+[21-Oct-2023 18:01:40 America/Los_Angeles] cron start
+[21-Oct-2023 18:01:40 America/Los_Angeles] cron end
+[21-Oct-2023 18:06:41 America/Los_Angeles] cron start
+[21-Oct-2023 18:06:41 America/Los_Angeles] cron end
+[21-Oct-2023 18:11:42 America/Los_Angeles] cron start
+[21-Oct-2023 18:11:42 America/Los_Angeles] cron end
+[21-Oct-2023 18:16:42 America/Los_Angeles] cron start
+[21-Oct-2023 18:16:42 America/Los_Angeles] cron end
+[21-Oct-2023 18:21:43 America/Los_Angeles] cron start
+[21-Oct-2023 18:21:43 America/Los_Angeles] cron end
+[21-Oct-2023 18:26:43 America/Los_Angeles] cron start
+[21-Oct-2023 18:26:43 America/Los_Angeles] cron end
+[21-Oct-2023 18:31:44 America/Los_Angeles] cron start
+[21-Oct-2023 18:31:44 America/Los_Angeles] cron end
+[21-Oct-2023 18:36:44 America/Los_Angeles] cron start
+[21-Oct-2023 18:36:44 America/Los_Angeles] cron end
+[21-Oct-2023 18:41:45 America/Los_Angeles] cron start
+[21-Oct-2023 18:41:45 America/Los_Angeles] cron end
+[21-Oct-2023 18:46:45 America/Los_Angeles] cron start
+[21-Oct-2023 18:46:45 America/Los_Angeles] cron end
+[21-Oct-2023 18:51:46 America/Los_Angeles] cron start
+[21-Oct-2023 18:51:46 America/Los_Angeles] cron end
+[21-Oct-2023 18:56:47 America/Los_Angeles] cron start
+[21-Oct-2023 18:56:47 America/Los_Angeles] cron end
+[21-Oct-2023 19:01:48 America/Los_Angeles] cron start
+[21-Oct-2023 19:01:48 America/Los_Angeles] cron end
+[21-Oct-2023 19:06:48 America/Los_Angeles] cron start
+[21-Oct-2023 19:06:48 America/Los_Angeles] cron end
+[21-Oct-2023 19:11:49 America/Los_Angeles] cron start
+[21-Oct-2023 19:11:49 America/Los_Angeles] cron end
+[21-Oct-2023 19:16:49 America/Los_Angeles] cron start
+[21-Oct-2023 19:16:49 America/Los_Angeles] cron end
+[21-Oct-2023 19:21:50 America/Los_Angeles] cron start
+[21-Oct-2023 19:21:50 America/Los_Angeles] cron end
+[21-Oct-2023 19:26:51 America/Los_Angeles] cron start
+[21-Oct-2023 19:26:51 America/Los_Angeles] cron end
+[21-Oct-2023 19:31:51 America/Los_Angeles] cron start
+[21-Oct-2023 19:31:51 America/Los_Angeles] cron end
+[21-Oct-2023 19:36:52 America/Los_Angeles] cron start
+[21-Oct-2023 19:36:52 America/Los_Angeles] cron end
+[21-Oct-2023 19:41:53 America/Los_Angeles] cron start
+[21-Oct-2023 19:41:53 America/Los_Angeles] cron end
+[21-Oct-2023 19:46:53 America/Los_Angeles] cron start
+[21-Oct-2023 19:46:53 America/Los_Angeles] cron end
+[21-Oct-2023 19:51:53 America/Los_Angeles] cron start
+[21-Oct-2023 19:51:53 America/Los_Angeles] cron end
+[21-Oct-2023 19:56:54 America/Los_Angeles] cron start
+[21-Oct-2023 19:56:54 America/Los_Angeles] cron end
+[21-Oct-2023 20:01:55 America/Los_Angeles] cron start
+[21-Oct-2023 20:01:55 America/Los_Angeles] cron end
+[21-Oct-2023 20:06:56 America/Los_Angeles] cron start
+[21-Oct-2023 20:06:56 America/Los_Angeles] cron end
+[21-Oct-2023 20:11:56 America/Los_Angeles] cron start
+[21-Oct-2023 20:11:56 America/Los_Angeles] cron end
+[21-Oct-2023 20:16:57 America/Los_Angeles] cron start
+[21-Oct-2023 20:16:57 America/Los_Angeles] cron end
+[21-Oct-2023 20:21:58 America/Los_Angeles] cron start
+[21-Oct-2023 20:21:58 America/Los_Angeles] cron end
+[21-Oct-2023 20:26:58 America/Los_Angeles] cron start
+[21-Oct-2023 20:26:58 America/Los_Angeles] cron end
+[21-Oct-2023 20:31:59 America/Los_Angeles] cron start
+[21-Oct-2023 20:31:59 America/Los_Angeles] cron end
+[21-Oct-2023 20:37:00 America/Los_Angeles] cron start
+[21-Oct-2023 20:37:00 America/Los_Angeles] cron end
+[21-Oct-2023 20:42:00 America/Los_Angeles] cron start
+[21-Oct-2023 20:42:00 America/Los_Angeles] cron end
+[21-Oct-2023 20:47:01 America/Los_Angeles] cron start
+[21-Oct-2023 20:47:01 America/Los_Angeles] cron end
+[21-Oct-2023 20:52:01 America/Los_Angeles] cron start
+[21-Oct-2023 20:52:01 America/Los_Angeles] cron end
+[21-Oct-2023 20:57:01 America/Los_Angeles] cron start
+[21-Oct-2023 20:57:01 America/Los_Angeles] cron end
+[21-Oct-2023 21:02:02 America/Los_Angeles] cron start
+[21-Oct-2023 21:02:02 America/Los_Angeles] cron end
+[21-Oct-2023 21:07:03 America/Los_Angeles] cron start
+[21-Oct-2023 21:07:03 America/Los_Angeles] cron end
+[21-Oct-2023 21:12:03 America/Los_Angeles] cron start
+[21-Oct-2023 21:12:03 America/Los_Angeles] cron end
+[21-Oct-2023 21:17:03 America/Los_Angeles] cron start
+[21-Oct-2023 21:17:03 America/Los_Angeles] cron end
+[21-Oct-2023 21:22:04 America/Los_Angeles] cron start
+[21-Oct-2023 21:22:04 America/Los_Angeles] cron end
+[21-Oct-2023 21:27:05 America/Los_Angeles] cron start
+[21-Oct-2023 21:27:05 America/Los_Angeles] cron end
+[21-Oct-2023 21:32:05 America/Los_Angeles] cron start
+[21-Oct-2023 21:32:05 America/Los_Angeles] cron end
+[21-Oct-2023 21:37:06 America/Los_Angeles] cron start
+[21-Oct-2023 21:37:06 America/Los_Angeles] cron end
+[21-Oct-2023 21:42:07 America/Los_Angeles] cron start
+[21-Oct-2023 21:42:07 America/Los_Angeles] cron end
+[21-Oct-2023 21:47:07 America/Los_Angeles] cron start
+[21-Oct-2023 21:47:07 America/Los_Angeles] cron end
+[21-Oct-2023 21:52:08 America/Los_Angeles] cron start
+[21-Oct-2023 21:52:08 America/Los_Angeles] cron end
+[21-Oct-2023 21:57:08 America/Los_Angeles] cron start
+[21-Oct-2023 21:57:08 America/Los_Angeles] cron end
+[21-Oct-2023 22:02:09 America/Los_Angeles] cron start
+[21-Oct-2023 22:02:09 America/Los_Angeles] cron end
+[21-Oct-2023 22:07:09 America/Los_Angeles] cron start
+[21-Oct-2023 22:07:09 America/Los_Angeles] cron end
+[21-Oct-2023 22:12:10 America/Los_Angeles] cron start
+[21-Oct-2023 22:12:10 America/Los_Angeles] cron end
+[21-Oct-2023 22:17:10 America/Los_Angeles] cron start
+[21-Oct-2023 22:17:10 America/Los_Angeles] cron end
+[21-Oct-2023 22:22:11 America/Los_Angeles] cron start
+[21-Oct-2023 22:22:11 America/Los_Angeles] cron end
+[21-Oct-2023 22:27:12 America/Los_Angeles] cron start
+[21-Oct-2023 22:27:12 America/Los_Angeles] cron end
+[21-Oct-2023 22:32:13 America/Los_Angeles] cron start
+[21-Oct-2023 22:32:13 America/Los_Angeles] cron end
+[21-Oct-2023 22:37:13 America/Los_Angeles] cron start
+[21-Oct-2023 22:37:13 America/Los_Angeles] cron end
+[21-Oct-2023 22:42:14 America/Los_Angeles] cron start
+[21-Oct-2023 22:42:14 America/Los_Angeles] cron end
+[21-Oct-2023 22:47:14 America/Los_Angeles] cron start
+[21-Oct-2023 22:47:14 America/Los_Angeles] cron end
+[21-Oct-2023 22:52:15 America/Los_Angeles] cron start
+[21-Oct-2023 22:52:15 America/Los_Angeles] cron end
+[21-Oct-2023 22:57:15 America/Los_Angeles] cron start
+[21-Oct-2023 22:57:15 America/Los_Angeles] cron end
+[21-Oct-2023 23:02:16 America/Los_Angeles] cron start
+[21-Oct-2023 23:02:16 America/Los_Angeles] cron end
+[21-Oct-2023 23:07:17 America/Los_Angeles] cron start
+[21-Oct-2023 23:07:17 America/Los_Angeles] cron end
+[21-Oct-2023 23:12:18 America/Los_Angeles] cron start
+[21-Oct-2023 23:12:18 America/Los_Angeles] cron end
+[21-Oct-2023 23:17:18 America/Los_Angeles] cron start
+[21-Oct-2023 23:17:18 America/Los_Angeles] cron end
+[21-Oct-2023 23:22:19 America/Los_Angeles] cron start
+[21-Oct-2023 23:22:19 America/Los_Angeles] cron end
+[21-Oct-2023 23:27:20 America/Los_Angeles] cron start
+[21-Oct-2023 23:27:20 America/Los_Angeles] cron end
+[21-Oct-2023 23:32:20 America/Los_Angeles] cron start
+[21-Oct-2023 23:32:20 America/Los_Angeles] cron end
+[21-Oct-2023 23:37:21 America/Los_Angeles] cron start
+[21-Oct-2023 23:37:21 America/Los_Angeles] cron end
+[21-Oct-2023 23:42:21 America/Los_Angeles] cron start
+[21-Oct-2023 23:42:21 America/Los_Angeles] cron end
+[21-Oct-2023 23:47:21 America/Los_Angeles] cron start
+[21-Oct-2023 23:47:21 America/Los_Angeles] cron end
+[21-Oct-2023 23:52:22 America/Los_Angeles] cron start
+[21-Oct-2023 23:52:22 America/Los_Angeles] cron end
+[21-Oct-2023 23:57:23 America/Los_Angeles] cron start
+[21-Oct-2023 23:57:23 America/Los_Angeles] cron end
+[22-Oct-2023 00:02:23 America/Los_Angeles] cron start
+[22-Oct-2023 00:02:23 America/Los_Angeles] cron end
+[22-Oct-2023 00:07:24 America/Los_Angeles] cron start
+[22-Oct-2023 00:07:24 America/Los_Angeles] cron end
+[22-Oct-2023 00:12:24 America/Los_Angeles] cron start
+[22-Oct-2023 00:12:24 America/Los_Angeles] cron end
+[22-Oct-2023 00:17:25 America/Los_Angeles] cron start
+[22-Oct-2023 00:17:25 America/Los_Angeles] cron end
+[22-Oct-2023 00:22:25 America/Los_Angeles] cron start
+[22-Oct-2023 00:22:25 America/Los_Angeles] cron end
+[22-Oct-2023 00:27:26 America/Los_Angeles] cron start
+[22-Oct-2023 00:27:26 America/Los_Angeles] cron end
+[22-Oct-2023 00:32:27 America/Los_Angeles] cron start
+[22-Oct-2023 00:32:27 America/Los_Angeles] cron end
+[22-Oct-2023 00:37:27 America/Los_Angeles] cron start
+[22-Oct-2023 00:37:27 America/Los_Angeles] cron end
+[22-Oct-2023 00:42:29 America/Los_Angeles] cron start
+[22-Oct-2023 00:42:29 America/Los_Angeles] cron end
+[22-Oct-2023 00:47:28 America/Los_Angeles] cron start
+[22-Oct-2023 00:47:28 America/Los_Angeles] cron end
+[22-Oct-2023 00:52:29 America/Los_Angeles] cron start
+[22-Oct-2023 00:52:29 America/Los_Angeles] cron end
+[22-Oct-2023 00:57:29 America/Los_Angeles] cron start
+[22-Oct-2023 00:57:29 America/Los_Angeles] cron end
+[22-Oct-2023 01:02:30 America/Los_Angeles] cron start
+[22-Oct-2023 01:02:30 America/Los_Angeles] cron end
+[22-Oct-2023 01:07:30 America/Los_Angeles] cron start
+[22-Oct-2023 01:07:30 America/Los_Angeles] cron end
+[22-Oct-2023 01:12:31 America/Los_Angeles] cron start
+[22-Oct-2023 01:12:31 America/Los_Angeles] cron end
+[22-Oct-2023 01:17:31 America/Los_Angeles] cron start
+[22-Oct-2023 01:17:31 America/Los_Angeles] cron end
+[22-Oct-2023 01:22:32 America/Los_Angeles] cron start
+[22-Oct-2023 01:22:32 America/Los_Angeles] cron end
+[22-Oct-2023 01:27:33 America/Los_Angeles] cron start
+[22-Oct-2023 01:27:33 America/Los_Angeles] cron end
+[22-Oct-2023 01:32:33 America/Los_Angeles] cron start
+[22-Oct-2023 01:32:33 America/Los_Angeles] cron end
+[22-Oct-2023 01:37:34 America/Los_Angeles] cron start
+[22-Oct-2023 01:37:34 America/Los_Angeles] cron end
+[22-Oct-2023 01:42:34 America/Los_Angeles] cron start
+[22-Oct-2023 01:42:34 America/Los_Angeles] cron end
+[22-Oct-2023 01:47:35 America/Los_Angeles] cron start
+[22-Oct-2023 01:47:35 America/Los_Angeles] cron end
+[22-Oct-2023 01:52:35 America/Los_Angeles] cron start
+[22-Oct-2023 01:52:35 America/Los_Angeles] cron end
+[22-Oct-2023 01:57:36 America/Los_Angeles] cron start
+[22-Oct-2023 01:57:36 America/Los_Angeles] cron end
+[22-Oct-2023 02:02:36 America/Los_Angeles] cron start
+[22-Oct-2023 02:02:36 America/Los_Angeles] cron end
+[22-Oct-2023 02:07:37 America/Los_Angeles] cron start
+[22-Oct-2023 02:07:37 America/Los_Angeles] cron end
+[22-Oct-2023 02:12:38 America/Los_Angeles] cron start
+[22-Oct-2023 02:12:38 America/Los_Angeles] cron end
+[22-Oct-2023 02:17:38 America/Los_Angeles] cron start
+[22-Oct-2023 02:17:38 America/Los_Angeles] cron end
+[22-Oct-2023 02:22:39 America/Los_Angeles] cron start
+[22-Oct-2023 02:22:39 America/Los_Angeles] cron end
+[22-Oct-2023 02:27:39 America/Los_Angeles] cron start
+[22-Oct-2023 02:27:39 America/Los_Angeles] cron end
+[22-Oct-2023 02:32:40 America/Los_Angeles] cron start
+[22-Oct-2023 02:32:40 America/Los_Angeles] cron end
+[22-Oct-2023 02:37:41 America/Los_Angeles] cron start
+[22-Oct-2023 02:37:41 America/Los_Angeles] cron end
+[22-Oct-2023 02:42:41 America/Los_Angeles] cron start
+[22-Oct-2023 02:42:41 America/Los_Angeles] cron end
+[22-Oct-2023 02:47:41 America/Los_Angeles] cron start
+[22-Oct-2023 02:47:41 America/Los_Angeles] cron end
+[22-Oct-2023 02:52:42 America/Los_Angeles] cron start
+[22-Oct-2023 02:52:42 America/Los_Angeles] cron end
+[22-Oct-2023 02:57:42 America/Los_Angeles] cron start
+[22-Oct-2023 02:57:42 America/Los_Angeles] cron end
+[22-Oct-2023 03:02:43 America/Los_Angeles] cron start
+[22-Oct-2023 03:02:43 America/Los_Angeles] cron end
+[22-Oct-2023 03:07:43 America/Los_Angeles] cron start
+[22-Oct-2023 03:07:43 America/Los_Angeles] cron end
+[22-Oct-2023 03:12:44 America/Los_Angeles] cron start
+[22-Oct-2023 03:12:44 America/Los_Angeles] cron end
+[22-Oct-2023 03:17:45 America/Los_Angeles] cron start
+[22-Oct-2023 03:17:45 America/Los_Angeles] cron end
+[22-Oct-2023 03:22:45 America/Los_Angeles] cron start
+[22-Oct-2023 03:22:45 America/Los_Angeles] cron end
+[22-Oct-2023 03:27:46 America/Los_Angeles] cron start
+[22-Oct-2023 03:27:46 America/Los_Angeles] cron end
+[22-Oct-2023 03:32:47 America/Los_Angeles] cron start
+[22-Oct-2023 03:32:47 America/Los_Angeles] cron end
+[22-Oct-2023 03:37:48 America/Los_Angeles] cron start
+[22-Oct-2023 03:37:48 America/Los_Angeles] cron end
+[22-Oct-2023 03:42:49 America/Los_Angeles] cron start
+[22-Oct-2023 03:42:49 America/Los_Angeles] cron end
+[22-Oct-2023 03:47:49 America/Los_Angeles] cron start
+[22-Oct-2023 03:47:50 America/Los_Angeles] cron end
+[22-Oct-2023 03:52:50 America/Los_Angeles] cron start
+[22-Oct-2023 03:52:50 America/Los_Angeles] cron end
+[22-Oct-2023 03:57:51 America/Los_Angeles] cron start
+[22-Oct-2023 03:57:51 America/Los_Angeles] cron end
+[22-Oct-2023 04:02:51 America/Los_Angeles] cron start
+[22-Oct-2023 04:02:51 America/Los_Angeles] cron end
+[22-Oct-2023 04:07:52 America/Los_Angeles] cron start
+[22-Oct-2023 04:07:52 America/Los_Angeles] cron end
+[22-Oct-2023 04:12:52 America/Los_Angeles] cron start
+[22-Oct-2023 04:12:52 America/Los_Angeles] cron end
+[22-Oct-2023 04:17:53 America/Los_Angeles] cron start
+[22-Oct-2023 04:17:53 America/Los_Angeles] cron end
+[22-Oct-2023 04:22:53 America/Los_Angeles] cron start
+[22-Oct-2023 04:22:53 America/Los_Angeles] cron end
+[22-Oct-2023 04:27:54 America/Los_Angeles] cron start
+[22-Oct-2023 04:27:54 America/Los_Angeles] cron end
+[22-Oct-2023 04:32:54 America/Los_Angeles] cron start
+[22-Oct-2023 04:32:54 America/Los_Angeles] cron end
+[22-Oct-2023 04:37:55 America/Los_Angeles] cron start
+[22-Oct-2023 04:37:55 America/Los_Angeles] cron end
+[22-Oct-2023 04:42:56 America/Los_Angeles] cron start
+[22-Oct-2023 04:42:56 America/Los_Angeles] cron end
+[22-Oct-2023 04:47:56 America/Los_Angeles] cron start
+[22-Oct-2023 04:47:56 America/Los_Angeles] cron end
+[22-Oct-2023 04:52:57 America/Los_Angeles] cron start
+[22-Oct-2023 04:52:57 America/Los_Angeles] cron end
+[22-Oct-2023 04:57:58 America/Los_Angeles] cron start
+[22-Oct-2023 04:57:58 America/Los_Angeles] cron end
+[22-Oct-2023 05:02:58 America/Los_Angeles] cron start
+[22-Oct-2023 05:02:58 America/Los_Angeles] cron end
+[22-Oct-2023 05:07:59 America/Los_Angeles] cron start
+[22-Oct-2023 05:07:59 America/Los_Angeles] cron end
+[22-Oct-2023 05:13:00 America/Los_Angeles] cron start
+[22-Oct-2023 05:13:00 America/Los_Angeles] cron end
+[22-Oct-2023 05:18:00 America/Los_Angeles] cron start
+[22-Oct-2023 05:18:00 America/Los_Angeles] cron end
+[22-Oct-2023 05:23:01 America/Los_Angeles] cron start
+[22-Oct-2023 05:23:01 America/Los_Angeles] cron end
+[22-Oct-2023 05:28:01 America/Los_Angeles] cron start
+[22-Oct-2023 05:28:01 America/Los_Angeles] cron end
+[22-Oct-2023 05:33:02 America/Los_Angeles] cron start
+[22-Oct-2023 05:33:02 America/Los_Angeles] cron end
+[22-Oct-2023 05:38:03 America/Los_Angeles] cron start
+[22-Oct-2023 05:38:03 America/Los_Angeles] cron end
+[22-Oct-2023 05:43:03 America/Los_Angeles] cron start
+[22-Oct-2023 05:43:03 America/Los_Angeles] cron end
+[22-Oct-2023 05:48:04 America/Los_Angeles] cron start
+[22-Oct-2023 05:48:04 America/Los_Angeles] cron end
+[22-Oct-2023 05:53:05 America/Los_Angeles] cron start
+[22-Oct-2023 05:53:05 America/Los_Angeles] cron end
+[22-Oct-2023 05:58:05 America/Los_Angeles] cron start
+[22-Oct-2023 05:58:05 America/Los_Angeles] cron end
+[22-Oct-2023 06:03:06 America/Los_Angeles] cron start
+[22-Oct-2023 06:03:06 America/Los_Angeles] cron end
+[22-Oct-2023 06:08:07 America/Los_Angeles] cron start
+[22-Oct-2023 06:08:07 America/Los_Angeles] cron end
+[22-Oct-2023 06:13:07 America/Los_Angeles] cron start
+[22-Oct-2023 06:13:07 America/Los_Angeles] cron end
+[22-Oct-2023 06:18:08 America/Los_Angeles] cron start
+[22-Oct-2023 06:18:08 America/Los_Angeles] cron end
+[22-Oct-2023 06:23:08 America/Los_Angeles] cron start
+[22-Oct-2023 06:23:08 America/Los_Angeles] cron end
+[22-Oct-2023 06:28:09 America/Los_Angeles] cron start
+[22-Oct-2023 06:28:09 America/Los_Angeles] cron end
+[22-Oct-2023 06:33:10 America/Los_Angeles] cron start
+[22-Oct-2023 06:33:10 America/Los_Angeles] cron end
+[22-Oct-2023 06:38:10 America/Los_Angeles] cron start
+[22-Oct-2023 06:38:10 America/Los_Angeles] cron end
+[22-Oct-2023 06:43:11 America/Los_Angeles] cron start
+[22-Oct-2023 06:43:11 America/Los_Angeles] cron end
+[22-Oct-2023 06:48:12 America/Los_Angeles] cron start
+[22-Oct-2023 06:48:12 America/Los_Angeles] cron end
+[22-Oct-2023 06:53:12 America/Los_Angeles] cron start
+[22-Oct-2023 06:53:12 America/Los_Angeles] cron end
+[22-Oct-2023 06:58:12 America/Los_Angeles] cron start
+[22-Oct-2023 06:58:12 America/Los_Angeles] cron end
+[22-Oct-2023 07:03:13 America/Los_Angeles] cron start
+[22-Oct-2023 07:03:13 America/Los_Angeles] cron end
+[22-Oct-2023 07:08:13 America/Los_Angeles] cron start
+[22-Oct-2023 07:08:13 America/Los_Angeles] cron end
+[22-Oct-2023 07:13:14 America/Los_Angeles] cron start
+[22-Oct-2023 07:13:14 America/Los_Angeles] cron end
+[22-Oct-2023 07:18:14 America/Los_Angeles] cron start
+[22-Oct-2023 07:18:14 America/Los_Angeles] cron end
+[22-Oct-2023 07:23:15 America/Los_Angeles] cron start
+[22-Oct-2023 07:23:15 America/Los_Angeles] cron end
+[22-Oct-2023 07:28:16 America/Los_Angeles] cron start
+[22-Oct-2023 07:28:16 America/Los_Angeles] cron end
+[22-Oct-2023 07:33:16 America/Los_Angeles] cron start
+[22-Oct-2023 07:33:16 America/Los_Angeles] cron end
+[22-Oct-2023 07:38:17 America/Los_Angeles] cron start
+[22-Oct-2023 07:38:17 America/Los_Angeles] cron end
+[22-Oct-2023 07:43:18 America/Los_Angeles] cron start
+[22-Oct-2023 07:43:18 America/Los_Angeles] cron end
+[22-Oct-2023 07:48:18 America/Los_Angeles] cron start
+[22-Oct-2023 07:48:18 America/Los_Angeles] cron end
+[22-Oct-2023 07:53:18 America/Los_Angeles] cron start
+[22-Oct-2023 07:53:18 America/Los_Angeles] cron end
+[22-Oct-2023 07:58:19 America/Los_Angeles] cron start
+[22-Oct-2023 07:58:19 America/Los_Angeles] cron end
+[22-Oct-2023 08:03:20 America/Los_Angeles] cron start
+[22-Oct-2023 08:03:20 America/Los_Angeles] cron end
+[22-Oct-2023 08:08:20 America/Los_Angeles] cron start
+[22-Oct-2023 08:08:20 America/Los_Angeles] cron end
+[22-Oct-2023 08:13:21 America/Los_Angeles] cron start
+[22-Oct-2023 08:13:21 America/Los_Angeles] cron end
+[22-Oct-2023 08:18:21 America/Los_Angeles] cron start
+[22-Oct-2023 08:18:21 America/Los_Angeles] cron end
+[22-Oct-2023 08:23:22 America/Los_Angeles] cron start
+[22-Oct-2023 08:23:22 America/Los_Angeles] cron end
+[22-Oct-2023 08:28:23 America/Los_Angeles] cron start
+[22-Oct-2023 08:28:23 America/Los_Angeles] cron end
+[22-Oct-2023 08:33:23 America/Los_Angeles] cron start
+[22-Oct-2023 08:33:23 America/Los_Angeles] cron end
+[22-Oct-2023 08:38:24 America/Los_Angeles] cron start
+[22-Oct-2023 08:38:24 America/Los_Angeles] cron end
+[22-Oct-2023 08:43:24 America/Los_Angeles] cron start
+[22-Oct-2023 08:43:24 America/Los_Angeles] cron end
+[22-Oct-2023 08:48:25 America/Los_Angeles] cron start
+[22-Oct-2023 08:48:25 America/Los_Angeles] cron end
+[22-Oct-2023 08:53:25 America/Los_Angeles] cron start
+[22-Oct-2023 08:53:25 America/Los_Angeles] cron end
+[22-Oct-2023 08:58:26 America/Los_Angeles] cron start
+[22-Oct-2023 08:58:26 America/Los_Angeles] cron end
+[22-Oct-2023 09:03:27 America/Los_Angeles] cron start
+[22-Oct-2023 09:03:27 America/Los_Angeles] cron end
+[22-Oct-2023 09:08:27 America/Los_Angeles] cron start
+[22-Oct-2023 09:08:27 America/Los_Angeles] cron end
+[22-Oct-2023 09:13:28 America/Los_Angeles] cron start
+[22-Oct-2023 09:13:28 America/Los_Angeles] cron end
+[22-Oct-2023 09:18:28 America/Los_Angeles] cron start
+[22-Oct-2023 09:18:28 America/Los_Angeles] cron end
+[22-Oct-2023 09:23:29 America/Los_Angeles] cron start
+[22-Oct-2023 09:23:29 America/Los_Angeles] cron end
+[22-Oct-2023 09:28:29 America/Los_Angeles] cron start
+[22-Oct-2023 09:28:29 America/Los_Angeles] cron end
+[22-Oct-2023 09:33:30 America/Los_Angeles] cron start
+[22-Oct-2023 09:33:30 America/Los_Angeles] cron end
+[22-Oct-2023 09:38:31 America/Los_Angeles] cron start
+[22-Oct-2023 09:38:31 America/Los_Angeles] cron end
+[22-Oct-2023 09:43:31 America/Los_Angeles] cron start
+[22-Oct-2023 09:43:31 America/Los_Angeles] cron end
+[22-Oct-2023 09:48:32 America/Los_Angeles] cron start
+[22-Oct-2023 09:48:32 America/Los_Angeles] cron end
+[22-Oct-2023 09:53:33 America/Los_Angeles] cron start
+[22-Oct-2023 09:53:33 America/Los_Angeles] cron end
+[22-Oct-2023 09:58:33 America/Los_Angeles] cron start
+[22-Oct-2023 09:58:33 America/Los_Angeles] cron end
+[22-Oct-2023 10:03:34 America/Los_Angeles] cron start
+[22-Oct-2023 10:03:34 America/Los_Angeles] cron end
+[22-Oct-2023 10:08:34 America/Los_Angeles] cron start
+[22-Oct-2023 10:08:34 America/Los_Angeles] cron end
+[22-Oct-2023 10:13:35 America/Los_Angeles] cron start
+[22-Oct-2023 10:13:35 America/Los_Angeles] cron end
+[22-Oct-2023 10:18:36 America/Los_Angeles] cron start
+[22-Oct-2023 10:18:36 America/Los_Angeles] cron end
+[22-Oct-2023 10:23:36 America/Los_Angeles] cron start
+[22-Oct-2023 10:23:36 America/Los_Angeles] cron end
+[22-Oct-2023 10:28:37 America/Los_Angeles] cron start
+[22-Oct-2023 10:28:37 America/Los_Angeles] cron end
+[22-Oct-2023 10:33:37 America/Los_Angeles] cron start
+[22-Oct-2023 10:33:37 America/Los_Angeles] cron end
+[22-Oct-2023 10:38:37 America/Los_Angeles] cron start
+[22-Oct-2023 10:38:37 America/Los_Angeles] cron end
+[22-Oct-2023 10:43:38 America/Los_Angeles] cron start
+[22-Oct-2023 10:43:38 America/Los_Angeles] cron end
+[22-Oct-2023 10:48:39 America/Los_Angeles] cron start
+[22-Oct-2023 10:48:39 America/Los_Angeles] cron end
+[22-Oct-2023 10:53:39 America/Los_Angeles] cron start
+[22-Oct-2023 10:53:39 America/Los_Angeles] cron end
+[22-Oct-2023 10:58:40 America/Los_Angeles] cron start
+[22-Oct-2023 10:58:40 America/Los_Angeles] cron end
+[22-Oct-2023 11:03:41 America/Los_Angeles] cron start
+[22-Oct-2023 11:03:41 America/Los_Angeles] cron end
+[22-Oct-2023 11:08:41 America/Los_Angeles] cron start
+[22-Oct-2023 11:08:41 America/Los_Angeles] cron end
+[22-Oct-2023 11:13:42 America/Los_Angeles] cron start
+[22-Oct-2023 11:13:42 America/Los_Angeles] cron end
+[22-Oct-2023 11:18:43 America/Los_Angeles] cron start
+[22-Oct-2023 11:18:43 America/Los_Angeles] cron end
