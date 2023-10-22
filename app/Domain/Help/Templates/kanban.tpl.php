@@ -25,7 +25,7 @@ $currentSprint = $tpl->get('sprint');
             <p>
              </p>
             <a href="javascript:void(0);"  onclick="leantime.helperController.startKanbanTour();" class="btn btn-primary"><?php echo $tpl->__('buttons.take_kanban_tour') ?></a><br />
-            <a href="javascript:void(0);"  onclick="jQuery.nmTop().close()"><?php echo $tpl->__('links.close') ?></a><br />
+
             <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('kanban')"><?php echo $tpl->__('links.close_dont_show_again') ?></a>
         </div>
     </div>

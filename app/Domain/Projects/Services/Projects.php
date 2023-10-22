@@ -1242,34 +1242,37 @@ namespace Leantime\Domain\Projects\Services {
             $progressSteps = array(
                 "define" => array(
                     "title" => "label.define",
+                    "description" => "Start your projects by creating a project description, adding your team members and creating a blueprint. This will ensure your are on the right track.",
                     "tasks" => array(
-                        "description" => array("title" => "label.projectDescription", "status" => ""),
-                        "defineTeam" => array("title" => "label.defineTeam", "status" => ""),
-                        "createBlueprint" => array("title" => "label.createBlueprint", "status" => ""),
+                        "description" => array("title" => "label.projectDescription", "status" => "", "link" =>BASE_URL."/projects/showProject".$_SESSION['currentProject']."", "description" => "A well defined project description will help everyone one the team understand the project and its goals."),
+                        "defineTeam" => array("title" => "label.defineTeam", "status" => "", "link" =>BASE_URL."/projects/showProject".$_SESSION['currentProject']."#team", "description" => "Add your team members and ensure collaborate on the project during the definition phase."),
+                        "createBlueprint" => array("title" => "label.createBlueprint", "status" => "", "link" =>BASE_URL."/strategy/showBoards", "description" => "Using a blueprint canvas define the core elements of your project. Who is the customer? What is the problem? What is the solution?"),
                     ),
                     "status" => '',
                 ),
                 "goals" => array(
                     "title" => "label.setGoals",
+                    "description" => "Time to set some goals for your project. What would you like to accomplish at the end of this project? Be as specific as possible and follow the S.M.A.R.T. goal principles.",
                     "tasks" => array(
-                        "setGoals" => array("title" => "label.setGoals", "status" => ""),
+                        "setGoals" => array("title" => "label.setGoals", "status" => "", "link" =>BASE_URL."/goalcanvas/dashboard", "description" => "Use goals to track metrics and outcomes. Discuss metrics with your team and stakeholders."),
                     ),
                     "status" => '',
                 ),
                 "timeline" => array(
                     "title" => "label.setTimeline",
+                    "description" => "With goals and definitions in hand we can define a few milestones and a timeline. This allows us to plan ahead, share progress with stakeholders and keep the team aligned on priorities",
                     "tasks" => array(
-                        "createMilestones" => array("title" => "label.createMilestones", "status" => ""),
+                        "createMilestones" => array("title" => "label.createMilestones", "status" => "", "link" =>BASE_URL."/tickets/roadmap", "description" => "Milestones in Leantime are groups of tasks with a measurable goal and deadline. Create 3-5 milestones and plan to cover approximately 3-6 months."),
 
                     ),
                     "status" => '',
                 ),
                 "implementation" => array(
                     "title" => "label.implementation",
+                    "description" => "Break down your milestones and get to work.",
                     "tasks" => array(
-                        "createTasks" =>  array("title" => "label.createTasks", "status" => ""),
-
-                        "finish80percent" =>  array("title" => "label.finish80percent", "status" => ""),
+                        "createTasks" =>  array("title" => "label.createTasks", "status" => "", "link" =>BASE_URL."/tickets/showAll", "description" => "Create as many tasks as you like and can think of. In general the smaller and granular the tasks the more likely it is that your estimates and effort calculations are going to be correct."),
+                        "finish80percent" =>  array("title" => "label.finish80percent", "status" => "", "link" =>BASE_URL."/reports/show", "description" => "Track your progress under reports, complete 80% of your tasks and you are almost there. You got this!"),
                     ),
                     "status" => '',
                 ),

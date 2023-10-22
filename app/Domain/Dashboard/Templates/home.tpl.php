@@ -452,8 +452,6 @@ $milestones = $tpl->get('milestones');
 
         leantime.dashboardController.initDueDateTimePickers();
 
-
-
         jQuery('.todaysDate').text(moment().format('LLLL'));
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
@@ -465,29 +463,6 @@ $milestones = $tpl->get('milestones');
         <?php } else { ?>
         leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>
-
-        <?php if ($tpl->get('completedOnboarding') === false) { ?>
-        leantime.helperController.firstLoginModal();
-        <?php } ?>
-
-
-        <?php
-        if ($tpl->get('completedOnboarding') == "1" && (isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0)) {  ?>
-        leantime.helperController.showHelperModal("dashboard", 500, 700);
-
-        <?php
-        //Only show once per session
-        if (!isset($_SESSION['userdata']['settings']["modals"])) {
-            $_SESSION['userdata']['settings']["modals"] = array();
-        }
-
-        if (!isset($_SESSION['userdata']['settings']["modals"]["dashboard"])) {
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
-        }
-        } ?>
-
-
-
 
     });
 

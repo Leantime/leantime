@@ -49,6 +49,7 @@
 
     @include('global::sections.pageBottom')
     @stack('scripts')
+    @include('help::helpermodal')
 </body>
 
 </html>
