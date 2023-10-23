@@ -221,12 +221,10 @@ namespace Leantime\Domain\Users\Controllers {
                     $timeFormat = htmlentities($_POST['time_format']);
                     $tz = htmlentities($_POST['timezone']);
 
-                    $dateTimeFormatOptions = $this->getSupportedDateTimeFormats();
-
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".language", $postLang);
-                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".date_format", $dateTimeFormatOptions['dates'][$dateFormat]);
-                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $dateTimeFormatOptions['times'][$timeFormat]);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".date_format", $dateFormat);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $timeFormat);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".timezone", $tz);
 
                     $_SESSION['usersettings.' . $this->userId . '.timezone'] = $tz;
