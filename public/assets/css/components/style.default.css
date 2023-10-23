@@ -4252,3 +4252,10 @@ h3.todaysDate {
 .htmx-request.htmx-loaded-content {
     display: none;
 }
+
+h4 .helperTooltip,
+.helperTooltip {
+    float:right;
+    color:var(--primary-font-color);
+    cursor:pointer;
+}
