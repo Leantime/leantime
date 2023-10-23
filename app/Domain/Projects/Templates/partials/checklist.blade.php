@@ -3,7 +3,7 @@
 ])
 
 @if ($includeTitle)
-    <h5 class="subtitle">Project Checklist <i class="fa fa-info-circle" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed."></i> </h5><br/>
+    <h5 class="subtitle">Project Checklist <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="The project checklist is list of activities you should do to ensure your projects are well defined, planned and executed."></i> </h5><br/>
 
 @endif
 
