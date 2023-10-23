@@ -1,5 +1,7 @@
 body .gantt-container {
     font-size: var(--base-font-size);
+    overflow-x:visible;
+    height:calc(100vh - 375px);
 }
 
 .gantt-wrapper {
@@ -101,7 +103,3 @@ body .gantt #details .details-container {
     font-size:var(--font-size-s);
     text-anchor: middle;
 }
-
-
-
-

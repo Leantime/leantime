@@ -246,7 +246,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND (project.state = -1)";
             }
 
-            if ($clientId != "") {
+            if ($clientId != "" && $clientId != null && $clientId > 0) {
                 $query .= " AND project.clientId = :clientId";
             }
 
@@ -262,7 +262,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
             }
 
-            if ($clientId != "") {
+            if ($clientId != "" && $clientId != null && $clientId > 0) {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 

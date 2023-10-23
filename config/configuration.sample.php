@@ -92,7 +92,10 @@ class Config
       "email":"mail",
       "firstname":"givenname",
       "lastname":"sn",
-      "phonenumber":"telephoneNumber"
+      "phone":"",
+      "jobTitle":"title",
+      "jobLevel":"level",
+      "department":"department"
       }';
      */
 

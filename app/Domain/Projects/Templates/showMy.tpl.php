@@ -118,7 +118,7 @@ foreach ($__data as $var => $val) {
                                         <div class="commentImage" style="margin-right:-10px;">
                                             <img
                                                 style=""
-                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'])?>" data-tippy-content="<?=$member['firstname'] . ' ' . $member['lastname'] ?>" />
+                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'] ?? 0)?>" data-tippy-content="<?=$member['firstname'] . ' ' . $member['lastname'] ?>" />
                                         </div>
                                     <?php } ?>
                                 </div>

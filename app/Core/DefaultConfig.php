@@ -291,7 +291,10 @@ class DefaultConfig
       "email":"mail",
       "firstname":"givenname",
       "lastname":"sn",
-      "phonenumber":"telephoneNumber"
+      "phone":"telephoneNumber",
+      "jobTitle":"title",
+      "jobLevel":"level",
+      "department":"department"
       }';
      */
 

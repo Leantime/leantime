@@ -211,6 +211,7 @@ foreach ($__data as $var => $val) {
           <col class="con0"/>
           <col class="con1"/>
           <col class="con0"/>
+          <col class="con1"/>
     </colgroup>
     <thead>
         <tr>
@@ -221,6 +222,7 @@ foreach ($__data as $var => $val) {
             <th><?php echo $tpl->__('label.difference'); ?></th>
             <th><?php echo $tpl->__('label.ticket'); ?></th>
             <th><?php echo $tpl->__('label.project'); ?></th>
+            <th><?php echo $tpl->__('label.client'); ?></th>
             <th><?php echo $tpl->__('label.employee'); ?></th>
             <th><?php echo $tpl->__("label.type")?></th>
             <th><?php echo $tpl->__('label.description'); ?></th>
@@ -247,7 +249,7 @@ foreach ($__data as $var => $val) {
                     #<?=$row['id']?>
                     <?php } ?>
             </td>
-            <td data-order="<?=$tpl->escape($row['workDate']); ?>>">
+            <td data-order="<?=$tpl->escape($row['workDate']); ?>">
                     <?php echo$tpl->getFormattedDateString($row['workDate']); ?>
             </td>
             <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours']); ?></td>
@@ -257,6 +259,8 @@ foreach ($__data as $var => $val) {
             <td data-order="<?=$tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
 
             <td data-order="<?=$tpl->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a></td>
+            <td data-order="<?=$tpl->e($row['clientName']); ?>"><a href="<?=BASE_URL ?>/clients/showClient/<?php echo $row['clientId']; ?>"><?php $tpl->e($row['clientName']); ?></a></td>
+
             <td><?php printf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row['lastname'])); ?></td>
             <td><?php echo $tpl->__($tpl->get('kind')[$row['kind']]); ?></td>
             <td><?php $tpl->e($row['description']); ?></td>

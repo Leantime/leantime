@@ -197,7 +197,7 @@ namespace Leantime\Domain\Canvas\Services {
         public function getBoardProgress(string $projectId = '', array $boards = array()): array
         {
 
-            $canvasRepo = app()->make(CanvaRepository::class);
+            $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
             $values = $canvasRepo->getCanvasProgressCount($projectId, $boards);
 
             $results = array();
@@ -270,7 +270,7 @@ namespace Leantime\Domain\Canvas\Services {
          */
         public function getLastUpdatedCanvas(string $projectId = '', array $boards = array()): array
         {
-            $canvasRepo = app()->make(CanvaRepository::class);
+            $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
             return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
         }
     }

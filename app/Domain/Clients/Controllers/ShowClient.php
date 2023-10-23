@@ -71,6 +71,11 @@ namespace Leantime\Domain\Clients\Controllers {
 
             $row = $this->clientRepo->getClient($id);
 
+            if($row === false) {
+                $this->tpl->display('errors.error404');
+                return;
+            }
+
             $clientValues = array(
                 'id' => $row['id'],
                 'name' => $row['name'],

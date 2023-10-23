@@ -44,7 +44,7 @@
 
 .nyroModalCloseButton:hover {
     text-decoration: none;
-    color: var(--primary-font-color);
+    color: var(--primary-font-color)  !important;
     background-color:var(--col-hover-bg);
 }
 
