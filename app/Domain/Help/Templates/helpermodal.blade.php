@@ -1,7 +1,7 @@
 <script>
     jQuery(document).ready(function() {
 
-        @if($completedOnboarding === false)
+        @if($completedOnboarding === false && $currentModal == "dashboard")
             leantime.helperController.firstLoginModal();
         @endif
 
