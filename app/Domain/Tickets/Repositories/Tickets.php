@@ -12,10 +12,6 @@ namespace Leantime\Domain\Tickets\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Tickets
     {
         use EventhelperCore;

@@ -150,16 +150,14 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
                     }
                 }
 
-
-
-
                 $dependencyList = array();
-                if ($mlst->milestoneid != 0) {
-                    $dependencyList[] = $mlst->milestoneid;
-                }
 
+                //Show subtask dependencies only within tasks
+                //Avvoid double arrow
                 if ($mlst->dependingTicketId != 0) {
                     $dependencyList[] = $mlst->dependingTicketId;
+                }else if ($mlst->milestoneid != 0) {
+                    $dependencyList[] = $mlst->milestoneid;
                 }
 
                 echo"{

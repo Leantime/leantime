@@ -47,20 +47,20 @@ if (isset($currentArticle->id)) {
             </div>
 
             <?php if ($id !== '') { ?>
-                <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$tpl->__("headlines.attached_milestone") ?></h4>
+                <h4 class="widgettitle title-light"><span class="fa fa-link"></span> <?=$tpl->__("headlines.linked_milestone") ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?=$tpl->__("tooltip.link_milestones_tooltip") ?>"></i></h4>
 
                 <ul class="sortableTicketList" style="width:99%">
                     <?php
                     if ($currentArticle->milestoneId == '') {
                         ?>
                         <li class="ui-state-default center" id="milestone_0">
-                            <h4><?=$tpl->__("headlines.no_milestone_attached") ?></h4>
+                            <h4><?=$tpl->__("headlines.no_milestone_link") ?></h4>
                             <?=$tpl->__("text.use_milestone_to_track_leancanvas") ?><br />
                             <div class="row" id="milestoneSelectors">
                                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="col-md-12">
-                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_attach_milestone") ?></a>
-                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.attach_existing_milestone") ?></a>
+                                        <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
+                                        | <a href="javascript:void(0);" onclick="leantime.leanCanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
 
                                     </div>
                                 <?php } ?>

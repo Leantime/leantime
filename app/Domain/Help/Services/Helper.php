@@ -30,7 +30,6 @@ class Helper
         "tickets.showKanban" => "kanban",
         "timesheets.showMy" => "mytimesheets",
         "projects.newProject" => "newProject",
-        "projects.showProject" => "projectSuccess",
         "projects.showAll" => "showProjects",
         "clients.showAll" => "showClients",
         "goalcanvas.dashboard" => "goalCanvas",
