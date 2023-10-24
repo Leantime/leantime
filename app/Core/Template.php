@@ -1061,7 +1061,6 @@ class Template
      */
     public function dispatchTplFilter(string $hookName, mixed $payload, array $available_params = []): mixed
     {
-
         return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
     }
 

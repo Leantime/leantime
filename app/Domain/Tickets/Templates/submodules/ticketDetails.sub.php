@@ -73,18 +73,21 @@ foreach ($__data as $var => $val) {
                         <div class="form-group">
                             <select  name="dependingTicketId"  class="span11" >
                                 <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
-                                <?php foreach ($tpl->get('ticketParents') as $ticketRow) {
-                                    ?>
-                                    <?php echo"<option value='" . $ticketRow->id . "'";
+                                <?php
+                                if(is_array($tpl->get('ticketParents'))){
+                                    foreach ($tpl->get('ticketParents') as $ticketRow) {
+                                        ?>
+                                        <?php echo"<option value='" . $ticketRow->id . "'";
 
-                                    if (($ticket->dependingTicketId == $ticketRow->id)) {
-                                        echo" selected='selected' ";
+                                        if (($ticket->dependingTicketId == $ticketRow->id)) {
+                                            echo" selected='selected' ";
+                                        }
+
+                                        echo">" . $tpl->escape($ticketRow->headline) . "</option>"; ?>
+
+                                        <?php
                                     }
-
-                                    echo">" . $tpl->escape($ticketRow->headline) . "</option>"; ?>
-
-                                    <?php
-                                } ?>
+                                }?>
                             </select>
                         </div>
                     </div>

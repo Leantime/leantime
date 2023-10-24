@@ -81,6 +81,11 @@ class DefaultConfig
      */
     public string $logPath = APP_ROOT . '/logs/error.log';
 
+    /**
+     * @var bool Don't show user/pass form on login?
+     */
+    public bool $disableLoginForm = false;
+
 
     # Database ====================================================================================
     /**
@@ -286,7 +291,10 @@ class DefaultConfig
       "email":"mail",
       "firstname":"givenname",
       "lastname":"sn",
-      "phonenumber":"telephoneNumber"
+      "phone":"telephoneNumber",
+      "jobTitle":"title",
+      "jobLevel":"level",
+      "department":"department"
       }';
      */
 

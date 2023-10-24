@@ -166,8 +166,6 @@ class Bootloader
 
         $app::setHasBeenBootstrapped();
 
-        $this->handleTelemetryResponse();
-
         self::dispatch_event("end", ['bootloader' => $this]);
     }
 
@@ -406,12 +404,6 @@ class Bootloader
             $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '');
         }
 
-        // handle authorized requests
-        $this->cronExec();
-
-        //Send telemetry if user is opt in and if it hasn't been sent that day
-        $this->telemetryResponse = $this->app->make(ReportService::class)->sendAnonymousTelemetry();
-
         $this->app->make(ProjectService::class)->setCurrentProject();
 
         self::dispatch_event("logged_in", ['application' => $this]);
@@ -440,54 +432,6 @@ class Bootloader
         $frontController::redirect($destination . $queryParams);
     }
 
-    /**
-     * Cron exec
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    private function cronExec(): void
-    {
-        $audit = $this->app->make(AuditRepository::class);
-
-        $lastCronEvent = $_SESSION['last_cron_call'] ?? null;
-
-        if (! isset($lastCronEvent)) {
-            $lastEvent = $audit->getLastEvent('cron');
-            $lastCronEvent = isset($lastEvent['date']) ? strtotime($lastEvent['date']) : 0;
-        }
-
-        // Using audit system to prevent too frequent cron executions
-        $nowDate = time();
-        $timeSince = abs($nowDate - $lastCronEvent);
-        $cron_exec_increment = self::dispatch_filter('increment', 300); //Run every 5 min
-
-        if ($timeSince < $cron_exec_increment) {
-            unset($_SESSION['do_cron']);
-            return;
-        }
-
-        $_SESSION['do_cron'] = true;
-        $_SESSION['last_cron_call'] = time();
-    }
-
-    /**
-     * Handle telemetry response
-     *
-     * @return void
-     */
-    private function handleTelemetryResponse(): void
-    {
-        if (! isset($this->telemetryResponse) || ! $this->telemetryResponse) {
-            return;
-        }
-
-        try {
-            $this->telemetryResponse->wait();
-        } catch (Exception $e) {
-            error_log($e);
-        }
-    }
 
     /**
      * @param int $debug

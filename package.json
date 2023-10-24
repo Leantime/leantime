@@ -1,6 +1,6 @@
 {
   "name": "leantime",
-  "version": "2.4.2",
+  "version": "2.4.4",
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
@@ -31,10 +31,10 @@
     "packery": "^2.1.2",
     "tailwind": "^4.0.0",
     "tether-shepherd": "^1.8.1",
-    "tinymce": "5.10.7",
+    "tinymce": "5.10.8",
     "tinymce-mention": "^4.0.2",
     "tippy.js": "^6.3.7",
-    "uppy": "^3.16.0"
+    "uppy": "^3.17.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",

@@ -12,12 +12,8 @@ foreach ($__data as $var => $val) {
 }
 
 ?>
-    <?php if (count($tpl->get('allCanvas')) > 0) {
-        if (isset($_SESSION['tourActive']) === true && $_SESSION['tourActive'] == 1) {     ?>
-        <p class="align-center"><br />
-            <?php echo sprintf($tpl->__("tour.$canvasName.once_your_done"), BASE_URL); ?>
-        </p>
-        <?php } ?>
+    <?php if (count($tpl->get('allCanvas')) > 0) { ?>
+
 
     <?php } else {
         echo "<br /><br /><div class='center'>";

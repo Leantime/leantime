@@ -68,21 +68,21 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php if ($id !== '') { ?>
             <br/><br/>
             <h4 class="widgettitle title-light"><span
-                    class="fas fa-map"></span> <?php echo $tpl->__("headlines.attached_milestone") ?></h4>
+                    class="fa fa-link"></span> <?php echo $tpl->__("headlines.linked_milestone") ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?=$tpl->__("tooltip.link_milestones_tooltip") ?>"></i></h4>
 
 
             <ul class="sortableTicketList" style="width:99%">
                 <?php if ($canvasItem['milestoneId'] == '') { ?>
                     <li class="ui-state-default center" id="milestone_0">
-                        <h4><?php echo $tpl->__("headlines.no_milestone_attached") ?></h4>
+                        <h4><?php echo $tpl->__("headlines.no_milestone_link") ?></h4>
                         <?php echo $tpl->__("text.use_milestone_to_track_idea") ?><br/>
                         <div class="row" id="milestoneSelectors">
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                 <div class="col-md-12">
                                     <a href="javascript:void(0);"
-                                       onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $tpl->__("links.create_attach_milestone") ?></a>
+                                       onclick="leantime.ideasController.toggleMilestoneSelectors('new');"><?php echo $tpl->__("links.create_link_milestone") ?></a>
                                     | <a href="javascript:void(0);"
-                                         onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $tpl->__("links.attach_existing_milestone") ?></a>
+                                         onclick="leantime.ideasController.toggleMilestoneSelectors('existing');"><?php echo $tpl->__("links.link_existing_milestone") ?></a>
                                 </div>
                             <?php } ?>
                         </div>

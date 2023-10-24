@@ -53,6 +53,7 @@ namespace Leantime\Domain\Auth\Controllers {
             $this->tpl->assign('redirectUrl', urlencode($redirectUrl));
 
             $this->tpl->assign('oidcEnabled', $this->config->oidcEnable);
+            $this->tpl->assign('noLoginForm', $this->config->disableLoginForm);
 
             $this->tpl->display('auth.login', 'entry');
         }

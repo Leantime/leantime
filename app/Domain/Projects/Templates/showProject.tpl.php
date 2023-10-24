@@ -145,7 +145,7 @@ $state = $tpl->get('state');
                                                 <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
 
                                                 <div class="commentImage">
-                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>&v=<?=strtotime($row['modified']) ?>"/>
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>&v=<?=strtotime($row['modified'] ?? 0)?>"/>
                                                 </div>
                                                 <label for="user-<?php echo $row['id'] ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></label>
                                                 <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>

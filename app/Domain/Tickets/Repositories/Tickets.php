@@ -12,10 +12,6 @@ namespace Leantime\Domain\Tickets\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Tickets
     {
         use EventhelperCore;
@@ -579,7 +575,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($searchCriteria["currentUser"])) {
                 $stmn->bindValue(':userId', $searchCriteria["currentUser"], PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+                $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
             }
 
             //Current client is only used for authorization as it represents the current client Id assigned to a user.

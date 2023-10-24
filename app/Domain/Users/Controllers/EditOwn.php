@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Users\Controllers {
 
-    use DateTimeInterface;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
@@ -67,16 +66,6 @@ namespace Leantime\Domain\Users\Controllers {
 
             $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
 
-            $userDateFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".date_format");
-            $userTimeFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".time_format");
-            $timezone = $this->settingsService->getSetting("usersettings." . $this->userId . ".timezone");
-
-            if (!$timezone) {
-                $timezone = date_default_timezone_get();
-            }
-
-            $timezonesAvailable = timezone_identifiers_list();
-
             //Build values array
             $values = array(
                 'firstname' => $row['firstname'],
@@ -93,7 +82,7 @@ namespace Leantime\Domain\Users\Controllers {
                 $values['messagesfrequency'] = $this->settingsService->getSetting("companysettings.messageFrequency");
             }
 
-            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+            $permitted_chars = '123456789abcdefghijklmnopqrstuvwxyz';
             $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
             $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
@@ -103,11 +92,6 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->assign('userLang', $userLang);
             $this->tpl->assign('userTheme', $userTheme);
             $this->tpl->assign("languageList", $this->language->getLanguageList());
-            $this->tpl->assign('dateFormat', $userDateFormat);
-            $this->tpl->assign('timeFormat', $userTimeFormat);
-            $this->tpl->assign('dateTimeValues', $this->getSupportedDateTimeFormats());
-            $this->tpl->assign('timezone', $timezone);
-            $this->tpl->assign('timezoneOptions', $timezonesAvailable);
 
             $this->tpl->assign('user', $row);
 
@@ -124,7 +108,7 @@ namespace Leantime\Domain\Users\Controllers {
             //Save Profile Info
             $tab = '';
 
-            if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+            if (isset($_SESSION['formTokenName']) && isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                 $row = $this->userRepo->getUser($this->userId);
 
                 //profile Info

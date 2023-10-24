@@ -180,6 +180,7 @@
     color:var(--project-selector-color);
     background:var(--project-selector-bg);
     border:none;
+    overflow: hidden;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector i.fa {
@@ -580,7 +581,7 @@
 }
 
 .headmenu-label {
-    display:none;
+
 }
 
 .leftmenu .nav li.dropdown {
