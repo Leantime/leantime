@@ -24,7 +24,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private TicketService $ticketsService;
         private UserService $usersService;
         private TimesheetService $timesheetsService;
-        private ReportService $reportsService;
         private SettingRepository $settingRepo;
         private CalendarRepository $calendarRepo;
 
@@ -33,7 +32,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
          * @param TicketService      $ticketsService
          * @param UserService        $usersService
          * @param TimesheetService   $timesheetsService
-         * @param ReportService      $reportsService
          * @param SettingRepository  $settingRepo
          * @param CalendarRepository $calendarRepo
          * @return void
@@ -43,7 +41,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
             TicketService $ticketsService,
             UserService $usersService,
             TimesheetService $timesheetsService,
-            ReportService $reportsService,
             SettingRepository $settingRepo,
             CalendarRepository $calendarRepo
         ): void {
@@ -51,7 +48,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->ticketsService = $ticketsService;
             $this->usersService = $usersService;
             $this->timesheetsService = $timesheetsService;
-            $this->reportsService = $reportsService;
             $this->settingRepo = $settingRepo;
             $this->calendarRepo = $calendarRepo;
 

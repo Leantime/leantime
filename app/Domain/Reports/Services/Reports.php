@@ -277,11 +277,13 @@ namespace Leantime\Domain\Reports\Services {
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
 
             if ($allowTelemetry === true) {
+                
                 $date_utc = new DateTime("now", new DateTimeZone("UTC"));
                 $today = $date_utc->format("Y-m-d");
                 $lastUpdate = $this->settings->getSetting("companysettings.telemetry.lastUpdate");
 
                 if ($lastUpdate != $today) {
+
                     $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
                     $telemetry['date'] = $today;
 
@@ -306,7 +308,6 @@ namespace Leantime\Domain\Reports\Services {
                     } catch (Exception $e) {
 
                         error_log($e);
-
                         $_SESSION['skipTelemetry'] = true;
                         return false;
                     }

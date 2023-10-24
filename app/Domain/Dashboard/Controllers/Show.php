@@ -37,7 +37,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
          * @param TimesheetService $timesheetService
          * @param CommentService   $commentService
          * @param ReactionService  $reactionsService
-         * @param ReportService    $reportsService
          * @return void
          * @throws BindingResolutionException
          * @throws BindingResolutionException
@@ -48,19 +47,17 @@ namespace Leantime\Domain\Dashboard\Controllers {
             UserService $userService,
             TimesheetService $timesheetService,
             CommentService $commentService,
-            ReactionService $reactionsService,
-            ReportService $reportsService
+            ReactionService $reactionsService
         ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->userService = $userService;
             $this->timesheetService = $timesheetService;
             $this->commentService = $commentService;
-            $this->reactionsService = $reactionsService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
 
-            $reportsService->dailyIngestion();
+
         }
 
         /**
