@@ -415,6 +415,8 @@ class Language
                 } else if ($isDate) {
                     return $this->convertDateFormatToJS($dateTimeFormat['date'], false);
                 }
+            } else if ($index === 'language.dateformat') {
+                return $dateTimeFormat['date'];
             }
 
             return (string) $this->ini_array[$index];
