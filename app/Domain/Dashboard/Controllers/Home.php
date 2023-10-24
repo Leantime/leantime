@@ -6,6 +6,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Reactions\Services\Reactions;
+    use Leantime\Domain\Reports\Services\Reports;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -27,6 +29,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private SettingRepository $settingRepo;
         private CalendarRepository $calendarRepo;
 
+        private Reactions $reactionsService;
+        private Reports $reportService;
+
         /**
          * @param ProjectService     $projectsService
          * @param TicketService      $ticketsService
@@ -42,7 +47,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
             UserService $usersService,
             TimesheetService $timesheetsService,
             SettingRepository $settingRepo,
-            CalendarRepository $calendarRepo
+            CalendarRepository $calendarRepo,
+            Reactions $reactionsService,
+            Reports $reportsService,
         ): void {
             $this->projectsService = $projectsService;
             $this->ticketsService = $ticketsService;
@@ -50,6 +57,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->timesheetsService = $timesheetsService;
             $this->settingRepo = $settingRepo;
             $this->calendarRepo = $calendarRepo;
+            $this->reactionsService = $reactionsService;
+            $this->reportsService = $reportsService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
         }
@@ -162,16 +171,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
         }
 
         /**
-         * @param $params
+         * @param mixed $params
          * @return void
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
-        public function post($params): void
+        public function post(mixed $params): void
         {
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {

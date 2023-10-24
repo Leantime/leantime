@@ -54,6 +54,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->userService = $userService;
             $this->timesheetService = $timesheetService;
             $this->commentService = $commentService;
+            $this->reactionsService = $reactionsService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
 
