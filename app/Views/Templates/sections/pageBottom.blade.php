@@ -1,12 +1,7 @@
-@if ($runCron)
 <script>
-    var req = new XMLHttpRequest();
-    req.open("GET", "{!! BASE_URL !!}/cron/run",true);
-    req.send(null);
-</script>
-@endif
+    //Run cron
+    jQuery.get('<?=BASE_URL?>/cron/run');
 
-<script>
     //5 min time to run cron
     setInterval(function(){
         jQuery.get('<?=BASE_URL?>/cron/run');

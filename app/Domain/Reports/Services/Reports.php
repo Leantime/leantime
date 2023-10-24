@@ -203,7 +203,7 @@ namespace Leantime\Domain\Reports\Services {
             $telemetry = array(
                 'date' => '',
                 'companyId' => $companyId,
-                'env' => 'prod',
+                'env' => 'oss',
                 'version' => $this->appSettings->appVersion,
                 'language' => $currentLanguage,
                 'numUsers' => $userRepository->getNumberOfUsers(),
@@ -277,11 +277,13 @@ namespace Leantime\Domain\Reports\Services {
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
 
             if ($allowTelemetry === true) {
+
                 $date_utc = new DateTime("now", new DateTimeZone("UTC"));
                 $today = $date_utc->format("Y-m-d");
                 $lastUpdate = $this->settings->getSetting("companysettings.telemetry.lastUpdate");
 
                 if ($lastUpdate != $today) {
+
                     $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
                     $telemetry['date'] = $today;
 
@@ -295,7 +297,7 @@ namespace Leantime\Domain\Reports\Services {
                             'form_params' => [
                                 'telemetry' => $data_string,
                             ],
-                            'timeout' => 5,
+                            'timeout' => 10,
                         ])->then(function ($response) use ($today) {
 
                             $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
@@ -304,15 +306,14 @@ namespace Leantime\Domain\Reports\Services {
 
                         return $promise;
                     } catch (Exception $e) {
-                        error_log($e);
 
+                        error_log($e);
                         $_SESSION['skipTelemetry'] = true;
                         return false;
                     }
                 }
             }
 
-            $_SESSION['skipTelemetry'] = true;
             return false;
         }
 
