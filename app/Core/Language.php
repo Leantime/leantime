@@ -287,7 +287,7 @@ class Language
         $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::CUSTOM_LANG_FOLDER . $this->language . '.ini', true);
 
         $this->ini_array = $mainLanguageArray;
-
+        
         $this->ini_array = self::dispatch_filter(
             'language_resources',
             $this->ini_array,
@@ -386,12 +386,37 @@ class Language
      *
      * @access public
      * @param  string $index
+     * @param  bool $convertValue If true then if a value has a conversion (i.e.: PHP -> JavaScript) then do it, otherwise return PHP value
      * @return string
      */
-    public function __(string $index): string
+    public function __(string $index, bool $convertValue = false): string
     {
         if (isset($this->ini_array[$index]) === true) {
             $index = trim($index);
+
+            // @TODO: move the date/time format logic into here and have Api/Controllers/I18n call this for each type?
+            $dateTimeIniSettings = [
+                'language.dateformat',
+                'language.jsdateformat',
+                'language.timeformat',
+                'language.jstimeformat',
+                'language.momentJSDate',
+            ];
+
+            $dateTimeFormat = $this->getCustomDateTimeFormat();
+
+            if (in_array($index, $dateTimeIniSettings) && $convertValue) {
+                $isMoment = stristr($index, 'momentjs') !== false;
+                $isJs = stristr($index, '.js') !== false;
+                $isDate = stristr($index, 'date') !== false;
+
+                if ($isJs || $isMoment) {
+                    return $this->convertDateFormatToJS($isDate ? $dateTimeFormat['date'] : $dateTimeFormat['time'], $isMoment);
+                } else if ($isDate) {
+                    return $this->convertDateFormatToJS($dateTimeFormat['date'], false);
+                }
+            }
+
             return (string) $this->ini_array[$index];
         } else {
             if ($this->alert === true) {
@@ -414,7 +439,6 @@ class Language
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
             $formats = $this->getCustomDateTimeFormat();
             $dateFormat = $formats['date'];
-            $timeFormat = $formats['time'];
 
             //If datetime object
             if ($date instanceof DateTime) {
@@ -581,11 +605,11 @@ class Language
         return false;
     }
 
-    private function getCustomDateTimeFormat(): array
+    public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
     {
         $settings = app()->make(ServicesSetting::class);
 
-        $results = ['date' => $this->__('language.dateformat'), 'time' => $this->__('language.timeformat')];
+        $results = ['date' => $this->ini_array['language.' . $defaultDateKey], 'time' => $this->ini_array['language.' . $defaultTimeKey]];
 
         $userId = isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id']) ? $_SESSION['userdata']['id'] : 0;
 
@@ -595,5 +619,66 @@ class Language
         }
 
         return $results;
+    }
+
+    /**
+     * Converts php DateTime format to Javascript Moment format.
+     * @link https://stackoverflow.com/a/55173613
+     * @param string $phpFormat
+     * @return string
+     */
+    public function convertDateFormatToJS(string $phpFormat, bool $toMoment = true): string
+    {
+        $momentReplacements = [
+            'A' => 'A',      // for the sake of escaping below
+            'a' => 'a',      // for the sake of escaping below
+            'B' => '',       // Swatch internet time (.beats), no equivalent
+            'c' => 'YYYY-MM-DD[T]HH:mm:ssZ', // ISO 8601
+            'D' => 'ddd',
+            'd' => 'DD',
+            'e' => 'zz',     // deprecated since version 1.6.0 of moment.js
+            'F' => 'MMMM',
+            'G' => 'H',
+            'g' => 'h',
+            'H' => 'HH',
+            'h' => 'hh',
+            'I' => '',       // Daylight Saving Time? => moment().isDST();
+            'i' => 'mm',
+            'j' => 'D',
+            'L' => '',       // Leap year? => moment().isLeapYear();
+            'l' => 'dddd',
+            'M' => 'MMM',
+            'm' => 'MM',
+            'N' => 'E',
+            'n' => 'M',
+            'O' => 'ZZ',
+            'o' => 'YYYY',
+            'P' => 'Z',
+            'r' => 'ddd, DD MMM YYYY HH:mm:ss ZZ', // RFC 2822
+            'S' => 'o',
+            's' => 'ss',
+            'T' => 'z',      // deprecated since version 1.6.0 of moment.js
+            't' => '',       // days in the month => moment().daysInMonth();
+            'U' => 'X',
+            'u' => 'SSSSSS', // microseconds
+            'v' => 'SSS',    // milliseconds (from PHP 7.0.0)
+            'W' => 'W',      // for the sake of escaping below
+            'w' => 'e',
+            'Y' => 'YYYY',
+            'y' => 'YY',
+            'Z' => '',       // time zone offset in minutes => moment().zone();
+            'z' => 'DDD',
+        ];
+
+        // @TODO: Additional format support (this covers the most popular)
+        $jsReplacements = [
+            'Y' => 'yy',
+            'm' => 'mm',
+            'd' => 'dd',
+            'F' => 'MM',
+            'l' => 'DD',
+        ];
+
+        return strtr($phpFormat, $toMoment ? $momentReplacements : $jsReplacements);
     }
 }
