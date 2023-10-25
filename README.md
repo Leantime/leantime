@@ -123,10 +123,10 @@ The dev environment provides a mysql server, mail server, s3 server, and should 
 
 * [http://localhost:8090](http://localhost:8090) : leantime
 * [http://localhost:8081](http://localhost:8081) : maildev - to check emails sent
-* [http://localhost:8082](http://localhost:8082) : phpmyadmin(authentication ``leantime:leantime``) to check the DB schema and data
+* [http://localhost:8082](http://localhost:8082) : phpMyAdmin(authentication ``leantime:leantime``) to check the DB schema and data
 * [http://localhost:8083](http://localhost:8083) : s3ninja - to check s3 uploads. You need to enable this in the ``.dev/.env`` file by enabling s3
 
-Additionally, XDebug is enabled, but you will have to modify your 
+Additionally, Xdebug is enabled, but you will have to modify your 
 IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connection
 <br /><br />
 ###  🏗 Update ###
@@ -137,7 +137,7 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 * If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
 
 #### Script
-* Execute ./updateLeantime.sh in the root of your leantime application
+* Execute ./updateLeantime.sh in the root of your leantime application.
 
 #### Docker
 * Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
@@ -151,7 +151,7 @@ Head to [leantime.io](https://leantime.io/) for more information.
 <br /><br />
 ## 🤙 Need technical support? ##
 
-We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/)
+We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/).
 
 ### Community Support ##
 
