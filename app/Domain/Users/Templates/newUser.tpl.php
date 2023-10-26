@@ -103,7 +103,7 @@ $projects = $tpl->get('relations');
 
             <label for="client"><?php echo $tpl->__('label.client') ?></label>
             <select name='client' id="client">
-                <?php if ($login::userIsAtLeast("administrator")) {?>
+                <?php if ($login::userIsAtLeast("admin")) {?>
                     <option value="0" selected="selected"><?php echo $tpl->__('label.no_clients') ?></option>
                 <?php } ?>
                 <?php foreach ($tpl->get('clients') as $client) : ?>
