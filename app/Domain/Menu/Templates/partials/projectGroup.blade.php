@@ -9,9 +9,10 @@
             || $_SESSION['userdata']["projectSelectFilter"]['client'] == $project["clientId"]
             || $_SESSION['userdata']["projectSelectFilter"]['client'] == 0
             || $_SESSION['userdata']["projectSelectFilter"]['client'] == ""
+            || $project["clientId"] == ''
             )
 
-            <li class="projectLineItem hasSubtitle {{ $currentProject['id'] ?? 0 == $project['id'] ? "active" : '' }}" >
+            <li class="projectLineItem hasSubtitle {{ $_SESSION['currentProject'] == $project['id'] ? "active" : '' }}" >
                 @php
                     $parentState = isset($_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['id']]) ? $_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['id']] : 'closed';
                 @endphp

@@ -935,6 +935,32 @@ a .label.feature-label:after {
     font-size: var(--base-font-size);
 }
 
+.login-alert .alert-warning{
+    background: var(--secondary-background);
+    border-left: 5px solid var(--yellow);
+    padding: 5px;
+    border-radius: var(--element-radius);
+    box-shadow: var(--large-shadow);
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+}
+
+.login-alert .alert-info{
+    background: var(--secondary-background);
+    border-left: 5px solid var(--blue);
+    padding: 5px;
+    border-radius: var(--element-radius);
+    box-shadow: var(--large-shadow);
+    color: var(--primary-font-color);
+    font-size: var(--base-font-size);
+}
+
+.bigAlert .alert {
+    font-size: var(--font-size-xl);
+    padding: 10px;
+    border-left-width:10px;
+}
+
 /*** HEADER ***/
 
 .header {

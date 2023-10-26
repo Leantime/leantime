@@ -3,11 +3,13 @@
 namespace Leantime\Domain\Users\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Users\Services\Users;
 
     /**
      *
@@ -17,6 +19,7 @@ namespace Leantime\Domain\Users\Controllers {
         private ProjectRepository $projectsRepo;
         private UserRepository $userRepo;
         private ClientRepository $clientsRepo;
+        private Users $userService;
 
         /**
          * init - initialize private variables
@@ -26,11 +29,13 @@ namespace Leantime\Domain\Users\Controllers {
         public function init(
             ProjectRepository $projectsRepo,
             UserRepository $userRepo,
-            ClientRepository $clientsRepo
+            ClientRepository $clientsRepo,
+            Users $userService
         ) {
             $this->projectsRepo = $projectsRepo;
             $this->userRepo = $userRepo;
             $this->clientsRepo = $clientsRepo;
+            $this->userService = $userService;
         }
 
         /**
@@ -53,6 +58,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Build values array
                 $values = array(
+                    'id' => $row['id'],
                     'firstname' => $row['firstname'],
                     'lastname' => $row['lastname'],
                     'user' => $row['username'],
@@ -70,9 +76,28 @@ namespace Leantime\Domain\Users\Controllers {
 
                 );
 
+                if(isset($_GET['resendInvite']) && $row !== false) {
+
+                    if(!isset($_SESSION['lastInvite.'.$values['id']]) || $_SESSION['lastInvite.'.$values['id']] < time() - 240) {
+                        $_SESSION['lastInvite.'.$values['id']] = time();
+                        $this->userService->sendUserInvite(
+                            inviteCode: $values['pwReset'],
+                            user: $values['user']);
+
+                        $this->tpl->setNotification($this->language->__("notification.invitation_sent"), 'success');
+                    } else {
+                        $this->tpl->setNotification($this->language->__("notification.invite_too_soon"), 'error');
+                    }
+
+                    Frontcontroller::redirect(BASE_URL . '/users/editUser/' . $values['id']);
+
+                }
+
                 if (isset($_POST['save'])) {
+
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                         $values = array(
+                            'id' =>  $row['id'],
                             'firstname' => ($_POST['firstname'] ?? $row['firstname']),
                             'lastname' => ($_POST['lastname'] ??  $row['lastname']),
                             'user' => ($_POST['user'] ?? $row['username']),

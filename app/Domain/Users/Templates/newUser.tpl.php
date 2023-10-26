@@ -70,7 +70,7 @@ $projects = $tpl->get('relations');
 
 <?php echo $tpl->displayNotification() ?>
 
-<form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal">
+<form action="<?=BASE_URL?>/users/newUser" method="post" class="stdform userEditModal formModal">
     <div class="row" style="width:800px;">
         <div class="col-md-7">
 
@@ -88,7 +88,10 @@ $projects = $tpl->get('relations');
             <select name="role" id="role">
 
                 <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                    <option value="<?php  echo $key; ?>"
+                    <?php if($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30) {
+                        continue;
+                    }?>
+                        <option value="<?php  echo $key; ?>"
                         <?php if ($key == $values['role']) {
                             ?> selected="selected" <?php
                         } ?>>
@@ -100,10 +103,14 @@ $projects = $tpl->get('relations');
 
             <label for="client"><?php echo $tpl->__('label.client') ?></label>
             <select name='client' id="client">
-                <?php if ($login::userIsAtLeast("manager")) {?>
+                <?php if ($login::userIsAtLeast("administrator")) {?>
                     <option value="0" selected="selected"><?php echo $tpl->__('label.no_clients') ?></option>
                 <?php } ?>
                 <?php foreach ($tpl->get('clients') as $client) : ?>
+                    <?php if($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client["id"] !== $_SESSION['userdata']['clientId']) {
+                    continue;
+                    }
+                    ?>
                     <option value="<?php echo $client['id'] ?>"
                             <?php if ($client['id'] == $values['clientId'] || $tpl->get('preSelectedClient') == $client['id']) :
                                 ?>selected="selected"<?php
@@ -150,6 +157,11 @@ $projects = $tpl->get('relations');
                     $currentClient = '';
                     $i = 0;
                     foreach ($tpl->get('allProjects') as $row) {
+
+                        if($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row["clientId"] !== $_SESSION['userdata']['clientId']) {
+                            continue;
+                        }
+
                         if ($row['clientName'] == '') {
                             $row['clientName'] = "Not assigned to client";
                         }
@@ -178,7 +190,7 @@ $projects = $tpl->get('relations');
                                     <?php $tpl->e($row['name']); ?></label>
                                 <div class="clearall"></div>
                             </div>
-                        <?php $i++; ?>
+                                            <?php $i++; ?>
                     <?php } ?>
 
                 </div>

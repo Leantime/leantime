@@ -729,7 +729,9 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
 
             //Add author to project
-            $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
+            if(isset($_SESSION["userdata"]["id"])) {
+                $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
+            }
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {

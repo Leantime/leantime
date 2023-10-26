@@ -259,6 +259,8 @@ namespace Leantime\Domain\Reports\Services {
 
             );
 
+            $telemetry = self::dispatch_filter("beforeReturnTelemetry", $telemetry);
+
             return $telemetry;
         }
 

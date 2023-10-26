@@ -185,7 +185,7 @@ $state = $tpl->get('state');
 
                                     <?php }
                                 } ?>
-                                <?php if ($login::userIsAtLeast($roles::$admin)) { ?>
+                                <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                     <div class="col-md-4">
 
                                         <div class="userBox">
@@ -438,6 +438,7 @@ $state = $tpl->get('state');
                                                 <option value="NEW" <?=($ticketStatus['statusType'] == 'NEW') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.new'); ?></option>
                                                 <option value="INPROGRESS" <?=($ticketStatus['statusType'] == 'INPROGRESS') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.in_progress'); ?></option>
                                                 <option value="DONE" <?=($ticketStatus['statusType'] == 'DONE') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.done'); ?></option>
+                                                <option value="NONE" <?=($ticketStatus['statusType'] == 'NONE') ? 'selected="selected"' : ""; ?>><?=$tpl->__('status.dont_report'); ?></option>
                                             </select>
                                         </div>
                                         <div class="col-md-2">

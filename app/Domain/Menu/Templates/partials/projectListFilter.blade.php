@@ -37,6 +37,7 @@
 
             @endforeach
         </select>
+        <input type="hidden" name="activeTab" value="" />
 
     </form>
 
