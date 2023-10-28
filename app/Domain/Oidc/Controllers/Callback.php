@@ -22,7 +22,7 @@ class Callback extends Controller
     {
         $this->oidc = $oidc;
     }
-    
+
     /**
      * @param $params
      * @return void
