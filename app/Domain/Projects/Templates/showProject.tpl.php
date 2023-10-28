@@ -22,17 +22,12 @@ $state = $tpl->get('state');
 
         <?php echo $tpl->displayNotification() ?>
 
-        <div class="inlineDropDownContainer" style="float:right; z-index:50; padding-top:10px;">
+        <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:4px;">
 
-            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-            </a>
-            <ul class="dropdown-menu">
-                <li class="nav-header">Project</li>
-                <li><a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="duplicateProjectModal"><?=$tpl->__("links.duplicate_project") ?></a></li>
-                <li><a href="<?=BASE_URL?>/projects/delProject/<?=$project['id']?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__('buttons.delete'); ?></a></li>
+            <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="btn btn-default duplicateProjectModal" data-tippy-content="<?=$tpl->__("link.duplicate_project") ?>"><i class="fa-regular fa-copy"></i></a>
+            <a href="<?=BASE_URL?>/projects/delProject/<?=$project['id']?>" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i></a>
 
-            </ul>
+
         </div>
         <div class="tabbedwidget tab-primary projectTabs">
 
