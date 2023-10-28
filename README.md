@@ -21,6 +21,11 @@ Leantime is an open source project management system for non-project manager.<br
 </div>
 <br /><br />
 
+## 💻Tech Stack
+![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![Javascript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+
 ## 🚀 Features* ##
 | Task Management                                                      | Project Planning                             | Information/Knowledge Management        | Administration                                                           |
 | -------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------ |
