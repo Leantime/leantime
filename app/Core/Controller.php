@@ -96,8 +96,15 @@ abstract class Controller
              */
 
             $this->$method($params);
-        } else {
+
+        } elseif (method_exists($this, 'run')) {
+
             $this->run();
+
+        } else {
+
+            self::redirect(BASE_URL . "/errors/error501", 501);
+
         }
     }
 }

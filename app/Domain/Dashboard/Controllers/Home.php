@@ -118,8 +118,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
             }
 
-            // if AI enabled, we will dispatch an event to allow llamadorian to filter/sort the ticket group
             $tickets = self::dispatch_filter('ticketGroups', $tickets);
+            self::dispatch_event('afterTicketGroups');
 
             $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
             $clients = array();

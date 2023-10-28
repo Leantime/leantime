@@ -53,7 +53,7 @@ namespace Leantime\Domain\Queue\Repositories {
                 // Low risk but still it could be deleted in the meantime
                 $userId = $theuser['id'];
                 $userEmail = $theuser['username'];
-                $msghash = md5($thedate . $message . $userEmail);
+                $msghash = md5($thedate . $subject . $message . $userEmail . $projectId);
 
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
@@ -64,7 +64,12 @@ namespace Leantime\Domain\Queue\Repositories {
                 $stmn->bindValue(':thedate', $thedate, PDO::PARAM_STR);
                 $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
 
-                $stmn->execute();
+                try {
+                    $stmn->execute();
+                }catch(\PDOException  $e){
+                    error_log($e);
+                }
+
                 $stmn->closeCursor();
             }
         }
