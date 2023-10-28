@@ -203,6 +203,7 @@ class Oidc
             $user['role'] = $this->getUserRole($userInfo, $user);
 
             $this->userRepo->editUser($user, $user['id']);
+            $user = $this->userRepo->getUserByEmail($userName);
         }
 
         $this->authService->setUserSession($user, false);
@@ -217,7 +218,7 @@ class Oidc
      */
     private function getUserRole(array $userInfo, array $user = []): string
     {
-        return $user['role'] ?? 'reader';
+        return $user['role'] ?? 'readonly';
     }
 
     /**

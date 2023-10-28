@@ -96,17 +96,17 @@ class Menu
 
         $user = $this->userService->getUser($userId);
 
-
         $projects = $this->projectService->getProjectHierarchyAssignedToUser($userId, 'open', $client);
         $allAssignedprojects = $projects['allAssignedProjects'];
         $allAssignedprojectsHierarchy = $projects['allAssignedProjectsHierarchy'];
         $favoriteProjects = $projects['favoriteProjects'];
 
-
+        //Filtered
         $projects = $this->projectService->getProjectHierarchyAvailableToUser($userId, 'open', $client);
         $allAvailableProjects = $projects['allAvailableProjects'];
         $allAvailableProjectsHierarchy = $projects['allAvailableProjectsHierarchy'];
-        $clients = $projects['clients'];
+
+        $clients = $this->projectService->getAllClientsAvailableToUser($userId, 'open', $client);
 
         $recent = $this->settingSvc->getSetting("usersettings." . $userId . ".recentProjects");
         $recentArr = unserialize($recent);

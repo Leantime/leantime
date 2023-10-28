@@ -75,13 +75,14 @@ $projects = $tpl->get('relations');
 
 
                     </select>
-                        <?php if ($values['status'] == 'i') {?>
+                        <?php if ($values['status'] == 'i') { ?>
                         <div class="pull-left dropdownWrapper" style="padding-left:5px; line-height: 29px;">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>"><i class="fa fa-link"></i> <?=$tpl->__("label.inviteLink") ?></a>
+                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>"><i class="fa fa-link"></i> <?=$tpl->__("label.copyinviteLink") ?></a>
                             <div class="dropdown-menu padding-md noClickProp">
                                 <input type="text" id="inviteURL" value="<?=BASE_URL ?>/auth/userInvite/<?=$values['pwReset'] ?>" />
                                 <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('inviteURL');"><?=$tpl->__('links.copy_url') ?></button>
                             </div>
+                            <a href="<?=BASE_URL?>/users/editUser/<?=$values['id'] ?>?resendInvite" class="btn btn-default" style="margin-left:5px;"><i class="fa fa-envelope"></i> <?=$tpl->__('buttons.resend_invite') ?></a>
                         </div>
                         <?php } ?>
                         <div class="clearfix"></div>

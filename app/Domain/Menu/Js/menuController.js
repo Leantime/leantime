@@ -42,7 +42,30 @@ leantime.menuController = (function () {
             e.stopPropagation();
         });
 
-        jQuery('.projectSelectorTabs').tabs();
+        let currentTab = localStorage.getItem("currentMenuTab");
+
+        if(typeof currentTab === 'undefined') {
+            activeTabIndex = 0;
+        }else{
+            activeTabIndex = jQuery('.projectSelectorTabs').find('a[href="#' + currentTab + '"]').parent().index();
+        }
+
+        jQuery('.projectSelectorTabs').tabs({
+            create: function ( event, ui ) {
+
+            },
+            activate: function (event, ui) {
+                localStorage.setItem("currentMenuTab", ui.newPanel[0].id);
+            },
+            load: function () {
+
+            },
+            enable: function () {
+
+            },
+            active: activeTabIndex
+
+        });
 
     };
 

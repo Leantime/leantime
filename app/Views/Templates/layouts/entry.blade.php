@@ -23,7 +23,9 @@
     <div class="col-md-6 hidden-phone regLeft">
         <div class="row">
             <div class="col-md-12" style="position:relative;">
-                <h1 class="mainWelcome">{{ __("headlines.welcome_back") }}</h1>
+                <h1 class="mainWelcome">
+                    @dispatchFilter('welcomeText', $language->__("headlines.welcome_back"))
+                </h1>
                 <span class="iq-objects-04 iq-fadebounce">
                     <span class="iq-round"></span>
                 </span>

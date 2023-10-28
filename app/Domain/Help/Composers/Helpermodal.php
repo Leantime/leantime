@@ -57,7 +57,7 @@ class Helpermodal extends Composer
 
 
         if ($completedOnboarding == "1"
-            && $currentModal !== 'notfount'
+            && $currentModal !== 'notfound'
             && (isset($_SESSION['userdata']['settings']["modals"][$currentModal]) === false || $_SESSION['userdata']['settings']["modals"][$currentModal] == 0)) {
 
             if (!isset($_SESSION['userdata']['settings']["modals"])) {

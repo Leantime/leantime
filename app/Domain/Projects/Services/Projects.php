@@ -513,12 +513,6 @@ namespace Leantime\Domain\Projects\Services {
 
         /**
          * @param $userId
-         * @param $projectStatus
-         * @param $clientId
-         * @return array
-         */
-        /**
-         * @param $userId
          * @param string   $projectStatus
          * @param $clientId
          * @return array
@@ -548,6 +542,26 @@ namespace Leantime\Domain\Projects\Services {
                 "allAvailableProjectsHierarchy" => $projectHierarchy,
                 "clients" => $clients,
             ];
+        }
+
+
+
+        public function getAllClientsAvailableToUser($userId, string $projectStatus = "open"): array
+        {
+
+            //Load all projects user is assigned to
+            $projects = $this->projectRepository->getUserProjects(
+                userId: $userId,
+                projectStatus: $projectStatus,
+                clientId: null,
+                accessStatus: "all"
+            );
+            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
+
+
+            $clients = $this->getClientsFromProjectList($projects);
+
+            return $clients;
         }
 
         /**

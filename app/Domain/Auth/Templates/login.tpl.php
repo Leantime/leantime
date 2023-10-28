@@ -40,6 +40,7 @@ $redirectUrl = $tpl->get('redirectUrl');
         <div>
         </div>
         <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
+
     </form>
     <?php } else {
         echo ($tpl->language->__("text.no_login_form"));
