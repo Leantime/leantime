@@ -1258,9 +1258,9 @@ namespace Leantime\Domain\Projects\Services {
                     "title" => "label.define",
                     "description" => "Start your projects by creating a project description, adding any team members and creating a blueprint. This will ensure you are on the right track.",
                     "tasks" => array(
-                        "description" => array("title" => "label.projectDescription", "status" => "", "link" =>BASE_URL."/projects/showProject".$_SESSION['currentProject']."", "description" => "A well defined project description helps everyone on the team understand the work and the goals to work towards."),
-                        "defineTeam" => array("title" => "label.defineTeam", "status" => "", "link" =>BASE_URL."/projects/showProject".$_SESSION['currentProject']."#team", "description" => "Add your team members to get their insights on the project during the definition phase."),
-                        "createBlueprint" => array("title" => "label.createBlueprint", "status" => "", "link" =>BASE_URL."/strategy/showBoards", "description" => "Define the core elements of your project with a Blueprint Board. Help everyone understand: Who is the customer? What is the problem? What is the solution?"),
+                        "description" => array("title" => "label.projectDescription", "status" => "", "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."", "description" => "A well defined project description helps everyone on the team understand the work and the goals to work towards."),
+                        "defineTeam" => array("title" => "label.defineTeam", "status" => "", "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."#team", "description" => "Add your team members to get their insights on the project during the definition phase."),
+                        "createBlueprint" => array("title" => "label.createBlueprint", "status" => "", "link" =>BASE_URL."/strategy/showBoards/", "description" => "Define the core elements of your project with a Blueprint Board. Help everyone understand: Who is the customer? What is the problem? What is the solution?"),
                     ),
                     "status" => '',
                 ),
