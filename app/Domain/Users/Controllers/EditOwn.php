@@ -135,13 +135,13 @@ namespace Leantime\Domain\Users\Controllers {
                             if ($changedEmail == 1) {
                                 if ($this->userRepo->usernameExist($values['user'], $this->userId) === false) {
                                     $this->userService->editOwn($values, $this->userId);
-                                    $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
+                                    $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success', "profile_edited");
                                 } else {
                                     $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                                 }
                             } else {
                                 $this->userService->editOwn($values, $this->userId);
-                                $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
+                                $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success', "profile_edited");
                             }
                         } else {
                             $this->tpl->setNotification($this->language->__("notification.no_valid_email"), 'error');
@@ -172,7 +172,8 @@ namespace Leantime\Domain\Users\Controllers {
                                 $this->userRepo->editOwn($values, $this->userId);
                                 $this->tpl->setNotification(
                                     $this->language->__("notifications.password_changed"),
-                                    'success'
+                                    'success',
+                                    "password_edited"
                                 );
                             } else {
                                 $this->tpl->setNotification(
@@ -211,7 +212,7 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->themeCore->setActive($postTheme);
                     $this->language->setLanguage($postLang);
 
-                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success');
+                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success', "profilesettings_updated");
                 }
 
                 //Save Profile Image
@@ -245,7 +246,7 @@ namespace Leantime\Domain\Users\Controllers {
                     // Storing option messagefrequency
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".messageFrequency", (int) $_POST['messagesfrequency']);
 
-                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success');
+                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success', "profilesettings_updated");
                 }
             } else {
                 $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
