@@ -98,6 +98,9 @@ class Mailer
             $host = $_SERVER['HTTP_HOST'] ?? "leantime";
             $this->emailDomain = "no-reply@" . $host;
         }
+
+        $this->emailDomain  = self::dispatch_filter("fromEmail", $this->emailDomain, $this);
+
         //PHPMailer
         $this->mailAgent = new PHPMailer(false);
 

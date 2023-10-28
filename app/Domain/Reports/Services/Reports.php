@@ -89,7 +89,7 @@ namespace Leantime\Domain\Reports\Services {
         public function dailyIngestion(): void
         {
 
-            if (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
+            if (isset($_SESSION['currentProject']) && (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1)) {
                 //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
                 //Get current Sprint Id, if no sprint available, dont run the sprint burndown
 
@@ -258,6 +258,8 @@ namespace Leantime\Domain\Reports\Services {
                 'numWikiItems' => $wikiRepo->getNumberOfCanvasItems(),
 
             );
+
+            $telemetry = self::dispatch_filter("beforeReturnTelemetry", $telemetry);
 
             return $telemetry;
         }

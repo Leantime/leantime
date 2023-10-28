@@ -165,6 +165,7 @@ leantime.helperController = (function () {
                     text: "Go to the welcome content",
                     events: {
                         'click': function () {
+                            gtag("event", "tutorial_complete");
                             leantime.helperController.showHelperModal('dashboard', 300, 500);
                         }
                     }
@@ -215,7 +216,7 @@ leantime.helperController = (function () {
             {
                 title: leantime.i18n.__("tour.drag_drop"),
                 text: leantime.i18n.__("tour.drag_drop_text"),
-                attachTo: { element: '.ticketBox h4 ', on: 'right' },
+                attachTo: { element: '.quickAddLink', on: 'right' },
                 advanceOn: '.ticketBox click',
                 buttons: [
                     {

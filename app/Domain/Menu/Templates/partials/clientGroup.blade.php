@@ -44,7 +44,7 @@
                     <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $project['clientId'] }}" class="level-1 projectGroup {{ $parentState }}">
             @endif
 
-            <li class="projectLineItem hasSubtitle {{ $currentProject['id'] ?? 0 == $project['id'] ? "active" : '' }}" >
+            <li class="projectLineItem hasSubtitle {{ $_SESSION['currentProject'] == $project['id'] ? "active" : '' }}" >
                 @include('menu::partials.projectLink')
                 <div class="clear"></div>
             </li>

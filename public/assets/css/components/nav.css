@@ -672,6 +672,7 @@
 
 .leftpanel .leftmenu .nav-tabs .projectselector li.active > a {
     background-image:none;
+    background:var(--main-menu-link-active-bg);
     color:var(--main-menu-link-active-color);
     font-weight:bold;
 }

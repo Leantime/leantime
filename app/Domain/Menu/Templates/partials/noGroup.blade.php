@@ -8,7 +8,7 @@
            || $_SESSION['userdata']["projectSelectFilter"]['client'] == ""
            )
 
-            <li class="projectLineItem hasSubtitle {{ $currentProject['id'] ?? 0  == $project['id'] ? "active" : '' }}" >
+            <li class="projectLineItem hasSubtitle {{ $_SESSION['currentProject'] ?? 0  == $project['id'] ? "active" : '' }}" >
                 @include('menu::partials.projectLink')
                 <div class="clear"></div>
             </li>
