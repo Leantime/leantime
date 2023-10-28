@@ -22,12 +22,7 @@ class Callback extends Controller
     {
         $this->oidc = $oidc;
     }
-
-    /**
-     * @param $params
-     * @return void
-     * @throws GuzzleException
-     */
+    
     /**
      * @param $params
      * @return void
