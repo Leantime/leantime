@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Date;
 use Leantime\Domain\Reports\Repositories\Reports;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Core\Eventhelpers;
+use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 /**
  * Language class - Internationilsation with ini-Files
@@ -280,7 +281,7 @@ class Language
         $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::CUSTOM_LANG_FOLDER . $this->language . '.ini', true);
 
         $this->ini_array = $mainLanguageArray;
-        
+
         $this->ini_array = self::dispatch_filter(
             'language_resources',
             $this->ini_array,
@@ -596,10 +597,10 @@ class Language
 
         return false;
     }
-  
+
     public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
     {
-        $settings = app()->make(ServicesSetting::class);
+        $settings = app()->make(SettingService::class);
 
         $results = ['date' => $this->ini_array['language.' . $defaultDateKey], 'time' => $this->ini_array['language.' . $defaultTimeKey]];
 
