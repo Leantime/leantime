@@ -4,7 +4,7 @@
 
 ### Leantime&reg; ###
 
-Leantime is an open source project management system for non-project manager.<br />We combine strategy, planning and executing while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+Leantime is an open-source project management system designed for non-project managers.<br />It combines strategy, planning, and execution while ensuring that everyone on the team can easily use it.<br />It serves as an alternative to tools like ClickUp, Monday, or Asana, offering simplicity akin to Trello but with feature richness comparable to Jira.<br />[https://leantime.io](https://leantime.io)<br />
 
 <a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="Leantime%2Fleantime | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
