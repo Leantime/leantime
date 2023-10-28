@@ -67,6 +67,7 @@ class Environment implements ArrayAccess, ConfigContract
         'oidcClientId' => 'LEAN_OIDC_CLIEND_ID',
         'oidcClientSecret' => 'LEAN_OIDC_CLIEND_SECRET',
         'oidcAuthUrl' => 'LEAN_OIDC_AUTH_URL_OVERRIDE',
+        'oidcTokenUrl' => 'LEAN_OIDC_TOKEN_URL_OVERRIDE',
         'oidcJwksUrl' => 'LEAN_OIDC_JWKS_URL_OVERRIDE',
         'oidcUserInfoUrl' => 'LEAN_OIDC_USERINFO_URL_OVERRIDE',
         'oidcFieldFirstName' => 'LEAN_OIDC_FIELD_FIRSTNAME',
