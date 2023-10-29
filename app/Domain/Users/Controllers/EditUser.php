@@ -84,7 +84,7 @@ namespace Leantime\Domain\Users\Controllers {
                             inviteCode: $values['pwReset'],
                             user: $values['user']);
 
-                        $this->tpl->setNotification($this->language->__("notification.invitation_sent"), 'success');
+                        $this->tpl->setNotification($this->language->__("notification.invitation_sent"), 'success', "userinvitation_sent");
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.invite_too_soon"), 'error');
                     }

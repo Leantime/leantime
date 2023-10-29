@@ -28,11 +28,6 @@ class Callback extends Controller
      * @return void
      * @throws GuzzleException
      */
-    /**
-     * @param $params
-     * @return void
-     * @throws GuzzleException
-     */
     public function get($params): void
     {
         $code = $_GET['code'];

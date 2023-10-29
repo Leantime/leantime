@@ -185,7 +185,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                     if (isset($result["status"])) {
                         $this->tpl->setNotification($result["message"], $result["status"]);
                     } else {
-                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success", "quickticket_created");
                     }
 
                     $this->tpl->redirect(BASE_URL . "/dashboard/home");
