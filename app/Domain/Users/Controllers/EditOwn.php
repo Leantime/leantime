@@ -66,6 +66,17 @@ namespace Leantime\Domain\Users\Controllers {
 
             $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
 
+            $userDateFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".date_format");
+            $userTimeFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".time_format");
+
+            $timezone = $this->settingsService->getSetting("usersettings." . $this->userId . ".timezone");
+
+            if (!$timezone) {
+                $timezone = date_default_timezone_get();
+            }
+            
+            $timezonesAvailable = timezone_identifiers_list();
+
             //Build values array
             $values = array(
                 'firstname' => $row['firstname'],
@@ -92,6 +103,11 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->assign('userLang', $userLang);
             $this->tpl->assign('userTheme', $userTheme);
             $this->tpl->assign("languageList", $this->language->getLanguageList());
+            $this->tpl->assign('dateFormat', $userDateFormat);
+            $this->tpl->assign('timeFormat', $userTimeFormat);
+            $this->tpl->assign('dateTimeValues', $this->getSupportedDateTimeFormats());
+            $this->tpl->assign('timezone', $timezone);
+            $this->tpl->assign('timezoneOptions', $timezonesAvailable);
 
             $this->tpl->assign('user', $row);
 
