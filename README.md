@@ -28,10 +28,10 @@ Leantime is an open source project management system for non-project manager.<br
 | Unlimited subtasks and dependencies                                  | Goal & metrics tracking                      | Idea Boards                             | Multiple user roles and per project permissions                          |
 | Milestone management                                                 | Lean & Business Model Canvas                 | Retrospectives                          | Two factor authentication                                                |
 | Sprint Management                                                    | SWOT Analysis canvas                         | File Storage via S3 or local filesystem | LDAP, OIDC integration                                                   |
-| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Integration with mattermost, slack, discord and zulip (more coming soon) |
+| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Integration with Mattermost, Slack, Discord and Zulip (more coming soon) |
 |                                                                      | ... and more                                 | Comments/discussions on everything      | Available in 19 languages                                                |
 
-*yes, all of theses features are included in the OSS version
+*yes, all of these features are included in the OSS version
 <br /><br />
 ### 📸 Screenshots ###
 
@@ -59,7 +59,7 @@ There are two main ways to install LeanTime for production. The first of which i
 
 * Download latest release package from our <a href="https://leantime.io/download-leantime/">Website</a> or <a href="https://github.com/Leantime/docker-leantime/releases">Github</a>
 * Create an empty MySQL database
-* Upload entire directory to your server 
+* Upload the entire directory to your server 
 * Point your domain root to the `public/` directory
 * Rename `config/.env.sample` to `config/.env`
 * Fill in your database credentials (username, password, host, dbname) in `config/.env`
@@ -119,7 +119,7 @@ afterwards, run
 
 this will start the development server on port 8090.
 
-The dev environment provides a mysql server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
+The dev environment provides a MySQL server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
 
 * [http://localhost:8090](http://localhost:8090) : leantime
 * [http://localhost:8081](http://localhost:8081) : maildev - to check emails sent
@@ -127,7 +127,7 @@ The dev environment provides a mysql server, mail server, s3 server, and should 
 * [http://localhost:8083](http://localhost:8083) : s3ninja - to check s3 uploads. You need to enable this in the ``.dev/.env`` file by enabling s3
 
 Additionally, Xdebug is enabled, but you will have to modify your 
-IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connection
+IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connections
 <br /><br />
 ###  🏗 Update ###
 
