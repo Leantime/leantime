@@ -411,6 +411,8 @@ class Language
                 }
             } else if ($index === 'language.dateformat') {
                 return $dateTimeFormat['date'];
+            } else if ($index === 'language.timeformat') {
+                return $dateTimeFormat['time'];
             }
 
             return (string) $this->ini_array[$index];
@@ -600,6 +602,11 @@ class Language
 
     public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
     {
+
+        if(isset($_SESSION['usersettings.language.dateTimeFormat'])) {
+            return $_SESSION['usersettings.language.dateTimeFormat'];
+        }
+
         $settings = app()->make(SettingService::class);
 
         $results = ['date' => $this->ini_array['language.' . $defaultDateKey], 'time' => $this->ini_array['language.' . $defaultTimeKey]];
@@ -610,6 +617,8 @@ class Language
             $results['date'] = $settings->getSetting("usersettings." . $userId . ".date_format");
             $results['time'] = $settings->getSetting("usersettings." . $userId . ".time_format");
         }
+
+        $_SESSION['usersettings.language.dateTimeFormat'] = $results;
 
         return $results;
     }

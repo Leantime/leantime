@@ -74,7 +74,7 @@ namespace Leantime\Domain\Users\Controllers {
             if (!$timezone) {
                 $timezone = date_default_timezone_get();
             }
-            
+
             $timezonesAvailable = timezone_identifiers_list();
 
             //Build values array
@@ -232,6 +232,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                     unset($_SESSION["companysettings.logoPath"]);
                     unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage() . '_' . $postTheme]);
+                    unset($_SESSION['usersettings.language.dateTimeFormat']);
 
                     $this->themeCore->setActive($postTheme);
                     $this->language->setLanguage($postLang);
@@ -283,7 +284,7 @@ namespace Leantime\Domain\Users\Controllers {
         /**
          * Returns list of supported varying date-time formats.
          * @link https://www.php.net/manual/en/class.datetimeinterface.php#datetimeinterface.constants.types
-         * 
+         *
          * @return [<string,string>] Format of ID => date-time string
          */
         private function getSupportedDateTimeFormats(): array
