@@ -76,7 +76,7 @@ namespace Leantime\Domain\Clients\Controllers {
                         if ($values['name'] !== '') {
                             $this->clientRepo->editClient($values, $id);
 
-                            $tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success');
+                            $tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success', "client_updated");
                         } else {
                             $tpl->setNotification('NO_NAME', 'error');
                         }

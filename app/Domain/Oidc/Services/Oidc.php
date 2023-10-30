@@ -10,6 +10,7 @@ use Leantime\Core\Environment;
 use GuzzleHttp\Client;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\Language;
+use Leantime\Core\Template;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -37,9 +38,21 @@ class Oidc
     private string $certificateString = '';
     private string $certificateFile = '';
     private string $scopes = '';
+
+    private bool $createUser = false;
+
+    private int $defaultRole = 20; //20 == editor
     private string $fieldEmail = '';
     private string $fieldFirstName = '';
     private string $fieldLastName = '';
+
+    private string $fieldPhone = '';
+
+    private string $fieldJobtitle = '';
+
+    private string $fieldJoblevel = '';
+
+    private string $fieldDepartment = '';
     private Language $language;
 
     /**
@@ -72,9 +85,17 @@ class Oidc
         $this->certificateString = $this->config->get('oidcCertificateString', '');
         $this->certificateFile = $this->config->get('oidcCertificateFile', '');
         $this->scopes = $this->config->get('oidcScopes', '');
+        $this->createUser = $this->config->get('oidcCreateUser', false);
+        $this->defaultRole = $this->config->get('oidcDefaultRole', 20);
+
         $this->fieldEmail = $this->config->get('oidcFieldEmail', '');
         $this->fieldFirstName = $this->config->get('oidcFieldFirstName', '');
         $this->fieldLastName = $this->config->get('oidcFieldLastName', '');
+        $this->fieldPhone= $this->config->get('oidcFieldPhone', '');
+        $this->fieldJobtitle = $this->config->get('oidcFieldJobtitle', '');
+        $this->fieldJoblevel = $this->config->get('oidcFieldJoblevel', '');
+        $this->fieldDepartment = $this->config->get('oidcFieldDepartment', '');
+
     }
 
     /**
@@ -164,8 +185,7 @@ class Oidc
      */
     private function login(array $userInfo): void
     {
-        // echo '<pre>' . print_r($idToken, true) . '</pre>';
-        // return;
+
         $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
 
         if (!$userName) {
@@ -175,34 +195,56 @@ class Oidc
         $user = $this->userRepo->getUserByEmail($userName);
 
         if ($user === false) {
-            //create user if it doesn't exist yet
-            $userArray = [
-                'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
-                'lastname' => $this->readMultilayerKey($userInfo, $this->fieldLastName),
-                'phone' => '',
-                'user' => $userName,
-                'role' => $this->getUserRole($userInfo),
-                'password' => '',
-                'clientId' => '',
-                'source' => 'oidc',
-                'status' => 'a',
-            ];
-            $userId = $this->userRepo->addUser($userArray);
 
-            if ($userId !== false) {
-                $user = $this->userRepo->getUserByEmail($userName);
-            } else {
-                error_log("OIDC user creation failed.");
+            if($this->createUser) {
+                //create user if it doesn't exist yet
+                $userArray = [
+                    'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
+                    'lastname' => $this->readMultilayerKey($userInfo, $this->fieldLastName),
+                    'phone' => $this->readMultilayerKey($userInfo, $this->fieldPhone),
+                    'jobTitle' => $this->readMultilayerKey($userInfo, $this->fieldJobtitle),
+                    'jobLevel' => $this->readMultilayerKey($userInfo, $this->fieldJoblevel),
+                    'department' => $this->readMultilayerKey($userInfo, $this->fieldDepartment),
+                    'user' => $userName,
+                    'role' => $this->defaultRole,
+                    'password' => '',
+                    'clientId' => '',
+                    'source' => 'oidc',
+                    'status' => 'a',
+                ];
+
+                $userId = $this->userRepo->addUser($userArray);
+
+                if ($userId !== false) {
+                    $user = $this->userRepo->getUserByEmail($userName);
+
+                } else {
+
+                    error_log("OIDC user creation failed.");
+                    return;
+                }
+
+            }else{
+                $this->displayError('oidc.error.user_not_found');
                 return;
             }
+
         } else {
+
             //update user if it exists
             $user['user'] = $user['username'];
-            $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName);
-            $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName);
+            $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldFirstName) : $user['firstname'];
+            $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldLastName) : $user['lastname'];
+            $user['phone'] = $this->readMultilayerKey($userInfo, $this->fieldLastName)  != "" ?  $this->readMultilayerKey($userInfo, $this->fieldLastName) : $user['phone'];
+            $user['jobTitle'] = $this->readMultilayerKey($userInfo, $this->fieldJobtitle) != "" ? $this->readMultilayerKey($userInfo, $this->fieldJobtitle) : $user['jobTitle'];
+            $user['jobLevel'] = $this->readMultilayerKey($userInfo, $this->fieldJoblevel) != "" ?  $this->readMultilayerKey($userInfo, $this->fieldJoblevel) : $user['jobLevel'];
+            $user['department'] = $this->readMultilayerKey($userInfo, $this->fieldDepartment) != "" ? $this->readMultilayerKey($userInfo, $this->fieldDepartment) : $user['department'];
+
             $user['role'] = $this->getUserRole($userInfo, $user);
 
             $this->userRepo->editUser($user, $user['id']);
+
+            //Get updated user
             $user = $this->userRepo->getUserByEmail($userName);
         }
 
@@ -416,19 +458,19 @@ class Oidc
 
         //load all not yet defined endpoints from well-known configuration
 
-        if (!$this->authUrl) {
+        if (!$this->authUrl && $this->authUrl != '') {
             $this->authUrl = $endpoints['authorization_endpoint'];
         }
 
-        if (!$this->tokenUrl) {
+        if (!$this->tokenUrl && $this->tokenUrl != '') {
             $this->tokenUrl = $endpoints['token_endpoint'];
         }
 
-        if (!$this->jwksUrl) {
+        if (!$this->jwksUrl && $this->jwksUrl != '') {
             $this->jwksUrl = $endpoints['jwks_uri'];
         }
 
-        if (!$this->userInfoUrl) {
+        if (!$this->userInfoUrl && $this->userInfoUrl != '') {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
     }
@@ -516,6 +558,8 @@ class Oidc
      */
     private function displayError(string $translationKey, string ...$values): void
     {
-        die(sprintf($this->language->__($translationKey), ...$values));
+        $tpl = app()->make(Template::class);
+        $tpl->setNotification(sprintf($this->language->__($translationKey), ...$values), "error");
+        $tpl->redirect(BASE_URL. "/auth/login");
     }
 }

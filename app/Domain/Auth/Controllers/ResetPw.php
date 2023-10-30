@@ -63,7 +63,7 @@ namespace Leantime\Domain\Auth\Controllers {
                 if (isset($_POST['username']) === true) {
                     //Always return success to prevent db attacks checking which email address are in there
                     $this->authService->generateLinkAndSendEmail($_POST["username"]);
-                    $this->tpl->setNotification($this->language->__('notifications.email_was_sent_to_reset'), "success");
+                    $this->tpl->setNotification($this->language->__('notifications.email_was_sent_to_reset'), "success", "passwordreset_sent");
                 }
 
                 if (isset($_POST['password']) === true && isset($_POST['password2']) === true) {
@@ -76,7 +76,8 @@ namespace Leantime\Domain\Auth\Controllers {
                             if ($this->authService->changePW($_POST['password'], $_GET['id'])) {
                                 $this->tpl->setNotification(
                                     $this->language->__('notifications.passwords_changed_successfully'),
-                                    "success"
+                                    "success",
+                                    "password_changed"
                                 );
 
                                 FrontcontrollerCore::redirect(BASE_URL . "/auth/login");

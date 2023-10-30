@@ -50,7 +50,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                 if (isset($params['delComment']) === true) {
                     $commentId = (int)($params['delComment']);
                     $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), "success");
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), "success", "ideacomment_deleted");
                 }
 
                 //Delete milestone relationship

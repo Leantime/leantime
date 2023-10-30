@@ -130,7 +130,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                             $_SESSION['currentProject']
                         );
 
-                        $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "_board_created");
+                        $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
 
                         $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
                         $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
