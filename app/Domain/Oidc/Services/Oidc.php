@@ -458,19 +458,19 @@ class Oidc
 
         //load all not yet defined endpoints from well-known configuration
 
-        if (!$this->authUrl && $this->authUrl != '') {
+        if (!$this->authUrl || $this->authUrl == '') {
             $this->authUrl = $endpoints['authorization_endpoint'];
         }
 
-        if (!$this->tokenUrl && $this->tokenUrl != '') {
+        if (!$this->tokenUrl || $this->tokenUrl == '') {
             $this->tokenUrl = $endpoints['token_endpoint'];
         }
 
-        if (!$this->jwksUrl && $this->jwksUrl != '') {
+        if (!$this->jwksUrl || $this->jwksUrl == '') {
             $this->jwksUrl = $endpoints['jwks_uri'];
         }
 
-        if (!$this->userInfoUrl && $this->userInfoUrl != '') {
+        if (!$this->userInfoUrl || $this->userInfoUrl == '') {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
     }
