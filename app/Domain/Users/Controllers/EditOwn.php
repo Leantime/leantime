@@ -66,6 +66,17 @@ namespace Leantime\Domain\Users\Controllers {
 
             $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
 
+            $userDateFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".date_format");
+            $userTimeFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".time_format");
+
+            $timezone = $this->settingsService->getSetting("usersettings." . $this->userId . ".timezone");
+
+            if (!$timezone) {
+                $timezone = date_default_timezone_get();
+            }
+            
+            $timezonesAvailable = timezone_identifiers_list();
+
             //Build values array
             $values = array(
                 'firstname' => $row['firstname'],
@@ -92,6 +103,11 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->assign('userLang', $userLang);
             $this->tpl->assign('userTheme', $userTheme);
             $this->tpl->assign("languageList", $this->language->getLanguageList());
+            $this->tpl->assign('dateFormat', $userDateFormat);
+            $this->tpl->assign('timeFormat', $userTimeFormat);
+            $this->tpl->assign('dateTimeValues', $this->getSupportedDateTimeFormats());
+            $this->tpl->assign('timezone', $timezone);
+            $this->tpl->assign('timezoneOptions', $timezonesAvailable);
 
             $this->tpl->assign('user', $row);
 
@@ -202,9 +218,17 @@ namespace Leantime\Domain\Users\Controllers {
 
                     $postLang = htmlentities($_POST['language']);
                     $postTheme = htmlentities($_POST['theme']);
+                    $dateFormat = htmlentities($_POST['date_format']);
+                    $timeFormat = htmlentities($_POST['time_format']);
+                    $tz = htmlentities($_POST['timezone']);
 
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".language", $postLang);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".date_format", $dateFormat);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $timeFormat);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".timezone", $tz);
+
+                    $_SESSION['usersettings.' . $this->userId . '.timezone'] = $tz;
 
                     unset($_SESSION["companysettings.logoPath"]);
                     unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage() . '_' . $postTheme]);
@@ -254,6 +278,38 @@ namespace Leantime\Domain\Users\Controllers {
 
             //Redirect
             FrontcontrollerCore::redirect(BASE_URL . "/users/editOwn" . $tab);
+        }
+
+        /**
+         * Returns list of supported varying date-time formats.
+         * @link https://www.php.net/manual/en/class.datetimeinterface.php#datetimeinterface.constants.types
+         * 
+         * @return [<string,string>] Format of ID => date-time string
+         */
+        private function getSupportedDateTimeFormats(): array
+        {
+            return [
+                'dates' => [
+                    $this->language->__("language.dateformat"),
+                    'Y-m-d',
+                    'D, d M y',
+                    'l, d-M-y',
+                    'd.m.Y',
+                    'd/m/Y',
+                    'd. F Y',
+                    'm-d-Y',
+                    'dmY',
+                    'F d, Y',
+                    'd F Y'
+                ],
+                'times' => [
+                    $this->language->__("language.timeformat"),
+                    'H:i:sP',
+                    'H:i:s O',
+                    'H:i:s T',
+                    'H:i:s',
+                ]
+            ];
         }
     }
 }
