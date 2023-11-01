@@ -51,11 +51,16 @@ class Details extends HtmxController
         try {
             $this->pluginService->installMarketplacePlugin($pluginModel);
         } catch (\Throwable $e) {
-            $this->tpl->assign('formNotification', $e->getMessage());
+            $this->tpl->assign('formError', $e->getMessage());
             return 'plugin-installation';
         }
 
-        $this->tpl->assign('formNotification', 'Plugin installed successfully!');
+        if ($this->pluginService->isPluginEnabled($pluginModel->identifier)) {
+            $this->tpl->assign('formNotification', 'Plugin Updated Successfully!');
+            return 'plugin-installation';
+        }
+
+        $this->tpl->assign('formNotification', 'Plugin installed successfully! Head to <a href="/plugins/myapps">My Apps</a> to activate.');
         return 'plugin-installation';
     }
 }

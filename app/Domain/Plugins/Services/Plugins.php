@@ -9,13 +9,9 @@ namespace Leantime\Domain\Plugins\Services {
     use Leantime\Domain\Plugins\Models\MarketplacePlugin;
     use Leantime\Domain\Plugins\Repositories\Plugins as PluginRepository;
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
-    use Ramsey\Uuid\Uuid;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Http\Client\RequestException;
     use Leantime\Domain\Settings\Repositories\Settings as SettingsRepository;
-    use Illuminate\Http\Client\Response;
-    use Illuminate\Support\Collection;
-    use Illuminate\Http\Client\Factory;
 
     /**
      *
@@ -441,9 +437,10 @@ namespace Leantime\Domain\Plugins\Services {
                 throw new \Exception('Could not download plugin');
             }
 
-            if (! is_dir($pluginDir = APP_ROOT . '/app/Plugins/' . $plugin->identifier)) {
-                mkdir($pluginDir);
+            if (is_dir($pluginDir = APP_ROOT . '/app/Plugins/' . $plugin->identifier)) {
+                rmdir($pluginDir);
             }
+            mkdir($pluginDir);
 
             $zip = new \ZipArchive();
             $zip->open($temporaryFile);
@@ -459,6 +456,8 @@ namespace Leantime\Domain\Plugins\Services {
             $pluginModel->version = $plugin->version;
             $pluginModel->installdate = date("Y-m-d");
             $pluginModel->foldername = $plugin->identifier;
+            $pluginModel->homepage = $plugin->marketplaceUrl;
+            $pluginModel->authors = $plugin->authors;
             $pluginModel->license = $plugin->license;
             $pluginModel->format = 'phar';
 

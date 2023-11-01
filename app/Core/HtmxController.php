@@ -5,8 +5,6 @@ namespace Leantime\Core;
 use Error;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Template;
-use Leantime\Core\Events;
-use Leantime\Core\Language;
 use Illuminate\Support\Str;
 use LogicException;
 

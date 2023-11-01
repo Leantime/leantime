@@ -1,0 +1,6 @@
+name: leantime
+recipe: lamp
+config:
+  php: 8.1
+  webroot: public
+  xdebug: true
