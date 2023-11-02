@@ -41,7 +41,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             if (isset($_POST['del']) && isset($id)) {
                 $this->ideasRepo->delCanvasItem($id);
 
-                $this->tpl->setNotification($this->language->__("notification.idea_board_item_deleted"), "success");
+                $this->tpl->setNotification($this->language->__("notification.idea_board_item_deleted"), "success", "ideaitem_deleted");
 
                 $this->tpl->redirect(BASE_URL . "/ideas/showBoards");
             }

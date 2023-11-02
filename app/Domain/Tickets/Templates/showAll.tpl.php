@@ -337,7 +337,7 @@ foreach ($__data as $var => $val) {
                             }
                             ?>
                             <td data-order="<?=$row['dateToFinish'] ?>" >
-                                <input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
+                                <input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo $date ?>" class="quickDueDates secretInput" data-id="<?php echo $row['id'];?>" name="date" />
                             </td>
                             <td data-order="<?=$tpl->e($row['planHours']); ?>">
                                 <input type="text" value="<?=$tpl->e($row['planHours']); ?>" name="planHours" class="small-input secretInput" onchange="leantime.ticketsController.updatePlannedHours(this, '<?=$row['id']?>'); jQuery(this).parent().attr('data-order',jQuery(this).val());" />
@@ -397,6 +397,7 @@ foreach ($__data as $var => $val) {
 
 
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+            leantime.ticketsController.initDueDateTimePickers();
             leantime.ticketsController.initUserDropdown();
             leantime.ticketsController.initMilestoneDropdown();
             leantime.ticketsController.initEffortDropdown();

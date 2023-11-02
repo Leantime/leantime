@@ -71,6 +71,11 @@ namespace Leantime\Domain\Clients\Controllers {
 
             $row = $this->clientRepo->getClient($id);
 
+            if($row === false) {
+                $this->tpl->display('errors.error404');
+                return;
+            }
+
             $clientValues = array(
                 'id' => $row['id'],
                 'name' => $row['name'],
@@ -95,7 +100,7 @@ namespace Leantime\Domain\Clients\Controllers {
                 if (isset($_POST['upload'])) {
                     if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
                         $return = $file->upload($_FILES, 'client', $id);
-                        $this->tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
+                        $this->tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success', "clientfile_uploaded");
                     } else {
                         $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
                     }
@@ -106,10 +111,10 @@ namespace Leantime\Domain\Clients\Controllers {
                     $result = $this->fileService->deleteFile($_GET['delFile']);
 
                     if ($result === true) {
-                        $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
+                        $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success", "clientfile_deleted");
                         $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id . "#files");
                     } else {
-                        $this->tpl->setNotification($result["msg"], "success");
+                        $this->tpl->setNotification($result["msg"], "error");
                     }
                 }
 

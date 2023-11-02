@@ -2,10 +2,10 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $ticket = $tpl->get('ticket');
-    $remainingHours = $tpl->get('remainingHours');
-    $statusLabels  = $tpl->get('statusLabels');
-    $ticketTypes = $tpl->get('ticketTypes');
+$ticket = $tpl->get('ticket');
+$remainingHours = $tpl->get('remainingHours');
+$statusLabels  = $tpl->get('statusLabels');
+$ticketTypes = $tpl->get('ticketTypes');
 
 ?>
 <input type="hidden" value="<?php $tpl->e($ticket->id); ?>" name="id" autocomplete="off" readonly/>
@@ -73,18 +73,21 @@ foreach ($__data as $var => $val) {
                         <div class="form-group">
                             <select  name="dependingTicketId"  class="span11" >
                                 <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
-                                <?php foreach ($tpl->get('ticketParents') as $ticketRow) {
-                                    ?>
-                                    <?php echo"<option value='" . $ticketRow->id . "'";
+                                <?php
+                                if(is_array($tpl->get('ticketParents'))){
+                                    foreach ($tpl->get('ticketParents') as $ticketRow) {
+                                        ?>
+                                        <?php echo"<option value='" . $ticketRow->id . "'";
 
-                                    if (($ticket->dependingTicketId == $ticketRow->id)) {
-                                        echo" selected='selected' ";
+                                        if (($ticket->dependingTicketId == $ticketRow->id)) {
+                                            echo" selected='selected' ";
+                                        }
+
+                                        echo">" . $tpl->escape($ticketRow->headline) . "</option>"; ?>
+
+                                        <?php
                                     }
-
-                                    echo">" . $tpl->escape($ticketRow->headline) . "</option>"; ?>
-
-                                    <?php
-                                } ?>
+                                }?>
                             </select>
                         </div>
                     </div>
@@ -285,7 +288,7 @@ foreach ($__data as $var => $val) {
                         <label class="control-label"><?php echo $tpl->__('label.ticket_date'); ?></label>
                         <div class="">
 
-                            <input type="text" class="dates" style="width:90px;" id="submittedDate" disabled="disabled"
+                            <input type="text" class="dates" style="width:200px;" id="submittedDate" disabled="disabled"
                                    value="<?php echo $ticket->date; ?>" name="date"/>
                         </div>
                     </div>

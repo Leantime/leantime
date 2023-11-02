@@ -246,7 +246,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND (project.state = -1)";
             }
 
-            if ($clientId != "") {
+            if ($clientId != "" && $clientId != null && $clientId > 0) {
                 $query .= " AND project.clientId = :clientId";
             }
 
@@ -262,7 +262,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
             }
 
-            if ($clientId != "") {
+            if ($clientId != "" && $clientId != null && $clientId > 0) {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 
@@ -729,7 +729,9 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
 
             //Add author to project
-            $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
+            if(isset($_SESSION["userdata"]["id"])) {
+                $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
+            }
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {

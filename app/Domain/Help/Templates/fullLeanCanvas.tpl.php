@@ -12,7 +12,7 @@ $currentSprint = $tpl->get('sprint');
             <div style='width:50%' class='svgContainer'>
                 <?php    echo file_get_contents(ROOT . "/dist/images/svg/undraw_design_data_khdb.svg");
                 echo"</div>";?>
-            <h3 class="primaryColor"><?php echo $tpl->__('headlines.welcome_to_research_board') ?></h3><br />
+            <h1 ><?php echo $tpl->__('headlines.welcome_to_research_board') ?></h1><br />
             <p><?php echo $tpl->__('text.full_lean_canvas_helper_content') ?></p>
             <br /><br />
         </div>

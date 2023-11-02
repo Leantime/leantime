@@ -10,7 +10,7 @@ require('mix-tailwindcss');
 require('dotenv').config({ path: 'config/.env' });
 
 mix
-    .sourceMaps(true)
+    .sourceMaps(true, 'source-map')
     .setPublicPath('public/dist') // this is the URL to place assets referenced in the CSS/JS
     .setResourceRoot(`../`) // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
@@ -144,6 +144,7 @@ mix
         }
     })
     .webpackConfig({
+        devtool: 'inline-source-map',
         resolve: {
             alias: {
                 'images': path.resolve(__dirname, 'public/assets/images'),

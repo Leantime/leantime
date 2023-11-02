@@ -4,7 +4,9 @@
 
 ### Leantime&reg; ###
 
-Leantime is an open source project management system for non-project manager.<br />We combine strategy, planning and executing while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+Leantime is an open source project management system for non-project manager.<br />We combine strategy, planning and executing while making it easy for everyone on the team to use.<br />It's an alternative to ClickUp, Monday, or Asana. As simple as Trello but as feature-rich as Jira.<br />[https://leantime.io](https://leantime.io)<br />
+
+<a href="https://trendshift.io/repositories/2264" target="_blank"><img src="https://trendshift.io/api/badge/repositories/2264" alt="Leantime%2Fleantime | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![License Badge](https://img.shields.io/github/license/leantime/leantime?style=flat-square)](https://www.gnu.org/licenses/agpl-3.0.en.html)
 [![Docker Hub Badge](https://img.shields.io/docker/pulls/leantime/leantime?style=flat-square)](https://hub.docker.com/r/leantime/leantime)
@@ -26,10 +28,10 @@ Leantime is an open source project management system for non-project manager.<br
 | Unlimited subtasks and dependencies                                  | Goal & metrics tracking                      | Idea Boards                             | Multiple user roles and per project permissions                          |
 | Milestone management                                                 | Lean & Business Model Canvas                 | Retrospectives                          | Two factor authentication                                                |
 | Sprint Management                                                    | SWOT Analysis canvas                         | File Storage via S3 or local filesystem | LDAP, OIDC integration                                                   |
-| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Integration with mattermost, slack, discord and zulip (more coming soon) |
+| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Integration with Mattermost, Slack, Discord and Zulip (more coming soon) |
 |                                                                      | ... and more                                 | Comments/discussions on everything      | Available in 19 languages                                                |
 
-*yes, all of theses features are included in the OSS version
+*yes, all of these features are included in the OSS version
 <br /><br />
 ### 📸 Screenshots ###
 
@@ -51,13 +53,13 @@ Leantime is an open source project management system for non-project manager.<br
 <br /><br />
 ### ️⚡️ Installation (Production) ###
 
-There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the offically supported Docker image.
+There are two main ways to install LeanTime for production. The first of which is to install all needed pieces of the system locally. The second is to use the officially supported Docker image.
 
 #### Local Production Installation ####
 
 * Download latest release package from our <a href="https://leantime.io/download-leantime/">Website</a> or <a href="https://github.com/Leantime/docker-leantime/releases">Github</a>
 * Create an empty MySQL database
-* Upload entire directory to your server 
+* Upload the entire directory to your server 
 * Point your domain root to the `public/` directory
 * Rename `config/.env.sample` to `config/.env`
 * Fill in your database credentials (username, password, host, dbname) in `config/.env`
@@ -85,13 +87,13 @@ Once started you can go to `<yourdomain.com>/install` and run the installation s
 <br /><br />
 ### 🤓 Installation (Development) ###
 
-There are two ways to install a development setup of LeanTime. The first (but most techical) is to install all pieces of the system locally. The second (and prefered method) is to use a docker containerized development environment.
+There are two ways to install a development setup of LeanTime. The first (but most technical) is to install all pieces of the system locally. The second (and preferred method) is to use a docker containerized development environment.
 
 #### Local Development Installation ####
 
 * Clone repository to your local server
 * Create MySQL database
-* Run wbepack builder via `make build-dev`
+* Run webpack builder via `make build-dev`
 * Point your local domain to the `public/` directory
 * Rename `config/.env.sample` to `config/.env`
 * Fill in your database credentials (username, password, host, dbname) in `config/.env`
@@ -105,7 +107,7 @@ For development, we use a dockerized development environment. You will need to h
 * Notes for Windows Environments:
     - Run all commands within the git bash terminal in order to utilize unix specific commands
     - If installing php from a zip file, make sure to configure php.ini
-    It does not exist initially, so copy C:\php\php.ini-development to C:\php\php.ini. You will also need to edit php.ini in a text editor and enable all needed extentions for the build process. You can find these by running the make commands and looking for any extensions that error out as missing. You can enable them by seaching php.ini for the extension that will look like: `;extension=gd` and removing the semicolon. 
+    It does not exist initially, so copy C:\php\php.ini-development to C:\php\php.ini. You will also need to edit php.ini in a text editor and enable all needed extensions for the build process. You can find these by running the make commands and looking for any extensions that error out as missing. You can enable them by searching php.ini for the extension that will look like: `;extension=gd` and removing the semicolon. 
 
 In order to build the development docker image, in the root of this repository, run a primer with
 
@@ -117,15 +119,15 @@ afterwards, run
 
 this will start the development server on port 8090.
 
-The dev environment provides a mysql server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
+The dev environment provides a MySQL server, mail server, s3 server, and should be good to go for your needs out of the box. The configuration of the development environment is found in ``.dev/.env``, and is already seeded with the appropriate values. **You should probably not be modifying this unless you plan to work on a feature for a specific integration**. the applications you get are as follows
 
 * [http://localhost:8090](http://localhost:8090) : leantime
 * [http://localhost:8081](http://localhost:8081) : maildev - to check emails sent
-* [http://localhost:8082](http://localhost:8082) : phpmyadmin(authentication ``leantime:leantime``) to check the DB schema and data
+* [http://localhost:8082](http://localhost:8082) : phpMyAdmin(authentication ``leantime:leantime``) to check the DB schema and data
 * [http://localhost:8083](http://localhost:8083) : s3ninja - to check s3 uploads. You need to enable this in the ``.dev/.env`` file by enabling s3
 
-Additionally, XDebug is enabled, but you will have to modify your 
-IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connection
+Additionally, Xdebug is enabled, but you will have to modify your 
+IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also need to have port 9003 temporarily open on your firewall so you can utilize it effectively. This is because connections from docker to the host will count as external inbound connections
 <br /><br />
 ###  🏗 Update ###
 
@@ -135,7 +137,7 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 * If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
 
 #### Script
-* Execute ./updateLeantime.sh in the root of your leantime application
+* Execute ./updateLeantime.sh in the root of your leantime application.
 
 #### Docker
 * Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
@@ -149,7 +151,7 @@ Head to [leantime.io](https://leantime.io/) for more information.
 <br /><br />
 ## 🤙 Need technical support? ##
 
-We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/)
+We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/).
 
 ### Community Support ##
 
@@ -162,4 +164,6 @@ We can help you set up Leantime in your environment and customize it to your nee
 
 Leantime is licensed under AGPLv3.
 This file forms part of the Leantime Software for which the following exception is added: Plugins within the `/app/plugins` directory which may contain plugins licensed under other licenses including our enterprise license.
+
+<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=856e290f-a6e9-4fbd-9b95-a835e39a0492" />
 

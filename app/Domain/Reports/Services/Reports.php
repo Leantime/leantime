@@ -89,7 +89,7 @@ namespace Leantime\Domain\Reports\Services {
         public function dailyIngestion(): void
         {
 
-            if (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
+            if (isset($_SESSION['currentProject']) && (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1)) {
                 //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
                 //Get current Sprint Id, if no sprint available, dont run the sprint burndown
 
@@ -203,7 +203,7 @@ namespace Leantime\Domain\Reports\Services {
             $telemetry = array(
                 'date' => '',
                 'companyId' => $companyId,
-                'env' => 'prod',
+                'env' => 'oss',
                 'version' => $this->appSettings->appVersion,
                 'language' => $currentLanguage,
                 'numUsers' => $userRepository->getNumberOfUsers(),
@@ -259,6 +259,8 @@ namespace Leantime\Domain\Reports\Services {
 
             );
 
+            $telemetry = self::dispatch_filter("beforeReturnTelemetry", $telemetry);
+
             return $telemetry;
         }
 
@@ -278,11 +280,13 @@ namespace Leantime\Domain\Reports\Services {
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
 
             if ($allowTelemetry === true) {
+
                 $date_utc = new DateTime("now", new DateTimeZone("UTC"));
                 $today = $date_utc->format("Y-m-d");
                 $lastUpdate = $this->settings->getSetting("companysettings.telemetry.lastUpdate");
 
                 if ($lastUpdate != $today) {
+
                     $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
                     $telemetry['date'] = $today;
 
@@ -296,7 +300,7 @@ namespace Leantime\Domain\Reports\Services {
                             'form_params' => [
                                 'telemetry' => $data_string,
                             ],
-                            'timeout' => 5,
+                            'timeout' => 10,
                         ])->then(function ($response) use ($today) {
 
                             $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
@@ -305,15 +309,14 @@ namespace Leantime\Domain\Reports\Services {
 
                         return $promise;
                     } catch (Exception $e) {
-                        error_log($e);
 
+                        error_log($e);
                         $_SESSION['skipTelemetry'] = true;
                         return false;
                     }
                 }
             }
 
-            $_SESSION['skipTelemetry'] = true;
             return false;
         }
 

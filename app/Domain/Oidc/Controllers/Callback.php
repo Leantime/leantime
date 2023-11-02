@@ -28,11 +28,6 @@ class Callback extends Controller
      * @return void
      * @throws GuzzleException
      */
-    /**
-     * @param $params
-     * @return void
-     * @throws GuzzleException
-     */
     public function get($params): void
     {
         $code = $_GET['code'];
@@ -40,7 +35,9 @@ class Callback extends Controller
         try {
             $this->oidc->callback($code, $state);
         } catch (Exception $ex) {
+            $this->tpl->setNotification("notifications.login_failed", "error");
             error_log($ex);
+            $this->tpl->redirect(BASE_URL."/auth/login");
         }
     }
 }

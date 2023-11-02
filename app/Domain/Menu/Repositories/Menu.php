@@ -174,7 +174,10 @@ namespace Leantime\Domain\Menu\Repositories {
         public function setSubmenuState(string $submenu, string $state): void
         {
 
-            $_SESSION['submenuToggle'][$submenu] = $state;
+            if(isset($_SESSION['submenuToggle']) && is_array($_SESSION['submenuToggle']) && $submenu !== false) {
+                $_SESSION['submenuToggle'][$submenu] = $state;
+            }
+
             $setting = $this->settingsRepo;
             $setting->saveSetting("usersetting." . $_SESSION['userdata']['id'] . ".submenuToggle", serialize($_SESSION['submenuToggle']));
         }

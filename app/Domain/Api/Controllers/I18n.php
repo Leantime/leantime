@@ -18,9 +18,21 @@ class I18n extends Controller
      */
     public function get(array $params)
     {
+        $languageIni = $this->language->readIni();
+
+        $dateTimeIniSettings = [
+            'language.jsdateformat',
+            'language.jstimeformat',
+            'language.momentJSDate',
+        ];
+
+        foreach ($dateTimeIniSettings as $index) {
+            $languageIni[$index] = $this->language->__($index, true);
+        }
+
         header('Content-Type: application/javascript');
 
-        $decodedString = json_encode($this->language->readIni());
+        $decodedString = json_encode($languageIni);
 
         $result = $decodedString ? $decodedString : '{}';
 

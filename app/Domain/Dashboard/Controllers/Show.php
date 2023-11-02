@@ -37,7 +37,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
          * @param TimesheetService $timesheetService
          * @param CommentService   $commentService
          * @param ReactionService  $reactionsService
-         * @param ReportService    $reportsService
          * @return void
          * @throws BindingResolutionException
          * @throws BindingResolutionException
@@ -48,8 +47,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             UserService $userService,
             TimesheetService $timesheetService,
             CommentService $commentService,
-            ReactionService $reactionsService,
-            ReportService $reportsService
+            ReactionService $reactionsService
         ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
@@ -60,7 +58,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
 
-            $reportsService->dailyIngestion();
+
         }
 
         /**
@@ -119,7 +117,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
                 $comments->deleteComment($commentId);
 
-                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
+                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success", "projectcomment_deleted");
             }
 
             // add replies to comments
@@ -162,7 +160,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                     if (isset($result["status"])) {
                         $this->tpl->setNotification($result["message"], $result["status"]);
                     } else {
-                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success", "quickticket_created");
                     }
 
                     $this->tpl->redirect(BASE_URL . "/dashboard/show");
@@ -175,7 +173,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 $project = $this->projectService->getProject($_SESSION['currentProject']);
 
                 if ($this->commentService->addComment($_POST, "project", $_SESSION['currentProject'], $project)) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
+                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success", "dashboardcomment_created");
                 } else {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                 }

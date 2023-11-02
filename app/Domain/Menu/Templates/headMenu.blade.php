@@ -107,7 +107,7 @@
                                     @formatDate($notif['datetime'])
                                     @formatTime($notif['datetime'])
                                 </span>
-                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
+                                <span class="notificationTitle">{!! $tpl->convertRelativePaths($notif['message']) !!}</span>
                             </a>
                         </li>
                     @endforeach
@@ -138,7 +138,7 @@
                                     @formatDate($notif['datetime'])
                                     @formatTime($notif['datetime'])
                                 </span>
-                                <span class="notificationTitle">{!! $notif['message'] !!}</span>
+                                <span class="notificationTitle">{!! $tpl->convertRelativePaths($notif['message']) !!}</span>
                             </a>
                         </li>
                     @endforeach

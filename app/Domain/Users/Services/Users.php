@@ -215,6 +215,14 @@ namespace Leantime\Domain\Users\Services {
                 return false;
             }
 
+            $this->sendUserInvite($inviteCode, $values['user']);
+
+            return $result;
+        }
+
+        public function sendUserInvite(string $inviteCode, string $user) {
+
+
             $mailer = app()->make(MailerCore::class);
             $mailer->setContext('new_user');
 
@@ -223,19 +231,19 @@ namespace Leantime\Domain\Users\Services {
 
             $message = sprintf(
                 $this->language->__("email_notifications.user_invite_message"),
-                $_SESSION["userdata"]["name"],
+                $_SESSION["userdata"]["name"] ?? "Leantime" ,
                 $actual_link,
-                $values["user"]
+                $user
             );
 
             $mailer->setHtml($message);
 
-            $to = array($values["user"]);
+            $to = array($user);
 
-            $mailer->sendMail($to, $_SESSION["userdata"]["name"]);
-
-            return $result;
+            $mailer->sendMail($to, $_SESSION["userdata"]["name"] ?? "Leantime");
         }
+
+
 
         /**
          * addUser - simple service wrapper to create a new user

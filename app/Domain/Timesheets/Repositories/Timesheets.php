@@ -59,6 +59,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
                         zp_timesheets.kind,
                         zp_projects.name,
                         zp_projects.id AS projectId,
+                        zp_clients.name AS clientName,
+                        zp_clients.id AS clientId,
                         zp_timesheets.invoicedEmpl,
                         zp_timesheets.invoicedComp,
                         zp_timesheets.invoicedEmplDate,
@@ -75,6 +77,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
                     LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
                     LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                    LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
                     WHERE
                         ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
 
@@ -295,6 +298,8 @@ namespace Leantime\Domain\Timesheets\Repositories {
 			zp_tickets.planHours,
 			zp_projects.name,
 			zp_projects.id AS projectId,
+			zp_projects.clientId AS clientId,
+			zp_clients.name AS clientName,
 			GROUP_CONCAT(DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') SEPARATOR ',') as workDates
 			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 2 then zp_timesheets.hours else 0 end),2) as hoursMonday
 			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 3 then zp_timesheets.hours else 0 end),2) as hoursTuesday
@@ -307,6 +312,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
 			zp_timesheets
 		LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
 		LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+		LEFT JOIN zp_clients ON zp_clients.id = zp_projects.clientId
 		WHERE
 			((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateStart1)) AND (TO_DAYS(zp_timesheets.workDate) < (TO_DAYS(:dateStart2) + 7)))
 			AND (zp_timesheets.userId = :userId)

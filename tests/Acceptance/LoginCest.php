@@ -36,4 +36,13 @@ class LoginCest
     {
         $loginPage->login('test@leantime.io', 'test');
     }
+
+    #[Depends('Tests\Acceptance\InstallCest::createdDBSuccessfully')]
+    public function loginFormIsHidden(AcceptanceTester $I)
+    {
+        $_ENV['LEAN_DISABLE_LOGIN_FORM'] = true;
+        
+        $I->amOnPage('/auth/login');
+        $I->dontSeeElementInDOM('div#login');
+    }
 }

@@ -192,7 +192,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'author' => $_SESSION['userdata']['id'],
                             'title' => $params['title'],
                             'description' => $params['description'] ?? '',
-                            'status' => $params['status'],
+                            'status' => $params['status'] ?? '',
                             'relates' => '',
                             'startValue' => $params['startValue'],
                             'currentValue' => $params['currentValue'],
@@ -269,7 +269,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'author' => $_SESSION['userdata']['id'],
                             'title' => $params['title'],
                             'description' => $params['description'] ?? '',
-                            'status' => $params['status'],
+                            'status' => $params['status'] ?? '',
                             'relates' => '',
                             'startValue' => $params['startValue'],
                             'currentValue' => $params['currentValue'],
@@ -314,6 +314,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
                     } else {
+                        $id = "";
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
 

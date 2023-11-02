@@ -51,17 +51,28 @@ class ProjectSelector extends HtmxController
         $allAssignedprojects =
         $allAvailableProjects =
         $recentProjects =
+        $favoriteProjects =
+        $clients =
+        $allAvailableProjectsHierarchy =
+        $allAssignedprojectsHierarchy  =
         $returnVars = [];
+
+        $currentClient = '';
+        $currentProject = '';
+        $projectType = '';
+        $menuType = 'default';
 
         $projectSelectFilter = array(
             "groupBy" => $_POST['groupBy'] ?? "none",
-            "clients" => $_POST['client'] ?? 0,
+            "client" => (int)$_POST['client'] ?? null,
         );
 
         $_SESSION['userdata']["projectSelectFilter"] = $projectSelectFilter;
 
         if (isset($_SESSION['userdata'])) {
-            $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id']);
+
+            //Getting all projects (ignoring client filter, clients are filtered on the frontend)
+            $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id'], $projectSelectFilter["client"]);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
             $allAvailableProjects  = $projectVars['availableProjects'];

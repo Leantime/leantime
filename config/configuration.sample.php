@@ -26,7 +26,7 @@ class Config
     public $enableMenuType = false;                       //Enable to specify menu on a project-by-project basis
     public $keepTheme = true;                             //Keep theme and language from previous user for login screen
     public $debug = 0;                                    //Debug flag
-
+    public $disableLoginForm = false;                     //If true then don't show the login form (useful only if additional auth method[s] are available)
 
     /* Database */
     public $dbHost = 'localhost';                         //Database host
@@ -92,7 +92,10 @@ class Config
       "email":"mail",
       "firstname":"givenname",
       "lastname":"sn",
-      "phonenumber":"telephoneNumber"
+      "phone":"",
+      "jobTitle":"title",
+      "jobLevel":"level",
+      "department":"department"
       }';
      */
 

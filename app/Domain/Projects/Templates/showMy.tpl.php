@@ -2,10 +2,10 @@
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $allProjects = $tpl->get('allProjects');
-    $clients = $tpl->get('clients');
-    $currentClient = $tpl->get("currentClient");
-    $currentClientName = $tpl->get("currentClientName");
+$allProjects = $tpl->get('allProjects');
+$clients = $tpl->get('clients');
+$currentClient = $tpl->get("currentClient");
+$currentClientName = $tpl->get("currentClientName");
 ?>
 
 <?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
@@ -31,12 +31,12 @@ foreach ($__data as $var => $val) {
                 <?php if (is_array($allProjects) && count($allProjects) == 0) {
                     echo "<div class='col-md-12'><br /><br /><div class='center'>";
                     echo"<div style='width:30%' class='svgContainer'>";
-                        echo file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg");
-                        echo $tpl->__('notifications.not_assigned_to_any_project');
+                    echo file_get_contents(ROOT . "/dist/images/svg/undraw_a_moment_to_relax_bbpa.svg");
+                    echo $tpl->__('notifications.not_assigned_to_any_project');
                     if ($login::userIsAtLeast($roles::$manager)) {
                         echo"<br /><br /><a href='" . BASE_URL . "/projects/newProject' class='btn btn-primary'>" . $tpl->__('link.new_project') . "</a>";
                     }
-                        echo"</div></div>";
+                    echo"</div></div>";
                 }?>
                 <?php foreach ($allProjects as $project) { ?>
                 <div class="col-md-3">
@@ -118,7 +118,7 @@ foreach ($__data as $var => $val) {
                                         <div class="commentImage" style="margin-right:-10px;">
                                             <img
                                                 style=""
-                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'])?>" data-tippy-content="<?=$member['firstname'] . ' ' . $member['lastname'] ?>" />
+                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'] ?? 0)?>" data-tippy-content="<?=$member['firstname'] . ' ' . $member['lastname'] ?>" />
                                         </div>
                                     <?php } ?>
                                 </div>

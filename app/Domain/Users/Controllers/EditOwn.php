@@ -66,6 +66,17 @@ namespace Leantime\Domain\Users\Controllers {
 
             $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
 
+            $userDateFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".date_format");
+            $userTimeFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".time_format");
+
+            $timezone = $this->settingsService->getSetting("usersettings." . $this->userId . ".timezone");
+
+            if (!$timezone) {
+                $timezone = date_default_timezone_get();
+            }
+
+            $timezonesAvailable = timezone_identifiers_list();
+
             //Build values array
             $values = array(
                 'firstname' => $row['firstname'],
@@ -82,7 +93,7 @@ namespace Leantime\Domain\Users\Controllers {
                 $values['messagesfrequency'] = $this->settingsService->getSetting("companysettings.messageFrequency");
             }
 
-            $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+            $permitted_chars = '123456789abcdefghijklmnopqrstuvwxyz';
             $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
             $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
@@ -92,6 +103,11 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->assign('userLang', $userLang);
             $this->tpl->assign('userTheme', $userTheme);
             $this->tpl->assign("languageList", $this->language->getLanguageList());
+            $this->tpl->assign('dateFormat', $userDateFormat);
+            $this->tpl->assign('timeFormat', $userTimeFormat);
+            $this->tpl->assign('dateTimeValues', $this->getSupportedDateTimeFormats());
+            $this->tpl->assign('timezone', $timezone);
+            $this->tpl->assign('timezoneOptions', $timezonesAvailable);
 
             $this->tpl->assign('user', $row);
 
@@ -108,7 +124,7 @@ namespace Leantime\Domain\Users\Controllers {
             //Save Profile Info
             $tab = '';
 
-            if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+            if (isset($_SESSION['formTokenName']) && isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                 $row = $this->userRepo->getUser($this->userId);
 
                 //profile Info
@@ -135,13 +151,13 @@ namespace Leantime\Domain\Users\Controllers {
                             if ($changedEmail == 1) {
                                 if ($this->userRepo->usernameExist($values['user'], $this->userId) === false) {
                                     $this->userService->editOwn($values, $this->userId);
-                                    $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
+                                    $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success', "profile_edited");
                                 } else {
                                     $this->tpl->setNotification($this->language->__("notification.user_exists"), 'error');
                                 }
                             } else {
                                 $this->userService->editOwn($values, $this->userId);
-                                $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success');
+                                $this->tpl->setNotification($this->language->__("notifications.profile_edited"), 'success', "profile_edited");
                             }
                         } else {
                             $this->tpl->setNotification($this->language->__("notification.no_valid_email"), 'error');
@@ -172,7 +188,8 @@ namespace Leantime\Domain\Users\Controllers {
                                 $this->userRepo->editOwn($values, $this->userId);
                                 $this->tpl->setNotification(
                                     $this->language->__("notifications.password_changed"),
-                                    'success'
+                                    'success',
+                                    "password_edited"
                                 );
                             } else {
                                 $this->tpl->setNotification(
@@ -201,17 +218,26 @@ namespace Leantime\Domain\Users\Controllers {
 
                     $postLang = htmlentities($_POST['language']);
                     $postTheme = htmlentities($_POST['theme']);
+                    $dateFormat = htmlentities($_POST['date_format']);
+                    $timeFormat = htmlentities($_POST['time_format']);
+                    $tz = htmlentities($_POST['timezone']);
 
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".language", $postLang);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".date_format", $dateFormat);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $timeFormat);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".timezone", $tz);
+
+                    $_SESSION['usersettings.' . $this->userId . '.timezone'] = $tz;
 
                     unset($_SESSION["companysettings.logoPath"]);
                     unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage() . '_' . $postTheme]);
+                    unset($_SESSION['usersettings.language.dateTimeFormat']);
 
                     $this->themeCore->setActive($postTheme);
                     $this->language->setLanguage($postLang);
 
-                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success');
+                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success', "profilesettings_updated");
                 }
 
                 //Save Profile Image
@@ -245,7 +271,7 @@ namespace Leantime\Domain\Users\Controllers {
                     // Storing option messagefrequency
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".messageFrequency", (int) $_POST['messagesfrequency']);
 
-                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success');
+                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success', "profilesettings_updated");
                 }
             } else {
                 $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
@@ -253,6 +279,38 @@ namespace Leantime\Domain\Users\Controllers {
 
             //Redirect
             FrontcontrollerCore::redirect(BASE_URL . "/users/editOwn" . $tab);
+        }
+
+        /**
+         * Returns list of supported varying date-time formats.
+         * @link https://www.php.net/manual/en/class.datetimeinterface.php#datetimeinterface.constants.types
+         *
+         * @return [<string,string>] Format of ID => date-time string
+         */
+        private function getSupportedDateTimeFormats(): array
+        {
+            return [
+                'dates' => [
+                    $this->language->__("language.dateformat"),
+                    'Y-m-d',
+                    'D, d M y',
+                    'l, d-M-y',
+                    'd.m.Y',
+                    'd/m/Y',
+                    'd. F Y',
+                    'm-d-Y',
+                    'dmY',
+                    'F d, Y',
+                    'd F Y'
+                ],
+                'times' => [
+                    $this->language->__("language.timeformat"),
+                    'H:i:sP',
+                    'H:i:s O',
+                    'H:i:s T',
+                    'H:i:s',
+                ]
+            ];
         }
     }
 }

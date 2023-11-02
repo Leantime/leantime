@@ -18,40 +18,21 @@ namespace Leantime\Domain\Help\Controllers {
         public function get($params)
         {
 
+            //show modals only once per session
+            if (!isset($_SESSION['userdata']['settings']["modals"])) {
+                $_SESSION['userdata']['settings']["modals"] = array();
+            }
+
             if (isset($params['module']) && $params['module'] != "") {
+
                 $filteredInput = htmlspecialchars($params['module']);
+
+                if (!isset($_SESSION['userdata']['settings']["modals"][$filteredInput])) {
+                    $_SESSION['userdata']['settings']["modals"][$filteredInput] = 1;
+                }
+
                 $this->tpl->displayPartial('help.' . $filteredInput);
             }
-        }
-
-        /**
-         * post - handle post requests
-         *
-         * @access public
-         *
-         */
-        public function post($params)
-        {
-        }
-
-        /**
-         * put - handle put requests
-         *
-         * @access public
-         *
-         */
-        public function put($params)
-        {
-        }
-
-        /**
-         * delete - handle delete requests
-         *
-         * @access public
-         *
-         */
-        public function delete($params)
-        {
         }
     }
 

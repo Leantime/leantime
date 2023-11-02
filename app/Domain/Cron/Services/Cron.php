@@ -3,8 +3,10 @@
 namespace Leantime\Domain\Cron\Services {
 
     use Leantime\Core\Environment;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
+    use Leantime\Domain\Reports\Services\Reports;
     use PDO;
     use PHPMailer\PHPMailer\Exception;
 
@@ -13,21 +15,27 @@ namespace Leantime\Domain\Cron\Services {
      */
     class Cron
     {
+        use Eventhelpers;
+
         private Audit $auditRepo;
         private Queue $queueSvc;
         private Environment $Environment;
         private Environment $environment;
+        private Reports $reportService;
+
+        private int $cronExecTimer = 60;
 
         /**
          * @param Audit       $auditRepo
          * @param Queue       $queueSvc
          * @param Environment $environment
          */
-        public function __construct(Audit $auditRepo, Queue $queueSvc, Environment $environment)
+        public function __construct(Audit $auditRepo, Queue $queueSvc, Environment $environment, Reports $reportService)
         {
             $this->auditRepo =  $auditRepo;
             $this->queueSvc = $queueSvc;
             $this->environment = $environment;
+            $this->reportService = $reportService;
         }
 
         /**
@@ -49,7 +57,7 @@ namespace Leantime\Domain\Cron\Services {
             $nowDate = time();
             $timeSince = abs($nowDate - $lastCronEvent);
 
-            if ($timeSince < 60) {
+            if ($timeSince < $this->cronExecTimer) {
                 if ($this->environment->debug) {
                     error_log("Last cron execution was on " . $lastEvent['date'] . " plz come back later");
                 }
@@ -57,11 +65,31 @@ namespace Leantime\Domain\Cron\Services {
                 return false;
             }
 
-            $this->auditRepo->storeEvent("cron", "Cron started");
+            //Process other events
+            self::dispatch_event("addJobToBeginning", $lastEvent);
 
+            //Process Telemetry Start
+            $telemetryResponse = $this->reportService->sendAnonymousTelemetry();
+
+            //Daily Ingestion
+            $this->reportService->dailyIngestion();
+
+            //Process Queue
             $this->queueSvc->processQueue();
 
+            if($telemetryResponse != null) {
+                try {
+                    $telemetryResponse->wait();
+                } catch (Exception $e) {
+                    error_log($e);
+                }
+            }
+
+            //Clean Audit Table
             $this->auditRepo->pruneEvents();
+
+            //Process other events
+            self::dispatch_event("addJobToEnd", $lastEvent);
 
             return true;
         }

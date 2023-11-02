@@ -197,10 +197,6 @@ class Theme
             if ($themeDir == '.' || $themeDir == '..') {
                 continue;
             }
-            if ($themeDir == $theme) {
-                $themes[$themeDir] = $language->__("theme.name");
-                continue;
-            }
 
             //Check specific language file
             $language_file = ROOT
@@ -211,6 +207,7 @@ class Theme
                 . '.ini';
 
             if (file_exists($language_file)) {
+
                 $iniData = parse_ini_file(
                     $language_file,
                     true,
@@ -221,6 +218,9 @@ class Theme
                     $themes[$themeDir] = $iniData['theme.name'];
                     continue;
                 }
+
+                $themes[$themeDir] = $themeDir;
+                continue;
             }
 
             //Check english language file

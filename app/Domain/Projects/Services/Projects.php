@@ -484,7 +484,7 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects(
                 userId: $userId,
                 projectStatus: $projectStatus,
-                clientId: $clientId,
+                clientId: (int)$clientId,
                 accessStatus: "assigned"
             );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
@@ -513,12 +513,6 @@ namespace Leantime\Domain\Projects\Services {
 
         /**
          * @param $userId
-         * @param $projectStatus
-         * @param $clientId
-         * @return array
-         */
-        /**
-         * @param $userId
          * @param string   $projectStatus
          * @param $clientId
          * @return array
@@ -530,7 +524,7 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects(
                 userId: $userId,
                 projectStatus: $projectStatus,
-                clientId: $clientId,
+                clientId: (int)$clientId,
                 accessStatus: "all"
             );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
@@ -548,6 +542,26 @@ namespace Leantime\Domain\Projects\Services {
                 "allAvailableProjectsHierarchy" => $projectHierarchy,
                 "clients" => $clients,
             ];
+        }
+
+
+
+        public function getAllClientsAvailableToUser($userId, string $projectStatus = "open"): array
+        {
+
+            //Load all projects user is assigned to
+            $projects = $this->projectRepository->getUserProjects(
+                userId: $userId,
+                projectStatus: $projectStatus,
+                clientId: null,
+                accessStatus: "all"
+            );
+            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
+
+
+            $clients = $this->getClientsFromProjectList($projects);
+
+            return $clients;
         }
 
         /**
@@ -1247,34 +1261,64 @@ namespace Leantime\Domain\Projects\Services {
             $progressSteps = array(
                 "define" => array(
                     "title" => "label.define",
+                    "description" => "checklist.define.description",
                     "tasks" => array(
-                        "description" => array("title" => "label.projectDescription", "status" => ""),
-                        "defineTeam" => array("title" => "label.defineTeam", "status" => ""),
-                        "createBlueprint" => array("title" => "label.createBlueprint", "status" => ""),
+                        "description" => array(
+                            "title" => "label.projectDescription",
+                            "status" => "",
+                            "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."",
+                            "description" => "checklist.define.tasks.description"),
+                        "defineTeam" => array(
+                            "title" => "label.defineTeam",
+                            "status" => "",
+                            "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."#team",
+                            "description" => "checklist.define.tasks.defineTeam"),
+                        "createBlueprint" => array(
+                            "title" => "label.createBlueprint",
+                            "status" => "",
+                            "link" =>BASE_URL."/strategy/showBoards/",
+                            "description" => "checklist.define.tasks.createBlueprint"),
                     ),
                     "status" => '',
                 ),
                 "goals" => array(
                     "title" => "label.setGoals",
+                    "description" => "checklist.goals.description ",
                     "tasks" => array(
-                        "setGoals" => array("title" => "label.setGoals", "status" => ""),
+                        "setGoals" => array(
+                            "title" => "label.setGoals",
+                            "status" => "",
+                            "link" =>BASE_URL."/goalcanvas/dashboard",
+                            "description" => "checklist.goals.tasks.setGoals"),
                     ),
                     "status" => '',
                 ),
                 "timeline" => array(
                     "title" => "label.setTimeline",
+                    "description" => "checklist.timeline.description ",
                     "tasks" => array(
-                        "createMilestones" => array("title" => "label.createMilestones", "status" => ""),
+                        "createMilestones" => array(
+                            "title" => "label.createMilestones",
+                            "status" => "",
+                            "link" =>BASE_URL."/tickets/roadmap",
+                            "description" => "checklist.timeline.tasks.createMilestones"),
 
                     ),
                     "status" => '',
                 ),
                 "implementation" => array(
                     "title" => "label.implementation",
+                    "description" => "checklist.implementation.description",
                     "tasks" => array(
-                        "createTasks" =>  array("title" => "label.createTasks", "status" => ""),
-
-                        "finish80percent" =>  array("title" => "label.finish80percent", "status" => ""),
+                        "createTasks" =>  array(
+                            "title" => "label.createTasks",
+                            "status" => "", "link" =>BASE_URL."/tickets/showAll",
+                            "description" => "checklist.implementation.tasks.createTasks "),
+                        "finish80percent" =>  array(
+                            "title" => "label.finish80percent",
+                            "status" => "",
+                            "link" =>BASE_URL."/reports/show",
+                            "description" => "checklist.implementation.tasks.finish80percent"),
                     ),
                     "status" => '',
                 ),
