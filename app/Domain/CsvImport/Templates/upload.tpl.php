@@ -13,7 +13,10 @@ foreach ($__data as $var => $val) {
 
     <?php echo $tpl->displayNotification() ?>
 
-    <div class="uploadWrapper" style="width:300px">
+    <h2>Upload CSV file</h2>
+    <p>You can upload CSVs to import or update Tasks, Projects, Goals. Check our documentaiton to learn more about the formatting and to download templates</p>
+    <br /><br/>
+    <div class="uploadWrapper" style="width:100%">
 
         <form id="upload-form">
 

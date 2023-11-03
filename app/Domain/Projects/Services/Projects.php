@@ -1462,7 +1462,7 @@ namespace Leantime\Domain\Projects\Services {
 
         public function getProjectIdbyName($allProjects, $projectName){
             foreach ($allProjects as $project) {
-                if ($project['name'] == $projectName) {
+                if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
                     return $project['id'];
                 }
             }

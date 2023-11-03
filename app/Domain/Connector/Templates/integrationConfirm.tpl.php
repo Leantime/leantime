@@ -1,43 +1,49 @@
 <?php
-$providerFields = $this->get("providerFields");
-$provider = $this->get("provider");
-$leantimeFields = $this->get("leantimeFields");
-$numberOfFields = $this->get("maxFields");
+$providerFields = $tpl->get("providerFields");
+$provider = $tpl->get("provider");
+$leantimeFields = $tpl->get("leantimeFields");
+$numberOfFields = $tpl->get("maxFields");
 $urlAppend = '';
 if(isset($integrationId) && is_numeric($integrationId)) {
     $urlAppend = "&integrationId=".$integrationId;
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $this->__("headlines.integrations"); ?></title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-plug"></span></div>
+    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
     <div class="pagetitle">
-        <h1>Integrations</h1>
+        <div class="row">
+            <div class="col-lg-8">
+                <h1><?php echo $tpl->__("headlines.connector"); ?> // <?=$provider->name ?></h1>
+            </div>
+        </div>
     </div>
 </div>
+
+<?php echo $tpl->displayNotification(); ?>
 
 <div class="maincontent">
     <div class="maincontentinner">
+        <?php $tpl->displaySubmodule('connector-importProgress') ?>
+    </div>
+    <div class="maincontentinner">
+        <?php
+        echo"<div class='center'>";
+        echo"<div  style='width:30%' class='svgContainer'>";
+        echo file_get_contents(ROOT . "/dist/images/svg/undraw_party_re_nmwj.svg");
+        echo"</div>";
+        echo"<br />";
 
-        <?php echo $this->displayNotification(); ?>
+        echo "<h3>Integration Success</h3>";
+        echo "<p>Your data was synced successfully.</p>";
+        echo "<br />";
+        echo "<a class='btn btn-default' href='".BASE_URL."/connector/show'>Go back to integrations</a>";
 
 
-        <h3>Your data has been successfully integrated into Leantime!</h3>
+        echo"</div>";
+        ?>
+
 
     </div>
 </div>
-</body>
-
-</html>
 

@@ -20,13 +20,26 @@ class CsvImport extends Provider implements ProviderIntegration
     public array $entities;
     public array $methods;
 
+    public array $steps = [
+        "connect",
+        "entity",
+        "fields",
+        "parse",
+        "import"
+    ];
+
+    public array $button = array(
+        "url" => '',
+        "text" => 'Import CSV',
+    );
+
     public function __construct()
     {
-
 
         $this->id = "csv_importer";
         $this->name = "CSV Import";
         $this->image = "/dist/images/doc.png";
+        $this->description = "Impport data from a CSV file";
 
         $this->methods[] = "import";
 
@@ -35,8 +48,11 @@ class CsvImport extends Provider implements ProviderIntegration
             "default" => array(
                 "name" => "Sheet",
                 "fields" => array(),
-        ),
+            ),
         );
+
+        $this->button["url"] = BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload";
+
     }
 
     //Logic to connect to provider goes here.
@@ -47,8 +63,6 @@ class CsvImport extends Provider implements ProviderIntegration
      */
     public function connect(): mixed
     {
-
-
         //Connection done. Send to next step.
         //May just want to add a nextStep() method to provider model or so.
         Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload");
@@ -56,10 +70,6 @@ class CsvImport extends Provider implements ProviderIntegration
 
     //Sync the entities from the db
 
-    /**
-     * @param Entity $Entity
-     * @return true
-     */
     /**
      * @param Entity $Entity
      * @return true
@@ -72,9 +82,6 @@ class CsvImport extends Provider implements ProviderIntegration
 
     //Get available fields
 
-    /**
-     * @return array|mixed
-     */
     /**
      * @return array|mixed
      */
@@ -94,10 +101,6 @@ class CsvImport extends Provider implements ProviderIntegration
     }
 
     //Get available entities
-
-    /**
-     * @return array
-     */
     /**
      * @return array
      */

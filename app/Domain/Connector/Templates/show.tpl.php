@@ -5,11 +5,11 @@ foreach ($__data as $var => $val) {
 ?>
 
 <div class="pageheader">
-    <div class="pageicon"><span class="fa fa-connectdevelop"></span></div>
+    <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h1><?php echo $tpl->__("headlines.connector"); ?></h1>
+                <h1>Integrations</h1>
             </div>
         </div>
     </div>
@@ -19,8 +19,10 @@ foreach ($__data as $var => $val) {
     <div class="maincontentinner">
 
         <?php echo $tpl->displayNotification(); ?>
-        <h3>Sync Leantime with your external applications</h3>
-        <p>Available providers</p>
+        <h5 class="subtitle">Sync Leantime with your external applications</h5>
+        <p>Available Integrations</p>
+
+
         <div class="row">
             <?php foreach ($tpl->get("providers") as $provider) { ?>
                 <div class="col-md-3">
@@ -34,7 +36,12 @@ foreach ($__data as $var => $val) {
                             <br /><small>Available methods: <?=implode(", ", $provider->methods); ?></small>
                         </span>
                         <br />
-                        <a class="btn btn-primary" href="<?=BASE_URL?>/connector/integration?provider=<?=$provider->id ?>">Create New Integration</a>
+
+                        <?php if(isset($provider->button)) { ?>
+                            <a href="<?=$provider->button["url"] ?>" class="btn btn-primary"><?=$provider->button["text"] ?></a>
+                       <?php }else{ ?>
+                            <a class="btn btn-primary" href="<?=BASE_URL?>/connector/integration?provider=<?=$provider->id ?>">Create New Integration</a>
+                        <?php } ?>
 
                         <div class="clearall"></div>
                     </div>
@@ -47,7 +54,7 @@ foreach ($__data as $var => $val) {
 
     <div class="maincontentinner">
 
-        <h3>Existing Integrations</h3>
+        <h5 class="subtitle">Existing Integrations</h5>
 
 
     </div>

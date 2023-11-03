@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\CsvImport\Controllers;
 
+use Leantime\Domain\Connector\Models\Integration;
+use Leantime\Domain\Connector\Services\Integrations;
 use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use League\Csv\Exception;
@@ -75,14 +77,14 @@ class Upload extends Controller
             $rows[] = $record;
         }
 
-        $integration = new models\connector\integration();
+        $integration = app()->make(Integration::class);
         $integration->fields = implode(",", $header);
 
         //Temporarily store results in meta
 
         $_SESSION['csv_records'] = iterator_to_array($records);
 
-        $integrationService = new services\connector\integrations();
+        $integrationService = app()->make(Integrations::class);
         $id = $integrationService->create($integration);
 
         $this->tpl->displayJson(json_encode(array("id"=>$id)));
