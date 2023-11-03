@@ -7,11 +7,7 @@ foreach ($__data as $var => $val) {
 <div class="pageheader">
     <div class="pageicon"><i class="fa-solid fa-circle-nodes"></i></div>
     <div class="pagetitle">
-        <div class="row">
-            <div class="col-lg-8">
-                <h1>Integrations</h1>
-            </div>
-        </div>
+       <h1>Integrations</h1>
     </div>
 </div>
 

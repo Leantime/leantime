@@ -208,7 +208,7 @@
                                 class="active"
                             @endif
                         >
-                            <a href="{{ BASE_URL }}/connector/show/">{!! __('menu.integrations') !!}</a>
+                            <a href="{{ BASE_URL }}/connector/show/">{!! __('menu.integrations') !!} <span class="label label-primary feature-label">Beta</span></a>
                         </li>
 
                         <li
