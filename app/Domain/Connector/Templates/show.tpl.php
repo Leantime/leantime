@@ -48,12 +48,14 @@ foreach ($__data as $var => $val) {
 
     </div>
 
+    <?php /*
     <div class="maincontentinner">
 
         <h5 class="subtitle">Existing Integrations</h5>
-
-
     </div>
+
+    */ ?>
+
 </div>
 
 <script type="text/javascript">

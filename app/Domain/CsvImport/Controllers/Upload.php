@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\CsvImport\Controllers;
 
+use Leantime\Core\Frontcontroller;
 use Leantime\Domain\Connector\Models\Integration;
 use Leantime\Domain\Connector\Services\Integrations;
 use Leantime\Domain\CsvImport\Services\CsvImport as CsvImportService;
@@ -67,7 +68,13 @@ class Upload extends Controller
 
         $csv->setHeaderOffset(0);
 
-        $records = Statement::create()->process($csv);
+        try {
+            $records = Statement::create()->process($csv);
+        }catch(Exception $e){
+            Frontcontroller::setResponseCode("500");
+            $this->tpl->displayJson(json_encode(array("error"=>$e->getMessage())));
+            return;
+        }
 
         $header = $records->getHeader();  //returns the CSV header record
         $records = $csv->getRecords(); //returns all the CSV records as an Iterator object

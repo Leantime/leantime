@@ -68,7 +68,7 @@ if(isset($integrationId) && is_numeric($integrationId)) {
                     <li style="margin-right: 10px; color: red; font-style: oblique;"><?= $flag ?></li>
                 <?php } ?>
             </ul>
-            <a class="btn btn-primary left" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>">Reconnect Integration</a>
+            <a class="btn btn-primary pull-left" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>">Reconnect Integration</a>
         <?php } else { ?>
             <a class="btn btn-primary right" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=import">Confirm</a>
         <?php } ?>

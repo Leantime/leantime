@@ -67,7 +67,7 @@ foreach ($__data as $var => $val) {
         uppy.use(Uppy.XHRUpload, {
             endpoint: '<?=BASE_URL ?>/csvImport/upload',
             formData: true,
-            fieldName: 'file',
+            fieldName: 'file'
         });
 
         uppy.use(Uppy.StatusBar, {
@@ -118,6 +118,16 @@ foreach ($__data as $var => $val) {
 
             window.location.href = "<?=BASE_URL?>/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
 
+        });
+
+
+        uppy.on('upload-error', (file, error, response) => {
+
+            jQuery(".input-error").html("<span class='label-important'>There is a problem with your CSV file: "+response.body.error+"</span>");
+
+
+
+            return false
         });
 
 

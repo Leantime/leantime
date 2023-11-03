@@ -36,24 +36,23 @@ namespace Leantime\Domain\Connector\Services {
                 } else {
                     if ($entity == "users") {
                         //TODO add flags for users
-                        $flags[] = "It is compulsory to have a Source Field matching to First Name, Role, Email, and Send Invite.";
+                        $flags[] = "First Name, Role, Email, and Send Invite are required fields";
                         $flags[] = "The Send Invite field should be either Yes/No or else the user will not be imported. If Send Invite is set to No the user will have to reset the password on their own.";
                         $flags[] = "Roles have to be one of the following values 'readonly', 'commenter', 'editor', 'manager', 'admin', 'owner'.";
                     } else {
                         if ($entity == "ideas") {
                             //TODO add flags for ideas
-                            $flags[] = "It is compulsory to have a Source Field matching to Description, Data, and CanvasId.";
+                            $flags[] = "Description, Data, and CanvasId are required fields.";
                             $flags[] = "If you do not have an Author field then you will be assigned as the Author.";
                         } else {
                             if ($entity == "goals") {
                                 //TODO add flags for goals
-                                $flags[] = "It is compulsory to have a Source Field matching to Title, CanvasId, Start Value, Current Value, and End Value.";
+                                $flags[] = "Title, CanvasId, Start Value, Current Value, and End Value are required fields";
                             } else {
                                 if ($entity == "milestones") {
                                     //TODO add flags for milestones
                                     $flags[] = "If you do not have an Editor (User) email/ID field then all imported entities will be assigned to you.";
-                                    $flags[] = "It is compulsory to have a Source Field matching to Headline and Project";
-                                    $flags[] = "It is compulsory to have a Edit From and Edit To column for each Milestone";
+                                    $flags[] = "Headline, Edit From, Edit To and Project are required fields";
                                 }
                             }
                         }

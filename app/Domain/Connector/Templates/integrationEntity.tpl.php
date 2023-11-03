@@ -66,6 +66,11 @@ if (isset($integrationId) && is_numeric($integrationId)) {
                     </div>
                     <div class="col-md-3"></div>
                 </div>
+
+                <div class="left">
+                    <a href="<?= BASE_URL ?>/connector/integration/?provider=<?= $provider->id ?>" class="btn btn-default pull-left">Back</a>
+                </div>
+
                 <input type="submit" value="Next" class="btn" />
 
             </form>
