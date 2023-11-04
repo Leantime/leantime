@@ -23,13 +23,14 @@ foreach ($__data as $var => $val) {
             <?php foreach ($tpl->get("providers") as $provider) { ?>
                 <div class="col-md-3">
                     <div class="profileBox">
-                        <div class="commentImage">
+                        <div class="commentImage gradient">
                             <img src="<?=BASE_URL ?>/<?=$provider->image ?>"/>
                         </div>
                         <span class="userName">
-                            <?=$provider->name ?>
-                            <br /><small>Things you can sync: <?php //implode(", ", $provider->entities);?></small>
+                            <strong><?=$provider->name ?></strong>
                             <br /><small>Available methods: <?=implode(", ", $provider->methods); ?></small>
+                            <br /><br />
+                            <?=$provider->description ?>
                         </span>
                         <br />
 

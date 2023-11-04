@@ -894,6 +894,10 @@ input.secretInput:active {
     color:var(--main-action-color);
 }
 
+.profileBox .commentImage.gradient img{
+    background:var(--element-gradient);
+}
+
 .profileBox.active .userName {
     color:var(--main-action-bg);
 }
