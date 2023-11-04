@@ -77,17 +77,6 @@ if (isset($integrationId) && is_numeric($integrationId)) {
             </form>
         </div>
     </div>
-<script type="text/javascript">
-
-    jQuery(document).ready(function() {
-
-
-    });
-
-</script>
-</body>
-
-</html>
 
 
 
