@@ -4,9 +4,12 @@ namespace Leantime\Domain\Connector\Services {
 
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Canvas\Repositories\Canvas;
+    use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas;
+    use Leantime\Domain\Ideas\Repositories\Ideas;
     use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Tickets\Services\Tickets;
     use Leantime\Domain\Users\Services\Users;
+    use Ramsey\Uuid\Uuid;
 
     /**
      *
@@ -18,7 +21,9 @@ namespace Leantime\Domain\Connector\Services {
             private Canvas $canvasRepository,
             private Projects $projectService,
             private Tickets $ticketService,
-            private \Leantime\Domain\Tickets\Repositories\Tickets $ticketRepository
+            private \Leantime\Domain\Tickets\Repositories\Tickets $ticketRepository,
+            private Goalcanvas $goalCanvasRepo,
+            private Ideas $ideaRepo,
         ){}
 
         public function getEntityFlags($entity)
@@ -269,7 +274,7 @@ namespace Leantime\Domain\Connector\Services {
                 if ($item['leantimeField'] === 'firstname') {
                     $matchingFirstNameSourceField = $item['sourceField'];
                 }
-                if ($item['leantimeField'] === 'username') {
+                if ($item['leantimeField'] === 'user') {
                     $matchingUsernameSourceField = $item['sourceField'];
                 }
                 if ($item['leantimeField'] === 'role') {
@@ -290,11 +295,12 @@ namespace Leantime\Domain\Connector\Services {
                         $flags[] = "The sendInvite column must contain only yes or no";
                     }
                     if (str_contains($row[$matchingUsernameSourceField], '@')) {
-                        $userId = $this->userService->getUserByEmail(
-                            trim($row[$matchingUsernameSourceField])
-                        )['id'];
-                        if ($userId) {
-                            $row['id'] = $userId;
+                        $user = $this->userService->getUserByEmail(
+                            email: trim($row[$matchingUsernameSourceField]),
+                            status: null
+                        );
+                        if ($user) {
+                            $row['id'] = $user['id'];
                         }
                     } else {
                         $flags[] = "The Username column must contain only valid emails";
@@ -369,13 +375,13 @@ namespace Leantime\Domain\Connector\Services {
                 }
             } else {
                 $id = $_SESSION['userdata']['id'];
-                foreach ($this->values as &$row) {
+                foreach ($values as &$row) {
                     $row['author'] = $id;
                 }
             }
             if ($matchingCanvasIdSourceField) {
-                foreach ($this->values as &$row) {
-                    if (!$this->canvasRepository->getSingleCanvas(
+                foreach ($values as &$row) {
+                    if (!$this->ideaRepo->getSingleCanvas(
                         $row[$matchingCanvasIdSourceField]
                     )) {
                         $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
@@ -425,10 +431,12 @@ namespace Leantime\Domain\Connector\Services {
             }
 
             if ($matchingCanvasIdSourceField) {
-                if (!$this->canvasRepository->getSingleCanvas(
-                    $row[$matchingCanvasIdSourceField]
-                )) {
-                    $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
+                foreach ($values as &$row) {
+                    if (!$this->goalCanvasRepo->getSingleCanvas(
+                        $row[$matchingCanvasIdSourceField]
+                    )) {
+                        $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
+                    }
                 }
             }
 
@@ -639,15 +647,23 @@ namespace Leantime\Domain\Connector\Services {
                 }
                 $values["notifications"] = 1;
                 $values['source'] = "csvImport"; //TODO: will have to change when other integrations are added
-                if($row['id']){
-                    $this->userService->editUser($values, $row['id']);
-                }
-                else if ($row['sendInvite']) {
+                if(isset($row['id']) && $row['id'] > 0){
+
+                    $currentUser = $this->userService->getUser($row['id']);
+                    $currentUser['user'] = $values['user'];
+                    foreach($currentUser as $key => &$userValues) {
+                        if(isset($values[$key])){
+                            $userValues = $values[$key];
+                        }
+                    }
+                    $this->userService->editUser($currentUser, $row['id']);
+
+                } else if (isset($row['sendInvite']) && $row['sendInvite'] == true) {
                     $this->userService->createUserInvite($values);
                 } else {
                     $values['status'] = 'a';
-                    if (!$values['password']) {
-                        $tempPasswordVar = Uuid::uuid4()->toString();
+                    if (!isset($values['password'])) {
+                        $tempPasswordVar =  Uuid::uuid4()->toString();
                         $values['password'] = $tempPasswordVar;
                     }
                     $this->userService->addUser($values);
@@ -664,10 +680,10 @@ namespace Leantime\Domain\Connector\Services {
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
                 if(isset($values["itemId"])){
-                    $this->goalRepository->editCanvasItem($values);
+                    $this->ideaRepo->editCanvasItem($values);
                 }
                 else{
-                    $this->goalRepository->addCanvasItem($values);
+                    $this->ideaRepo->addCanvasItem($values);
                 }
 
             }
@@ -679,11 +695,15 @@ namespace Leantime\Domain\Connector\Services {
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
+                $values["box"] = "goal";
+                if(!isset($values['author'])){
+                    $values['author'] = $_SESSION['userdata']['id'];
+                }
                 if(isset($values["itemId"])){
-                    $this->goalRepository->editCanvasItem($values);
+                    $this->goalCanvasRepo->editCanvasItem($values);
                 }
                 else{
-                    $this->goalRepository->addCanvasItem($values);
+                    $this->goalCanvasRepo->addCanvasItem($values);
                 }
 
             }

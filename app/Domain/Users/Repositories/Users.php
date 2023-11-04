@@ -172,13 +172,22 @@ namespace Leantime\Domain\Users\Repositories {
          * @param $email
          * @return array|false
          */
-        public function getUserByEmail($email): array | false
+        public function getUserByEmail($email, $status = "a"): array | false
         {
+            $sql = "SELECT * FROM `zp_user` WHERE username = :email ";
 
-            $sql = "SELECT * FROM `zp_user` WHERE username = :email AND status LIKE 'a' LIMIT 1";
+            if ($status == "a") {
+                $sql .= " and status = 'a'";
+            }
+
+            if ($status == "i") {
+                $sql .= " and status = 'i'";
+            }
+
+            $sql .=  " LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmn->bindValue(':email', $email, PDO::PARAM_STR);$stmn->bindValue(':email', $email, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetch();
@@ -573,14 +582,14 @@ namespace Leantime\Domain\Users\Repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':firstname', $values['firstname'], PDO::PARAM_STR);
-            $stmn->bindValue(':lastname', $values['lastname'], PDO::PARAM_STR);
+            $stmn->bindValue(':firstname', $values['firstname'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':lastname', $values['lastname'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':phone', $values['phone'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':user', $values['user'], PDO::PARAM_STR);
             $stmn->bindValue(':role', $values['role'], PDO::PARAM_STR);
 
             $stmn->bindValue(':password', password_hash($values['password'], PASSWORD_DEFAULT), PDO::PARAM_STR);
-            $stmn->bindValue(':clientId', $values['clientId'], PDO::PARAM_INT);
+            $stmn->bindValue(':clientId', $values['clientId'] ?? '', PDO::PARAM_INT);
 
             $stmn->bindValue(':jobTitle', $values['jobTitle'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':jobLevel', $values['jobLevel'] ?? '', PDO::PARAM_STR);

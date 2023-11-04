@@ -108,9 +108,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $email
          * @return array|false
          */
-        public function getUserByEmail($email): false|array
+        public function getUserByEmail($email, $status = "a"): false|array
         {
-            return $this->userRepo->getUserByEmail($email);
+            return $this->userRepo->getUserByEmail($email, $status);
         }
 
         /**
@@ -260,7 +260,7 @@ namespace Leantime\Domain\Users\Services {
                 "firstname" => $values["firstname"] ?? '',
                 "lastname" => $values["lastname"] ?? '',
                 "phone" => $values["phone"] ?? '',
-                "user" => $values["username"],
+                "user" => $values["username"] ?? $values["user"],
                 "role" => $values["role"],
                 "notifications" => $values["notifications"] ?? 1,
                 "clientId" => $values["clientId"] ?? '',

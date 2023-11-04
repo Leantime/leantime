@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Connector\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Connector\Services\Connector;
@@ -129,8 +130,16 @@ namespace Leantime\Domain\Connector\Controllers {
                 //STEP 3: Choose Entities to sync
                 if (isset($params["step"]) && $params["step"] == "fields") {
 
-                    $entity = $_POST['leantimeEntities'];
-                    $_SESSION['currentImportEntity'] = $entity;
+                    if(isset($_POST['leantimeEntities'])){
+                        $entity = $_POST['leantimeEntities'];
+                        $_SESSION['currentImportEntity'] = $entity;
+                    }else if(isset($_SESSION['currentImportEntity']) && $_SESSION['currentImportEntity'] != "") {
+                        $entity = $_SESSION['currentImportEntity'];
+                    }else{
+                        $this->tpl->setNotification("Entity not set", "error");
+
+                        Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $provider->id . "");
+                    }
 
                     $currentIntegration->entity = $entity;
 
