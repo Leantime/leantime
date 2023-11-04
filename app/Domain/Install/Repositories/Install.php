@@ -96,7 +96,9 @@ namespace Leantime\Domain\Install\Repositories {
             20120,
             20121,
             20122,
-            20405
+            20405,
+            20406,
+            20407,
         );
 
         /**
@@ -379,11 +381,11 @@ namespace Leantime\Domain\Install\Repositories {
                   `featured` int NULL,
                   `tags` text NULL,
                   `kpi` INT NULL DEFAULT NULL,
-                  `data1` TEXT NULL DEFAULT NULL,
-                  `data2` TEXT NULL DEFAULT NULL,
-                  `data3` TEXT NULL DEFAULT NULL,
-                  `data4` TEXT NULL DEFAULT NULL,
-                  `data5` TEXT NULL DEFAULT NULL,
+                  `data1` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data2` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data3` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data4` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data5` MEDIUMTEXT NULL DEFAULT NULL,
                   `startDate` DATETIME NULL DEFAULT NULL,
                   `endDate` DATETIME NULL DEFAULT NULL,
                   `setting` TEXT NULL DEFAULT NULL,
@@ -1764,10 +1766,42 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        public function update_sql_20402(): bool|array {
-          ;
+        /**
+         * Install script did not include medium text updates. Run again
+         * @return bool|array
+         */
+        public function update_sql_20406(): bool|array
+        {
 
-             $errors = array();
+            $errors = array();
+
+            $sql = ["ALTER TABLE `zp_canvas_items`
+                    CHANGE COLUMN `data1` `data1` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data2` `data2` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data3` `data3` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data4` `data4` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data5` `data5` MEDIUMTEXT NULL DEFAULT NULL;",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        public function update_sql_20407(): bool|array {
+
+            $errors = array();
 
             $sql = [
                 "  ALTER TABLE `zp_integration`
