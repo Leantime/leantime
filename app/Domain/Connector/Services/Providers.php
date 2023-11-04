@@ -2,10 +2,9 @@
 
 namespace Leantime\Domain\Connector\Services {
 
+    use Leantime\Domain\CsvImport\Services\CsvImport;
     use Leantime\Core\Eventhelpers;
-    use Leantime\Domain\Connector\Models\Entity;
     use Leantime\Domain\Connector\Models\Provider;
-    use PHPMailer\PHPMailer\Exception;
 
     /**
      *
@@ -27,8 +26,12 @@ namespace Leantime\Domain\Connector\Services {
         public function loadProviders(): void
         {
 
+            //Default Providers
+            $provider = app()->make(\Leantime\Domain\CsvImport\Services\CsvImport::class);
+            $this->providers[$provider->id] = $provider;
+
             //providerId => provider
-            $this->providers = self::dispatch_filter('providerList', []);
+            $this->providers = self::dispatch_filter('providerList', $this->providers);
         }
 
         /**
@@ -42,11 +45,6 @@ namespace Leantime\Domain\Connector\Services {
             return $this->providers;
         }
 
-        /**
-         * @param $providerId
-         * @return Provider
-         * @throws \Exception
-         */
         /**
          * @param $providerId
          * @return Provider

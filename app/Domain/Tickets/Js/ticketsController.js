@@ -1077,13 +1077,15 @@ leantime.ticketsController = (function () {
 
             var height = 250;
 
-            jQuery(".sortableTicketKanban .column .contentInner").each(function () {
+            jQuery(".sortableTicketList .column .contentInner").each(function () {
+                console.log(jQuery(this).height());
                 if (jQuery(this).height() > height) {
                     height = jQuery(this).height();
                 }
             });
+
             height = height + 50;
-            jQuery(".sortableTicketKanban .column .contentInner").css("min-height", height);
+            jQuery(".sortableTicketList .column .contentInner").css("height", height);
 
         });
 
@@ -1112,7 +1114,7 @@ leantime.ticketsController = (function () {
                 placeholder: "ui-state-highlight",
                 forcePlaceholderSize: true,
                 cancel: ".portlet-toggle,:input,a,input",
-                distance: 25,
+                distance: 10,
 
                 start: function (event, ui) {
                     ui.item.addClass('tilt');
@@ -1157,14 +1159,20 @@ leantime.ticketsController = (function () {
         {
             var left_pos = item.position().left,
                 move_handler = function (e) {
-                    if (e.pageX >= left_pos) {
+
+                    if ((e.pageX +5) > left_pos) {
                         item.addClass("right");
                         item.removeClass("left");
-                    } else {
+                    } else if (e.pageX < (left_pos +5)) {
                         item.addClass("left");
                         item.removeClass("right");
+                    }else{
+                        item.removeClass("left");
+                        item.removeClass("right");
                     }
+
                     left_pos = e.pageX;
+
                 };
             jQuery("html").bind("mousemove", move_handler);
             item.data("move_handler", move_handler);

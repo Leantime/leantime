@@ -233,15 +233,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $statusList;
         }
 
-        /**
-         * @return mixed
-         */
-        /**
-         * @return mixed
-         */
-        /**
-         * @return mixed
-         */
+
         /**
          * @return mixed
          */
@@ -250,18 +242,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $this->statusList;
         }
 
-        /**
-         * @param $projectId
-         * @return string[]
-         */
-        /**
-         * @param $projectId
-         * @return string[]
-         */
-        /**
-         * @param $projectId
-         * @return string[]
-         */
+
         /**
          * @param $projectId
          * @return string[]
@@ -306,6 +287,19 @@ namespace Leantime\Domain\Tickets\Repositories {
                 "ALLOPEN" => $openTodos,
             );
             return $statusByTypeQuery;
+        }
+
+        public function getStatusIdByName($statusLabel, $projectId): int|false
+        {
+            $statusList = $this->getStateLabels($projectId);
+
+            foreach ($statusList as $key => $status) {
+                if ($status['name'] == $statusLabel) {
+                    return $key;
+                }
+            }
+
+            return false;
         }
 
         /**

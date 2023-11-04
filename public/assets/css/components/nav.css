@@ -496,6 +496,10 @@
     margin-right:10px;
 }
 
+.headmenu .dropdown-menu a .label.feature-label {
+    margin-top:0px;
+}
+
 .header .nav-header {
     text-shadow: none;
     text-transform: none;

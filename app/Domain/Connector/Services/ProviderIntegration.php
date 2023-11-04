@@ -9,6 +9,7 @@ use Leantime\Domain\Connector\Models\Entity;
  */
 interface ProviderIntegration
 {
+
     /**
      * @return mixed
      */

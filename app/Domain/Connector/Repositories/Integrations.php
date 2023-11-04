@@ -13,7 +13,7 @@ namespace Leantime\Domain\Connector\Repositories {
     {
         public function __construct()
         {
-            $this->entity = "integrations";
+            $this->entity = "integration";
             $this->model = Integration::class;
         }
     }

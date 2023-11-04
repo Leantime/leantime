@@ -204,6 +204,14 @@
                         </li>
 
                         <li
+                            @if (str_starts_with($activePath, 'connector'))
+                                class="active"
+                            @endif
+                        >
+                            <a href="{{ BASE_URL }}/connector/show/">{!! __('menu.integrations') !!} <span class="label label-primary feature-label">Beta</span></a>
+                        </li>
+
+                        <li
                             @if (str_starts_with($activePath, 'setting'))
                                 class="active"
                             @endif

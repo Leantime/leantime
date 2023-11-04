@@ -271,8 +271,9 @@ namespace Leantime\Domain\Reports\Services {
         public function sendAnonymousTelemetry(): bool|PromiseInterface
         {
 
+
             if (isset($_SESSION['skipTelemetry']) && $_SESSION['skipTelemetry'] === true) {
-                return false;
+                //return false;
             }
 
             //Only send once a day

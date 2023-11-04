@@ -59,6 +59,37 @@ namespace Leantime\Domain\Ideas\Repositories {
         }
 
         /**
+         * @param $canvasId
+         * @return array|false
+         */
+        public function getSingleCanvas($canvasId): false|array
+        {
+            $sql = "SELECT
+                        zp_canvas.id,
+                        zp_canvas.title,
+                        zp_canvas.author,
+                        zp_canvas.created,
+                        zp_canvas.projectId,
+                        t1.firstname AS authorFirstname,
+                        t1.lastname AS authorLastname
+
+                FROM
+                zp_canvas
+                LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
+                WHERE type = 'idea' AND zp_canvas.id = :canvasId
+                ORDER BY zp_canvas.title, zp_canvas.created";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+        /**
          * @return array|mixed
          */
         public function getCanvasLabels(): mixed
@@ -467,13 +498,13 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':assumptions', $values['assumptions'], PDO::PARAM_STR);
-            $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
-            $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
-            $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
-            $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
+            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':box', $values['box'] ?? "idea", PDO::PARAM_STR);
+            $stmn->bindValue(':author', $values['author'] ?? $_SESSION['userdata']['id'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
-            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();

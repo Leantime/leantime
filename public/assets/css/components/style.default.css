@@ -4226,6 +4226,7 @@ h3.todaysDate {
 .uppy-StatusBar-actionBtn--retry,
 .uppy-StatusBar-actionBtn--retry:hover{
     background-color: var(--red);
+    color:#fff !important;
 }
 
 .uppy-StatusBar.is-complete .uppy-StatusBar-progress {

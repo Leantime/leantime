@@ -108,9 +108,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $email
          * @return array|false
          */
-        public function getUserByEmail($email): false|array
+        public function getUserByEmail($email, $status = "a"): false|array
         {
-            return $this->userRepo->getUserByEmail($email);
+            return $this->userRepo->getUserByEmail($email, $status);
         }
 
         /**
@@ -256,8 +256,28 @@ namespace Leantime\Domain\Users\Services {
          */
         public function addUser(array $values): bool|int
         {
+            $values = array(
+                "firstname" => $values["firstname"] ?? '',
+                "lastname" => $values["lastname"] ?? '',
+                "phone" => $values["phone"] ?? '',
+                "user" => $values["username"] ?? $values["user"],
+                "role" => $values["role"],
+                "notifications" => $values["notifications"] ?? 1,
+                "clientId" => $values["clientId"] ?? '',
+                "password" => $values["password"],
+                "source" => $values["source"] ?? '',
+                "pwReset" => $values["pwReset"] ?? '',
+                "status" => $values["status"] ?? '',
+                "createdOn" => $values["createdOn"] ?? '',
+                "jobTitle" => $values["jobTitle"] ?? '',
+                "jobLevel" => $values["jobLevel"] ?? '',
+                "department" => $values["department"] ?? ''
+            );
+
             return $this->userRepo->addUser($values);
         }
+
+
 
 
         /**

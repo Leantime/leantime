@@ -1,8 +1,9 @@
 <?php
 
+namespace CsvImport;
+
+use CsvImport\Services\CsvImport as CsvImportService;
 use Leantime\Core\Events;
-use Leantime\Domain\Connector\Models\Provider;
-use Leantime\Plugins\CsvImport\Services\CsvImport as CsvImportService;
 
 /**
  * MotivationalQuotes
@@ -10,7 +11,6 @@ use Leantime\Plugins\CsvImport\Services\CsvImport as CsvImportService;
  * Register Events here
  *
  */
-
 //Create function for the event
 class AddCSVImportProvider
 {
@@ -19,14 +19,8 @@ class AddCSVImportProvider
      * @return mixed
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    /**
-     * @param $payload
-     * @return mixed
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
     public function handle($payload): mixed
     {
-
         $provider = app()->make(CsvImportService::class);
         $payload[$provider->id] = $provider;
 
@@ -35,4 +29,7 @@ class AddCSVImportProvider
 }
 
 //Register event listener
-Events::add_filter_listener("domain.connector.services.providers.loadProviders.providerList", new addCSVImportProvider());
+Events::add_filter_listener(
+    "domain.connector.services.providers.loadProviders.providerList",
+    new addCSVImportProvider()
+);

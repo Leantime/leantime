@@ -828,18 +828,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param int $userId
          * @param int $projectId
          * @return bool
-         *
-         */
-        /**
-         * @param int $userId
-         * @param int $projectId
-         * @return bool
-         * @throws BindingResolutionException
-         */
-        /**
-         * @param int $userId
-         * @param int $projectId
-         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserAssignedToProject(int $userId, int $projectId): bool
@@ -864,15 +852,28 @@ namespace Leantime\Domain\Projects\Services {
         }
 
 
-        /**
-         * @param int $projectId
-         * @param int $clientId
-         * @param string $projectName
-         * @param string $userStartDate
-         * @param bool $assignSameUsers
-         * @return bool|int
-         * @throws BindingResolutionException
-         */
+        public function addProject($values) {
+            $values = array(
+                "name" => $values['name'],
+                'details' => $values['details'] ?? '',
+                'clientId' => $values['clientId'],
+                'hourBudget' => $values['hourBudget'] ?? 0,
+                'assignedUsers' => $values['assignedUsers'] ?? '',
+                'dollarBudget' => $values['dollarBudget'] ?? 0,
+                'psettings' => $values['psettings'] ?? 'restricted',
+                'type' => "project",
+                'start' => $values['start'],
+                'end' => $values['end'],
+            );
+            if ($values['start'] != null) {
+                $values['start'] = $this->language->getISODateString($values['start']);
+            }
+            if ($values['end'] != null) {
+                $values['end'] = $this->language->getISODateString($values['end']);
+            }
+            $this->projectRepository->addProject($values);
+        }
+
         /**
          * @param int    $projectId
          * @param int    $clientId
@@ -1241,6 +1242,10 @@ namespace Leantime\Domain\Projects\Services {
             return $this->projectRepository->setPicture($file, $project);
         }
 
+        public function getAllProjects(){
+            return $this->projectRepository->getAll();
+        }
+
         /**
          * @param $projectId
          * @return array
@@ -1455,17 +1460,21 @@ namespace Leantime\Domain\Projects\Services {
             );
         }
 
-        /**
-         * @param $params
-         * @return false|void
-         */
+        public function getProjectIdbyName($allProjects, $projectName){
+            foreach ($allProjects as $project) {
+                if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
+                    return $project['id'];
+                }
+            }
+            return false;
+        }
+
         /**
          * @param $params
          * @return false|void
          */
         public function updateProjectSorting($params)
         {
-
             //ticketId: sortIndex
             foreach ($params as $id => $sortKey) {
                 if ($this->projectRepository->patch($id, ["sortIndex" => $sortKey * 100]) === false) {
@@ -1474,11 +1483,10 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        /**
-         * @param $params
-         * @param $handler
-         * @return true
-         */
+        public function editProject($values, $id){
+            $this->projectRepository->editProject($values, $id);
+        }
+
         /**
          * @param $params
          * @param $handler

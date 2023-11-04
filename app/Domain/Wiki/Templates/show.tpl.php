@@ -8,15 +8,6 @@ $wikiHeadlines = $tpl->get('wikiHeadlines');
 $currentWiki = $tpl->get('currentWiki');
 $currentArticle = $tpl->get('currentArticle');
 
-
-/**
- * @param $array
- * @param $currentParent
- * @param $currLevel
- * @param $prevLevel
- * @param $tplObject
- * @return void
- */
 /**
  * @param $array
  * @param $currentParent
