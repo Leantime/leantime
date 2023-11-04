@@ -22,7 +22,7 @@ namespace Leantime\Domain\Connector\Controllers {
          */
         public function init(Services\Providers $projectService)
         {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
             $this->providerService = $projectService;
         }
 
