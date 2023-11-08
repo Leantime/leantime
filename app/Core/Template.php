@@ -441,16 +441,16 @@ class Template
     /**
      * gives HTMX response
      *
-     * @param string $view     The blade view path.
+     * @param string $viewPath The blade view path.
      * @param string $fragment The fragment key.
      * @return never
      */
-    public function displayFragment(string $view, string $fragment = ''): never
+    public function displayFragment(string $viewPath, string $fragment = ''): never
     {
+        $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
         $this->viewFactory->share(['tpl' => $this]);
-        echo $this->viewFactory
-            ->make($view, $this->vars)
-            ->fragmentIf(! empty($fragment), $fragment);
+        $view = $this->viewFactory->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
+        echo $view->fragmentIf(! empty($fragment), $fragment);
         exit;
     }
 

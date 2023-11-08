@@ -7,6 +7,7 @@ use Leantime\Core\HtmxController;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 use Illuminate\Support\Str;
+use Leantime\Core\Frontcontroller;
 
 /**
  *
@@ -46,11 +47,12 @@ class Details extends HtmxController
             $pluginModel->identifier = Str::studly($pluginModel->identifier);
         }
 
-        $this->tpl->assign('plugin', $pluginModel);
+        $this->tpl->assign('versions', [$pluginModel->version => $pluginModel]);
 
         try {
             $this->pluginService->installMarketplacePlugin($pluginModel);
         } catch (\Throwable $e) {
+            Frontcontroller::setResponseCode(200);
             $this->tpl->assign('formError', $e->getMessage());
             return 'plugin-installation';
         }

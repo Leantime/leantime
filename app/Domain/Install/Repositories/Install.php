@@ -97,6 +97,7 @@ namespace Leantime\Domain\Install\Repositories {
             20121,
             20122,
             20401,
+            20402,
         );
 
         /**
@@ -1766,9 +1767,25 @@ namespace Leantime\Domain\Install\Repositories {
         }
 
 
+        public function update_sql_20402(): bool|array
+        {
+            $errors = [];
 
+            $sql = [
+                "ALTER TABLE `zp_plugins`
+                ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+            ];
 
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, "$statement Failed: {$e->getMessage()}");
+                }
+            }
 
+            return count($errors) ? $errors : true;
+        }
     }
-
 }

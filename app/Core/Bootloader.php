@@ -214,6 +214,7 @@ class Bootloader
         $this->app->singleton(AuthService::class, AuthService::class);
         $this->app->singleton(OidcService::class, OidcService::class);
         $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
+        $this->app->singleton('files', fn () => new \Illuminate\Filesystem\Filesystem);
 
         $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
 

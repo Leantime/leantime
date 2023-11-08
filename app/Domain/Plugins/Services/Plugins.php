@@ -11,7 +11,9 @@ namespace Leantime\Domain\Plugins\Services {
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Http\Client\RequestException;
-    use Leantime\Domain\Settings\Repositories\Settings as SettingsRepository;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingsRepository;
+    use Illuminate\Support\Facades\File;
+    use Illuminate\Support\Str;
 
     /**
      *
@@ -46,6 +48,7 @@ namespace Leantime\Domain\Plugins\Services {
         private array $pluginTypes = [
             'custom' => "custom",
             'system' => "system",
+            'marketplace' => 'marketplace',
         ];
 
         /**
@@ -65,7 +68,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
          * @var string
          */
-        private string $marketplaceUrl = "http://marketplace.leantime.local:8888/ltmp-api";
+        private string $marketplaceUrl = "http://marketplace.leantime.local:8888";
 
         /**
          * @param PluginRepository $pluginRepository
@@ -92,11 +95,10 @@ namespace Leantime\Domain\Plugins\Services {
 
             //Build array with pluginId as $key
             foreach ($installedPlugins as &$plugin) {
-                if ($plugin->format === $this->pluginFormat["phar"]) {
-                    $plugin->type = $this->pluginTypes["marketplace"];
-                } else {
-                    $plugin->type = $this->pluginTypes["custom"];
-                }
+                $plugin->type = $plugin->format === $this->pluginFormat['phar']
+                    ? $plugin->type = $this->pluginTypes['marketplace']
+                    : $plugin->type = $this->pluginTypes['custom'];
+
                 $installedPluginsById[$plugin->foldername] = $plugin;
             }
 
@@ -105,28 +107,15 @@ namespace Leantime\Domain\Plugins\Services {
                 isset($this->config->plugins)
                 && $configplugins = explode(',', $this->config->plugins)
             ) {
-                foreach ($configplugins as $plugin) {
-                    if ($plugin != '') {
+                collect($configplugins)
+                ->filter(fn ($plugin) => ! empty($plugin))
+                ->each(function ($plugin) use (&$installedPluginsById) {
+                    $pluginModel = $this->createPluginFromComposer($plugin);
 
-                        $pluginModel = app()->make(InstalledPlugin::class);
-                        $pluginModel->foldername = $plugin;
-                        $pluginModel->name = $plugin;
-                        $pluginModel->format = file_exists(
-                            $this->pluginDirectory . "/" . $plugin . "/." . $plugin . ".phar"
-                        ) ? 'phar' : 'folder';
-                        $pluginModel->type = $this->pluginTypes['system'];
-                        $pluginModel->enabled = true;
-
-                        if(isset($installedPluginsById[$plugin])) {
-                            $installedPluginsById[$plugin]->enabled = true;
-                            $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
-                            $installedPluginsById[$plugin]->format = $pluginModel->format;
-                        }else{
-                            $installedPluginsById[$plugin] = $pluginModel;
-                        }
-
-                    }
-                }
+                    $installedPluginsById[$plugin] ??= $pluginModel;
+                    $installedPluginsById[$plugin]->enabled = true;
+                    $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
+                });
             }
 
             /**
@@ -180,49 +169,57 @@ namespace Leantime\Domain\Plugins\Services {
             return $enabledPlugins;
         }
 
-
         /**
-         * @return array
+         * @return InstalledPlugin[]
          * @throws BindingResolutionException
          */
         public function discoverNewPlugins(): array
         {
-            $installedPlugins = $this->getAllPlugins();
-            //Simplify list of installed plugin for a quicker array_Search
-            $installedPluginNames = array();
+            $installedPluginNames = array_map(fn ($plugin) => $plugin->foldername, $this->getAllPlugins());
+            $scanned_directory = array_diff(scandir($this->pluginDirectory), ['..', '.']);
 
-            foreach ($installedPlugins as $plugin) {
-                $installedPluginNames[] = $plugin->foldername;
-            }
-
-            $scanned_directory = array_diff(scandir($this->pluginDirectory), array('..', '.'));
-
-            $newPlugins = [];
-
-            foreach ($scanned_directory as $directory) {
-                if (is_dir($this->pluginDirectory . "/" . $directory) && array_search($directory, $installedPluginNames) === false) {
-                    $pluginJsonFile = $this->pluginDirectory . "/" . $directory . "/composer.json";
-
-                    if (is_file($pluginJsonFile)) {
-                        $json = file_get_contents($pluginJsonFile);
-
-                        $pluginFile = json_decode($json, true);
-                        $plugin = app()->make(InstalledPlugin::class);
-                        $plugin->name = $pluginFile['name'];
-                        $plugin->enabled = 0;
-                        $plugin->description = $pluginFile['description'];
-                        $plugin->version = $pluginFile['version'];
-                        $plugin->installdate = '';
-                        $plugin->foldername = $directory;
-                        $plugin->homepage = $pluginFile['homepage'];
-                        $plugin->authors = $pluginFile['authors'];
-
-                        $newPlugins[] = $plugin;
+            $newPlugins = collect($scanned_directory)
+                ->filter(fn ($directory) => is_dir("{$this->pluginDirectory}/{$directory}") && ! array_search($directory, $installedPluginNames))
+                ->map(function ($directory) {
+                    try {
+                        return $this->createPluginFromComposer($directory);
+                    } catch (\Exception $e) {
+                        return null;
                     }
-                }
-            }
+                })
+                ->filter()->all();
 
             return $newPlugins;
+        }
+
+        public function createPluginFromComposer(string $pluginFolder, string $license_key = ''): InstalledPlugin
+        {
+            $pluginPath = Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR) . Str::finish($pluginFolder, DIRECTORY_SEPARATOR);
+
+            if (file_exists($composerPath = $pluginPath . 'composer.json')) {
+                $format = 'folder';
+            } elseif (file_exists($composerPath = "phar://{$pluginPath}{$pluginFolder}.phar" . DIRECTORY_SEPARATOR . 'composer.json')) {
+                $format = 'phar';
+            } else {
+                throw new \Exception('Could not find composer.json');
+            }
+
+            $json = file_get_contents($composerPath);
+            $pluginFile = json_decode($json, true);
+
+            $plugin = app()->make(InstalledPlugin::class);
+            $plugin->name = $pluginFile['name'];
+            $plugin->enabled = 0;
+            $plugin->description = $pluginFile['description'];
+            $plugin->version = $pluginFile['version'];
+            $plugin->installdate = date("y-m-d");
+            $plugin->foldername = $pluginFolder;
+            $plugin->license = $license_key;
+            $plugin->format = $format;
+            $plugin->homepage = $pluginFile['homepage'];
+            $plugin->authors = json_encode($pluginFile['authors']);
+
+            return $plugin;
         }
 
         /**
@@ -232,44 +229,28 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function installPlugin($pluginFolder): false|string
         {
+            $pluginFolder = Str::studly($pluginFolder);
 
-            $pluginFolder = strip_tags(stripslashes($pluginFolder));
-            $pluginJsonFile = $this->pluginDirectory . "/" . $pluginFolder . "/composer.json";
-
-            if (is_file($pluginJsonFile)) {
-                $json = file_get_contents($pluginJsonFile);
-
-                $pluginFile = json_decode($json, true);
-                $plugin = app()->make(InstalledPlugin::class);
-                $plugin->name = $pluginFile['name'];
-                $plugin->enabled = 0;
-                $plugin->description = $pluginFile['description'];
-                $plugin->version = $pluginFile['version'];
-                $plugin->installdate = date("Y-m-d");
-                $plugin->foldername = $pluginFolder;
-                $plugin->license = ''; //TODO: Add license to install routine
-                $plugin->format = file_exists($this->pluginDirectory . "/" . $pluginFolder . "/." . $pluginFolder . ".phar") ? 'phar' : 'folder';
-                $plugin->foldername = $pluginFolder;
-                $plugin->homepage = $pluginFile['homepage'];
-                $plugin->authors = json_encode($pluginFile['authors']);
-
-                //Any installation calls should happen right here.
-                $pluginClassName = $this->getPluginClassName($plugin);
-                $newPluginSvc = app()->make($pluginClassName);
-
-                if (method_exists($newPluginSvc, "install")) {
-                    try {
-                        $newPluginSvc->install();
-                    } catch (Exception $e) {
-                        error_log($e);
-                        return false;
-                    }
-                }
-
-                return $this->pluginRepository->addPlugin($plugin);
+            try {
+                $plugin = $this->createPluginFromComposer($pluginFolder);
+            } catch (\Exception $e) {
+                error_log($e);
+                return false;
             }
 
-            return false;
+            $pluginClassName = $this->getPluginClassName($plugin);
+            $newPluginSvc = app()->make($pluginClassName);
+
+            if (method_exists($newPluginSvc, "install")) {
+                try {
+                    $newPluginSvc->install();
+                } catch (Exception $e) {
+                    error_log($e);
+                    return false;
+                }
+            }
+
+            return $this->pluginRepository->addPlugin($plugin);
         }
 
         /**
@@ -279,6 +260,33 @@ namespace Leantime\Domain\Plugins\Services {
         public function enablePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
+
+            $pluginModel = $this->pluginRepository->getPlugin($id);
+
+            if ($pluginModel->format == 'phar') {
+                $phar = new \Phar(
+                    Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
+                    . Str::finish($pluginModel->foldername, DIRECTORY_SEPARATOR)
+                    . Str::finish($pluginModel->foldername, '.phar')
+                );
+
+                $signature = $phar->getSignature();
+
+                $response = Http::get("$this->marketplaceUrl", [
+                    'request' => 'activation',
+                    'license_key' => $pluginModel->license,
+                    'product_id' => $pluginModel->id,
+                    'instance' => app()
+                        ->make(SettingsRepository::class)
+                        ->getSetting('companysettings.telemetry.anonymousId'),
+                    'phar_hash' => $signature,
+                ]);
+
+                if (! $response->ok()) {
+                    return false;
+                }
+            }
+
             return $this->pluginRepository->enablePlugin($id);
         }
 
@@ -289,6 +297,33 @@ namespace Leantime\Domain\Plugins\Services {
         public function disablePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
+
+            $pluginModel = $this->pluginRepository->getPlugin($id);
+
+            if ($pluginModel->format == 'phar') {
+                $phar = new \Phar(
+                    Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
+                    . Str::finish($pluginModel->foldername, DIRECTORY_SEPARATOR)
+                    . Str::finish($pluginModel->foldername, '.phar')
+                );
+
+                $signature = $phar->getSignature();
+
+                $response = Http::get("$this->marketplaceUrl", [
+                    'request' => 'deactivation',
+                    'license_key' => $pluginModel->license,
+                    'product_id' => $pluginModel->id,
+                    'instance' => app()
+                        ->make(SettingsRepository::class)
+                        ->getSetting('companysettings.telemetry.anonymousId'),
+                    'phar_hash' => $signature,
+                ]);
+
+                if (! $response->ok()) {
+                    return false;
+                }
+            }
+
             return $this->pluginRepository->disablePlugin($id);
         }
 
@@ -326,17 +361,17 @@ namespace Leantime\Domain\Plugins\Services {
         }
 
         /**
-         * @param PluginModel $plugin
+         * @param InstalledPlugin $plugin
          * @return string
          * @throws BindingResolutionException
          */
-        public function getPluginClassName(PluginModel $plugin): string
+        public function getPluginClassName(InstalledPlugin $plugin): string
         {
             return app()->getNamespace()
                 . 'Plugins\\'
-                . htmlspecialchars(ucfirst($plugin->foldername))
+                . Str::studly($plugin->foldername)
                 . '\\Services\\'
-                . htmlspecialchars(ucfirst($plugin->foldername));
+                . Str::studly($plugin->fodlername);
         }
 
         /**
@@ -347,7 +382,7 @@ namespace Leantime\Domain\Plugins\Services {
         public function getMarketplacePlugins(int $page, string $query = ''): array
         {
             $plugins = Http::withoutVerifying()->get(
-                "$this->marketplaceUrl"
+                "{$this->marketplaceUrl}/ltmp-api"
                 . (! empty($query) ? "/search/$query" : '/index')
                 . "/$page"
             );
@@ -378,7 +413,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getMarketplacePlugin(string $identifier): array
         {
-            return Http::get("$this->marketplaceUrl/versions/$identifier")
+            return Http::get("$this->marketplaceUrl/ltmp-api/versions/$identifier")
                 ->collect()
                 ->mapWithKeys(function ($data, $version) use ($identifier) {
                     static $count;
@@ -416,7 +451,7 @@ namespace Leantime\Domain\Plugins\Services {
                         ->make(SettingsRepository::class)
                         ->getSetting('companysettings.telemetry.anonymousId')
                 ])
-                ->get("{$this->marketplaceUrl}/download/{$plugin->marketplaceId}");
+                ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->marketplaceId}");
 
             $response->throwIf(in_array(true, [
                 ! $response->ok(),
@@ -424,44 +459,60 @@ namespace Leantime\Domain\Plugins\Services {
             ]), fn () => new RequestException($response));
 
             $filename = $response->header('Content-Disposition');
-            $filename = substr($filename, strpos($filename, 'filename=') + 1);
+            $filename = substr($filename, strpos($filename, 'filename=') + 9);
 
             if (! str_starts_with($filename, $plugin->identifier)) {
                 throw new \Exception('Wrong file downloaded');
             }
 
             if (! file_put_contents(
-                $temporaryFile = sys_get_temp_dir() . '/' . $filename,
+                $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
                 $response->body()
             )) {
                 throw new \Exception('Could not download plugin');
             }
 
-            if (is_dir($pluginDir = APP_ROOT . '/app/Plugins/' . $plugin->identifier)) {
-                rmdir($pluginDir);
+            if (
+                is_dir($pluginDir = "{$this->pluginDirectory}{$plugin->identifier}")
+                && ! File::deleteDirectory($pluginDir)
+            ) {
+                throw new \Exception('Could not remove existing plugin');
             }
+
             mkdir($pluginDir);
 
             $zip = new \ZipArchive();
-            $zip->open($temporaryFile);
-            $zip->extractTo($pluginDir);
+
+            match ($zip->open($temporaryFile)) {
+                \ZipArchive::ER_EXISTS => throw new \Exception('Zip: File already exists'),
+                \ZipArchive::ER_INCONS => throw new \Exception('Zip: Archive inconsistent'),
+                \ZipArchive::ER_INVAL => throw new \Exception('Zip: Invalid argument'),
+                \ZipArchive::ER_MEMORY => throw new \Exception('Zip: Malloc failure'),
+                \ZipArchive::ER_NOENT => throw new \Exception('Zip: No such file'),
+                \ZipArchive::ER_NOZIP => throw new \Exception('Zip: Not a zip archive'),
+                \ZipArchive::ER_OPEN => throw new \Exception('Zip: Can\'t open file'),
+                \ZipArchive::ER_READ => throw new \Exception('Zip: Read error'),
+                \ZipArchive::ER_SEEK => throw new \Exception('Zip: Seek error'),
+                default => throw new \Exception('Zip: Unknown error'),
+                true => null,
+            };
+
+            if (! $zip->extractTo($pluginDir)) {
+                throw new \Exception('Could not extract plugin');
+            }
+
             $zip->close();
 
             unlink($temporaryFile);
 
-            $pluginModel = app()->make(InstalledPlugin::class);
-            $pluginModel->name = $plugin->name;
-            $pluginModel->enabled = 0;
-            $pluginModel->description = $plugin->excerpt;
-            $pluginModel->version = $plugin->version;
-            $pluginModel->installdate = date("Y-m-d");
-            $pluginModel->foldername = $plugin->identifier;
-            $pluginModel->homepage = $plugin->marketplaceUrl;
-            $pluginModel->authors = $plugin->authors;
-            $pluginModel->license = $plugin->license;
-            $pluginModel->format = 'phar';
+            # read the composer.json content from the plugin phar file
+            $pluginModel = $this->createPluginFromComposer($plugin->identifier, $plugin->license);
 
-            $this->pluginRepository->addPlugin($pluginModel);
+            if (! $this->pluginRepository->addPlugin($pluginModel)) {
+                throw new \Exception('Could not add plugin to database');
+            }
+
+            unset($_SESSION['enabledPlugins']);
         }
     }
 }

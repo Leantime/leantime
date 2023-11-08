@@ -37,30 +37,32 @@
                         @fragment('plugin-installation')
                             @if (! empty($plugin->marketplaceId))
                                 @if (isset($formNotification) && ! empty($formNotification))
-                                    <div class="tw-text-red-500">{!! $formNotification !!}</div>
+                                    <div class="tw-text-green-500">{!! $formNotification !!}</div>
                                 @else
-                                    <form
-                                        class="tw-flex tw-gap-2 tw-items-center"
-                                        hx-post="{{ BASE_URL }}/hx/plugins/details/install"
-                                        hx-swap="outerHTML"
-                                        hx-indicator=".htmx-indicator, .htmx-loaded-content"
-                                        hx-target="this"
-                                    >
+                                    <div id="installForm{{ $plugin->marketplaceId }}">
                                         @if (! empty($formError))
                                             <div class="tw-text-red-500">{!! $formError !!}</div>
                                         @endif
-                                        @foreach ((array) $plugin as $prop => $value)
-                                            <input type="hidden" name="plugin[{{ $prop }}]" value="{{ is_array($value) || is_object($value) ? json_encode($value) : $value }}" />
-                                        @endforeach
-                                        <input class="!tw-mb-none !tw-p-[4px]" type="text" name="plugin[license]" placeholder="License Key" />
-                                        <x-global::button
-                                            :tag="'button'"
-                                            :type="'secondary'"
-                                        >Install</x-global::button>
-                                        <div class="htmx-indicator">
-                                            <x-global::loadingText type="text" :count="5" />
-                                        </div>
-                                    </form>
+                                        <form
+                                            class="tw-flex tw-gap-2 tw-items-center"
+                                            hx-post="{{ BASE_URL }}/hx/plugins/details/install"
+                                            hx-swap="outerHTML"
+                                            hx-indicator=".htmx-indicator, .htmx-loaded-content"
+                                            hx-target="#installForm{{ $plugin->marketplaceId }}"
+                                        >
+                                            @foreach ((array) $plugin as $prop => $value)
+                                                <input type="hidden" name="plugin[{{ $prop }}]" value="{{ is_array($value) || is_object($value) ? json_encode($value) : $value }}" />
+                                            @endforeach
+                                            <input class="!tw-mb-none !tw-p-[4px]" type="text" name="plugin[license]" placeholder="License Key" />
+                                            <x-global::button
+                                                :tag="'button'"
+                                                :type="'secondary'"
+                                            >Install</x-global::button>
+                                            <div class="htmx-indicator">
+                                                <x-global::loadingText type="text" :count="5" />
+                                            </div>
+                                        </form>
+                                    </div>
                                 @endif
                             @else
                                 <span>This plugin currently isn't available for installation.</span>

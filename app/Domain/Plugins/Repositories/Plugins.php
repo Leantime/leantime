@@ -27,26 +27,21 @@ namespace Leantime\Domain\Plugins\Repositories {
          * @param $enabledOnly
          * @return array|false
          */
-        /**
-         * @param true $enabledOnly
-         * @return array|false
-         */
         public function getAllPlugins(bool $enabledOnly = true): false|array
         {
-
             $query = "SELECT
-                  id,
-                  name,
-                  enabled,
-                  description,
-                  version,
-                  installdate,
-                  foldername,
-                  homepage,
-                  authors,
-                  format,
-                  license
-                FROM zp_plugins";
+                id,
+                name,
+                enabled,
+                description,
+                version,
+                installdate,
+                foldername,
+                homepage,
+                authors,
+                format,
+                license
+            FROM zp_plugins";
 
             if ($enabledOnly) {
                 $query .= " WHERE enabled = true";
@@ -107,14 +102,16 @@ namespace Leantime\Domain\Plugins\Repositories {
         {
 
             $sql = "INSERT INTO zp_plugins (
-                    name,
-                   enabled,
-                   description,
-                   version,
-                   installdate,
-                   foldername,
-                   homepage,
-                   authors
+                name,
+                enabled,
+                description,
+                version,
+                installdate,
+                foldername,
+                homepage,
+                authors,
+                license,
+                format
             ) VALUES (
                 :name,
                 :enabled,
@@ -123,7 +120,9 @@ namespace Leantime\Domain\Plugins\Repositories {
                 :installdate,
                 :foldername,
                 :homepage,
-                :authors
+                :authors,
+                :license,
+                :format
             )";
 
             $stmn = $this->db->database->prepare($sql);
@@ -135,6 +134,8 @@ namespace Leantime\Domain\Plugins\Repositories {
             $stmn->bindValue(':foldername', $plugin->foldername, PDO::PARAM_STR);
             $stmn->bindValue(':homepage', $plugin->homepage, PDO::PARAM_STR);
             $stmn->bindValue(':authors', $plugin->authors, PDO::PARAM_STR);
+            $stmn->bindValue(':license', $plugin->license ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':format', $plugin->format ?? 'folder', PDO::PARAM_STR);
 
             $stmn->execute();
 

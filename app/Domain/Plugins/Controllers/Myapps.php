@@ -31,49 +31,22 @@ namespace Leantime\Domain\Plugins\Controllers {
          */
         public function get(): void
         {
-
-            if (isset($_GET['install']) && $_GET['install'] != '') {
-                $result = $this->pluginService->installPlugin($_GET['install']);
-                if ($result) {
-                    $this->tpl->setNotification("notification.plugin_install_success", "success");
-                } else {
-                    $this->tpl->setNotification("notification.plugin_install_error", "error");
+            foreach (['install', 'enable', 'disable', 'remove'] as $varName) {
+                if (empty($_GET[$varName])) {
+                    continue;
                 }
 
-                $this->tpl->redirect(BASE_URL . "/plugins/show");
-            }
+                try {
+                    $notification = $this->pluginService->{"{$varName}Plugin"}($_GET[$varName])
+                        ? ["notification.plugin_{$varName}_success", "success"]
+                        : ["notification.plugin_{$varName}_error", "error"];
 
-            if (isset($_GET['enable']) && $_GET['enable'] != '') {
-                $result = $this->pluginService->enablePlugin((int) $_GET['enable']);
-                if ($result) {
-                    $this->tpl->setNotification("notification.plugin_activation_success", "success");
-                } else {
-                    $this->tpl->setNotification("notification.plugin_activation_error", "error");
+                    $this->tpl->setNotification(...$notification);
+                    $this->tpl->redirect(BASE_URL . "/plugins/myapps");
+                } catch (\Exception $e) {
+                    $this->tpl->setNotification($e->getMessage(), "error");
+                    $this->tpl->redirect(BASE_URL . "/plugins/myapps");
                 }
-
-                $this->tpl->redirect(BASE_URL . "/plugins/show");
-            }
-
-            if (isset($_GET['disable']) && $_GET['disable'] != '') {
-                $result = $this->pluginService->disablePlugin((int) $_GET['disable']);
-                if ($result) {
-                    $this->tpl->setNotification("notification.plugin_disable_success", "success");
-                } else {
-                    $this->tpl->setNotification("notification.plugin_disable_error", "error");
-                }
-
-                $this->tpl->redirect(BASE_URL . "/plugins/show");
-            }
-
-            if (isset($_GET['remove']) && $_GET['remove'] != '') {
-                $result = $this->pluginService->removePlugin((int) $_GET['remove']);
-                if ($result) {
-                    $this->tpl->setNotification("notification.plugin_remove_success", "success");
-                } else {
-                    $this->tpl->setNotification("notification.plugin_remove_error", "error");
-                }
-
-                $this->tpl->redirect(BASE_URL . "/plugins/show");
             }
 
             $newPlugins = $this->pluginService->discoverNewPlugins();
@@ -88,14 +61,9 @@ namespace Leantime\Domain\Plugins\Controllers {
          * @param $params
          * @return void
          */
-        /**
-         * @param $params
-         * @return void
-         */
         public function post($params): void
         {
-
-            $this->tpl->redirect(BASE_URL . "/plugins/show");
+            $this->tpl->redirect(BASE_URL . "/plugins/myapps");
         }
     }
 }

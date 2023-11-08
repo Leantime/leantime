@@ -11,11 +11,5 @@
                 <i class="fa-solid fa-puzzle-piece"></i> My Apps
             </a>
         </li>
-        <li class="{{ $currentUrl == 'show' ? "active" : ""  }}" id="installCustomPlugin">
-            <a href="<?=BASE_URL ?>/plugins/show">
-                <i class="fa-solid fa-file-code"></i> Install Custom
-            </a>
-        </li>
-
     </ul>
 </div>
