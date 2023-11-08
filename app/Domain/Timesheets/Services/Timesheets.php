@@ -103,11 +103,11 @@ namespace Leantime\Domain\Timesheets\Services {
                 $values['date'] = $this->language->getISODateString($params['date']);
             }
 
-            if (isset($_POST['hours']) && $_POST['hours'] != '') {
+            if (isset($params['hours']) && $params['hours'] != '') {
                 $values['hours'] = $params['hours'];
             }
 
-            if (isset($_POST['description']) && $_POST['description'] != '') {
+            if (isset($params['description']) && $params['description'] != '') {
                 $values['description'] = $params['description'];
             }
 
