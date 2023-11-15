@@ -82,6 +82,7 @@ Whilst the steps above are applicable to Internet Information Services (IIS), th
 * Click `OK`
 * A popup will appear asking if you want to create a FastCGI application - click `Yes`
 
+Note: You may need to repeat this when you upgrade PHP.
 
 #### Production Installation via Docker ####
 
