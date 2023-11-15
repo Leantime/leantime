@@ -66,6 +66,23 @@ There are two main ways to install LeanTime for production. The first of which i
 * Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
 
+##### IIS Installation Notes #####
+
+Whilst the steps above are applicable to Internet Information Services (IIS), there is an additional configuration change that may be required in IIS to ensure full functionality - you need to allow the PATCH method:
+
+* Open IIS
+* Expand the server and sites on the left and select the LeanTime site
+* Double click on `Handler Mappings`
+* Double click on the PHP handler mapping that is used by the site
+* Click `Request Restrictions…`
+* Click the `Verbs` tab
+* In the `One of the following verbs` text box, add `,PATCH` - for example: `GET,HEAD,POST,PATCH`
+* Click `OK`
+* In the `Executable (optional)` text box, put a double quote character (`“`) at the start and at the end of the path to the `php-cgi.exe` file (_this isn't needed if the path doesn't have a space in it_)
+* Click `OK`
+* A popup will appear asking if you want to create a FastCGI application - click `Yes`
+
+
 #### Production Installation via Docker ####
 
 We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
