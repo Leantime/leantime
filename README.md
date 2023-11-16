@@ -153,6 +153,24 @@ Head to [leantime.io](https://leantime.io/) for more information.
 
 We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/).
 
+## Contributing
+
+We're excited you are interested in contributing to Leantime. We want to make sure you have a great experience contributing to Leantime and that the new features you build will make it into core. 
+<br />
+
+### Bugs
+
+Find an issue on Github (or create a new one) add your name to it or comment that you will be working on it. Once fixed, create a  Pull Request.
+
+### New Features in Core
+
+If you have an idea about new features please reach out to us on Discord. This is where we coordinate feature development and discuss whether core is the right place to add your new features (Plugins is the alternative). 
+
+### Translations
+
+We use (Crowdin)[https://crowdin.com/project/leantime](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
+
+
 ### Community Support ##
 
 * Documentation [https://docs.leantime.io](https://docs.leantime.io)

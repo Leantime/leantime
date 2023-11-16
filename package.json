@@ -34,7 +34,7 @@
     "tinymce": "5.10.8",
     "tinymce-mention": "^4.0.2",
     "tippy.js": "^6.3.7",
-    "uppy": "^3.17.0"
+    "uppy": "^3.18.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
