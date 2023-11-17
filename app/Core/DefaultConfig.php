@@ -431,6 +431,11 @@ class DefaultConfig
     public string $oidcFieldFirstName = 'given_name';
 
     /**
+     * @var string OIDC Field Last Name
+     */
+    public string $oidcFieldLastName = 'family_name';
+
+    /**
      * @var string OIDC Field Phone
      */
     public string $oidcFieldPhone= '';
