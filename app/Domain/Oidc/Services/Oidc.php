@@ -235,7 +235,7 @@ class Oidc
             $user['user'] = $user['username'];
             $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldFirstName) : $user['firstname'];
             $user['lastname'] = $this->readMultilayerKey($userInfo, $this->fieldLastName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldLastName) : $user['lastname'];
-            $user['phone'] = $this->readMultilayerKey($userInfo, $this->fieldLastName)  != "" ?  $this->readMultilayerKey($userInfo, $this->fieldLastName) : $user['phone'];
+            $user['phone'] = $this->readMultilayerKey($userInfo, $this->fieldPhone)  != "" ?  $this->readMultilayerKey($userInfo, $this->fieldPhone) : $user['phone'];
             $user['jobTitle'] = $this->readMultilayerKey($userInfo, $this->fieldJobtitle) != "" ? $this->readMultilayerKey($userInfo, $this->fieldJobtitle) : $user['jobTitle'];
             $user['jobLevel'] = $this->readMultilayerKey($userInfo, $this->fieldJoblevel) != "" ?  $this->readMultilayerKey($userInfo, $this->fieldJoblevel) : $user['jobLevel'];
             $user['department'] = $this->readMultilayerKey($userInfo, $this->fieldDepartment) != "" ? $this->readMultilayerKey($userInfo, $this->fieldDepartment) : $user['department'];
