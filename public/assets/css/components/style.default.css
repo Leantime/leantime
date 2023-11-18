@@ -975,10 +975,6 @@ a .label.feature-label:after {
     background:var(--header-gradient);
 }
 
-.headerinner {
-    margin-left: 240px;
-}
-
 
 
 .viewmore a {
@@ -1023,9 +1019,7 @@ a .label.feature-label:after {
 /*** MAIN PANEL ***/
 
 .rightpanel {
-    margin-left: 240px;
 
-    padding-top: 50px;
 }
 
 .rightpanel:after {
@@ -1042,8 +1036,6 @@ a .label.feature-label:after {
     /*border-bottom: 1px solid #ddd;
      */
     position: relative;
-    background:var(--header-bg-color);
-    background:var(--header-gradient);
 }
 
 .pageheader .padding-top {
@@ -1112,8 +1104,7 @@ a .label.feature-label:after {
 .maincontent {
     float: left;
     width: 100%;
-    background:var(--main-bg);
-    padding: 10px 20px;
+    padding: 10px 15px;
     margin-top:-95px;
 }
 

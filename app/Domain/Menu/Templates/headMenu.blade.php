@@ -4,6 +4,9 @@
 <ul class="headmenu">
 
     @dispatchEvent('afterHeadMenuOpen')
+    <li>
+        @include('menu::projectSelector')
+    </li>
 
     @include('timesheets::partials.stopwatch', [
                    'progressSteps' => $onTheClock
@@ -48,7 +51,10 @@
         >{!! __("menu.my_calendar") !!}</a>
     </li>
 
-    </li>
+</ul>
+
+<ul class="headmenu pull-right">
+
     <li class="notificationDropdown">
 
         <a

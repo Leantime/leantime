@@ -8,41 +8,47 @@
 <body>
     <div class="mainwrapper menu{{ $_SESSION['menuState'] }}">
 
-        <div class="leftpanel">
-
-            <a class="barmenu" href="javascript:void(0);">
-                <span class="fa fa-bars"></span>
-            </a>
-
-            <div class="logo">
-                <a
-                    href="{{ BASE_URL }}"
-                    style="background-image: url({{{ str_replace('http:', '', $_SESSION['companysettings.logoPath']) }}}"
-                >&nbsp;</a>
-            </div>
-
-            <div class="leftmenu">
-                @include('menu::menu')
-            </div><!-- leftmenu -->
-
-        </div><!-- leftpanel -->
 
         <div class="header">
 
             <div class="headerinner">
+                <a class="btnmenu" href="javascript:void(0);"></a>
+
+                <a class="barmenu" href="javascript:void(0);">
+                    <span class="fa fa-bars"></span>
+                </a>
+
+                <div class="logo">
+                    <a
+                        href="{{ BASE_URL }}"
+                        style="background-image: url({{{ str_replace('http:', '', $_SESSION['companysettings.logoPath']) }}}"
+                    >&nbsp;</a>
+                </div>
+
                 @include('menu::headMenu')
             </div><!-- headerinner -->
 
         </div><!-- header -->
 
-        <div class="rightpanel" style="position: relative">
-            @isset($action, $module)
-                @include("$module::$action")
-            @else
-                @yield('content')
-            @endisset
 
-            @include('global::sections.footer')
+
+        <div class="" style="position: relative">
+            <div class="leftpanel">
+                <div class="leftmenu">
+                    @include('menu::menu')
+                </div><!-- leftmenu -->
+            </div>
+            <div class="rightpanel">
+                <div class="primaryContent">
+                    @isset($action, $module)
+                        @include("$module::$action")
+                    @else
+                        @yield('content')
+                    @endisset
+                    <div class="clearfix"></div>
+                    @include('global::sections.footer')
+                </div>
+            </div>
         </div><!-- rightpanel -->
 
     </div><!-- mainwrapper -->

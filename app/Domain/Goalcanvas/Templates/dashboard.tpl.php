@@ -413,7 +413,6 @@ $goalStats = $tpl->get("goalStats");
 
     <?php } ?>
 
-    </div>
 <?php } ?>
 
 <?php /*
