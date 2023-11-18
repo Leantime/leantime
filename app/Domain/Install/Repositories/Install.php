@@ -1804,6 +1804,20 @@ namespace Leantime\Domain\Install\Repositories {
             $errors = array();
 
             $sql = [
+                "CREATE TABLE IF NOT EXISTS `zp_integration` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `providerId` VARCHAR(45) NULL,
+                      `method` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `fields` TEXT NULL,
+                      `schedule` VARCHAR(45) NULL,
+                      `notes` VARCHAR(45) NULL,
+                      `auth` TEXT NULL,
+                      `meta` VARCHAR(45) NULL,
+                      `createdOn` DATETIME NULL,
+                      `createdBy` INT NULL,
+                      PRIMARY KEY (`id`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
                 "  ALTER TABLE `zp_integration`
                     ADD COLUMN `lastSync` DATETIME NULL DEFAULT NULL",
             ];
