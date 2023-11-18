@@ -66,6 +66,24 @@ There are two main ways to install LeanTime for production. The first of which i
 * Navigate to `<yourdomain.com>/install`
 * Follow instructions to install database and set up first user account
 
+##### IIS Installation Notes #####
+
+Whilst the steps above are applicable to Internet Information Services (IIS), there is an additional configuration change that may be required in IIS to ensure full functionality - you need to allow the PATCH method:
+
+* Open IIS
+* Expand the server and sites on the left and select the LeanTime site
+* Double click on `Handler Mappings`
+* Double click on the PHP handler mapping that is used by the site
+* Click `Request Restrictions…`
+* Click the `Verbs` tab
+* In the `One of the following verbs` text box, add `,PATCH` - for example: `GET,HEAD,POST,PATCH`
+* Click `OK`
+* In the `Executable (optional)` text box, put a double quote character (`“`) at the start and at the end of the path to the `php-cgi.exe` file (_this isn't needed if the path doesn't have a space in it_)
+* Click `OK`
+* A popup will appear asking if you want to create a FastCGI application - click `Yes`
+
+Note: You may need to repeat this when you upgrade PHP.
+
 #### Production Installation via Docker ####
 
 We maintain an official <a href="https://hub.docker.com/r/leantime/leantime">Docker image on dockerhub</a>. 
@@ -152,6 +170,24 @@ Head to [leantime.io](https://leantime.io/) for more information.
 ## 🤙 Need technical support? ##
 
 We can help you set up Leantime in your environment and customize it to your needs. Our support plans are [outlined on our website](https://leantime.io/priority-support/).
+
+## Contributing
+
+We're excited you are interested in contributing to Leantime. We want to make sure you have a great experience contributing to Leantime and that the new features you build will make it into core. 
+<br />
+
+### Bugs
+
+Find an issue on Github (or create a new one) add your name to it or comment that you will be working on it. Once fixed, create a  Pull Request.
+
+### New Features in Core
+
+If you have an idea about new features please reach out to us on Discord. This is where we coordinate feature development and discuss whether core is the right place to add your new features (Plugins is the alternative). 
+
+### Translations
+
+We use (Crowdin)[https://crowdin.com/project/leantime](https://crowdin.com/project/leantime) to manage all of our translations. If you don't see a language please message us on Discord. 
+
 
 ### Community Support ##
 
