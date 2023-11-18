@@ -84,7 +84,7 @@ class Session
         setcookie("sid", self::$sid, [
             'expires' => time() + $config->sessionExpiration,
             'path' => '/',
-            'samesite' => 'lax',
+            'SameSite' => 'Lax',
             'secure' => true,
         ]);
     }

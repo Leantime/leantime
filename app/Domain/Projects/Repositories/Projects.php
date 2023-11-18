@@ -187,7 +187,6 @@ namespace Leantime\Domain\Projects\Repositories {
 				    project.type,
 				    project.parent,
 				    project.modified,
-					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
 					parent.id AS parentId,
@@ -198,7 +197,6 @@ namespace Leantime\Domain\Projects\Repositories {
 				LEFT JOIN zp_relationuserproject AS relation ON project.id = relation.projectId
 				LEFT JOIN zp_projects as parent ON parent.id = project.parent
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				LEFT JOIN zp_user as `user` ON relation.userId = user.id
 				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId
 				                                          AND favorite.module = 'project'

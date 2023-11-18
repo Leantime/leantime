@@ -526,7 +526,7 @@ class Language
             $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
 
             if (is_object($timestamp)) {
-                return date("Y-m-d 00:00:00", $timestamp->getTimestamp());
+                return date("Y-m-d 23:59:59", $timestamp->getTimestamp());
             }
         }
 
