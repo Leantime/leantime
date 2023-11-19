@@ -6,7 +6,6 @@
 /* background */
 
 body.loginpage,
-.header,
 .leftmenu .nav-tabs.nav-stacked > li.active > a,
 .leftmenu .nav-tabs.nav-stacked > li.active > a:hover,
 .shortcuts li a,
@@ -284,7 +283,7 @@ div.tagsinput {
 
 body .tox .tox-edit-area__iframe,
 body .tox .tox-toolbar-overlord{
-    background-color:var(--secondary-background);
+    background-color:transparent;
 }
 
 

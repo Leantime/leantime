@@ -19,16 +19,6 @@ foreach ($__data as $var => $val) {
     $allTicketGroups = $tpl->get("allTickets");
 
 
-
-    //Count Columns to show
-    $numberofColumns = count($tpl->get('allKanbanColumns'));
-
-if ($numberofColumns > 0) {
-    $size = floor(100 / $numberofColumns);
-} else {
-    $size = 100;
-}
-
 ?>
 
 <?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
@@ -70,13 +60,14 @@ if ($numberofColumns > 0) {
             display: flex;
             position: sticky;
             top: 50px;
-            background: var(--secondary-background);
+            justify-content: flex-start;
             z-index: 9;
             ">
         <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
-            <div class="column" style="width:<?=$size?>%;">
+            <div class="column">
 
                 <h4 class="widgettitle title-primary title-border-<?php echo $statusRow['class']; ?>">
+
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                         <div class="inlineDropDownContainer" style="float:right;">
                             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
@@ -90,27 +81,31 @@ if ($numberofColumns > 0) {
                             </ul>
                         </div>
                     <?php } ?>
+
                     <strong class="count">0</strong>
-                    <?php $tpl->e($statusRow['name']); ?></h4>
-                <div class="contentInner <?php echo"status_" . $key;?>" >
-                    <div>
-                        <a href="javascript:void(0);" class="quickAddLink" id="ticket_new_link_<?=$key?>" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();}); jQuery(this).toggle('fast');"><i class="fas fa-plus-circle"></i> <?php echo $tpl->__("links.add_todo_no_icon"); ?></a>
-                        <div class="ticketBox hideOnLoad " id="ticket_new_<?=$key?>" style="padding:10px">
+                    <?php $tpl->e($statusRow['name']); ?>
+                    <a href="javascript:void(0);" class="" id="ticket_new_link_<?=$key?>" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();});"><i class="fas fa-plus-circle"></i></a>
 
-                            <form method="post">
-                                <input type="text" name="headline" style="width:100%;" title="<?=$tpl->__("label.headline") ?>"/><br />
-                                <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
-                                <input type="hidden" name="status" value="<?php echo $key; ?> " />
-                                <input type="hidden" name="sprint" value="<?php echo $_SESSION["currentSprint"]; ?> " />
-                                <input type="submit" value="Save" name="quickadd" />
-                                <a href="javascript:void(0);" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast'); jQuery('#ticket_new_link_<?=$key?>').toggle('fast');">
-                                    <?=$tpl->__("links.cancel") ?>
-                                </a>
-                            </form>
+                </h4>
 
-                            <div class="clearfix"></div>
-                        </div>
+                <div class="">
+
+                     <div class="hideOnLoad " id="ticket_new_<?=$key?>" style="padding-top:5px;">
+
+                        <form method="post">
+                            <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
+                            <input type="hidden" name="milestone" value="<?php echo $searchCriteria['milestone']; ?>" />
+                            <input type="hidden" name="status" value="<?php echo $key; ?> " />
+                            <input type="hidden" name="sprint" value="<?php echo $_SESSION["currentSprint"]; ?> " />
+                            <input type="submit" value="Save" name="quickadd" />
+                            <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast');">
+                                <?=$tpl->__("links.cancel") ?>
+                            </a>
+                        </form>
+
+                        <div class="clearfix"></div>
                     </div>
+
                 </div>
             </div>
         <?php } ?>
@@ -135,7 +130,7 @@ if ($numberofColumns > 0) {
                         <div class="row-fluid">
 
                         <?php foreach ($tpl->get('allKanbanColumns') as $key => $statusRow) { ?>
-                            <div class="column" style="width:<?=$size?>%;">
+                            <div class="column">
                                 <div class="contentInner <?php echo"status_" . $key;?>" >
                                     <?php foreach ($allTickets as $row) { ?>
                                         <?php if ($row["status"] == $key) {?>

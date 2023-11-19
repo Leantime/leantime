@@ -1,6 +1,6 @@
 
 <a href="javascript:void(0);"
-   class="dropdown-toggle bigProjectSelector"
+   class="dropdown-toggle bigProjectSelector {{ $menuType == "project" ? "active" : "" }}"
    data-toggle="dropdown">
     <span class="projectAvatar {{ $currentProjectType }}">
         @if(isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != "avatar")

@@ -33,7 +33,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
-    padding: 7px;
+    padding: 6px 12px;
     color:var(--primary-font-color);
 }
 
@@ -52,7 +52,7 @@ body div.tagsinput {
     color:var(--primary-font-color);
     font-family: var(--primary-font-family);
     width:100% !important;
-    height:35px !important;
+    height:31px !important;
     border-radius:var(--element-radius);
     box-shadow: none;
     border:0px;
@@ -159,7 +159,7 @@ a.btn-default,
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 4px 12px;
+    padding: 6px 12px;
     line-height:21px;
     background: var(--secondary-action-bg);
     text-shadow: none;
@@ -230,7 +230,7 @@ input[type='submit'],
     outline:0;
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 4px 12px;
+    padding: 6px 12px;
     line-height:21px;
     box-shadow:none;
     text-shadow: none;
@@ -282,7 +282,7 @@ body input[type='submit'].btn-primary .caret,
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
-    padding: 7px;
+    padding: 6px 12px;
     color:var(--primary-font-color);
 }
 
@@ -546,7 +546,7 @@ a:link.btn{
 
 select,
 .row-fluid [class*="span"] select {
-    min-height: 29px;
+    min-height: 35px;
 }
 
 .row-fluid.marginBottom,
@@ -589,7 +589,7 @@ select,
 
 .chosen-container-multi .chosen-choices .search-field input {
     height: auto;
-    padding: 4px 12px;
+    padding: 6px 12px;
 }
 
 .chosen-container-single .chosen-search input {
@@ -672,7 +672,7 @@ input[type=color] {
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: 3px;
-    padding: 4px 12px;
+    padding: 6px 12px;
     color:var(--primary-font-color);
 }
 
@@ -726,6 +726,7 @@ body div.tagsinput.readonly {
     padding:0px;
     border:0px !important;
     height:auto !important;
+    background:none;
 }
 
 body .ticketBox div.tagsinput.readonly {
@@ -821,7 +822,7 @@ input.secretInput:active {
     border:1px solid var(--main-action-bg);
     font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
-    padding:4px 12px;
+    padding: 6px 12px;
     line-height: 21px;
     border-radius: var(--element-radius);
     vertical-align: top;
@@ -1187,4 +1188,179 @@ input[type=text].simpleColorPicker {
 
 body .croppie-container {
     height:auto;
+}
+
+
+.form-group {
+    clear:both;
+}
+
+.maincontent .chosen-container .chosen-results li {
+    margin-bottom:2px;
+    list-style-type:none;
+    padding:5px;
+}
+
+.maincontent .chosen-container .chosen-results li span,
+.maincontent .chosen-container .chosen-single span{
+    margin-left:0px !important;
+}
+
+.maincontent .chosen-container .chosen-results li span:after,
+.maincontent .chosen-container .chosen-single span:after{
+    border-color:transparent;
+}
+
+
+.stdform p, .stdform div.par {
+    margin: 20px 0;
+}
+
+.stdform span.field, .stdform div.field {
+    display: block;
+    position: relative;
+}
+
+.stdform .formwrapper {
+    display: block;
+    padding-top: 5px;
+    margin-left: 220px;
+    line-height: 25px;
+}
+
+.stdform label {
+    float: left;
+    width: 150px;
+    text-align: left;
+    padding: 5px 20px 0 0;
+}
+
+.stdform label.error {
+    float: none;
+    display: block;
+    font-size: var(--base-font-size);
+    color: var(--dark-red);
+    text-align: left;
+    padding: 0;
+    width: auto;
+}
+
+.stdform label.valid {
+    color: var(--green);
+}
+
+.stdform small.desc {
+    font-size: var(--base-font-size);
+    color: #999;
+    font-style: italic;
+    display: block;
+    margin: 5px 0 0 220px;
+}
+
+.stdform .stdformbutton {
+}
+
+.stdform #spinner.input-small {
+    width: 100px;
+}
+
+.stdform2 p, .stdform2 div.par {
+    border-top: 1px solid #ddd;
+    background: #fcfcfc;
+    margin: 0;
+    clear: both;
+}
+
+.stdform2 div.terms {
+    border: 0;
+    background: none;
+}
+
+.stdform2 p:first-child, .stdform2 div.par:first-child {
+    border-top: 0;
+}
+
+.stdform2 label {
+    display: inline-block;
+    padding: 15px 0 0 15px;
+    vertical-align: top;
+    text-align: left;
+    font-weight: bold;
+}
+
+.stdform2 label.error {
+    margin-left: 0;
+    padding: 0;
+}
+
+.stdform2 label small {
+    font-size: var(--base-font-size);
+    color: #999;
+    display: block;
+    font-weight: normal;
+    line-height: 16px;
+}
+
+.stdform2 span.field, .stdform2 div.field {
+    margin-left: 220px;
+    display: block;
+    background: #fff;
+    padding: 15px;
+    border-left: 1px solid #ddd;
+}
+
+.stdform2 .stdformbutton {
+    margin-left: 0;
+    padding: 15px;
+    background: #fff;
+}
+
+.stdform2 input {
+    margin: 0;
+}
+
+.stdform2 input[type=checkbox], .stdform2 input[type=radio] {
+    margin: 10px;
+}
+
+.dualselect {
+    margin-left: 220px;
+    display: block;
+}
+
+.dualselect select {
+    height: 200px;
+    width: 40%;
+    padding: 0;
+    outline: none;
+}
+
+.dualselect select option {
+    padding: 4px 5px;
+    margin: 0;
+    white-space: normal;
+}
+
+.dualselect .ds_arrow {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 60px;
+    margin: 0 10px;
+}
+
+.dualselect .ds_arrow button {
+    margin-top: -1px;
+}
+
+.counter {
+    display: block;
+    font-size: var(--base-font-size);
+}
+
+.warning {
+    color: var(--yellow);
+}
+
+.exceeded {
+    color: var(--dark-red);
 }

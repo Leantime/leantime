@@ -1,7 +1,14 @@
+.mainwrapper .mce-tinymce {
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+body.mce-content-body{
+    background:var(--layered-background);
+}
 
 .mce-content-body  {
     font-size:var(--base-font-size);
-    background:var(--secondary-background);
     max-width:760px;
     text-align:left;
 }
@@ -76,8 +83,8 @@ body .tox .tox-edit-area{
 }
 
 body .tox .tox-toolbar__primary {
-    background:var(--col-title-bg);
-    border-radius:20px;
+    background:var(--neutral-background);
+    border-radius:10px 10px 0px 0px;
 }
 
 .tox-statusbar {
@@ -86,6 +93,8 @@ body .tox .tox-toolbar__primary {
 
 body .tox-tinymce {
     border:0px;
+    border-radius:10px 10px 0px 0px;
+    box-shadow:var(--min-shadow);
 }
 
 body .tox-editor-header {

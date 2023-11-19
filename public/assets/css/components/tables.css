@@ -1,3 +1,7 @@
+.table thead th.right, .table tr td.right {
+    text-align: right;
+}
+
 .table th {
     font-weight: normal;
     text-transform: uppercase;
@@ -18,10 +22,13 @@
 }
 
 .table .con0 {
-    background: var(--content-bg);
 }
 
 .table .con1 {
+}
+
+.table tr.even {
+    background:var(--col-row-striped);
 }
 
 .table-bordered th,
@@ -253,18 +260,36 @@
     border-right:1px solid var(--secondary-background);
 }
 
+.maincontentinner .listStyleTable td {
+    border-right:0px;
+}
+
 .maincontentinner table.fc-scrollgrid td,
 .maincontentinner table.fc-scrollgrid th{
     padding:0px;
+    background: var(--layered-background);
 }
+
+.maincontentinner table.fc-scrollgrid th.fc-col-header-cell {
+    background: var(--col-title-bg);
+}
+
+.maincontentinner table.fc-scrollgrid th.fc-col-header-cell:first-child {
+    border-top-left-radius:var(--box-radius);
+}
+
+.maincontentinner table.fc-scrollgrid th.fc-col-header-cell:last-child {
+    border-top-right-radius:var(--box-radius);
+}
+
 
 .maincontentinner table.fc-scrollgrid th {
-    padding:2px;
+    padding:0px;
+    border-radius: 5px 5px 0px 0px;
 }
 
-.maincontentinner .table td input {
-    margin-bottom:0px;
-    padding:3px 7px;
+.maincontentinner table.fc-scrollgrid th .fc-scrollgrid-sync-inner {
+    padding:5px 0px;
 }
 
 .dataTable tr:hover {
@@ -386,19 +411,17 @@
     border-color: var(--neutral);
     border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
-    padding: 3px 12px;
-    line-height: 20px;
+    padding: 4px 12px;
+    line-height: 21px;
     text-align: center;
     vertical-align: baseline;
     cursor: pointer;
     color: var(--secondary-action-color);
     background: var(--secondary-action-bg);
     text-shadow: none;
-    line-height:20px;
 }
 
 .maincontentinner .dt-buttons>.dt-button span {
-    line-height:20px;
 }
 
 .maincontentinner .dt-buttons>.dt-button:hover {
@@ -565,5 +588,20 @@ table td{
 
 .ticketTable .ticketModal {
     font-weight:bold;
+}
+
+.dt-button-down-arrow {
+    font-size:0px;
+}
+
+.dt-button-down-arrow:before {
+    font-family: "Font Awesome 6 Free";
+    content: "\f0d7";
+    font-size: var(--font-size-m);
+    margin-left: 5px;
+}
+
+table.fc-multimonth-header-table {
+    border:0px;
 }
 

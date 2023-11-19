@@ -101,7 +101,7 @@
                         @endswitch
                     @endforeach
 
-                    @if ($login::userIsAtLeast(Roles::$manager))
+                    @if ($login::userIsAtLeast(Roles::$manager) && $menuType != 'company' && $menuType != 'personal')
                         <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
                             <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ $_SESSION['currentProject'] }}">
                                 {!! $settingsLink['label']  !!}

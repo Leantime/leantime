@@ -18,7 +18,7 @@
     box-sizing: border-box;
     height:auto;
     padding:5px;
-    flex:0 0 auto;
+    flex:1;
     min-width:150px;
 }
 
@@ -375,7 +375,7 @@ body .maincontent .priority-text-5 a:link {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: linear-gradient(transparent, var(--kanban-card-bg) 80% 100%);
+
 }
 
 .kanbanLane {

@@ -104,7 +104,35 @@ namespace Leantime\Domain\Menu\Repositories {
                     ],
                 ],
             ],
+            'personal' => [
+                5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
+                10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_projects', 'icon' => 'fa fa-briefcase', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
+                15 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
+                20 => ['type' => 'item', 'module' => 'calendar', 'title' => 'menu.sidemenu_my_calendar', 'icon' => 'fa fa-calendar', 'tooltip' => 'menu.my_calendar_tooltip', 'href' => '/calendar/showMyCalendar', 'active' => ['showMyCalendar']],
+            ],
+            "company" => [
+                10 => [
+                    'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'manager',
+                    'submenu' => [
+                        5 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
+                        10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
+                        15 => ['type' => 'item', 'module' => 'clients', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
+                        20 => ['type' => 'item', 'module' => 'users', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
+                    ],
+                ],
+                15 => [
+                    'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'role' => 'administrator',
+                    'submenu' => [
+                        5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.plugins', 'icon' => 'fa fa-fw fa-pluge', 'tooltip' => 'menu.plugins_tooltip', 'href' => '/plugins/show', 'active' => ['show']],
+                        10 => ['type' => 'item', 'module' => 'connector', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
+                        15 => ['type' => 'item', 'module' => 'setting', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
+                    ],
+                ],
+            ]
         ];
+
+
+        private array $companyMenuStructure = [];
 
         private LanguageCore $language;
         private EnvironmentCore $config;
@@ -174,7 +202,7 @@ namespace Leantime\Domain\Menu\Repositories {
         public function setSubmenuState(string $submenu, string $state): void
         {
 
-            if(isset($_SESSION['submenuToggle']) && is_array($_SESSION['submenuToggle']) && $submenu !== false) {
+            if (isset($_SESSION['submenuToggle']) && is_array($_SESSION['submenuToggle']) && $submenu !== false) {
                 $_SESSION['submenuToggle'][$submenu] = $state;
             }
 
@@ -346,6 +374,34 @@ namespace Leantime\Domain\Menu\Repositories {
             }
 
             return $url;
+        }
+
+        public function getSectionMenuType($currentRoute, $default = "default")
+        {
+
+            $sections = [
+                "dashboard.home" => "personal",
+                "projects.showMy" => "personal",
+                "timesheets.showMy" => "personal",
+                "calendar.showMyCalendar" => "personal",
+                "calendar.showMyList" => "personal",
+                "tickets.roadmapAll" => "personal",
+                "tickets.showAllMilestonesOverview" => "personal",
+                "users.editOwn" => "personal",
+                "setting.editCompanySettings" => "company",
+                "timesheets.showAll" => "company",
+                "projects.showAll" => "company",
+                "clients.showAll" => "company",
+                "users.showAll" => "company",
+                "plugins.show" => "company",
+                "connector.show" => "company",
+            ];
+
+            if (isset($sections[$currentRoute])) {
+                return $sections[$currentRoute];
+            } else {
+                return $default;
+            }
         }
     }
 

@@ -38,13 +38,15 @@ class HeadMenu extends Composer
         TimesheetService $timesheets,
         UserService $userService,
         AuthService $authService,
-        Helper $helperService
+        Helper $helperService,
+        \Leantime\Domain\Menu\Repositories\Menu $menuRepo
     ): void {
         $this->notificationService = $notificationService;
         $this->timesheets = $timesheets;
         $this->userService = $userService;
         $this->authService = $authService;
         $this->helperService = $helperService;
+        $this->menuRepo = $menuRepo;
     }
 
     /**
@@ -69,6 +71,8 @@ class HeadMenu extends Composer
         $totalMentionCount =
         $totalNewMentions =
         $totalNewNotifications = 0;
+
+        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), "project");
 
         foreach ($notifications as $notif) {
             if ($notif['type'] == 'mention') {
@@ -102,6 +106,7 @@ class HeadMenu extends Composer
             'totalMentionCount' => $totalMentionCount,
             'totalNewMentions' => $totalNewMentions,
             'totalNewNotifications' => $totalNewNotifications,
+            'menuType' => $menuType,
             'notifications' => $notifications ?? [],
             'onTheClock' => isset($_SESSION['userdata']) ? $this->timesheets->isClocked($_SESSION["userdata"]["id"]) : false,
             'activePath' => FrontcontrollerCore::getCurrentRoute(),
