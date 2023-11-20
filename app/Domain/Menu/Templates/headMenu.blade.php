@@ -1,46 +1,11 @@
 @php use Leantime\Domain\Auth\Models\Roles; @endphp
 @dispatchEvent('beforeHeadMenu')
 
-<ul class="headmenu">
-
-    @dispatchEvent('afterHeadMenuOpen')
-    <li>
-        @include('menu::projectSelector')
-    </li>
+<ul class="headmenu pull-right">
 
     @include('timesheets::partials.stopwatch', [
-                   'progressSteps' => $onTheClock
-               ])
-    <li>
-        <a
-            href="{{ BASE_URL }}/dashboard/home"
-            @if ($menuType == 'personal')
-                class="active"
-            @endif
-            data-tippy-content="{{ __('popover.my_work') }}"
-        >{!! __('menu.my_work') !!}</a>
-    </li>
-    @if ($login::userIsAtLeast("manager"))
-        <li>
-            <a
-                href="{{ BASE_URL }}/setting/editCompanySettings/"
-                @if ($menuType == 'company')
-                    class="active"
-                @endif
-                data-tippy-content="{{ __('popover.company') }}"
-            >{!! __('menu.company') !!}</a>
-        </li>
-    @endif
-
-
-
-
-
-
-
-</ul>
-
-<ul class="headmenu pull-right">
+               'progressSteps' => $onTheClock
+           ])
 
     <li class="notificationDropdown">
 
@@ -157,6 +122,37 @@
     @dispatchEvent('beforeHeadMenuClose')
 
 </ul>
+
+<ul class="headmenu">
+
+    @dispatchEvent('afterHeadMenuOpen')
+    <li>
+        @include('menu::projectSelector')
+    </li>
+    <li>
+        <a
+            href="{{ BASE_URL }}/dashboard/home"
+            @if ($menuType == 'personal')
+                class="active"
+            @endif
+            data-tippy-content="{{ __('popover.my_work') }}"
+        >{!! __('menu.my_work') !!}</a>
+    </li>
+    @if ($login::userIsAtLeast("manager"))
+        <li>
+            <a
+                href="{{ BASE_URL }}/setting/editCompanySettings/"
+                @if ($menuType == 'company')
+                    class="active"
+                @endif
+                data-tippy-content="{{ __('popover.company') }}"
+            >{!! __('menu.company') !!}</a>
+        </li>
+    @endif
+
+</ul>
+
+
 
 @dispatchEvent('afterHeadMenu')
 

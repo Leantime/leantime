@@ -44,6 +44,9 @@ min-width: 1200px
         display:none;
     }
 
+    .mainwrapper.menuclosed .headmenu {
+        margin-left: 15px;
+    }
 
 
     .col-md-4 > .pull-right,

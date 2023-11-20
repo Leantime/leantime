@@ -29,12 +29,8 @@ body {
 }
 
 body.loginpage {
-    background: var(--primary-color);
+    background: var(--main-bg);
 }
-
-
-
-
 
 /* TOOLS */
 .f-right {

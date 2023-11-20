@@ -341,13 +341,13 @@ body {
     margin-left: 91.666667%
 }
 
-.rightpanel {
-
+.mainwrapper {
     background:var(--header-gradient);
+}
 
+.rightpanel {
     background-size: contain;
     background-position: bottom;
-
     padding-top:50px;
     min-height: 100vh;
 }
@@ -364,16 +364,12 @@ body {
 }
 
 .primaryContent {
-
-    /* background: linear-gradient(var(--primary-background), var(--primary-background));
-     background-size: auto calc(100% - 250px);
-     background-repeat: no-repeat;
-     background-position: bottom;
-     background-attachment: fixed;*/
+    background: rgba(255,255,255, 0.1);
 
 
     padding-left:255px;
     padding-top:10px;
+    padding-bottom:10px;
 
 }
 
