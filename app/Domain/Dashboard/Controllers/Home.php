@@ -140,7 +140,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
                         $projectResults[$i]['progress'] = $this->projectsService->getProjectProgress($project['id']);
 
                         $fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
-
                         $projectResults[$i]['report'] = $fullReport;
 
                         $i++;
@@ -149,6 +148,17 @@ namespace Leantime\Domain\Dashboard\Controllers {
             }
 
             $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
+
+            $dashboardGrid = $this->settingRepo->getSetting("usersettings.". $_SESSION['userdata']['id'] . ".dashboardGrid");
+            $unserializedData =  unserialize($dashboardGrid);
+            $unserializedData = array_sort($unserializedData, function($a, $b) {
+
+                $first = intval($a['y'].$a['x']);
+                $second = intval(($b['y'] ?? 0).($b['x'] ?? 0));
+                return $first - $second;
+            });
+            $this->tpl->assign("dashboardGrid", $unserializedData);
+
 
             $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
             $this->tpl->assign("completedOnboarding", $completedOnboarding);
@@ -177,6 +187,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
          */
         public function post(mixed $params): void
         {
+
+            if(isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '' ) {
+                $this->settingRepo->saveSetting("usersettings.". $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
+                return;
+            }
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
                 if (isset($params['quickadd'])) {

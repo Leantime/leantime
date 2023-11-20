@@ -346,6 +346,8 @@ foreach ($__data as $var => $val) {
 
 <script type="text/javascript">
 
+    jQuery(document).ready(function(){
+
     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.ticketsController.initUserDropdown();
         leantime.ticketsController.initMilestoneDropdown();
@@ -364,7 +366,7 @@ foreach ($__data as $var => $val) {
 
     leantime.ticketsController.setUpKanbanColumns();
 
-    jQuery(document).ready(function(){
+
 
 
 

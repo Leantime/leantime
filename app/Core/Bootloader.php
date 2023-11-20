@@ -309,21 +309,6 @@ class Bootloader
     }
 
     /**
-     * Redirect to update
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    private function redirectToUpdate(): void
-    {
-        $frontController = $this->app->make(Frontcontroller::class);
-
-        if (! in_array($frontController::getCurrentRoute(), ['install.update', 'api.i18n'])) {
-            $frontController::redirect(BASE_URL . '/install/update');
-        }
-    }
-
-    /**
      * Check if Leantime is updated
      *
      * @return bool

@@ -1550,6 +1550,54 @@ namespace Leantime\Domain\Tickets\Services {
                 'searchParams' => $searchUrlString,
             );
         }
+
+        public function getToDoWidgetAssignments($params) {
+
+            $projectFilter = "";
+            if (isset($_SESSION['userHomeProjectFilter'])) {
+                $projectFilter = $_SESSION['userHomeProjectFilter'];
+            }
+
+            if (isset($params['projectFilter'])) {
+                $projectFilter = $params['projectFilter'];
+                $_SESSION['userHomeProjectFilter'] = $projectFilter;
+            }
+
+            $groupBy = "time";
+            if (isset($_SESSION['userHomeGroupBy'])) {
+                $groupBy = $_SESSION['userHomeGroupBy'];
+            }
+
+            if (isset($params['groupBy'])) {
+                $groupBy = $params['groupBy'];
+                $_SESSION['userHomeGroupBy'] = $groupBy;
+            }
+
+            if ($groupBy == "time") {
+                $tickets = $this->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
+            } elseif ($groupBy == "project") {
+                $tickets = $this->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
+            }
+
+            $onTheClock = $this->timesheetService->isClocked($_SESSION["userdata"]["id"]);
+            $effortLabels = $this->getEffortLabels();
+            $priorityLabels = $this->getPriorityLabels();
+            $ticketTypes = $this->getTicketTypes();
+            $statusLabels = $this->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]);
+            $projectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+
+            return array(
+                'tickets' => $tickets,
+                'onTheClock' => $onTheClock,
+                'efforts' => $effortLabels,
+                'priorities' => $priorityLabels,
+                'ticketTypes' =>  $ticketTypes,
+                'statusLabels' => $statusLabels,
+                'milestones' => $projectMilestones,
+                'allAssignedprojects' => $allAssignedprojects,
+            );
+        }
     }
 
 }

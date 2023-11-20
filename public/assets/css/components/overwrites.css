@@ -404,3 +404,8 @@ body hr {
 .tippy-arrow {
     color:var(--secondary-action-hover-bg);
 }
+
+
+.ui-resizable-se {
+    opaciy:0.5
+}

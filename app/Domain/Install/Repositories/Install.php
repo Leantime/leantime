@@ -5,8 +5,8 @@ namespace Leantime\Domain\Install\Repositories {
     use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\AppSettings;
-    use Leantime\Core\Environment;
     use Leantime\Domain\Setting\Repositories\Setting;
+    use Leantime\Core\Environment;
     use PDO;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use PDOException;

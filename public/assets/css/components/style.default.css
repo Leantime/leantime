@@ -2507,6 +2507,10 @@ h3.todaysDate {
     z-index:5;
 }
 
+.minCalendar .fc .fc-multimonth {
+    height:100%;
+}
+
 .minCalendar .fc .fc-multimonth,
 .minCalendar .fc-theme-standard td, .fc-theme-standard th{
     border:none;
@@ -2593,7 +2597,6 @@ h3.todaysDate {
     margin-right:5px;
     padding:0px;
 
-
 }
 
 .profileImage img {
@@ -2671,10 +2674,6 @@ h3.todaysDate {
 }
 
 .htmx-request .htmx-loaded-content {
-    display: none;
-}
-
-.htmx-request.htmx-loaded-content {
     display: none;
 }
 
