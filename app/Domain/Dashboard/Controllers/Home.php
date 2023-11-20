@@ -150,13 +150,19 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
 
             $dashboardGrid = $this->settingRepo->getSetting("usersettings.". $_SESSION['userdata']['id'] . ".dashboardGrid");
-            $unserializedData =  unserialize($dashboardGrid);
-            $unserializedData = array_sort($unserializedData, function($a, $b) {
 
-                $first = intval($a['y'].$a['x']);
-                $second = intval(($b['y'] ?? 0).($b['x'] ?? 0));
-                return $first - $second;
-            });
+            $unserializedData = "{}";
+
+            if($dashboardGrid && $dashboardGrid != ''){
+                $unserializedData =  unserialize($dashboardGrid);
+                $unserializedData = array_sort($unserializedData, function($a, $b) {
+
+                    $first = intval($a['y'].$a['x']);
+                    $second = intval(($b['y'] ?? 0).($b['x'] ?? 0));
+                    return $first - $second;
+                });
+            }
+
             $this->tpl->assign("dashboardGrid", $unserializedData);
 
 

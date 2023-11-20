@@ -56,7 +56,7 @@ mix
         "./node_modules/tether-shepherd/dist/js/tether.js",
         "./node_modules/tether-shepherd/dist/js/shepherd.js",
         "./node_modules/isotope-layout/dist/isotope.pkgd.js",
-        "./node_modules/gridstack/dist/es5/gridstack-all.js",
+        "./node_modules/gridstack/dist/gridstack-all.js",
         "./node_modules/jstree/dist/jstree.js",
         "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
         "./node_modules/leader-line/leader-line.min.js",

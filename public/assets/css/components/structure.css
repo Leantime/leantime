@@ -365,7 +365,7 @@ body {
 
 .primaryContent {
     background: rgba(255,255,255, 0.1);
-
+    min-height:100vh;
 
     padding-left:255px;
     padding-top:10px;
