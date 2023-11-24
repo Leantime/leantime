@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Date;
 use Leantime\Domain\Reports\Repositories\Reports;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Core\Eventhelpers;
+use Leantime\Core\ApiRequest;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 /**
@@ -81,9 +82,9 @@ class Language
     public Theme $themeCore;
 
     /**
-     * @var Apirequest $apiRequest
+     * @var ApiRequest $apiRequest
      */
-    public Apirequest $apiRequest;
+    public ApiRequest $apiRequest;
 
     /**
      * @var string $theme
@@ -95,13 +96,13 @@ class Language
      *
      * @param Environment $config
      * @param Setting     $settingsRepo
-     * @param Apirequest  $apiRequest
+     * @param ApiRequest  $apiRequest
      * @throws BindingResolutionException
      */
     public function __construct(
         Environment $config,
         Setting $settingsRepo,
-        Apirequest $apiRequest,
+        ApiRequest $apiRequest,
     ) {
 
         $this->config = $config;
