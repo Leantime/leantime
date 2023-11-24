@@ -60,7 +60,7 @@ namespace Leantime\Domain\Sprints\Repositories {
          * @param $projectId
          * @return array
          */
-        public function getAllSprints($projectId): array
+        public function getAllSprints($projectId = null): array
         {
 
 
@@ -70,12 +70,20 @@ namespace Leantime\Domain\Sprints\Repositories {
 					zp_sprints.projectId,
 					zp_sprints.startDate,
 					zp_sprints.endDate
-				FROM zp_sprints
-				WHERE zp_sprints.projectId = :id
-				ORDER BY zp_sprints.startDate DESC";
+				FROM zp_sprints";
+
+
+            if ($projectId != null) {
+                $query .= " WHERE zp_sprints.projectId = :id";
+            }
+            $query .= " ORDER BY zp_sprints.startDate DESC";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
+
+            if ($projectId != null) {
+                $stmn->bindValue(':id', $projectId, PDO::PARAM_INT);
+            }
+
             $stmn->execute();
 
             $value = $stmn->fetchAll(PDO::FETCH_CLASS, "Leantime\Domain\Sprints\Models\Sprints");
