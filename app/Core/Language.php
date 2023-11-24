@@ -81,6 +81,11 @@ class Language
     public Theme $themeCore;
 
     /**
+     * @var Apirequest $apiRequest
+     */
+    public Apirequest $apiRequest;
+
+    /**
      * @var string $theme
      */
     public string $theme;
@@ -90,16 +95,19 @@ class Language
      *
      * @param Environment $config
      * @param Setting     $settingsRepo
+     * @param Apirequest  $apiRequest
      * @throws BindingResolutionException
      */
     public function __construct(
         Environment $config,
         Setting $settingsRepo,
+        Apirequest $apiRequest,
     ) {
 
         $this->config = $config;
         $this->themeCore = app()->make(Theme::class);
         $this->theme = $this->themeCore->getActive();
+        $this->apiRequest = $apiRequest;
 
         //Get list of available languages
         if (isset($_SESSION['cache.langlist'])) {
@@ -435,6 +443,13 @@ class Language
     public function getFormattedDateString(string|DateTime $date): string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
+            if ($this->apiRequest->isApiRequest()) {
+                if (is_string($date)) {
+                    $date = new DateTime($date);
+                }
+
+                return $date->format(DateTime::ATOM);
+            }
             $formats = $this->getCustomDateTimeFormat();
             $dateFormat = $formats['date'];
 
