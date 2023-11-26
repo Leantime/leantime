@@ -110,7 +110,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                     $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
-                    $this->tpl->setNotification($this->language->__("notification.board_edited"), "success", "ideaboard_edited");
+                    $this->tpl->setNotification($this->language->__("notification.board_edited"), "success", "idea_board_edited");
                     $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');

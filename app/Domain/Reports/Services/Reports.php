@@ -191,7 +191,7 @@ namespace Leantime\Domain\Reports\Services {
                 $this->settings->saveSetting("companysettings.telemetry.anonymousId", $companyId);
             }
 
-            self::dispatch_event("beforeTelemetrySend", $companyId);
+            self::dispatch_event("beforeTelemetrySend", array("companyId" => $companyId));
 
             $companyLang = $this->settings->getSetting("companysettings.language");
             if ($companyLang != "" && $companyLang !== false) {
@@ -273,7 +273,7 @@ namespace Leantime\Domain\Reports\Services {
 
 
             if (isset($_SESSION['skipTelemetry']) && $_SESSION['skipTelemetry'] === true) {
-                //return false;
+                return false;
             }
 
             //Only send once a day

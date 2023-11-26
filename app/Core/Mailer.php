@@ -336,7 +336,7 @@ class Mailer
                     'inlineLogoContent' => $inlineLogoContent,
                     'headline' => $this->language->__('email_notifications.hi'),
                     'content' => $this->nl2br ? nl2br($this->html) : $this->html,
-                    'unsub_link' => sprintf($this->language->__('email_notification.unsubscribe'), BASE_URL . '/users/editOwn/'),
+                    'unsub_link' => sprintf($this->language->__('email_notifications.unsubscribe'), BASE_URL . '/users/editOwn/'),
                 ]
             )
         );
