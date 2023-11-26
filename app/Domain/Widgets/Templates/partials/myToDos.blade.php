@@ -207,6 +207,7 @@
                                                             </li>
                                                             @if(isset($milestones[$row['projectId']]))
                                                                 @foreach($milestones[$row['projectId']] as $milestone)
+                                                                    @if(is_object($milestone))
                                                                     <li class='dropdown-item'>
                                                                         <a href='javascript:void(0);'
                                                                            data-label='{{ $milestone->headline }}'
@@ -216,6 +217,7 @@
                                                                             {{ $milestone->headline }}
                                                                         </a>
                                                                     </li>
+                                                                    @endif
                                                                 @endforeach
                                                             @endif
                                                         </ul>

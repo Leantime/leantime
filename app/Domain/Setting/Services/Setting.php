@@ -67,18 +67,11 @@ namespace Leantime\Domain\Setting\Services {
         public function resetLogo(): void
         {
 
-            $url = '/dist/images/logo.svg';
-
-            $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
-
-            $_SESSION["companysettings.logoPath"] = BASE_URL . $url;
+            $this->settingsRepo->deleteSetting("companysettings.logoPath");
+            unset($_SESSION["companysettings.logoPath"]);
+            $_SESSION["companysettings.logoPath"] = "";
         }
 
-        /**
-         * @param $key
-         * @param $value
-         * @return bool
-         */
         /**
          * @param $key
          * @param $value

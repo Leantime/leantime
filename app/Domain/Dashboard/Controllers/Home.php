@@ -149,16 +149,16 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
 
-            $dashboardGrid = $this->settingRepo->getSetting("usersettings.". $_SESSION['userdata']['id'] . ".dashboardGrid");
+            $dashboardGrid = $this->settingRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid");
 
             $unserializedData = "{}";
 
-            if($dashboardGrid && $dashboardGrid != ''){
+            if ($dashboardGrid && $dashboardGrid != '') {
                 $unserializedData =  unserialize($dashboardGrid);
-                $unserializedData = array_sort($unserializedData, function($a, $b) {
+                $unserializedData = array_sort($unserializedData, function ($a, $b) {
 
-                    $first = intval($a['y'].$a['x']);
-                    $second = intval(($b['y'] ?? 0).($b['x'] ?? 0));
+                    $first = intval($a['y'] . $a['x']);
+                    $second = intval(($b['y'] ?? 0) . ($b['x'] ?? 0));
                     return $first - $second;
                 });
             }
@@ -194,8 +194,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
         public function post(mixed $params): void
         {
 
-            if(isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '' ) {
-                $this->settingRepo->saveSetting("usersettings.". $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
+            if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
+                $this->settingRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
                 return;
             }
 

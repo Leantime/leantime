@@ -12,7 +12,6 @@ input, button, select, textarea {
 }
 form label{
     padding-top:5px;
-    font-weight:bold;
 }
 
 form .switchery {
@@ -45,7 +44,9 @@ input:disabled,
     padding-left: 0px;
 }
 
-
+body input:focus {
+    border-color:var(--main-border-color-hover);
+}
 
 body div.tagsinput {
     background-color: var(--secondary-background);
@@ -1363,4 +1364,48 @@ body .croppie-container {
 
 .exceeded {
     color: var(--dark-red);
+}
+
+.selectable {
+    cursor: pointer;
+    display: inline-block;
+    margin-right: 15px;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 20px;
+}
+
+.selectable .selectableContent {
+    border: 1px solid var(--layered-background);
+    padding:5px;
+    border-radius: var(--element-radius);
+    background:var(--layered-background);
+    margin:auto;
+}
+
+.selectable.circle .selectableContent {
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+
+.colorCircle {
+    display:block;
+    width:100%;
+    height:100%;
+    border-radius: 50%;
+}
+
+.selectable.active .selectableContent{
+    border:1px solid var(--accent1);
+}
+
+.selectable.active .selectable-label {
+    color:var(--accent1);
+    font-weight:bold;
+}
+
+.selectable:hover .selectableContent{
+    background:var(--col-hover-bg);
+    color: var(--main-menu-link-active-color);
 }

@@ -8,18 +8,25 @@
 namespace Leantime\Domain\Clients\Repositories {
 
     use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Repository;
     use PDO;
 
     /**
      *
      */
-    class Clients
+    class Clients extends Repository
     {
         /**
          * @access public
          * @var    string
          */
         public string $name;
+
+        /**
+         * @access protected
+         * @var    string
+         */
+        protected  string $entity = "clients";
 
         /**
          * @access public

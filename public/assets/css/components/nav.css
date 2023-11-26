@@ -84,11 +84,11 @@
 }
 
 .logo {
-    width: 225px;
+    width: 170px;
     text-align: center;
     height: 50px;
-    padding:5px;
-    margin-left: 45px;
+    padding:7px 5px 5px 5px;
+    margin-left: 55px;
     display: block;
     float: left;
 }
@@ -110,8 +110,8 @@
 a.barmenu {
     position:absolute;
     left:0px;
-    margin-top:0;
-    margin-left:25px;
+    margin-top:1px;
+    margin-left:20px;
     font-size:20px;
     color:#fff !important;
     cursor:pointer;
@@ -196,7 +196,7 @@ a.barmenu:hover {
 .headmenu .projectselector {
     z-index: 10000000;
     border-radius: var(--box-radius);
-    min-width:375px;
+    min-width:400px;
 }
 
 .headmenu .projectselector  li.intro {
@@ -874,6 +874,19 @@ a.barmenu:hover {
     margin-right: 5px;
 }
 
+.header .userloggedinfo img.logo {
+    border-radius:0px;
+    border:0px;
+    background:transparent;
+    max-width: none;
+    max-height: 18px;
+    margin: 0px;
+    margin-top: 17px;
+    padding: 0px;
+    margin-right: 5px;
+}
+
+
 .userloggedinfo {
     color: #fff;
     float: right;
@@ -891,7 +904,7 @@ a.barmenu:hover {
 
 .userloggedinfo .userinfo a.profileHandler {
     color: #fff;
-    padding:0 5px 0 10px;
+    padding:0 5px 0 5px;
     height:50px;
     line-height:50px;
     display: block;
@@ -1090,7 +1103,7 @@ a.barmenu:hover {
 
 
 .mainwrapper.menuclosed .primaryContent {
-    padding-left:83px;
+    padding-left:50px;
 }
 
 .mainwrapper.menuclosed .headmenu {
@@ -1103,11 +1116,11 @@ a.barmenu:hover {
 }
 
 .mainwrapper.menuclosed .logo {
-    display:none;
+
 
 }
 .mainwrapper.menuclosed .leftpanel {
-    width:65px;
+    width:40px;
 }
 
 .mainwrapper.menuclosed .leftpanel .submenu {
@@ -1119,13 +1132,14 @@ a.barmenu:hover {
 }
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a {
-    font-size:0px;
-    padding: 15px 0px 10px 0;
-    width: 65px;
+    font-size: 0px;
+    padding: 12px 0px 8px 0;
+    width: 39px;
     text-align: center;
     display: block;
-    line-height:21px;
-    margin-left:0px;
+    line-height: 13px;
+    margin-left: 0px;
+    margin-bottom:2px;
 }
 
 .mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked a span {
@@ -1179,7 +1193,9 @@ a.barmenu:hover {
 
 /* Left Nav expanded + + + + + + + + + + + + + + + + + */
 
-.mainwrapper.menuopen .barmenu {}
+.mainwrapper.menuopen .barmenu {
+
+}
 .mainwrapper.menuopen .rightpanel {
     margin-left:0px;
 }
@@ -1192,7 +1208,7 @@ a.barmenu:hover {
     float:left;
 }
 .mainwrapper.menuopen .leftpanel {
-    width:240px;
+    width:215px;
 }
 
 .mainwrapper.menuopen .leftpanel .submenu.closed {
@@ -1213,7 +1229,10 @@ a.barmenu:hover {
     height: 50px;
     margin-bottom: 7px;
     padding: 5px;
-    padding-top:10px;
+    padding-top:9px;
+    position:sticky;
+    top:55px;
+    z-index: 9;
 }
 
 
@@ -1281,7 +1300,7 @@ a.barmenu:hover {
 
 .headerinner .bigProjectSelector .projectAvatar img{
     max-height:30px;
-    margin:9px 5px 0px 0px;
+    margin:10px 5px 0px 0px;
     border-radius:3px;
     float:left;
 }

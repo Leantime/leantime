@@ -1438,11 +1438,20 @@ leantime.ticketsController = (function () {
 
     var initMilestoneTable = function (groupBy) {
 
+        function isNumeric(n)
+        {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+
         jQuery(document).ready(function () {
+
+            var size = 100;
+            var columnIndex = false;
+
 
             var defaultOrder = [];
 
-            var allTickets = jQuery(".ticketsTable").DataTable({
+            var allTickets = jQuery(".ticketTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
                     "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
@@ -1465,15 +1474,18 @@ leantime.ticketsController = (function () {
                     "aria": {
                         "sortAscending":  leantime.i18n.__("datatables.sortAscending"),
                         "sortDescending":leantime.i18n.__("datatables.sortDescending"),
+                    },
+                    "buttons": {
+                        colvis: leantime.i18n.__("datatables.buttons.colvis"),
+                        csv: leantime.i18n.__("datatables.buttons.download")
                     }
 
                 },
-                "dom": '<"top">rt<"bottom"ilp><"clear">',
+                "dom": '<"top">rt<"bottom"><"clear">',
                 "searching": false,
                 "stateSave": true,
                 "displayLength":100,
                 "order": defaultOrder,
-
                 "columnDefs": [
                     { "visible": false, "targets": 7 },
                     { "visible": false, "targets": 8 },
@@ -1482,11 +1494,48 @@ leantime.ticketsController = (function () {
 
             });
 
-            jQuery('.ticketsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
-                allTickets.draw(false);
-            });
+            var buttons = new jQuery.fn.dataTable.Buttons(allTickets.table(0), {
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        title: leantime.i18n.__("label.filename_fileexport"),
+                        charset: 'utf-8',
+                        bom: true,
+                        exportOptions: {
+                            format: {
+                                body: function ( data, row, column, node ) {
 
-            jQuery('.ticketsTable input').on('change', function ( e, settings, column, state ) {
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        data = jQuery(node).data('order');
+                                    }
+                                    return data;
+                                }
+                            }
+                        }
+                    },
+                    {
+                        extend: 'colvis',
+                        columns: ':not(.noVis)'
+                    }
+                ]
+            }).container().appendTo(jQuery('#tableButtons'));
+
+            // When the column visibility changes on the firs table, also change it on // the others tables.
+            allTickets.table(0).on(
+                'column-visibility',
+                function ( e, settings, colIdx, visibility ) {
+
+                    // Toggle the visibility
+                    for (var i = 1; i < allTickets.tables().context.length; i++) {
+                        allTickets.tables(i).column(colIdx).visible(visibility);
+                    }
+
+                    allTickets.draw();
+
+                }
+            );
+
+            jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
 
                 jQuery(this).parent().attr('data-order',jQuery(this).val());
                 allTickets.draw();

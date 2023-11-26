@@ -6,7 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-touch-fullscreen" content="yes">
 <meta name="theme-color" content="{{ $primaryColor }}">
-<meta name="color-scheme" content="{{ $theme }}">
+<meta name="color-scheme" content="{{ $themeColorMode }}">
+<meta name="theme" content="{{ $theme }}">
 <meta name="identifier-URL" content="{!! BASE_URL !!}">
 <meta name="leantime-version" content="{{ $version }}">
 
@@ -53,7 +54,11 @@
 
 <!-- Replace main theme colors -->
 @foreach ($accents as $accent)
-    <style>:root { --accent{{ $loop->iteration }}: {{{ $accent }}}; }</style>
+    @if($accent !== false)
+        <style>:root { --accent{{ $loop->iteration }}: {{{ $accent }}}; }</style>
+    @endif
 @endforeach
+
+<style>:root { --primary-font-family: '{{{ $themeFont }}}', 'Helvetica Neue', Helvetica, sans-serif; }</style>
 
 @dispatchEvent('afterThemeColors')

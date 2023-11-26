@@ -55,6 +55,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
                 } else {
                     $theme = $this->config->defaultTheme;
                 }
+
             } else {
                 // This is not a login session
                 if (
@@ -78,7 +79,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
                  * This is placed here because the session isn't started yet when
                  * AppSettings::loadSettings() is called.  Plus, this is mostly cosmetic/UI
                  * change and should not apply to things such as date/times stored in the DB.
-                 * 
+                 *
                  * This also doesn't effect JS date-time any, only PHP calls for date-time, as
                  * they use incompatible formats.
                  */

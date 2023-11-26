@@ -52,15 +52,33 @@ class Header extends Composer
      */
     public function with(): array
     {
+        $theme = $this->themeCore->getActive();
+        $colorMode = $this->themeCore->getColorMode();
+        $colorScheme = $this->themeCore->getColorScheme();
+        $themeFont = $this->themeCore->getFont();
+
+        // Set colors to use
+        if (! isset($_SESSION["companysettings.sitename"])) {
+            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
+            if ($sitename !== false) {
+                $_SESSION["companysettings.sitename"] = $sitename;
+            } else {
+                $_SESSION["companysettings.sitename"] = $this->config->sitename;
+            }
+        }
+
         return [
             'sitename' => $_SESSION['companysettings.sitename'] ?? '',
-            'primaryColor' => $_SESSION['companysettings.primarycolor'] ?? '',
-            'theme' => $this->themeCore->getActive() ?? 'default',
+            'primaryColor' => $_SESSION['usersettings.colorScheme.primaryColor'] ?? '',
+            'theme' => $theme,
             'version' => $this->appSettings->appVersion ?? '',
             'themeScripts' => [
                 $this->themeCore->getJsUrl() ?? '',
                 $this->themeCore->getCustomJsUrl() ?? '',
             ],
+            'themeColorMode' => $colorMode,
+            'themeColorScheme' => $colorScheme,
+            'themeFont' => $themeFont,
             'themeStyles' => [
                 [
                     'id' => 'themeStyleSheet',
@@ -71,8 +89,8 @@ class Header extends Composer
                 ],
             ],
             'accents' => [
-                $_SESSION['companysettings.primarycolor'] ?? '',
-                $_SESSION['companysettings.secondarycolor'] ?? '',
+                $_SESSION['usersettings.colorScheme.primaryColor'] ?? "",
+                $_SESSION['usersettings.colorScheme.secondaryColor'] ?? "",
             ],
         ];
     }

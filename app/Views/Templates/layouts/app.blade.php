@@ -8,7 +8,6 @@
 <body>
     <div class="mainwrapper menu{{ $_SESSION['menuState'] }}">
 
-
         <div class="header">
 
             <div class="headerinner">
@@ -21,7 +20,7 @@
                 <div class="logo">
                     <a
                         href="{{ BASE_URL }}"
-                        style="background-image: url({{{ str_replace('http:', '', $_SESSION['companysettings.logoPath']) }}}"
+                        style="background-image: url('{{ BASE_URL }}/dist/images/logo.svg')"
                     >&nbsp;</a>
                 </div>
 
@@ -38,7 +37,7 @@
                     @include('menu::menu')
                 </div><!-- leftmenu -->
             </div>
-            <div class="rightpanel">
+            <div class="rightpanel {{ $section }}">
                 <div class="primaryContent">
                     @isset($action, $module)
                         @include("$module::$action")

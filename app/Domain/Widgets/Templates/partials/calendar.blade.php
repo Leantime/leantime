@@ -13,15 +13,6 @@
 
     <h5 class="subtitle">{{ __('headlines.calendar') }}</h5>
 
-    <button class="fc-next-button btn btn-default right" type="button" style="position:relative; z-index:9;">
-        <span class="fc-icon fc-icon-chevron-right"></span>
-    </button>
-    <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px; position:relative; z-index:9;">
-        <span class="fc-icon fc-icon-chevron-left"></span>
-    </button>
-
-    <button class="fc-today-button btn btn-default right" style="margin-right:5px; position:relative; z-index:9;">today</button>
-
     <div class="clear"></div>
 
     <div id="calendar" class="tw-h-full" style="height:calc(100% - 55px)"></div>
@@ -87,7 +78,11 @@
                 },
                 events: events,
                 editable: true,
-                headerToolbar: false,
+                headerToolbar: {
+                    left: 'prev,next',
+                    center: 'title',
+                    right: 'multiMonthOneMonth,timeGridDay' // user can switch between the two
+                },
 
                 nowIndicator: true,
                 bootstrapFontAwesome: {
@@ -150,7 +145,12 @@
 
                 },
                 eventMouseEnter: function() {
-                }
+                },
+                dateClick: function(info) {
+                    if(info.view.type == "timeGridDay") {
+                        console.log(info);
+                    }
+                },
             }
         );
         calendar.setOption('locale', leantime.i18n.__("language.code"));

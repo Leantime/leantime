@@ -89,7 +89,7 @@
                                                     @endif
                                                 >
                                                     <a href="{{ BASE_URL . $submenuItem['href'] }}"
-                                                       data-tippy-content="{{ __($submenuItem['tooltip']) }}"
+                                                       data-tippy-content="{{ strip_tags(__($submenuItem['tooltip'])) }}"
                                                        data-tippy-placement="right">
                                                         {!! __($submenuItem['title']) !!}
                                                     </a>

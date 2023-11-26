@@ -182,7 +182,7 @@ body.loginpage {
 }
 
 .loginpage .pagetitle h1 {
-    font-size:var(--font-size-xxl);
+    font-size:32px;
 }
 
 .loginpanelinner {
@@ -276,7 +276,7 @@ body.loginpage {
     overflow:hidden;
     display: flex;
     align-items: center;
-    justify-content: center;
+    padding-left:100px;
     color:var(--accent1-color);
     background:linear-gradient(45deg, var(--accent1) 20%,var(--accent2) 100%);
     box-shadow: var(--large-shadow);
@@ -478,7 +478,8 @@ body.loginpage {
 }
 
 .regcontent {
-    width:260px;
+    width:400px;
+    padding-top:25px;
 }
 
 .regcontent a.forgotPw  {
@@ -656,13 +657,20 @@ body.loginpage {
 .tab-primary.ui-tabs .ui-tabs-nav li a,
 .ui-tabs-nav > li a {
     color:var(--main-action-bg);
+    background:none;
 }
+
+
 
 .tab-primary.ui-tabs .ui-tabs-nav li a:hover,
 .ui-tabs-nav > li a:hover {
     background:var(--main-menu-link-hover-bg);
     color:var(--main-menu-link-hover-color);
 
+}
+
+.tab-primary.ui-tabs .ui-tabs-nav > li {
+    border-right:0px;
 }
 
 .tab-primary.ui-tabs .ui-tabs-nav > li a {
@@ -679,6 +687,10 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
     color:var(--main-menu-link-hover-color);
     background: var(--layered-background);
     border-radius: 5px 5px 0px 0px;
+}
+
+.tab-primary.ui-tabs .ui-tabs-nav > li a:hover {
+    background:var(--main-menu-link-active-bg);
 }
 
 
@@ -2247,6 +2259,7 @@ body .widgettitle .editHeadline:hover {
     background: var(--layered-background);
 }
 
+
 .profileBox .commentImage {
     float:none;
     margin:0px;
@@ -2377,6 +2390,7 @@ a.titleInsertLink:hover {
     box-shadow:var(--regular-shadow);
     padding:10px;
     margin-bottom:30px;
+    background:var(--layered-background);
 }
 
 .projectBox small {
@@ -2502,9 +2516,14 @@ h3.todaysDate {
 }
 
 .minCalendar #calendar {
-    top: -40px;
+    padding-top:10px;
     position: relative;
     z-index:5;
+}
+
+
+.minCalendar .fc .fc-toolbar-title {
+    font-size: var(--font-size-xl);
 }
 
 .minCalendar .fc .fc-multimonth {
@@ -2581,8 +2600,26 @@ h3.todaysDate {
 }
 
 .maincontentinner .fc .fc-timegrid-col.fc-day-today,
-.maincontentinner .fc .fc-daygrid-day.fc-day-today {
-    background-color: var(--col-hover-bg);
+.maincontentinner .fc .fc-daygrid-day.fc-day-today,
+.maincontentinner  .fc .fc-button-primary {
+    background-color: var(--secondary-background);
+    color:var(--primary-font-color);
+    border: 1px solid var(--secondary-action-bg);
+    border-radius: var(--element-radius) !important;
+}
+
+
+
+.minCalendar .fc .fc-button-primary:focus,
+.minCalendar .fc .fc-button-primary:active {
+    box-shadow: none;
+}
+
+.minCalendar .fc .fc-button-primary:not(:disabled).fc-button-active,
+.minCalendar .fc .fc-button-primary:not(:disabled):active,
+.minCalendar .fc .fc-button-primary:not(:disabled):hover {
+    background:var(--secondary-action-hover-bg);
+    color:var(--secondary-action-hover-color);
 }
 
 .maincontentinner .fc-multimonth-header-table .fc-col-header-cell {
@@ -2682,4 +2719,19 @@ h4 .helperTooltip,
     float:right;
     color:var(--primary-font-color);
     cursor:pointer;
+}
+
+.color-circle {
+    display: inline-block;
+    margin-right: 25px;
+    text-align: center;
+}
+
+.color-circle .color {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--main-border-color);
+    display: block;
+    margin:auto;
 }

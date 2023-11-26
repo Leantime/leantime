@@ -8,61 +8,56 @@
 
 </x-global::pageheader>
 
-<div style="width:100%; height:100%; background:url('{{ BASE_URL }}/dist/images/calming-desktop.jpg') no-repeat center center fixed; background-size:cover;">
-
 <div class="maincontent">
 
     {!! $tpl->displayNotification() !!}
 
     <div class="grid-stack">
 
+        @foreach($dashboardGrid as $widget)
 
+            <x-widgets::moveableWidget
+                gs-x="{{ $widget['x'] }}"
+                gs-y="{{ $widget['y'] }}"
+                gs-h="{{ $widget['h'] ?? $widget['minh'] }}"
+                gs-w="{{ $widget['w'] ?? $widget['minW'] }}"
+            >
+                <div hx-get="{{$widget['hxget']}}" hx-trigger="{{$widget['hxtrigger']}}">
+                    <x-global::loadingText type="card" count="1" includeHeadline="true" />
+                </div>
+            </x-widgets::moveableWidget>
 
-{{-- @foreach($dashboardGrid as $widget)
+        @endforeach
 
-    <x-widgets::moveableWidget
-        gs-x="{{ $widget['x'] }}"
-        gs-y="{{ $widget['y'] }}"
-        gs-h="{{ $widget['h'] ?? $widget['minh'] }}"
-        gs-w="{{ $widget['w'] ?? $widget['minW'] }}"
-    >
-        <div hx-get="{{$widget['hxget']}}" hx-trigger="{{$widget['hxtrigger']}}">
-            <x-global::loadingText type="card" count="1" includeHeadline="true" />
-        </div>
-    </x-widgets::moveableWidget>
+        @if($dashboardGrid == '')
 
-@endforeach
+            <x-widgets::moveableWidget gs-h="4" gs-w="4">
+                 <div hx-get="{{ BASE_URL }}/widgets/pomodoro/get" hx-trigger="load" >
+                     <x-global::loadingText type="text" count="1" includeHeadline="true"/>
 
-@if($dashboardGrid == '')--}}
+                 </div>
+            </x-widgets::moveableWidget>
 
-    <x-widgets::moveableWidget gs-h="4" gs-w="4">
-         <div hx-get="{{ BASE_URL }}/widgets/pomodoro/get" hx-trigger="load" >
-             <x-global::loadingText type="text" count="1" includeHeadline="true"/>
+            <x-widgets::moveableWidget gs-h="1" gs-w="8">
+                <div hx-get="{{ BASE_URL }}/widgets/welcome/get" hx-trigger="load" >
+                    <x-global::loadingText type="text" count="1" includeHeadline="true"/>
+                </div>
+            </x-widgets::moveableWidget>
 
-         </div>
-    </x-widgets::moveableWidget>
+            <x-widgets::moveableWidget gs-h="2" gs-w="4">
+                <div hx-get="{{ BASE_URL }}/widgets/calendar/get" hx-trigger="load" >
+                    <x-global::loadingText type="text" count="1" includeHeadline="true"/>
+                </div>
+            </x-widgets::moveableWidget>
 
-    <x-widgets::moveableWidget gs-h="1" gs-w="8">
-        <div hx-get="{{ BASE_URL }}/widgets/welcome/get" hx-trigger="load" >
-            <x-global::loadingText type="text" count="1" includeHeadline="true"/>
+            <x-widgets::moveableWidget gs-w="8" gs-h="6">
+                <div hx-get="{{ BASE_URL }}/widgets/myToDos/get" hx-trigger="load" >
+                    <x-global::loadingText type="text" count="1" includeHeadline="true" />
+                </div>
+            </x-widgets::moveableWidget>
+        @endif
 
-        </div>
-    </x-widgets::moveableWidget>
-
-    <x-widgets::moveableWidget gs-h="2" gs-w="4">
-        <div hx-get="{{ BASE_URL }}/widgets/calendar/get" hx-trigger="load" >
-            <x-global::loadingText type="text" count="1" includeHeadline="true"/>
-        </div>
-    </x-widgets::moveableWidget>
-
-    <x-widgets::moveableWidget gs-w="8" gs-h="6">
-        <div hx-get="{{ BASE_URL }}/widgets/myToDos/get" hx-trigger="load" >
-            <x-global::loadingText type="text" count="1" includeHeadline="true" />
-        </div>
-    </x-widgets::moveableWidget>
-
-
-</div>
+    </div>
 </div>
 
 <script>
@@ -73,12 +68,11 @@ jQuery(document).ready(function() {
     let grid = GridStack.init({
         margin: 10,
         handle: ".grid-handler-top",
-        minRow: 1, // don't let it collapse when empty
-        cellHeight: '150px',
+        minRow: 4, // don't let it collapse when empty
+        cellHeight: '100px',
     });
 
     grid.on('dragstop', function(event, item) {
-
         saveGrid();
     });
 
@@ -137,9 +131,16 @@ jQuery(document).ready(function() {
     function removeWidget(el) {
         // TEST removing from DOM first like Angular/React/Vue would do
         el.remove();
-        grid.removeWidget(el, false);
+        grid.removeWidget(el, true);
         saveGrid();
     }
+
+    jQuery(".grid-stack-item").each(function(){
+        jQuery(this).find(".removeWidget").click(function(){
+            removeWidget(jQuery(this).closest(".grid-stack-item")[0]);
+        });
+
+    })
 
 
 

@@ -85,12 +85,17 @@ if (! function_exists('array_sort')) {
      * @param string $sortyBy
      * @return array
      */
-    function array_sort(array $array, string $sortyBy): array
+    function array_sort(array $array, mixed $sortyBy): array
     {
-        $collection = collect($array);
 
-        $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
+        if(is_string($sortyBy)){
+            $collection = collect($array);
 
-        return $sorted->values()->all();
+            $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
+
+            return $sorted->values()->all();
+        }else{
+            return \Illuminate\Support\Collection::make($array)->sortBy($sortyBy)->all();
+        }
     }
 }

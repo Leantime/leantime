@@ -61,12 +61,12 @@ namespace Leantime\Domain\Setting\Controllers {
             }
 
             $companySettings = array(
-                "logo" => $_SESSION["companysettings.logoPath"],
-                "primarycolor" => $_SESSION["companysettings.primarycolor"],
-                "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
+                "logo" => $_SESSION["companysettings.logoPath"] ?? '',
+                "primarycolor" => $_SESSION['companysettings.primarycolor'] ?? '',
+                "secondarycolor" => $_SESSION["companysettings.secondarycolor"] ?? '',
                 "name" => $_SESSION["companysettings.sitename"],
                 "language" => $_SESSION["companysettings.language"],
-                "telemetryActive" => false,
+                "telemetryActive" => true,
                 "messageFrequency" => '',
             );
 

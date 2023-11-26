@@ -353,21 +353,35 @@ body {
 }
 
 .rightpanel:before {
-    background: url(../../images/03-1.png?ff674ab…) no-repeat 50px 0;
+
     content: "";
-    height: 326px;
-    right: 0;
+    height: 100%;
+    left: 0;
     opacity: .2;
     position: fixed;
-    top: 10px;
-    width: 250px;
+    background-size: cover;
+    top: 0px;
+    width: 100%;
 }
 
+.rightpanel.personal:before {
+
+}
+
+.rightpanel.project:before {
+
+}
+
+.rightpanel.company:before {
+
+}
+
+
 .primaryContent {
-    background: rgba(255,255,255, 0.1);
+
     min-height:100vh;
 
-    padding-left:255px;
+    padding-left:225px;
     padding-top:10px;
     padding-bottom:10px;
 
@@ -396,17 +410,18 @@ body {
     clear: both;
     height: 50px;
     position: fixed;
-    z-index: 10;
+    z-index: 15;
     width: 100%;
     box-shadow: var(--large-shadow);
-
-    background:var(--header-gradient);
+    backdrop-filter: var(--glass-blur);
 
 }
 
+.header .headmenu > li > a {
+    text-shadow: 0px 1px 3px var(--primary-font-color);
+}
 
 .rightpanel {
-
 }
 
 .rightpanel:after {

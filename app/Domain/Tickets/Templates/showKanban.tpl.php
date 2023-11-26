@@ -59,7 +59,7 @@ foreach ($__data as $var => $val) {
         <div class="row-fluid" style="width: 100%;
             display: flex;
             position: sticky;
-            top: 50px;
+            top: 105px;
             justify-content: flex-start;
             z-index: 9;
             ">

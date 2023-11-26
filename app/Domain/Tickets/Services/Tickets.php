@@ -1307,11 +1307,28 @@ namespace Leantime\Domain\Tickets\Services {
                     return $_SESSION['lastFilterdTicketListView'];
                 }
 
-                if ($_SESSION['lastTicketView'] == "roadmap" && isset($_SESSION['lastFilterdTicketRoadmapView']) && $_SESSION['lastFilterdTicketRoadmapView'] != "") {
+                return $url;
+            } else {
+                return $url;
+            }
+        }
+
+        public function getLastTimelineViewUrl(): mixed
+        {
+
+            $url = BASE_URL . "/tickets/roadmap";
+
+            if (isset($_SESSION['lastMilestoneView']) && $_SESSION['lastMilestoneView'] != "") {
+
+                if ($_SESSION['lastMilestoneView'] == "table" && isset($_SESSION['lastFilterdMilestoneTableView']) && $_SESSION['lastFilterdMilestoneTableView'] != "") {
+                    return $_SESSION['lastFilterdMilestoneTableView'];
+                }
+
+                if ($_SESSION['lastMilestoneView'] == "roadmap" && isset($_SESSION['lastFilterdTicketRoadmapView']) && $_SESSION['lastFilterdTicketRoadmapView'] != "") {
                     return $_SESSION['lastFilterdTicketRoadmapView'];
                 }
 
-                if ($_SESSION['lastTicketView'] == "calendar" && isset($_SESSION['lastFilterdTicketCalendarView']) && $_SESSION['lastFilterdTicketCalendarView'] != "") {
+                if ($_SESSION['lastMilestoneView'] == "calendar" && isset($_SESSION['lastFilterdTicketCalendarView']) && $_SESSION['lastFilterdTicketCalendarView'] != "") {
                     return $_SESSION['lastFilterdTicketCalendarView'];
                 }
 

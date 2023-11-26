@@ -53,10 +53,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $id
          * @return array|false
          */
-        /**
-         * @param $id
-         * @return array|false
-         */
         public function getSprint($id): false|Models\Sprints
         {
 
@@ -99,10 +95,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getUpcomingSprint($projectId): false|array
         {
 
@@ -115,10 +107,6 @@ namespace Leantime\Domain\Sprints\Services {
             return false;
         }
 
-        /**
-         * @param $projectId
-         * @return array
-         */
         /**
          * @param $projectId
          * @return array
@@ -140,10 +128,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllFutureSprints($projectId): false|array
         {
 
@@ -156,10 +140,6 @@ namespace Leantime\Domain\Sprints\Services {
             return false;
         }
 
-        /**
-         * @param $params
-         * @return false|object
-         */
         /**
          * @param $params
          * @return false|object
@@ -187,10 +167,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $params
          * @return false|object
          */
-        /**
-         * @param $params
-         * @return false|object
-         */
         public function editSprint($params): object|false
         {
 
@@ -210,11 +186,6 @@ namespace Leantime\Domain\Sprints\Services {
             return false;
         }
 
-        /**
-         * @param $sprint
-         * @return array|false
-         * @throws \Exception
-         */
         /**
          * @param $sprint
          * @return array|false

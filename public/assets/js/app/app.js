@@ -58,4 +58,8 @@ jQuery(document).ready(function () {
         jQuery('.login-alert').fadeIn();
     }
 
+    document.addEventListener('scroll', () => {
+        document.documentElement.dataset.scroll = window.scrollY;
+    });
+
 });

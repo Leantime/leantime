@@ -65,6 +65,20 @@ namespace Leantime\Domain\Users\Controllers {
             }
 
             $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
+            $userColorMode = $this->settingsService->getSetting("usersettings." . $this->userId . ".colorMode");
+            if(!$userColorMode) {
+                $userColorMode = "light";
+            }
+
+            $userColorScheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".colorScheme");
+            if(!$userColorScheme) {
+                $userColorScheme = "companyColors";
+            }
+
+            $themeFont = $this->settingsService->getSetting("usersettings." . $this->userId . ".themeFont");
+            if(!$themeFont) {
+                $themeFont = "Roboto";
+            }
 
             $userDateFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".date_format");
             $userTimeFormat = $this->settingsService->getSetting("usersettings." . $this->userId . ".time_format");
@@ -76,6 +90,8 @@ namespace Leantime\Domain\Users\Controllers {
             }
 
             $timezonesAvailable = timezone_identifiers_list();
+
+            $availableColorSchemes = $this->themeCore->getAvailableColorSchemes();
 
             //Build values array
             $values = array(
@@ -102,11 +118,17 @@ namespace Leantime\Domain\Users\Controllers {
 
             $this->tpl->assign('userLang', $userLang);
             $this->tpl->assign('userTheme', $userTheme);
+            $this->tpl->assign('themeFont', $themeFont);
+            $this->tpl->assign('userColorMode', $userColorMode);
+            $this->tpl->assign('userColorScheme', $userColorScheme);
             $this->tpl->assign("languageList", $this->language->getLanguageList());
             $this->tpl->assign('dateFormat', $userDateFormat);
             $this->tpl->assign('timeFormat', $userTimeFormat);
             $this->tpl->assign('dateTimeValues', $this->getSupportedDateTimeFormats());
             $this->tpl->assign('timezone', $timezone);
+            $this->tpl->assign('availableColorSchemes', $availableColorSchemes);
+            $this->tpl->assign('availableFonts', $this->themeCore->getAvailableFonts());
+            $this->tpl->assign('availableThemes', $this->themeCore->getAll());
             $this->tpl->assign('timezoneOptions', $timezonesAvailable);
 
             $this->tpl->assign('user', $row);
@@ -211,18 +233,37 @@ namespace Leantime\Domain\Users\Controllers {
                     }
                 }
 
+                if (isset($_POST['saveTheme'])) {
+                    $postTheme = htmlentities($_POST['theme']);
+                    $postColorMode = htmlentities($_POST['colormode']);
+                    $postColorScheme = htmlentities($_POST['colorscheme']);
+                    $themeFont = htmlentities($_POST['themeFont']);
+
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".colorMode", $postColorMode);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".colorScheme", $postColorScheme);
+                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".themeFont", $themeFont);
+                    $this->themeCore->clearCache();
+                    $this->themeCore->setActive($postTheme);
+                    $this->themeCore->setColorMode($postColorMode);
+                    $this->themeCore->setColorScheme($postColorScheme);
+                    $this->themeCore->setFont($themeFont);
+
+
+                    $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success', "themsettings_updated");
+                }
+
 
                 //Save Look & Feel
-                if (isset($_POST['saveLook'])) {
+                if (isset($_POST['saveSettings'])) {
                     $tab = '#look';
 
                     $postLang = htmlentities($_POST['language']);
-                    $postTheme = htmlentities($_POST['theme']);
+
                     $dateFormat = htmlentities($_POST['date_format']);
                     $timeFormat = htmlentities($_POST['time_format']);
                     $tz = htmlentities($_POST['timezone']);
 
-                    $this->settingsService->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".language", $postLang);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".date_format", $dateFormat);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $timeFormat);
@@ -234,7 +275,7 @@ namespace Leantime\Domain\Users\Controllers {
                     unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage() . '_' . $postTheme]);
                     unset($_SESSION['usersettings.language.dateTimeFormat']);
 
-                    $this->themeCore->setActive($postTheme);
+
                     $this->language->setLanguage($postLang);
 
                     $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success', "profilesettings_updated");
