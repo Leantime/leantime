@@ -58,7 +58,8 @@ namespace Leantime\Domain\Notifications\Repositories {
                       zp_user.lastname
                 FROM zp_notifications
                 LEFT JOIN zp_user ON zp_notifications.authorId = zp_user.id
-                WHERE userId = :userId";
+                WHERE userId = :userId
+                AND zp_notifications.type != 'ainotification'";
 
 
             if ($showNewOnly === true) {
