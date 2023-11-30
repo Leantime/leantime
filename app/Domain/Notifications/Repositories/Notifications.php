@@ -22,15 +22,6 @@ namespace Leantime\Domain\Notifications\Repositories {
             $this->db = $db;
         }
 
-
-        /**
-         * @param $userId
-         * @param $showNewOnly
-         * @param $limitStart
-         * @param $limitEnd
-         * @param $filterOptions
-         * @return array|false
-         */
         /**
          * @param $userId
          * @param false  $showNewOnly

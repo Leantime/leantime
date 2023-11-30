@@ -1195,10 +1195,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param $id
          * @return array
          */
-        /**
-         * @param $id
-         * @return array
-         */
         public function getProjectUserRelation($id): array
         {
             return $this->projectRepository->getProjectUserRelation($id);
@@ -1209,21 +1205,11 @@ namespace Leantime\Domain\Projects\Services {
          * @param $params
          * @return bool
          */
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         public function patch($id, $params): bool
         {
             return $this->projectRepository->patch($id, $params);
         }
 
-        /**
-         * @param $id
-         * @return mixed
-         * @throws BindingResolutionException
-         */
         /**
          * @param $id
          * @return mixed
