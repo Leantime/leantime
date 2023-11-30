@@ -619,7 +619,10 @@ class Language
     public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
     {
 
-        if(isset($_SESSION['usersettings.language.dateTimeFormat']) && isset($_SESSION['userdata'])) {
+        if(isset($_SESSION['usersettings.language.dateTimeFormat'])
+            && isset($_SESSION['userdata'])
+            && $_SESSION['usersettings.language.dateTimeFormat']["date"] !== false
+            && $_SESSION['usersettings.language.dateTimeFormat']["time"] !== false) {
             return $_SESSION['usersettings.language.dateTimeFormat'];
         }
 
@@ -630,8 +633,8 @@ class Language
         $userId = isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id']) ? $_SESSION['userdata']['id'] : 0;
 
         if ($userId) {
-            $results['date'] = $settings->getSetting("usersettings." . $userId . ".date_format");
-            $results['time'] = $settings->getSetting("usersettings." . $userId . ".time_format");
+            $results['date'] = $settings->getSetting("usersettings." . $userId . ".date_format") !== false ? $settings->getSetting("usersettings." . $userId . ".date_format") : $results['date'];
+            $results['time'] = $settings->getSetting("usersettings." . $userId . ".time_format") !== false ? $settings->getSetting("usersettings." . $userId . ".time_format") : $results['time'];
         }
 
         //Only cache when user is logged in.
