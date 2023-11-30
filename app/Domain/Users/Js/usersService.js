@@ -1,14 +1,5 @@
 leantime.usersService = (function () {
 
-    // Variables (underscore for private variables)
-    var publicThing = "not secret";
-    var _privateThing = "secret";
-
-    //Constructor
-    (function () {
-
-    })();
-
     //Functions
 
     var saveUserPhoto = function (photo) {

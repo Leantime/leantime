@@ -25,7 +25,7 @@ leantime.projectsController = (function () {
                 currentText: leantime.i18n.__("language.currentText"),
                 closeText: leantime.i18n.__("language.closeText"),
                 buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -315,9 +315,6 @@ leantime.projectsController = (function () {
                                 // dates and progress value
                                 var end_date = project._end;
 
-                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
-
-
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (project.projectName !== undefined) {
@@ -431,9 +428,6 @@ leantime.projectsController = (function () {
                                 // the task object will contain the updated
                                 // dates and progress value
                                 var end_date = task._end;
-                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
-
-
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 

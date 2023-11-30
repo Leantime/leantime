@@ -44,7 +44,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
         {
 
             //Only admins and employees
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             $_SESSION['lastPage'] = BASE_URL . "/timesheets/showAll";
 

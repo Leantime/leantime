@@ -2,8 +2,10 @@ leantime.dashboardController = (function () {
 
     // Variables (underscore for private variables)
 
+    var chartColors = {};
+
     if (leantime.theme == "dark") {
-        var chartColors = {
+        chartColors = {
             red: 'rgb(201,48,44)',
             orange: 'rgb(255, 159, 64)',
             yellow: 'rgb(255, 205, 86)',
@@ -13,7 +15,7 @@ leantime.dashboardController = (function () {
             grey: 'rgb(56, 56, 56)'
         };
     } else {
-        var chartColors = {
+        chartColors = {
             red: 'rgb(201,48,44)',
             orange: 'rgb(255, 159, 64)',
             yellow: 'rgb(255, 205, 86)',
@@ -324,7 +326,7 @@ leantime.dashboardController = (function () {
                     currentText: leantime.i18n.__("language.currentText"),
                     closeText: leantime.i18n.__("language.closeText"),
                     buttonText: leantime.i18n.__("language.buttonText"),
-                    isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                    isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),

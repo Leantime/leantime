@@ -149,7 +149,7 @@
 
     </li>
 
-    @if ($login::userIsAtLeast("manager"))
+    @if ($login::userIsAtLeast("manager", true))
 
         <li class="appsDropdown">
 
@@ -175,7 +175,7 @@
                     <a href="{{ BASE_URL }}/projects/showAll">{!! __('menu.all_projects') !!}</a>
                 </li>
 
-                @if ($login::userIsAtLeast(Roles::$admin))
+                @if ($login::userIsAtLeast(Roles::$admin, true))
                     <li
                         @if (str_starts_with($activePath, 'clients'))
                             class="active"
