@@ -34,7 +34,7 @@ namespace Leantime\Domain\Setting\Controllers {
             ApiService $APIService,
             SettingService $settingsSvc
         ) {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
             $this->config = $config;
             $this->settingsRepo = $settingsRepo;
