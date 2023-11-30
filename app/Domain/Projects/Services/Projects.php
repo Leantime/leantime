@@ -685,6 +685,11 @@ namespace Leantime\Domain\Projects\Services {
          */
         public function changeCurrentSessionProject($projectId): bool
         {
+            if(!is_numeric($projectId)){
+                return false;
+            }
+
+            $projectId = (int)$projectId;
 
             if (isset($_SESSION["currentProjectName"]) === false) {
                 $_SESSION["currentProjectName"] = '';
@@ -1283,7 +1288,7 @@ namespace Leantime\Domain\Projects\Services {
                 ),
                 "goals" => array(
                     "title" => "label.setGoals",
-                    "description" => "checklist.goals.description ",
+                    "description" => "checklist.goals.description",
                     "tasks" => array(
                         "setGoals" => array(
                             "title" => "label.setGoals",
@@ -1295,7 +1300,7 @@ namespace Leantime\Domain\Projects\Services {
                 ),
                 "timeline" => array(
                     "title" => "label.setTimeline",
-                    "description" => "checklist.timeline.description ",
+                    "description" => "checklist.timeline.description",
                     "tasks" => array(
                         "createMilestones" => array(
                             "title" => "label.createMilestones",
