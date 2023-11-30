@@ -619,7 +619,7 @@ class Language
     public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
     {
 
-        if(isset($_SESSION['usersettings.language.dateTimeFormat'])) {
+        if(isset($_SESSION['usersettings.language.dateTimeFormat']) && isset($_SESSION['userdata'])) {
             return $_SESSION['usersettings.language.dateTimeFormat'];
         }
 
@@ -634,7 +634,10 @@ class Language
             $results['time'] = $settings->getSetting("usersettings." . $userId . ".time_format");
         }
 
-        $_SESSION['usersettings.language.dateTimeFormat'] = $results;
+        //Only cache when user is logged in.
+        if(isset($_SESSION['userdata'])){
+            $_SESSION['usersettings.language.dateTimeFormat'] = $results;
+        }
 
         return $results;
     }

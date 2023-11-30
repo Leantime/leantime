@@ -52,6 +52,15 @@ class Header extends Composer
      */
     public function with(): array
     {
+
+        if (isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id'])) {
+            $userId = $_SESSION['userdata']['id'];
+
+            if (isset($_SESSION['usersettings.' . $userId . '.timezone'])) {
+                date_default_timezone_set($_SESSION['usersettings.' . $userId . '.timezone']);
+            }
+        }
+
         return [
             'sitename' => $_SESSION['companysettings.sitename'] ?? '',
             'primaryColor' => $_SESSION['companysettings.primarycolor'] ?? '',

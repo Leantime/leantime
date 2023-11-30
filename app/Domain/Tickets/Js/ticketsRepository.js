@@ -2,13 +2,6 @@ var leantime = leantime || {};
 
 leantime.ticketsRepository = (function () {
 
-    // Variables (underscore for private variables)
-
-    //Constructor
-    (function () {
-
-    })();
-
     //Functions
 
     var updateMilestoneDates = function (id, start, end, sortIndex) {

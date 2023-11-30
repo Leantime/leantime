@@ -2,8 +2,10 @@ leantime.dashboardController = (function () {
 
     // Variables (underscore for private variables)
 
+    var chartColors = {};
+
     if (leantime.theme == "dark") {
-        var chartColors = {
+        chartColors = {
             red: 'rgb(201,48,44)',
             orange: 'rgb(255, 159, 64)',
             yellow: 'rgb(255, 205, 86)',
@@ -13,7 +15,7 @@ leantime.dashboardController = (function () {
             grey: 'rgb(56, 56, 56)'
         };
     } else {
-        var chartColors = {
+        chartColors = {
             red: 'rgb(201,48,44)',
             orange: 'rgb(255, 159, 64)',
             yellow: 'rgb(255, 205, 86)',

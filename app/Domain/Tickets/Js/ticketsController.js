@@ -2,15 +2,6 @@ leantime.ticketsController = (function () {
 
     //Variables
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-
-            }
-        );
-
-    })();
 
     //Functions
     function countTickets()

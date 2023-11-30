@@ -315,9 +315,6 @@ leantime.projectsController = (function () {
                                 // dates and progress value
                                 var end_date = project._end;
 
-                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
-
-
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (project.projectName !== undefined) {
@@ -431,9 +428,6 @@ leantime.projectsController = (function () {
                                 // the task object will contain the updated
                                 // dates and progress value
                                 var end_date = task._end;
-                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
-
-
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
