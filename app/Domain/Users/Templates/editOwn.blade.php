@@ -230,13 +230,13 @@
                                         <hr />
                                         <label for="colormode" >{{ __('label.colormode') }}</label>
 
-                                        <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'">
+                                        <x-global::selectable :selected="($userColorMode == 'light') ? 'true' : ''" :id="'light'" :name="'colormode'" :value="'light'" :label="'Light'" onclick="leantime.snippets.toggleTheme('light')">
                                             <label for="colormode-light" class="tw-w-[100px]">
                                                 <i class="fa-solid fa-sun tw-font-xxl"></i>
                                             </label>
                                         </x-global::selectable>
 
-                                        <x-global::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'">
+                                        <x-global::selectable :selected="($userColorMode == 'dark') ? 'true' : ''" :id="'dark'" :name="'colormode'" :value="'dark'" :label="'Dark'" onclick="leantime.snippets.toggleTheme('dark')">
                                             <label for="colormode-light" class="tw-w-[100px]">
                                                 <i class="fa-solid fa-moon tw-font-xxl"></i>
                                             </label>
@@ -250,7 +250,7 @@
                                         <label>Font</label>
                                         @foreach($availableFonts as $key => $font)
 
-                                            <x-global::selectable  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font">
+                                            <x-global::selectable  :selected="($themeFont == $font) ? 'true' : ''" :id="$key" :name="'themeFont'" :value="$font" :label="$font" onclick="leantime.snippets.toggleFont('{{ $font }}')">
                                                 <label for="selectable-{{ $key }}" class="font tw-w-[200px]"
                                                        style="font-family:'{{ $font }}'; font-size:16px;">
                                                     The quick brown fox jumps over the lazy dog
@@ -266,7 +266,7 @@
                                         <hr />
                                         <label>Color Scheme</label>
                                         @foreach($availableColorSchemes as $key => $scheme )
-                                            <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])">
+                                            <x-global::selectable class="circle" :selected="($userColorScheme == $key) ? 'true' : ''" :id="$key" :name="'colorscheme'" :value="$key" :label="__($scheme['name'])"  onclick="leantime.snippets.toggleColors('{{ $scheme['primaryColor'] }}','{{ $scheme['secondaryColor'] }}');">
                                                 <label for="color-{{ $key }}" class="colorCircle"
                                                        style="background:linear-gradient(135deg, {{ $scheme["primaryColor"] }} 20%, {{ $scheme["secondaryColor"] }} 100%);">
                                                 </label>

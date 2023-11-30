@@ -162,7 +162,8 @@ class Theme
         return $parsedColorSchemes;
     }
 
-    public function getAvailableFonts() {
+    public function getAvailableFonts()
+    {
         return Events::dispatch_filter("fonts", $this->fonts);
     }
 
@@ -196,7 +197,7 @@ class Theme
 
 
         //No generic theme set. Check if cookie is set
-        if ($this->config->keepTheme && isset($_COOKIE['theme'])) {
+        if (isset($_COOKIE['theme'])) {
             $this->setActive($_COOKIE['theme']);
             return $_COOKIE['theme'];
         }
@@ -662,30 +663,27 @@ class Theme
         //Session Logo Path needs to be set here
         //Logo will be in there. Session will be renewed when new logo is updated or theme is changed
 
+        $logoPath = false;
         if (isset($_SESSION["companysettings.logoPath"]) === false) {
-
             $settingsRepo = app()->make(Setting::class);
-
             $logoPath = $settingsRepo->getSetting("companysettings.logoPath");
 
+            if (
+                $logoPath !== false &&
+                (file_exists(ROOT . $logoPath) || str_starts_with($logoPath, "http"))
+            ) {
+                if (str_starts_with($logoPath, "http")) {
+                    $_SESSION["companysettings.logoPath"] = $logoPath;
+                } else {
+                    $_SESSION["companysettings.logoPath"] = BASE_URL . $logoPath;
+                }
+
+                return $_SESSION["companysettings.logoPath"];
+            }
         }
 
-        if (
-            !file_exists(ROOT . $logoPath)
-            && !str_starts_with($logoPath, "http")
-        ) {
-            $_SESSION["companysettings.logoPath"] = false;
-            return false;
-
-        }
-
-        if (str_starts_with($logoPath, "http")) {
-            $_SESSION["companysettings.logoPath"] = $logoPath;
-        } else {
-            $_SESSION["companysettings.logoPath"] = BASE_URL . $logoPath;
-        }
-
-        return $_SESSION["companysettings.logoPath"];
+        $_SESSION["companysettings.logoPath"] = false;
+        return false;
     }
 
     /**
@@ -791,11 +789,11 @@ class Theme
     {
         $this->iniData = [];
 
-        unset( $_SESSION["usersettings.colorScheme.primaryColor"]);
-        unset( $_SESSION["usersettings.colorScheme.secondarycolor"]);
-        unset( $_SESSION["usersettings.colorMode"]);
-        unset( $_SESSION["usersettings.colorScheme"]);
-        unset( $_SESSION["usersettings.themeFont"]);
-        unset( $_SESSION["usersettings.theme"]);
+        unset($_SESSION["usersettings.colorScheme.primaryColor"]);
+        unset($_SESSION["usersettings.colorScheme.secondarycolor"]);
+        unset($_SESSION["usersettings.colorMode"]);
+        unset($_SESSION["usersettings.colorScheme"]);
+        unset($_SESSION["usersettings.themeFont"]);
+        unset($_SESSION["usersettings.theme"]);
     }
 }

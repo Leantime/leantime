@@ -107,6 +107,7 @@ class HeadMenu extends Composer
         if(!isset($_SESSION['companysettings.logoPath'])) {
             $_SESSION['companysettings.logoPath'] = $this->themeCore->getLogoUrl();
         }
+
         return [
             'newNotificationCount' => $nCount,
             'totalNotificationCount' => $totalNotificationCount,

@@ -84,8 +84,37 @@ class Welcome extends HtmxController
             $totalTickets = $totalTickets + count($ticketGroup["tickets"]);
         }
 
+        $closedTicketsCount = 0;
+        $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser($_SESSION["userdata"]["id"], null);
+        if(is_array($closedTickets)){
+            $closedTicketsCount = count($closedTickets);
+        }
+
+        $ticketsInGoals = 0;
+        $goalTickets = $this->ticketsService->goalsRelatedToWork($_SESSION["userdata"]["id"], null);
+        if(is_array($goalTickets)){
+            $ticketsInGoals = count($goalTickets);
+        }
+
+        $todayTaskCount = 0;
+        $todayStart = new \DateTime();
+        $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
+        $todayStart->setTime(0, 0, 0);
+
+        $todayEnd = new \DateTime();
+        $todayEnd->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
+        $todayEnd->setTime(23, 59, 59);
+
+        $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, $_SESSION["userdata"]["id"]);
+        $totalToday = count($todaysTasks['totalTasks']) ?? 0;
+        $doneToday = count($todaysTasks['doneTasks']) ?? 0;
+
         $this->tpl->assign('tickets', $tickets);
         $this->tpl->assign('totalTickets', $totalTickets);
+        $this->tpl->assign('closedTicketsCount', $closedTicketsCount);
+        $this->tpl->assign('ticketsInGoals', $ticketsInGoals);
+        $this->tpl->assign('totalTodayCount', $totalToday);
+        $this->tpl->assign('doneTodayCount', $doneToday);
 
         $allAssignedprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
         $this->tpl->assign("allProjects", $allAssignedprojects);

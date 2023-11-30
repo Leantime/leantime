@@ -451,7 +451,7 @@ a.barmenu:hover {
 }
 
 .nav-tabs li .submenuCaret:hover {
-    background: rgba(255,255,255,0.3);
+    background: var(--light-layered-background);
 }
 
 
@@ -1228,8 +1228,7 @@ a.barmenu:hover {
 .maincontentinner.tabs {
     height: 50px;
     margin-bottom: 7px;
-    padding: 5px;
-    padding-top:9px;
+    padding: 9px 14px;
     position:sticky;
     top:55px;
     z-index: 9;
@@ -1244,7 +1243,7 @@ a.barmenu:hover {
 .maincontentinner.tabs ul li {
     display:inline-block;
     float:left;
-    padding:0 5px;
+    padding:0;
     margin-right:2px;
 
 
@@ -1258,7 +1257,7 @@ a.barmenu:hover {
 
 .maincontentinner.tabs ul li a {
     font-weight:bold;
-    padding:5px 12px;
+    padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
     border-radius:var(--element-radius);
     line-height:21px;
     display:block;

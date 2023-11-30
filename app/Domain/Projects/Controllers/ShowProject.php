@@ -226,7 +226,7 @@ namespace Leantime\Domain\Projects\Controllers {
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
                         'start' => $this->language->getISODateString($_POST['start']),
-                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
+                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end'], "e") : '',
                     );
 
                     if ($values['name'] !== '') {

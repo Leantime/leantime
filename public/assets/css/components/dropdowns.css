@@ -122,8 +122,8 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     left:auto;
 }
 
-.maincontentinner .ticketDropdown > a,
-.maincontentinner .ticketDropdown > a:link,
+.maincontent .ticketDropdown > a,
+.maincontent .ticketDropdown > a:link,
 .nyroModalCont .ticketDropdown > a,
 .nyroModalCont .ticketDropdown > a:link{
     color:#fff;
@@ -134,47 +134,47 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     box-shadow:var(--min-shadow);
 }
 
-.maincontentinner .ticketDropdown.userDropdown > a,
-.maincontentinner .ticketDropdown.userDropdown > a:link,
+.maincontent .ticketDropdown.userDropdown > a,
+.maincontent .ticketDropdown.userDropdown > a:link,
 .nyroModalCont .ticketDropdown.userDropdown > a,
 .nyroModalCont .ticketDropdown.userDropdown > a:link {
     padding-left:0px;
 }
 
-.maincontentinner .ticketDropdown.firstDropdown > a {
+.maincontent .ticketDropdown.firstDropdown > a {
     margin-left:0px;
 }
 
-.maincontentinner .ticketDropdown.lastDropdown > a {
+.maincontent .ticketDropdown.lastDropdown > a {
     padding-right:0px;
 }
 
-.maincontentinner .ticketDropdown > a:hover,
-.maincontentinner .ticketDropdown > a:focus {
+.maincontent .ticketDropdown > a:hover,
+.maincontent .ticketDropdown > a:focus {
     text-decoration: none;
 }
 
 
-.maincontentinner .ticketDropdown.colorized li a,
+.maincontent .ticketDropdown.colorized li a,
 .nyroModalCont .ticketDropdown.colorized li a{
     color:#fff;
 }
 
-.maincontentinner .ticketDropdown.noBg {
+.maincontent .ticketDropdown.noBg {
     background:transparent;
 
 
 }
 
-.maincontentinner .ticketDropdown.noBg a {
+.maincontent .ticketDropdown.noBg a {
     box-shadow: none;
 }
 
-.maincontentinner .ticketDropdown.noBg >a img {
+.maincontent .ticketDropdown.noBg >a img {
     margin-top:-1px;
 }
 
-.maincontentinner .dropdown img {
+.maincontent .dropdown img {
     width:23px;
     border-radius: 12px;
     border: 1px solid var(--neutral);
@@ -183,15 +183,15 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 
-.maincontentinner .ticketDropdown.noBg >a:hover {
+.maincontent .ticketDropdown.noBg >a:hover {
     color:#000;
 }
 
-.maincontentinner .ticketDropdown.noBg >a:hover img {
+.maincontent .ticketDropdown.noBg >a:hover img {
     border-color:var(--dropdown-link-hover-bg) !important
 }
 
-.maincontentinner .ticketDropdown ul li a[class*="label-"],
+.maincontent .ticketDropdown ul li a[class*="label-"],
 .nyroModalCont .ticketDropdown ul li a[class*="label-"] {
     padding: 5px 10px;
     display:block;
@@ -207,7 +207,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .chosen-results li.label-warning,
-.maincontentinner .ticketDropdown a.label-warning,
+.maincontent .ticketDropdown a.label-warning,
 .nyroModalCont .ticketDropdown a.label-warning,
 .label-warning,
 .label-yellow{
@@ -216,14 +216,14 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .chosen-results li.label-info,
-.maincontentinner .ticketDropdown a.label-info,
+.maincontent .ticketDropdown a.label-info,
 .nyroModalCont .ticketDropdown a.label-info{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
 .chosen-results li.label-important,
-.maincontentinner .ticketDropdown a.label-important,
+.maincontent .ticketDropdown a.label-important,
 .nyroModalCont .ticketDropdown a.label-important,
 .label-important{
     background:var(--red);
@@ -231,7 +231,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .chosen-results li.label-danger,
-.maincontentinner .ticketDropdown a.label-danger,
+.maincontent .ticketDropdown a.label-danger,
 .nyroModalCont .ticketDropdown a.label-danger,
 .label-danger,
 .label-red{
@@ -240,7 +240,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .chosen-results li.label-success,
-.maincontentinner .ticketDropdown a.label-success,
+.maincontent .ticketDropdown a.label-success,
 .nyroModalCont .ticketDropdown a.label-success,
 .label-success,
 .label-green {
@@ -249,7 +249,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .chosen-results li.label-default,
-.maincontentinner .ticketDropdown a.label-default,
+.maincontent .ticketDropdown a.label-default,
 .nyroModalCont .ticketDropdown a.label-default,
 .label-default{
     background: var(--grey);
@@ -257,89 +257,89 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .chosen-results li.label-default.milestone,
-.maincontentinner .ticketDropdown a.label-default.milestone,
+.maincontent .ticketDropdown a.label-default.milestone,
 .nyroModalCont .ticketDropdown a.label-default.milestone {
     color:var(--blue-text-color);
 }
 
 .chosen-results li.label-purple,
-.maincontentinner .ticketDropdown a.label-purple,
+.maincontent .ticketDropdown a.label-purple,
 .nyroModalCont .ticketDropdown a.label-purple{
     background:var(--purple);
     color:var(--purple-text-color);
 }
 
 .chosen-results li.label-pink,
-.maincontentinner .ticketDropdown a.label-pink,
+.maincontent .ticketDropdown a.label-pink,
 .nyroModalCont .ticketDropdown a.label-pink{
     background:var(--pink);
     color:var(--pink-text-color);
 }
 
 .chosen-results li.label-brown,
-.maincontentinner .ticketDropdown a.label-brown,
+.maincontent .ticketDropdown a.label-brown,
 .nyroModalCont .ticketDropdown a.label-brown{
     background:var(--brown);
     color:var(--brown-text-color);
 }
 
 .chosen-results li.label-blue,
-.maincontentinner .ticketDropdown a.label-blue,
+.maincontent .ticketDropdown a.label-blue,
 .nyroModalCont .ticketDropdown a.label-blue{
     background:var(--blue);
     color:var(--blue-text-color);
 }
 
 .chosen-results li.label-dark-blue,
-.maincontentinner .ticketDropdown a.label-dark-blue,
+.maincontent .ticketDropdown a.label-dark-blue,
 .nyroModalCont .ticketDropdown a.label-dark-blue{
     background:var(--dark-blue);
     color:var(--dark-blue-text-color);
 }
 
 .chosen-results li.label-darker-blue,
-.maincontentinner .ticketDropdown a.label-darker-blue,
+.maincontent .ticketDropdown a.label-darker-blue,
 .nyroModalCont .ticketDropdown a.label-darker-blue{
     background:var(--darker-blue);
     color:var(--darker-blue-text-color);
 }
 
 .chosen-results li.label-green,
-.maincontentinner .ticketDropdown a.label-green,
+.maincontent .ticketDropdown a.label-green,
 .nyroModalCont .ticketDropdown a.label-green{
     background:var(--green);
     color:var(--green-text-color);
 }
 
 .chosen-results li.label-dark-green,
-.maincontentinner .ticketDropdown a.label-dark-green,
+.maincontent .ticketDropdown a.label-dark-green,
 .nyroModalCont .ticketDropdown a.label-dark-green{
     background:var(--dark-green);
     color:var(--dark-green-text-color);
 }
 
 .chosen-results li.label-red,
-.maincontentinner .ticketDropdown a.label-red,
+.maincontent .ticketDropdown a.label-red,
 .nyroModalCont .ticketDropdown a.label-red{
     background:var(--red);
     color:var(--red-text-color);
 }
 
 .chosen-results li.label-dark-red,
-.maincontentinner .ticketDropdown a.label-dark-red,
+.maincontent .ticketDropdown a.label-dark-red,
 .nyroModalCont .ticketDropdown a.label-dark-red{
     background:var(--dark-red);
     color:var(--dark-red-text-color);
 }
 
 .chosen-results li.label-grey,
-.maincontentinner .ticketDropdown a.label-grey,
+.maincontent .ticketDropdown a.label-grey,
 .nyroModalCont .ticketDropdown a.label-grey{
     background:var(--grey);
     color:var(--grey-text-color);
 }
 
-.maincontentinner .ticketDropdown a.label-default.effort,
+.maincontent .ticketDropdown a.label-default.effort,
 .nyroModalCont .ticketDropdown a.label-default.effort{
     background:var(--secondary-background);
     color:var(--primary-font-color);
@@ -347,67 +347,91 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 
-.maincontentinner .ticketDropdown ul li {
+.maincontent .ticketDropdown ul li {
     margin-bottom:1px;
 }
 
-.maincontentinner .ticketDropdown.milestoneDropdown li a:hover{
+.maincontent .ticketDropdown.milestoneDropdown li a:hover{
     background: var(--dropdown-link-hover-bg) !important;
     color: var(--dropdown-link-hover-color) !important;
 }
 
-.maincontentinner .accordionTitle {
+.maincontent .accordionTitle {
     font-size: var(--font-size-l);
     color: var(--primary-font-color);
     margin-bottom: 10px;
     font-weight:bold;
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
-    padding: 5px 8px;
+    padding: 5px 0px;
 }
 
-.maincontentinner .accordionTitle i {
+.maincontent .accordionTitle i {
     display:inline-block;
     width:10px;
     text-align:center;
     margin-right:10px;
 }
 
-.maincontentinner .accordionTitle[class*="label-"] {
+.maincontent .accordionTitle[class*="label-"] {
     margin-left:0px;
     border-radius: var(--accordion-header-radius);
-    padding: 5px 8px;
+    padding: 5px 0px;
     background: none;
 }
 
-.maincontentinner .accordionTitle.label-warning a{
+.maincontent .accordionTitle.label-warning a{
     background:none;
     color:var(--yellow);
 }
 
-.maincontentinner .accordionTitle.label-important a {
+.maincontent .accordionTitle.label-important a {
     background:none;
     color:var(--red);
 }
 
-.maincontentinner .accordionTitle.label-info a {
+.maincontent .accordionTitle.label-info a {
     background:none;
     color:var(--dark-blue);
 }
 
-.maincontentinner .accordionTitle.label-danger a {
+.maincontent .accordionTitle.label-danger a {
     background:none;
     color:var(--dark-red);
 }
 
-.maincontentinner .accordionTitle.label-success a {
+.maincontent .accordionTitle.label-success a {
     background:none;
     color:var(--green);
 }
 
-.maincontentinner .accordionTitle.label-default a {
+.maincontent .accordionTitle.label-default a {
     background:none;
     color:var(--grey);
+}
+
+.simpleAccordionContainer {
+    margin-bottom:30px;
+    padding-left: 20px;
+}
+
+.simpleAccordionContainer.kanban {
+    padding-left:0px;
+}
+
+.maincontent .accordionTitle .accordion-toggle i.fa:first-child {
+    width: 15px;
+    margin-top: 0px;
+    margin-right: 5px;
+    height: 15px;
+    line-height: 15px;
+    text-align: center;
+    border-radius: var(--element-radius);
+    font-size: var(--font-size-m);
+}
+
+.maincontent .accordionTitle .accordion-toggle i.fa:first-child:hover {
+    background: var(--main-menu-link-active-bg);
 }
 
 
@@ -600,7 +624,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .inlineDropDownContainer .ticketDropDown {
     float:right;
     font-size: var(--font-size-xl);
-    color:#aaa;
+    color: var(--interactive-icon-color);
     margin-right:-5px;
 }
 

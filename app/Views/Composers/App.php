@@ -59,10 +59,7 @@ class App extends Composer
             $_SESSION['menuState'] = $this->menuRepo->getSubmenuState('mainMenu') ?: 'open';
         }
 
-
-
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), "project");
-
 
         return [
             "section" => $menuType,

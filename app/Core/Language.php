@@ -77,19 +77,10 @@ class Language
     public Environment $config;
 
     /**
-     * @var Theme $themeCore
-     */
-    public Theme $themeCore;
-
-    /**
      * @var ApiRequest $apiRequest
      */
     public ApiRequest $apiRequest;
 
-    /**
-     * @var string $theme
-     */
-    public string $theme;
 
     /**
      * __construct - Check standard language otherwise get language from browser
@@ -106,8 +97,6 @@ class Language
     ) {
 
         $this->config = $config;
-        $this->themeCore = app()->make(Theme::class);
-        $this->theme = $this->themeCore->getActive();
         $this->apiRequest = $apiRequest;
 
         //Get list of available languages
@@ -141,30 +130,28 @@ class Language
 
         //Get user language
         if (!isset($_SESSION["userdata"]["id"])) {
-            // This is a login session, we need to ensure the default language (or the user's browser)
-            if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-                $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
-            }
+
+            // This is a not a login session, we need to ensure the default language (or the user's browser)
+            $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
+
         } else {
             // This is not a login session
             if (
-                ! isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"])
-                || empty($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"])
+                ! isset($_SESSION["usersettings.language"])
+                || empty($_SESSION["usersettings.language"])
             ) {
                 // User has a saved language
                 $languageSettings = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".language");
                 if ($languageSettings === false) {
-                    if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-                        $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
-                    }
+                    $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
                 } else {
                     $language = $languageSettings;
                 }
             } else {
-                $language = $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"];
+                $language = $_SESSION["usersettings.language"];
             }
 
-            $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"] = $language;
+            $_SESSION["usersettings.language"] = $language;
         }
         $_SESSION['usersettings.language'] = $language;
 
@@ -192,32 +179,31 @@ class Language
 
         $_SESSION['usersettings.language'] = $lang;
         if (isset($_SESSION["userdata"]["id"])) {
-            $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"] = $lang;
+            $_SESSION["usersettings.language"] = $lang;
         }
 
-        if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-            if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-                setcookie('language', $lang, [
-                'expires' => time() + 60 * 60 * 24 * 30,
-                    'path' => $this->config->appDir . '/',
-                    'samesite' => 'Strict',
-                ]);
-            }
+
+        if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
+            setcookie('language', $lang, [
+            'expires' => time() + 60 * 60 * 24 * 30,
+                'path' => $this->config->appDir . '/',
+                'samesite' => 'Strict',
+            ]);
         }
+
 
         $_SESSION['usersettings.language'] = $lang;
         if (isset($_SESSION["userdata"]["id"])) {
-            $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".language"] = $lang;
+            $_SESSION["usersettings.language"] = $lang;
         }
 
-        if (isset($this->config->keepTheme) && $this->config->keepTheme) {
-            if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-                setcookie('language', $lang, [
-                'expires' => time() + 60 * 60 * 24 * 30,
-                    'path' => $this->config->appDir . '/',
-                    'samesite' => 'Strict',
-                ]);
-            }
+
+        if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
+            setcookie('language', $lang, [
+            'expires' => time() + 60 * 60 * 24 * 30,
+                'path' => $this->config->appDir . '/',
+                'samesite' => 'Strict',
+            ]);
         }
 
         $this->readIni();
@@ -255,13 +241,12 @@ class Language
      */
     public function readIni(): array
     {
-        if (isset($_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme]) && $this->config->debug == 0) {
-            $this->ini_array = $_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme] = self::dispatch_filter(
+        if (isset($_SESSION['cache.language_resources_' . $this->language]) && $this->config->debug == 0) {
+            $this->ini_array = $_SESSION['cache.language_resources_' . $this->language] = self::dispatch_filter(
                 'language_resources',
-                $_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme],
+                $_SESSION['cache.language_resources_' . $this->language],
                 [
                     'language' => $this->language,
-                    'theme' => $this->theme,
                 ]
             );
             return $this->ini_array;
@@ -274,17 +259,11 @@ class Language
 
         $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER . 'en-US.ini', false, INI_SCANNER_RAW);
 
-        // Overwrite with english from theme
-        $mainLanguageArray = $this->includeOverrides($mainLanguageArray, $this->themeCore->getDir() . '/language/en-US.ini');
-
         // Complement english with english customization
         $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::CUSTOM_LANG_FOLDER . 'en-US.ini');
 
         // Overwrite english language by non-english language
         $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::DEFAULT_LANG_FOLDER . $this->language . '.ini', true);
-
-        // Overwrite english by non-english from theme
-        $mainLanguageArray = $this->includeOverrides($mainLanguageArray, $this->themeCore->getDir() . '/language/' . $this->language . '.ini', true);
 
         // Overwrite with non-engish customizations
         $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::CUSTOM_LANG_FOLDER . $this->language . '.ini', true);
@@ -296,11 +275,10 @@ class Language
             $this->ini_array,
             [
                 'language' => $this->language,
-                'theme' => $this->theme,
             ]
         );
 
-        $_SESSION['cache.language_resources_' . $this->language . '_' . $this->theme] = $this->ini_array;
+        $_SESSION['cache.language_resources_' . $this->language] = $this->ini_array;
 
         return $this->ini_array;
     }
@@ -389,7 +367,7 @@ class Language
      *
      * @access public
      * @param  string $index
-     * @param  bool $convertValue If true then if a value has a conversion (i.e.: PHP -> JavaScript) then do it, otherwise return PHP value
+     * @param  bool   $convertValue If true then if a value has a conversion (i.e.: PHP -> JavaScript) then do it, otherwise return PHP value
      * @return string
      */
     public function __(string $index, bool $convertValue = false): string
@@ -529,9 +507,10 @@ class Language
      *
      * @access public
      * @param string $date
+     * @param string $timeOfDay b beginning, m mid day, e end of day
      * @return string|bool
      */
-    public function getISODateString(?string $date): bool|string
+    public function getISODateString(?string $date, string $timeOfDay = "b"): bool|string
     {
         if (
             is_null($date) === false
@@ -539,10 +518,23 @@ class Language
             && $date != "1969-12-31 00:00:00"
             && $date != "0000-00-00 00:00:00"
         ) {
-            $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
+            $timestamp = date_create_from_format($this->__("language.dateformat"), $date, new \DateTimeZone($_SESSION['usersettings.timezone']));
 
             if (is_object($timestamp)) {
-                return date("Y-m-d 23:59:59", $timestamp->getTimestamp());
+
+                switch ($timeOfDay) {
+                    case "b":
+                        $timestamp->setTime(0, 0, 0);
+                        break;
+                    case "m":
+                        $timestamp->setTime(12, 0, 0);
+                        break;
+                    case "e":
+                        $timestamp->setTime(23, 59, 59);
+                        break;
+                }
+
+                return date("Y-m-d 00:00:00", $timestamp->getTimestamp());
             }
         }
 
@@ -560,7 +552,7 @@ class Language
     public function getISODateTimeString(?string $date, $time): bool|string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
+            $timestamp = date_create_from_format($this->__("language.dateformat"), $date, new \DateTimeZone($_SESSION['usersettings.timezone']));
 
             //Time is coming in as 24hour format with :
             $timeparts = explode(":", $time);
@@ -586,7 +578,7 @@ class Language
     public function getISOTimeString(?string $time): bool|string
     {
         if (is_null($time) === false && $time != "" && $time != "1969-12-31 00:00:00" && $time != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format($this->__("language.timeformat"), $time);
+            $timestamp = date_create_from_format($this->__("language.timeformat"), $time, new \DateTimeZone($_SESSION['usersettings.timezone']));
 
             if (is_object($timestamp)) {
                 return date("H:i:00", $timestamp->getTimestamp());
@@ -606,7 +598,7 @@ class Language
     public function extractTime(?string $dateTime): bool|string
     {
         if (is_null($dateTime) === false && $dateTime != "" && $dateTime != "1969-12-31 00:00:00" && $dateTime != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime);
+            $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime, new \DateTimeZone($_SESSION['usersettings.timezone']));
 
             if (is_object($timestamp)) {
                 return date("H:i:00", $timestamp->getTimestamp());
@@ -619,7 +611,7 @@ class Language
     public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
     {
 
-        if(isset($_SESSION['usersettings.language.dateTimeFormat'])) {
+        if (isset($_SESSION['usersettings.language.dateTimeFormat'])) {
             return $_SESSION['usersettings.language.dateTimeFormat'];
         }
 

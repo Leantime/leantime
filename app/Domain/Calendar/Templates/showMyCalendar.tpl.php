@@ -69,8 +69,9 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
         leantime.calendarController.initExportModal();
 
     });
+    var eventSources = [];
 
-    var events = [
+    var events = {events: [
         <?php foreach ($tpl->get('calendar') as $calendar) : ?>
         {
             title: <?php echo json_encode($calendar['title']); ?>,
@@ -97,26 +98,46 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
             enitityId: <?php echo $calendar['id'] ?>,
             <?php if (isset($calendar['eventType']) && $calendar['eventType'] == 'calendar') : ?>
             url: '<?=CURRENT_URL ?>#/calendar/editEvent/<?php echo $calendar['id'] ?>',
-            color: 'var(--accent2)',
+            backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
+            borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
             enitityType: "event",
             <?php else : ?>
             url: '<?=CURRENT_URL ?>#/tickets/showTicket/<?php echo $calendar['id'] ?>?projectId=<?php echo $calendar['projectId'] ?>',
-            color: 'var(--accent1)',
+            backgroundColor: '<?= $calendar['backgroundColor'] ?? "var(--accent2)" ?>',
+            borderColor: '<?= $calendar['borderColor'] ?? "var(--accent2)" ?>',
             enitityType: "ticket",
             <?php endif; ?>
         },
         <?php endforeach; ?>
-    ];
+    ]};
+
+    eventSources.push(events);
+
+    <?php
+    $externalCalendars = $tpl->get("externalCalendars");
+
+    foreach($externalCalendars as $externalCalendar) { ?>
+        eventSources.push(
+            {
+                url: '<?=BASE_URL ?>/calendar/externalCal/<?=$externalCalendar['id'] ?>',
+                format: 'ics',
+                color: '<?=$externalCalendar['colorClass'] ?>',
+                editable: false,
+            }
+        );
+
+    <?php } ?>
+
 
     document.addEventListener('DOMContentLoaded', function() {
-        const heightWindow = jQuery("body").height() - 190;
+        const heightWindow = jQuery("body").height() - 210;
 
         const calendarEl = document.getElementById('calendar');
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 height:heightWindow,
                 initialView: '<?=$_SESSION['submenuToggle']["myCalendarView"] ?>',
-                events: events,
+                eventSources:eventSources,
                 editable: true,
                 headerToolbar: false,
 
@@ -186,7 +207,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
             );
         calendar.setOption('locale', leantime.i18n.__("language.code"));
         calendar.render();
-        calendar.scrollToTime( 100 );
+        calendar.scrollToTime( Date.now() );
         jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
 
         jQuery('.fc-prev-button').click(function() {

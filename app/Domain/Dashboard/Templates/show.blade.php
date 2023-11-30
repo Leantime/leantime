@@ -100,7 +100,16 @@
 
                                 <div class="row">
                                     <div class="col-md-4 tw-px-[15px] tw-py-0">
-                                        {{ __('label.due') }}<input
+
+
+                                        @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
+                                            <i class="fa-regular fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} @formatDate($row['editFrom']) "></i>
+                                        @else
+                                            <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-sm" data-tippy-content="{{ __('text.not_scheduled') }}"></i>
+                                        @endif
+
+                                        <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
+                                             <input
                                             type="text"
                                             title="{{ __('label.due') }}"
                                             value="{{ $row['dateToFinish'] == '0000-00-00 00:00:00' || $row['dateToFinish'] == '1969-12-31 00:00:00'

@@ -10,6 +10,17 @@
 input, button, select, textarea {
     font-family:var(--primary-font-family);
 }
+
+input:focus,
+button:focus,
+select:focus,
+textarea:focus,
+.btn:focus {
+    outline:none;
+    /* TODO: Figure out good focus outline */
+    text-decoration: none;
+}
+
 form label{
     padding-top:5px;
 }
@@ -231,7 +242,7 @@ input[type='submit'],
     outline:0;
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 6px 12px;
+    padding: 6px 14px;
     line-height:21px;
     box-shadow:none;
     text-shadow: none;
@@ -655,9 +666,6 @@ input[type=color] {
     margin-left:5px !important;
 }
 
-#calendar {
-    margin-top:10px;
-}
 
 .dropdown-toggle.full-width-select {
     width:100%;
@@ -1397,7 +1405,8 @@ body .croppie-container {
 }
 
 .selectable.active .selectableContent{
-    border:1px solid var(--accent1);
+    background: var(--header-gradient);
+    color: var(--main-action-color);
 }
 
 .selectable.active .selectable-label {
@@ -1408,4 +1417,56 @@ body .croppie-container {
 .selectable:hover .selectableContent{
     background:var(--col-hover-bg);
     color: var(--main-menu-link-active-color);
+}
+
+
+/* PRetty toggle*/
+input[type="checkbox"].toggle {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+}
+
+input[type="checkbox"].toggle:focus {
+    outline:none;
+}
+
+input[type="checkbox"].toggle {
+    height: 20px;
+    width: 40px;
+    border-radius: 16px;
+    display: inline-block;
+    position: relative;
+    margin: 0;
+    border: 0px solid var(--primary-font-color);
+    background: var(--secondary-background);
+    box-shadow: var(--min-shadow);
+    transition: all .2s ease;
+    margin-top: 7px;
+
+}
+
+input[type="checkbox"].toggle:after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    box-shadow: var(--regular-shadow);
+    background:var(--primary-font-color);
+    transition: all .2s cubic-bezier(.5, .1, .75, 1.35);
+
+}
+
+input[type="checkbox"].toggle:checked {
+    border-color: var(--accent1);
+    background: var(--header-gradient);
+}
+input[type="checkbox"].toggle:checked:after {
+    transform: translatex(20px);
+    background:#fff;
 }

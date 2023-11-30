@@ -148,8 +148,8 @@ namespace Leantime\Domain\Sprints\Services {
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = $this->language->getISODateString($sprint->startDate);
-            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
+            $sprint->startDate = $this->language->getISODateString($sprint->startDate, "b");
+            $sprint->endDate = $this->language->getISODateString($sprint->endDate, "e");
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];
@@ -172,7 +172,7 @@ namespace Leantime\Domain\Sprints\Services {
 
             $sprint = (object) $params;
             $sprint->startDate = $this->language->getISODateString($sprint->startDate);
-            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
+            $sprint->endDate = $this->language->getISODateString($sprint->endDate, "e");
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];
@@ -235,11 +235,11 @@ namespace Leantime\Domain\Sprints\Services {
             } else {
                 //language formatted
                 $dateStart = new DateTime($this->language->getISODateString($sprint->startDate));
-                $dateEnd = new DateTime($this->language->getISODateString($sprint->endDate));
+                $dateEnd = new DateTime($this->language->getISODateString($sprint->endDate, "e"));
                 $period = new DatePeriod(
                     new DateTime($this->language->getISODateString($sprint->startDate)),
                     new DateInterval('P1D'),
-                    new DateTime($this->language->getISODateString($sprint->endDate))
+                    new DateTime($this->language->getISODateString($sprint->endDate, "e"))
                 );
             }
 

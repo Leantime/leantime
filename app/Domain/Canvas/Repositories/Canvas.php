@@ -239,11 +239,6 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @param $type
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @param $type
-         * @return array|false
-         */
         public function getAllCanvas($projectId, $type = null): false|array
         {
 

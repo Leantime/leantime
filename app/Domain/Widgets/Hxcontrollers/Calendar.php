@@ -55,6 +55,7 @@ class Calendar extends HtmxController
 
     public function get() {
 
+        $this->tpl->assign('externalCalendars', $this->calendarRepo->getMyExternalCalendars($_SESSION['userdata']['id']));
         $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
 
     }

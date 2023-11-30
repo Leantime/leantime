@@ -16,6 +16,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Core\Controller;
+    use Leantime\Domain\Widgets\Services\Widgets;
 
     /**
      *
@@ -31,6 +32,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
         private Reactions $reactionsService;
         private Reports $reportService;
+
+        private Widgets $widgetService;
 
         /**
          * @param ProjectService     $projectsService
@@ -50,6 +53,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             CalendarRepository $calendarRepo,
             Reactions $reactionsService,
             Reports $reportsService,
+            Widgets $widgetService
         ): void {
             $this->projectsService = $projectsService;
             $this->ticketsService = $ticketsService;
@@ -59,6 +63,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->calendarRepo = $calendarRepo;
             $this->reactionsService = $reactionsService;
             $this->reportsService = $reportsService;
+            $this->widgetService = $widgetService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
         }
@@ -69,6 +74,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
          */
         public function get(): void
         {
+
             $images = array(
                 "undraw_smiley_face_re_9uid.svg",
                 "undraw_meditation_re_gll0.svg",
@@ -87,101 +93,46 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $this->tpl->assign('randomImage', $images[$randomKey]);
 
-            $projectFilter = "";
-            if (isset($_SESSION['userHomeProjectFilter'])) {
-                $projectFilter = $_SESSION['userHomeProjectFilter'];
+
+
+
+            $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], '');
+            $totalTickets = 0;
+            foreach ($tickets as $ticketGroup) {
+                $totalTickets = $totalTickets + count($ticketGroup["tickets"]);
             }
 
-            if (isset($_GET['projectFilter'])) {
-                $projectFilter = $_GET['projectFilter'];
-                $_SESSION['userHomeProjectFilter'] = $projectFilter;
-            }
+            $this->tpl->assign('tickets', $tickets);
+            $this->tpl->assign('totalTickets', $totalTickets);
 
-            // TICKETS
             $allAssignedprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $this->tpl->assign("allProjects", $allAssignedprojects);
+            $this->tpl->assign("projectCount", count($allAssignedprojects));
 
-            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
-
-            $groupBy = "time";
-            if (isset($_SESSION['userHomeGroupBy'])) {
-                $groupBy = $_SESSION['userHomeGroupBy'];
-            }
-
-            if (isset($_GET['groupBy'])) {
-                $groupBy = $_GET['groupBy'];
-                $_SESSION['userHomeGroupBy'] = $groupBy;
-            }
-
-            if ($groupBy == "time") {
-                $tickets = $this->ticketsService->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
-            } elseif ($groupBy == "project") {
-                $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
-            }
-
-            $tickets = self::dispatch_filter('ticketGroups', $tickets);
-            self::dispatch_event('afterTicketGroups');
-
-            $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
-            $clients = array();
-
-            $projectResults = array();
-            $i = 0;
-
-            $clientId = "";
-
-            if (is_array($allprojects)) {
-                foreach ($allprojects as $project) {
-                    if (!array_key_exists($project["clientId"], $clients)) {
-                        $clients[$project["clientId"]] = $project['clientName'];
-                    }
-
-                    if ($clientId == "" || $project["clientId"] == $clientId) {
-                        $projectResults[$i] = $project;
-                        $projectResults[$i]['progress'] = $this->projectsService->getProjectProgress($project['id']);
-
-                        $fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
-                        $projectResults[$i]['report'] = $fullReport;
-
-                        $i++;
-                    }
-                }
-            }
 
             $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
 
-            $dashboardGrid = $this->settingRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid");
-
-            $unserializedData = "{}";
-
-            if ($dashboardGrid && $dashboardGrid != '') {
-                $unserializedData =  unserialize($dashboardGrid);
-                $unserializedData = array_sort($unserializedData, function ($a, $b) {
-
-                    $first = intval($a['y'] . $a['x']);
-                    $second = intval(($b['y'] ?? 0) . ($b['x'] ?? 0));
-                    return $first - $second;
-                });
-            }
-
-            $this->tpl->assign("dashboardGrid", $unserializedData);
+            //$this->widgetService->resetDashboard($_SESSION['userdata']['id']);
+            $dashboardGrid = $this->widgetService->getActiveWidgets($_SESSION['userdata']['id']);
+            $this->tpl->assign("dashboardGrid", $dashboardGrid);
 
 
             $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
             $this->tpl->assign("completedOnboarding", $completedOnboarding);
 
-            $this->tpl->assign("allProjects", $projectResults);
+            //$this->tpl->assign("allProjects", $projectResults);
 
             $this->tpl->assign('currentUser', $currentUser);
-            $this->tpl->assign('tickets', $tickets);
-            $this->tpl->assign("onTheClock", $this->timesheetsService->isClocked($_SESSION["userdata"]["id"]));
-            $this->tpl->assign('efforts', $this->ticketsService->getEffortLabels());
-            $this->tpl->assign('priorities', $this->ticketsService->getPriorityLabels());
-            $this->tpl->assign("types", $this->ticketsService->getTicketTypes());
-            $this->tpl->assign("statusLabels", $this->ticketsService->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]));
 
-            $allProjectMilestones = $this->ticketsService->getAllMilestonesByUserProjects($_SESSION["userdata"]["id"]);
-            $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
+            //$this->tpl->assign("onTheClock", $this->timesheetsService->isClocked($_SESSION["userdata"]["id"]));
+            //$this->tpl->assign('efforts', $this->ticketsService->getEffortLabels());
+            //$this->tpl->assign('priorities', $this->ticketsService->getPriorityLabels());
+            //$this->tpl->assign("types", $this->ticketsService->getTicketTypes());
+            //$this->tpl->assign("statusLabels", $this->ticketsService->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]));
+
+            //$allProjectMilestones = $this->ticketsService->getAllMilestonesByUserProjects($_SESSION["userdata"]["id"]);
+            //$this->tpl->assign('milestones', $allProjectMilestones);
+            //$this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
 
             $this->tpl->display('dashboard.home');
         }

@@ -93,7 +93,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                     }
 
                     if (isset($_POST['date']) && $_POST['date'] != '') {
-                        $values['date'] = $this->language->getISODateString($_POST['date']);
+                        $values['date'] = $this->language->getISODateString($_POST['date'], "b");
                     }
 
                     if (isset($_POST['hours']) && $_POST['hours'] != '') {
@@ -106,7 +106,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                         }
 
                         if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                            $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate']);
+                            $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate'], "m");
                         }
                     }
 
@@ -117,7 +117,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             }
 
                             if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                                $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate']);
+                                $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate'], "m");
                             }
                         }
                     }
@@ -129,7 +129,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             }
 
                             if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                                $values['paidDate'] = $this->language->getISODateString($_POST['paidDate']);
+                                $values['paidDate'] = $this->language->getISODateString($_POST['paidDate'], "m");
                             }
                         }
                     }

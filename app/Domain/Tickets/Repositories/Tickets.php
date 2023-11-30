@@ -161,18 +161,6 @@ namespace Leantime\Domain\Tickets\Repositories {
          * @param $projectId
          * @return array|array[]
          */
-        /**
-         * @param $projectId
-         * @return array|array[]
-         */
-        /**
-         * @param $projectId
-         * @return array|array[]
-         */
-        /**
-         * @param $projectId
-         * @return array|array[]
-         */
         public function getStateLabels($projectId = null): array
         {
 
@@ -320,24 +308,6 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $values;
         }
 
-        /**
-         * @param $id
-         * @param $limit
-         * @return array|false
-         * @throws BindingResolutionException
-         */
-        /**
-         * @param $id
-         * @param $limit
-         * @return array|false
-         * @throws BindingResolutionException
-         */
-        /**
-         * @param $id
-         * @param $limit
-         * @return array|false
-         * @throws BindingResolutionException
-         */
         /**
          * @param $id
          * @param $limit
@@ -646,6 +616,116 @@ namespace Leantime\Domain\Tickets\Repositories {
             $stmn->closeCursor();
 
             return $values;
+        }
+
+        public function getScheduledTasks(\DateTime $dateFrom, \DateTime $dateTo, ?int $userId = null) {
+            $query = "SELECT
+							zp_tickets.id,
+							zp_tickets.headline,
+							zp_tickets.description,
+							zp_tickets.date,
+							zp_tickets.sprint,
+
+							zp_tickets.storypoints,
+							zp_tickets.sortindex,
+							zp_tickets.dateToFinish,
+							zp_tickets.projectId,
+							zp_tickets.priority,
+							zp_tickets.type,
+							zp_tickets.status,
+							zp_tickets.tags,
+							zp_tickets.editorId,
+							zp_tickets.dependingTicketId,
+							zp_tickets.milestoneid,
+							zp_tickets.planHours,
+							zp_tickets.editFrom,
+							zp_tickets.editTo,
+							zp_tickets.hourRemaining ";
+
+            /*              zp_sprints.name as sprintName,
+							(SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
+							zp_projects.name AS projectName,
+							zp_clients.name AS clientName,
+							zp_clients.id AS clientId,
+							t1.id AS authorId,
+							t1.lastname AS authorLastname,
+							t1.firstname AS authorFirstname,
+							t1.profileId AS authorProfileId,
+							t2.firstname AS editorFirstname,
+							t2.lastname AS editorLastname,
+							t2.profileId AS editorProfileId,
+							milestone.headline AS milestoneHeadline,
+							IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,
+							COUNT(DISTINCT zp_comment.id) AS commentCount,
+							COUNT(DISTINCT zp_file.id) AS fileCount,
+							COUNT(DISTINCT subtasks.id) AS subtaskCount,
+							parent.headline AS parentHeadline*/
+            $query .= "
+						FROM zp_tickets
+						LEFT JOIN zp_relationuserproject USING (projectId)
+						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+						LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+							 WHERE
+							 (   zp_relationuserproject.userId = :userId
+						        OR zp_projects.psettings = 'all'
+						        OR (requestor.role >= 40)
+						        )
+							AND zp_tickets.type <> 'milestone' ";
+
+
+
+					/*
+
+
+						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+						LEFT JOIN zp_user AS t1 ON zp_tickets.userId = t1.id
+						LEFT JOIN zp_user AS t2 ON zp_tickets.editorId = t2.id
+
+						LEFT JOIN zp_comment ON zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket'
+						LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
+						LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
+						LEFT JOIN zp_tickets AS milestone ON zp_tickets.milestoneid = milestone.id AND zp_tickets.milestoneid > 0 AND milestone.type = 'milestone'
+						LEFT JOIN zp_tickets AS parent ON zp_tickets.dependingTicketId = parent.id
+						LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0
+						LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
+						WHERE
+						   ";*/
+
+            if (isset($userId)) {
+                $query .= " AND zp_tickets.editorId = :userId";
+            }
+
+            $query .= " AND ((zp_tickets.editFrom BETWEEN :dateFrom AND :dateTo) OR (zp_tickets.editTo BETWEEN :dateFrom AND :dateTo))
+            GROUP BY zp_tickets.id";
+
+
+            $stmn = $this->db->database->prepare($query);
+
+            if (isset($userId)) {
+                $stmn->bindValue(':userId',$userId, PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
+            }
+
+            $dateFromString = $dateFrom->format("Y-m-d 00:00:00");
+            $stmn->bindValue(':dateFrom', $dateFromString, PDO::PARAM_STR);
+
+            $dateToString = $dateTo->format("Y-m-d 23:59:59");
+            $stmn->bindValue(':dateTo', $dateToString, PDO::PARAM_STR);
+
+
+            if(isset($_SESSION['userdata'])) {
+                $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            }else{
+                $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+
         }
 
         /**

@@ -172,7 +172,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                             <?php echo $tpl->__('subtitles.organization'); ?>
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_tickets-organization" style="padding-left:0">
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
 
                     <div class="form-group">
                         <label class="control-label"><?php echo $tpl->__('label.milestone'); ?></label>
@@ -231,7 +231,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <?php echo $tpl->__('subtitle.people'); ?>
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_tickets-people" style="padding-left:0">
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-people" style="padding-left:0">
 
                     <div class="form-group">
                         <label class="control-label"><?php echo $tpl->__('label.author'); ?></label>
@@ -345,7 +345,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <?php echo $tpl->__('subtitle.time_tracking'); ?>
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_tickets-timetracking" style="padding-left:0">
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-timetracking" style="padding-left:0">
 
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.planned_hours'); ?></label>

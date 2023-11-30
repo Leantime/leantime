@@ -2068,6 +2068,11 @@ body .widgettitle .editHeadline:hover {
     height: auto;
 }
 
+.svgContainer.fixedHeight svg {
+    width:auto;
+    height:100px;
+}
+
 .loading {
     width:100%;
     text-align:center;
@@ -2235,15 +2240,6 @@ body .widgettitle .editHeadline:hover {
 
 .articleBody {
     margin-bottom:25px;
-}
-
-.simpleAccordionContainer {
-    margin-bottom:30px;
-    padding-left: 20px;
-}
-
-.simpleAccordionContainer.kanban {
-    padding-left:0px;
 }
 
 .teamBox {
@@ -2560,6 +2556,7 @@ h3.todaysDate {
     text-align:left;
     font-size: var(--font-size-xl);
     font-weight:normal;
+    display:none;
 }
 
 .minCalendar .fc .fc-multimonth-singlecol .fc-multimonth-header {
@@ -2599,9 +2596,13 @@ h3.todaysDate {
     background:var(--layered-background);
 }
 
-.maincontentinner .fc .fc-timegrid-col.fc-day-today,
-.maincontentinner .fc .fc-daygrid-day.fc-day-today,
-.maincontentinner  .fc .fc-button-primary {
+.minCalendar .fc-multimonth-daygrid-table .fc-daygrid-day-events .fc-daygrid-event-harness {
+
+}
+
+.maincontent .fc .fc-timegrid-col.fc-day-today,
+.maincontent .fc .fc-daygrid-day.fc-day-today,
+.maincontent  .fc .fc-button-primary {
     background-color: var(--secondary-background);
     color:var(--primary-font-color);
     border: 1px solid var(--secondary-action-bg);
@@ -2609,21 +2610,93 @@ h3.todaysDate {
 }
 
 
-
-.minCalendar .fc .fc-button-primary:focus,
-.minCalendar .fc .fc-button-primary:active {
+.maincontent .fc .fc-button-primary:focus,
+.maincontent .fc .fc-button-primary:active {
     box-shadow: none;
 }
 
-.minCalendar .fc .fc-button-primary:not(:disabled).fc-button-active,
-.minCalendar .fc .fc-button-primary:not(:disabled):active,
-.minCalendar .fc .fc-button-primary:not(:disabled):hover {
+.maincontent .fc .fc-button-primary:not(:disabled).fc-button-active,
+.maincontent .fc .fc-button-primary:not(:disabled):active,
+.maincontent .fc .fc-button-primary:not(:disabled):hover {
     background:var(--secondary-action-hover-bg);
     color:var(--secondary-action-hover-color);
 }
 
-.maincontentinner .fc-multimonth-header-table .fc-col-header-cell {
+.maincontent .fc-multimonth-header-table .fc-col-header-cell {
     padding:5px;
+}
+
+.maincontent .fc-list-event {
+    background:var(--secondary-background);
+
+}
+
+.maincontent .fc-list-event td {
+    padding:5px;
+}
+
+.maincontent .fc-list-event td.fc-list-event-time {
+    padding-left:15px;
+}
+
+.maincontent .fc-v-event {
+    border:none;
+    border-left:5px solid var(--fc-event-border-color);
+}
+
+.maincontent .fc-v-event .fc-event-main-frame {
+    padding-left:5px;
+}
+
+.maincontent .fc-timegrid-event {
+    border-radius: var(--element-radius);
+}
+
+.maincontent .fc-timegrid-event-harness-inset .fc-timegrid-event,
+.maincontent .fc-timegrid-event.fc-event-mirror {
+    box-shadow:var(--regular-shadow);
+}
+
+.maincontent .fc-timegrid-event .fc-event-main {
+    padding: 3px 1px 0px;
+}
+
+.maincontent .fc-event:not(.fc-event-draggable):before {
+    content: "🔒";
+    position: absolute;
+    right: 5px;
+}
+
+.ticketBox {
+    cursor:grab;
+}
+
+.ticketBox.fc-event-dragging,
+.ticketBox.ui-draggable-dragging {
+    background:var(--secondary-background);
+    padding:10px;
+    border-radius:var(--box-radius);
+    opacity:0.7;
+}
+
+.ticketBox.fc-event-dragging .dropdown a,
+.ticketBox.ui-draggable-dragging .dropdown a{
+    color:var(--main-action-color);
+}
+
+.ticketBox.fc-event-dragging:before,
+.ticketBox.ui-draggable-dragging:before{
+    content: "Drag me to the calendar";
+    background: #000;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    position: absolute;
+    top: -38px;
+    text-align: center;
+    width: 200px;
+    left: 50%;
+    margin-left: -100px;
 }
 
 .profileImage {
@@ -2734,4 +2807,44 @@ h4 .helperTooltip,
     border: 3px solid var(--main-border-color);
     display: block;
     margin:auto;
+}
+
+.bigNumberBox {
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--secondary-background) -85%, transparent 100%);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--large-shadow);
+    border: 1px solid var(--light-layered-background);
+}
+
+.bigNumberBox .icon {
+    float:left;
+    margin-right:10px;
+}
+
+.bigNumberBox .icon .fa {
+    font-size: 40px;
+    color: var(--main-action-color);
+}
+
+
+.bigNumberBoxNumber {
+    font-size: 36px;
+    color: var(--main-action-color);
+    font-weight: normal;
+    text-shadow: var(--min-shadow);
+    line-height: 1;
+}
+
+.bigNumberBoxText {
+    color: var(--main-action-color);
+    font-weight:bold;
+}
+
+.maincontent .infoIcon {
+    font-size: var(--font-size-l);
+    color: var(--interactive-icon-color);
+    vertical-align: text-top;
+    cursor:pointer;
 }

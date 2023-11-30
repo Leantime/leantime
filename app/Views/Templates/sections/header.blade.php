@@ -53,12 +53,14 @@
 @dispatchEvent('afterScriptsAndStyles')
 
 <!-- Replace main theme colors -->
-@foreach ($accents as $accent)
-    @if($accent !== false)
-        <style>:root { --accent{{ $loop->iteration }}: {{{ $accent }}}; }</style>
-    @endif
-@endforeach
+<style id="colorSchemeSetter">
+    @foreach ($accents as $accent)
+        @if($accent !== false)
+           :root { --accent{{ $loop->iteration }}: {{{ $accent }}}; }
+        @endif
+    @endforeach
+</style>
 
-<style>:root { --primary-font-family: '{{{ $themeFont }}}', 'Helvetica Neue', Helvetica, sans-serif; }</style>
+<style id="fontStyleSetter">:root { --primary-font-family: '{{{ $themeFont }}}', 'Helvetica Neue', Helvetica, sans-serif; }</style>
 
 @dispatchEvent('afterThemeColors')

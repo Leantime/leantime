@@ -24,6 +24,26 @@ namespace Leantime\Domain\Calendar\Repositories {
 
         private LanguageCore $language;
 
+        private array $classColorMap = array(
+             "label-warning" => "var(--yellow)",
+             "label-purple" => "var(--purple)",
+             "label-pink" => "var(--pink)",
+             "label-darker-blue" => "var(--darker-blue)",
+             "label-info" => "var(--dark-blue)",
+             "label-blue" => "var(--blue)",
+             "label-dark-blue" => "var(--dark-blue)",
+             "label-success" => "var(--green)",
+             "label-brown" => "var(--brown)",
+             "label-danger" => "var(--dark-red)",
+             "label-important" => "var(--red)",
+             "label-green" => "var(--green)",
+             "label-default" => "var(--grey)",
+             "label-dark-green" => "var(--dark-green)",
+             "label-red" => "var(--red)",
+             "label-dark-red" => "var(--dark-red)",
+             "label-grey" => "var(--grey)",
+        );
+
         /**
          * __construct - get database connection
          *
@@ -75,48 +95,23 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @return array
          * @throws BindingResolutionException
          */
-        /**
-         * @param $userId
-         * @return array
-         * @throws BindingResolutionException
-         */
         public function getCalendar($userId): array
         {
 
-            /*
-           $userTickets = "SELECT
-                    tickets.dateToFinish,
-                    tickets.headline,
-                    tickets.id,
-                    tickets.projectId,
-                    tickets.editFrom,
-                    tickets.editTo
-                FROM zp_tickets AS tickets
-                WHERE (tickets.editorId = :userId OR tickets.userId = :userId) AND tickets.type <> 'Milestone' AND tickets.type <> 'Subtask'";
-
-            $stmn = $this->db->database->prepare($userTickets);
-            $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-
-            $stmn->execute();
-            $tickets = $stmn->fetchAll();
-            $stmn->closeCursor();
-            */
-
             $ticketService = app()->make(Tickets::class);
-            $ticketArray =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
+            $dbTickets =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
 
-            if (!empty($ticketArray)) {
-                if (isset($ticketArray["thisWeek"]["tickets"]) && isset($ticketArray["later"]["tickets"])) {
-                    $tickets = array_merge($ticketArray["thisWeek"]["tickets"], $ticketArray["later"]["tickets"]);
-                } elseif (isset($ticketArray["thisWeek"]["tickets"])) {
-                    $tickets = $ticketArray["thisWeek"]["tickets"];
-                } elseif ($ticketArray["later"]["tickets"]) {
-                    $tickets = $ticketArray["later"]["tickets"];
-                } else {
-                    $tickets = array();
-                }
-            } else {
-                $tickets = array();
+            $tickets = array();
+            if (isset($dbTickets["thisWeek"]["tickets"])){
+                $tickets = array_merge($tickets, $dbTickets["thisWeek"]["tickets"]);
+            }
+
+            if (isset($dbTickets["later"]["tickets"])){
+                $tickets = array_merge($tickets, $dbTickets["later"]["tickets"]);
+            }
+
+            if (isset($dbTickets["overdue"]["tickets"])){
+                $tickets = array_merge($tickets, $dbTickets["overdue"]["tickets"]);
             }
 
 
@@ -159,6 +154,8 @@ namespace Leantime\Domain\Calendar\Repositories {
                     'projectId' => '',
                     'eventType' => "calendar",
                     'dateContext' => 'plan',
+                    'backgroundColor' => 'var(--accent1)',
+                    'borderColor' => 'var(--accent1)',
                 );
             }
 
@@ -166,84 +163,112 @@ namespace Leantime\Domain\Calendar\Repositories {
                 $statusLabelsArray = array();
 
                 foreach ($tickets as $ticket) {
+                    if (!isset($statusLabelsArray[$ticket['projectId']])) {
+                        $statusLabelsArray[$ticket['projectId']] = $ticketService->getStatusLabels(
+                            $ticket['projectId']
+                        );
+                    }
+
+                    if (isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
+                        $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]["name"];
+                        $statusColor = $this->classColorMap[$statusLabelsArray[$ticket['projectId']][$ticket['status']]["class"]];
+                    } else {
+                        $statusName = "";
+                        $statusColor = "var(--grey)";
+                    }
+
+                    $backgroundColor = "var(--accent1)";
+
                     $context = "";
                     if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
                         $dateFrom = strtotime($ticket['dateToFinish']);
                         $dateTo = strtotime($ticket['dateToFinish']);
                         $context = '❕ ' . $this->language->__("label.due_todo");
 
-                        if (!isset($statusLabelsArray[$ticket['projectId']])) {
-                            $statusLabelsArray[$ticket['projectId']] = $ticketService->getStatusLabels(
-                                $ticket['projectId']
-                            );
-                        }
-
-                        if (isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
-                            $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]["name"];
-                        } else {
-                            $statusName = "";
-                        }
-
-                        $newValues[] = array(
-                            'title'  => $context . $ticket['headline'] . " (" . $statusName . ")",
-                            'allDay' => false,
-                            'dateFrom' => array(
-                                'y' => date('Y', $dateFrom),
-                                'm' => date('m', $dateFrom),
-                                'd' => date('d', $dateFrom),
-                                'h' => date('H', $dateFrom),
-                                'i' => date('i', $dateFrom),
-                                'ical' => date('Ymd\THis', $dateFrom),
-                            ),
-                            'dateTo' => array(
-                                'y' => date('Y', $dateTo),
-                                'm' => date('m', $dateTo),
-                                'd' => date('d', $dateTo),
-                                'h' => date('H', $dateTo),
-                                'i' => date('i', $dateTo),
-                                'ical' => date('Ymd\THis', $dateTo),
-                            ),
-                            'id' => $ticket['id'],
-                            'projectId' => $ticket['projectId'],
-                            'eventType' => "ticket",
-                            'dateContext' => 'due',
+                        $newValues[] = $this->mapEventData(
+                            title:$context . $ticket['headline'] . " (" . $statusName . ")",
+                            allDay:false,
+                            id: $ticket['id'],
+                            projectId: $ticket['projectId'],
+                            eventType: "ticket",
+                            dateContext: "edit",
+                            backgroundColor: $backgroundColor,
+                            borderColor: $statusColor,
+                            dateFrom: $dateFrom,
+                            dateTo: $dateTo
                         );
                     }
 
                     if ($ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00") {
-                        $dateFrom = strtotime($ticket['editFrom']);
-                        $dateTo     = strtotime($ticket['editTo']);
-                        $context =  $this->language->__("label.planned_edit");
+                         $dateFrom = strtotime($ticket['editFrom']);
+                         $dateTo = strtotime($ticket['editTo']);
+                         $context = $this->language->__("label.planned_edit");
 
-                        $newValues[] = array(
-                            'title'  => $context . $ticket['headline'],
-                            'allDay' => false,
-                            'dateFrom' => array(
-                                'y' => date('Y', $dateFrom),
-                                'm' => date('m', $dateFrom),
-                                'd' => date('d', $dateFrom),
-                                'h' => date('H', $dateFrom),
-                                'i' => date('i', $dateFrom),
-                                'ical' => date('Ymd\THis', $dateFrom),
-                            ),
-                            'dateTo' => array(
-                                'y' => date('Y', $dateTo),
-                                'm' => date('m', $dateTo),
-                                'd' => date('d', $dateTo),
-                                'h' => date('H', $dateTo),
-                                'i' => date('i', $dateTo),
-                                'ical' => date('Ymd\THis', $dateTo),
-                            ),
-                            'id' => $ticket['id'],
-                            'projectId' => $ticket['projectId'],
-                            'eventType' => "ticket",
-                            'dateContext' => 'plan',
-                        );
+                         $newValues[] = $this->mapEventData(
+                             title: $context . $ticket['headline'] . " (" . $statusName . ")",
+                             allDay:false,
+                             id: $ticket['id'],
+                             projectId: $ticket['projectId'],
+                             eventType: "ticket",
+                             dateContext: "edit",
+                             backgroundColor: $backgroundColor,
+                             borderColor: $statusColor,
+                             dateFrom: $dateFrom,
+                             dateTo: $dateTo
+                         );
                     }
                 }
             }
 
             return $newValues;
+        }
+
+
+
+        /**
+         * Generates event array for fullcalendar.io frontend.
+         *
+         * @param string   $title
+         * @param bool     $allDay
+         * @param int      $id
+         * @param int      $projectId
+         * @param string   $eventType
+         * @param string   $dateContext
+         * @param string   $backgroundColor
+         * @param string   $borderColor
+         * @param int|null $dateFrom
+         * @param int|null $dateTo
+         * @return array
+         */
+        private function mapEventData(string $title, bool $allDay, int $id, int $projectId, string $eventType, string $dateContext, string $backgroundColor, string $borderColor, ?int $dateFrom, ?int $dateTo): array
+        {
+
+            return array(
+                'title'  => $title,
+                'allDay' => $allDay,
+                'dateFrom' => array(
+                    'y' => date('Y', $dateFrom),
+                    'm' => date('m', $dateFrom),
+                    'd' => date('d', $dateFrom),
+                    'h' => date('H', $dateFrom),
+                    'i' => date('i', $dateFrom),
+                    'ical' => date('Ymd\THis', $dateFrom),
+                ),
+                'dateTo' => array(
+                    'y' => date('Y', $dateTo),
+                    'm' => date('m', $dateTo),
+                    'd' => date('d', $dateTo),
+                    'h' => date('H', $dateTo),
+                    'i' => date('i', $dateTo),
+                    'ical' => date('Ymd\THis', $dateTo),
+                ),
+                'id' => $id,
+                'projectId' => $projectId,
+                'eventType' => $eventType,
+                'dateContext' => $dateContext,
+                'backgroundColor' => $backgroundColor,
+                'borderColor' => $borderColor,
+            );
         }
 
 
@@ -555,16 +580,13 @@ namespace Leantime\Domain\Calendar\Repositories {
         /**
          * @return array|false
          */
-        /**
-         * @return array|false
-         */
-        public function getMyGoogleCalendars(): false|array
+        public function getMyExternalCalendars($userId): false|array
         {
 
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            $stmn->bindValue(':userId',$userId, PDO::PARAM_INT);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -574,9 +596,25 @@ namespace Leantime\Domain\Calendar\Repositories {
         }
 
         /**
-         * @param $id
-         * @return mixed
+         * @return array|false
          */
+        public function getExternalCalendar($calendarId, $userId): false|array
+        {
+
+            $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':userId',$userId, PDO::PARAM_INT);
+            $stmn->bindValue(':id',$calendarId, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values;
+        }
+
+
         /**
          * @param $id
          * @return mixed

@@ -493,12 +493,7 @@ class Template
         echo $content;
     }
 
-    /**
-     * @param $layoutName
-     * @param $template
-     * @return bool|string
-     * @throws Exception
-     */
+
     /**
      * @param $layoutName
      * @param $template
@@ -640,6 +635,15 @@ class Template
         }
 
         return $notification;
+    }
+
+    public function getToggleState(string $name): string
+    {
+        if(isset($_SESSION['submenuToggle'][$name])){
+            return $_SESSION['submenuToggle'][$name];
+        }
+
+        return false;
     }
 
     /**

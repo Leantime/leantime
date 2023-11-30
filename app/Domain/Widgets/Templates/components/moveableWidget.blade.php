@@ -1,7 +1,8 @@
 
 <div class="grid-stack-item" {{ $attributes }}>
-    <div class="grid-stack-item-content maincontentinner tw-p-none tw-overflow-hidden">
-        <div class="grid-handler-top tw-w-full tw-h-[40px] tw-cursor-grab tw-group tw-absolute tw-top-0 tw-z-10">
+    <div class="grid-stack-item-content {{ ($background == "default") ? "maincontentinner" : $background  }} tw-p-none">
+        <div class="{{ ($background == "default") ? "tw-px-m tw-py-l" : ""  }}">
+            <div class="grid-handler-top tw-w-full tw-h-[40px] tw-cursor-grab tw-group tw-absolute tw-top-0 tw-left-0 tw-z-10">
 
             <div class="inlineDropDownContainer tw-float-right tw-p-m">
 
@@ -10,13 +11,14 @@
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a href="javascript:void(0)" class="removeWidget">Remove</a></li>
+                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>
+                    <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-trash"></i> Remove</a></li>
                 </ul>
             </div>
 
         </div>
-        <div class="tw-px-m tw-py-l tw-h-full tw-overflow-auto">
             {{ $slot }}
         </div>
+        <div class="clear"></div>
     </div>
 </div>

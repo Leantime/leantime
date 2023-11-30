@@ -4,24 +4,20 @@
     'onTheClock' => false,
     'groupBy' => '',
     'allProjects' => [],
+    'allAssignedprojects' => [],
+    'projectFilter' => '',
+
 ])
 
-<div class=""
-     id="myToDoBox"
-     hx-get="{{BASE_URL}}/widgets/myToDos/get"
-     hx-trigger="ticketUpdate from:body"
-     hx-swap="outerHTML"
-    >
+<div class="">
     <div class="row" id="yourToDoContainer">
         <div class="col-md-12">
-
-            <div class="marginBottomMd">
-
+            <div class="">
                 <form method="get">
-                    <h5 class="subtitle">{{ __('headlines.your_todos') }}</h5>
+                    <h5 class="subtitle">📥 {{ __('headlines.your_todos') }}</h5>
 
                     <div class="btn-group viewDropDown right">
-                        <button class="btn dropdown-toggle " type="button" data-toggle="dropdown">{!! __("links.group_by") !!}</button>
+                        <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">{!! __("links.group_by") !!}</button>
                         <ul class="dropdown-menu">
                             <li><span class="radio">
                                     <input type="radio" name="groupBy"
@@ -29,38 +25,69 @@
                                            value="time" id="groupByDate"
                                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
                                            hx-trigger="click"
-                                           hx-target="#myToDoBox"
+                                           hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
-                                           hx-indicator="#myToDoBox .htmx-indicator"
+                                           hx-indicator="#todos .htmx-indicator"
+                                           hx-vals='{"projectFilter": {{ $projectFilter }}, "groupBy": "time" }'
                                         />
                                     <label for="groupByDate">{!! __("label.dates") !!}</label></span></li>
-                            <li><span class="radio">
+                            <li>
+                                <span class="radio">
                                     <input type="radio"
                                            name="groupBy"
                                            @if($groupBy == "project") checked='checked' @endif
                                            value="project" id="groupByProject"
                                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
                                            hx-trigger="click"
-                                           hx-target="#myToDoBox"
+                                           hx-target="#yourToDoContainer"
                                            hx-swap="outerHTML"
-                                           hx-indicator="#myToDoBox .htmx-indicator"
+                                           hx-indicator="#todos .htmx-indicator"
+                                           hx-vals='{"projectFilter": {{ $projectFilter }}, "groupBy": "project" }'
                                     />
-                                    <label for="groupByProject">{!! __("label.project") !!}</label></span></li>
+                                    <label for="groupByProject">{!! __("label.project") !!}</label>
+                                </span>
+                            </li>
                         </ul>
                     </div>
-                    <div class="right">
-                        <label class="inline">{{  __('label.show') }}</label>
-                        <select name="projectFilter" onchange="form.submit();">
-                            <option value="">{{ __('labels.all_projects') }}</option>
-                            @foreach($allProjects as $project)
-                                <option value="{{  $project['id'] }}"
-                                        @if($projectFilter == $project['id'])
-                                            selected='selected'
-                                    @endif
-                                >{{ $project['name'] }}</option>
-                            @endforeach
-                        </select>
-                        &nbsp;
+                    <div class="btn-group viewDropDown right">
+                        <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
+                            {!! __("links.filter") !!}
+                            @if($projectFilter != '')
+                                <span class='badge badge-primary'>1</span>
+                                @endif
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li
+                                @if($projectFilter == '')
+                                    class='active'
+                                @endif
+                            ><a href=""
+                                   hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                   hx-trigger="click"
+                                   hx-target="#yourToDoContainer"
+                                   hx-swap="outerHTML"
+                                   hx-indicator="#todos .htmx-indicator"
+                                   hx-vals='{"projectFilter": "", "groupBy": "{{ $groupBy }}" }'
+
+                                >{{ __('labels.all_projects') }}
+
+                                </a></li>
+                                    @foreach($allAssignedprojects as $project)
+                                        <li
+                                                @if($projectFilter == $project['id'])
+                                                    class='active'
+                                            @endif
+                                        ><a href=""
+                                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                            hx-trigger="click"
+                                            hx-target="#yourToDoContainer"
+                                            hx-swap="outerHTML"
+                                            hx-indicator="#todos .htmx-indicator"
+                                            hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
+                                            >{{ $project['name'] }}</a></li>
+                                    @endforeach
+
+                        </ul>
                     </div>
                     <div class="clearall"></div>
                 </form>
@@ -105,7 +132,6 @@
                 <x-global::accordion id="ticketBox1-{{ $loop->index }}">
                     <x-slot name="title">
                         {{ __($ticketGroup["labelName"]) }} ({{ count($ticketGroup["tickets"]) }})
-                        <a class="titleInsertLink" href="javascript:void(0)" onclick="insertQuickAddForm({{ $loop->index }}, {{ $groupProjectId }}, '{{ $ticketCreationDueDate }}')"><i class="fa fa-plus"></i> {{ __('links.add_todo_no_icon') }}</a>
                     </x-slot>
                     <x-slot name="content">
                         <ul class="sortableTicketList" >
@@ -147,9 +173,16 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4" style="padding:0 15px;">
-                                                {{ __("label.due") }}<input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput" data-id="{{ $row['id'] }}" name="date" />
+                                                @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
+                                                    <i class="fa-solid fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} @formatDate($row['editFrom']) "></i>
+                                                @else
+                                                    <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-sm" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
+                                                @endif
+
+                                               <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
+                                               <input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput" data-id="{{ $row['id'] }}" name="date" />
                                             </div>
-                                            <div class="col-md-8" style="padding-top:3px;">
+                                            <div class="col-md-8" style="padding-top:5px;">
                                                 <div class="right">
 
                                                     <div class="dropdown ticketDropdown effortDropdown show">
@@ -291,7 +324,7 @@
     jQuery('.todaysDate').text(moment().format('LLLL'));
 
     jQuery(document).ready(function(){
-
+        tippy('[data-tippy-content]');
         @if ($login::userIsAtLeast(\Leantime\Domain\Auth\Models\Roles::$editor))
             leantime.dashboardController.prepareHiddenDueDate();
             leantime.ticketsController.initEffortDropdown();

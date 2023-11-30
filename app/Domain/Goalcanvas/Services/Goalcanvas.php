@@ -93,10 +93,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
          * @param $parentId
          * @return array
          */
-        /**
-         * @param $parentId
-         * @return array
-         */
         public function getChildrenbyKPI($parentId): array
         {
 
@@ -148,10 +144,6 @@ namespace Leantime\Domain\Goalcanvas\Services {
          * @param $projectId
          * @return array
          */
-        /**
-         * @param $projectId
-         * @return array
-         */
         public function getParentKPIs($projectId): array
         {
 
@@ -168,6 +160,14 @@ namespace Leantime\Domain\Goalcanvas\Services {
                     "board" => $kpi['boardTitle'],
                 );
             }
+
+            return $goals;
+        }
+
+        public function getGoalsByMilestone($milestoneId): array
+        {
+
+            $goals = $this->goalRepository->getGoalsByMilestone($milestoneId);
 
             return $goals;
         }

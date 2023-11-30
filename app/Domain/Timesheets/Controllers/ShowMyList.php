@@ -52,7 +52,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-                $dateTo =  $this->language->getISODateString($_POST['dateTo']);
+                $dateTo =  $this->language->getISODateString($_POST['dateTo'], "e");
             }
 
             $this->tpl->assign('dateFrom', $dateFrom);

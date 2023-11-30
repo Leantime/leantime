@@ -56,10 +56,10 @@ foreach ($__data as $var => $val) {
             $allTickets = $allTicketGroups['all']['items'];
         }
         ?>
-        <div class="row-fluid" style="width: 100%;
+        <div class="" style="
             display: flex;
             position: sticky;
-            top: 105px;
+            top: 110px;
             justify-content: flex-start;
             z-index: 9;
             ">
@@ -222,7 +222,7 @@ foreach ($__data as $var => $val) {
                                                 <?php } ?>
 
 
-                                                    <div class="dropdown ticketDropdown priorityDropdown show">
+                                                <div class="dropdown ticketDropdown priorityDropdown show">
                                                     <a class="dropdown-toggle f-left  label-default priority priority-bg-<?=$row['priority']?>" href="javascript:void(0);" role="button" id="priorityDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text"><?php
                                                         if ($row['priority'] != '' && $row['priority'] > 0) {

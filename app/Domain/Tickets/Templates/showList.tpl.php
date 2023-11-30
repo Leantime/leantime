@@ -74,7 +74,7 @@ $size = floor(100 / $numberofColumns);
                                     <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
                                 </a>
                             </h5>
-                            <div class="simpleAccordionContainer" id="accordion_<?=$group['id'] ?>">
+                            <div class="simpleAccordionContainer" id="accordion_content-<?=$group['id'] ?>">
                         <?php } ?>
 
                         <?php $allTickets = $group['items']; ?>

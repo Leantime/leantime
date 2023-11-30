@@ -106,6 +106,8 @@
     --accordion-header-bg: var(--secondary-action-bg);
     --accordion-header-radius: 5px;
 
+    --interactive-icon-color: #aaa;
+
     --dark-red:#D61B0A;
     --dark-red-text-color:#fff;
 

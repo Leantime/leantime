@@ -151,6 +151,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //profile Info
                 if (isset($_POST['profileInfo'])) {
+
                     $tab = '#myProfile';
 
                     $values = array(
@@ -191,6 +192,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Save Password
                 if (isset($_POST['savepw'])) {
+
                     $tab = '#security';
 
                     $values = array(
@@ -234,6 +236,9 @@ namespace Leantime\Domain\Users\Controllers {
                 }
 
                 if (isset($_POST['saveTheme'])) {
+
+                    $tab = '#theme';
+
                     $postTheme = htmlentities($_POST['theme']);
                     $postColorMode = htmlentities($_POST['colormode']);
                     $postColorScheme = htmlentities($_POST['colorscheme']);
@@ -253,10 +258,10 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->tpl->setNotification($this->language->__("notifications.changed_profile_settings_successfully"), 'success', "themsettings_updated");
                 }
 
-
                 //Save Look & Feel
                 if (isset($_POST['saveSettings'])) {
-                    $tab = '#look';
+
+                    $tab = '#settings';
 
                     $postLang = htmlentities($_POST['language']);
 
@@ -269,10 +274,10 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $timeFormat);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".timezone", $tz);
 
-                    $_SESSION['usersettings.' . $this->userId . '.timezone'] = $tz;
+                    $_SESSION['usersettings.timezone'] = $tz;
 
                     unset($_SESSION["companysettings.logoPath"]);
-                    unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage() . '_' . $postTheme]);
+                    unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage()]);
                     unset($_SESSION['usersettings.language.dateTimeFormat']);
 
 
@@ -346,10 +351,11 @@ namespace Leantime\Domain\Users\Controllers {
                 ],
                 'times' => [
                     $this->language->__("language.timeformat"),
-                    'H:i:sP',
-                    'H:i:s O',
-                    'H:i:s T',
+                    'H:i P',
+                    'H:i O',
+                    'H:i T',
                     'H:i:s',
+                    'H:i',
                 ]
             ];
         }

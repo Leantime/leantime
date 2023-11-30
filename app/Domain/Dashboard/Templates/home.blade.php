@@ -2,13 +2,7 @@
 
 @section('content')
 
-<x-global::pageheader :icon="'fa fa-home'">
-    <h5>{{ $_SESSION['currentProjectClient'] }}</h5>
-    <h1>{!! __('headlines.home') !!}</h1>
-
-</x-global::pageheader>
-
-<div class="maincontent">
+<div class="maincontent" style="margin-top:0px">
 
     {!! $tpl->displayNotification() !!}
 
@@ -17,46 +11,21 @@
         @foreach($dashboardGrid as $widget)
 
             <x-widgets::moveableWidget
-                gs-x="{{ $widget['x'] }}"
-                gs-y="{{ $widget['y'] }}"
-                gs-h="{{ $widget['h'] ?? $widget['minh'] }}"
-                gs-w="{{ $widget['w'] ?? $widget['minW'] }}"
+                gs-x="{{ $widget->gridX }}"
+                gs-y="{{ $widget->gridY }}"
+                gs-h="{{ $widget->gridHeight }}"
+                gs-w="{{ $widget->gridWidth }}"
+                gs-min-w="{{ $widget->gridMinWidth }}"
+                gs-min-h="{{ $widget->gridMinHeight }}"
+                background="{{ $widget->widgetBackground }}"
+
             >
-                <div hx-get="{{$widget['hxget']}}" hx-trigger="{{$widget['hxtrigger']}}">
-                    <x-global::loadingText type="card" count="1" includeHeadline="true" />
+                <div hx-get="{{$widget->widgetUrl }}" hx-trigger="{{$widget->widgetTrigger }}" id="{{ $widget->id }}">
+                    <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
                 </div>
             </x-widgets::moveableWidget>
 
         @endforeach
-
-        @if($dashboardGrid == '')
-
-            <x-widgets::moveableWidget gs-h="4" gs-w="4">
-                 <div hx-get="{{ BASE_URL }}/widgets/pomodoro/get" hx-trigger="load" >
-                     <x-global::loadingText type="text" count="1" includeHeadline="true"/>
-
-                 </div>
-            </x-widgets::moveableWidget>
-
-            <x-widgets::moveableWidget gs-h="1" gs-w="8">
-                <div hx-get="{{ BASE_URL }}/widgets/welcome/get" hx-trigger="load" >
-                    <x-global::loadingText type="text" count="1" includeHeadline="true"/>
-                </div>
-            </x-widgets::moveableWidget>
-
-            <x-widgets::moveableWidget gs-h="2" gs-w="4">
-                <div hx-get="{{ BASE_URL }}/widgets/calendar/get" hx-trigger="load" >
-                    <x-global::loadingText type="text" count="1" includeHeadline="true"/>
-                </div>
-            </x-widgets::moveableWidget>
-
-            <x-widgets::moveableWidget gs-w="8" gs-h="6">
-                <div hx-get="{{ BASE_URL }}/widgets/myToDos/get" hx-trigger="load" >
-                    <x-global::loadingText type="text" count="1" includeHeadline="true" />
-                </div>
-            </x-widgets::moveableWidget>
-        @endif
-
     </div>
 </div>
 
@@ -66,10 +35,10 @@
 jQuery(document).ready(function() {
 
     let grid = GridStack.init({
-        margin: 10,
+        margin: 5,
         handle: ".grid-handler-top",
-        minRow: 4, // don't let it collapse when empty
-        cellHeight: '100px',
+        minRow: 2, // don't let it collapse when empty
+        cellHeight: '30px',
     });
 
     grid.on('dragstop', function(event, item) {
@@ -92,39 +61,44 @@ jQuery(document).ready(function() {
             //get hx links
             let htmxElement = jQuery(item.content).find("[hx-get]").first();
 
-            item.hxget = htmxElement.attr("hx-get");
-            item.hxtrigger = htmxElement.attr("hx-trigger");
+            item.id = htmxElement.attr("id");
+            item.widgetUrl = htmxElement.attr("hx-get");
+            item.widgetTrigger = htmxElement.attr("hx-trigger");
 
             if(item.x == undefined) {
                 item.x = 0;
             }
+            item.gridX = item.x;
 
             if(item.y == undefined) {
                 item.y = 0;
             }
+            item.gridY = item.y;
 
             if(item.w == undefined) {
                 item.w = 2;
             }
+            item.gridWidth = item.w;
 
             if(item.h == undefined) {
                 item.h = 2;
             }
+            item.gridHeight = item.h;
 
             item.content = '';
-        });
 
-        console.log(items);
+            console.log(item);
+        });
 
         GridStack.Utils.sort(items);
 
-        jQuery.post("{{ BASE_URL }}/dashboard/home",
+        jQuery.post("{{ BASE_URL }}/widgets/widgetManager",
             {
                 action: "saveGrid",
                 data: items
             },
             function(data, status){
-                console.log(data);
+
             });
     }
 
@@ -135,10 +109,22 @@ jQuery(document).ready(function() {
         saveGrid();
     }
 
+    function resizeWidget(el) {
+
+        console.log(jQuery(el).find(".grid-stack-item-content").css("height"));
+        grid.resizeToContent(el, false);
+        saveGrid();
+    }
+
     jQuery(".grid-stack-item").each(function(){
         jQuery(this).find(".removeWidget").click(function(){
             removeWidget(jQuery(this).closest(".grid-stack-item")[0]);
         });
+        jQuery(this).find(".fitContent").click(function(){
+            console.log(jQuery(this).closest(".grid-stack-item")[0])
+            resizeWidget(jQuery(this).closest(".grid-stack-item")[0]);
+        });
+
 
     })
 

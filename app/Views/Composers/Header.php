@@ -67,6 +67,13 @@ class Header extends Composer
             }
         }
 
+        if (isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id'])) {
+
+            if (isset($_SESSION['usersettings.timezone'])) {
+                date_default_timezone_set($_SESSION['usersettings.timezone']);
+            }
+        }
+
         return [
             'sitename' => $_SESSION['companysettings.sitename'] ?? '',
             'primaryColor' => $_SESSION['usersettings.colorScheme.primaryColor'] ?? '',
