@@ -10,7 +10,7 @@ namespace Leantime\Core;
  */
 class AppSettings
 {
-    public string $appVersion = "2.4.7";
+    public string $appVersion = "2.4.8";
 
     public string $dbVersion = "2.4.7";
 
