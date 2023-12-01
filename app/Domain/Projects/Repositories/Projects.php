@@ -93,12 +93,18 @@ namespace Leantime\Domain\Projects\Repositories {
                     project.menuType,
                     project.type,
                     project.modified,
-					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId
+					client.id AS clientId,
+					comments.status as status
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+                LEFT JOIN zp_comment as comments ON comments.id = (
+                      SELECT
+						id
+                      FROM zp_comment
+                      WHERE module = 'project' AND moduleId = project.id
+                      ORDER BY date DESC LIMIT 1
+                    )
 				";
 
             if ($showClosedProjects === false) {

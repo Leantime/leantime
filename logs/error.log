@@ -10836,3 +10836,191 @@
 [30-Nov-2023 11:23:28 America/Los_Angeles] 2 SERVER -> CLIENT: 221 Bye
 
 [30-Nov-2023 11:23:28 America/Los_Angeles] 3 Connection: closed
+[01-Dec-2023 05:45:39 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 05:45:39 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 05:53:37 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 05:53:37 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 05:58:56 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 05:58:56 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 06:03:57 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 06:03:57 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 06:08:56 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 06:08:56 America/Los_Angeles] PDOException: SQLSTATE[HY000] [2002] Connection refused in /Volumes/Source/Sites/leantime-oss/app/Core/Db.php:66
+Stack trace:
+#0 /Volumes/Source/Sites/leantime-oss/app/Core/Db.php(66): PDO->__construct('mysql:host=127....', 'root', 'test', Array)
+#1 [internal function]: Leantime\Core\Db->__construct(Object(Leantime\Core\Environment))
+#2 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(929): ReflectionClass->newInstanceArgs(Array)
+#3 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(292): Illuminate\Container\Container->build('Leantime\\Core\\D...')
+#4 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(885): Illuminate\Container\Container->Illuminate\Container\{closure}(Object(Leantime\Core\Application), Array)
+#5 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build(Object(Closure))
+#6 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Core\\D...', Array)
+#7 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(1043): Illuminate\Container\Container->make('Leantime\\Core\\D...')
+#8 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(959): Illuminate\Container\Container->resolveClass(Object(ReflectionParameter))
+#9 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(920): Illuminate\Container\Container->resolveDependencies(Array)
+#10 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(770): Illuminate\Container\Container->build('Leantime\\Domain...')
+#11 /Volumes/Source/Sites/leantime-oss/vendor/illuminate/container/Container.php(706): Illuminate\Container\Container->resolve('Leantime\\Domain...', Array)
+#12 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(249): Illuminate\Container\Container->make('Leantime\\Domain...')
+#13 /Volumes/Source/Sites/leantime-oss/app/Core/Bootloader.php(156): Leantime\Core\Bootloader->checkIfInstalled()
+#14 /Volumes/Source/Sites/leantime-oss/public/index.php(14): Leantime\Core\Bootloader->boot()
+#15 {main}
+[01-Dec-2023 07:31:00 America/Los_Angeles] 2023-12-01T07:31:00-08:00 [critical] Uncaught Error: syntax error, unexpected token "{"
+[01-Dec-2023 07:57:42 America/Los_Angeles] 2023-12-01T07:57:42-08:00 [critical] Uncaught Exception: Target class [Leantime\Domain\Reports\Services\ReactionsRepository] does not exist.
+[01-Dec-2023 08:01:16 America/Los_Angeles] 2023-12-01T08:01:16-08:00 [warning] Uncaught Warning: Attempt to read property "status" on array
+[01-Dec-2023 08:01:18 America/Los_Angeles] 2023-12-01T08:01:18-08:00 [critical] Uncaught Error: Call to undefined method Leantime\Domain\Projects\Repositories\Projects::getProjectStatus()
+[01-Dec-2023 08:01:43 America/Los_Angeles] 2023-12-01T08:01:43-08:00 [warning] Uncaught Warning: Undefined variable $query
+[01-Dec-2023 08:02:01 America/Los_Angeles] 2023-12-01T08:02:01-08:00 [critical] Uncaught Exception: SQLSTATE[HY093]: Invalid parameter number: parameter was not defined
+[01-Dec-2023 08:10:56 America/Los_Angeles] 2023-12-01T08:10:56-08:00 [warning] Uncaught Warning: Trying to access array offset on value of type int
+[01-Dec-2023 08:12:13 America/Los_Angeles] 2023-12-01T08:12:13-08:00 [warning] Uncaught Warning: Attempt to read property "reaction" on int
