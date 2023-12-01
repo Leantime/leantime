@@ -115,7 +115,7 @@ $size = floor(100 / $numberofColumns);
                                         </div>
                                     </td>
 
-                                    <td data-search="<?=$statusLabels[$row['status']]["name"]; ?>" data-order="<?=$tpl->e($row['headline']); ?>" >
+                                    <td data-search="<?=$isset($statusLabels[$row['status']]) ? statusLabels[$row['status']]["name"] : ''; ?>" data-order="<?=$tpl->e($row['headline']); ?>" >
                                         <a href="javascript:void(0);"><strong><?=$tpl->e($row['headline']); ?></strong></a></td>
 
                                     <?php $tpl->dispatchTplEvent('allTicketsTable.beforeRowEnd', ['tickets' => $allTickets, 'rowNum' => $rowNum]); ?>

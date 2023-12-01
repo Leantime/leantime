@@ -173,7 +173,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $this->tpl->assign('projectFilter', $projectFilter);
             $this->tpl->assign('clientFilter', $clientId);
             $this->tpl->assign('allClients', $this->clientService->getAll());
-            $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck, $clientId));
+            $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll((int)$projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck, $clientId));
 
             $this->tpl->display('timesheets.showAll');
         }

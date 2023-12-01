@@ -335,7 +335,7 @@ namespace Leantime\Domain\Projects\Services {
                 $this->notificationService->processMentions(
                     $contentToCheck,
                     $notification->module,
-                    $entityId,
+                    (int)$entityId,
                     $notification->authorId,
                     $notification->url["url"]
                 );
