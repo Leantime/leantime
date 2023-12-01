@@ -31,7 +31,6 @@ namespace Leantime\Domain\Ideas\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             if (isset($_GET['id'])) {
@@ -43,10 +42,10 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                 unset($_SESSION['currentIdeaCanvas']);
                 $this->tpl->setNotification($this->language->__("notification.idea_board_deleted"), "success");
-                $this->tpl->redirect(BASE_URL . "/ideas/showBoards");
+                return $this->tpl->redirect(BASE_URL . "/ideas/showBoards");
             }
 
-            $this->tpl->display('ideas.delCanvas');
+            return $this->tpl->display('ideas.delCanvas');
         }
     }
 }

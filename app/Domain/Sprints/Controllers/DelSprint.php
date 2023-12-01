@@ -48,18 +48,17 @@ namespace Leantime\Domain\Sprints\Controllers {
                     $_SESSION["currentSprint"] = "";
 
                     if (isset($_SESSION['lastPage'])) {
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                        return $this->tpl->redirect($_SESSION['lastPage']);
                     } else {
-                        $this->tpl->redirect(BASE_URL . "/tickets/showKanban");
+                        return $this->tpl->redirect(BASE_URL . "/tickets/showKanban");
                     }
                 }
 
                 $this->tpl->assign('id', $id);
-                $this->tpl->displayPartial('sprints.delSprint');
+                return $this->tpl->displayPartial('sprints.delSprint');
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayPartial('errors.error403', responseCode: 403);
             }
         }
     }
-
 }

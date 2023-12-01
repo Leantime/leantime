@@ -31,7 +31,6 @@ namespace Leantime\Domain\Wiki\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             if (isset($_GET['id'])) {
@@ -43,11 +42,10 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 $this->tpl->setNotification($this->language->__("notification.article_deleted"), "success");
 
-                $this->tpl->redirect(BASE_URL . "/wiki/show");
+                return $this->tpl->redirect(BASE_URL . "/wiki/show");
             }
 
-            $this->tpl->displayPartial('wiki.delArticle');
+            return $this->tpl->displayPartial('wiki.delArticle');
         }
     }
-
 }

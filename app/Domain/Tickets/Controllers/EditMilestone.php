@@ -67,13 +67,13 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                 if (!isset($milestone->id)) {
                     $this->tpl->setNotification($this->language->__("notifications.could_not_find_milestone"), "error");
-                    $this->tpl->redirect(BASE_URL . "/tickets/roadmap/");
+                    return $this->tpl->redirect(BASE_URL . "/tickets/roadmap/");
                 }
 
                 //Ensure this ticket belongs to the current project
                 if ($_SESSION["currentProject"] != $milestone->projectId) {
                     $this->projectService->changeCurrentSessionProject($milestone->projectId);
-                    $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $milestone->id);
+                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $milestone->id);
                 }
 
                 $comments = $this->commentsService->getComments('ticket', $params['id']);
@@ -100,7 +100,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject($_SESSION['currentProject']));
             $this->tpl->assign('milestone', $milestone);
-            $this->tpl->displayPartial('tickets.milestoneDialog');
+            return $this->tpl->displayPartial('tickets.milestoneDialog');
         }
 
         /**
@@ -153,7 +153,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                         $this->tpl->setNotification($this->language->__("notifications.problem_saving_your_comment"), "error");
                     }
 
-                    $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                 }
 
                 if (isset($params['headline']) === true) {
@@ -180,10 +180,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
                     }
-                    $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                 }
 
-                $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+                return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
             } else {
                 $result = $this->ticketService->quickAddMilestone($params);
 
@@ -210,16 +210,16 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $result);
+                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $result);
                 } else {
                     $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
-                    $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/");
+                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/");
                 }
             }
 
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('milestone', (object) $params);
-            $this->tpl->displayPartial('tickets.milestoneDialog');
+            return $this->tpl->displayPartial('tickets.milestoneDialog');
         }
 
         /**
@@ -242,5 +242,4 @@ namespace Leantime\Domain\Tickets\Controllers {
         {
         }
     }
-
 }

@@ -6,6 +6,7 @@ namespace Leantime\Domain\Plugins\Controllers {
     use Leantime\Domain\Plugins\Services\Plugins as PluginService;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -25,22 +26,19 @@ namespace Leantime\Domain\Plugins\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          */
-        public function get(): void
+        public function get(): Response
         {
-            $cssFiles = array();
+            $cssFiles = self::dispatch_filter("pluginCss", []);
+            $cssStrs = collect($cssFiles)
+                ->filter(fn ($file) => file_exists(APP_ROOT . "/plugins/$file"))
+                ->map(fn ($file) => file_get_contents(APP_ROOT . "/plugins/$file"))
+                ->all();
 
-            $cssFiles = self::dispatch_filter("pluginCss", $cssFiles);
-
-            $cssString = '';
-            foreach ($cssFiles as $file) {
-                if (file_exists(APP_ROOT . "/plugins/" . $file)) {
-                    $cssString = file_get_contents(APP_ROOT . "/plugins/" . $file);
-                }
-            }
-            header("Content-Type: text/css");
-            echo $cssString;
+            $response = new Response(join('', $cssStrs));
+            $response->headers->set('Content-Type', 'text/css');
+            return $response;
         }
     }
 }

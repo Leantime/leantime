@@ -14,6 +14,8 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -121,7 +123,7 @@ class Oidc
      * @return void
      * @throws GuzzleException
      */
-    public function callback(string $code, string $state): void
+    public function callback(string $code, string $state): Response
     {
         if (!$this->verifyState($state)) {
             $this->displayError('oidc.error.invalidState');
@@ -140,12 +142,12 @@ class Oidc
             $this->displayError("oidc.error.unsupportedToken");
         }
 
-        if ($userInfo != null) {
-            $this->login($userInfo);
-        } else {
-            $this->displayError('oidc.error.invalidToken');
+        if ($userInfo == null) {
             //TODO: invalid token
+            $this->displayError('oidc.error.invalidToken');
         }
+
+        return $this->login($userInfo);
     }
 
     /**
@@ -162,7 +164,7 @@ class Oidc
      * @param array $userInfo
      * @return void
      */
-    private function login(array $userInfo): void
+    private function login(array $userInfo): Response
     {
         // echo '<pre>' . print_r($idToken, true) . '</pre>';
         // return;
@@ -192,8 +194,7 @@ class Oidc
             if ($userId !== false) {
                 $user = $this->userRepo->getUserByEmail($userName);
             } else {
-                error_log("OIDC user creation failed.");
-                return;
+                throw new HttpResponseException(new Response("OIDC user creation failed.", 500));
             }
         } else {
             //update user if it exists
@@ -207,7 +208,7 @@ class Oidc
 
         $this->authService->setUserSession($user, false);
 
-        Frontcontroller::redirect(BASE_URL . "/dashboard/home");
+        return Frontcontroller::redirect(BASE_URL . "/dashboard/home");
     }
 
     /**
@@ -242,6 +243,7 @@ class Oidc
             $headerArray[strtolower($header)] = $values;
         }
         $contentType = array_pop($headerArray['content-type']);
+
         switch ($contentType) {
             case 'application/x-www-form-urlencoded; charset=utf-8':
             case 'application/x-www-form-urlencoded':
@@ -301,6 +303,7 @@ class Oidc
         if (openssl_verify($data, $this->decodeBase64Url($signature), $key, $this->getAlgorythm($header)) === 1) {
             return $tokenData;
         }
+
         return null;
     }
 
@@ -398,8 +401,6 @@ class Oidc
      */
     private function loadEndpoints(): void
     {
-
-
         if ($this->configLoaded) {
             return;
         }
@@ -511,10 +512,11 @@ class Oidc
     /**
      * @param string $translationKey
      * @param string ...$values
+     * @throws HttpResponseException
      * @return void
      */
     private function displayError(string $translationKey, string ...$values): void
     {
-        die(sprintf($this->language->__($translationKey), ...$values));
+        throw new HttpResponseException(new Response(sprintf($this->language->__($translationKey), ...$values)));
     }
 }

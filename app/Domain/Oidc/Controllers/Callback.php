@@ -2,10 +2,11 @@
 
 namespace Leantime\Domain\Oidc\Controllers;
 
-use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Exception\HttpResponseException;
 
 /**
  *
@@ -25,22 +26,13 @@ class Callback extends Controller
 
     /**
      * @param $params
-     * @return void
-     * @throws GuzzleException
+     * @return Response
+     * @throws GuzzleException|HttpResponseException
      */
-    /**
-     * @param $params
-     * @return void
-     * @throws GuzzleException
-     */
-    public function get($params): void
+    public function get($params): Response
     {
         $code = $_GET['code'];
         $state = $_GET['state'];
-        try {
-            $this->oidc->callback($code, $state);
-        } catch (Exception $ex) {
-            error_log($ex);
-        }
+        return $this->oidc->callback($code, $state);
     }
 }

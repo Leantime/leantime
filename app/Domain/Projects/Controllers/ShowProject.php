@@ -173,7 +173,7 @@ namespace Leantime\Domain\Projects\Controllers {
                 $project = $this->projectRepo->getProject($id);
 
                 if (isset($project['id']) === false) {
-                    FrontcontrollerCore::redirect(BASE_URL . "/error/error404");
+                    return FrontcontrollerCore::redirect(BASE_URL . "/error/error404");
                 }
 
                 $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
@@ -295,7 +295,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
+                        return $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
                     } else {
                         $this->tpl->setNotification('notifications.file_deleted_error', "success");
                     }
@@ -360,9 +360,9 @@ namespace Leantime\Domain\Projects\Controllers {
                 $this->tpl->assign('state', $this->projectRepo->state);
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);
 
-                $this->tpl->display('projects.showProject');
+                return $this->tpl->display('projects.showProject');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

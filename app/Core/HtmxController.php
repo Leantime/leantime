@@ -7,6 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Template;
 use Illuminate\Support\Str;
 use LogicException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * HtmxController Class - Base class For all htmx controllers
@@ -20,6 +21,7 @@ abstract class HtmxController
 
     protected IncomingRequest $incomingRequest;
     protected Template $tpl;
+    protected Response $response;
 
     /**
      * constructor - initialize private variables
@@ -74,6 +76,11 @@ abstract class HtmxController
 
         $fragment = $this->$action();
 
-        $this->tpl->displayFragment($this::$view, $fragment ?? '');
+        $this->response = $this->tpl->displayFragment($this::$view, $fragment ?? '');
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
     }
 }

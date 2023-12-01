@@ -17,10 +17,9 @@ namespace Leantime\Domain\Help\Controllers {
          */
         public function get($params)
         {
-
             if (isset($params['module']) && $params['module'] != "") {
                 $filteredInput = htmlspecialchars($params['module']);
-                $this->tpl->displayPartial('help.' . $filteredInput);
+                return $this->tpl->displayPartial('help.' . $filteredInput);
             }
         }
 
@@ -54,5 +53,4 @@ namespace Leantime\Domain\Help\Controllers {
         {
         }
     }
-
 }

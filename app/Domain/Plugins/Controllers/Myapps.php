@@ -7,6 +7,7 @@ namespace Leantime\Domain\Plugins\Controllers {
     use Leantime\Domain\Plugins\Services\Plugins as PluginService;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -26,10 +27,10 @@ namespace Leantime\Domain\Plugins\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get(): void
+        public function get(): Response
         {
             foreach (['install', 'enable', 'disable', 'remove'] as $varName) {
                 if (empty($_GET[$varName])) {
@@ -42,10 +43,10 @@ namespace Leantime\Domain\Plugins\Controllers {
                         : ["notification.plugin_{$varName}_error", "error"];
 
                     $this->tpl->setNotification(...$notification);
-                    $this->tpl->redirect(BASE_URL . "/plugins/myapps");
+                    return $this->tpl->redirect(BASE_URL . "/plugins/myapps");
                 } catch (\Exception $e) {
                     $this->tpl->setNotification($e->getMessage(), "error");
-                    $this->tpl->redirect(BASE_URL . "/plugins/myapps");
+                    return $this->tpl->redirect(BASE_URL . "/plugins/myapps");
                 }
             }
 
@@ -54,16 +55,16 @@ namespace Leantime\Domain\Plugins\Controllers {
 
             $this->tpl->assign("newPlugins", $newPlugins);
             $this->tpl->assign("installedPlugins", $installedPlugins);
-            $this->tpl->display("plugins.myapps");
+            return $this->tpl->display("plugins.myapps");
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          */
-        public function post($params): void
+        public function post($params): Response
         {
-            $this->tpl->redirect(BASE_URL . "/plugins/myapps");
+            return $this->tpl->redirect(BASE_URL . "/plugins/myapps");
         }
     }
 }

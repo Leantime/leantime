@@ -4,8 +4,8 @@ namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Template;
-use Leantime\Core\Events;
 use Leantime\Core\Language;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller Class - Base class For all controllers
@@ -18,12 +18,12 @@ abstract class Controller
     use Eventhelpers;
 
     /**
-     * @var template
+     * @var Template
      */
     protected Template $tpl;
 
     /**
-     * @var language
+     * @var Language
      */
     protected Language $language;
 
@@ -33,19 +33,24 @@ abstract class Controller
     protected IncomingRequest $incomingRequest;
 
     /**
+     * @var Response
+     */
+    protected Response $response;
+
+    /**
      * constructor - initialize private variables
      *
      * @access public
      *
      * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param template        $tpl             The template to be initialized.
-     * @param language        $language        The language to be initialized.
+     * @param Template        $tpl             The template to be initialized.
+     * @param Language        $language        The language to be initialized.
      * @throws BindingResolutionException
      */
     public function __construct(
         IncomingRequest $incomingRequest,
-        template $tpl,
-        language $language
+        Template $tpl,
+        Language $language
     ) {
         self::dispatch_event('begin');
 
@@ -89,9 +94,14 @@ abstract class Controller
         self::dispatch_event('before_action', $available_params);
 
         if (method_exists($this, $method)) {
-            $this->$method($params);
+            $this->response = $this->$method($params);
         } else {
-            $this->run();
+            $this->response = $this->run();
         }
+    }
+
+    public function getResponse(): Response
+    {
+        return $this->response;
     }
 }

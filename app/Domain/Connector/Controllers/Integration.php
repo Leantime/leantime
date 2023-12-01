@@ -73,7 +73,7 @@ namespace Leantime\Domain\Connector\Controllers {
                     $this->tpl->assign("leantimeEntities", $this->leantimeEntities->availableLeantimeEntities);
 
                     //TODO UI to show entity picker/mapper
-                    $this->tpl->display('connector.integrationEntity');
+                    return $this->tpl->display('connector.integrationEntity');
                 }
 
                 //Choose fields to map
@@ -91,28 +91,26 @@ namespace Leantime\Domain\Connector\Controllers {
                         $this->tpl->assign("providerFields", $provider->getFields());
                     }
                     $this->tpl->assign("leantimeFields", $this->leantimeEntities->availableLeantimeEntities[$entity]['fields']);
-                    $this->tpl->display('connector.integrationFields');
+                    return $this->tpl->display('connector.integrationFields');
                 }
 
                 if (isset($params["step"])  && $params["step"] == "sync") {
                     //TODO UI to show sync schedule/options
-
-                    $this->tpl->display('connector.integrationSync');
+                    return $this->tpl->display('connector.integrationSync');
                 }
 
                 if (isset($params["step"])  && $params["step"] == "import") {
                     //TODO UI to show sync schedule/options
-
-                    $this->tpl->display('connector.integrationSync');
+                    return $this->tpl->display('connector.integrationSync');
                 }
 
                 if (isset($params["step"])  && $params["step"] == "confirm") {
                     //confirm and store in DB
-                    $this->tpl->display('connector.integrationConfirm');
+                    return $this->tpl->display('connector.integrationConfirm');
                 }
 
                 if (!isset($params["step"])) {
-                    $this->tpl->display('connector.newIntegration');
+                    return $this->tpl->display('connector.newIntegration');
                 }
             }
         }

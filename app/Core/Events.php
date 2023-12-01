@@ -159,6 +159,13 @@ class Events
      */
     public static function discover_listeners(): void
     {
+        static $discovered;
+        $discovered ??= false;
+
+        if ($discovered) {
+            return;
+        }
+
         if (empty($_SESSION['domainEvents']) || app()->make(Environment::class)->debug) {
             $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
             $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
@@ -172,8 +179,8 @@ class Events
 
         $modules = $_SESSION['domainEvents'];
         foreach ($modules as $module) {
-            if (file_exists($module . "/Events/register.php")) {
-                include $module . "/Events/register.php";
+            if (file_exists($moduleEventsPath = "$module/register.php")) {
+                include_once $moduleEventsPath;
             }
         }
 
@@ -184,8 +191,8 @@ class Events
 
             //TODO: Do phar plugins get to be system plugins? Right now they dont
             foreach ($configplugins as $plugin) {
-                if (file_exists(APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {
-                    include_once APP_ROOT . "/app/Plugins/" . $plugin . "/register.php";
+                if (file_exists($pluginEventsPath = APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {
+                    include_once $pluginEventsPath;
                 }
             }
         }
@@ -224,6 +231,8 @@ class Events
                 include_once $registerPath;
             }
         });
+
+        $discovered = true;
     }
 
     /**
@@ -313,17 +322,11 @@ class Events
             return;
         }
 
-        $sorter = function ($a, $b) {
-            if ($a['priority'] > $b['priority']) {
-                return 1;
-            } elseif ($a['priority'] == $b['priority']) {
-                return 0;
-            } else {
-                return -1;
-            }
+        $sorter = fn ($a, $b) => match (true) {
+            $a['priority'] > $b['priority'] => 1,
+            $a['priority'] == $b['priority'] => 0,
+            default => -1,
         };
-
-
 
         if ($type == 'filters') {
             usort(self::$filterRegistry[$hookName], $sorter);
@@ -360,7 +363,7 @@ class Events
             return $finalParams;
         }
 
-        if (is_object($paramAttr)) {
+        if (is_object($paramAttr) && get_class($paramAttr) == 'stdClass') {
             $finalParams = (object) array_merge($default_params, (array) $paramAttr);
             return $finalParams;
         }
@@ -396,14 +399,10 @@ class Events
         $filteredPayload = null;
 
         //sort matches by priority
-        usort($registry, function ($a, $b) {
-            if ($a['priority'] > $b['priority']) {
-                return 1;
-            } elseif ($a['priority'] == $b['priority']) {
-                return 0;
-            } else {
-                return -1;
-            }
+        usort($registry, fn ($a, $b) => match (true) {
+            $a['priority'] > $b['priority'] => 1,
+            $a['priority'] == $b['priority'] => 0,
+            default => -1,
         });
 
         foreach ($registry as $index => $listener) {

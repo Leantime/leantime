@@ -63,9 +63,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
             }
 
-
-
-
             $goalAnalytics = array(
                 "numCanvases" => $allCanvas ? count($allCanvas) : 0,
                 "numGoals" => "0",
@@ -145,7 +142,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             if (isset($_REQUEST['searchCanvas']) === true) {
                 $currentCanvasId = (int)$_REQUEST['searchCanvas'];
                 $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
-                $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
+                return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
             }
 
             // Add Canvas
@@ -186,7 +183,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success');
 
                         $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
+                        return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
                     }
@@ -203,7 +200,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $currentCanvasId = $this->canvasRepo->updateCanvas($values);
 
                         $this->tpl->setNotification($this->language->__('notification.board_edited'), 'success');
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
+                        return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
                     }
@@ -227,7 +224,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.board_copied'), 'success');
 
                         $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
+                        return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
                     }
@@ -243,7 +240,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                     if ($status) {
                         $this->tpl->setNotification($this->language->__('notification.board_merged'), 'success');
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
+                        return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.merge_error'), 'error');
                     }
@@ -297,7 +294,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             );
 
                             $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
-                            $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
+                            return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                         } else {
                             $this->tpl->setNotification($this->language->__('notification.board_import_failed'), 'error');
                         }
@@ -320,11 +317,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION['currentProject']));
 
             if (!isset($_GET['raw'])) {
-                $this->tpl->display(static::CANVAS_NAME . 'canvas.dashboard');
+                return $this->tpl->display(static::CANVAS_NAME . 'canvas.dashboard');
             }
         }
     }
-
-
-
 }

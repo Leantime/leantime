@@ -6,6 +6,7 @@ namespace Leantime\Domain\Setting\Services {
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Ramsey\Uuid\Uuid;
 
     /**
      *
@@ -117,6 +118,22 @@ namespace Leantime\Domain\Setting\Services {
         {
             $this->settingsRepo = $settingsRepo;
         }
-    }
 
+        /**
+         * Gets the company id (Sets if it's not set)
+         *
+         * @return string
+         **/
+        public function getCompanyId(): string
+        {
+            $companyId = $this->getSetting('companysettings.telemetry.anonymousId');
+
+            if (! $companyId) {
+                $companyId = Uuid::uuid4()->toString();
+                $this->saveSetting('companysettings.telemetry.anonymousId', $companyId);
+            }
+
+            return $companyId;
+        }
+    }
 }

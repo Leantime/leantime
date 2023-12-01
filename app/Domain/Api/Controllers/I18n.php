@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -18,18 +19,25 @@ class I18n extends Controller
      */
     public function get(array $params)
     {
-        header('Content-Type: application/javascript');
-
         $decodedString = json_encode($this->language->readIni());
 
         $result = $decodedString ? $decodedString : '{}';
 
-        echo "var leantime = leantime || {};
+        $response = new Response(
+            <<<JS
+            var leantime = leantime || {};
             var leantime = {
                 i18n: {
-                    dictionary: " . $result . ",
+                    dictionary: $result,
                     __: function(index){ return leantime.i18n.dictionary[index];  }
                 }
-            };";
+            };
+            JS,
+            200
+        );
+
+        $response->headers->set('Content-Type', 'application/javascript');
+
+        return $response;
     }
 }

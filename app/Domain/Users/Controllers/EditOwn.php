@@ -11,6 +11,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -50,10 +51,10 @@ namespace Leantime\Domain\Users\Controllers {
 
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function get(): void
+        public function get(): Response
         {
 
             $row = $this->userRepo->getUser($this->userId);
@@ -95,14 +96,14 @@ namespace Leantime\Domain\Users\Controllers {
 
             $this->tpl->assign('user', $row);
 
-            $this->tpl->display('users.editOwn');
+            return $this->tpl->display('users.editOwn');
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function post(): void
+        public function post(): Response
         {
 
             //Save Profile Info
@@ -252,7 +253,7 @@ namespace Leantime\Domain\Users\Controllers {
             }
 
             //Redirect
-            FrontcontrollerCore::redirect(BASE_URL . "/users/editOwn" . $tab);
+            return FrontcontrollerCore::redirect(BASE_URL . "/users/editOwn" . $tab);
         }
     }
 }

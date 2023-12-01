@@ -36,19 +36,23 @@ class Session
     private mixed $sessionpassword = '';
 
     /**
-     * @var environment
-     */
-    private Environment $config;
-
-    /**
      * __construct - get and test Session or make session
      *
-     * @param environment $config
+     * @param Environment $config
+     * @param IncomingRequest $request
      * @return void
      */
-    public function __construct(Environment $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        /**
+         * @var Environment
+         */
+        private Environment $config,
+
+        /**
+         * @var IncomingRequest
+         **/
+        private IncomingRequest $request
+    ) {
         $this->sessionpassword = $config->sessionpassword;
 
         if (session_status() == PHP_SESSION_ACTIVE) {
@@ -109,7 +113,7 @@ class Session
      */
     private function makeSID(): void
     {
-        $session_string = ! defined('LEAN_CLI') || LEAN_CLI === false
+        $session_string = ! $this->request instanceof CliRequest
             ? $_SERVER['REMOTE_ADDR']
             : 'cli';
 

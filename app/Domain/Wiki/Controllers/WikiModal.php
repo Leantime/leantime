@@ -6,6 +6,7 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Wiki\Models\Wiki;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -25,10 +26,10 @@ namespace Leantime\Domain\Wiki\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get($params): void
+        public function get($params): Response
         {
             $wiki = app()->make(Wiki::class);
 
@@ -37,15 +38,15 @@ namespace Leantime\Domain\Wiki\Controllers {
             }
 
             $this->tpl->assign("wiki", $wiki);
-            $this->tpl->displayPartial("wiki.wikiDialog");
+            return $this->tpl->displayPartial("wiki.wikiDialog");
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
             $wiki = app()->make(Wiki::class);
 
@@ -55,7 +56,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $wiki->title = $params['title'];
                 $this->wikiService->updateWiki($wiki, $id);
                 $this->tpl->setNotification("notification.wiki_updated_successfully", "success");
-                $this->tpl->redirect(BASE_URL . "/wiki/wikiModal/" . $id);
+                return $this->tpl->redirect(BASE_URL . "/wiki/wikiModal/" . $id);
             } else {
             //New
                 $wiki->title = $params['title'];
@@ -68,7 +69,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 if ($id) {
                     $this->tpl->setNotification("notification.wiki_created_successfully", "success");
-                    $this->tpl->redirect(BASE_URL . "/wiki/wikiModal/" . $id . "?closeModal=1");
+                    return $this->tpl->redirect(BASE_URL . "/wiki/wikiModal/" . $id . "?closeModal=1");
                 }
             }
         }

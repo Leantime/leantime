@@ -83,7 +83,7 @@ class Environment implements ArrayAccess, ConfigContract
     {
         if (
             isset($_SESSION)
-            && (! empty($_SESSION['mainconfig']) || ! $_SESSION['mainconfig']['debug'])
+            && (! empty($_SESSION['mainconfig']) && ! $_SESSION['mainconfig']['debug'])
         ) {
             $this->config = $_SESSION['mainconfig'];
             return $this;

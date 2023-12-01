@@ -6,6 +6,7 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -50,26 +51,29 @@ namespace Leantime\Domain\Api\Controllers {
 
                 $users = $this->usersService->getUsersWithProjectAccess($_SESSION['userdata']['id'], $projectId);
 
-                $this->tpl->displayJson(json_encode($users));
-
-                return;
+                return $this->tpl->displayJson($users);
             }
 
             if (isset($params["profileImage"])) {
-                $return = $this->usersService->getProfilePicture($params["profileImage"]);
+                /**
+                 * @var SVG\SVG|array
+                 **/
+                $svg = $this->usersService->getProfilePicture($params["profileImage"]);
 
-                if (is_array($return)) {
+                if (is_array($svg)) {
                     $file = app()->make(FileuploadCore::class);
-                    if ($return["type"] == "uploaded") {
-                        $file->displayImageFile($return["filename"]);
-                    } elseif ($return["type"] == "generated") {
-                        $file->displayImageFile("avatar", $return["filename"]);
-                    }
-                } elseif (is_object($return)) {
-                    header('Content-type: image/svg+xml');
-                    echo $return->toXMLString();
+                    return match ($svg['type']) {
+                        'uploaded' => $file->displayImageFile($svg['filename']),
+                        'generated' => $file->displayImageFile('avatar', $svg['filename']),
+                    };
                 }
+
+                $response = new Response($return->toXMLString());
+                $response->headers->set('Content-type', 'image/svg+xml');
+                return $response;
             }
+
+            return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
         /**
@@ -80,47 +84,57 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function post($params)
         {
+            if (! isset($_FILES['file'])) {
+                return $this->tpl->displayJson(['error' => 'File not included'], 400);
+            }
 
             //Updatind User Image
-            if (isset($_FILES['file'])) {
-                $_FILES['file']['name'] = "userPicture.png";
+            $_FILES['file']['name'] = "userPicture.png";
 
-                $this->usersService->setProfilePicture($_FILES, $_SESSION['userdata']['id']);
+            $this->usersService->setProfilePicture($_FILES, $_SESSION['userdata']['id']);
 
-                $_SESSION['msg'] = "PICTURE_CHANGED";
-                $_SESSION['msgT'] = "success";
+            $_SESSION['msg'] = "PICTURE_CHANGED";
+            $_SESSION['msgT'] = "success";
 
-                echo "{status:ok}";
-            }
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**
-         * put - handle put requests
+         * put - Special handling for settings
          *
          * @access public
          * @params parameters or body of the request
          */
         public function patch($params)
         {
-            //Special handling for settings
-
-            if (isset($params['patchModalSettings'])) {
-                if ($this->usersService->updateUserSettings("modals", $params['settings'], 1)) {
-                    echo "{status:ok}";
-                }
+            if (
+                ! in_array(array_keys($params), ['patchModalSettings', 'patchViewSettings', 'patchMenuStateSettings'])
+                || (! empty($params['patchModalSettings']) && empty($params['settings']))
+                || (! empty($params['patchViewSettings']) && empty($params['value']))
+                || (! empty($params['patchMenuStateSettings']) && empty($params['value']))
+            ) {
+                return $this->tpl->displayJson(['status' => 'failure', 'error' => 'Required params not included in request'], 400);
             }
 
-            if (isset($params['patchViewSettings'])) {
-                if ($this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value'])) {
-                    echo "{status:ok}";
+            $success = false;
+            foreach ([
+                'patchModalSettings' => fn () => $this->usersService->updateUserSettings("modals", $params['settings'], 1),
+                'patchViewSettings' => fn () => $this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value']),
+                'patchMenuStateSettings' => fn () => $this->usersService->updateUserSettings("views", "menuState", $params['value']),
+            ] as $param => $callback) {
+                if (! isset($params[$param])) {
+                    continue;
                 }
+
+                $success = $callback();
+                break;
             }
 
-            if (isset($params['patchMenuStateSettings'])) {
-                if ($this->usersService->updateUserSettings("views", "menuState", $params['value'])) {
-                    echo "{status:ok}";
-                }
+            if ($success) {
+                return $this->tpl->displayJson(['status' => 'ok']);
             }
+
+            return $this->tpl->displayJson(['status' =>'failure'], 500);
         }
 
         /**

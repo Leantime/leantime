@@ -3,13 +3,11 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-
     use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Wiki\Models\Wiki;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
-    use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -32,10 +30,10 @@ namespace Leantime\Domain\Wiki\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get($params): void
+        public function get($params): Response
         {
 
             $currentArticle = '';
@@ -91,7 +89,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
                 } else {
-                    $this->tpl->redirect(BASE_URL . "/wiki/show");
+                    return $this->tpl->redirect(BASE_URL . "/wiki/show");
                 }
             } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
                 $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
@@ -105,7 +103,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                     );
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
-                    $this->tpl->redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
+                    return $this->tpl->redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
                 }
             } elseif (isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] > 0) {
                 $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
@@ -192,15 +190,15 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->assign('wikiHeadlines', $wikiHeadlines);
 
 
-            $this->tpl->display("wiki.show");
+            return $this->tpl->display("wiki.show");
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
 
             if (isset($_GET['id']) === true) {
@@ -218,10 +216,10 @@ namespace Leantime\Domain\Wiki\Controllers {
                     }
                 }
 
-                $this->tpl->redirect(BASE_URL . "/wiki/show/" . $id);
+                return $this->tpl->redirect(BASE_URL . "/wiki/show/" . $id);
             }
 
-            $this->tpl->redirect(BASE_URL . "/wiki/show/");
+            return $this->tpl->redirect(BASE_URL . "/wiki/show/");
         }
     }
 

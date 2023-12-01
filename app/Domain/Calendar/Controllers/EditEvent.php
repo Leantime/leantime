@@ -52,7 +52,7 @@ namespace Leantime\Domain\Calendar\Controllers {
             $values = $this->calendarService->getEvent($params['id']);
 
             $this->tpl->assign('values', $values);
-            $this->tpl->displayPartial('calendar.editEvent');
+            return $this->tpl->displayPartial('calendar.editEvent');
         }
 
         /**
@@ -73,7 +73,7 @@ namespace Leantime\Domain\Calendar\Controllers {
                 $this->tpl->setNotification('notification.please_enter_title', 'error');
             }
 
-            $this->tpl->redirect(BASE_URL . '/calendar/editEvent/' . $params['id']);
+            return $this->tpl->redirect(BASE_URL . '/calendar/editEvent/' . $params['id']);
         }
     }
 }

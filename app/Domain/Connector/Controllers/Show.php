@@ -38,7 +38,7 @@ namespace Leantime\Domain\Connector\Controllers {
 
             $this->tpl->assign("providers", $providers);
 
-            $this->tpl->display('connector.show');
+            return $this->tpl->display('connector.show');
         }
 
         /**

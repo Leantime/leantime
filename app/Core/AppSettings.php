@@ -14,15 +14,14 @@ class AppSettings
 
     public string $dbVersion = "2.1.23";
 
-    protected Environment $config;
-
     /**
      * __construct
      *
      */
-    public function __construct(Environment $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        protected Environment $config,
+    ) {
+        //
     }
 
     /**

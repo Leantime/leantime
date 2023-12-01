@@ -14,6 +14,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Core\Controller;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -59,10 +60,10 @@ namespace Leantime\Domain\Dashboard\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get(): void
+        public function get(): Response
         {
             $images = array(
                 "undraw_smiley_face_re_9uid.svg",
@@ -162,20 +163,15 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
 
-            $this->tpl->display('dashboard.home');
+            return $this->tpl->display('dashboard.home');
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
-        public function post($params): void
+        public function post($params): Response
         {
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
@@ -188,11 +184,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
                         $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
                     }
 
-                    $this->tpl->redirect(BASE_URL . "/dashboard/home");
+                    return $this->tpl->redirect(BASE_URL . "/dashboard/home");
                 }
             }
 
-            $this->tpl->redirect(BASE_URL . "/dashboard/home");
+            return $this->tpl->redirect(BASE_URL . "/dashboard/home");
         }
     }
 }

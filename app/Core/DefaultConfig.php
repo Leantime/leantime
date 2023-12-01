@@ -81,6 +81,11 @@ class DefaultConfig
      */
     public string $logPath = APP_ROOT . '/logs/error.log';
 
+    /**
+     * @var bool Whether or not to enable the Poor Man's Cron fallback
+     */
+    public bool $poorMansCron = true;
+
 
     # Database ====================================================================================
     /**

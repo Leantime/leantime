@@ -20,6 +20,8 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Illuminate\Support\Str;
 use ReflectionClass;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Template class - Template routing
@@ -443,15 +445,14 @@ class Template
      *
      * @param string $viewPath The blade view path.
      * @param string $fragment The fragment key.
-     * @return never
+     * @return Response
      */
-    public function displayFragment(string $viewPath, string $fragment = ''): never
+    public function displayFragment(string $viewPath, string $fragment = ''): Response
     {
         $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
         $this->viewFactory->share(['tpl' => $this]);
         $view = $this->viewFactory->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
-        echo $view->fragmentIf(! empty($fragment), $fragment);
-        exit;
+        return Response($view->fragmentIf(! empty($fragment), $fragment));
     }
 
     /**
@@ -460,10 +461,11 @@ class Template
      * @access public
      * @param string $template
      * @param string $layout
-     * @return void
+     * @param int $responseCode
+     * @return Response
      * @throws Exception
      */
-    public function display(string $template, string $layout = "app"): void
+    public function display(string $template, string $layout = "app", $responseCode = 200): Response
     {
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
@@ -500,7 +502,7 @@ class Template
         $content = self::dispatch_filter('content', $content);
         $content = self::dispatch_filter("content.$template", $content);
 
-        echo $content;
+        return new Response($content, $responseCode);
     }
 
     /**
@@ -525,29 +527,39 @@ class Template
      *
      * @access public
      * @param  $jsonContent
-     * @return void
+     * @return Response
      */
-    public function displayJson($jsonContent): void
+    public function displayJson(array|object|string $jsonContent, $statusCode = 200): Response
     {
-        header('Content-Type: application/json; charset=utf-8');
-        if ($jsonContent !== false) {
-            echo $jsonContent;
-        } else {
-            echo json_encode(['error' => 'Invalid Json']);
+        $response = new Response(json_encode(['error' => 'Invalid Json']), 500);
+        $response->headers->set('Content-Type', 'application/json; charset=utf-8');
+
+        if (is_array($jsonContent) || is_object($jsonContent)) {
+            $jsonContent = json_encode($jsonContent);
+
+            if (json_last_error() == JSON_ERROR_NONE) {
+                return $response;
+            }
         }
+
+        $response = $response->setContent($jsonContent);
+        $response = $response->setStatusCode($statusCode);
+
+        return $response;
     }
 
     /**
      * display - display only the template from the template folder without a wrapper
      *
-     * @access public
-     * @param  $template
-     * @return void
-     * @throws Exception
+     * @access  public
+     * @param   string  $template
+     * @param   int     $responseCode (optional)
+     * @return  Response
+     * @throws  Exception
      */
-    public function displayPartial($template): void
+    public function displayPartial($template, $responseCode = 200): Response
     {
-        $this->display($template, 'blank');
+        return $this->display($template, 'blank', $responseCode);
     }
 
     /**
@@ -701,12 +713,11 @@ class Template
      * redirect - redirect to a given url
      *
      * @param  string $url
-     * @return void
+     * @return RedirectResponse
      */
-    public function redirect(string $url): void
+    public function redirect(string $url): RedirectResponse
     {
-        header("Location:" . trim($url));
-        exit();
+        return Frontcontroller::redirect($url);
     }
 
     /**

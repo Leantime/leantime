@@ -33,7 +33,7 @@ namespace Leantime\Domain\Reports\Services {
     use Leantime\Domain\Sbcanvas\Repositories\Sbcanvas as SbcanvaRepository;
     use Leantime\Domain\Swotcanvas\Repositories\Swotcanvas as SwotcanvaRepository;
     use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
-    use Ramsey\Uuid\Uuid;
+    use Leantime\Domain\Setting\Services\Setting as SettingsService;
     use Leantime\Core\Eventhelpers;
 
     /**
@@ -49,7 +49,7 @@ namespace Leantime\Domain\Reports\Services {
         private ProjectRepository $projectRepository;
         private SprintRepository $sprintRepository;
         private ReportRepository $reportRepository;
-        private SettingRepository $settings;
+        private SettingsService $settings;
         private TicketRepository $ticketRepository;
 
         /**
@@ -69,7 +69,7 @@ namespace Leantime\Domain\Reports\Services {
             ProjectRepository $projectRepository,
             SprintRepository $sprintRepository,
             ReportRepository $reportRepository,
-            SettingRepository $settings,
+            SettingsService $settings,
             TicketRepository $ticketRepository
         ) {
             $this->tpl = $tpl;
@@ -183,13 +183,7 @@ namespace Leantime\Domain\Reports\Services {
         ): array {
 
             //Get anonymous company guid
-            $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");
-
-            if ($companyId === false) {
-                $uuid = Uuid::uuid4();
-                $companyId = $uuid->toString();
-                $this->settings->saveSetting("companysettings.telemetry.anonymousId", $companyId);
-            }
+            $companyId = $this->settings->getCompanyId();
 
             self::dispatch_event("beforeTelemetrySend", $companyId);
 
@@ -297,7 +291,6 @@ namespace Leantime\Domain\Reports\Services {
                             ],
                             'timeout' => 5,
                         ])->then(function ($response) use ($today) {
-
                             $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
                             $_SESSION['skipTelemetry'] = true;
                         });
@@ -325,12 +318,7 @@ namespace Leantime\Domain\Reports\Services {
             $date_utc = new DateTime("now", new DateTimeZone("UTC"));
             $today = $date_utc->format("Y-m-d");
 
-            $companyId = $this->settings->getSetting("companysettings.telemetry.anonymousId");
-            if ($companyId === false) {
-                $uuid = Uuid::uuid4();
-                $companyId = $uuid->toString();
-                $this->settings->saveSetting("companysettings.telemetry.anonymousId", $companyId);
-            }
+            $companyId = $this->settings->getCompanyId();
 
             $telemetry = array(
                 'date' => '',

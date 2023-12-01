@@ -4,6 +4,7 @@ namespace Leantime\Domain\Plugins\Controllers;
 
 use Leantime\Core\Controller;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
+use Symfony\Component\HttpFoundation\Response;
 
 class Details extends Controller
 {
@@ -22,9 +23,9 @@ class Details extends Controller
     }
 
     /**
-     * @return void
+     * @return Response
      */
-    public function get(): void
+    public function get(): Response
     {
         if (! $this->incomingRequest->query->has('id')) {
             throw new \Exception('Plugin Identifier is required');
@@ -39,6 +40,6 @@ class Details extends Controller
 
         $this->tpl->assign('versions', $versions);
 
-        $this->tpl->display('plugins.plugindetails', 'blank');
+        return $this->tpl->display('plugins.plugindetails', 'blank');
     }
 }

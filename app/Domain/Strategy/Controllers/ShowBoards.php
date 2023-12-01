@@ -4,6 +4,7 @@ namespace Leantime\Domain\Strategy\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Canvas\Services\Canvas as CanvaService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -22,10 +23,10 @@ namespace Leantime\Domain\Strategy\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function run(): void
+        public function run(): Response
         {
 
 
@@ -164,7 +165,7 @@ namespace Leantime\Domain\Strategy\Controllers {
             $this->tpl->assign('level3Boards', $level3);
             $this->tpl->assign('otherBoards', $others);
 
-            $this->tpl->display('strategy.showBoards');
+            return $this->tpl->display('strategy.showBoards');
         }
     }
 }

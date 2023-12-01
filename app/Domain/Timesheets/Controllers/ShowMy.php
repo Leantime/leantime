@@ -86,13 +86,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $this->tpl->assign('allProjects', $this->projects->getUserProjects($_SESSION["userdata"]["id"]));
             $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
             $this->tpl->assign('allTimesheets', $myTimesheets);
-            $this->tpl->display('timesheets.showMy');
+            return $this->tpl->display('timesheets.showMy');
         }
 
-        /**
-         * @param $postData
-         * @return void
-         */
         /**
          * @param $postData
          * @return void

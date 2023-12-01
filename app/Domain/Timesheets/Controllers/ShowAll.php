@@ -42,7 +42,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
          */
         public function run()
         {
-
             //Only admins and employees
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
@@ -67,8 +66,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
 
                 $this->timesheetsService->updateInvoices($invEmpl, $invComp, $paid);
             }
-
-
 
             $invEmplCheck = '0';
             $invCompCheck = '0';
@@ -175,8 +172,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $this->tpl->assign('allClients', $this->clientService->getAll());
             $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck, $clientId));
 
-            $this->tpl->display('timesheets.showAll');
+            return $this->tpl->display('timesheets.showAll');
         }
     }
-
 }

@@ -6,6 +6,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -26,10 +27,10 @@ namespace Leantime\Domain\Tickets\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function get(): void
+        public function get(): Response
         {
 
             //Only admins
@@ -37,28 +38,22 @@ namespace Leantime\Domain\Tickets\Controllers {
                 if (isset($_GET['id'])) {
                     $id = (int)($_GET['id']);
                     $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                    $this->tpl->displayPartial('tickets.delTicket');
+                    return $this->tpl->displayPartial('tickets.delTicket');
                 } else {
-                    $this->tpl->display('errors.error404');
+                    return $this->tpl->display('errors.error404', responseCode: 404);
                 }
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws \Exception
-         */
-        public function post($params): void
+        public function post($params): Response
         {
-
             if (isset($_GET['id'])) {
                 $id = (int)($_GET['id']);
             }
@@ -70,19 +65,18 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notification.todo_deleted"), "success");
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                        return $this->tpl->redirect($_SESSION['lastPage']);
                     } else {
                         $this->tpl->setNotification($this->language->__($result['msg']), "error");
                         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                        $this->tpl->displayPartial('tickets.delTicket');
+                        return $this->tpl->displayPartial('tickets.delTicket');
                     }
                 } else {
-                    $this->tpl->display('errors.error403');
+                    return $this->tpl->display('errors.error403', responseCode: 403);
                 }
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }
-
 }

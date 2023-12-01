@@ -47,7 +47,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                         $this->tpl->setNotification($this->language->__("notifications.user_deleted"), "success");
 
-                        $this->tpl->redirect(BASE_URL . "/users/showAll");
+                        return $this->tpl->redirect(BASE_URL . "/users/showAll");
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                     }
@@ -61,9 +61,9 @@ namespace Leantime\Domain\Users\Controllers {
                 //Assign variables
                 $this->tpl->assign('user', $user);
 
-                $this->tpl->display('users.delUser');
+                return $this->tpl->display('users.delUser');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

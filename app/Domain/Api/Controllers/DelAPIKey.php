@@ -50,7 +50,7 @@ namespace Leantime\Domain\Api\Controllers {
 
                         $this->tpl->setNotification($this->language->__("notifications.key_deleted"), "success");
 
-                        $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings/#apiKeys");
+                        return $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings/#apiKeys");
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                     }
@@ -64,9 +64,9 @@ namespace Leantime\Domain\Api\Controllers {
                 //Assign variables
                 $this->tpl->assign('user', $user);
 
-                $this->tpl->display('api.delKey');
+                return $this->tpl->display('api.delKey');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

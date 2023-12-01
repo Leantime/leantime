@@ -11,7 +11,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Leantime\Domain\Plugins\Models\InstalledPlugin;
     use Illuminate\Support\Facades\Http;
     use Illuminate\Http\Client\RequestException;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingsRepository;
+    use Leantime\Domain\Setting\Services\Setting as SettingsService;
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Str;
 
@@ -68,7 +68,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
          * @var string
          */
-        private string $marketplaceUrl = "http://marketplace.leantime.local:8888";
+        public string $marketplaceUrl = "http://marketplace.leantime.local:8888";
 
         /**
          * @param PluginRepository $pluginRepository
@@ -277,8 +277,8 @@ namespace Leantime\Domain\Plugins\Services {
                     'license_key' => $pluginModel->license,
                     'product_id' => $pluginModel->id,
                     'instance' => app()
-                        ->make(SettingsRepository::class)
-                        ->getSetting('companysettings.telemetry.anonymousId'),
+                        ->make(SettingsService::class)
+                        ->getCompanyId(),
                     'phar_hash' => $signature,
                 ]);
 
@@ -314,8 +314,8 @@ namespace Leantime\Domain\Plugins\Services {
                     'license_key' => $pluginModel->license,
                     'product_id' => $pluginModel->id,
                     'instance' => app()
-                        ->make(SettingsRepository::class)
-                        ->getSetting('companysettings.telemetry.anonymousId'),
+                        ->make(SettingsService::class)
+                        ->getCompanyId(),
                     'phar_hash' => $signature,
                 ]);
 
@@ -448,8 +448,8 @@ namespace Leantime\Domain\Plugins\Services {
             $response = Http::withHeaders([
                     'X-License-Key' => $plugin->license,
                     'X-Instance-Id' => app()
-                        ->make(SettingsRepository::class)
-                        ->getSetting('companysettings.telemetry.anonymousId')
+                        ->make(SettingsService::class)
+                        ->getCompanyId(),
                 ])
                 ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->marketplaceId}");
 

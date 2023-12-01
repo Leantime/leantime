@@ -8,6 +8,8 @@ use Aws\S3\Exception\S3Exception;
 use Aws\S3;
 use Aws\S3\S3Client;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 /**
  * Fileupload class - Data filuploads
@@ -353,9 +355,9 @@ class Fileupload
      *
      * @param string $imageName
      * @param string $fullPath
-     * @return void
+     * @return Response
      */
-    public function displayImageFile(string $imageName, string $fullPath = ''): void
+    public function displayImageFile(string $imageName, string $fullPath = ''): Response
     {
         $mimes = array(
             'jpg' => 'image/jpg',
@@ -363,6 +365,9 @@ class Fileupload
             'gif' => 'image/gif',
             'png' => 'image/png',
         );
+
+        $responseFailure = new Response(file_get_contents(ROOT . '/dist/images/doc.png'));
+        $responseFailure->headers->set('Content-Type', 'image/png');
 
         if ($this->config->useS3 && $fullPath == '') {
             try {
@@ -374,39 +379,54 @@ class Fileupload
                     'Key' => $fileName,
                 ]);
 
-                header('Content-Type: ' . $result['ContentType']);
-                header('Pragma: public');
-                header('Cache-Control: max-age=86400');
-                header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
-                header('Content-disposition: inline; filename="' . $imageName . '";');
+                $response = new Response($result->get('Body')->getContents());
 
-                $body = $result->get('Body');
-
-                echo $body->getContents();
-            } catch (S3Exception $e) {
-                echo $e->getMessage() . "\n";
-            }
-        } else {
-            if ($fullPath == '') {
-                $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
-                $fullPath = $path . "/" . $imageName;
-            }
-
-            if (file_exists(realpath($fullPath))) {
-                $path_parts = pathinfo($fullPath);
-                $ext = $path_parts["extension"];
-
-                if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
-                    header('Content-type: ' . $mimes[$ext]);
-                    header('Content-disposition: inline; filename="' . $imageName . '";');
-                    header('Pragma: public');
-                    header('Cache-Control: max-age=900');
-                    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 900));
-
-
-                    readfile($fullPath);
+                foreach ([
+                    'Content-Type' => $result['ContentType'],
+                    'Pragma' => 'public',
+                    'Cache-Control' => 'max-age=86400',
+                    'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
+                    'Content-disposition' => 'inline; filename="' . $imageName . '";',
+                ] as $header => $value) {
+                    $response->headers->set($header, $value);
                 }
+
+                return $response;
+            } catch (S3Exception $e) {
+                throw new HttpResponseException($responseFailure);
             }
         }
+
+        if ($fullPath == '') {
+            $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
+            $fullPath = $path . "/" . $imageName;
+        }
+
+        if (! file_exists(realpath($fullPath))) {
+            throw new HttpResponseException($responseFailure);
+        }
+
+        $path_parts = pathinfo($fullPath);
+        $ext = $path_parts["extension"];
+
+        if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png'])) {
+            throw new HttpResponseException($responseFailure);
+        }
+
+        ob_start();
+        readfile($fullPath);
+        $response = new Response(ob_get_clean());
+
+        foreach ([
+            'Content-Type' => $mimes[$ext],
+            'Content-disposition' => 'inline; filename="' . $imageName . '";',
+            'Pragma' => 'public',
+            'Cache-Control' => 'max-age=86400',
+            'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
+        ] as $header => $value) {
+            $response->headers->set($header, $value);
+        }
+
+        return $response;
     }
 }

@@ -98,7 +98,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
+                    return $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -111,7 +111,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
                     $this->tpl->setNotification($this->language->__("notification.board_edited"), "success");
-                    $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
+                    return $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -123,9 +123,8 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-
             if (isset($_GET["raw"]) === false) {
-                $this->tpl->display('ideas.showBoards');
+                return $this->tpl->display('ideas.showBoards');
             }
         }
     }

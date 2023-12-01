@@ -8,6 +8,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Core\Theme;
     use Leantime\Domain\Setting\Repositories\Setting;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -41,11 +42,11 @@ namespace Leantime\Domain\Pageparts\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws Exception
          * @throws Exception
          */
-        public function run(): void
+        public function run(): Response
         {
 
             if (!isset($_SESSION["userdata"]["id"])) {
@@ -206,7 +207,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
 
             $this->tpl->assign('theme', $this->themeCore->getActive());
             $this->tpl->assign('appSettings', $this->appSettings);
-            $this->tpl->displayPartial('pageparts.header');
+            return $this->tpl->displayPartial('pageparts.header');
         }
     }
 

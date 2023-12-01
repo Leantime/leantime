@@ -40,7 +40,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
             $info = '';
@@ -187,15 +186,15 @@ namespace Leantime\Domain\Timesheets\Controllers {
                         $this->tpl->assign('allProjects', $this->projects->getAll());
                         $this->tpl->assign('allTickets', $this->tickets->getAll());
                         $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-                        $this->tpl->displayPartial('timesheets.editTime');
+                        return $this->tpl->displayPartial('timesheets.editTime');
                     } else {
-                        $this->tpl->displayPartial('errors.error403');
+                        return $this->tpl->displayPartial('errors.error403');
                     }
                 } else {
-                    $this->tpl->displayPartial('errors.error403');
+                    return $this->tpl->displayPartial('errors.error403');
                 }
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayPartial('errors.error403');
             }
         }
     }

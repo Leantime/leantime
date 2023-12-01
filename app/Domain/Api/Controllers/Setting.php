@@ -34,25 +34,26 @@ namespace Leantime\Domain\Api\Controllers {
         }
 
         /**
-         * post - handle post requests
+         * post - Updatind User Image
          *
          * @access public
          * @params parameters or body of the request
          */
         public function post($params)
         {
-
-            //Updatind User Image
-            if (isset($_FILES['file'])) {
-                $_FILES['file']['name'] = "logo.png";
-
-                $this->settingService->setLogo($_FILES);
-
-                $_SESSION['msg'] = "PICTURE_CHANGED";
-                $_SESSION['msgT'] = "success";
-
-                echo "{status:ok}";
+            if (! isset($_FILES['file'])) {
+                return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
+
+
+            $_FILES['file']['name'] = "logo.png";
+
+            $this->settingService->setLogo($_FILES);
+
+            $_SESSION['msg'] = "PICTURE_CHANGED";
+            $_SESSION['msgT'] = "success";
+
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**
@@ -75,5 +76,4 @@ namespace Leantime\Domain\Api\Controllers {
         {
         }
     }
-
 }

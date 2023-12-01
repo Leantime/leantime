@@ -4,6 +4,7 @@ namespace Leantime\Domain\Plugins\Controllers;
 
 use Leantime\Core\Controller;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
+use Symfony\Component\HttpFoundation\Response;
 
 class Marketplace extends Controller
 {
@@ -22,13 +23,12 @@ class Marketplace extends Controller
     }
 
     /**
-     * @return void
+     * @return Response
      */
-    public function get(): void
+    public function get(): Response
     {
-
         $this->tpl->assign('plugins', []);
 
-        $this->tpl->display('plugins.marketplace');
+        return $this->tpl->display('plugins.marketplace');
     }
 }

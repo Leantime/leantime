@@ -8,6 +8,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
     use RobThree\Auth\Providers\Qr\IQRCodeProvider;
     use RobThree\Auth\TwoFactorAuth;
     use RobThree\Auth\TwoFactorAuthException;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -26,18 +27,37 @@ namespace Leantime\Domain\TwoFA\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws TwoFactorAuthException
          */
-        public function run(): void
+        public function run(): Response
         {
-
             $userId = $_SESSION['userdata']['id'];
 
             $user = $this->userRepo->getUser($userId);
 
-            $mp = new TwoFAQRCode();
-            $tfa = new TwoFactorAuth('Leantime', 6, 30, 'sha1', $mp);
+            $tfa = new TwoFactorAuth('Leantime', 6, 30, 'sha1', new class implements IQRCodeProvider
+            {
+                /**
+                 * @return string
+                 */
+                public function getMimeType(): string
+                {
+                    return 'image/png';
+                }
+
+                /**
+                 * @param $qrtext
+                 * @param $size
+                 * @return string
+                 */
+                public function getQRCodeImage($qrtext, $size): string
+                {
+                    $qrCode = new QrCode($qrtext);
+                    $qrCode->setSize($size);
+                    return $qrCode->writeString();
+                }
+            });
             $secret = $user['twoFASecret'];
 
             if (isset($_POST['disable'])) {
@@ -103,36 +123,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
             $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
             $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
 
-            $this->tpl->display('twofa.edit');
-        }
-    }
-
-    // TODO: lets find a place for this
-
-    /**
-     *
-     */
-    class TwoFAQRCode implements IQRCodeProvider
-    {
-        /**
-         * @return string
-         */
-        public function getMimeType(): string
-        {
-            return 'image/png';
-        }
-
-
-        /**
-         * @param $qrtext
-         * @param $size
-         * @return string
-         */
-        public function getQRCodeImage($qrtext, $size): string
-        {
-            $qrCode = new QrCode($qrtext);
-            $qrCode->setSize($size);
-            return $qrCode->writeString();
+            return $this->tpl->display('twofa.edit');
         }
     }
 }

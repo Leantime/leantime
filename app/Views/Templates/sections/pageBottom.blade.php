@@ -1,3 +1,4 @@
+@if ($poorMansCron)
 @if ($runCron)
 <script>
     var req = new XMLHttpRequest();
@@ -7,11 +8,12 @@
 @endif
 
 <script>
-    //5 min time to run cron
+    //1 min time to run cron
     setInterval(function(){
-        jQuery.get('<?=BASE_URL?>/cron/run');
-    }, 300000);
+        jQuery.get('{!! BASE_URL !!}/cron/run');
+    }, 60000);
 </script>
+@endif
 
 @if ($loggedIn)
 <script>
