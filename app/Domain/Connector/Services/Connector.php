@@ -75,18 +75,17 @@ namespace Leantime\Domain\Connector\Services {
             foreach ($postParams as $fieldmapping) {
                 // Checking if the field mapping is selected
                 if (
-                    !empty($fieldmapping) && strpos(
-                        $fieldmapping,
-                        '|'
-                    ) !== false
-                ) { //are we assuming everyone has PHP 8.0? {
-                    $mappingParts = explode("|", $fieldmapping);
+                    !empty($fieldmapping)
+                    && strpos($fieldmapping,'|') !== false
+                    ){
+                        $mappingParts = explode("|", $fieldmapping);
+                        $sourceField = $mappingParts[0];
+                        $leantimeField = $mappingParts[1];
+
+                        $fields[] = array("sourceField" => $sourceField, "leantimeField" => $leantimeField);
+
                 }
 
-                $sourceField = $mappingParts[0];
-                $leantimeField = $mappingParts[1];
-
-                $fields[] = array("sourceField" => $sourceField, "leantimeField" => $leantimeField);
             }
 
             return $fields;
@@ -199,7 +198,7 @@ namespace Leantime\Domain\Connector\Services {
             if($matchingStatusField) {
 
                 foreach ($values as &$row) {
-                    $getStatus = $this->ticketRepository->getStatusIdByName($row[$matchingStatusField], $row['projectId']);
+                    $getStatus = $this->ticketRepository->getStatusIdByName($row[$matchingStatusField], $row['projectId'] ?? null);
                     if($getStatus !== false) {
                         $row['status'] = $getStatus;
                     } else{

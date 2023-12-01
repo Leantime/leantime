@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Codeception">
+    <option name="configurations">
+      <list>
+        <Configuration>
+          <option name="namespace" value="Tests" />
+          <option name="path" value="$PROJECT_DIR$/tests" />
+        </Configuration>
+      </list>
+    </option>
+  </component>
+</project>

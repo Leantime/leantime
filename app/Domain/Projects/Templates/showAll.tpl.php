@@ -56,7 +56,6 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                     <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.menu_type'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.project_state'); ?></th>
-                    <th class="head0"><?php echo $tpl->__('label.num_tickets'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.hourly_budget'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.budget_cost'); ?></th>
                 </tr>
@@ -68,14 +67,12 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                 <col class="con1"/>
                 <col class="con0" />
                 <col class="con1"/>
-                <col class="con0"/>
             </colgroup>
             <thead>
                 <tr>
                     <th class="head0"><?php echo $tpl->__('label.project_name'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.project_state'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.num_tickets'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.hourly_budget'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.budget_cost'); ?></th>
                 </tr>
@@ -99,7 +96,6 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                         } else {
                             echo $tpl->__('label.open');
                         } ?></td>
-                    <td class="center"><?php echo $row['numberOfTickets']; ?></td>
                     <td class="center"><?php $tpl->e($row['hourBudget']); ?></td>
                     <td class="center"><?php $tpl->e($row['dollarBudget']); ?></td>
                 </tr>

@@ -214,7 +214,7 @@ class Theme
                     INI_SCANNER_RAW
                 );
 
-                if ($iniData['theme.name'] !== null) {
+                if (isset($iniData['theme.name']) && $iniData['theme.name'] !== null) {
                     $themes[$themeDir] = $iniData['theme.name'];
                     continue;
                 }

@@ -196,5 +196,36 @@ namespace Leantime\Domain\Reactions\Repositories {
 
             return $return;
         }
+
+        public function getReactionsByModule(string $module, ?int $moduleId = null): array|false
+        {
+            $sql = "SELECT
+                        reaction,
+                        Count(reaction) as reactionCount
+
+                    FROM zp_reactions
+                    WHERE module=:module";
+
+            if($moduleId != null) {
+                $sql .= " AND moduleId=:moduleId";
+            }
+
+            $sql .= " GROUP BY reaction collate utf8mb4_bin;";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':module', $module, PDO::PARAM_STR);
+
+            if($moduleId != null) {
+                $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
+            }
+
+            $return = $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+
+        }
+
     }
 }

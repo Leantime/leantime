@@ -103,7 +103,7 @@ abstract class Controller
 
         } else {
 
-            self::redirect(BASE_URL . "/errors/error501", 501);
+            Frontcontroller::redirect(BASE_URL . "/errors/error501", 501);
 
         }
     }
