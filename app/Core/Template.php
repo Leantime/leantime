@@ -452,7 +452,7 @@ class Template
         $layout = $this->confirmLayoutName('blank', ! empty($fragment) ? "$viewPath.fragment" : $viewPath);
         $this->viewFactory->share(['tpl' => $this]);
         $view = $this->viewFactory->make($viewPath, array_merge($this->vars, ['layout' => $layout]));
-        return Response($view->fragmentIf(! empty($fragment), $fragment));
+        return new Response($view->fragmentIf(! empty($fragment), $fragment));
     }
 
     /**

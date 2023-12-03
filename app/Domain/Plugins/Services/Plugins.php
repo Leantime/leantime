@@ -14,6 +14,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Leantime\Domain\Setting\Services\Setting as SettingsService;
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Str;
+    use Leantime\Domain\Users\Services\Users;
 
     /**
      *
@@ -68,7 +69,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
          * @var string
          */
-        public string $marketplaceUrl = "http://marketplace.leantime.local:8888";
+        public string $marketplaceUrl = "https://marketplace.localhost";
 
         /**
          * @param PluginRepository $pluginRepository
@@ -272,7 +273,7 @@ namespace Leantime\Domain\Plugins\Services {
 
                 $signature = $phar->getSignature();
 
-                $response = Http::get("$this->marketplaceUrl", [
+                $response = Http::withoutVerifying()->get("$this->marketplaceUrl", [
                     'request' => 'activation',
                     'license_key' => $pluginModel->license,
                     'product_id' => $pluginModel->id,
@@ -413,7 +414,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getMarketplacePlugin(string $identifier): array
         {
-            return Http::get("$this->marketplaceUrl/ltmp-api/versions/$identifier")
+            return Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/versions/$identifier")
                 ->collect()
                 ->mapWithKeys(function ($data, $version) use ($identifier) {
                     static $count;
@@ -445,11 +446,13 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function installMarketplacePlugin(MarketplacePlugin $plugin): void
         {
-            $response = Http::withHeaders([
+            $response = Http::withoutVerifying()->withHeaders([
                     'X-License-Key' => $plugin->license,
                     'X-Instance-Id' => app()
                         ->make(SettingsService::class)
                         ->getCompanyId(),
+                    'X-User-Count' => count(app()
+                        ->make(Users::class)->getAll(true))
                 ])
                 ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->marketplaceId}");
 
