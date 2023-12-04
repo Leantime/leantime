@@ -6,6 +6,7 @@ use Leantime\Core\Events;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Http;
 use Leantime\Domain\Users\Services\Users as UsersService;
+use Leantime\Domain\Setting\Services\Setting as SettingsService;
 
 Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function ($params) {
     if (get_class($params['schedule']) !== Schedule::class) {
@@ -18,31 +19,25 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
          **/
         $pluginsService = app()->make(Services\Plugins::class);
 
-        /**
-         * @var UsersService $userService
-         **/
-        $userService = app()->make(UsersService::class);
-
-        $numberOfUsers = count(collect($userService->getAll() ?: [])->filter()->all());
-        $instanceId = app()->make(Services\Plugins::class)->getInstanceId();
-
         collect($pluginsService->getAllPlugins(true))
-            ->filter(fn ($plugin) => $plugin->type === 'phar')
+            ->filter(fn ($plugin) => $plugin->type === 'marketplace')
             ->filter(fn ($plugin) => $plugin->enabled)
-            /**
-             * @var Leantime\Core\Domain\Plugins\Models\Plugin $plugin
-             **/
-            ->each(function ($plugin) use ($pluginsService, $numberOfUsers, $instanceId) {
+            ->each(function (Models\InstalledPlugin $plugin) use ($pluginsService) {
+                static $instanceId, $numberOfUsers;
+                $instanceId ??= app()->make(SettingsService::class)->getCompanyId();
+                $numberOfUsers ??= app()->make(UsersService::class)->getNumberOfUsers();
+
                 $response = Http::get($pluginsService->marketplaceUrl, [
                     'wp-api' => 'software-api',
                     'request' => 'check',
                     'users' => $numberOfUsers,
                     'product_id' => $plugin->id,
                     'license_key' => $plugin->license,
-                    'instance_id' => $instanceId,
+                    'instance' => $instanceId,
+                    'user_count' => $numberOfUsers,
                 ]);
 
-                if ($response->failed()) {
+                if (! $response->ok()) {
                     $pluginsService->disablePlugin($plugin->id);
                 }
             });

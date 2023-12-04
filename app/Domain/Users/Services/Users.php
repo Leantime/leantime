@@ -189,9 +189,7 @@ namespace Leantime\Domain\Users\Services {
         }
 
         /**
-         * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email
-         *
-         * TODO: Should accept userModel
+         * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email TODO: Should accept userModel
          *
          * @access public
          * @param array $values basic user values
@@ -329,6 +327,17 @@ namespace Leantime\Domain\Users\Services {
             $this->authService->setUserSession($user);
 
             self::dispatch_event("editUser", ["id" => $id, "values" => $values]);
+        }
+
+        /**
+         * Get number of users
+         *
+         * @param bool $activeOnly
+         * @return int
+         **/
+        public function getNumberOfUsers(bool $activeOnly = false): int
+        {
+            return count(collect($this->getAll($activeOnly) ?: [])->filter()->all());
         }
     }
 }

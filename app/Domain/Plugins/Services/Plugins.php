@@ -12,6 +12,7 @@ namespace Leantime\Domain\Plugins\Services {
     use Illuminate\Support\Facades\Http;
     use Illuminate\Http\Client\RequestException;
     use Leantime\Domain\Setting\Services\Setting as SettingsService;
+    use Leantime\Domain\Users\Services\Users as UsersService;
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Str;
 
@@ -20,22 +21,12 @@ namespace Leantime\Domain\Plugins\Services {
      */
     class Plugins
     {
-
         use Eventhelpers;
-        /**
-         * @var PluginRepository
-         */
-        private PluginRepository $pluginRepository;
 
         /**
          * @var string
          */
-
         private string $pluginDirectory =  ROOT . "/../app/Plugins/";
-        /**
-         * @var EnvironmentCore
-         */
-        private EnvironmentCore $config;
 
         /**
          * Plugin types
@@ -73,11 +64,18 @@ namespace Leantime\Domain\Plugins\Services {
         /**
          * @param PluginRepository $pluginRepository
          * @param EnvironmentCore  $config
-         */
-        public function __construct(PluginRepository $pluginRepository, EnvironmentCore $config)
-        {
-            $this->pluginRepository = $pluginRepository;
-            $this->config = $config;
+         * @param SettingsService  $settingsService
+         * @param UsersService  $usersService
+         * @return void
+         * @throws BindingResolutionException
+         **/
+        public function __construct(
+            private PluginRepository $pluginRepository,
+            private EnvironmentCore $config,
+            private SettingsService $settingsService,
+            private UsersService $usersService,
+        ) {
+            //
         }
 
         /**
@@ -276,10 +274,9 @@ namespace Leantime\Domain\Plugins\Services {
                     'request' => 'activation',
                     'license_key' => $pluginModel->license,
                     'product_id' => $pluginModel->id,
-                    'instance' => app()
-                        ->make(SettingsService::class)
-                        ->getCompanyId(),
+                    'instance' => $this->settingsService->getCompanyId(),
                     'phar_hash' => $signature,
+                    'user_count' => $this->usersService->getNumberOfUsers(),
                 ]);
 
                 if (! $response->ok()) {
@@ -313,10 +310,9 @@ namespace Leantime\Domain\Plugins\Services {
                     'request' => 'deactivation',
                     'license_key' => $pluginModel->license,
                     'product_id' => $pluginModel->id,
-                    'instance' => app()
-                        ->make(SettingsService::class)
-                        ->getCompanyId(),
+                    'instance' => $this->settingsService->getCompanyId(),
                     'phar_hash' => $signature,
+                    'user_count' => $this->usersService->getNumberOfUsers(),
                 ]);
 
                 if (! $response->ok()) {
@@ -447,9 +443,8 @@ namespace Leantime\Domain\Plugins\Services {
         {
             $response = Http::withHeaders([
                     'X-License-Key' => $plugin->license,
-                    'X-Instance-Id' => app()
-                        ->make(SettingsService::class)
-                        ->getCompanyId(),
+                    'X-Instance-Id' => $this->settingsService->getCompanyId(),
+                    'X-User-Count' => $this->usersService->getNumberOfUsers(),
                 ])
                 ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->marketplaceId}");
 
