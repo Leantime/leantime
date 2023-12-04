@@ -45,11 +45,11 @@ class Upload extends Controller
      * get - display upload form
      *
      * @access public
-     * @return void
+     * @return Response
      * @throws \Exception
      * @throws \Exception
      */
-    public function get(): void
+    public function get(): Response
     {
         return $this->tpl->displayPartial("csvImport.upload");
     }

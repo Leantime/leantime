@@ -33,6 +33,12 @@ class Callback extends Controller
     {
         $code = $_GET['code'];
         $state = $_GET['state'];
-        return $this->oidc->callback($code, $state);
+
+        try {
+            return $this->oidc->callback($code, $state);
+        } catch (\Exception $e) {
+            $this->tpl->setNotification($e->getMessage(), 'danger', 'oidc_error');
+            return $this->tpl->redirect(BASE_URL . '/oidc/login');
+        }
     }
 }

@@ -48,7 +48,8 @@ class AppSettings
 
         if (session_status() !== PHP_SESSION_ACTIVE) {
 
-            if ($config->useRedis == "true" || $config->useRedis === true) {
+
+            if (filter_var($config->useRedis, FILTER_VALIDATE_BOOL) && (!defined("LEAN_CLI") || !LEAN_CLI)){
                 ini_set('session.save_handler', 'redis');
                 ini_set('session.save_path', $config->redisUrl);
             }
