@@ -104,7 +104,7 @@ namespace Leantime\Domain\Api\Controllers {
                         //If projects is not set, all project assignments have been removed.
                         $this->projectsRepo->deleteAllProjectRelations($id);
                     }
-                    $this->tpl->setNotification($this->language->__("notifications.key_updated"), 'success');
+                    $this->tpl->setNotification($this->language->__("notifications.key_updated"), 'success', 'apikey_updated');
                 }
 
                 // Get relations to projects

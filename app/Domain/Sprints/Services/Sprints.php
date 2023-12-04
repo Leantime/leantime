@@ -123,7 +123,7 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array
          */
-        public function getAllSprints($projectId): array
+        public function getAllSprints($projectId = null): array
         {
 
             $sprints = $this->sprintRepository->getAllSprints($projectId);

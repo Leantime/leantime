@@ -15,7 +15,7 @@
             @foreach ($clients as $client)
                 @if($client['id'] > 0)
                     <option value='{{ $client['id'] }}'
-                    @if (isset($projectSelectFilter['clients']) && $projectSelectFilter['clients'] == $client['id'])
+                    @if (isset($projectSelectFilter['client']) && $projectSelectFilter['client'] == $client['id'])
                         selected='selected'
                     @endif
                    >{{ $client['name'] }}</option>
@@ -37,6 +37,7 @@
 
             @endforeach
         </select>
+        <input type="hidden" name="activeTab" value="" />
 
     </form>
 

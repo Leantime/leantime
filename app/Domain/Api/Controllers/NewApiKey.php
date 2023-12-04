@@ -91,7 +91,7 @@ namespace Leantime\Domain\Api\Controllers {
                         }
                     }
 
-                    $this->tpl->setNotification("notification.api_key_created", 'success');
+                    $this->tpl->setNotification("notification.api_key_created", 'success', 'apikey_created');
 
                     $this->tpl->assign('apiKeyValues', $apiKeyValues);
                 }

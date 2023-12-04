@@ -3,108 +3,109 @@ leantime.ideasController = (function () {
     var closeModal = false;
 
     //Variables
-    var canvasoptions = {
-        sizes: {
-            minW:  700,
-            minH: 1000,
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                if (closeModal == true) {
-                    closeModal = false;
+    var canvasoptions = function() {
+        return {
+            sizes: {
+                minW: 700,
+                minH: 1000,
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                beforeShowCont: function () {
+                    jQuery(".showDialogOnLoad").show();
+                    if (closeModal == true) {
+                        closeModal = false;
+                        location.reload();
+                    }
+                },
+                afterShowCont: function () {
+
+                    jQuery(".ideaModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
+
+                    jQuery('textarea.ideaTextEditor').tinymce(
+                        {
+                            // General options
+                            width: "100%",
+                            height: "400px",
+                            skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
+                            content_css: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css',
+                            content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
+                            plugins: "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
+                            toolbar: "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
+                            branding: true,
+                            statusbar: true,
+                            convert_urls: false,
+                            menubar: false,
+                            resizable: true,
+                            paste_data_images: true,
+                            images_upload_handler: function (blobInfo, success, failure) {
+                                var xhr, formData;
+
+                                xhr = new XMLHttpRequest();
+                                xhr.withCredentials = false;
+                                xhr.open('POST', leantime.appUrl + '/api/files');
+
+                                xhr.onload = function () {
+                                    var json;
+
+                                    if (xhr.status < 200 || xhr.status >= 300) {
+                                        failure('HTTP Error: ' + xhr.status);
+                                        return;
+                                    }
+
+                                    success(xhr.responseText);
+                                };
+
+                                formData = new FormData();
+                                formData.append('file', blobInfo.blob());
+
+                                xhr.send(formData);
+                            },
+                            file_picker_callback: function (callback, value, meta) {
+
+                                window.filePickerCallback = callback;
+
+                                var shortOptions = {
+                                    afterShowCont: function () {
+                                        jQuery(".fileModal").nyroModal({callbacks: shortOptions});
+
+                                    }
+                                };
+
+                                jQuery.nmManual(
+                                    leantime.appUrl + '/files/showAll&modalPopUp=true',
+                                    {
+                                        stack: true,
+                                        callbacks: shortOptions,
+                                        sizes: {
+                                            minW: 500,
+                                            minH: 500,
+                                        }
+                                    }
+                                );
+                                jQuery.nmTop().elts.cont.css("zIndex", "1000010");
+                                jQuery.nmTop().elts.bg.css("zIndex", "1000010");
+                                jQuery.nmTop().elts.load.css("zIndex", "1000010");
+                                jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
+
+                            }
+                        }
+                    );
+
+                },
+                beforeClose: function () {
                     location.reload();
                 }
             },
-            afterShowCont: function () {
-
-                jQuery(".ideaModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
-
-                jQuery('textarea.ideaTextEditor').tinymce(
-                    {
-                        // General options
-                        width: "100%",
-                        height:"400px",
-                        skin_url: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide',
-                        content_css: leantime.appUrl + '/assets/css/libs/tinymceSkin/oxide/content.css',
-                        content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
-                        plugins : "emoticons,autolink,link,image,lists,table,save,preview,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,template,advlist",
-                        toolbar : "bold italic strikethrough | formatselect forecolor | alignleft aligncenter alignright | link unlink image media | bullist numlist | table | template | emoticons",
-                        branding: true,
-                        statusbar: true,
-                        convert_urls: false,
-                        menubar:false,
-                        resizable: true,
-                        paste_data_images: true,
-                        images_upload_handler: function (blobInfo, success, failure) {
-                            var xhr, formData;
-
-                            xhr = new XMLHttpRequest();
-                            xhr.withCredentials = false;
-                            xhr.open('POST', leantime.appUrl + '/api/files');
-
-                            xhr.onload = function () {
-                                var json;
-
-                                if (xhr.status < 200 || xhr.status >= 300) {
-                                    failure('HTTP Error: ' + xhr.status);
-                                    return;
-                                }
-
-                                success(xhr.responseText);
-                            };
-
-                            formData = new FormData();
-                            formData.append('file', blobInfo.blob());
-
-                            xhr.send(formData);
-                        },
-                        file_picker_callback: function (callback, value, meta) {
-
-                            window.filePickerCallback = callback;
-
-                            var shortOptions = {
-                                afterShowCont: function () {
-                                    jQuery(".fileModal").nyroModal({callbacks:shortOptions});
-
-                                }
-                            };
-
-                            jQuery.nmManual(
-                                leantime.appUrl + '/files/showAll&modalPopUp=true',
-                                {
-                                    stack: true,
-                                    callbacks: shortOptions,
-                                    sizes: {
-                                        minW: 500,
-                                        minH: 500,
-                                    }
-                                }
-                            );
-                            jQuery.nmTop().elts.cont.css("zIndex", "1000010");
-                            jQuery.nmTop().elts.bg.css("zIndex", "1000010");
-                            jQuery.nmTop().elts.load.css("zIndex", "1000010");
-                            jQuery.nmTop().elts.all.find('.nyroModalCloseButton').css("zIndex", "1000010");
-
-                        }
-                    }
-                );
-
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-        },
-        titleFromIframe: true
-
+            titleFromIframe: true
+        }
     };
 
     //Functions
 
     var _initModals = function () {
-        jQuery(".ideaModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+        jQuery(".ideaModal, #commentForm, #commentForm .deleteComment, .leanCanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
     };
 
     var openModalManually = function (url) {

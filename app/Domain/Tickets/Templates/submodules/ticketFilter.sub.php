@@ -81,16 +81,19 @@ $statusLabels = $tpl->get("allTicketStates");
                     <div class="form-group">
                         <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" multiple="multiple" title="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="milestone" id="milestoneSelect">
                             <option value="" data-placeholder="true"><?=$tpl->__("label.all_milestones") ?></option>
-                            <?php foreach ($tpl->get('milestones') as $milestoneRow) {   ?>
-                                <?php echo"<option value='" . $milestoneRow->id . "'";
+                            <?php
+                            if(is_array($tpl->get('milestones'))){
+                                foreach ($tpl->get('milestones') as $milestoneRow) {   ?>
+                                    <?php echo"<option value='" . $milestoneRow->id . "'";
 
-                                if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) && array_search($milestoneRow->id, explode(",", $searchCriteria['milestone'])) !== false) {
-                                    echo" selected='selected' ";
-                                }
+                                    if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id) && array_search($milestoneRow->id, explode(",", $searchCriteria['milestone'])) !== false) {
+                                        echo" selected='selected' ";
+                                    }
 
-                                echo">" . $tpl->escape($milestoneRow->headline) . "</option>"; ?>
+                                    echo">" . $tpl->escape($milestoneRow->headline) . "</option>"; ?>
 
-                            <?php } ?>
+                                <?php }
+                            }?>
                         </select>
                     </div>
                 </div>

@@ -71,7 +71,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 if (isset($params['delComment']) === true) {
                     $commentId = (int)($params['delComment']);
                     $this->commentsRepo->deleteComment($commentId);
-                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success');
+                    $this->tpl->setNotification($this->language->__('notifications.comment_deleted'), 'success', strtoupper(static::CANVAS_NAME) . 'canvascomment_deleted');
                 }
 
                 $canvasItem = $this->canvasRepo->getSingleCanvasItem($params['id']);
@@ -147,7 +147,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                         ));
                         $this->tpl->assign('comments', $comments);
 
-                        $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success');
+                        $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_updated');
 
 
                         $notification = app()->make(NotificationModel::class);
@@ -194,7 +194,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                        $this->tpl->setNotification($canvasTypes[$params['box']] . ' successfully created', 'success');
+                        $this->tpl->setNotification($canvasTypes[$params['box']] . ' successfully created', 'success',  strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
 
 
                         $notification = app()->make(NotificationModel::class);
@@ -215,7 +215,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        $this->tpl->setNotification($this->language->__('notification.element_created'), 'success');
+                        $this->tpl->setNotification($this->language->__('notification.element_created'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
 
                         return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $id);
                     } else {
@@ -234,7 +234,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 );
 
                 $message = $this->commentsRepo->addComment($values, static::CANVAS_NAME . 'canvasitem');
-                $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success');
+                $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitemcomment_created');
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = array(

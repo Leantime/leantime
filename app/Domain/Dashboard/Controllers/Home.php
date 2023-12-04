@@ -6,6 +6,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Reactions\Services\Reactions;
+    use Leantime\Domain\Reports\Services\Reports;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -25,16 +27,17 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private TicketService $ticketsService;
         private UserService $usersService;
         private TimesheetService $timesheetsService;
-        private ReportService $reportsService;
         private SettingRepository $settingRepo;
         private CalendarRepository $calendarRepo;
+
+        private Reactions $reactionsService;
+        private Reports $reportService;
 
         /**
          * @param ProjectService     $projectsService
          * @param TicketService      $ticketsService
          * @param UserService        $usersService
          * @param TimesheetService   $timesheetsService
-         * @param ReportService      $reportsService
          * @param SettingRepository  $settingRepo
          * @param CalendarRepository $calendarRepo
          * @return void
@@ -44,17 +47,19 @@ namespace Leantime\Domain\Dashboard\Controllers {
             TicketService $ticketsService,
             UserService $usersService,
             TimesheetService $timesheetsService,
-            ReportService $reportsService,
             SettingRepository $settingRepo,
-            CalendarRepository $calendarRepo
+            CalendarRepository $calendarRepo,
+            Reactions $reactionsService,
+            Reports $reportsService,
         ): void {
             $this->projectsService = $projectsService;
             $this->ticketsService = $ticketsService;
             $this->usersService = $usersService;
             $this->timesheetsService = $timesheetsService;
-            $this->reportsService = $reportsService;
             $this->settingRepo = $settingRepo;
             $this->calendarRepo = $calendarRepo;
+            $this->reactionsService = $reactionsService;
+            $this->reportsService = $reportsService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
         }
@@ -114,8 +119,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
             }
 
-            // if AI enabled, we will dispatch an event to allow llamadorian to filter/sort the ticket group
             $tickets = self::dispatch_filter('ticketGroups', $tickets);
+            self::dispatch_event('afterTicketGroups');
 
             $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
             $clients = array();
@@ -181,7 +186,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                     if (isset($result["status"])) {
                         $this->tpl->setNotification($result["message"], $result["status"]);
                     } else {
-                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
+                        $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success", "quickticket_created");
                     }
 
                     return $this->tpl->redirect(BASE_URL . "/dashboard/home");

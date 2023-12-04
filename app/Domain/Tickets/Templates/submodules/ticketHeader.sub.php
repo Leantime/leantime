@@ -43,14 +43,14 @@ if (is_array($tpl->get('sprints'))) {
         <span class="fa fa-fw fa-thumb-tack"></span>
     </div>
     <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
+        <h5><?php $tpl->e($_SESSION['currentProjectClient'] ?? '' . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
 
         <?php  if (
             ($tpl->get('currentSprint') !== false)
                 && ($tpl->get('currentSprint') !== null)
                 && count($tpl->get('sprints'))  > 0
-                && $sprint->id != 'all'
-                && $sprint->id != 'backlog'
+                && $currentSprintId != 'all'
+                && $currentSprintId != 'backlog'
 ) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>

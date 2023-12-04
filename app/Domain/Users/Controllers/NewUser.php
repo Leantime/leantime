@@ -41,7 +41,7 @@ namespace Leantime\Domain\Users\Controllers {
          */
         public function run()
         {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             $values = array(
                 'firstname' => "",
@@ -58,7 +58,7 @@ namespace Leantime\Domain\Users\Controllers {
             );
 
             //only Admins
-            if (Auth::userIsAtLeast(Roles::$admin)) {
+            if (Auth::userIsAtLeast(Roles::$manager)) {
                 $projectrelation = array();
 
                 if (isset($_POST['save'])) {
@@ -74,7 +74,7 @@ namespace Leantime\Domain\Users\Controllers {
                         'jobTitle' => ($_POST['jobTitle']),
                         'jobLevel' => ($_POST['jobLevel']),
                         'department' => ($_POST['department']),
-                        'clientId' => ($_POST['client']),
+                        'clientId' => Auth::userHasRole(Roles::$manager) ? $_SESSION['userdata']['clientId'] : $_POST['client'],
                     );
                     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
                         foreach ($_POST['projects'] as $project) {

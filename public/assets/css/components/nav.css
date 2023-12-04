@@ -180,6 +180,7 @@
     color:var(--project-selector-color);
     background:var(--project-selector-bg);
     border:none;
+    overflow: hidden;
 }
 
 .leftmenu .nav-tabs.nav-stacked .bigProjectSelector i.fa {
@@ -495,6 +496,10 @@
     margin-right:10px;
 }
 
+.headmenu .dropdown-menu a .label.feature-label {
+    margin-top:0px;
+}
+
 .header .nav-header {
     text-shadow: none;
     text-transform: none;
@@ -580,7 +585,7 @@
 }
 
 .headmenu-label {
-    display:none;
+
 }
 
 .leftmenu .nav li.dropdown {
@@ -671,6 +676,7 @@
 
 .leftpanel .leftmenu .nav-tabs .projectselector li.active > a {
     background-image:none;
+    background:var(--main-menu-link-active-bg);
     color:var(--main-menu-link-active-color);
     font-weight:bold;
 }

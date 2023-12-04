@@ -56,7 +56,8 @@ leantime.dbmCanvasController = (function () {
     var closeModal = false;
 
     //Variables
-    var canvasoptions = {
+    var canvasoptions = function() {
+        return {
         sizes: {
             minW:  700,
             minH: 1000,
@@ -72,7 +73,7 @@ leantime.dbmCanvasController = (function () {
                 }
             },
             afterShowCont: function () {
-                jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+                jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
 
             },
             beforeClose: function () {
@@ -81,12 +82,13 @@ leantime.dbmCanvasController = (function () {
         },
         titleFromIframe: true
 
-    };
+        }
+    }
 
     //Functions
 
     var _initModals = function () {
-        jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+        jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
     };
 
     var openModalManually = function (url) {

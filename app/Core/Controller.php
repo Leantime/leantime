@@ -3,6 +3,7 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Leantime\Core\Template;
 use Leantime\Core\Language;
 use Symfony\Component\HttpFoundation\Response;
@@ -95,8 +96,10 @@ abstract class Controller
 
         if (method_exists($this, $method)) {
             $this->response = $this->$method($params);
-        } else {
+        } elseif (method_exists($this, 'run')) {
             $this->response = $this->run();
+        } else {
+            throw new HttpResponseException(Frontcontroller::redirect(BASE_URL . "/errors/error501", 501));
         }
     }
 

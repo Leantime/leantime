@@ -1,27 +1,27 @@
 <?php
 
-    defined('RESTRICTED') or die('Restricted access');
+defined('RESTRICTED') or die('Restricted access');
 
-    echo $tpl->displayNotification();
+echo $tpl->displayNotification();
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
-    $tickets        = $tpl->get("tickets");
-    $sprints        = $tpl->get("sprints");
-    $searchCriteria = $tpl->get("searchCriteria");
-    $currentSprint  = $tpl->get("currentSprint");
+$tickets        = $tpl->get("tickets");
+$sprints        = $tpl->get("sprints");
+$searchCriteria = $tpl->get("searchCriteria");
+$currentSprint  = $tpl->get("currentSprint");
 
-    $todoTypeIcons  = $tpl->get("ticketTypeIcons");
+$todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
-    $efforts        = $tpl->get('efforts');
-    $priorities     = $tpl->get('priorities');
+$efforts        = $tpl->get('efforts');
+$priorities     = $tpl->get('priorities');
 
-    $allTicketGroups = $tpl->get("allTickets");
+$allTicketGroups = $tpl->get("allTickets");
 
 
 
-    //Count Columns to show
-    $numberofColumns = count($tpl->get('allKanbanColumns'));
+//Count Columns to show
+$numberofColumns = count($tpl->get('allKanbanColumns'));
 
 if ($numberofColumns > 0) {
     $size = floor(100 / $numberofColumns);

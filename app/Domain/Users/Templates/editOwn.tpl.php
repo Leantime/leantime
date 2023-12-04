@@ -164,10 +164,61 @@ $user = $tpl->get('user');
                                             $themeCore = app()->make(Theme::class);
                                             $themeAll = $themeCore->getAll();
                                             foreach ($themeAll as $key => $name) {
-                                                ?>
-                                                <option value="<?=$key ?>" <?php if ($tpl->get('userTheme') == $key) {
-                                                    echo "selected='selected'";
-                                                               } ?>><?=$tpl->__($name) ?></option>
+                                            ?>
+                                                <option value="<?= $key ?>" <?php if ($tpl->get('userTheme') == $key) {
+                                                                                echo "selected='selected'";
+                                                                            } ?>><?= $tpl->__($name) ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date_format" class="span3"><?php echo $tpl->__('label.date_format') ?></label>
+                                    <span class='field span6'>
+                                        <select name="date_format" id="date_format" style="width: 220px">
+                                            <?php
+                                            $dateFormats = $tpl->get('dateTimeValues')['dates'];
+                                            $dateTimeNow = date_create();
+
+                                            foreach ($dateFormats as $format) {
+                                            ?>
+                                                <option value="<?php echo ($format); ?>" <?php if ($tpl->get('dateFormat') == $format) {
+                                                                                            echo "selected='selected'";
+                                                                                        } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="time_format" class="span3"><?php echo $tpl->__('label.time_format') ?></label>
+                                    <span class='field span6'>
+                                        <select name="time_format" id="time_format" style="width: 220px">
+                                            <?php
+                                            $timeFormats = $tpl->get('dateTimeValues')['times'];
+                                            $dateTimeNow = date_create();
+
+                                            foreach ($timeFormats as $format) {
+                                            ?>
+                                                <option value="<?php echo ($format); ?>" <?php if ($tpl->get('timeFormat') == $format) {
+                                                                                            echo "selected='selected'";
+                                                                                        } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="timezone" class="span3"><?php echo $tpl->__('label.timezone') ?></label>
+                                    <span class='field span6'>
+                                        <select name="timezone" id="timezone" style="width: 220px">
+                                            <?php
+                                            $userTZ = $tpl->get('timezone');
+                                            $TZlist = $tpl->get('timezoneOptions');
+
+                                            foreach ($TZlist as $tz) {
+                                            ?>
+                                                <option value="<?php echo ($tz); ?>" <?php if ($userTZ === $tz) {
+                                                                                            echo "selected='selected'";
+                                                                                        } ?>><?php echo ($tz); ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>

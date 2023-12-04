@@ -166,7 +166,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 $this->commentService->deleteComment($commentId);
 
-                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
+                $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success", "wikicomment_deleted");
             }
 
 
@@ -209,7 +209,8 @@ namespace Leantime\Domain\Wiki\Controllers {
                     if ($this->commentService->addComment($_POST, "article", $id, $currentArticle)) {
                         $this->tpl->setNotification(
                             $this->language->__("notifications.comment_create_success"),
-                            "success"
+                            "success",
+                            "wikicomment_created"
                         );
                     } else {
                         $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");

@@ -12,6 +12,7 @@ namespace Leantime\Domain\Reports\Services {
     use Leantime\Core\AppSettings as AppSettingCore;
     use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Reactions\Repositories\Reactions;
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
     use Leantime\Domain\Reports\Repositories\Reports as ReportRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -89,7 +90,7 @@ namespace Leantime\Domain\Reports\Services {
         public function dailyIngestion(): void
         {
 
-            if (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1) {
+            if (isset($_SESSION['currentProject']) && (!isset($_SESSION["reportCompleted"][$_SESSION['currentProject']]) || $_SESSION["reportCompleted"][$_SESSION['currentProject']] != 1)) {
                 //Check if the dailyingestion cycle was executed already. There should be one entry for backlog and one entry for current sprint (unless there is no current sprint
                 //Get current Sprint Id, if no sprint available, dont run the sprint burndown
 
@@ -185,7 +186,7 @@ namespace Leantime\Domain\Reports\Services {
             //Get anonymous company guid
             $companyId = $this->settings->getCompanyId();
 
-            self::dispatch_event("beforeTelemetrySend", $companyId);
+            self::dispatch_event("beforeTelemetrySend", array("companyId" => $companyId));
 
             $companyLang = $this->settings->getSetting("companysettings.language");
             if ($companyLang != "" && $companyLang !== false) {
@@ -194,15 +195,25 @@ namespace Leantime\Domain\Reports\Services {
                 $currentLanguage = $this->config->language;
             }
 
+            $projectStatusCount = $this->getProjectStatusReport();
+
+            $taskSentiment = $this->generateTicketReactionsReport();
+
             $telemetry = array(
                 'date' => '',
                 'companyId' => $companyId,
-                'env' => 'prod',
+                'env' => 'oss',
                 'version' => $this->appSettings->appVersion,
                 'language' => $currentLanguage,
                 'numUsers' => $userRepository->getNumberOfUsers(),
                 'lastUserLogin' => $userRepository->getLastLogin(),
+
                 'numProjects' => $this->projectRepository->getNumberOfProjects(null, "project"),
+                'numProjectsGreen' => $projectStatusCount["green"] ?? 0,
+                'numProjectsYellow' => $projectStatusCount["yellow"] ?? 0,
+                'numProjectsRed' => $projectStatusCount["red"] ?? 0,
+                'numProjectsNone' => $projectStatusCount["none"] ?? 0,
+
                 'numStrategies' => $this->projectRepository->getNumberOfProjects(null, "strategy"),
                 'numPrograms' => $this->projectRepository->getNumberOfProjects(null, "program"),
                 'numClients' => $clientRepository->getNumberOfClients(),
@@ -251,7 +262,17 @@ namespace Leantime\Domain\Reports\Services {
                 'numWikiBoards' => $wikiRepo->getNumberOfBoards(),
                 'numWikiItems' => $wikiRepo->getNumberOfCanvasItems(),
 
+                "numTaskSentimentAngry" => $taskSentiment["🤬"] ?? 0,
+                "numTaskSentimentDisgust" => $taskSentiment["🤢"] ?? 0,
+                "numTaskSentimentUnhappy" => $taskSentiment["🙁"] ?? 0,
+                "numTaskSentimentNeutral" => $taskSentiment["😐"] ?? 0,
+                "numTaskSentimentHappy" => $taskSentiment["🙂"] ?? 0,
+                "numTaskSentimentLove" => $taskSentiment["😍"] ?? 0,
+                "numTaskSentimenUnicorn" => $taskSentiment["🦄"] ?? 0,
+
             );
+
+            $telemetry = self::dispatch_filter("beforeReturnTelemetry", $telemetry);
 
             return $telemetry;
         }
@@ -269,6 +290,7 @@ namespace Leantime\Domain\Reports\Services {
 
             //Only send once a day
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
+
 
             if ($allowTelemetry === true) {
                 $date_utc = new DateTime("now", new DateTimeZone("UTC"));
@@ -289,7 +311,7 @@ namespace Leantime\Domain\Reports\Services {
                             'form_params' => [
                                 'telemetry' => $data_string,
                             ],
-                            'timeout' => 5,
+                            'timeout' => 10,
                         ])->then(function ($response) use ($today) {
                             $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
                             $_SESSION['skipTelemetry'] = true;
@@ -298,14 +320,12 @@ namespace Leantime\Domain\Reports\Services {
                         return $promise;
                     } catch (Exception $e) {
                         error_log($e);
-
                         $_SESSION['skipTelemetry'] = true;
                         return false;
                     }
                 }
             }
 
-            $_SESSION['skipTelemetry'] = true;
             return false;
         }
 
@@ -407,6 +427,54 @@ namespace Leantime\Domain\Reports\Services {
             }
 
             return;
+        }
+
+        /**
+         *
+         * @return array
+         * @throws Exception
+         */
+        public function getProjectStatusReport()
+        {
+
+            $projectStatus = $this->projectRepository->getAll();
+
+            $statusList = ["green" => 0, "yellow" => 0, "red" => 0, "none" => 0];
+            foreach ($projectStatus as $project) {
+                if (isset($statusList[$project["status"]])) {
+                    $statusList[$project["status"]]++;
+                } else {
+                    $statusList["none"]++;
+                }
+            }
+
+            return $statusList;
+        }
+
+        public function generateTicketReactionsReport()
+        {
+            $reactionsRepo = app()->make(Reactions::class);
+            $collectedReactions = $reactionsRepo->getReactionsByModule("ticketSentiment");
+
+            $reactions = array(
+                "🤬" => 0,
+                "🤢" => 0,
+                "🙁" => 0,
+                "😐" => 0,
+                "🙂" => 0,
+                "😍" => 0,
+                "🦄" => 0,
+                "other" => 0,
+            );
+
+            foreach ($collectedReactions as $reaction) {
+
+                if (isset($reactions[$reaction["reaction"]])) {
+                    $reactions[$reaction["reaction"]] = $reactions[$reaction["reaction"]] + $reaction["reactionCount"];
+                }
+            }
+
+            return $reactions;
         }
     }
 

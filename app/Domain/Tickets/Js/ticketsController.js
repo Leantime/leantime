@@ -2,15 +2,6 @@ leantime.ticketsController = (function () {
 
     //Variables
 
-    //Constructor
-    (function () {
-        jQuery(document).ready(
-            function () {
-
-            }
-        );
-
-    })();
 
     //Functions
     function countTickets()
@@ -94,7 +85,7 @@ leantime.ticketsController = (function () {
                             padding:20,
                             view_mode: 'Month',
                             date_format: leantime.i18n.__("language.momentJSDate"),
-                            language: 'en', // or 'es', 'it', 'ru', 'ptBr', 'fr', 'tr', 'zh'
+                            language: leantime.i18n.__("language.code").slice(0, 2), //Get first 2 characters of language code
                             additional_rows: 5,
                             custom_popup_html: function (task) {
 
@@ -245,7 +236,7 @@ leantime.ticketsController = (function () {
                 currentText: leantime.i18n.__("language.currentText"),
                 closeText: leantime.i18n.__("language.closeText"),
                 buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -282,7 +273,7 @@ leantime.ticketsController = (function () {
                         currentText: leantime.i18n.__("language.currentText"),
                         closeText: leantime.i18n.__("language.closeText"),
                         buttonText: leantime.i18n.__("language.buttonText"),
-                        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -311,7 +302,7 @@ leantime.ticketsController = (function () {
                     currentText: leantime.i18n.__("language.currentText"),
                     closeText: leantime.i18n.__("language.closeText"),
                     buttonText: leantime.i18n.__("language.buttonText"),
-                    isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                    isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -353,7 +344,7 @@ leantime.ticketsController = (function () {
                         currentText: leantime.i18n.__("language.currentText"),
                         closeText: leantime.i18n.__("language.closeText"),
                         buttonText: leantime.i18n.__("language.buttonText"),
-                        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -378,7 +369,7 @@ leantime.ticketsController = (function () {
                     currentText: leantime.i18n.__("language.currentText"),
                     closeText: leantime.i18n.__("language.closeText"),
                     buttonText: leantime.i18n.__("language.buttonText"),
-                    isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                    isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -421,7 +412,7 @@ leantime.ticketsController = (function () {
                         currentText: leantime.i18n.__("language.currentText"),
                         closeText: leantime.i18n.__("language.closeText"),
                         buttonText: leantime.i18n.__("language.buttonText"),
-                        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                         nextText: leantime.i18n.__("language.nextText"),
                         prevText: leantime.i18n.__("language.prevText"),
                         weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -467,7 +458,7 @@ leantime.ticketsController = (function () {
                     currentText: leantime.i18n.__("language.currentText"),
                     closeText: leantime.i18n.__("language.closeText"),
                     buttonText: leantime.i18n.__("language.buttonText"),
-                    isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                    isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                     nextText: leantime.i18n.__("language.nextText"),
                     prevText: leantime.i18n.__("language.prevText"),
                     weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -819,7 +810,7 @@ leantime.ticketsController = (function () {
 
     var initDueDateTimePickers = function () {
 
-        jQuery(".quickDueDates").datepicker(
+        jQuery(".quickDueDates, .duedates").datepicker(
             {
                 dateFormat:  leantime.i18n.__("language.jsdateformat"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
@@ -829,7 +820,7 @@ leantime.ticketsController = (function () {
                 currentText: leantime.i18n.__("language.currentText"),
                 closeText: leantime.i18n.__("language.closeText"),
                 buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -1077,13 +1068,15 @@ leantime.ticketsController = (function () {
 
             var height = 250;
 
-            jQuery(".sortableTicketKanban .column .contentInner").each(function () {
+            jQuery(".sortableTicketList .column .contentInner").each(function () {
+                console.log(jQuery(this).height());
                 if (jQuery(this).height() > height) {
                     height = jQuery(this).height();
                 }
             });
+
             height = height + 50;
-            jQuery(".sortableTicketKanban .column .contentInner").css("min-height", height);
+            jQuery(".sortableTicketList .column .contentInner").css("height", height);
 
         });
 
@@ -1112,7 +1105,7 @@ leantime.ticketsController = (function () {
                 placeholder: "ui-state-highlight",
                 forcePlaceholderSize: true,
                 cancel: ".portlet-toggle,:input,a,input",
-                distance: 25,
+                distance: 10,
 
                 start: function (event, ui) {
                     ui.item.addClass('tilt');
@@ -1157,14 +1150,20 @@ leantime.ticketsController = (function () {
         {
             var left_pos = item.position().left,
                 move_handler = function (e) {
-                    if (e.pageX >= left_pos) {
+
+                    if ((e.pageX +5) > left_pos) {
                         item.addClass("right");
                         item.removeClass("left");
-                    } else {
+                    } else if (e.pageX < (left_pos +5)) {
                         item.addClass("left");
                         item.removeClass("right");
+                    }else{
+                        item.removeClass("left");
+                        item.removeClass("right");
                     }
+
                     left_pos = e.pageX;
+
                 };
             jQuery("html").bind("mousemove", move_handler);
             item.data("move_handler", move_handler);

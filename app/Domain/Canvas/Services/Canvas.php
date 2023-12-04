@@ -5,8 +5,8 @@ namespace Leantime\Domain\Canvas\Services {
     use DOMDocument;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Canvas\Repositories\Canvas as CanvaRepository;
     use Illuminate\Support\Str;
+    use Illuminate\Support\Facades\App;
 
     /**
      *
@@ -162,8 +162,8 @@ namespace Leantime\Domain\Canvas\Services {
 
             $canvasName = Str::studly($canvasName);
 
-            $canvasRepoName = app()->getNamespace() . "\\Domain\\$canvasName\\Repositories\\$canvasName";
-            $canvasRepo = app()->make($canvasRepoName);
+            $canvasRepoName = app()->getNamespace() . "Domain\\$canvasName\\Repositories\\$canvasName";
+            $canvasRepo = app($canvasRepoName);
 
             // Check if canvas already exists?
             $canvasAry['title'] .= ' [imported]';
@@ -197,7 +197,7 @@ namespace Leantime\Domain\Canvas\Services {
         public function getBoardProgress(string $projectId = '', array $boards = array()): array
         {
 
-            $canvasRepo = app()->make(CanvaRepository::class);
+            $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
             $values = $canvasRepo->getCanvasProgressCount($projectId, $boards);
 
             $results = array();
@@ -270,7 +270,7 @@ namespace Leantime\Domain\Canvas\Services {
          */
         public function getLastUpdatedCanvas(string $projectId = '', array $boards = array()): array
         {
-            $canvasRepo = app()->make(CanvaRepository::class);
+            $canvasRepo = app()->make(\Leantime\Domain\Canvas\Repositories\Canvas::class);
             return $canvasRepo->getLastUpdatedCanvas($projectId, $boards);
         }
     }

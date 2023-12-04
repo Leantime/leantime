@@ -72,7 +72,7 @@ jQuery(document).ready(function(){
         currentText: leantime.i18n.__("language.currentText"),
         closeText: leantime.i18n.__("language.closeText"),
         buttonText: leantime.i18n.__("language.buttonText"),
-        isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
         nextText: leantime.i18n.__("language.nextText"),
         prevText: leantime.i18n.__("language.prevText"),
         weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -258,6 +258,7 @@ jQuery(document).ready(function(){
                       <col class="con0" >
                       <col class="con1">
                       <col class="con0">
+
                 </colgroup>
                 <thead>
                 <?php
@@ -338,7 +339,7 @@ jQuery(document).ready(function(){
                         ?>
 
                         <tr class="gradeA timesheetRow">
-                            <td width="14%"><?php $tpl->e($timeRow["name"]); ?></td>
+                            <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
                             <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
                             <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
                             <?php $currentDate = $dateFrom->format('Y-m-d'); ?>

@@ -25,7 +25,7 @@ leantime.projectsController = (function () {
                 currentText: leantime.i18n.__("language.currentText"),
                 closeText: leantime.i18n.__("language.closeText"),
                 buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: JSON.parse(leantime.i18n.__("language.isRTL")),
+                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
                 nextText: leantime.i18n.__("language.nextText"),
                 prevText: leantime.i18n.__("language.prevText"),
                 weekHeader: leantime.i18n.__("language.weekHeader"),
@@ -315,9 +315,6 @@ leantime.projectsController = (function () {
                                 // dates and progress value
                                 var end_date = project._end;
 
-                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
-
-
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
                                 if (project.projectName !== undefined) {
@@ -335,24 +332,50 @@ leantime.projectsController = (function () {
                             },
                             on_date_change: function (project, start, end) {
 
-                                jQuery.ajax(
-                                    {
-                                        type: 'PATCH',
-                                        url: leantime.appUrl + '/api/projects',
-                                        data:
-                                            {
-                                                id : project.id,
-                                                start:start,
-                                                end:end,
-                                                sortIndex: project._index
-                                        }
-                                    }
-                                ).done(
-                                    function () {
-                                        //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
+                                var idParts = project.id.split("-");
 
+                                let entityId = 0;
+                                let entityType = "";
+
+                                if(idParts.length > 1){
+                                    if(idParts[0] == "ticket") {
+                                        entityId = idParts[1];
+                                        entityType = "ticket"
+                                    }else  if(idParts[0] == "pgm") {
+                                        entityId = idParts[1];
+                                        entityType = "project"
                                     }
-                                );
+                                }else{
+                                    entityId = idParts;
+                                }
+
+
+                                if(entityType == "ticket") {
+
+                                    leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, task._index);
+
+                                }else{
+
+
+                                    jQuery.ajax(
+                                        {
+                                            type: 'PATCH',
+                                            url: leantime.appUrl + '/api/projects',
+                                            data:
+                                                {
+                                                    id : entityId,
+                                                    start:start,
+                                                    end:end,
+                                                    sortIndex: project._index
+                                            }
+                                        }
+                                    ).done(
+                                        function () {
+                                            //This is easier for now and MVP. Later this needs to be refactored to reload the list of tickets async
+
+                                        }
+                                    );
+                                }
 
                                 //leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
                                 //_initModals();
@@ -405,9 +428,6 @@ leantime.projectsController = (function () {
                                 // the task object will contain the updated
                                 // dates and progress value
                                 var end_date = task._end;
-                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
-
-
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 

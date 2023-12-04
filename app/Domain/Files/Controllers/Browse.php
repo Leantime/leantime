@@ -40,7 +40,7 @@ class Browse extends Controller
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
                 $this->filesRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
-                $this->tpl->setNotification('notifications.file_upload_success', 'success');
+                $this->tpl->setNotification('notifications.file_upload_success', 'success', "file_created");
             } else {
                 $this->tpl->setNotification('notifications.file_upload_error', 'error');
             }
@@ -50,7 +50,7 @@ class Browse extends Controller
             $result = $this->filesService->deleteFile($_GET['delFile']);
 
             if ($result === true) {
-                $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
+                $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success", "file_deleted");
                 return $this->tpl->redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp'] ?? '') ? "?modalPopUp=true" : "");
             } else {
                 $this->tpl->setNotification($result["msg"], "success");

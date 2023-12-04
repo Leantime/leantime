@@ -6,16 +6,10 @@ foreach ($__data as $var => $val) {
 $appSettings = $tpl->get('appSettings');
 ?>
 
-<?php if (isset($_SESSION['do_cron'])) { ?>
-    <script>
-        var req = new XMLHttpRequest();
-        req.open("GET", "<?=BASE_URL?>/cron/run",true);
-        req.send(null);
-    </script>
-<?php } ?>
-
 <script>
-    //5 min time to run cron
+    jQuery.get('<?=BASE_URL?>/cron/run');
+
+    //5 min time to run cron agin
     setInterval(function(){
         jQuery.get('<?=BASE_URL?>/cron/run');
     }, 300000);

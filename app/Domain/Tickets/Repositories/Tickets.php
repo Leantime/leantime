@@ -12,10 +12,6 @@ namespace Leantime\Domain\Tickets\Repositories {
     /**
      *
      */
-
-    /**
-     *
-     */
     class Tickets
     {
         use EventhelperCore;
@@ -237,15 +233,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $statusList;
         }
 
-        /**
-         * @return mixed
-         */
-        /**
-         * @return mixed
-         */
-        /**
-         * @return mixed
-         */
+
         /**
          * @return mixed
          */
@@ -254,18 +242,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $this->statusList;
         }
 
-        /**
-         * @param $projectId
-         * @return string[]
-         */
-        /**
-         * @param $projectId
-         * @return string[]
-         */
-        /**
-         * @param $projectId
-         * @return string[]
-         */
+
         /**
          * @param $projectId
          * @return string[]
@@ -310,6 +287,19 @@ namespace Leantime\Domain\Tickets\Repositories {
                 "ALLOPEN" => $openTodos,
             );
             return $statusByTypeQuery;
+        }
+
+        public function getStatusIdByName($statusLabel, $projectId): int|false
+        {
+            $statusList = $this->getStateLabels($projectId);
+
+            foreach ($statusList as $key => $status) {
+                if ($status['name'] == $statusLabel) {
+                    return $key;
+                }
+            }
+
+            return false;
         }
 
         /**
@@ -579,7 +569,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($searchCriteria["currentUser"])) {
                 $stmn->bindValue(':userId', $searchCriteria["currentUser"], PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+                $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
             }
 
             //Current client is only used for authorization as it represents the current client Id assigned to a user.
@@ -587,7 +577,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($searchCriteria["currentClient"])) {
                 $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'], PDO::PARAM_INT);
+                $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'] ?? '-1', PDO::PARAM_INT);
             }
 
 

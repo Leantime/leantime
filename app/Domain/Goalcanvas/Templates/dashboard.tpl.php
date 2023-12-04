@@ -197,12 +197,12 @@ $goalStats = $tpl->get("goalStats");
                                                             <ul class="dropdown-menu">
                                                                 <li class="nav-header"><?=$tpl->__("subtitles.edit"); ?></li>
                                                                 <li><a
-                                                                        href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
+                                                                        href="#/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $row["id"];?>"
                                                                         class="<?=$canvasName ?>CanvasModal"
                                                                         data="item_<?php echo $row["id"];?>"
                                                                     > <?=$tpl->__("links.edit_canvas_item"); ?></a></li>
                                                                 <li><a
-                                                                        href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
+                                                                        href="#/<?=$canvasName ?>canvas/delCanvasItem/<?php echo $row["id"]; ?>"
                                                                         class="delete <?=$canvasName ?>CanvasModal"
                                                                         data="item_<?php echo $row["id"];?>"
                                                                     > <?=$tpl->__("links.delete_canvas_item"); ?></a></li>
@@ -213,7 +213,7 @@ $goalStats = $tpl->get("goalStats");
                                                     <h4>
                                                         <strong>Goal:</strong>
                                                         <a
-                                                            href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
+                                                            href="#/<?=$canvasName ?>canvas/editCanvasItem/<?=$row["id"];?>"
                                                             class="<?=$canvasName ?>CanvasModal"
                                                             data="item_<?=$row['id'] ?>">
                                                             <?php $tpl->e($row["title"]);?>
@@ -263,11 +263,10 @@ $goalStats = $tpl->get("goalStats");
 
                                                     <?php if (!empty($statusLabels)) { ?>
                                                         <div class="dropdown ticketDropdown statusDropdown colorized show firstDropdown">
-                                                            <a class="dropdown-toggle f-left status label-<?=$statusLabels[$row['status']]['dropdown'] ?>"
+                                                            <a class="dropdown-toggle f-left status label-<?=$row['status'] != "" ? $statusLabels[$row['status']]['dropdown'] : ""?>"
                                                                href="javascript:void(0);" role="button"
                                                                id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                                <span class="text"><?=$statusLabels[$row['status']]['title'] ?></span> <i class="fa fa-caret-down"
-                                                                                                                                          aria-hidden="true"></i>
+                                                                <span class="text"><?=$row['status'] != "" ? $statusLabels[$row['status']]['title'] : ""?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink<?=$row['id']?>">
                                                                 <li class="nav-header border"><?=$tpl->__("dropdown.choose_status")?></li>
@@ -290,8 +289,7 @@ $goalStats = $tpl->get("goalStats");
                                                                href="javascript:void(0);" role="button"
                                                                id="relatesDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true"
                                                                aria-expanded="false">
-                                                                <span class="text"><?=$relatesLabels[$row['relates']]['title'] ?></span> <i class="fa fa-caret-down"
-                                                                                                                                            aria-hidden="true"></i>
+                                                                <span class="text"><?=$relatesLabels[$row['relates']]['title'] ?></span> <i class="fa fa-caret-down" aria-hidden="true"></i>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="relatesDropdownMenuLink<?=$row['id']?>">
                                                                 <li class="nav-header border"><?=$tpl->__("dropdown.choose_relates")?></li>

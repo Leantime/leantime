@@ -335,7 +335,7 @@ namespace Leantime\Domain\Projects\Services {
                 $this->notificationService->processMentions(
                     $contentToCheck,
                     $notification->module,
-                    $entityId,
+                    (int)$entityId,
                     $notification->authorId,
                     $notification->url["url"]
                 );
@@ -484,7 +484,7 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects(
                 userId: $userId,
                 projectStatus: $projectStatus,
-                clientId: $clientId,
+                clientId: (int)$clientId,
                 accessStatus: "assigned"
             );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
@@ -513,12 +513,6 @@ namespace Leantime\Domain\Projects\Services {
 
         /**
          * @param $userId
-         * @param $projectStatus
-         * @param $clientId
-         * @return array
-         */
-        /**
-         * @param $userId
          * @param string   $projectStatus
          * @param $clientId
          * @return array
@@ -530,7 +524,7 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects(
                 userId: $userId,
                 projectStatus: $projectStatus,
-                clientId: $clientId,
+                clientId: (int)$clientId,
                 accessStatus: "all"
             );
             $projects = self::dispatch_filter('afterLoadingProjects', $projects);
@@ -548,6 +542,26 @@ namespace Leantime\Domain\Projects\Services {
                 "allAvailableProjectsHierarchy" => $projectHierarchy,
                 "clients" => $clients,
             ];
+        }
+
+
+
+        public function getAllClientsAvailableToUser($userId, string $projectStatus = "open"): array
+        {
+
+            //Load all projects user is assigned to
+            $projects = $this->projectRepository->getUserProjects(
+                userId: $userId,
+                projectStatus: $projectStatus,
+                clientId: null,
+                accessStatus: "all"
+            );
+            $projects = self::dispatch_filter('afterLoadingProjects', $projects);
+
+
+            $clients = $this->getClientsFromProjectList($projects);
+
+            return $clients;
         }
 
         /**
@@ -671,6 +685,11 @@ namespace Leantime\Domain\Projects\Services {
          */
         public function changeCurrentSessionProject($projectId): bool
         {
+            if(!is_numeric($projectId)){
+                return false;
+            }
+
+            $projectId = (int)$projectId;
 
             if (isset($_SESSION["currentProjectName"]) === false) {
                 $_SESSION["currentProjectName"] = '';
@@ -814,18 +833,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param int $userId
          * @param int $projectId
          * @return bool
-         *
-         */
-        /**
-         * @param int $userId
-         * @param int $projectId
-         * @return bool
-         * @throws BindingResolutionException
-         */
-        /**
-         * @param int $userId
-         * @param int $projectId
-         * @return bool
          * @throws BindingResolutionException
          */
         public function isUserAssignedToProject(int $userId, int $projectId): bool
@@ -850,15 +857,28 @@ namespace Leantime\Domain\Projects\Services {
         }
 
 
-        /**
-         * @param int $projectId
-         * @param int $clientId
-         * @param string $projectName
-         * @param string $userStartDate
-         * @param bool $assignSameUsers
-         * @return bool|int
-         * @throws BindingResolutionException
-         */
+        public function addProject($values) {
+            $values = array(
+                "name" => $values['name'],
+                'details' => $values['details'] ?? '',
+                'clientId' => $values['clientId'],
+                'hourBudget' => $values['hourBudget'] ?? 0,
+                'assignedUsers' => $values['assignedUsers'] ?? '',
+                'dollarBudget' => $values['dollarBudget'] ?? 0,
+                'psettings' => $values['psettings'] ?? 'restricted',
+                'type' => "project",
+                'start' => $values['start'],
+                'end' => $values['end'],
+            );
+            if ($values['start'] != null) {
+                $values['start'] = $this->language->getISODateString($values['start']);
+            }
+            if ($values['end'] != null) {
+                $values['end'] = $this->language->getISODateString($values['end']);
+            }
+            $this->projectRepository->addProject($values);
+        }
+
         /**
          * @param int    $projectId
          * @param int    $clientId
@@ -1175,10 +1195,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param $id
          * @return array
          */
-        /**
-         * @param $id
-         * @return array
-         */
         public function getProjectUserRelation($id): array
         {
             return $this->projectRepository->getProjectUserRelation($id);
@@ -1189,21 +1205,11 @@ namespace Leantime\Domain\Projects\Services {
          * @param $params
          * @return bool
          */
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         public function patch($id, $params): bool
         {
             return $this->projectRepository->patch($id, $params);
         }
 
-        /**
-         * @param $id
-         * @return mixed
-         * @throws BindingResolutionException
-         */
         /**
          * @param $id
          * @return mixed
@@ -1227,6 +1233,10 @@ namespace Leantime\Domain\Projects\Services {
             return $this->projectRepository->setPicture($file, $project);
         }
 
+        public function getAllProjects(){
+            return $this->projectRepository->getAll();
+        }
+
         /**
          * @param $projectId
          * @return array
@@ -1242,34 +1252,64 @@ namespace Leantime\Domain\Projects\Services {
             $progressSteps = array(
                 "define" => array(
                     "title" => "label.define",
+                    "description" => "checklist.define.description",
                     "tasks" => array(
-                        "description" => array("title" => "label.projectDescription", "status" => ""),
-                        "defineTeam" => array("title" => "label.defineTeam", "status" => ""),
-                        "createBlueprint" => array("title" => "label.createBlueprint", "status" => ""),
+                        "description" => array(
+                            "title" => "label.projectDescription",
+                            "status" => "",
+                            "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."",
+                            "description" => "checklist.define.tasks.description"),
+                        "defineTeam" => array(
+                            "title" => "label.defineTeam",
+                            "status" => "",
+                            "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."#team",
+                            "description" => "checklist.define.tasks.defineTeam"),
+                        "createBlueprint" => array(
+                            "title" => "label.createBlueprint",
+                            "status" => "",
+                            "link" =>BASE_URL."/strategy/showBoards/",
+                            "description" => "checklist.define.tasks.createBlueprint"),
                     ),
                     "status" => '',
                 ),
                 "goals" => array(
                     "title" => "label.setGoals",
+                    "description" => "checklist.goals.description",
                     "tasks" => array(
-                        "setGoals" => array("title" => "label.setGoals", "status" => ""),
+                        "setGoals" => array(
+                            "title" => "label.setGoals",
+                            "status" => "",
+                            "link" =>BASE_URL."/goalcanvas/dashboard",
+                            "description" => "checklist.goals.tasks.setGoals"),
                     ),
                     "status" => '',
                 ),
                 "timeline" => array(
                     "title" => "label.setTimeline",
+                    "description" => "checklist.timeline.description",
                     "tasks" => array(
-                        "createMilestones" => array("title" => "label.createMilestones", "status" => ""),
+                        "createMilestones" => array(
+                            "title" => "label.createMilestones",
+                            "status" => "",
+                            "link" =>BASE_URL."/tickets/roadmap",
+                            "description" => "checklist.timeline.tasks.createMilestones"),
 
                     ),
                     "status" => '',
                 ),
                 "implementation" => array(
                     "title" => "label.implementation",
+                    "description" => "checklist.implementation.description",
                     "tasks" => array(
-                        "createTasks" =>  array("title" => "label.createTasks", "status" => ""),
-
-                        "finish80percent" =>  array("title" => "label.finish80percent", "status" => ""),
+                        "createTasks" =>  array(
+                            "title" => "label.createTasks",
+                            "status" => "", "link" =>BASE_URL."/tickets/showAll",
+                            "description" => "checklist.implementation.tasks.createTasks "),
+                        "finish80percent" =>  array(
+                            "title" => "label.finish80percent",
+                            "status" => "",
+                            "link" =>BASE_URL."/reports/show",
+                            "description" => "checklist.implementation.tasks.finish80percent"),
                     ),
                     "status" => '',
                 ),
@@ -1411,17 +1451,21 @@ namespace Leantime\Domain\Projects\Services {
             );
         }
 
-        /**
-         * @param $params
-         * @return false|void
-         */
+        public function getProjectIdbyName($allProjects, $projectName){
+            foreach ($allProjects as $project) {
+                if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
+                    return $project['id'];
+                }
+            }
+            return false;
+        }
+
         /**
          * @param $params
          * @return false|void
          */
         public function updateProjectSorting($params)
         {
-
             //ticketId: sortIndex
             foreach ($params as $id => $sortKey) {
                 if ($this->projectRepository->patch($id, ["sortIndex" => $sortKey * 100]) === false) {
@@ -1430,11 +1474,10 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        /**
-         * @param $params
-         * @param $handler
-         * @return true
-         */
+        public function editProject($values, $id){
+            $this->projectRepository->editProject($values, $id);
+        }
+
         /**
          * @param $params
          * @param $handler

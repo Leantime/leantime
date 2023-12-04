@@ -55,16 +55,18 @@
                 ])
 
                 <br/><br/>
-                <strong>{{ __('label.background') }}</strong><br/>
-                <div class="mce-content-body kanbanContent closed tw-max-h-[200px]" id="projectDescription">
-                    {!! $tpl->escapeMinimal($project['details']) !!}
-                </div>
 
-                @if (strlen($project['details']) > 100)
-                    <div class="center">
+                    <strong>{{ __('label.background') }}</strong><br/>
+                <div class="readMoreBox">
+                    <div class="mce-content-body kanbanContent closed tw-max-h-[200px] readMoreContent tw-pb-[30px]" id="projectDescription">
+                        {!! $tpl->escapeMinimal($project['details']) !!}
+                    </div>
+
+                    <div class="center readMoreToggle" style="display:none;">
                         <a href="javascript:void(0)" id="descriptionReadMoreToggle">{{ __('label.read_more') }}</a>
                     </div>
-                @endif
+                </div>
+
 
                 <br/>
 
@@ -83,8 +85,15 @@
                             <div class="ticketBox fixed priority-border-{!! $row['priority'] !!}" data-val="{!! $row['id'] !!}">
                                 <div class="row">
                                     <div class="col-md-12 timerContainer tw-py-[5px] tw-px-[15px]" id="timerContainer-{!! $row['id'] !!}">
-                                        <a href="#/tickets/showTicket/{!! $row['dependingTicketId'] > 0 ? $row['dependingTicketId'] : $row['id'] !!}">
-                                            {!! $row['dependingTicketId'] > 0 ? $row['parentHeadline'] : sprintf("<strong>%s</strong>", $row['headline']) !!}
+                                        @if($row['dependingTicketId'] > 0)
+                                        <a href="#/tickets/showTicket/{{  $row['dependingTicketId'] }}">
+                                            {{ $row['parentHeadline'] }}
+                                        </a>
+                                            //
+                                        @endif
+
+                                        <a href="#/tickets/showTicket/{{ $row['id'] }}">
+                                           {!! sprintf("<strong>%s</strong>", $row['headline']) !!}
                                         </a>
 
                                         @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
@@ -502,15 +511,26 @@
     @dispatchEvent('scripts.afterOpen')
 
     jQuery(document).ready(function () {
+
         jQuery('#descriptionReadMoreToggle').click(function() {
+
             if (jQuery("#projectDescription").hasClass("closed")) {
                 jQuery("#projectDescription").css("max-height", "100%");
                 jQuery("#projectDescription").removeClass("closed");
                 jQuery("#projectDescription").removeClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_less') }}");
             } else {
                 jQuery("#projectDescription").css("max-height", "200px");
                 jQuery("#projectDescription").addClass("closed");
                 jQuery("#projectDescription").addClass("kanbanContent");
+                jQuery('#descriptionReadMoreToggle').text("{{ __('label.read_more') }}");
+            }
+        });
+
+        jQuery(".readMoreBox").each(function() {
+            if (jQuery(this).find(".readMoreContent").height() >= 169) {
+
+                jQuery(this).find(".readMoreToggle").show();
             }
         });
 

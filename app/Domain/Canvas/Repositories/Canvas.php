@@ -8,6 +8,7 @@ namespace Leantime\Domain\Canvas\Repositories {
 
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Db as DbCore;
+    use Leantime\Domain\Tickets\Repositories\Tickets;
     use PDO;
 
     /**
@@ -110,16 +111,22 @@ namespace Leantime\Domain\Canvas\Repositories {
 
         private LanguageCore $language;
 
+        private Tickets $ticketRepo;
+
         /**
          * __construct - get db connection
          *
          * @access public
          * @return void
          */
-        public function __construct(DbCore $db, LanguageCore $language)
+        public function __construct(
+            DbCore $db,
+            LanguageCore $language,
+            Tickets $ticketRepo)
         {
             $this->db = $db;
             $this->language = $language;
+            $this->ticketRepo = $ticketRepo;
         }
 
         /**
@@ -527,12 +534,10 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @param $id
          * @return array|false
          */
-        /**
-         * @param $id
-         * @return array|false
-         */
         public function getCanvasItemsById($id): false|array
         {
+
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
 
             $sql = "SELECT
                         zp_canvas_items.id,
@@ -576,23 +581,22 @@ namespace Leantime\Domain\Canvas\Repositories {
                         milestone.headline as milestoneHeadline,
                         milestone.editTo as milestoneEditTo,
                         COUNT(DISTINCT zp_comment.id) AS commentCount,
-                        SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
-                        SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
-                        SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
-                        SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
+
                         COUNT(progressTickets.id) AS allTickets,
 
-                        CASE WHEN
-                          COUNT(progressTickets.id) > 0
-                        THEN
-                          ROUND(
-                            (
-                              SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
-                              SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-                            ) *100)
-                        ELSE
-                          0
-                        END AS percentDone
+                       (SELECT (
+                            CASE WHEN
+                              COUNT(DISTINCT progressSub.id) > 0
+                            THEN
+                              ROUND(
+                                (
+                                  SUM(CASE WHEN progressSub.status " . $statusGroups["DONE"] . " THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
+                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
+                                ) *100)
+                            ELSE
+                              0
+                            END) AS percentDone
+                        FROM zp_tickets AS progressSub WHERE progressSub.milestoneid = zp_canvas_items.milestoneId AND progressSub.type <> 'milestone') AS percentDone
 
                 FROM
                 zp_canvas_items
@@ -615,10 +619,7 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
-        /**
-         * @param $id
-         * @return array|false
-         */
+
         /**
          * @param $id
          * @return array|false
@@ -679,10 +680,6 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         /**
          * @param $projectId
          * @return array|false
@@ -758,10 +755,6 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllAvailableKPIs($projectId): false|array
         {
             $sql = "SELECT
@@ -806,16 +799,16 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
-        /**
-         * @param $id
-         * @return false|mixed
-         */
+
         /**
          * @param $id
          * @return false|mixed
          */
         public function getSingleCanvasItem($id): mixed
         {
+
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
+
             $sql = "SELECT
                         zp_canvas_items.id,
                         zp_canvas_items.title,
@@ -859,23 +852,21 @@ namespace Leantime\Domain\Canvas\Repositories {
                         t1.lastname AS authorLastname,
                         milestone.headline as milestoneHeadline,
                         milestone.editTo as milestoneEditTo,
-                        SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
-                        SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
-                        SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
-                        SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
                         COUNT(progressTickets.id) AS allTickets,
+                        (SELECT (
+                            CASE WHEN
+                              COUNT(DISTINCT progressSub.id) > 0
+                            THEN
+                              ROUND(
+                                (
+                                  SUM(CASE WHEN progressSub.status " . $statusGroups["DONE"] . " THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
+                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
+                                ) *100)
+                            ELSE
+                              0
+                            END) AS percentDone
+                        FROM zp_tickets AS progressSub WHERE progressSub.milestoneid = zp_canvas_items.milestoneId AND progressSub.type <> 'milestone') AS percentDone
 
-                        CASE WHEN
-                          COUNT(progressTickets.id) > 0
-                        THEN
-                          ROUND(
-                            (
-                              SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
-                              SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-                            ) *100)
-                        ELSE
-                          0
-                        END AS percentDone
                 FROM
                 zp_canvas_items
                 LEFT JOIN zp_canvas_items AS parentKPI ON zp_canvas_items.kpi = parentKPI.id
@@ -975,7 +966,7 @@ namespace Leantime\Domain\Canvas\Repositories {
 
             $stmn = $this->db->database->prepare($query);
 
-            $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
+            $stmn->bindValue(':description', $values['description'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':title', $values['title'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
@@ -983,8 +974,8 @@ namespace Leantime\Domain\Canvas\Repositories {
             $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
             $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
-            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
-            $stmn->bindValue(':relates', $values['relates'], PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':relates', $values['relates'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
             $stmn->bindValue(':kpi', $values['kpi'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':data1', $values['data1'] ?? '', PDO::PARAM_STR);

@@ -2,6 +2,8 @@ leantime.commentsController = (function () {
 
     var enableCommenterForms = function () {
 
+        console.log("in");
+
         jQuery(".commentBox").show();
 
         //Hide reply comment boxes
@@ -10,11 +12,12 @@ leantime.commentsController = (function () {
 
         jQuery(".commentReply .tinymceSimple").tinymce().getBody().setAttribute('contenteditable', "true");
         jQuery(".commentReply .tox-editor-header").show();
-        jQuery(".commentBox input").prop("readonly", false);
-        jQuery(".commentBox input").prop("disabled", false);
 
-        jQuery(".commentBox textarea").prop("readonly", false);
-        jQuery(".commentBox textarea").prop("disabled", false);
+        jQuery(".commenterFields input").prop("readonly", false);
+        jQuery(".commenterFields input").prop("disabled", false);
+
+        jQuery(".commenterFields textarea").prop("readonly", false);
+        jQuery(".commenterFields textarea").prop("disabled", false);
 
     };
 

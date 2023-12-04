@@ -103,11 +103,11 @@ namespace Leantime\Domain\Timesheets\Services {
                 $values['date'] = $this->language->getISODateString($params['date']);
             }
 
-            if (isset($_POST['hours']) && $_POST['hours'] != '') {
+            if (isset($params['hours']) && $params['hours'] != '') {
                 $values['hours'] = $params['hours'];
             }
 
-            if (isset($_POST['description']) && $_POST['description'] != '') {
+            if (isset($params['description']) && $params['description'] != '') {
                 $values['description'] = $params['description'];
             }
 
@@ -230,7 +230,18 @@ namespace Leantime\Domain\Timesheets\Services {
          */
         public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
         {
-            return $this->timesheetsRepo->getAll($projectId, $kind, $dateFrom, $dateTo, $userId, $invEmpl, $invComp, $ticketFilter, $paid, $clientId);
+
+            return $this->timesheetsRepo->getAll(
+                id: $projectId,
+                kind: $kind,
+                dateFrom: $dateFrom,
+                dateTo: $dateTo,
+                userId: $userId,
+                invEmpl: $invEmpl,
+                invComp: $invComp,
+                ticketFilter: $ticketFilter,
+                paid: $paid,
+                clientId: $clientId);
         }
 
         /**

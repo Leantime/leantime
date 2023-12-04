@@ -1,18 +1,5 @@
 leantime.usersController = (function () {
 
-    // Variables (underscore for private variables)
-    var publicThing = "not secret";
-    var _privateThing = "secret";
-
-    var _uploadResult;
-
-    //Constructor
-    (function () {
-
-    })();
-
-    //Functions
-
     var readURL = function (input) {
 
         clearCroppie();

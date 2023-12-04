@@ -17,6 +17,7 @@ $redirectUrl = $tpl->get('redirectUrl');
 
 <div class="regcontent">
     <?php $tpl->dispatchTplEvent('afterRegcontentOpen'); ?>
+        <?php if (false === $tpl->get('noLoginForm')) { ?>
     <form id="login" action="<?=BASE_URL . "/auth/login"?>" method="post">
         <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
@@ -39,7 +40,12 @@ $redirectUrl = $tpl->get('redirectUrl');
         <div>
         </div>
         <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
+
     </form>
+    <?php } else {
+        echo ($tpl->language->__("text.no_login_form"));
+        ?><br /><br />
+        <?php }// if disableLoginForm ?>
     <?php if ($tpl->get('oidcEnabled')) { ?>
         <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>
         <div class="">

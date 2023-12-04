@@ -46,7 +46,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $id = (int)($_GET['id']);
                 $this->canvasRepo->delCanvasItem($id);
 
-                $this->tpl->setNotification($this->language->__('notification.element_deleted'), 'success');
+                $this->tpl->setNotification($this->language->__('notification.element_deleted'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_deleted');
                 return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
             }
 

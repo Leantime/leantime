@@ -310,6 +310,11 @@ class Fileupload
      */
     private function uploadToS3(): bool
     {
+
+        if($this->file_tmp_name == null || $this->file_tmp_name == '') {
+            return false;
+        }
+
         try {
             // Upload data.
             $file = fopen($this->file_tmp_name, "rb");

@@ -124,19 +124,19 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
 
         <?php if ($id !== '') { ?>
             <br /><br />
-            <h4 class="widgettitle title-light"><span class="fas fa-map"></span> <?=$tpl->__("headlines.attached_milestone") ?></h4>
+            <h4 class="widgettitle title-light"><span class="fa fa-link"></span> <?=$tpl->__("headlines.linked_milestone") ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?=$tpl->__("tooltip.link_milestones_tooltip") ?>"></i></h4>
 
             <ul class="sortableTicketList" style="width: 100%">
 
             <?php if ($canvasItem['milestoneId'] == '') {?>
                 <li class="ui-state-default center" id="milestone_0">
-                    <h4><?=$tpl->__("headlines.no_milestone_attached") ?></h4>
+                    <h4><?=$tpl->__("headlines.no_milestone_link") ?></h4>
                         <div class="row" id="milestoneSelectors">
                             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                             <div class="col-md-12">
-                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_attach_milestone") ?></a>
+                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
                                 <?php if (count($tpl->get('milestones')) > 0) { ?>
-                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.attach_existing_milestone") ?></a>
+                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
                                 <?php } ?>
                              </div>
                             <?php } ?>
@@ -193,7 +193,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                                     <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php $tpl->e($canvasItem['milestoneHeadline']); ?></a></strong>
                                 </div>
                                 <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>&removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+                                    <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
                                 </div>
                             </div>
                             <div class="row">

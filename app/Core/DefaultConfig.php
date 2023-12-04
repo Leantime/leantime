@@ -86,6 +86,11 @@ class DefaultConfig
      */
     public bool $poorMansCron = true;
 
+    /**
+     * @var bool Don't show user/pass form on login?
+     */
+    public bool $disableLoginForm = false;
+
 
     # Database ====================================================================================
     /**
@@ -291,9 +296,19 @@ class DefaultConfig
       "email":"mail",
       "firstname":"givenname",
       "lastname":"sn",
-      "phonenumber":"telephoneNumber"
+      "phone":"telephoneNumber",
+      "jobTitle":"title",
+      "jobLevel":"level",
+      "department":"department"
       }';
      */
+
+    /**
+     * @var bool Create users
+     * Create user if not exists
+     *
+     */
+    public bool $ldapCreateUser = false;
 
     /**
      * @var string Default role assignments upon first login. (Optional) Can be updated in user settings for each user
@@ -325,16 +340,18 @@ class DefaultConfig
           }
         }';
     //Default Leantime Role on creation. (set to editor)
-    /**
-     * @var string Comma separated list of plugins that will always be loaded
-     */
-    public string $plugins = '';
+
 
     /**
      * @var int Default Leantime Role on creation. (set to editor)
      */
     public int $ldapDefaultRoleKey = 20;
 
+    # Plugin Settings ================================================================================
+    /**
+     * @var string Comma separated list of plugins that will always be loaded
+     */
+    public string $plugins = '';
 
     # OIDC Settings ================================================================================
     /**
@@ -393,6 +410,22 @@ class DefaultConfig
     public string $oidcScopes = 'openid profile email';
 
     /**
+     * @var bool create user
+     *
+     * Create user if not exists
+     *
+     */
+    public bool $oidcCreateUser = false;
+
+    /**
+     * @var string OIDC
+     *
+     * Default Role for new users
+     *
+     */
+    public int $oidcDefaultRole = 20;
+
+    /**
      * @var string OIDC Field Email
      */
     public string $oidcFieldEmail = 'email';
@@ -406,6 +439,26 @@ class DefaultConfig
      * @var string OIDC Field Last Name
      */
     public string $oidcFieldLastName = 'family_name';
+
+    /**
+     * @var string OIDC Field Phone
+     */
+    public string $oidcFieldPhone= '';
+
+    /**
+     * @var string OIDC Field Job Title
+     */
+    public string $oidcFieldJobtitle = '';
+
+    /**
+     * @var string OIDC Field Job Level
+     */
+    public string $oidcFieldJoblevel = '';
+
+    /**
+     * @var string OIDC Field Department
+     */
+    public string $oidcFieldDepartment = '';
 
 
     # Redis Settings ===============================================================================

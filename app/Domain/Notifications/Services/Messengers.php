@@ -7,8 +7,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use League\HTMLToMarkdown\HtmlConverter;
 use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Leantime\Domain\Tickets\Services\Tickets;
 
 /**
  *
@@ -75,8 +76,7 @@ class Messengers
      */
     private function slackWebhook(NotificationModel $notification): bool
     {
-
-        $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".slackWebhookURL");
+        $slackWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.slackWebhookURL");
 
         if ($slackWebhookURL !== "" && $slackWebhookURL !== false) {
             $message = $this->prepareMessage($notification);
@@ -96,7 +96,8 @@ class Messengers
 
                 return true;
             } catch (GuzzleException $e) {
-                error_log($e);
+                error_log($e->getMessage());
+
                 return false;
             }
         }
@@ -112,15 +113,14 @@ class Messengers
     private function mattermostWebhook(NotificationModel $notification): bool
     {
 
-        $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".mattermostWebhookURL");
+        $mattermostWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.mattermostWebhookURL");
 
-        if ($mattermostWebhookURL !== "" && $mattermostWebhookURL !== false) {
+        if ($mattermostWebhookURL !== '' && $mattermostWebhookURL !== false) {
             $message = $this->prepareMessage($notification);
-
 
             $data = array(
                 'username' => "Leantime",
-                "icon_url" => '',
+                'icon_url' => '',
                 'text' => '',
                 'attachments' => $message,
             );
@@ -134,7 +134,7 @@ class Messengers
 
                 return true;
             } catch (Exception $e) {
-                error_log($e);
+                error_log($e->getMessage());
 
                 return false;
             }
@@ -150,8 +150,7 @@ class Messengers
      */
     private function zulipWebhook(NotificationModel $notification): bool
     {
-
-        $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings." . $notification->projectId . ".zulipHook");
+        $zulipWebhookSerialized = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.zulipHook");
 
         if ($zulipWebhookSerialized !== false && $zulipWebhookSerialized !== "") {
             $zulipWebhook = unserialize($zulipWebhookSerialized);
@@ -166,9 +165,9 @@ class Messengers
             }
 
             $data = array(
-                "type" => "stream",
-                "to" => $zulipWebhook['zulipStream'],
-                "topic" => $zulipWebhook['zulipTopic'],
+                'type' => 'stream',
+                'to' => $zulipWebhook['zulipStream'],
+                'topic' => $zulipWebhook['zulipTopic'],
                 'content' => $prepareChatMessage,
             );
 
@@ -188,7 +187,7 @@ class Messengers
 
                 return true;
             } catch (GuzzleException $e) {
-                error_log($e);
+                error_log($e->getMessage());
 
                 return false;
             }
@@ -207,8 +206,8 @@ class Messengers
         $converter = false;
 
         for ($i = 1; 3 >= $i; $i++) {
-            $discordWebhookURL = $this->settingsRepo->getSetting('projectsettings.' . $notification->projectId . '.discordWebhookURL' . $i);
-            if ($discordWebhookURL !== "" && $discordWebhookURL !== false) {
+            $discordWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.discordWebhookURL{$i}");
+            if ($discordWebhookURL !== '' && $discordWebhookURL !== false) {
                 if (!$converter) {
                     $converter = new HtmlConverter();
                 }
@@ -236,7 +235,7 @@ class Messengers
                         [
                             'title' => $notification->subject,
                             'type' => 'rich',
-                            'description' => $converter->convert($notification->message),
+                            'description' => html_entity_decode($converter->convert($notification->message)),
                             'url' => $url_link,
                             'timestamp' => $timestamp,
                             'color' => hexdec('1b75bb'),
@@ -255,12 +254,14 @@ class Messengers
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
                 try {
-                    $response = $this->httpClient->post($discordWebhookURL, [
+                    $this->httpClient->post($discordWebhookURL, [
                         'body' => $data_string,
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
                 } catch (GuzzleException $e) {
-                    error_log($e);
+                    error_log($e->getMessage());
+
+                    return false;
                 }
             }
         }
@@ -274,27 +275,30 @@ class Messengers
      */
     public function prepareMessage(NotificationModel $notification): array
     {
-
-
-
-        $prepareChatMessage = $notification->message;
-        if ($notification->url !== false) {
-            $prepareChatMessage .= " <" . $notification->url['url'] . "|" . $notification->url['text'] . ">";
+        $ticketService = app()->make(Tickets::class);
+        if (is_array($notification->entity)) {
+            $headline = $notification->entity['headline'];
+            $status = $notification->entity['status'];
+        } else {
+            $headline = $notification->entity->headline;
+            $status = $notification->entity->status;
         }
-
+        $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
         $message = array(
-        [
-            'fallback' => $notification->subject,
-            'pretext'  => $notification->subject,
-            'color'    => '#1b75bb',
-            'fields'   => array(
-                [
-                    'title' => $this->language->__("headlines.project_with_name") . " " . $this->projectName,
-                    'value' => $prepareChatMessage,
-                    'short' => false,
-                ],
-            ),
-        ],
+            [
+                'color'    => '#1b75bb',
+                'fallback' => $notification->message,
+                'pretext'  => $notification->message,
+                'title' => $headline,
+                'title_link' => $notification->url['url'],
+                'fields'   => array(
+                    [
+                        'title' => $this->language->__("headlines.project_with_name") . ' ' . $this->projectName,
+                        'value' => $this->language->__("label.todo_status") . ': ' . $statusLabelsArray[$status]['name'],
+                        'short' => false,
+                    ],
+                ),
+            ],
         );
 
         return $message;

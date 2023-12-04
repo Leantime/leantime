@@ -48,7 +48,7 @@ namespace Leantime\Domain\Api\Controllers {
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                         $this->userRepo->deleteUser($id);
 
-                        $this->tpl->setNotification($this->language->__("notifications.key_deleted"), "success");
+                        $this->tpl->setNotification($this->language->__("notifications.key_deleted"), "success", "apikey_deleted");
 
                         return $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings/#apiKeys");
                     } else {

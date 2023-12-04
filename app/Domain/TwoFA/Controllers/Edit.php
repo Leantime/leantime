@@ -102,7 +102,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
                             "twoFASecret" => $secret,
                         ]);
                         $user['twoFAEnabled'] = 1;
-                        $this->tpl->setNotification($this->language->__("notification.twoFA_enabled_success"), 'success');
+                        $this->tpl->setNotification($this->language->__("notification.twoFA_enabled_success"), 'success', "twoFAenabled");
                         $this->tpl->assign("twoFAEnabled", true);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.incorrect_twoFA_code"), 'error');

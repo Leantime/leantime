@@ -29,10 +29,10 @@
                         @if(isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != "avatar")
                             <span class="{{ $projectTypeAvatars[$currentProjectType] }}"></span>
                         @else
-                            <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $currentProject['id'] }}&v={{ strtotime($currentProject['modified'] ?? '0') }}"/>
+                            <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $currentProject['id'] ?? -1 }}&v={{ strtotime($currentProject['modified'] ?? '0') }}"/>
                         @endif
                     </span>
-                    {{ $currentProject['name'] }}&nbsp;<i class="fa fa-angle-right"></i>
+                    {{ $currentProject['name'] ?? "" }}&nbsp;<i class="fa fa-angle-right"></i>
                 </a>
                 @include('menu::partials.projectSelector', [])
             </li>

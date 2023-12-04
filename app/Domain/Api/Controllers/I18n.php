@@ -16,13 +16,26 @@ class I18n extends Controller
      * @param array $params or body of the request.
      * @throws \Exception
      * @access public
+     * @todo refactor to remove user timezone and timeformat and move to user settings
      */
     public function get(array $params)
     {
-        $decodedString = json_encode($this->language->readIni());
+
+        $languageIni = $this->language->readIni();
+
+        $dateTimeIniSettings = [
+            'language.jsdateformat',
+            'language.jstimeformat',
+            'language.momentJSDate',
+        ];
+
+        foreach ($dateTimeIniSettings as $index) {
+            $languageIni[$index] = $this->language->__($index, true);
+        }
+
+        $decodedString = json_encode($languageIni);
 
         $result = $decodedString ? $decodedString : '{}';
-
         $response = new Response(
             <<<JS
             var leantime = leantime || {};

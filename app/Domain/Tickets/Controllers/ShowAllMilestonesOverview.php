@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Domain\Clients\Repositories\Clients;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -22,6 +23,7 @@ namespace Leantime\Domain\Tickets\Controllers {
         private TimesheetService $timesheetService;
         private UserService $userService;
         private ClientService $clientService;
+        private Clients $clientRepo;
 
         /**
          * @param ProjectService   $projectService
@@ -38,7 +40,8 @@ namespace Leantime\Domain\Tickets\Controllers {
             SprintService $sprintService,
             TimesheetService $timesheetService,
             UserService $userService,
-            ClientService $clientService
+            ClientService $clientService,
+            Clients $clientRepo
         ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
@@ -46,6 +49,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->timesheetService = $timesheetService;
             $this->userService = $userService;
             $this->clientService = $clientService;
+            $this->clientRepo = $clientRepo;
 
             $_SESSION['lastPage'] = CURRENT_URL;
         }

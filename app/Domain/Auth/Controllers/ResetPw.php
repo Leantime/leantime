@@ -79,7 +79,8 @@ namespace Leantime\Domain\Auth\Controllers {
                     if ($this->authService->changePW($_POST['password'], $_GET['id'])) {
                         $this->tpl->setNotification(
                             $this->language->__('notifications.passwords_changed_successfully'),
-                            "success"
+                            "success",
+                            "password_changed"
                         );
 
                         return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");

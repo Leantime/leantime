@@ -13,7 +13,10 @@ foreach ($__data as $var => $val) {
 
     <?php echo $tpl->displayNotification() ?>
 
-    <div class="uploadWrapper" style="width:300px">
+    <h2>Upload CSV file</h2>
+    <p>You can upload CSVs to import or update Tasks, Projects, Goals. <a href="https://support.leantime.io/support/solutions/articles/154000063304-importing-data-via-csv" target="_blank">Check our documentaiton</a> to learn more about the formatting and to download templates</p>
+    <br /><br/>
+    <div class="uploadWrapper" style="width:100%">
 
         <form id="upload-form">
 
@@ -64,7 +67,7 @@ foreach ($__data as $var => $val) {
         uppy.use(Uppy.XHRUpload, {
             endpoint: '<?=BASE_URL ?>/csvImport/upload',
             formData: true,
-            fieldName: 'file',
+            fieldName: 'file'
         });
 
         uppy.use(Uppy.StatusBar, {
@@ -115,6 +118,16 @@ foreach ($__data as $var => $val) {
 
             window.location.href = "<?=BASE_URL?>/connector/integration?provider=csv_importer&step=entity&integrationId="+response.body.id;
 
+        });
+
+
+        uppy.on('upload-error', (file, error, response) => {
+
+            jQuery(".input-error").html("<span class='label-important'>There is a problem with your CSV file: "+response.body.error+"</span>");
+
+
+
+            return false
         });
 
 

@@ -4,6 +4,7 @@ namespace Leantime\Domain\Ideas\Repositories {
 
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Tickets\Repositories\Tickets;
     use PDO;
 
     /**
@@ -42,16 +43,50 @@ namespace Leantime\Domain\Ideas\Repositories {
 
         private LanguageCore $language;
 
+        private Tickets $ticketRepo;
+
         /**
          * __construct - get db connection
          *
          * @access public
          * @return void
          */
-        public function __construct(DbCore $db, LanguageCore $language)
+        public function __construct(DbCore $db, LanguageCore $language, Tickets $ticketRepo)
         {
             $this->db = $db;
             $this->language = $language;
+            $this->ticketRepo = $ticketRepo;
+        }
+
+        /**
+         * @param $canvasId
+         * @return array|false
+         */
+        public function getSingleCanvas($canvasId): false|array
+        {
+            $sql = "SELECT
+                        zp_canvas.id,
+                        zp_canvas.title,
+                        zp_canvas.author,
+                        zp_canvas.created,
+                        zp_canvas.projectId,
+                        t1.firstname AS authorFirstname,
+                        t1.lastname AS authorLastname
+
+                FROM
+                zp_canvas
+                LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
+                WHERE type = 'idea' AND zp_canvas.id = :canvasId
+                ORDER BY zp_canvas.title, zp_canvas.created";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
         }
 
         /**
@@ -305,6 +340,8 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function getCanvasItemsById($id): false|array
         {
 
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
+
             $sql = "SELECT
 						zp_canvas_items.id,
 						zp_canvas_items.description,
@@ -325,26 +362,21 @@ namespace Leantime\Domain\Ideas\Repositories {
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
 						COUNT(DISTINCT zp_comment.id) AS commentCount,
-						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
-						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
-						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
-						SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
 						COUNT(progressTickets.id) AS allTickets,
 
-						CASE WHEN
-						  COUNT(progressTickets.id) > 0
-						THEN
-						  ROUND(
-						    (
-						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
-						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-						    ) *100)
-						ELSE
-						  0
-						END AS percentDone
-
-
-
+						 (SELECT (
+                            CASE WHEN
+                              COUNT(DISTINCT progressSub.id) > 0
+                            THEN
+                              ROUND(
+                                (
+                                  SUM(CASE WHEN progressSub.status " . $statusGroups["DONE"] . " THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
+                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
+                                ) *100)
+                            ELSE
+                              0
+                            END) AS percentDone
+                        FROM zp_tickets AS progressSub WHERE progressSub.milestoneid = zp_canvas_items.milestoneId AND progressSub.type <> 'milestone') AS percentDone
 
 				FROM
 				zp_canvas_items
@@ -374,6 +406,8 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function getSingleCanvasItem($id): mixed
         {
 
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
+
             $sql = "SELECT
 						zp_canvas_items.id,
 						zp_canvas_items.description,
@@ -394,23 +428,22 @@ namespace Leantime\Domain\Ideas\Repositories {
 						zp_canvas_items.milestoneId,
 						milestone.headline as milestoneHeadline,
 						milestone.editTo as milestoneEditTo,
-						SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
-						SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
-						SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
-						SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
 						COUNT(progressTickets.id) AS allTickets,
 
-						CASE WHEN
-						  COUNT(progressTickets.id) > 0
-						THEN
-						  ROUND(
-						    (
-						      SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
-						      SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-						    ) *100)
-						ELSE
-						  0
-						END AS percentDone
+                          (SELECT (
+                            CASE WHEN
+                              COUNT(DISTINCT progressSub.id) > 0
+                            THEN
+                              ROUND(
+                                (
+                                  SUM(CASE WHEN progressSub.status " . $statusGroups["DONE"] . " THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
+                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
+                                ) *100)
+                            ELSE
+                              0
+                            END) AS percentDone
+                        FROM zp_tickets AS progressSub WHERE progressSub.milestoneid = zp_canvas_items.milestoneId AND progressSub.type <> 'milestone') AS percentDone
+
 				FROM
 				zp_canvas_items
 			    LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
@@ -465,13 +498,13 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn = $this->db->database->prepare($query);
 
             $stmn->bindValue(':description', $values['description'], PDO::PARAM_STR);
-            $stmn->bindValue(':assumptions', $values['assumptions'], PDO::PARAM_STR);
-            $stmn->bindValue(':data', $values['data'], PDO::PARAM_STR);
-            $stmn->bindValue(':conclusion', $values['conclusion'], PDO::PARAM_STR);
-            $stmn->bindValue(':box', $values['box'], PDO::PARAM_STR);
-            $stmn->bindValue(':author', $values['author'], PDO::PARAM_INT);
+            $stmn->bindValue(':assumptions', $values['assumptions'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
+            $stmn->bindValue(':box', $values['box'] ?? "idea", PDO::PARAM_STR);
+            $stmn->bindValue(':author', $values['author'] ?? $_SESSION['userdata']['id'], PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
-            $stmn->bindValue(':status', $values['status'], PDO::PARAM_STR);
+            $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);
 
             $stmn->execute();

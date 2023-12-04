@@ -71,7 +71,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $currentCanvasId = $this->ideaRepo->addCanvas($values);
                     $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
 
-                    $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success');
+                    $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', "ideaboard_created");
 
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('idea_board_created');
@@ -100,7 +100,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $values = array("title" => $_POST['canvastitle'], "id" => $currentCanvasId);
                     $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
-                    $this->tpl->setNotification($this->language->__("notification.board_edited"), "success");
+                    $this->tpl->setNotification($this->language->__("notification.board_edited"), "success", "ideaboard_edited");
                     return $this->tpl->redirect(BASE_URL . "/ideas/advancedBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');

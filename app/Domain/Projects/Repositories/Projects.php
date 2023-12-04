@@ -93,12 +93,18 @@ namespace Leantime\Domain\Projects\Repositories {
                     project.menuType,
                     project.type,
                     project.modified,
-					SUM(case when ticket.type <> 'milestone' AND ticket.type <> 'subtask' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
-					client.id AS clientId
+					client.id AS clientId,
+					comments.status as status
 				FROM zp_projects as project
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
+                LEFT JOIN zp_comment as comments ON comments.id = (
+                      SELECT
+						id
+                      FROM zp_comment
+                      WHERE module = 'project' AND moduleId = project.id
+                      ORDER BY date DESC LIMIT 1
+                    )
 				";
 
             if ($showClosedProjects === false) {
@@ -187,7 +193,6 @@ namespace Leantime\Domain\Projects\Repositories {
 				    project.type,
 				    project.parent,
 				    project.modified,
-					SUM(case when ticket.type <> 'milestone' then 1 else 0 end) as numberOfTickets,
 					client.name AS clientName,
 					client.id AS clientId,
 					parent.id AS parentId,
@@ -198,7 +203,6 @@ namespace Leantime\Domain\Projects\Repositories {
 				LEFT JOIN zp_relationuserproject AS relation ON project.id = relation.projectId
 				LEFT JOIN zp_projects as parent ON parent.id = project.parent
 				LEFT JOIN zp_clients as client ON project.clientId = client.id
-				LEFT JOIN zp_tickets as ticket ON project.id = ticket.projectId
 				LEFT JOIN zp_user as `user` ON relation.userId = user.id
 				LEFT JOIN zp_reactions as favorite ON project.id = favorite.moduleId
 				                                          AND favorite.module = 'project'
@@ -246,7 +250,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND (project.state = -1)";
             }
 
-            if ($clientId != "") {
+            if ($clientId != "" && $clientId != null && $clientId > 0) {
                 $query .= " AND project.clientId = :clientId";
             }
 
@@ -262,7 +266,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
             }
 
-            if ($clientId != "") {
+            if ($clientId != "" && $clientId != null && $clientId > 0) {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 
@@ -729,7 +733,9 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
 
             //Add author to project
-            $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
+            if(isset($_SESSION["userdata"]["id"])) {
+                $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
+            }
 
             //Add users to relation
             if (is_array($values['assignedUsers']) === true && count($values['assignedUsers']) > 0) {

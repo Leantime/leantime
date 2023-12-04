@@ -222,6 +222,7 @@ namespace Leantime\Domain\Auth\Services {
             ////C: update users from the identity provider
             //Try Ldap
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
+
                 $ldap = app()->make(Ldap::class);
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
@@ -302,6 +303,7 @@ namespace Leantime\Domain\Auth\Services {
                 self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return true;
             } else {
+                $this->logFailedLogin($username);
                 self::dispatch_event("afterLoginCheck", ['username' => $username, 'password' => $password, 'authService' => app()->make(self::class)]);
                 return false;
             }
@@ -620,6 +622,18 @@ namespace Leantime\Domain\Auth\Services {
         public function set2FAVerified(): void
         {
             $_SESSION['userdata']['twoFAVerified'] = true;
+        }
+
+        private function logFailedLogin($user) {
+
+            $user = $user == "" ? "unknown" : $user;
+            $date = new \DateTime();
+            $date = $date->format("y:m:d h:i:s");
+
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $msg = "[".$date."][".$ip."] Login failed for user: ".$user."";
+            error_log($msg);
+
         }
     }
 

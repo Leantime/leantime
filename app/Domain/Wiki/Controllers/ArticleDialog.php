@@ -49,7 +49,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $results = $this->wikiService->updateArticle($article);
 
                 if ($results) {
-                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success");
+                    $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success", "articlemilestone_unlinked");
                     return $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
                 }
             }
@@ -108,7 +108,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $results = $this->wikiService->updateArticle($article);
 
                 if ($results) {
-                    $this->tpl->setNotification("notification.article_updated_successfully", "success");
+                    $this->tpl->setNotification("notification.article_updated_successfully", "success", "article_updated");
                 }
             } else {
                 //New
@@ -124,7 +124,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $id = $this->wikiService->createArticle($article);
 
                 if ($id) {
-                    $this->tpl->setNotification("notification.article_created_successfully", "success");
+                    $this->tpl->setNotification("notification.article_created_successfully", "success", "article_created");
                 }
             }
             if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {

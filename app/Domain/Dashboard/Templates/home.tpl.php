@@ -247,7 +247,7 @@ $milestones = $tpl->get('milestones');
                                                                     <li class='dropdown-item'><a style='background-color:#b0b0b0' href='javascript:void(0);' data-label="<?=$tpl->__("label.no_milestone")?>" data-value='<?=$row['id'] . "_0_#b0b0b0"?>'> <?=$tpl->__("label.no_milestone")?> </a></li>
 
                                                                     <?php
-                                                                    if (isset($milestones[$row['projectId']])) {
+                                                                    if (isset($milestones[$row['projectId']]) && is_array($milestones[$row['projectId']])) {
                                                                         foreach ($milestones[$row['projectId']] as $milestone) {
                                                                             if ($milestone != null && is_object($milestone)) {
                                                                                 echo "<li class='dropdown-item'>
@@ -452,10 +452,6 @@ $milestones = $tpl->get('milestones');
 
         leantime.dashboardController.initDueDateTimePickers();
 
-
-
-        jQuery('.todaysDate').text(moment().format('LLLL'));
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.dashboardController.prepareHiddenDueDate();
         leantime.ticketsController.initEffortDropdown();
@@ -465,29 +461,6 @@ $milestones = $tpl->get('milestones');
         <?php } else { ?>
         leantime.authController.makeInputReadonly(".maincontentinner");
         <?php } ?>
-
-        <?php if ($tpl->get('completedOnboarding') === false) { ?>
-        leantime.helperController.firstLoginModal();
-        <?php } ?>
-
-
-        <?php
-        if ($tpl->get('completedOnboarding') == "1" && (isset($_SESSION['userdata']['settings']["modals"]["dashboard"]) === false || $_SESSION['userdata']['settings']["modals"]["dashboard"] == 0)) {  ?>
-        leantime.helperController.showHelperModal("dashboard", 500, 700);
-
-        <?php
-        //Only show once per session
-        if (!isset($_SESSION['userdata']['settings']["modals"])) {
-            $_SESSION['userdata']['settings']["modals"] = array();
-        }
-
-        if (!isset($_SESSION['userdata']['settings']["modals"]["dashboard"])) {
-            $_SESSION['userdata']['settings']["modals"]["dashboard"] = 1;
-        }
-        } ?>
-
-
-
 
     });
 

@@ -82,4 +82,13 @@ class ApiRequest extends IncomingRequest
 
         return null;
     }
+
+    /**
+     * determine whether or not in api context
+     *
+     * @return bool
+     */
+    public function isApiRequest(): bool {
+        return str_starts_with($_SERVER['REQUEST_URI'], "/api/jsonrpc");
+    }
 }

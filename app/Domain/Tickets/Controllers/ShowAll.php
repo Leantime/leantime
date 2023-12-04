@@ -41,6 +41,10 @@ namespace Leantime\Domain\Tickets\Controllers {
             $_SESSION['lastPage'] = CURRENT_URL;
             $_SESSION['lastTicketView'] = "table";
             $_SESSION['lastFilterdTicketTableView'] = CURRENT_URL;
+
+            if(!isset($_SESSION['currentProjectName'])){
+               $this->tpl->redirect(BASE_URL."/");
+            }
         }
 
         /**

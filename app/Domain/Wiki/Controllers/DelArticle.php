@@ -40,7 +40,7 @@ namespace Leantime\Domain\Wiki\Controllers {
             if (isset($_POST['del']) && isset($id)) {
                 $this->wikiRepo->delArticle($id);
 
-                $this->tpl->setNotification($this->language->__("notification.article_deleted"), "success");
+                $this->tpl->setNotification($this->language->__("notification.article_deleted"), "success", "article_deleted");
 
                 return $this->tpl->redirect(BASE_URL . "/wiki/show");
             }

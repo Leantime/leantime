@@ -845,32 +845,31 @@ namespace Leantime\Domain\Tickets\Services {
          */
         public function addTicket($values)
         {
-
             $values = array(
                 'id' => '',
-                'headline' => $values['headline'],
-                'type' => $values['type'],
-                'description' => $values['description'],
-                'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
-                'editorId' => $values['editorId'],
+                'headline' => $values['headline'] ?? "",
+                'type' => $values['type'] ?? "Task",
+                'description' => $values['description'] ?? "",
+                'projectId' => $values['projectId'] ?? $_SESSION['currentProject'] ,
+                'editorId' => $values['editorId'] ?? "",
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date('Y-m-d  H:i:s'),
-                'dateToFinish' => $values['dateToFinish'],
-                'timeToFinish' => $values['timeToFinish'],
-                'status' => $values['status'],
-                'planHours' => $values['planHours'],
-                'tags' => $values['tags'],
-                'sprint' => $values['sprint'],
-                'storypoints' => $values['storypoints'],
-                'hourRemaining' => $values['hourRemaining'],
-                'priority' => $values['priority'],
-                'acceptanceCriteria' => $values['acceptanceCriteria'],
-                'editFrom' => $values['editFrom'],
-                'timeFrom' => $values['timeFrom'],
-                'editTo' => $values['editTo'],
-                'timeTo' => $values['timeTo'],
-                'dependingTicketId' => $values['dependingTicketId'],
-                'milestoneid' => $values['milestoneid'],
+                'date' => date('Y-m-d  H:i:s') ?? "",
+                'dateToFinish' => $values['dateToFinish'] ?? "",
+                'timeToFinish' => $values['timeToFinish'] ?? "",
+                'status' => (int) $values['status'] ?? 3,
+                'planHours' => $values['planHours'] ?? "",
+                'tags' => $values['tags'] ?? "",
+                'sprint' => $values['sprint'] ?? "",
+                'storypoints' => $values['storypoints'] ?? "",
+                'hourRemaining' => $values['hourRemaining'] ?? "",
+                'priority' => $values['priority'] ?? "",
+                'acceptanceCriteria' => $values['acceptanceCriteria'] ?? "",
+                'editFrom' => $this->language->getISODateString($values['editFrom'] ?? ''),
+                'timeFrom' => $values['timeFrom'] ?? "",
+                'editTo' => $this->language->getISODateString($values['editTo'] ?? ""),
+                'timeTo' => $values['timeTo'] ?? "",
+                'dependingTicketId' => $values['dependingTicketId'] ?? "",
+                'milestoneid' => $values['milestoneid'] ?? "",
             );
 
             if (!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $values['projectId'])) {
@@ -944,28 +943,28 @@ namespace Leantime\Domain\Tickets\Services {
 
             $values = array(
                 'id' => $id,
-                'headline' => $values['headline'],
-                'type' => $values['type'],
-                'description' => $values['description'],
+                'headline' => $values['headline'] ?? "",
+                'type' => $values['type'] ?? "",
+                'description' => $values['description'] ?? "",
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
-                'editorId' => $values['editorId'],
+                'editorId' => $values['editorId'] ?? "",
                 'date' => date('Y-m-d  H:i:s'),
-                'dateToFinish' => $values['dateToFinish'],
-                'timeToFinish' => $values['timeToFinish'],
-                'status' => $values['status'],
-                'planHours' => $values['planHours'],
-                'tags' => $values['tags'],
-                'sprint' => $values['sprint'],
-                'storypoints' => $values['storypoints'],
-                'hourRemaining' => $values['hourRemaining'],
-                'priority' => $values['priority'],
-                'acceptanceCriteria' => $values['acceptanceCriteria'],
-                'editFrom' => $values['editFrom'],
-                'timeFrom' => $values['timeFrom'],
-                'editTo' => $values['editTo'],
-                'timeTo' => $values['timeTo'],
-                'dependingTicketId' => $values['dependingTicketId'],
-                'milestoneid' => $values['milestoneid'],
+                'dateToFinish' => $values['dateToFinish'] ?? "",
+                'timeToFinish' => $values['timeToFinish'] ?? "",
+                'status' => $values['status'] ?? "",
+                'planHours' => $values['planHours'] ?? "",
+                'tags' => $values['tags'] ?? "",
+                'sprint' => $values['sprint'] ?? "",
+                'storypoints' => $values['storypoints'] ?? "",
+                'hourRemaining' => $values['hourRemaining'] ?? "",
+                'priority' => $values['priority'] ?? "",
+                'acceptanceCriteria' => $values['acceptanceCriteria'] ?? "",
+                'editFrom' => $values['editFrom'] ?? "",
+                'timeFrom' => $values['timeFrom'] ?? "",
+                'editTo' => $values['editTo'] ?? "",
+                'timeTo' => $values['timeTo'] ?? "",
+                'dependingTicketId' => $values['dependingTicketId'] ?? "",
+                'milestoneid' => $values['milestoneid'] ?? "",
             );
 
             if (!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $values['projectId'])) {
@@ -1291,7 +1290,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function getLastTicketViewUrl(): mixed
         {
 
-            $url = BASE_URL . "/tickets/showAll";
+            $url = BASE_URL . "/tickets/showKanban";
 
             if (isset($_SESSION['lastTicketView']) && $_SESSION['lastTicketView'] != "") {
                 if ($_SESSION['lastTicketView'] == "kanban" && isset($_SESSION['lastFilterdTicketKanbanView']) && $_SESSION['lastFilterdTicketKanbanView'] != "") {

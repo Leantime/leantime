@@ -108,9 +108,9 @@ namespace Leantime\Domain\Users\Services {
          * @param $email
          * @return array|false
          */
-        public function getUserByEmail($email): false|array
+        public function getUserByEmail($email, $status = "a"): false|array
         {
-            return $this->userRepo->getUserByEmail($email);
+            return $this->userRepo->getUserByEmail($email, $status);
         }
 
         /**
@@ -213,6 +213,14 @@ namespace Leantime\Domain\Users\Services {
                 return false;
             }
 
+            $this->sendUserInvite($inviteCode, $values['user']);
+
+            return $result;
+        }
+
+        public function sendUserInvite(string $inviteCode, string $user) {
+
+
             $mailer = app()->make(MailerCore::class);
             $mailer->setContext('new_user');
 
@@ -221,19 +229,19 @@ namespace Leantime\Domain\Users\Services {
 
             $message = sprintf(
                 $this->language->__("email_notifications.user_invite_message"),
-                $_SESSION["userdata"]["name"],
+                $_SESSION["userdata"]["name"] ?? "Leantime" ,
                 $actual_link,
-                $values["user"]
+                $user
             );
 
             $mailer->setHtml($message);
 
-            $to = array($values["user"]);
+            $to = array($user);
 
-            $mailer->sendMail($to, $_SESSION["userdata"]["name"]);
-
-            return $result;
+            $mailer->sendMail($to, $_SESSION["userdata"]["name"] ?? "Leantime");
         }
+
+
 
         /**
          * addUser - simple service wrapper to create a new user
@@ -246,8 +254,28 @@ namespace Leantime\Domain\Users\Services {
          */
         public function addUser(array $values): bool|int
         {
+            $values = array(
+                "firstname" => $values["firstname"] ?? '',
+                "lastname" => $values["lastname"] ?? '',
+                "phone" => $values["phone"] ?? '',
+                "user" => $values["username"] ?? $values["user"],
+                "role" => $values["role"],
+                "notifications" => $values["notifications"] ?? 1,
+                "clientId" => $values["clientId"] ?? '',
+                "password" => $values["password"],
+                "source" => $values["source"] ?? '',
+                "pwReset" => $values["pwReset"] ?? '',
+                "status" => $values["status"] ?? '',
+                "createdOn" => $values["createdOn"] ?? '',
+                "jobTitle" => $values["jobTitle"] ?? '',
+                "jobLevel" => $values["jobLevel"] ?? '',
+                "department" => $values["department"] ?? ''
+            );
+
             return $this->userRepo->addUser($values);
         }
+
+
 
 
         /**

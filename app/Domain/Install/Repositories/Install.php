@@ -98,6 +98,9 @@ namespace Leantime\Domain\Install\Repositories {
             20122,
             20401,
             20402,
+            20405,
+            20406,
+            20407,
         );
 
         /**
@@ -362,9 +365,9 @@ namespace Leantime\Domain\Install\Repositories {
 
                 CREATE TABLE `zp_canvas_items` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
-                  `description` text,
+                  `description` MEDIUMTEXT,
                   `assumptions` text,
-                  `data` text,
+                  `data` MEDIUMTEXT,
                   `conclusion` text,
                   `box` varchar(255) DEFAULT NULL,
                   `author` int(11) DEFAULT NULL,
@@ -380,11 +383,11 @@ namespace Leantime\Domain\Install\Repositories {
                   `featured` int NULL,
                   `tags` text NULL,
                   `kpi` INT NULL DEFAULT NULL,
-                  `data1` TEXT NULL DEFAULT NULL,
-                  `data2` TEXT NULL DEFAULT NULL,
-                  `data3` TEXT NULL DEFAULT NULL,
-                  `data4` TEXT NULL DEFAULT NULL,
-                  `data5` TEXT NULL DEFAULT NULL,
+                  `data1` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data2` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data3` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data4` MEDIUMTEXT NULL DEFAULT NULL,
+                  `data5` MEDIUMTEXT NULL DEFAULT NULL,
                   `startDate` DATETIME NULL DEFAULT NULL,
                   `endDate` DATETIME NULL DEFAULT NULL,
                   `setting` TEXT NULL DEFAULT NULL,
@@ -686,7 +689,7 @@ namespace Leantime\Domain\Install\Repositories {
 
                 CREATE TABLE `zp_settings` (
                     `key` VARCHAR(175) NOT NULL,
-                    `value` TEXT NULL,
+                    `value` MEDIUMTEXT NULL,
                     PRIMARY KEY (`key`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -802,6 +805,7 @@ namespace Leantime\Domain\Install\Repositories {
                       `meta` VARCHAR(45) NULL,
                       `createdOn` DATETIME NULL,
                       `createdBy` INT NULL,
+                      `lastSync` VARCHAR(45) NULL,
                       PRIMARY KEY (`id`)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1715,7 +1719,6 @@ namespace Leantime\Domain\Install\Repositories {
                     CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL;",
                 "ALTER TABLE `zp_user`
                     ADD COLUMN `modified` DATETIME NULL DEFAULT NULL;",
-
             ];
 
             foreach ($sql as $statement) {
@@ -1732,6 +1735,112 @@ namespace Leantime\Domain\Install\Repositories {
             } else {
                 return true;
             }
+        }
+
+        /**
+         * Install script did not include medium text updates. Run again
+         * @return bool|array
+         */
+        public function update_sql_20405(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_settings`
+                    CHANGE COLUMN `value` `value` MEDIUMTEXT NULL DEFAULT NULL ;",
+                "ALTER TABLE `zp_canvas_items`
+                    CHANGE COLUMN `description` `description` MEDIUMTEXT NULL DEFAULT NULL ,
+                    CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL;",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        /**
+         * Install script did not include medium text updates. Run again
+         * @return bool|array
+         */
+        public function update_sql_20406(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = ["ALTER TABLE `zp_canvas_items`
+                    CHANGE COLUMN `data1` `data1` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data2` `data2` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data3` `data3` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data4` `data4` MEDIUMTEXT NULL DEFAULT NULL,
+                    CHANGE COLUMN `data5` `data5` MEDIUMTEXT NULL DEFAULT NULL;",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        public function update_sql_20407(): bool|array {
+
+            $errors = array();
+
+            $sql = [
+                "CREATE TABLE IF NOT EXISTS `zp_integration` (
+                      `id` INT NOT NULL AUTO_INCREMENT,
+                      `providerId` VARCHAR(45) NULL,
+                      `method` VARCHAR(45) NULL,
+                      `entity` VARCHAR(45) NULL,
+                      `fields` TEXT NULL,
+                      `schedule` VARCHAR(45) NULL,
+                      `notes` VARCHAR(45) NULL,
+                      `auth` TEXT NULL,
+                      `meta` VARCHAR(45) NULL,
+                      `createdOn` DATETIME NULL,
+                      `createdBy` INT NULL,
+                      PRIMARY KEY (`id`)
+                      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+                "  ALTER TABLE `zp_integration`
+                    ADD COLUMN `lastSync` DATETIME NULL DEFAULT NULL",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+
         }
 
 

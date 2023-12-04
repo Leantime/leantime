@@ -45,7 +45,7 @@ namespace Leantime\Domain\Users\Controllers {
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                         $this->userRepo->deleteUser($id);
 
-                        $this->tpl->setNotification($this->language->__("notifications.user_deleted"), "success");
+                        $this->tpl->setNotification($this->language->__("notifications.user_deleted"), "success", "user_deleted");
 
                         return $this->tpl->redirect(BASE_URL . "/users/showAll");
                     } else {
