@@ -468,4 +468,14 @@ class Events
 
         return null;
     }
+
+    public static function getEventRegistry(): array
+    {
+        return self::$eventRegistry;
+    }
+
+    public static function getFilterRegistry(): array
+    {
+        return self::$filterRegistry;
+    }
 }

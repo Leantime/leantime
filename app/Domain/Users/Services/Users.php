@@ -77,9 +77,19 @@ namespace Leantime\Domain\Users\Services {
         /**
          * @return int
          */
-        public function getNumberOfUsers(): int
+        public function getNumberOfUsers($activeOnly = false, $includeApi = true): int
         {
-            return $this->userRepo->getNumberOfUsers();
+            $filters = [];
+
+            if ($activeOnly) {
+                $filters[] = ['status', '=', 'a'];
+            }
+
+            if (! $includeApi) {
+                $filters[] = ['source', '!=', 'api'];
+            }
+
+            return $this->userRepo->getNumberOfUsers($filters);
         }
 
         /**
@@ -355,17 +365,6 @@ namespace Leantime\Domain\Users\Services {
             $this->authService->setUserSession($user);
 
             self::dispatch_event("editUser", ["id" => $id, "values" => $values]);
-        }
-
-        /**
-         * Get number of users
-         *
-         * @param bool $activeOnly
-         * @return int
-         **/
-        public function getNumberOfUsers(bool $activeOnly = false): int
-        {
-            return count(collect($this->getAll($activeOnly) ?: [])->filter()->all());
         }
     }
 }

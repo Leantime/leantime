@@ -199,22 +199,37 @@ namespace Leantime\Domain\Users\Repositories {
         /**
          * @return int
          */
-        public function getNumberOfUsers(): int
+        public function getNumberOfUsers($filters = []): int
         {
 
             $sql = "SELECT COUNT(id) AS userCount FROM `zp_user`";
 
+            foreach ($filters as $key => $filter) {
+                if (
+                    ! isset($filter[0], $filter[1], $filter[2])
+                    || ! in_array($filter[1], ['=', '!=', '>', '<', '>=', '<=', 'LIKE', 'NOT LIKE'])
+                    || ! in_array($filter[0], ['status', 'source'])
+                ) {
+                    unset($filters[$key]);
+                    continue;
+                }
+
+                $appender = str_contains('WHERE', $sql) ? ' AND ' : ' WHERE ';
+
+                $sql .= "{$appender} {$filter[0]} {$filter[1]} ':{$filter[0]}'";
+            }
+
             $stmn = $this->db->database->prepare($sql);
+
+            foreach ($filters as $key => $filter) {
+                $stmn->bindValue(":{$filter[0]}", $filter[2], PDO::PARAM_STR);
+            }
 
             $stmn->execute();
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if (isset($values['userCount']) === true) {
-                return $values['userCount'];
-            } else {
-                return 0;
-            }
+            return $values['userCount'] ?? 0;
         }
 
         /**

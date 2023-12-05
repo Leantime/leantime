@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Setting\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Ramsey\Uuid\Uuid;
@@ -13,19 +12,13 @@ namespace Leantime\Domain\Setting\Services {
      */
     class Setting
     {
-        private TemplateCore $tpl;
-        public SettingRepository $settingsRepo;
-
         /**
-         * @param TemplateCore      $tpl
          * @param SettingRepository $settingsRepo
          */
         public function __construct(
-            TemplateCore $tpl,
-            SettingRepository $settingsRepo
+            public SettingRepository $settingsRepo,
         ) {
-            $this->tpl = $tpl;
-            $this->settingsRepo = $settingsRepo;
+            //
         }
 
         /**

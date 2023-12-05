@@ -277,7 +277,7 @@ namespace Leantime\Domain\Plugins\Services {
                     'product_id' => $pluginModel->id,
                     'instance' => $this->settingsService->getCompanyId(),
                     'phar_hash' => $signature,
-                    'user_count' => $this->usersService->getNumberOfUsers(),
+                    'user_count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
                 ]);
 
                 if (! $response->ok()) {
@@ -313,7 +313,7 @@ namespace Leantime\Domain\Plugins\Services {
                     'product_id' => $pluginModel->id,
                     'instance' => $this->settingsService->getCompanyId(),
                     'phar_hash' => $signature,
-                    'user_count' => $this->usersService->getNumberOfUsers(),
+                    'user_count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
                 ]);
 
                 if (! $response->ok()) {
@@ -445,7 +445,7 @@ namespace Leantime\Domain\Plugins\Services {
             $response = Http::withoutVerifying()->withHeaders([
                     'X-License-Key' => $plugin->license,
                     'X-Instance-Id' => $this->settingsService->getCompanyId(),
-                    'X-User-Count' => $this->usersService->getNumberOfUsers(),
+                    'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
                 ])
                 ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->marketplaceId}");
 

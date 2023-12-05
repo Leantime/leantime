@@ -25,7 +25,7 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
             ->each(function (Models\InstalledPlugin $plugin) use ($pluginsService) {
                 static $instanceId, $numberOfUsers;
                 $instanceId ??= app()->make(SettingsService::class)->getCompanyId();
-                $numberOfUsers ??= app()->make(UsersService::class)->getNumberOfUsers();
+                $numberOfUsers ??= app()->make(UsersService::class)->getNumberOfUsers(activeOnly: true, includeApi: false);
 
                 $response = Http::get($pluginsService->marketplaceUrl, [
                     'wp-api' => 'software-api',

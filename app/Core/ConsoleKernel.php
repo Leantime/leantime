@@ -5,7 +5,8 @@ namespace Leantime\Core;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use \Illuminate\Console\Command as LaravelCommand;
 use Symfony\Component\Console\Application as ConsoleApplication;
 use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Leantime\Core\Eventhelpers;
@@ -146,7 +147,7 @@ class ConsoleKernel implements ConsoleKernelContract
         /**
          * Other commands to be included
          *
-         * @var \Illuminate\Console\Command[]|\Symfony\Component\Console\Command\Command[] $additionalCommands
+         * @var LaravelCommand[]|SymfonyCommand[] $additionalCommands
          **/
         $additionalCommands = self::dispatch_filter('additional_commands', [
             \Illuminate\Console\Scheduling\ScheduleRunCommand::class,
@@ -161,7 +162,7 @@ class ConsoleKernel implements ConsoleKernelContract
         collect($commands)->concat($additionalCommands)
             ->each(function ($command) {
                 if (
-                    ! is_subclass_of($command, Command::class)
+                    ! is_subclass_of($command, SymfonyCommand::class)
                     || (new \ReflectionClass($command))->isAbstract()
                 ) {
                     return;
@@ -169,7 +170,7 @@ class ConsoleKernel implements ConsoleKernelContract
 
                 $command = $this->getApplication()->make($command);
 
-                if ($command instanceof \Illuminate\Console\Command) {
+                if ($command instanceof LaravelCommand) {
                     $command->setLaravel($this->getApplication());
                 }
 

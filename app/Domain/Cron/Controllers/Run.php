@@ -5,25 +5,23 @@ namespace Leantime\Domain\Cron\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Cron\Services\Cron;
     use PHPMailer\PHPMailer\Exception;
-    use Illuminate\Support\Facades\Artisan;
-    use Fiber;
     use Symfony\Component\HttpFoundation\Response;
+    use Illuminate\Console\Scheduling\Schedule;
+    use Leantime\Core\Events;
 
     /**
      *
      */
     class Run extends Controller
     {
-        private Cron $cronSvc;
-
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init(Cron $cronSvc)
+        public function init()
         {
-            $this->cronSvc = $cronSvc;
+            //
         }
 
         /**
@@ -34,7 +32,9 @@ namespace Leantime\Domain\Cron\Controllers {
          */
         public function run(): Response
         {
-            (new Fiber(function () {
+            error_log("Cron run started");
+
+            Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
                 // Removes script execution limit
@@ -46,23 +46,35 @@ namespace Leantime\Domain\Cron\Controllers {
                     flush();
                 }
 
-                // Run the scheduler
-                try {
-                    Artisan::call('schedule:run');
-                    exit(0);
-                } catch (\Throwable $e) {
-                    error_log($e);
-                    exit(1);
-                }
-            }))->start();
+                $schedule = tap(new Schedule, function ($schedule) {
+                    \Leantime\Core\Events::dispatch_event('cron', ['schedule' => $schedule], 'leantime.core.consolekernel.schedule');
+                });
 
-            $response = new Response();
+                $schedule->dueEvents(app())
+                    ->each(function (\Illuminate\Console\Scheduling\Event $event) {
+                        error_log(sprintf(
+                            'Running scheduled command: %s' . PHP_EOL,
+                            $event->mutexName()
+                        ));
 
-            // Close the connection with the client
-            $response->headers->set('Content-Length', '0');
-            $response->headers->set('Connection', 'close');
+                        $completion = 'Completed %s with status: %s' . PHP_EOL;
 
-            return $response;
+                        try {
+                            $event->run(app());
+                        } catch (\Throwable $e) {
+                            error_log(sprintf($completion, $event->mutexName(), 1));
+                            error_log($e);
+                            return;
+                        }
+
+                        error_log(sprintf($completion, $event->mutexName(), $event->exitCode));
+                    });
+            });
+
+            return tap(new Response, function ($response) {
+                $response->headers->set('Content-Length', '0');
+                $response->headers->set('Connection', 'close');
+            });
         }
     }
 }
