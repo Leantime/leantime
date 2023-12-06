@@ -5,23 +5,24 @@ namespace Leantime\Domain\Cron\Controllers {
     use Leantime\Core\Controller;
     use PHPMailer\PHPMailer\Exception;
     use Symfony\Component\HttpFoundation\Response;
-    use Illuminate\Console\Scheduling\Schedule;
     use Leantime\Core\Events;
-    use Illuminate\Console\Scheduling\ScheduleRunCommand;
+    use Leantime\Core\Environment;
 
     /**
      *
      */
     class Run extends Controller
     {
+        private Environment $config;
+
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init()
+        public function init(Environment $config)
         {
-            //
+            $this->config = $config;
         }
 
         /**
@@ -32,8 +33,6 @@ namespace Leantime\Domain\Cron\Controllers {
          */
         public function run(): Response
         {
-            error_log("Cron run started");
-
             Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
@@ -48,12 +47,14 @@ namespace Leantime\Domain\Cron\Controllers {
 
                 $output = new \Symfony\Component\Console\Output\BufferedOutput;
 
-                register_shutdown_function(function () use ($output) {
-                    error_log("Command Output: " . $output->fetch());
-                    error_log("Cron run finished");
-                });
+                if ($this->config->debug) {
+                    register_shutdown_function(function () use ($output) {
+                        error_log("Command Output: " . $output->fetch());
+                        error_log("Cron run finished");
+                    });
 
-                error_log("Running schedule:run");
+                    error_log("Cron run started");
+                }
 
                 /** @return never **/
                 (new \Leantime\Core\ConsoleKernel)->call('schedule:run', [], $output);
