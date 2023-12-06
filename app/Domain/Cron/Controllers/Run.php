@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Cron\Controllers {
 
     use Leantime\Core\Controller;
-    use Leantime\Domain\Cron\Services\Cron;
     use PHPMailer\PHPMailer\Exception;
     use Symfony\Component\HttpFoundation\Response;
     use Illuminate\Console\Scheduling\Schedule;
     use Leantime\Core\Events;
+    use Illuminate\Console\Scheduling\ScheduleRunCommand;
 
     /**
      *
@@ -46,29 +46,17 @@ namespace Leantime\Domain\Cron\Controllers {
                     flush();
                 }
 
-                $schedule = tap(new Schedule, function ($schedule) {
-                    \Leantime\Core\Events::dispatch_event('cron', ['schedule' => $schedule], 'leantime.core.consolekernel.schedule');
+                $output = new \Symfony\Component\Console\Output\BufferedOutput;
+
+                register_shutdown_function(function () use ($output) {
+                    error_log("Command Output: " . $output->fetch());
+                    error_log("Cron run finished");
                 });
 
-                $schedule->dueEvents(app())
-                    ->each(function (\Illuminate\Console\Scheduling\Event $event) {
-                        error_log(sprintf(
-                            'Running scheduled command: %s' . PHP_EOL,
-                            $event->mutexName()
-                        ));
+                error_log("Running schedule:run");
 
-                        $completion = 'Completed %s with status: %s' . PHP_EOL;
-
-                        try {
-                            $event->run(app());
-                        } catch (\Throwable $e) {
-                            error_log(sprintf($completion, $event->mutexName(), 1));
-                            error_log($e);
-                            return;
-                        }
-
-                        error_log(sprintf($completion, $event->mutexName(), $event->exitCode));
-                    });
+                /** @return never **/
+                (new \Leantime\Core\ConsoleKernel)->call('schedule:run', [], $output);
             });
 
             return tap(new Response, function ($response) {
@@ -78,3 +66,4 @@ namespace Leantime\Domain\Cron\Controllers {
         }
     }
 }
+
