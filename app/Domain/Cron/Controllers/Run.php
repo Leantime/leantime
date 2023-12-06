@@ -33,6 +33,10 @@ namespace Leantime\Domain\Cron\Controllers {
          */
         public function run(): Response
         {
+            if (! $this->config->poorMansCron) {
+                return new Response;
+            }
+
             Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
