@@ -15,7 +15,6 @@ namespace Leantime\Domain\Plugins\Services {
     use Leantime\Domain\Users\Services\Users as UsersService;
     use Illuminate\Support\Facades\File;
     use Illuminate\Support\Str;
-    use Leantime\Domain\Users\Services\Users;
 
     /**
      *
@@ -60,7 +59,7 @@ namespace Leantime\Domain\Plugins\Services {
          *
          * @var string
          */
-        public string $marketplaceUrl = "https://marketplace.localhost";
+        public string $marketplaceUrl;
 
         /**
          * @param PluginRepository $pluginRepository
@@ -76,7 +75,7 @@ namespace Leantime\Domain\Plugins\Services {
             private SettingsService $settingsService,
             private UsersService $usersService,
         ) {
-            //
+            $this->marketplaceUrl = rtrim($config->marketplaceUrl, '/');
         }
 
         /**
@@ -206,17 +205,18 @@ namespace Leantime\Domain\Plugins\Services {
             $json = file_get_contents($composerPath);
             $pluginFile = json_decode($json, true);
 
-            $plugin = app()->make(InstalledPlugin::class);
-            $plugin->name = $pluginFile['name'];
-            $plugin->enabled = 0;
-            $plugin->description = $pluginFile['description'];
-            $plugin->version = $pluginFile['version'];
-            $plugin->installdate = date("y-m-d");
-            $plugin->foldername = $pluginFolder;
-            $plugin->license = $license_key;
-            $plugin->format = $format;
-            $plugin->homepage = $pluginFile['homepage'];
-            $plugin->authors = json_encode($pluginFile['authors']);
+            $plugin = build(new InstalledPlugin)
+                ->setName($pluginFile['name'])
+                ->setEnabled(0)
+                ->setDescription($pluginFile['description'])
+                ->setVersion($pluginFile['version'])
+                ->setInstalldate(date("y-m-d"))
+                ->setFoldername($pluginFolder)
+                ->setLicense($license_key)
+                ->setFormat($format)
+                ->setHomepage($pluginFile['homepage'])
+                ->setAuthors(json_encode($pluginFile['authors']))
+                ->get();
 
             return $plugin;
         }
@@ -391,13 +391,14 @@ namespace Leantime\Domain\Plugins\Services {
             if(isset($pluginArray["data"] )) {
 
                 foreach ($pluginArray["data"] as $plugin) {
-                    $pluginModel = app()->make(MarketplacePlugin::class);
-                    $pluginModel->identifier = $plugin['identifier'];
-                    $pluginModel->name = $plugin['post_title'];
-                    $pluginModel->excerpt = $plugin['excerpt'];
-                    $pluginModel->imageUrl = $plugin['featured_image'];
-                    $pluginModel->authors = ''; //TODO Send from marketplace
-                    $plugins[] = $pluginModel;
+                    $plugins[] = build(new MarketplacePlugin)
+                        ->setIdentifier($plugin['identifier'] ?? '')
+                        ->setName($plugin['post_title'] ?? '')
+                        ->setExcerpt($plugin['excerpt'] ?? '')
+                        ->set('imageUrl', $plugin['featured_image'] ?? '')
+                        /** @todo Send from marketplace **/
+                        ->setAuthors('')
+                        ->get();
                 }
             }
 

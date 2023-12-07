@@ -112,7 +112,6 @@ class HttpKernel implements HttpKernelContract
             app()->make(IncomingRequest::class) instanceof ApiRequest
                 ? Middleware\ApiAuth::class
                 : Middleware\Auth::class,
-            Middleware\Telemetry::class,
             Middleware\CurrentProject::class,
         ]);
     }

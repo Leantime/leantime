@@ -291,18 +291,17 @@ class Bootloader
      */
     private function bindRequest(): void
     {
-        $headers = array_map(
-            fn ($val) => match ($val) {
+        $headers = collect(getallheaders())
+            ->mapWithKeys(fn ($val, $key) => [strtolower($key) => match ($val) {
                 'false', 'true' => filter_var($val, FILTER_VALIDATE_BOOLEAN),
                 default => $val
-            },
-            getallheaders()
-        );
+            }])
+            ->all();
 
         $this->app->singleton(IncomingRequest::class, function () use ($headers) {
             $request = match (true) {
-                isset($headers['Hx-Request']) => HtmxRequest::createFromGlobals(),
-                isset($headers['X-Api-Key']) => ApiRequest::createFromGlobals(),
+                isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
+                isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
                 defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
                 default => IncomingRequest::createFromGlobals(),
             };

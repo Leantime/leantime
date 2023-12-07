@@ -5,6 +5,7 @@ use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
 use Leantime\Core\Language;
+use Leantime\Core\Support\Build;
 
 if (! function_exists('app')) {
     /**
@@ -151,5 +152,17 @@ if (! function_exists('config')) {
         }
 
         return app('config')->get($key, $default);
+    }
+}
+
+if (! function_exists('build')) {
+    /**
+     * Turns any object into a builder object
+     * @param object $object
+     * @return Build
+     **/
+    function build(object $object): Build
+    {
+        return new Build($object);
     }
 }

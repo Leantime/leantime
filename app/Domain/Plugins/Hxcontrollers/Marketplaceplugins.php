@@ -43,8 +43,6 @@ class Marketplaceplugins extends HtmxController
         );
 
         $this->tpl->assign('plugins', $plugins);
-
-
     }
 
     /**
