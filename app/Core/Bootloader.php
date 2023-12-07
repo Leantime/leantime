@@ -292,9 +292,10 @@ class Bootloader
     private function bindRequest(): void
     {
         $headers = collect(getallheaders())
-            ->mapWithKeys(fn ($val, $key) => [strtolower($key) => match ($val) {
-                'false', 'true' => filter_var($val, FILTER_VALIDATE_BOOLEAN),
-                default => $val
+            ->mapWithKeys(fn ($val, $key) => [strtolower($key) => match (true) {
+                in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
+                preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
+                default => $val,
             }])
             ->all();
 
