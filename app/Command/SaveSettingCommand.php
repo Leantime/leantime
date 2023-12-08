@@ -9,15 +9,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 
-/**
- *
- */
+#[AsCommand(
+    name: 'setting:save',
+    description: 'Saves a setting, will create it if it doesn\'t exist',
+)]
 class SaveSettingCommand extends Command
 {
-    protected static $defaultName = 'setting:save';
-    protected static $defaultDescription = 'Saves a setting, will create it if it doesn\'t exist';
-
     /**
      * @return void
      */

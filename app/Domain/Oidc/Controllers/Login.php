@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
 use Leantime\Core\Frontcontroller;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -20,9 +21,9 @@ class Login extends Controller
      * @return void
      * @throws GuzzleException
      */
-    public function init(OidcService $oidc, frontcontroller $frontcontroller): void
+    public function init(OidcService $oidc, Frontcontroller $frontcontroller): Response
     {
         $this->oidc = $oidc;
-        Frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
+        return $frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
     }
 }

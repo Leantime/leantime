@@ -59,38 +59,38 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function post($params)
         {
+            if (! AuthService::userIsAtLeast(Roles::$editor)) {
+                return $this->tpl->displayJson(['Error' => 'Not Authorized'], 403);
+            }
+
+            if (! isset($params['action'])) {
+                return $this->tpl->displayJson(['Error' => 'Action not set'], 400);
+            }
 
             ob_start();
 
-            if (AuthService::userIsAtLeast(Roles::$editor)) {
-                if (isset($params['action']) && $params['action'] == "kanbanSort" && isset($params["payload"]) === true) {
-                    $handler = null;
-                    if (isset($params["handler"])) {
-                        $handler = $params["handler"];
-                    }
+            if (
+                $params['action'] == "kanbanSort"
+                && isset($params['payload'])
+                && ! $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $params['handler'] ?? null)
+            ) {
+                ob_end_clean();
+                return $this->tpl->displayJson(['error' => 'Could not update the status'], 500);
+            }
 
-                    $results = $this->ticketsApiService->updateTicketStatusAndSorting($params["payload"], $handler);
-
-                    if ($results === false) {
-                        $this->apiService->setError(-32000, "Could not update status", "");
-                    }
-                }
-
-                if (isset($params['action']) && $params['action'] == "ganttSort") {
-                    $results = $this->ticketsApiService->updateTicketSorting($params["payload"]);
-
-                    if ($results === false) {
-                        $this->apiService->setError(-32000, "Could not update status", "");
-                    }
-                }
-            } else {
-                $this->apiService->setError(-32000, "Not authorized", "");
+            if (
+                $params['action'] == 'ganttSort'
+                && ! $this->ticketsApiService->updateTicketSorting($params["payload"])
+            ) {
+                ob_end_clean();
+                return $this->tpl->displayJson(['Error' => 'Could not update status'], 500);
             }
 
             $htmlOutput = ob_get_clean();
 
             $result = array("html" => $htmlOutput);
-            $this->apiService->jsonResponse(1, $result);
+
+            return $this->tpl->displayJson(['result' => $result]);
         }
 
         /**
@@ -101,27 +101,26 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function patch($params)
         {
+            if (! AuthService::userIsAtLeast(Roles::$editor)) {
+                return $this->tpl->displayJson(['error' => 'Not Authorized'], 403);
+            }
+
+            if (! isset($params['id'])) {
+                return $this->tpl->displayJson(['error' => 'ID not set'], 400);
+            }
+
             ob_start();
 
-            if (AuthService::userIsAtLeast(Roles::$editor)) {
-                $results = false;
-                if (isset($params['id'])) {
-                    $results = $this->ticketsApiService->patchTicket($params['id'], $params);
-                } else {
-                    $this->apiService->setError(-32000, "ID not set", "");
-                }
-
-                if ($results === false) {
-                    $this->apiService->setError(-32000, "Could not update status", "");
-                }
-            } else {
-                $this->apiService->setError(-32000, "Not authorized", "");
+            if (! $this->ticketsApiService->patchTicket($params['id'], $params)) {
+                ob_end_clean();
+                return $this->tpl->displayJson(['error' => 'Could not update status'], 500);
             }
 
             $htmlOutput = ob_get_clean();
 
             $result = array("html" => $htmlOutput);
-            $this->apiService->jsonResponse(1, $result);
+
+            return $this->tpl->displayJson(['result' => $result]);
         }
 
         /**

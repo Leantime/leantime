@@ -33,28 +33,23 @@ namespace Leantime\Domain\Projects\Controllers {
          */
         public function get($params)
         {
-            if (isset($params['id'])) {
-                $id = filter_var($params['id'], FILTER_SANITIZE_NUMBER_INT);
-
-                if ($this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $id)) {
-                    $project = $this->projectService->getProject($id);
-
-                    if ($project !== false) {
-                        $this->projectService->changeCurrentSessionProject($id);
-
-                        $defaultURL = "/dashboard/show";
-                        $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL, $project);
-
-                        $this->tpl->redirect(BASE_URL . $redirectFilter);
-                    } else {
-                        $this->tpl->redirect(BASE_URL . "/errors/error404");
-                    }
-                } else {
-                    $this->tpl->redirect(BASE_URL . "/errors/error404");
-                }
-            } else {
-                $this->tpl->redirect(BASE_URL . "/errors/error404");
+            if (
+                ! isset($params['id'])
+                || ! $this->projectService->isUserAssignedToProject(
+                    $_SESSION['userdata']['id'],
+                    $id = filter_var($params['id'], FILTER_SANITIZE_NUMBER_INT)
+                )
+                || ! $project = $this->projectService->getProject($id)
+            ) {
+                return $this->tpl->redirect(BASE_URL . "/errors/error404", responseCode: 404);
             }
+
+            $this->projectService->changeCurrentSessionProject($id);
+
+            $defaultURL = "/dashboard/show";
+            $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL, $project);
+
+            return $this->tpl->redirect(BASE_URL . $redirectFilter);
         }
 
 
@@ -68,7 +63,7 @@ namespace Leantime\Domain\Projects\Controllers {
         {
             if (isset($_GET['id'])) {
                 $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
-                $this->tpl->redirect(BASE_URL . "/projects/changeCurrentProject/" . $id);
+                return $this->tpl->redirect(BASE_URL . "/projects/changeCurrentProject/" . $id);
             }
         }
     }

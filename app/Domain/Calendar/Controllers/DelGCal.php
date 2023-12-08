@@ -26,9 +26,9 @@ class DelGCal extends Controller
                 $msgKey = 'Kalender gelöscht';
             }
             $this->tpl->assign('msg', $msgKey);
-            $this->tpl->display('calendar.delGCal');
+           return $this->tpl->display('calendar.delGCal');
         } else {
-            $this->tpl->display('errors.error403');
+           return $this->tpl->display('errors.error403');
         }
     }
 }

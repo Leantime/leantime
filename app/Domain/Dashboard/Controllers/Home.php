@@ -17,6 +17,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Core\Controller;
     use Leantime\Domain\Widgets\Services\Widgets;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -69,10 +70,10 @@ namespace Leantime\Domain\Dashboard\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get(): void
+        public function get(): Response
         {
 
             $images = array(
@@ -133,15 +134,15 @@ namespace Leantime\Domain\Dashboard\Controllers {
             //$this->tpl->assign('milestones', $allProjectMilestones);
             //$this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
 
-            $this->tpl->display('dashboard.home');
+            return $this->tpl->display('dashboard.home');
         }
 
         /**
-         * @param mixed $params
-         * @return void
+         * @param $params
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post(mixed $params): void
+        public function post($params): Response
         {
 
             if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
@@ -159,11 +160,11 @@ namespace Leantime\Domain\Dashboard\Controllers {
                         $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success", "quickticket_created");
                     }
 
-                    $this->tpl->redirect(BASE_URL . "/dashboard/home");
+                    return $this->tpl->redirect(BASE_URL . "/dashboard/home");
                 }
             }
 
-            $this->tpl->redirect(BASE_URL . "/dashboard/home");
+            return $this->tpl->redirect(BASE_URL . "/dashboard/home");
         }
     }
 }

@@ -38,7 +38,6 @@ namespace Leantime\Domain\Calendar\Controllers {
          */
         public function run()
         {
-
             if (isset($_GET['remove'])) {
                 $this->settingsRepo->deleteSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret");
 
@@ -55,7 +54,6 @@ namespace Leantime\Domain\Calendar\Controllers {
                 $this->tpl->setNotification("notifications.ical_success", "success");
             }
 
-
             $icalHash = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret");
             $userHash = hash('sha1', $_SESSION['userdata']['id'] . $this->config->sessionpassword);
 
@@ -65,13 +63,10 @@ namespace Leantime\Domain\Calendar\Controllers {
                 $icalUrl = BASE_URL . "/calendar/ical/" . $icalHash . "_" . $userHash;
             }
 
-
-
             //Add delete handling
-
             $this->tpl->assign("url", $icalUrl);
 
-            $this->tpl->displayPartial("calendar.export");
+            return $this->tpl->displayPartial("calendar.export");
         }
     }
 

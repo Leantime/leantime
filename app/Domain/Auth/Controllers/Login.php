@@ -55,7 +55,7 @@ namespace Leantime\Domain\Auth\Controllers {
             $this->tpl->assign('oidcEnabled', $this->config->oidcEnable);
             $this->tpl->assign('noLoginForm', $this->config->disableLoginForm);
 
-            $this->tpl->display('auth.login', 'entry');
+            return $this->tpl->display('auth.login', 'entry');
         }
 
         /**
@@ -81,19 +81,19 @@ namespace Leantime\Domain\Auth\Controllers {
                 //If login successful redirect to the correct url to avoid post on reload
                 if ($this->authService->login($username, $password) === true) {
                     if ($this->authService->use2FA()) {
-                        FrontcontrollerCore::redirect(BASE_URL . "/auth/twoFA");
+                        return FrontcontrollerCore::redirect(BASE_URL . "/auth/twoFA");
                     }
 
                     self::dispatch_event("afterAuthServiceCall", ['post' => $_POST]);
 
-                    FrontcontrollerCore::redirect($redirectUrl);
+                    return FrontcontrollerCore::redirect($redirectUrl);
                 } else {
                     $this->tpl->setNotification("notifications.username_or_password_incorrect", "error");
-                    FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
                 }
             } else {
                 $this->tpl->setNotification("notifications.username_or_password_missing", "error");
-                FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
             }
         }
     }

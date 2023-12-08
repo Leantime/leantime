@@ -2,7 +2,6 @@
 
 namespace Leantime\Core;
 
-use Exception;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
@@ -10,12 +9,11 @@ use Psr\Container\ContainerInterface as PsrContainerContract;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
 use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
-use Leantime\Domain\Api\Services\Api as ApiService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Reports\Services\Reports as ReportService;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Domain\Audit\Repositories\Audit as AuditRepository;
 use Symfony\Component\ErrorHandler\Debug;
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Leantime\Domain\Setting\Services\Setting as SettingsService;
 
 /**
  * Bootloader
@@ -114,7 +112,7 @@ class Bootloader
     }
 
     /**
-     * Boot the Application.
+     * Execute the Application lifecycle.
      *
      * @return void
      * @throws BindingResolutionException
@@ -131,11 +129,21 @@ class Bootloader
             return;
         }
 
+        $app->make(AppSettings::class)->loadSettings();
+
+        Events::discover_listeners();
+
+        self::dispatch_event('config_initialized');
+
+        $app->instance(Session::class, $app->make(Session::class));
+
+        self::dispatch_event('session_initialized');
+
+        $app = self::dispatch_filter("initialized", $app, ['bootloader' => $this]);
+
         $config = $app->make(Environment::class);
 
         $this->setErrorHandler($config->debug ?? 0);
-
-
 
         $request = $app->make(IncomingRequest::class);
 
@@ -151,15 +159,6 @@ class Bootloader
             define('CURRENT_URL', BASE_URL . $request->getRequestUri());
         }
 
-        $this->loadHeaders();
-
-        $this->checkIfInstalled();
-
-        self::dispatch_event('after_install');
-
-        $this->checkIfUpdated();
-
-
         self::dispatch_event("beginning", ['bootloader' => $this]);
 
         $this->handleRequest();
@@ -170,168 +169,68 @@ class Bootloader
     }
 
     /**
-     * Get the Application instance.
+     * Get the Application instance and bind important services
      *
      * @return Application
      * @throws BindingResolutionException
+     * @todo Break this up into Service Providers
      */
     public function getApplication(): Application
     {
         $this->app ??= Application::getInstance();
 
-        // attach container to container
-        $this->app->bind(Application::class, fn () => Application::getInstance());
-        $this->app->alias(Application::class, IlluminateContainerContract::class);
-        $this->app->alias(Application::class, PsrContainerContract::class);
-
+        $this->registerCoreBindings();
+        $this->registerCoreAliases();
         $this->bindRequest();
 
-        // Setup Configuration
-        $this->app->singleton(Environment::class, Environment::class);
-        $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
-        $this->app->alias(Environment::class, alias: "config");
-
-        $this->app->singleton(AppSettings::class, AppSettings::class);
-        $this->app->make(AppSettings::class)->loadSettings();
-
-        Events::discover_listeners();
-
-        self::dispatch_event('config_initialized');
-
-        // specify singletons/instances
-        $this->app->singleton(Db::class, Db::class);
-        $this->app->singleton(Frontcontroller::class, Frontcontroller::class);
-        $this->app->instance(Session::class, $this->app->make(Session::class));
-
-        self::dispatch_event('session_initialized');
-
-        $this->app->singleton(Language::class, Language::class);
-        $this->app->singleton(AuthService::class, AuthService::class);
-        $this->app->singleton(OidcService::class, OidcService::class);
-        $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
-
-        $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
+        Facade::setFacadeApplication($this->app);
 
         Application::setInstance($this->app);
 
         return $this->app;
     }
 
-    /**
-     * Load headers
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    private function loadHeaders(): void
+    private function registerCoreBindings(): void
     {
-        $headers = self::dispatch_filter('headers', [
-            'X-Frame-Options' => 'SAMEORIGIN',
-            'X-XSS-Protection' => '1; mode=block',
-            'X-Content-Type-Options' => 'nosniff',
-            'Access-Control-Allow-Origin' => BASE_URL,
-        ]);
-
-        foreach ($headers as $key => $value) {
-            header($key . ': ' . $value);
-        }
+        $this->app->bind(Application::class, fn () => Application::getInstance());
+        $this->app->singleton(Environment::class, Environment::class);
+        $this->app->singleton(AppSettings::class, AppSettings::class);
+        $this->app->singleton(Db::class, Db::class);
+        $this->app->singleton(Frontcontroller::class, Frontcontroller::class);
+        $this->app->singleton(Language::class, Language::class);
+        $this->app->singleton(AuthService::class, AuthService::class);
+        $this->app->singleton(OidcService::class, OidcService::class);
+        $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
+        $this->app->singleton(\Illuminate\Filesystem\Filesystem::class, fn () => new \Illuminate\Filesystem\Filesystem);
+        $this->app->singleton(\Illuminate\Cache\CacheManager::class, function ($app) {
+            $cacheManager = new \Illuminate\Cache\CacheManager($app);
+            $companyId = $app->make(SettingsService::class)->getCompanyId();
+            if (! is_dir($companyCacheDir = APP_ROOT . "/cache/$companyId")) {
+                mkdir($companyCacheDir);
+            }
+            $cacheManager->extend('default', fn ($app) => $cacheManager->repository(
+                $app->make(\Illuminate\Cache\FileStore::class, ['directory' => $companyCacheDir])
+            ));
+            return $cacheManager;
+        });
+        $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
+        $this->app->singleton('cache.psr6', fn ($app) => new \Symfony\Component\Cache\Adapter\Psr16Adapter($app['cache.store']));
+        $this->app->singleton('memcached.connector', fn () => new \Illuminate\Support\MemcachedConnector);
+        $this->app->singleton(\Illuminate\Cache\RateLimiter::class, fn ($app) => new \Illuminate\Cache\RateLimiter($app['cache']->driver($app['config']['cache.limiter'])));
     }
 
-    /**
-     * Check if Leantime is installed
-     *
-     * @return bool
-     * @throws BindingResolutionException
-     */
-    private function checkIfInstalled(): bool
+    private function registerCoreAliases(): void
     {
-        $session_says = isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'];
-        $config_says = $this->app->make(SettingRepository::class)->checkIfInstalled();
-        $frontController = $this->app->make(Frontcontroller::class);
-
-        if (! $session_says && $config_says) {
-            $this->setInstalled();
-            return true;
-        }
-
-        if (! $session_says && ! $config_says) {
-            $this->setUninstalled();
-            $this->redirectToInstall();
-            return false;
-        }
-
-        if ($session_says && ! $config_says) {
-            $this->setUninstalled();
-            $this->redirectToInstall();
-            return false;
-        }
-
-        return $session_says && $config_says;
-    }
-
-    /**
-     * Set installed
-     *
-     * @return void
-     */
-    private function setInstalled(): void
-    {
-        $_SESSION['isInstalled'] = true;
-    }
-
-    /**
-     * Set uninstalled
-     *
-     * @return void
-     */
-    private function setUninstalled(): void
-    {
-        $_SESSION['isInstalled'] = false;
-
-        if (isset($_SESSION['userdata'])) {
-            unset($_SESSION['userdata']);
-        }
-    }
-
-    /**
-     * Redirect to install
-     *
-     * @return void
-     * @throws BindingResolutionException
-     */
-    private function redirectToInstall(): void
-    {
-        $frontController = $this->app->make(Frontcontroller::class);
-
-        if (! in_array($frontController::getCurrentRoute(), ['install', 'api.i18n'])) {
-            $frontController::redirect(BASE_URL . '/install');
-        }
-    }
-
-    /**
-     * Check if Leantime is updated
-     *
-     * @return bool
-     * @throws BindingResolutionException
-     */
-    private function checkIfUpdated(): bool
-    {
-        $dbVersion = $this->app->make(SettingRepository::class)->getSetting('db-version');
-        $settingsDbVersion = $this->app->make(AppSettings::class)->dbVersion;
-
-        $_SESSION['isUpdated'] = $dbVersion == $settingsDbVersion;
-
-        self::dispatch_event('system_update', ['dbVersion' => $dbVersion, 'settingsDbVersion' => $settingsDbVersion]);
-
-        if ($_SESSION['isUpdated']) {
-            return true;
-        }
-
-        if (! isset($_GET['act']) || ($_GET['act'] !== "install" && $_GET['act'] !== "install.update")) {
-            $this->redirectToUpdate();
-        }
-
-        return false;
+        $this->app->alias(Application::class, 'app');
+        $this->app->alias(Application::class, IlluminateContainerContract::class);
+        $this->app->alias(Application::class, PsrContainerContract::class);
+        $this->app->alias(Environment::class, 'config');
+        $this->app->alias(Environment::class, \Illuminate\Contracts\Config\Repository::class);
+        $this->app->alias(\Illuminate\Filesystem\Filesystem::class, 'files');
+        $this->app->alias(ConsoleKernel::class, ConsoleKernelContract::class);
+        $this->app->alias(HttpKernel::class, HttpKernelContract::class);
+        $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
+        $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
     }
 
     /**
@@ -343,80 +242,27 @@ class Bootloader
      */
     private function handleRequest(): void
     {
-        $frontController = $this->app->make(Frontcontroller::class);
-        $incomingRequest = $this->app->make(IncomingRequest::class);
+        if (! ($request = $this->app->make(IncomingRequest::class)) instanceof CliRequest) {
+            /** @var HttpKernel $kernel */
+            $kernel = $this->app->make(HttpKernel::class);
 
-        $this->publicActions = self::dispatch_filter("publicActions", $this->publicActions, ['bootloader' => $this]);
+            $response = $kernel->handle($request)->send();
 
-        // handle public request
-        if (in_array($frontController::getCurrentRoute(), $this->publicActions)) {
-            $frontController::dispatch();
-            return;
+            $kernel->terminate($request, $response);
+        } else {
+            /** @var ConsoleKernel $kernel */
+            $kernel = $this->app->make(ConsoleKernel::class);
+
+            $status = $kernel->handle(
+                $input = new \Symfony\Component\Console\Input\ArgvInput,
+                new \Symfony\Component\Console\Output\ConsoleOutput
+            );
+
+            $kernel->terminate($input, $status);
+
+            exit($status);
         }
-
-        // handle API request
-        if ($incomingRequest instanceof ApiRequest) {
-            self::dispatch_event("before_api_request", ['application' => $this]);
-
-            $apiKey = $incomingRequest->getAPIKey();
-            $apiUser = $this->app->make(ApiService::class)->getAPIKeyUser($apiKey);
-
-            if (! $apiUser) {
-                echo json_encode(['error' => 'Invalid API Key']);
-                exit();
-            }
-
-            $this->app->make(AuthService::class)->setUserSession($apiUser);
-            $this->app->make(ProjectService::class)->setCurrentProject();
-
-            if (! str_starts_with(strtolower($frontController->getCurrentRoute()), 'api.jsonrpc')) {
-                echo json_encode(['error' => 'API endpoint not valid']);
-                exit();
-            }
-
-            $frontController::dispatch();
-            return;
-        }
-
-        // handle unathorized requests
-        if (! $this->app->make(AuthService::class)->logged_in()) {
-            $this->redirectWithOrigin('auth.login', $incomingRequest->getRequestUri());
-            return;
-        }
-
-        // Check if trying to access twoFA code page, or if trying to access any other action without verifying the code.
-        if ($_SESSION['userdata']['twoFAEnabled'] && ! $_SESSION['userdata']['twoFAVerified']) {
-            $this->redirectWithOrigin('twoFA.verify', $_GET['redirect'] ?? '');
-        }
-
-        $this->app->make(ProjectService::class)->setCurrentProject();
-
-        self::dispatch_event("logged_in", ['application' => $this]);
-
-        $frontController::dispatch();
     }
-
-    /**
-     * Redirect with origin
-     *
-     * @param string $route
-     * @param string $origin
-     * @return void
-     * @throws BindingResolutionException
-     */
-    public function redirectWithOrigin(string $route, string $origin): void
-    {
-        $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
-        $queryParams = !empty($origin)  && $origin !== '/' ? '?' . http_build_query(['redirect' => $origin]) : '';
-        $frontController = $this->app->make(Frontcontroller::class);
-
-        if ($frontController::getCurrentRoute() == $route) {
-            return;
-        }
-
-        $frontController::redirect($destination . $queryParams);
-    }
-
 
     /**
      * @param int $debug
@@ -424,11 +270,18 @@ class Bootloader
      */
     private function setErrorHandler(int $debug): void
     {
-        if ($debug == 0) {
+        $incomingRequest = app(IncomingRequest::class);
+
+        if ($debug == 0
+            || $incomingRequest instanceof HtmxRequest
+            || $incomingRequest instanceof ApiRequest
+        ) {
             return;
         }
 
         Debug::enable();
+
+        app()->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, \Leantime\Core\ExceptionHandler::class);
     }
 
     /**
@@ -438,21 +291,25 @@ class Bootloader
      */
     private function bindRequest(): void
     {
-        $headers = array_map(
-            fn ($val) => in_array($val, ['false', 'true'])
-                ? filter_var($val, FILTER_VALIDATE_BOOLEAN)
-                : $val,
-            getallheaders()
-        );
+        $headers = collect(getallheaders())
+            ->mapWithKeys(fn ($val, $key) => [strtolower($key) => match (true) {
+                in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
+                preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
+                default => $val,
+            }])
+            ->all();
 
-        if (isset($headers['Hx-Request'])) {
-            $incomingRequest = $this->app->instance(IncomingRequest::class, HtmxRequest::createFromGlobals());
-        } elseif (isset($headers['X-Api-Key'])) {
-            $incomingRequest = $this->app->instance(IncomingRequest::class, ApiRequest::createFromGlobals());
-        } else {
-            $incomingRequest = $this->app->instance(IncomingRequest::class, IncomingRequest::createFromGlobals());
-        }
+        $this->app->singleton(IncomingRequest::class, function () use ($headers) {
+            $request = match (true) {
+                isset($headers['hx-request']) => HtmxRequest::createFromGlobals(),
+                isset($headers['x-api-key']) => ApiRequest::createFromGlobals(),
+                defined('LEAN_CLI') && LEAN_CLI => CliRequest::createFromGlobals(),
+                default => IncomingRequest::createFromGlobals(),
+            };
 
-        $incomingRequest->overrideGlobals();
+            do_once('overrideGlobals', fn () => $request->overrideGlobals());
+
+            return $request;
+        });
     }
 }

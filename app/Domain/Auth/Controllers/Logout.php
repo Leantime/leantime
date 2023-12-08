@@ -34,10 +34,9 @@ namespace Leantime\Domain\Auth\Controllers {
          */
         public function get($params)
         {
-
             $this->authService->logout();
 
-            FrontcontrollerCore::redirect(BASE_URL . "/");
+            return FrontcontrollerCore::redirect(BASE_URL . "/");
         }
     }
 

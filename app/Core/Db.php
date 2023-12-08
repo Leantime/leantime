@@ -71,7 +71,7 @@ class Db
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
         } catch (PDOException $e) {
-            $newline = defined('LEAN_CLI') ? "\n" : "<br />\n";
+            $newline = app()->make(IncomingRequest::class) instanceof CliRequest ? "\n" : "<br />\n";
             echo "No database connection, check your database credentials in your configuration file.$newline";
             $found_errors = [];
 

@@ -10,7 +10,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller;
 use ReflectionClass;
-use ReflectionParameter;
+use Symfony\Component\HttpFoundation\Response;
+use Exception;
 
 /**
  *
@@ -29,8 +30,6 @@ class Jsonrpc extends Controller
      */
     public function init(): void
     {
-        header('Content-Type: application/json; charset=utf-8');
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST)) {
             $this->json_data = json_decode(file_get_contents('php://input'), JSON_OBJECT_AS_ARRAY);
         }
@@ -45,7 +44,7 @@ class Jsonrpc extends Controller
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
-    public function post(array $params): void
+    public function post(array $params): Response
     {
         if (empty($params)) {
             $params = $this->json_data;
@@ -58,23 +57,7 @@ class Jsonrpc extends Controller
             }
         }
 
-        /**
-         * batch requests
-         *
-         * @see https://jsonrpc.org/specification#batch
-         */
-        if (array_keys($params) == range(0, count($params) - 1)) {
-            for ($i = 0; $i < count($params); $i++) {
-                $this->executeApiRequest($params[$i]);
-
-                if ($i !== count($params) - 1) {
-                    echo ",";
-                }
-            }
-            // normal requests
-        } else {
-            $this->executeApiRequest($params);
-        }
+        return $this->executeApiRequest($params);
     }
 
     /**
@@ -86,10 +69,10 @@ class Jsonrpc extends Controller
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
-    public function get(array $params): void
+    public function get(array $params): Response
     {
         if (!isset($params['method'])) {
-            $this->returnInvalidRequest("Method name required");
+            return $this->returnInvalidRequest("Method name required");
         }
 
         /**
@@ -111,48 +94,31 @@ class Jsonrpc extends Controller
         );
 
         $params["params"] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
-        //$params = json_decode($params['q'], JSON_OBJECT_AS_ARRAY);
 
         // check if decode failed
         if ($params == null) {
-            $this->returnParseError('JSON is invalid and was not able to be parsed');
+            return $this->returnParseError('JSON is invalid and was not able to be parsed');
         }
 
-        /**
-         * batch requests
-         *
-         * @see https://jsonrpc.org/specification#batch
-         */
-        if (array_keys($params) == range(0, count($params) - 1)) {
-            for ($i = 0; $i < count($params); $i++) {
-                $this->executeApiRequest($params[$i]);
-
-                if ($i !== count($params) - 1) {
-                    echo ",";
-                }
-            }
-            // normal requests
-        } else {
-            $this->executeApiRequest($params);
-        }
+        return $this->executeApiRequest($params);
     }
 
     /**
      * Handles patch requests
      *
-     * @return void
+     * @return Response
      */
-    public function patch(): void
+    public function patch(): Response
     {
-        $this->returnInvalidRequest('The JSON-RPC API only supports POST/GET requests');
+        return $this->returnInvalidRequest('The JSON-RPC API only supports POST/GET requests');
     }
 
     /**
      * Handles delete requests
      *
-     * @return void
+     * @return Response
      */
-    public function delete(): void
+    public function delete(): Response
     {
         $this->returnInvalidRequest('The JSON-RPC API only supports POST/GET requests');
     }
@@ -162,14 +128,34 @@ class Jsonrpc extends Controller
      *
      * @param array $params - request body
      *
-     * @return void
+     * @return Response
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
-    private function executeApiRequest(array $params): void
+    private function executeApiRequest(array $params): Response
     {
-        $methodparts = $this->parseMethodString($params['method'] ?? '');
+        /**
+         * checks to see if array keys are incremented, if so, assume it's a batch request
+         *
+         * @see https://jsonrpc.org/specification#batch
+         */
+        if (array_keys($params) !== range(0, count($params) - 1)) {
+            return $this->tpl->displayJson(array_map(
+                fn ($requestParams) => json_decode($this->executeApiRequest($requestParams)->getContent()),
+                $params
+            ));
+        }
+
+        $id = $params['id'] ?? null;
+
+        try {
+            $methodparts = $this->parseMethodString($params['method'] ?? '');
+        } catch (Exception $e) {
+            return $this->returnInvalidParams($e, $id);
+        }
+
         $jsonRpcVer = $params['jsonrpc'] ?? null;
+
         $serviceName = Str::studly($methodparts['service']);
 
         $domainServiceNamespace = app()->getNamespace() . "Domain\\$serviceName\\Services\\$serviceName";
@@ -178,66 +164,75 @@ class Jsonrpc extends Controller
         $methodName = Str::camel($methodparts['method']);
 
         $paramsFromRequest = $params['params'] ?? [];
-        $id = $params['id'] ?? null;
-
 
         if (class_exists($domainServiceNamespace)) {
             $serviceName = $domainServiceNamespace;
         } elseif (class_exists($pluginServiceNamespace)) {
             $serviceName = $pluginServiceNamespace;
         } else {
-            $this->returnMethodNotFound("Service doesn't exist: $serviceName");
+            return $this->returnMethodNotFound("Service doesn't exist: $serviceName", $id);
         }
 
         if (! method_exists($serviceName, $methodName)) {
-            $this->returnMethodNotFound("Method doesn't exist: $methodName");
+            return $this->returnMethodNotFound("Method doesn't exist: $methodName", $id);
         }
 
         if ($jsonRpcVer == null) {
-            $this->returnInvalidRequest("You must include a \"jsonrpc\" parameter with a value of \"2.0\"");
+            return $this->returnInvalidRequest("You must include a \"jsonrpc\" parameter with a value of \"2.0\"", $id);
         }
 
         if ($jsonRpcVer !== '2.0') {
-            $this->returnInvalidRequest("Leantime only supports JSON-RPC version 2.0");
+            return $this->returnInvalidRequest("Leantime only supports JSON-RPC version 2.0", $id);
         }
 
-        $methodParams = $this->getMethodParameters($serviceName, $methodName);
-        $preparedParams = $this->prepareParameters($paramsFromRequest, $methodParams);
+        try {
+            $methodParams = $this->getMethodParameters($serviceName, $methodName);
+        } catch (\ReflectionException $e) {
+            return $this->returnServerError("Error getting parameters: $e", $id);
+        }
+
+        try {
+            $preparedParams = $this->prepareParameters($paramsFromRequest, $methodParams);
+        } catch (Exception $e) {
+            return $this->returnInvalidParams($e, $id);
+        }
 
         // can be null
         try {
             $method_response = app()->make($serviceName)->$methodName(...$preparedParams);
         } catch (\Error $e) {
-            $this->returnServerError($e);
+            return $this->returnServerError($e, $id);
         }
 
         if ($method_response !== null) {
-            if (!settype($method_response, 'array')) {
+            if (! settype($method_response, 'array')) {
                 $method_response = [$method_response];
             }
         }
 
-        $this->returnResponse($method_response, $id);
+        return $this->returnResponse($method_response, $id);
     }
 
     /**
      * Parses the method string
      *
      * @param string $methodstring - leantime.rpc.service.method
+     * @return array
+     * @throws Exception
      */
     private function parseMethodString(string $methodstring): array
     {
         if (empty($methodstring)) {
-            $this->returnInvalidRequest("Must include method");
+            throw new Exception('Must include method');
         }
 
         if (!str_starts_with($methodstring, "leantime.rpc.")) {
-            $this->returnInvalidRequest("Method string doesn't start with \"leantime.rpc.\"");
+            throw new Exception("Method string doesn't start with \"leantime.rpc.\"");
         }
 
         $methodStringPieces = explode('.', $methodstring);
         if (count($methodStringPieces) !== 4) {
-            $this->returnInvalidRequest("Method is case sensitive and must follow the following naming convention: \"leantime.rpc.{servicename}.{methodname}\"");
+            throw new Exception("Method is case sensitive and must follow the following naming convention: \"leantime.rpc.{servicename}.{methodname}\"");
         }
 
         return [
@@ -269,8 +264,8 @@ class Jsonrpc extends Controller
      *
      * @param array $params
      * @param array $methodParams
-     *
      * @return array
+     * @throws Exception
      */
     private function prepareParameters(array $params, array $methodParams): array
     {
@@ -286,7 +281,7 @@ class Jsonrpc extends Controller
             // check if param is there
             if (!in_array($name, array_keys($params))) {
                 if ($required) {
-                    $this->returnInvalidParams("Required Parameter Missing: $name");
+                    throw new Exception("Required Parameter Missing: $name");
                 }
 
                 $filtered_parameters[$position] = $methodparam->getDefaultValue();
@@ -301,35 +296,25 @@ class Jsonrpc extends Controller
                 }
 
                 //If it's a nullable type and the parameter is null, set the value to null
-                if($type->allowsNull()){
-                    if($params[$name] == null || $params[$name] == "null"){
-
+                if ($type->allowsNull()) {
+                    if ($params[$name] == null || $params[$name] == "null") {
                         $filtered_parameters[$position] = $params[$name];
                         continue;
-
-                    }else{
-
-                        //GetName will return base types even if the type is nullable.
-                        $typeName = $type->getName();
-
-                        if (settype($params[$name], $typeName)) {
-
-                            $filtered_parameters[$position] = $typeName == "bool" ? $this->castBoolValue($params[$name]) : $params[$name];
-                            continue;
-
-                        }
-
                     }
 
+                    //GetName will return base types even if the type is nullable.
+                    if (settype($params[$name], $typeName = $type->getName())) {
+                        $filtered_parameters[$position] = $typeName == "bool" ? filter_var($params[$name], FILTER_VALIDATE_BOOL) : $params[$name];
+                        continue;
+                    }
                 }
 
                 if (settype($params[$name], $type)) {
-
-                    $filtered_parameters[$position] = $type->getName() == "bool" ? $this->castBoolValue($params[$name]) : $params[$name];
+                    $filtered_parameters[$position] = $type->getName() == "bool" ? filter_var($params[$name], FILTER_VALIDATE_BOOL) : $params[$name];
                     continue;
                 }
 
-                $this->returnInvalidParams("Incorrect Type on Parameter: $name");
+                throw new Exception("Incorrect Type on Parameter: $name");
             }
 
             $filtered_parameters[$position] = $params[$name];
@@ -341,35 +326,6 @@ class Jsonrpc extends Controller
         return $filtered_parameters;
     }
 
-    private function castBoolValue($value) {
-
-        if (is_bool($value)) {
-            return $value;
-        }
-
-        if (is_string($value)) {
-            if (strtolower($value) === 'true') {
-                return true;
-            }
-
-            if (strtolower($value) === 'false') {
-                return false;
-            }
-        }
-
-        if (is_numeric($value)) {
-            if ($value == 1) {
-                return true;
-            }
-
-            if ($value == 0) {
-                return false;
-            }
-        }
-
-        return $value;
-    }
-
     /**
      * Echos the return response
      *
@@ -377,9 +333,9 @@ class Jsonrpc extends Controller
      *
      * @param array|null  $returnValue
      * @param string|null $id
-     * @return void
+     * @return Response
      */
-    private function returnResponse(array|null $returnValue, string $id = null): void
+    private function returnResponse(array|null $returnValue, string $id = null): Response
     {
         /**
          * No IDs imply notification and MUST not be responded to
@@ -387,12 +343,11 @@ class Jsonrpc extends Controller
          * @see https://jsonrpc.org/specification#notification
          */
         if ($id == null) {
-            return;
+            return new Response();
         }
 
-        echo json_encode([
+        return $this->tpl->displayJson([
             'jsonrpc' => '2.0',
-            'message' => "Request was successful",
             'result' => $returnValue,
             'id' => $id,
         ]);
@@ -406,16 +361,20 @@ class Jsonrpc extends Controller
      * @param string     $errorMessage
      * @param int        $errorcode
      * @param mixed|null $additional_info
-     * @return void
+     * @param string|null $id
+     * @return Response
      */
-    private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null): void
+    private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, $id): Response
     {
-        echo json_encode([
-            'code' => $errorcode,
-            'message' => $errorMessage,
-            'data' => $additional_info,
+        return $this->tpl->displayJson([
+            'jsonrpc' => '2.0',
+            'error' => [
+                'code' => $errorcode,
+                'message' => $errorMessage,
+                'data' => $additional_info,
+            ],
+            'id' => $id,
         ]);
-        exit;
     }
 
     /**
@@ -424,12 +383,13 @@ class Jsonrpc extends Controller
      * @see https://jsonrpc.org/specification#error_object
      *
      * @param mixed|null $additional_info
+     * @param string|null $id
      *
-     * @return void
+     * @return Response
      */
-    private function returnParseError(mixed $additional_info = null): void
+    private function returnParseError(mixed $additional_info = null, $id): Response
     {
-        $this->returnError('Parse error', -32700, $additional_info);
+        return $this->returnError('Parse error', -32700, $additional_info, $id);
     }
 
     /**
@@ -438,12 +398,13 @@ class Jsonrpc extends Controller
      * @see https://jsonrpc.org/specification#error_object
      *
      * @param mixed|null $additional_info
+     * @param string|null $id
      *
-     * @return void
+     * @return Response
      */
-    private function returnInvalidRequest(mixed $additional_info = null): void
+    private function returnInvalidRequest(mixed $additional_info = null, $id): Response
     {
-        $this->returnError('Invalid Request', -32600, $additional_info);
+        return $this->returnError('Invalid Request', -32600, $additional_info, $id);
     }
 
     /**
@@ -452,12 +413,13 @@ class Jsonrpc extends Controller
      * @see https://jsonrpc.org/specification#error_object
      *
      * @param mixed|null $additional_info
+     * @param string|null $id
      *
-     * @return void
+     * @return Response
      */
-    private function returnMethodNotFound(mixed $additional_info = null): void
+    private function returnMethodNotFound(mixed $additional_info = null, $id): Response
     {
-        $this->returnError('Method not found', -32601, $additional_info);
+        return $this->returnError('Method not found', -32601, $additional_info, $id);
     }
 
     /**
@@ -466,12 +428,13 @@ class Jsonrpc extends Controller
      * @see https://jsonrpc.org/specification#error_object
      *
      * @param mixed|null $additional_info
+     * @param string|null $id
      *
-     * @return void
+     * @return Response
      */
-    private function returnInvalidParams(mixed $additional_info = null): void
+    private function returnInvalidParams(mixed $additional_info = null, $id): Response
     {
-        $this->returnError('Invalid params', -32602, $additional_info);
+        return $this->returnError('Invalid params', -32602, $additional_info, $id);
     }
 
     /**
@@ -480,11 +443,12 @@ class Jsonrpc extends Controller
      * @see https://jsonrpc.org/specification#error_object
      *
      * @param mixed|null $additional_info
+     * @param string|null $id
      *
      * @return void
      */
-    private function returnServerError(mixed $additional_info): void
+    private function returnServerError(mixed $additional_info, $id): Response
     {
-        $this->returnError('Server error', -32000, $additional_info);
+        return $this->returnError('Server error', -32000, $additional_info, $id);
     }
 }

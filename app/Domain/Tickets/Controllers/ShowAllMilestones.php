@@ -7,6 +7,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -43,22 +44,16 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws \Exception
-         */
-        public function get($params): void
+        public function get($params): Response
         {
 
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
-            $this->tpl->display('tickets.showAllMilestones');
+            return $this->tpl->display('tickets.showAllMilestones');
         }
     }
-
 }

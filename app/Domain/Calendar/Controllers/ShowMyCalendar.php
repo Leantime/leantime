@@ -48,8 +48,7 @@ namespace Leantime\Domain\Calendar\Controllers {
             //$this->tpl->assign('ticketWishDates', $this->calendarRepo->getTicketWishDates());
             //$this->tpl->assign('dates', $this->calendarRepo->getAllDates($dateFrom, $dateTo));
 
-            $this->tpl->display('calendar.showMyCalendar');
+            return $this->tpl->display('calendar.showMyCalendar');
         }
     }
-
 }

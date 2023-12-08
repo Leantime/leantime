@@ -21,12 +21,10 @@ function openModal() {
                 }
             },
             beforeShowCont: function () {
-
-
                 jQuery(".showDialogOnLoad").show();
             },
             afterShowCont: function () {
-
+                window.htmx.process('.nyroModalCont');
                 jQuery(".formModal, .modal").nyroModal(modalOptions);
                 tippy('[data-tippy-content]');
             },

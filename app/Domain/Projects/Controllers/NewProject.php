@@ -53,7 +53,6 @@ namespace Leantime\Domain\Projects\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             if (!isset($_SESSION['lastPage'])) {
@@ -146,7 +145,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', "project_created");
 
-                    $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id);
+                    return $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id);
                 }
 
 
@@ -161,7 +160,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
             $this->tpl->assign('info', $msgKey);
 
-            $this->tpl->display('projects.newProject');
+            return $this->tpl->display('projects.newProject');
         }
     }
 

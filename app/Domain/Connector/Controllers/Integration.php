@@ -123,8 +123,8 @@ namespace Leantime\Domain\Connector\Controllers {
                     $this->tpl->assign("providerEntities", $provider->getEntities());
                     $this->tpl->assign("leantimeEntities", $this->leantimeEntities->availableLeantimeEntities);
 
-                    $this->tpl->display('connector.integrationEntity');
-                    return;
+                    //TODO UI to show entity picker/mapper
+                    return $this->tpl->display('connector.integrationEntity');
                 }
 
                 //STEP 3: Choose Entities to sync
@@ -138,7 +138,7 @@ namespace Leantime\Domain\Connector\Controllers {
                     }else{
                         $this->tpl->setNotification("Entity not set", "error");
 
-                        Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $provider->id . "");
+                        return Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $provider->id . "");
                     }
 
                     $currentIntegration->entity = $entity;
@@ -154,17 +154,13 @@ namespace Leantime\Domain\Connector\Controllers {
                     }
                     $this->tpl->assign("flags", $flags);
                     $this->tpl->assign("leantimeFields", $this->leantimeEntities->availableLeantimeEntities[$entity]['fields']);
-                    $this->tpl->display('connector.integrationFields');
-
-                    return;
+                    return $this->tpl->display('connector.integrationFields');
                 }
 
                 //STEP 4: Choose Entities to sync
                 if (isset($params["step"]) && $params["step"] == "sync") {
                     //TODO UI to show sync schedule/options
-
-                    $this->tpl->display('connector.integrationSync');
-                    return;
+                    return $this->tpl->display('connector.integrationSync');
                 }
 
                 //STEP 5: import Review
@@ -184,8 +180,7 @@ namespace Leantime\Domain\Connector\Controllers {
                     $this->tpl->assign("fields", $this->fields);
                     $this->tpl->assign("flags", $flags);
 
-                    $this->tpl->display('connector.integrationImport');
-                    return;
+                    return $this->tpl->display('connector.integrationImport');
                 }
 
                 //STEP 6: Do the import
@@ -195,12 +190,12 @@ namespace Leantime\Domain\Connector\Controllers {
                     $values = unserialize($_SESSION['serValues']);
                     $fields = unserialize($_SESSION['serFields']);
 
+                    //confirm and store in DB
                     $this->connectorService->importValues($fields, $values, $_SESSION['currentImportEntity']);
 
                     //display stored successfully message
-                    $this->tpl->display('connector.integrationConfirm');
+                    return $this->tpl->display('connector.integrationConfirm');
                 }
-
 
             }
         }

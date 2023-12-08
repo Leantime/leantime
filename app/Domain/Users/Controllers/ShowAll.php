@@ -7,6 +7,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Ldap\Services\Ldap as LdapService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -28,15 +29,12 @@ namespace Leantime\Domain\Users\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function get(): void
+        public function get(): Response
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
-
-
 
             //Only Admins
             if (Auth::userIsAtLeast(Roles::$admin)) {
@@ -49,18 +47,19 @@ namespace Leantime\Domain\Users\Controllers {
                 $this->tpl->assign('admin', true);
                 $this->tpl->assign('roles', Roles::getRoles());
 
-                $this->tpl->display('users.showAll');
+                return $this->tpl->display('users.showAll');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          */
-        public function post($params): void
+        public function post($params): Response
         {
+            return $this->tpl->displayJson(['status' => 'Not Implemented']);
         }
     }
 

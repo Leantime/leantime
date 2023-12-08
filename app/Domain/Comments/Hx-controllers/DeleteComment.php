@@ -3,6 +3,7 @@
 use Leantime\Core\HtmxController;
 use Leantime\Core\IncomingRequest;
 use Leantime\Domain\Tickets\Services\Tickets;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -18,16 +19,17 @@ class DeleteComment extends HTMXController
     public function init(
         Tickets $tickets,
     ): void {
+        $this->tickets = $tickets;
     }
 
     /**
      * @param IncomingRequest $incomingRequest
-     * @return void
+     * @return Response
      */
-    public function post(IncomingRequest $incomingRequest): void
+    public function post(IncomingRequest $incomingRequest): Response
     {
         $this->tickets->deleteComment($incomingRequest->get('id'));
 
-        echo '';
+        return new Response();
     }
 }

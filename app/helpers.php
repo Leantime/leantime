@@ -5,6 +5,7 @@ use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
 use Leantime\Core\Language;
+use Leantime\Core\Support\Build;
 
 if (! function_exists('app')) {
     /**
@@ -97,5 +98,76 @@ if (! function_exists('array_sort')) {
         }else{
             return \Illuminate\Support\Collection::make($array)->sortBy($sortyBy)->all();
         }
+    }
+}
+
+if (! function_exists('do_once')) {
+    /**
+     * Execute a callback only once.
+     *
+     * @param Closure $callback
+     * @param bool $across_requests
+     * @param string $key
+     * @return void
+     **/
+    function do_once(string $key, Closure $callback, bool $across_requests = false): void
+    {
+        $key = "do_once_{$key}";
+
+        if ($across_requests) {
+            $_SESSION['do_once'] ??= [];
+
+            if ($_SESSION['do_once'][$key] ?? false) {
+                return;
+            }
+
+            $_SESSION['do_once'][$key] = true;
+        } else {
+            static $do_once;
+            $do_once ??= [];
+
+            if ($do_once[$key] ?? false) {
+                return;
+            }
+
+            $do_once[$key] = true;
+        }
+
+        $callback();
+    }
+}
+
+if (! function_exists('config')) {
+    /**
+     * Get / set the specified configuration value.
+     * If an array is passed as the key, we will assume you want to set an array of values.
+     * @param array|string|null $key
+     * @param mixed $default
+     * @return mixed|Application
+     * @throws BindingResolutionException
+    **/
+    function config(array|string|null $key = null, mixed $default = null): mixed
+    {
+        if (is_null($key)) {
+            return app('config');
+        }
+
+        if (is_array($key)) {
+            return app('config')->set($key);
+        }
+
+        return app('config')->get($key, $default);
+    }
+}
+
+if (! function_exists('build')) {
+    /**
+     * Turns any object into a builder object
+     * @param object $object
+     * @return Build
+     **/
+    function build(object $object): Build
+    {
+        return new Build($object);
     }
 }

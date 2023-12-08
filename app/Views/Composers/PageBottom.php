@@ -4,6 +4,7 @@ namespace Leantime\Views\Composers;
 
 use Leantime\Core\AppSettings;
 use Leantime\Core\Composer;
+use Leantime\Core\Environment;
 
 /**
  *
@@ -19,18 +20,18 @@ class PageBottom extends Composer
 
     protected AppSettings $settings;
 
+    protected Environment $environment;
+
     /**
      * @param AppSettings $settings
      * @return void
      */
-    public function init(AppSettings $settings): void
+    public function init(AppSettings $settings, Environment $environment): void
     {
         $this->settings = $settings;
+        $this->environment = $environment;
     }
 
-    /**
-     * @return array
-     */
     /**
      * @return array
      */
@@ -38,6 +39,7 @@ class PageBottom extends Composer
     {
         return [
             'version' => $this->settings->appVersion,
+            'poorMansCron' => $this->environment->get('poorMansCron'),
             'loggedIn' => isset($_SESSION['userdata']),
         ];
     }

@@ -44,9 +44,9 @@ namespace Leantime\Domain\Auth\Controllers {
         {
 
             if ((isset($_GET["id"]) === true && $this->authService->validateResetLink($_GET["id"]))) {
-                $this->tpl->display('auth.resetPw', 'entry');
+                return $this->tpl->display('auth.resetPw', 'entry');
             } else {
-                $this->tpl->display('auth.requestPwLink', 'entry');
+                return $this->tpl->display('auth.requestPwLink', 'entry');
             }
         }
 
@@ -58,51 +58,56 @@ namespace Leantime\Domain\Auth\Controllers {
          */
         public function post($params)
         {
-
-            if (isset($_POST["resetPassword"])) {
-                if (isset($_POST['username']) === true) {
-                    //Always return success to prevent db attacks checking which email address are in there
-                    $this->authService->generateLinkAndSendEmail($_POST["username"]);
-                    $this->tpl->setNotification($this->language->__('notifications.email_was_sent_to_reset'), "success", "passwordreset_sent");
-                }
-
-                if (isset($_POST['password']) === true && isset($_POST['password2']) === true) {
-                    if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
-                        $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), "error");
-
-                        FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/" . $_GET['id']);
-                    } else {
-                        if ($this->usersService->checkPasswordStrength($_POST['password'])) {
-                            if ($this->authService->changePW($_POST['password'], $_GET['id'])) {
-                                $this->tpl->setNotification(
-                                    $this->language->__('notifications.passwords_changed_successfully'),
-                                    "success",
-                                    "password_changed"
-                                );
-
-                                FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
-                            } else {
-                                $this->tpl->setNotification(
-                                    $this->language->__('notifications.problem_resetting_password'),
-                                    "error"
-                                );
-
-                                FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/" . $_GET['id']);
-                            }
-                        } else {
-                            $this->tpl->setNotification(
-                                $this->language->__("notification.password_not_strong_enough"),
-                                'error'
-                            );
-
-                            FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/" . $_GET['id']);
-                        }
-                    }
-                }
+            if (! isset($_POST['resetPassword'])) {
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/");
             }
 
-            FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/");
+            if (isset($_POST['username']) === true) {
+                //Always return success to prevent db attacks checking which email address are in there
+                $this->authService->generateLinkAndSendEmail($_POST["username"]);
+                $this->tpl->setNotification($this->language->__('notifications.email_was_sent_to_reset'), "success");
+            }
+
+            if (isset($_POST['password']) === true && isset($_POST['password2']) === true) {
+                if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
+                    $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), "error");
+
+                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/" . $_GET['id']);
+                }
+
+                if ($this->usersService->checkPasswordStrength($_POST['password'])) {
+                    if ($this->authService->changePW($_POST['password'], $_GET['id'])) {
+                        $this->tpl->setNotification(
+                            $this->language->__('notifications.passwords_changed_successfully'),
+                            "success",
+                            "password_changed"
+                        );
+
+                        return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                    }
+
+                    $this->tpl->setNotification(
+                        $this->language->__('notifications.problem_resetting_password'),
+                        "error"
+                    );
+
+                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/" . $_GET['id']);
+                }
+
+                $this->tpl->setNotification(
+                    $this->language->__("notification.password_not_strong_enough"),
+                    'error'
+                );
+
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/resetPw/" . $_GET['id']);
+            }
+
+            $this->tpl->setNotification(
+                $this->language->__('notifications.problem_resetting_password'),
+                "error"
+            );
+
+            return FrontcontrollerCore::redirect(BASE_URL . '/auth/resetPw/' . $_GET['id']);
         }
     }
-
 }

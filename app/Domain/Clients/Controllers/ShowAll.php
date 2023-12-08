@@ -45,7 +45,7 @@ namespace Leantime\Domain\Clients\Controllers {
             }
 
             $this->tpl->assign('allClients', $this->clientRepo->getAll());
-            $this->tpl->display('clients.showAll');
+            return $this->tpl->display('clients.showAll');
         }
     }
 }

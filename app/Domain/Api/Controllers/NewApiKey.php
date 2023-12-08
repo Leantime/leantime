@@ -103,9 +103,9 @@ namespace Leantime\Domain\Api\Controllers {
 
                 $this->tpl->assign('relations', $projectrelation);
 
-                $this->tpl->displayPartial('api.newAPIKey');
+                return $this->tpl->displayPartial('api.newAPIKey');
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayPartial('errors.error403');
             }
         }
     }

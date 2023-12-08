@@ -16,6 +16,7 @@ namespace Leantime\Domain\Auth\Services {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Eventhelpers;
     use RobThree\Auth\TwoFactorAuth;
+    use Illuminate\Http\Exceptions\HttpResponseException;
 
     /**
      *
@@ -533,17 +534,15 @@ namespace Leantime\Domain\Auth\Services {
          * @param $role
          * @param bool $forceGlobalRoleCheck
          * @return bool
+         * @throws HttpResponseException
          */
         public static function authOrRedirect($role, bool $forceGlobalRoleCheck = false): bool
         {
-
             if (self::userHasRole($role, $forceGlobalRoleCheck)) {
                 return true;
-            } else {
-                FrontcontrollerCore::redirect(BASE_URL . "/errors/error403");
             }
 
-            return false;
+            throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL . "/errors/error403"));
         }
 
         /**

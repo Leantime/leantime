@@ -13,6 +13,7 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Illuminate\Support\Str;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      * Template class For exporting class as XML file
@@ -59,16 +60,15 @@ namespace Leantime\Domain\Canvas\Controllers {
         /**
          * run - Generate XML file
          */
-        public function run()
+        public function run(): Response
         {
-
             // Retrieve id of canvas to print
             if (isset($_GET['id']) === true) {
                 $canvasId = (int)$_GET['id'];
             } elseif (isset($_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'])) {
                 $canvasId = $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
             } else {
-                return;
+                return new Response();
             }
 
             // Generate XML code
@@ -76,10 +76,12 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             // Service report
             clearstatcache();
-            header("Content-type: application/xml");
-            header('Content-Disposition: attachment; filename="' . static::CANVAS_NAME . static::CANVAS_TYPE . '-' . $canvasId . '.xml"');
-            header('Cache-Control: no-cache');
-            echo $exportData;
+            $response = new Response($exportData);
+            $response->headers->set('Content-type', 'application/xml');
+            $response->headers->set('Content-Disposition', 'attachment; filename="' . static::CANVAS_NAME . static::CANVAS_TYPE . '-' . $canvasId . '.xml"');
+            $response->headers->set('Cache-Control', 'no-cache');
+
+            return $response;
         }
 
         /***

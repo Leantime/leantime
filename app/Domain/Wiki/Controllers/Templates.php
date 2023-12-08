@@ -8,6 +8,7 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -29,9 +30,9 @@ namespace Leantime\Domain\Wiki\Controllers {
          * @return void
          * @throws \Exception
          */
-        public function get($params): void
+        public function get($params): Response
         {
-            $this->tpl->displayPartial("wiki.templates");
+            return $this->tpl->displayPartial("wiki.templates");
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -35,14 +36,10 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * @param $params
-         * @return void
-         */
-        /**
-         * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get($params): void
+        public function get($params): Response
         {
             $ticketId = $params['id'] ?? '';
 
@@ -53,32 +50,17 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('projects', $projects);
 
-            $this->tpl->displayPartial('tickets.moveTicket');
+            return $this->tpl->displayPartial('tickets.moveTicket');
         }
 
         /**
          * @param $params
-         * @return void
-         */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
-            $ticketId = null;
-            if (isset($_GET['id'])) {
-                $ticketId = (int)($_GET['id']);
-            }
-
-            $projectId = null;
-            if (isset($params['projectId'])) {
-                $projectId = (int)($params['projectId']);
-            }
-
-            if (!empty($ticketId) && !empty($projectId)) {
+            if (! empty($ticketId = (int) $_GET['id'] ?? null) && ! empty($projectId = (int) $params['projectId'] ?? null)) {
                 if ($this->ticketService->moveTicket($ticketId, $projectId)) {
                     $this->tpl->setNotification($this->language->__("text.ticket_moved"), "success");
                 } else {
@@ -86,7 +68,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
             }
 
-            FrontcontrollerCore::redirect(BASE_URL . "/tickets/moveTicket/" . $ticketId . "?closeModal=true");
+            return FrontcontrollerCore::redirect(BASE_URL . "/tickets/moveTicket/" . $ticketId . "?closeModal=true");
         }
     }
 

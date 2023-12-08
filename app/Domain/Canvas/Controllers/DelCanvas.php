@@ -56,13 +56,13 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                 //Create default canvas.
                 if (!$allCanvas || count($allCanvas) == 0) {
-                    $this->tpl->redirect(BASE_URL . '/strategy/showBoards');
+                    return $this->tpl->redirect(BASE_URL . '/strategy/showBoards');
                 } else {
-                    $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
+                    return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
                 }
             }
 
-            $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.delCanvas');
+            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.delCanvas');
         }
     }
 }

@@ -36,7 +36,6 @@ namespace Leantime\Domain\Clients\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
             //Only admins
@@ -51,17 +50,17 @@ namespace Leantime\Domain\Clients\Controllers {
                             $this->clientRepo->deleteClient($id);
 
                             $this->tpl->setNotification($this->language->__('notification.client_deleted'), 'success');
-                            $this->tpl->redirect(BASE_URL . "/clients/showAll");
+                            return $this->tpl->redirect(BASE_URL . "/clients/showAll");
                         }
                     }
 
                     $this->tpl->assign('client', $this->clientRepo->getClient($id));
-                    $this->tpl->display('clients.delClient');
+                    return $this->tpl->display('clients.delClient');
                 } else {
-                    $this->tpl->display('errors.error403');
+                    return $this->tpl->display('errors.error403', responseCode: 403);
                 }
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

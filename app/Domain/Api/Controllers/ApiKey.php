@@ -132,9 +132,9 @@ namespace Leantime\Domain\Api\Controllers {
                 $this->tpl->assign('status', $this->userRepo->status);
                 $this->tpl->assign('id', $id);
 
-                $this->tpl->displayPartial('api.apiKey');
+                return $this->tpl->displayPartial('api.apiKey');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

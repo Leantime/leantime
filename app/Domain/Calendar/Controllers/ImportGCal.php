@@ -57,7 +57,7 @@ namespace Leantime\Domain\Calendar\Controllers {
 
             $this->tpl->assign('values', $values);
 
-            $this->tpl->displayPartial('calendar.importGCal');
+            return $this->tpl->displayPartial('calendar.importGCal');
         }
     }
 }

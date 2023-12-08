@@ -8,40 +8,37 @@ use Leantime\Domain\Users\Repositories\Users;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Completion\CompletionInput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Leantime\Domain\Auth\Models\Roles;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Attribute\AsCommand;
 
-/**
- *
- */
+#[AsCommand(
+    name: 'user:add',
+    description: 'Add a new user',
+)]
 class AddUserCommand extends Command
 {
-    protected static $defaultName = 'user:add';
-    protected static $defaultDescription = 'Add a new User';
-
     /**
      * @return void
      */
     protected function configure(): void
     {
         parent::configure();
-        $this->addOption('email', null, InputOption::VALUE_REQUIRED, "User's Email")
-            ->addOption('password', null, InputOption::VALUE_REQUIRED, "User's Password")
+
+        $this->addOption(name: 'email', mode: InputOption::VALUE_REQUIRED, description: "User's Email")
+            ->addOption(name: 'password', mode: InputOption::VALUE_REQUIRED, description: "User's Password")
             ->addOption(
                 'role',
                 null,
                 InputOption::VALUE_REQUIRED,
                 "User's Role",
-                function (CompletionInput $input) {
-                    return array_values(Roles::getRoles());
-                }
+                array_values(Roles::getRoles()),
             )
-            ->addOption('client-id', null, InputOption::VALUE_OPTIONAL, "Id of The Client to Assign the User To", null)
-            ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", "")
-            ->addOption('last-name', null, InputOption::VALUE_OPTIONAL, "User's Last Name", "")
-            ->addOption('phone', null, InputOption::VALUE_OPTIONAL, "User's Phone", "");
+            ->addOption(name: 'client-id', mode: InputOption::VALUE_OPTIONAL, description: "Id of The Client to Assign the User To")
+            ->addOption(name: 'first-name', mode: InputOption::VALUE_OPTIONAL, description: "User's First name")
+            ->addOption(name: 'last-name', mode: InputOption::VALUE_OPTIONAL, description: "User's Last Name")
+            ->addOption(name: 'phone', mode: InputOption::VALUE_OPTIONAL, description: "User's Phone");
     }
 
     /**

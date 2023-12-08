@@ -4,6 +4,7 @@ namespace Leantime\Domain\Pageparts\Controllers {
 
     use Leantime\Core\AppSettings as AppSettingCore;
     use Leantime\Core\Controller;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -22,13 +23,13 @@ namespace Leantime\Domain\Pageparts\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function run(): void
+        public function run(): Response
         {
             $this->tpl->assign("version", $this->settings->appVersion);
-            $this->tpl->displayPartial('pageparts.footer');
+            return $this->tpl->displayPartial('pageparts.footer');
         }
     }
 

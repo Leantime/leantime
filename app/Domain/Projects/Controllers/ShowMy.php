@@ -102,8 +102,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->tpl->assign("currentClient", $clientId);
             $this->tpl->assign("clients", $clients);
             $this->tpl->assign("allProjects", $projectResults);
-            $this->tpl->display('projects.showMy');
+            return $this->tpl->display('projects.showMy');
         }
     }
-
 }

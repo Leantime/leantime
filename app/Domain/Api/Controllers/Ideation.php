@@ -45,28 +45,29 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function post($params)
         {
-
-            if (isset($params['action']) && $params['action'] == "ideationSort" && isset($params["payload"]) === true) {
-                $sortOrder = $params["payload"];
-
-                $results = $this->ideationAPIRepo->updateIdeationSorting($sortOrder);
-
-                if ($results === true) {
-                    echo "{status:ok}";
-                } else {
-                    echo "{status:failure}";
-                }
-            } elseif (isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true) {
-                $results = $this->ideationAPIRepo->bulkUpdateIdeationStatus($params["payload"]);
-
-                if ($results === true) {
-                    echo "{status:ok}";
-                } else {
-                    echo "{status:failure}";
-                }
-            } else {
-                echo "{status:failure}";
+            if (
+                ! isset($params['action'], $params['payload'])
+                || ! in_array($params['action'], ['ideationSort', 'statusUpdate'])
+            ) {
+                return $this->tpl->displayJson(['status' => 'failure'], 400);
             }
+
+            foreach ([
+                'ideationSort' => fn () => $this->ideationAPIRepo->updateIdeationSorting($params['payload']),
+                'statusUpdate' => fn () => $this->ideationAPIRepo->bulkUpdateIdeationStatus($params["payload"]),
+            ] as $param => $callback) {
+                if ($param !== $params['action']) {
+                    continue;
+                }
+
+                if (! $callback()) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
+                }
+
+                break;
+            }
+
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**
@@ -77,13 +78,11 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function patch($params)
         {
-            $results = $this->ideationAPIRepo->patchCanvasItem($params['id'], $params);
-
-            if ($results === true) {
-                echo "{status:ok}";
-            } else {
-                echo "{status:failure}";
+            if (! $this->ideationAPIRepo->patchCanvasItem($params['id'], $params)) {
+                return $this->tpl->displayJson(['status', 'failure'], 500);
             }
+
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**
