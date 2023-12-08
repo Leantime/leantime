@@ -98,11 +98,17 @@ class Welcome extends HtmxController
 
         $todayTaskCount = 0;
         $todayStart = new \DateTime();
-        $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
+
+        if($_SESSION['usersettings.timezone'] !== null){
+            $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
+        }
+
         $todayStart->setTime(0, 0, 0);
 
         $todayEnd = new \DateTime();
-        $todayEnd->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
+        if($_SESSION['usersettings.timezone'] !== null){
+            $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
+        }
         $todayEnd->setTime(23, 59, 59);
 
         $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, $_SESSION["userdata"]["id"]);

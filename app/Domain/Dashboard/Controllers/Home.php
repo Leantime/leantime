@@ -113,7 +113,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
 
-            $this->widgetService->resetDashboard($_SESSION['userdata']['id']);
+            //Debug uncomment to reset dashboard
+            //$this->widgetService->resetDashboard($_SESSION['userdata']['id']);
             $dashboardGrid = $this->widgetService->getActiveWidgets($_SESSION['userdata']['id']);
             $this->tpl->assign("dashboardGrid", $dashboardGrid);
 
@@ -147,7 +148,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
                 $this->settingRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
-                return;
+                return new Response();
             }
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {

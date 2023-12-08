@@ -124,7 +124,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 15 => [
                     'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'role' => 'administrator',
                     'submenu' => [
-                        5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.plugins', 'icon' => 'fa fa-fw fa-pluge', 'tooltip' => 'menu.plugins_tooltip', 'href' => '/plugins/show', 'active' => ['show']],
+                        5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.leantime_apps', 'icon' => 'fa fa-fw fa-puzzle-piece', 'tooltip' => 'menu.leantime_apps_tooltip', 'href' => '/plugins/marketplace', 'active' => ['marketplace', 'myapps']],
                         10 => ['type' => 'item', 'module' => 'connector', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
                         15 => ['type' => 'item', 'module' => 'setting', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
                     ],
@@ -407,6 +407,8 @@ namespace Leantime\Domain\Menu\Repositories {
                 "clients.showAll" => "company",
                 "users.showAll" => "company",
                 "plugins.show" => "company",
+                "plugins.marketplace" => "company",
+                "plugins.myapps" => "company",
                 "connector.show" => "company",
             ];
 

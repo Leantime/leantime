@@ -126,7 +126,7 @@ class Environment implements ArrayAccess, ConfigContract
         }
 
         Events::add_event_listener(
-            'leantime.core.bootloader.getApplication.session_initialized',
+            'leantime.core.bootloader.boot.session_initialized',
             function () {
                 $_SESSION['mainconfig'] = $this->config;
             }

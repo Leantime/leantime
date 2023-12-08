@@ -17,7 +17,9 @@
         <span style="font-size:44px; color:var(--main-action-color);">
             @php
                 $date = new DateTime();
-                $date->setTimezone(new DateTimeZone($_SESSION['usersettings.timezone']));
+                if(!empty($_SESSION['usersettings.timezone'])){
+                    $date->setTimezone(new DateTimeZone($_SESSION['usersettings.timezone']));
+                }
                 $date = $date->format(__("language.timeformat"));
             @endphp
 

@@ -194,17 +194,26 @@ class Template
 
             $pluginPaths = $plugins->mapWithKeys( function ($plugin) use ($domainPaths) {
 
-                if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
-                    throw new Exception("Plugin $basename conflicts with domain");
+                //Catch issue when plugins are cached on load but autoloader is not quite done loading.
+                //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
+                //Clearing session cache in that case.
+                //@TODO: Check on callstack to make sure autoload loads before sessions
+                if(!is_a($plugin, '__PHP_Incomplete_Class')) {
+                    if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
+                        throw new Exception("Plugin $basename conflicts with domain");
+                    }
+
+                    if($plugin->format == "phar"){
+                        $path = 'phar://' . APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/'. $plugin->foldername . '.phar/Templates';
+                    } else {
+                        $path = APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Templates';
+                    }
+
+                    return [$basename => $path];
                 }
 
-                if($plugin->format == "phar"){
-                    $path = 'phar://' . APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/'. $plugin->foldername . '.phar/Templates';
-                } else {
-                    $path = APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Templates';
-                }
-
-                return [$basename => $path];
+                unset($_SESSION['enabledPlugins']);
+                return [];
             });
 
             $_SESSION['template_paths'] = $domainPaths

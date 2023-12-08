@@ -43,7 +43,7 @@ class Widgets
             "id" => "welcome",
             "name" => "Welcome",
             "gridHeight" => 9,
-            "gridWidth" => 8,
+            "gridWidth" => 12,
             "gridMinHeight" => 4,
             "gridMinWidth" => 2,
             "gridX" => 0,
@@ -61,7 +61,7 @@ class Widgets
             "gridMinHeight" => 12,
             "gridMinWidth" => 2,
             "gridX" => 8,
-            "gridY" => 0,
+            "gridY" => 9,
             "widgetUrl" => BASE_URL . "/widgets/calendar/get",
         ]);
 
@@ -73,7 +73,7 @@ class Widgets
             "gridMinHeight" => 16,
             "gridMinWidth" => 2,
             "gridX" => 0,
-            "gridY" => 10,
+            "gridY" => 9,
             "widgetUrl" => BASE_URL . "/widgets/myToDos/get",
         ]);
 

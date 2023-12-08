@@ -99,7 +99,7 @@ abstract class Controller
         } elseif (method_exists($this, 'run')) {
             $this->response = $this->run();
         } else {
-            throw new HttpResponseException(Frontcontroller::redirect(BASE_URL . "/errors/error501", 501));
+            throw new HttpResponseException(Frontcontroller::redirect(BASE_URL . "/errors/error501", 307));
         }
     }
 
