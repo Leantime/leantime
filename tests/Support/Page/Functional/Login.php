@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Tests\Support\Page\Acceptance;
+namespace Tests\Support\Page\Functional;
 
-use Tests\Support\Page\Acceptance\Install;
+use Tests\Support\Page\Functional\Install;
 use Codeception\Util\Fixtures;
 
 class Login
 {
     /**
-     * @var \Tests\Support\AcceptanceTester;
+     * @var \Tests\Support\FunctionalTester;
      */
     protected $I;
 
-    public function __construct(\Tests\Support\AcceptanceTester $I, Install $installPage)
+    public function __construct(\Tests\Support\FunctionalTester $I, Install $installPage)
     {
         $this->I = $I;
         $this->installPage = $installPage;

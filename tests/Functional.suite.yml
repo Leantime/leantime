@@ -1,12 +1,29 @@
 # Codeception Test Suite Configuration
 #
-# Suite for functional tests
-# Emulate web requests and make application process them
-# Include one of framework modules (Symfony, Yii2, Laravel, Phalcon5) to use it
-# Remove this suite if you don't use frameworks
+# Suite for functional tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
 
 actor: FunctionalTester
+bootstrap: bootstrap.php
 modules:
-    enabled:
-        # add a framework module here
-step_decorators: ~
+  enabled:
+    - WebDriver:
+        url: 'https://127.0.0.1:8090'
+        browser: firefox
+        wait: 20
+        log_js_errors: true
+        capabilities:
+          acceptInsecureCerts: true
+          "moz:firefoxOptions": {
+            args: ["-headless"]
+          }
+    - Db:
+        dsn: "mysql:host=127.0.0.1;port=3307;dbname=leantime_test"
+        user: leantime
+        password: leantime
+# add Codeception\Step\Retry trait to FunctionalTester to enable retries
+step_decorators:
+  - Codeception\Step\ConditionalAssertion
+  - Codeception\Step\TryTo
+  - Codeception\Step\Retry

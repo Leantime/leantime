@@ -1,19 +1,19 @@
 <?php
 
-namespace Tests\Acceptance;
+namespace Functional;
 
-use Tests\Support\AcceptanceTester;
-use Tests\Support\Page\Acceptance\Login;
 use Codeception\Attribute\Depends;
+use Tests\Support\FunctionalTester;
+use Tests\Support\Page\Functional\Login;
 
 class TicketsCest
 {
-    public function _before(AcceptanceTester $I, Login $loginPage)
+    public function _before(FunctionalTester $I, Login $loginPage)
     {
         $loginPage->login('test@leantime.io', 'test');
     }
 
-    public function createTicket(AcceptanceTester $I)
+    public function createTicket(FunctionalTester $I)
     {
         $I->wantTo('Create a ticket');
 
@@ -42,7 +42,7 @@ class TicketsCest
     }
 
     #[Depends('createTicket')]
-    public function editTicket(AcceptanceTester $I)
+    public function editTicket(FunctionalTester $I)
     {
         $I->wantTo('Edit a ticket');
 

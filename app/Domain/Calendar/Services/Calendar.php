@@ -25,6 +25,17 @@ namespace Leantime\Domain\Calendar\Services {
             $this->language = $language;
         }
 
+        /**
+         * Deletes a Google Calendar event with the specified ID.
+         *
+         * @param int $id The ID of the Google Calendar event to be deleted.
+         *
+         * @return void
+         */
+        public function deleteGCal(int $id): void
+        {
+            $this->calendarRepo->deleteGCal($id);
+        }
 
         /**
          * Patches calendar event

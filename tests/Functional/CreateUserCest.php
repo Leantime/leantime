@@ -1,20 +1,20 @@
 <?php
 
-namespace Tests\Acceptance;
+namespace Functional;
 
-use Tests\Support\AcceptanceTester;
 use Codeception\Attribute\Depends;
-use Tests\Support\Page\Acceptance\Login;
+use Tests\Support\FunctionalTester;
+use Tests\Support\Page\Functional\Login;
 
 class CreateUserCest
 {
-    public function _before(AcceptanceTester $I, Login $loginPage)
+    public function _before(FunctionalTester $I, Login $loginPage)
     {
         $loginPage->login('test@leantime.io', 'test');
     }
 
-    #[Depends('Tests\Acceptance\LoginCest:loginSuccessfully')]
-    public function createAUser(AcceptanceTester $I)
+    #[Depends('Tests\Functional\LoginCest:loginSuccessfully')]
+    public function createAUser(FunctionalTester $I)
     {
         $I->wantTo('Create a user');
         $I->amOnPage('/users/showAll');
@@ -36,8 +36,8 @@ class CreateUserCest
         $I->see('New user invited successfully');
     }
 
-    #[Depends('Tests\Acceptance\LoginCest:loginSuccessfully')]
-    public function editAUser(AcceptanceTester $I)
+    #[Depends('Tests\Functional\LoginCest:loginSuccessfully')]
+    public function editAUser(FunctionalTester $I)
     {
         $I->wantTo('Edit a user');
         $I->amOnPage('/users/editUser/1/');

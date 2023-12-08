@@ -1,6 +1,5 @@
 namespace: Tests
 support_namespace: Support
-bootstrap: bootstrap.php
 paths:
   tests: tests
   output: tests/_output

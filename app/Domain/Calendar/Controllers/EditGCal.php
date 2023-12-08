@@ -1,73 +1,55 @@
 <?php
 
-namespace Leantime\Domain\Calendar\Controllers {
+namespace Leantime\Domain\Calendar\Controllers;
 
-    /**
-     * importGCal Class - Add a new client
-     *
-     */
+use Leantime\Core\Controller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Calendar\Services\Calendar;
+use Leantime\Domain\Auth\Services\Auth;
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-    use Leantime\Domain\Auth\Services\Auth;
+class EditGCal extends Controller
+{
+    private Calendar $calendarService;
 
-    /**
-     *
-     */
-    class EditGCal extends Controller
+    public function init(Calendar $calendarService)
     {
-        private CalendarRepository $calendarRepo;
+        $this->calendarService = $calendarService;
+    }
 
-        /**
-         * init - initialize private variables
-         */
-        public function init(CalendarRepository $calendarRepo)
-        {
-            $this->calendarRepo = $calendarRepo;
-        }
+    public function run()
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        $msgKey = '';
 
-            $msgKey = '';
+        if (isset($_GET['id']) === true) {
+            $id = ($_GET['id']);
 
-            if (isset($_GET['id']) === true) {
-                $id = ($_GET['id']);
+            $calendar = $this->calendarService->getGCalendar($id);
 
-                $row = $this->calendarRepo->getGCal($id);
+            $values = array(
+                'url' => $calendar['url'],
+                'name' => $calendar['name'],
+                'colorClass' => $calendar['colorClass'],
+            );
 
+            if (isset($_POST['save']) === true) {
                 $values = array(
-                    'url' => $row['url'],
-                    'name' => $row['name'],
-                    'colorClass' => $row['colorClass'],
+                    'url' => ($_POST['url']),
+                    'name' => ($_POST['name']),
+                    'colorClass' => ($_POST['color']),
                 );
 
-                if (isset($_POST['save']) === true) {
-                    $values = array(
-                        'url' => ($_POST['url']),
-                        'name' => ($_POST['name']),
-                        'colorClass' => ($_POST['color']),
-                    );
+                $this->calendarService->editGCalendar($values, $id);
 
-                    $this->calendarRepo->editGUrl($values, $id);
-
-                    $msgKey = 'Kalender bearbeitet';
-                }
-
-                $this->tpl->assign('values', $values);
-                $this->tpl->assign('info', $msgKey);
-
-                $this->tpl->display('calendar.editGCal');
-            } else {
-                $this->tpl->display('errors.error403');
+                $msgKey = 'Kalender bearbeitet';
             }
+
+            $this->tpl->assign('values', $values);
+            $this->tpl->assign('info', $msgKey);
+            $this->tpl->display('calendar.editGCal');
+        } else {
+            $this->tpl->display('errors.error403');
         }
     }
 }

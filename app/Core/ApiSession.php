@@ -66,7 +66,7 @@ class ApiSession
     ): Client {
         return new Client(
             array_merge_recursive(
-                $requestedDefaults,
+                $requestDefaults,
                 [
                     'base_uri' => $baseUri,
                     'handler' => $stack,

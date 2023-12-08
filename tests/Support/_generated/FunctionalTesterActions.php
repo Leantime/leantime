@@ -1,4 +1,4 @@
-<?php  //[STAMP] f7b0dc010c6382678788521affe9434d
+<?php  //[STAMP] 91dcdae4b5328a27f04f40cc3936a01a
 // phpcs:ignoreFile
 namespace Tests\Support\_generated;
 
@@ -13,4 +13,6480 @@ trait FunctionalTesterActions
     abstract protected function getScenario();
 
     
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Print out latest Selenium Logs in debug mode
+     * @see \Codeception\Module\WebDriver::debugWebDriverLogs()
+     */
+    public function debugWebDriverLogs(?\Codeception\TestInterface $test = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('debugWebDriverLogs', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Print out latest Selenium Logs in debug mode
+     * @see \Codeception\Module\WebDriver::debugWebDriverLogs()
+     */
+    public function tryToDebugWebDriverLogs(?\Codeception\TestInterface $test = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('debugWebDriverLogs', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes debugWebDriverLogs and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::debugWebDriverLogs()
+     */
+    public function retryDebugWebDriverLogs(?\Codeception\TestInterface $test = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('debugWebDriverLogs', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Changes the subdomain for the 'url' configuration parameter.
+     * Does not open a page; use `amOnPage` for that.
+     *
+     * ``` php
+     * <?php
+     * // If config is: 'https://mysite.com'
+     * // or config is: 'https://www.mysite.com'
+     * // or config is: 'https://company.mysite.com'
+     *
+     * $I->amOnSubdomain('user');
+     * $I->amOnPage('/');
+     * // moves to https://user.mysite.com/
+     * ```
+     *
+     * @see \Codeception\Module\WebDriver::amOnSubdomain()
+     */
+    public function amOnSubdomain(string $subdomain): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Condition('amOnSubdomain', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Takes a screenshot of the current window and saves it to `tests/_output/debug`.
+     *
+     * ``` php
+     * <?php
+     * $I->amOnPage('/user/edit');
+     * $I->makeScreenshot('edit_page');
+     * // saved to: tests/_output/debug/edit_page.png
+     * $I->makeScreenshot();
+     * // saved to: tests/_output/debug/2017-05-26_14-24-11_4b3403665fea6.png
+     * ```
+     * @see \Codeception\Module\WebDriver::makeScreenshot()
+     */
+    public function makeScreenshot(?string $name = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('makeScreenshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Takes a screenshot of the current window and saves it to `tests/_output/debug`.
+     *
+     * ``` php
+     * <?php
+     * $I->amOnPage('/user/edit');
+     * $I->makeScreenshot('edit_page');
+     * // saved to: tests/_output/debug/edit_page.png
+     * $I->makeScreenshot();
+     * // saved to: tests/_output/debug/2017-05-26_14-24-11_4b3403665fea6.png
+     * ```
+     * @see \Codeception\Module\WebDriver::makeScreenshot()
+     */
+    public function tryToMakeScreenshot(?string $name = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('makeScreenshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes makeScreenshot and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::makeScreenshot()
+     */
+    public function retryMakeScreenshot(?string $name = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('makeScreenshot', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Takes a screenshot of an element of the current window and saves it to `tests/_output/debug`.
+     *
+     * ``` php
+     * <?php
+     * $I->amOnPage('/user/edit');
+     * $I->makeElementScreenshot('#dialog', 'edit_page');
+     * // saved to: tests/_output/debug/edit_page.png
+     * $I->makeElementScreenshot('#dialog');
+     * // saved to: tests/_output/debug/2017-05-26_14-24-11_4b3403665fea6.png
+     * ```
+     *
+     * @param WebDriverBy|array $selector
+     * @see \Codeception\Module\WebDriver::makeElementScreenshot()
+     */
+    public function makeElementScreenshot($selector, ?string $name = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('makeElementScreenshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Takes a screenshot of an element of the current window and saves it to `tests/_output/debug`.
+     *
+     * ``` php
+     * <?php
+     * $I->amOnPage('/user/edit');
+     * $I->makeElementScreenshot('#dialog', 'edit_page');
+     * // saved to: tests/_output/debug/edit_page.png
+     * $I->makeElementScreenshot('#dialog');
+     * // saved to: tests/_output/debug/2017-05-26_14-24-11_4b3403665fea6.png
+     * ```
+     *
+     * @param WebDriverBy|array $selector
+     * @see \Codeception\Module\WebDriver::makeElementScreenshot()
+     */
+    public function tryToMakeElementScreenshot($selector, ?string $name = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('makeElementScreenshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes makeElementScreenshot and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::makeElementScreenshot()
+     */
+    public function retryMakeElementScreenshot($selector, ?string $name = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('makeElementScreenshot', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Use this method within an [interactive pause](https://codeception.com/docs/02-GettingStarted#Interactive-Pause) to save the HTML source code of the current page.
+     *
+     * ```php
+     * <?php
+     * $I->makeHtmlSnapshot('edit_page');
+     * // saved to: tests/_output/debug/edit_page.html
+     * $I->makeHtmlSnapshot();
+     * // saved to: tests/_output/debug/2017-05-26_14-24-11_4b3403665fea6.html
+     * ```
+     * @see \Codeception\Module\WebDriver::makeHtmlSnapshot()
+     */
+    public function makeHtmlSnapshot(?string $name = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('makeHtmlSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Use this method within an [interactive pause](https://codeception.com/docs/02-GettingStarted#Interactive-Pause) to save the HTML source code of the current page.
+     *
+     * ```php
+     * <?php
+     * $I->makeHtmlSnapshot('edit_page');
+     * // saved to: tests/_output/debug/edit_page.html
+     * $I->makeHtmlSnapshot();
+     * // saved to: tests/_output/debug/2017-05-26_14-24-11_4b3403665fea6.html
+     * ```
+     * @see \Codeception\Module\WebDriver::makeHtmlSnapshot()
+     */
+    public function tryToMakeHtmlSnapshot(?string $name = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('makeHtmlSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes makeHtmlSnapshot and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::makeHtmlSnapshot()
+     */
+    public function retryMakeHtmlSnapshot(?string $name = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('makeHtmlSnapshot', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Resize the current window.
+     *
+     * ``` php
+     * <?php
+     * $I->resizeWindow(800, 600);
+     *
+     * ```
+     * @see \Codeception\Module\WebDriver::resizeWindow()
+     */
+    public function resizeWindow(int $width, int $height): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('resizeWindow', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Resize the current window.
+     *
+     * ``` php
+     * <?php
+     * $I->resizeWindow(800, 600);
+     *
+     * ```
+     * @see \Codeception\Module\WebDriver::resizeWindow()
+     */
+    public function tryToResizeWindow(int $width, int $height): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('resizeWindow', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes resizeWindow and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::resizeWindow()
+     */
+    public function retryResizeWindow(int $width, int $height) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('resizeWindow', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that a cookie with the given name is set.
+     * You can set additional cookie params like `domain`, `path` as array passed in last argument.
+     *
+     * ``` php
+     * <?php
+     * $I->seeCookie('PHPSESSID');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeCookie()
+     */
+    public function seeCookie($cookie, array $params = [], bool $showDebug = true): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that a cookie with the given name is set.
+     * You can set additional cookie params like `domain`, `path` as array passed in last argument.
+     *
+     * ``` php
+     * <?php
+     * $I->seeCookie('PHPSESSID');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeCookie()
+     */
+    public function canSeeCookie($cookie, array $params = [], bool $showDebug = true): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that a cookie with the given name is set.
+     * You can set additional cookie params like `domain`, `path` as array passed in last argument.
+     *
+     * ``` php
+     * <?php
+     * $I->seeCookie('PHPSESSID');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeCookie()
+     */
+    public function tryToSeeCookie($cookie, array $params = [], bool $showDebug = true): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeCookie and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeCookie()
+     */
+    public function retrySeeCookie($cookie, array $params = [], bool $showDebug = true) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeCookie', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that there isn't a cookie with the given name.
+     * You can set additional cookie params like `domain`, `path` as array passed in last argument.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeCookie()
+     */
+    public function dontSeeCookie($cookie, array $params = [], bool $showDebug = true): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that there isn't a cookie with the given name.
+     * You can set additional cookie params like `domain`, `path` as array passed in last argument.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeCookie()
+     */
+    public function cantSeeCookie($cookie, array $params = [], bool $showDebug = true): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that there isn't a cookie with the given name.
+     * You can set additional cookie params like `domain`, `path` as array passed in last argument.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeCookie()
+     */
+    public function tryToDontSeeCookie($cookie, array $params = [], bool $showDebug = true): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeCookie and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeCookie()
+     */
+    public function retryDontSeeCookie($cookie, array $params = [], bool $showDebug = true) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeCookie', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Sets a cookie with the given name and value.
+     * You can set additional cookie params like `domain`, `path`, `expires`, `secure` in array passed as last argument.
+     *
+     * ``` php
+     * <?php
+     * $I->setCookie('PHPSESSID', 'el4ukv0kqbvoirg7nkp4dncpk3');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::setCookie()
+     */
+    public function setCookie($name, $value, array $params = [], $showDebug = true): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('setCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Sets a cookie with the given name and value.
+     * You can set additional cookie params like `domain`, `path`, `expires`, `secure` in array passed as last argument.
+     *
+     * ``` php
+     * <?php
+     * $I->setCookie('PHPSESSID', 'el4ukv0kqbvoirg7nkp4dncpk3');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::setCookie()
+     */
+    public function tryToSetCookie($name, $value, array $params = [], $showDebug = true): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('setCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes setCookie and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::setCookie()
+     */
+    public function retrySetCookie($name, $value, array $params = [], $showDebug = true) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('setCookie', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Unsets cookie with the given name.
+     * You can set additional cookie params like `domain`, `path` in array passed as last argument.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::resetCookie()
+     */
+    public function resetCookie($cookie, array $params = [], bool $showDebug = true): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('resetCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Unsets cookie with the given name.
+     * You can set additional cookie params like `domain`, `path` in array passed as last argument.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::resetCookie()
+     */
+    public function tryToResetCookie($cookie, array $params = [], bool $showDebug = true): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('resetCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes resetCookie and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::resetCookie()
+     */
+    public function retryResetCookie($cookie, array $params = [], bool $showDebug = true) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('resetCookie', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Grabs a cookie value.
+     * You can set additional cookie params like `domain`, `path` in array passed as last argument.
+     * If the cookie is set by an ajax request (XMLHttpRequest), there might be some delay caused by the browser, so try `$I->wait(0.1)`.
+     * @see \Codeception\Module\WebDriver::grabCookie()
+     */
+    public function grabCookie($cookie, array $params = []): mixed {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabCookie', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabCookie and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::grabCookie()
+     */
+    public function retryGrabCookie($cookie, array $params = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabCookie', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Grabs current page source code.
+     *
+     * @throws ModuleException if no page was opened.
+     * @return string Current page source code.
+     * @see \Codeception\Module\WebDriver::grabPageSource()
+     */
+    public function grabPageSource(): string {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabPageSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabPageSource and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::grabPageSource()
+     */
+    public function retryGrabPageSource() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabPageSource', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Open web page at the given absolute URL and sets its hostname as the base host.
+     *
+     * ``` php
+     * <?php
+     * $I->amOnUrl('https://codeception.com');
+     * $I->amOnPage('/quickstart'); // moves to https://codeception.com/quickstart
+     * ```
+     * @see \Codeception\Module\WebDriver::amOnUrl()
+     */
+    public function amOnUrl($url): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Condition('amOnUrl', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Opens the page for the given relative URI.
+     *
+     * ``` php
+     * <?php
+     * // opens front page
+     * $I->amOnPage('/');
+     * // opens /register page
+     * $I->amOnPage('/register');
+     * ```
+     * @see \Codeception\Module\WebDriver::amOnPage()
+     */
+    public function amOnPage($page): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Condition('amOnPage', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current page contains the given string (case insensitive).
+     *
+     * You can specify a specific HTML element (via CSS or XPath) as the second
+     * parameter to only search within that element.
+     *
+     * ``` php
+     * <?php
+     * $I->see('Logout');                        // I can suppose user is logged in
+     * $I->see('Sign Up', 'h1');                 // I can suppose it's a signup page
+     * $I->see('Sign Up', '//body/h1');          // with XPath
+     * $I->see('Sign Up', ['css' => 'body h1']); // with strict CSS locator
+     * ```
+     *
+     * Note that the search is done after stripping all HTML tags from the body,
+     * so `$I->see('strong')` will return true for strings like:
+     *
+     *   - `<p>I am Stronger than thou</p>`
+     *   - `<script>document.createElement('strong');</script>`
+     *
+     * But will *not* be true for strings like:
+     *
+     *   - `<strong>Home</strong>`
+     *   - `<div class="strong">Home</strong>`
+     *   - `<!-- strong -->`
+     *
+     * For checking the raw source code, use `seeInSource()`.
+     *
+     * @param array|string $selector optional
+     * @see \Codeception\Module\WebDriver::see()
+     */
+    public function see($text, $selector = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('see', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current page contains the given string (case insensitive).
+     *
+     * You can specify a specific HTML element (via CSS or XPath) as the second
+     * parameter to only search within that element.
+     *
+     * ``` php
+     * <?php
+     * $I->see('Logout');                        // I can suppose user is logged in
+     * $I->see('Sign Up', 'h1');                 // I can suppose it's a signup page
+     * $I->see('Sign Up', '//body/h1');          // with XPath
+     * $I->see('Sign Up', ['css' => 'body h1']); // with strict CSS locator
+     * ```
+     *
+     * Note that the search is done after stripping all HTML tags from the body,
+     * so `$I->see('strong')` will return true for strings like:
+     *
+     *   - `<p>I am Stronger than thou</p>`
+     *   - `<script>document.createElement('strong');</script>`
+     *
+     * But will *not* be true for strings like:
+     *
+     *   - `<strong>Home</strong>`
+     *   - `<div class="strong">Home</strong>`
+     *   - `<!-- strong -->`
+     *
+     * For checking the raw source code, use `seeInSource()`.
+     *
+     * @param array|string $selector optional
+     * @see \Codeception\Module\WebDriver::see()
+     */
+    public function canSee($text, $selector = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('see', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current page contains the given string (case insensitive).
+     *
+     * You can specify a specific HTML element (via CSS or XPath) as the second
+     * parameter to only search within that element.
+     *
+     * ``` php
+     * <?php
+     * $I->see('Logout');                        // I can suppose user is logged in
+     * $I->see('Sign Up', 'h1');                 // I can suppose it's a signup page
+     * $I->see('Sign Up', '//body/h1');          // with XPath
+     * $I->see('Sign Up', ['css' => 'body h1']); // with strict CSS locator
+     * ```
+     *
+     * Note that the search is done after stripping all HTML tags from the body,
+     * so `$I->see('strong')` will return true for strings like:
+     *
+     *   - `<p>I am Stronger than thou</p>`
+     *   - `<script>document.createElement('strong');</script>`
+     *
+     * But will *not* be true for strings like:
+     *
+     *   - `<strong>Home</strong>`
+     *   - `<div class="strong">Home</strong>`
+     *   - `<!-- strong -->`
+     *
+     * For checking the raw source code, use `seeInSource()`.
+     *
+     * @param array|string $selector optional
+     * @see \Codeception\Module\WebDriver::see()
+     */
+    public function tryToSee($text, $selector = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('see', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes see and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::see()
+     */
+    public function retrySee($text, $selector = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('see', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current page doesn't contain the text specified (case insensitive).
+     * Give a locator as the second parameter to match a specific region.
+     *
+     * ```php
+     * <?php
+     * $I->dontSee('Login');                         // I can suppose user is already logged in
+     * $I->dontSee('Sign Up','h1');                  // I can suppose it's not a signup page
+     * $I->dontSee('Sign Up','//body/h1');           // with XPath
+     * $I->dontSee('Sign Up', ['css' => 'body h1']); // with strict CSS locator
+     * ```
+     *
+     * Note that the search is done after stripping all HTML tags from the body,
+     * so `$I->dontSee('strong')` will fail on strings like:
+     *
+     *   - `<p>I am Stronger than thou</p>`
+     *   - `<script>document.createElement('strong');</script>`
+     *
+     * But will ignore strings like:
+     *
+     *   - `<strong>Home</strong>`
+     *   - `<div class="strong">Home</strong>`
+     *   - `<!-- strong -->`
+     *
+     * For checking the raw source code, use `seeInSource()`.
+     *
+     * @param array|string $selector optional
+     * @see \Codeception\Module\WebDriver::dontSee()
+     */
+    public function dontSee($text, $selector = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSee', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current page doesn't contain the text specified (case insensitive).
+     * Give a locator as the second parameter to match a specific region.
+     *
+     * ```php
+     * <?php
+     * $I->dontSee('Login');                         // I can suppose user is already logged in
+     * $I->dontSee('Sign Up','h1');                  // I can suppose it's not a signup page
+     * $I->dontSee('Sign Up','//body/h1');           // with XPath
+     * $I->dontSee('Sign Up', ['css' => 'body h1']); // with strict CSS locator
+     * ```
+     *
+     * Note that the search is done after stripping all HTML tags from the body,
+     * so `$I->dontSee('strong')` will fail on strings like:
+     *
+     *   - `<p>I am Stronger than thou</p>`
+     *   - `<script>document.createElement('strong');</script>`
+     *
+     * But will ignore strings like:
+     *
+     *   - `<strong>Home</strong>`
+     *   - `<div class="strong">Home</strong>`
+     *   - `<!-- strong -->`
+     *
+     * For checking the raw source code, use `seeInSource()`.
+     *
+     * @param array|string $selector optional
+     * @see \Codeception\Module\WebDriver::dontSee()
+     */
+    public function cantSee($text, $selector = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSee', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current page doesn't contain the text specified (case insensitive).
+     * Give a locator as the second parameter to match a specific region.
+     *
+     * ```php
+     * <?php
+     * $I->dontSee('Login');                         // I can suppose user is already logged in
+     * $I->dontSee('Sign Up','h1');                  // I can suppose it's not a signup page
+     * $I->dontSee('Sign Up','//body/h1');           // with XPath
+     * $I->dontSee('Sign Up', ['css' => 'body h1']); // with strict CSS locator
+     * ```
+     *
+     * Note that the search is done after stripping all HTML tags from the body,
+     * so `$I->dontSee('strong')` will fail on strings like:
+     *
+     *   - `<p>I am Stronger than thou</p>`
+     *   - `<script>document.createElement('strong');</script>`
+     *
+     * But will ignore strings like:
+     *
+     *   - `<strong>Home</strong>`
+     *   - `<div class="strong">Home</strong>`
+     *   - `<!-- strong -->`
+     *
+     * For checking the raw source code, use `seeInSource()`.
+     *
+     * @param array|string $selector optional
+     * @see \Codeception\Module\WebDriver::dontSee()
+     */
+    public function tryToDontSee($text, $selector = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSee', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSee and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSee()
+     */
+    public function retryDontSee($text, $selector = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSee', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current page contains the given string in its
+     * raw source code.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInSource('<h1>Green eggs &amp; ham</h1>');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInSource()
+     */
+    public function seeInSource($raw): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current page contains the given string in its
+     * raw source code.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInSource('<h1>Green eggs &amp; ham</h1>');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInSource()
+     */
+    public function canSeeInSource($raw): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current page contains the given string in its
+     * raw source code.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInSource('<h1>Green eggs &amp; ham</h1>');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInSource()
+     */
+    public function tryToSeeInSource($raw): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInSource and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeInSource()
+     */
+    public function retrySeeInSource($raw) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInSource', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current page contains the given string in its
+     * raw source code.
+     *
+     * ```php
+     * <?php
+     * $I->dontSeeInSource('<h1>Green eggs &amp; ham</h1>');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInSource()
+     */
+    public function dontSeeInSource($raw): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current page contains the given string in its
+     * raw source code.
+     *
+     * ```php
+     * <?php
+     * $I->dontSeeInSource('<h1>Green eggs &amp; ham</h1>');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInSource()
+     */
+    public function cantSeeInSource($raw): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current page contains the given string in its
+     * raw source code.
+     *
+     * ```php
+     * <?php
+     * $I->dontSeeInSource('<h1>Green eggs &amp; ham</h1>');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInSource()
+     */
+    public function tryToDontSeeInSource($raw): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInSource and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeInSource()
+     */
+    public function retryDontSeeInSource($raw) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInSource', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the page source contains the given string.
+     *
+     * ```php
+     * <?php
+     * $I->seeInPageSource('<link rel="apple-touch-icon"');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInPageSource()
+     */
+    public function seeInPageSource(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInPageSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the page source contains the given string.
+     *
+     * ```php
+     * <?php
+     * $I->seeInPageSource('<link rel="apple-touch-icon"');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInPageSource()
+     */
+    public function canSeeInPageSource(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInPageSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the page source contains the given string.
+     *
+     * ```php
+     * <?php
+     * $I->seeInPageSource('<link rel="apple-touch-icon"');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInPageSource()
+     */
+    public function tryToSeeInPageSource(string $text): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInPageSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInPageSource and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeInPageSource()
+     */
+    public function retrySeeInPageSource(string $text) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInPageSource', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the page source doesn't contain the given string.
+     * @see \Codeception\Module\WebDriver::dontSeeInPageSource()
+     */
+    public function dontSeeInPageSource(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInPageSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the page source doesn't contain the given string.
+     * @see \Codeception\Module\WebDriver::dontSeeInPageSource()
+     */
+    public function cantSeeInPageSource(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInPageSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the page source doesn't contain the given string.
+     * @see \Codeception\Module\WebDriver::dontSeeInPageSource()
+     */
+    public function tryToDontSeeInPageSource(string $text): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInPageSource', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInPageSource and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeInPageSource()
+     */
+    public function retryDontSeeInPageSource(string $text) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInPageSource', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Perform a click on a link or a button, given by a locator.
+     * If a fuzzy locator is given, the page will be searched for a button, link, or image matching the locator string.
+     * For buttons, the "value" attribute, "name" attribute, and inner text are searched.
+     * For links, the link text is searched.
+     * For images, the "alt" attribute and inner text of any parent links are searched.
+     *
+     * The second parameter is a context (CSS or XPath locator) to narrow the search.
+     *
+     * Note that if the locator matches a button of type `submit`, the form will be submitted.
+     *
+     * ``` php
+     * <?php
+     * // simple link
+     * $I->click('Logout');
+     * // button of form
+     * $I->click('Submit');
+     * // CSS button
+     * $I->click('#form input[type=submit]');
+     * // XPath
+     * $I->click('//form/*[@type="submit"]');
+     * // link in context
+     * $I->click('Logout', '#nav');
+     * // using strict locator
+     * $I->click(['link' => 'Login']);
+     * ```
+     * @param string|array $link
+     * @see \Codeception\Module\WebDriver::click()
+     */
+    public function click($link, $context = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('click', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Perform a click on a link or a button, given by a locator.
+     * If a fuzzy locator is given, the page will be searched for a button, link, or image matching the locator string.
+     * For buttons, the "value" attribute, "name" attribute, and inner text are searched.
+     * For links, the link text is searched.
+     * For images, the "alt" attribute and inner text of any parent links are searched.
+     *
+     * The second parameter is a context (CSS or XPath locator) to narrow the search.
+     *
+     * Note that if the locator matches a button of type `submit`, the form will be submitted.
+     *
+     * ``` php
+     * <?php
+     * // simple link
+     * $I->click('Logout');
+     * // button of form
+     * $I->click('Submit');
+     * // CSS button
+     * $I->click('#form input[type=submit]');
+     * // XPath
+     * $I->click('//form/*[@type="submit"]');
+     * // link in context
+     * $I->click('Logout', '#nav');
+     * // using strict locator
+     * $I->click(['link' => 'Login']);
+     * ```
+     * @param string|array $link
+     * @see \Codeception\Module\WebDriver::click()
+     */
+    public function tryToClick($link, $context = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('click', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes click and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::click()
+     */
+    public function retryClick($link, $context = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('click', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that there's a link with the specified text.
+     * Give a full URL as the second parameter to match links with that exact URL.
+     *
+     * ``` php
+     * <?php
+     * $I->seeLink('Logout'); // matches <a href="#">Logout</a>
+     * $I->seeLink('Logout','/logout'); // matches <a href="/logout">Logout</a>
+     * ```
+     * @see \Codeception\Module\WebDriver::seeLink()
+     */
+    public function seeLink(string $text, ?string $url = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeLink', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that there's a link with the specified text.
+     * Give a full URL as the second parameter to match links with that exact URL.
+     *
+     * ``` php
+     * <?php
+     * $I->seeLink('Logout'); // matches <a href="#">Logout</a>
+     * $I->seeLink('Logout','/logout'); // matches <a href="/logout">Logout</a>
+     * ```
+     * @see \Codeception\Module\WebDriver::seeLink()
+     */
+    public function canSeeLink(string $text, ?string $url = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeLink', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that there's a link with the specified text.
+     * Give a full URL as the second parameter to match links with that exact URL.
+     *
+     * ``` php
+     * <?php
+     * $I->seeLink('Logout'); // matches <a href="#">Logout</a>
+     * $I->seeLink('Logout','/logout'); // matches <a href="/logout">Logout</a>
+     * ```
+     * @see \Codeception\Module\WebDriver::seeLink()
+     */
+    public function tryToSeeLink(string $text, ?string $url = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeLink', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeLink and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeLink()
+     */
+    public function retrySeeLink(string $text, ?string $url = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeLink', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the page doesn't contain a link with the given string.
+     * If the second parameter is given, only links with a matching "href" attribute will be checked.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeLink('Logout'); // I suppose user is not logged in
+     * $I->dontSeeLink('Checkout now', '/store/cart.php');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeLink()
+     */
+    public function dontSeeLink(string $text, string $url = ""): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeLink', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the page doesn't contain a link with the given string.
+     * If the second parameter is given, only links with a matching "href" attribute will be checked.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeLink('Logout'); // I suppose user is not logged in
+     * $I->dontSeeLink('Checkout now', '/store/cart.php');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeLink()
+     */
+    public function cantSeeLink(string $text, string $url = ""): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeLink', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the page doesn't contain a link with the given string.
+     * If the second parameter is given, only links with a matching "href" attribute will be checked.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeLink('Logout'); // I suppose user is not logged in
+     * $I->dontSeeLink('Checkout now', '/store/cart.php');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeLink()
+     */
+    public function tryToDontSeeLink(string $text, string $url = ""): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeLink', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeLink and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeLink()
+     */
+    public function retryDontSeeLink(string $text, string $url = "") {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeLink', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that current URI contains the given string.
+     *
+     * ``` php
+     * <?php
+     * // to match: /home/dashboard
+     * $I->seeInCurrentUrl('home');
+     * // to match: /users/1
+     * $I->seeInCurrentUrl('/users/');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInCurrentUrl()
+     */
+    public function seeInCurrentUrl(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInCurrentUrl', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that current URI contains the given string.
+     *
+     * ``` php
+     * <?php
+     * // to match: /home/dashboard
+     * $I->seeInCurrentUrl('home');
+     * // to match: /users/1
+     * $I->seeInCurrentUrl('/users/');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInCurrentUrl()
+     */
+    public function canSeeInCurrentUrl(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInCurrentUrl', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that current URI contains the given string.
+     *
+     * ``` php
+     * <?php
+     * // to match: /home/dashboard
+     * $I->seeInCurrentUrl('home');
+     * // to match: /users/1
+     * $I->seeInCurrentUrl('/users/');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInCurrentUrl()
+     */
+    public function tryToSeeInCurrentUrl(string $uri): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInCurrentUrl', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInCurrentUrl and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeInCurrentUrl()
+     */
+    public function retrySeeInCurrentUrl(string $uri) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInCurrentUrl', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current URL is equal to the given string.
+     * Unlike `seeInCurrentUrl`, this only matches the full URL.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->seeCurrentUrlEquals('/');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlEquals()
+     */
+    public function seeCurrentUrlEquals(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeCurrentUrlEquals', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current URL is equal to the given string.
+     * Unlike `seeInCurrentUrl`, this only matches the full URL.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->seeCurrentUrlEquals('/');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlEquals()
+     */
+    public function canSeeCurrentUrlEquals(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeCurrentUrlEquals', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current URL is equal to the given string.
+     * Unlike `seeInCurrentUrl`, this only matches the full URL.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->seeCurrentUrlEquals('/');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlEquals()
+     */
+    public function tryToSeeCurrentUrlEquals(string $uri): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeCurrentUrlEquals', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeCurrentUrlEquals and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlEquals()
+     */
+    public function retrySeeCurrentUrlEquals(string $uri) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeCurrentUrlEquals', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current URL matches the given regular expression.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->seeCurrentUrlMatches('~^/users/(\d+)~');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlMatches()
+     */
+    public function seeCurrentUrlMatches(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeCurrentUrlMatches', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current URL matches the given regular expression.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->seeCurrentUrlMatches('~^/users/(\d+)~');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlMatches()
+     */
+    public function canSeeCurrentUrlMatches(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeCurrentUrlMatches', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current URL matches the given regular expression.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->seeCurrentUrlMatches('~^/users/(\d+)~');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlMatches()
+     */
+    public function tryToSeeCurrentUrlMatches(string $uri): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeCurrentUrlMatches', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeCurrentUrlMatches and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeCurrentUrlMatches()
+     */
+    public function retrySeeCurrentUrlMatches(string $uri) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeCurrentUrlMatches', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current URI doesn't contain the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInCurrentUrl('/users/');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInCurrentUrl()
+     */
+    public function dontSeeInCurrentUrl(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInCurrentUrl', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current URI doesn't contain the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInCurrentUrl('/users/');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInCurrentUrl()
+     */
+    public function cantSeeInCurrentUrl(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInCurrentUrl', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current URI doesn't contain the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInCurrentUrl('/users/');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInCurrentUrl()
+     */
+    public function tryToDontSeeInCurrentUrl(string $uri): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInCurrentUrl', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInCurrentUrl and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeInCurrentUrl()
+     */
+    public function retryDontSeeInCurrentUrl(string $uri) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInCurrentUrl', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the current URL doesn't equal the given string.
+     * Unlike `dontSeeInCurrentUrl`, this only matches the full URL.
+     *
+     * ``` php
+     * <?php
+     * // current url is not root
+     * $I->dontSeeCurrentUrlEquals('/');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlEquals()
+     */
+    public function dontSeeCurrentUrlEquals(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeCurrentUrlEquals', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the current URL doesn't equal the given string.
+     * Unlike `dontSeeInCurrentUrl`, this only matches the full URL.
+     *
+     * ``` php
+     * <?php
+     * // current url is not root
+     * $I->dontSeeCurrentUrlEquals('/');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlEquals()
+     */
+    public function cantSeeCurrentUrlEquals(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeCurrentUrlEquals', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the current URL doesn't equal the given string.
+     * Unlike `dontSeeInCurrentUrl`, this only matches the full URL.
+     *
+     * ``` php
+     * <?php
+     * // current url is not root
+     * $I->dontSeeCurrentUrlEquals('/');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlEquals()
+     */
+    public function tryToDontSeeCurrentUrlEquals(string $uri): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeCurrentUrlEquals', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeCurrentUrlEquals and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlEquals()
+     */
+    public function retryDontSeeCurrentUrlEquals(string $uri) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeCurrentUrlEquals', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that current url doesn't match the given regular expression.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->dontSeeCurrentUrlMatches('~^/users/(\d+)~');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlMatches()
+     */
+    public function dontSeeCurrentUrlMatches(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeCurrentUrlMatches', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that current url doesn't match the given regular expression.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->dontSeeCurrentUrlMatches('~^/users/(\d+)~');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlMatches()
+     */
+    public function cantSeeCurrentUrlMatches(string $uri): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeCurrentUrlMatches', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that current url doesn't match the given regular expression.
+     *
+     * ``` php
+     * <?php
+     * // to match root url
+     * $I->dontSeeCurrentUrlMatches('~^/users/(\d+)~');
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlMatches()
+     */
+    public function tryToDontSeeCurrentUrlMatches(string $uri): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeCurrentUrlMatches', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeCurrentUrlMatches and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeCurrentUrlMatches()
+     */
+    public function retryDontSeeCurrentUrlMatches(string $uri) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeCurrentUrlMatches', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Executes the given regular expression against the current URI and returns the first capturing group.
+     * If no parameters are provided, the full URI is returned.
+     *
+     * ``` php
+     * <?php
+     * $user_id = $I->grabFromCurrentUrl('~^/user/(\d+)/~');
+     * $uri = $I->grabFromCurrentUrl();
+     * ```
+     * @see \Codeception\Module\WebDriver::grabFromCurrentUrl()
+     */
+    public function grabFromCurrentUrl($uri = NULL): mixed {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabFromCurrentUrl', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabFromCurrentUrl and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::grabFromCurrentUrl()
+     */
+    public function retryGrabFromCurrentUrl($uri = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabFromCurrentUrl', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the specified checkbox is checked.
+     *
+     * ``` php
+     * <?php
+     * $I->seeCheckboxIsChecked('#agree'); // I suppose user agreed to terms
+     * $I->seeCheckboxIsChecked('#signup_form input[type=checkbox]'); // I suppose user agreed to terms, If there is only one checkbox in form.
+     * $I->seeCheckboxIsChecked('//form/input[@type=checkbox and @name=agree]');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCheckboxIsChecked()
+     */
+    public function seeCheckboxIsChecked($checkbox): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeCheckboxIsChecked', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the specified checkbox is checked.
+     *
+     * ``` php
+     * <?php
+     * $I->seeCheckboxIsChecked('#agree'); // I suppose user agreed to terms
+     * $I->seeCheckboxIsChecked('#signup_form input[type=checkbox]'); // I suppose user agreed to terms, If there is only one checkbox in form.
+     * $I->seeCheckboxIsChecked('//form/input[@type=checkbox and @name=agree]');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCheckboxIsChecked()
+     */
+    public function canSeeCheckboxIsChecked($checkbox): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeCheckboxIsChecked', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the specified checkbox is checked.
+     *
+     * ``` php
+     * <?php
+     * $I->seeCheckboxIsChecked('#agree'); // I suppose user agreed to terms
+     * $I->seeCheckboxIsChecked('#signup_form input[type=checkbox]'); // I suppose user agreed to terms, If there is only one checkbox in form.
+     * $I->seeCheckboxIsChecked('//form/input[@type=checkbox and @name=agree]');
+     * ```
+     * @see \Codeception\Module\WebDriver::seeCheckboxIsChecked()
+     */
+    public function tryToSeeCheckboxIsChecked($checkbox): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeCheckboxIsChecked', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeCheckboxIsChecked and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeCheckboxIsChecked()
+     */
+    public function retrySeeCheckboxIsChecked($checkbox) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeCheckboxIsChecked', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Check that the specified checkbox is unchecked.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeCheckboxIsChecked('#agree'); // I suppose user didn't agree to terms
+     * $I->seeCheckboxIsChecked('#signup_form input[type=checkbox]'); // I suppose user didn't check the first checkbox in form.
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCheckboxIsChecked()
+     */
+    public function dontSeeCheckboxIsChecked($checkbox): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeCheckboxIsChecked', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Check that the specified checkbox is unchecked.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeCheckboxIsChecked('#agree'); // I suppose user didn't agree to terms
+     * $I->seeCheckboxIsChecked('#signup_form input[type=checkbox]'); // I suppose user didn't check the first checkbox in form.
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCheckboxIsChecked()
+     */
+    public function cantSeeCheckboxIsChecked($checkbox): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeCheckboxIsChecked', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Check that the specified checkbox is unchecked.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeCheckboxIsChecked('#agree'); // I suppose user didn't agree to terms
+     * $I->seeCheckboxIsChecked('#signup_form input[type=checkbox]'); // I suppose user didn't check the first checkbox in form.
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeCheckboxIsChecked()
+     */
+    public function tryToDontSeeCheckboxIsChecked($checkbox): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeCheckboxIsChecked', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeCheckboxIsChecked and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeCheckboxIsChecked()
+     */
+    public function retryDontSeeCheckboxIsChecked($checkbox) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeCheckboxIsChecked', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the given input field or textarea *equals* (i.e. not just contains) the given value.
+     * Fields are matched by label text, the "name" attribute, CSS, or XPath.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInField('Body','Type your comment here');
+     * $I->seeInField('form textarea[name=body]','Type your comment here');
+     * $I->seeInField('form input[type=hidden]','hidden_value');
+     * $I->seeInField('#searchform input','Search');
+     * $I->seeInField('//form/*[@name=search]','Search');
+     * $I->seeInField(['name' => 'search'], 'Search');
+     * ```
+     *
+     * @param string|array $field
+     * @see \Codeception\Module\WebDriver::seeInField()
+     */
+    public function seeInField($field, $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the given input field or textarea *equals* (i.e. not just contains) the given value.
+     * Fields are matched by label text, the "name" attribute, CSS, or XPath.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInField('Body','Type your comment here');
+     * $I->seeInField('form textarea[name=body]','Type your comment here');
+     * $I->seeInField('form input[type=hidden]','hidden_value');
+     * $I->seeInField('#searchform input','Search');
+     * $I->seeInField('//form/*[@name=search]','Search');
+     * $I->seeInField(['name' => 'search'], 'Search');
+     * ```
+     *
+     * @param string|array $field
+     * @see \Codeception\Module\WebDriver::seeInField()
+     */
+    public function canSeeInField($field, $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the given input field or textarea *equals* (i.e. not just contains) the given value.
+     * Fields are matched by label text, the "name" attribute, CSS, or XPath.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInField('Body','Type your comment here');
+     * $I->seeInField('form textarea[name=body]','Type your comment here');
+     * $I->seeInField('form input[type=hidden]','hidden_value');
+     * $I->seeInField('#searchform input','Search');
+     * $I->seeInField('//form/*[@name=search]','Search');
+     * $I->seeInField(['name' => 'search'], 'Search');
+     * ```
+     *
+     * @param string|array $field
+     * @see \Codeception\Module\WebDriver::seeInField()
+     */
+    public function tryToSeeInField($field, $value): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInField and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeInField()
+     */
+    public function retrySeeInField($field, $value) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInField', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that an input field or textarea doesn't contain the given value.
+     * For fuzzy locators, the field is matched by label text, CSS and XPath.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInField('Body','Type your comment here');
+     * $I->dontSeeInField('form textarea[name=body]','Type your comment here');
+     * $I->dontSeeInField('form input[type=hidden]','hidden_value');
+     * $I->dontSeeInField('#searchform input','Search');
+     * $I->dontSeeInField('//form/*[@name=search]','Search');
+     * $I->dontSeeInField(['name' => 'search'], 'Search');
+     * ```
+     * @param string|array $field
+     * @see \Codeception\Module\WebDriver::dontSeeInField()
+     */
+    public function dontSeeInField($field, $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that an input field or textarea doesn't contain the given value.
+     * For fuzzy locators, the field is matched by label text, CSS and XPath.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInField('Body','Type your comment here');
+     * $I->dontSeeInField('form textarea[name=body]','Type your comment here');
+     * $I->dontSeeInField('form input[type=hidden]','hidden_value');
+     * $I->dontSeeInField('#searchform input','Search');
+     * $I->dontSeeInField('//form/*[@name=search]','Search');
+     * $I->dontSeeInField(['name' => 'search'], 'Search');
+     * ```
+     * @param string|array $field
+     * @see \Codeception\Module\WebDriver::dontSeeInField()
+     */
+    public function cantSeeInField($field, $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that an input field or textarea doesn't contain the given value.
+     * For fuzzy locators, the field is matched by label text, CSS and XPath.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInField('Body','Type your comment here');
+     * $I->dontSeeInField('form textarea[name=body]','Type your comment here');
+     * $I->dontSeeInField('form input[type=hidden]','hidden_value');
+     * $I->dontSeeInField('#searchform input','Search');
+     * $I->dontSeeInField('//form/*[@name=search]','Search');
+     * $I->dontSeeInField(['name' => 'search'], 'Search');
+     * ```
+     * @param string|array $field
+     * @see \Codeception\Module\WebDriver::dontSeeInField()
+     */
+    public function tryToDontSeeInField($field, $value): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInField and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeInField()
+     */
+    public function retryDontSeeInField($field, $value) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInField', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks if the array of form parameters (name => value) are set on the form matched with the
+     * passed selector.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('form[name=myform]', [
+     *      'input1' => 'value',
+     *      'input2' => 'other value',
+     * ]);
+     * ```
+     *
+     * For multi-select elements, or to check values of multiple elements with the same name, an
+     * array may be passed:
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('.form-class', [
+     *      'multiselect' => [
+     *          'value1',
+     *          'value2',
+     *      ],
+     *      'checkbox[]' => [
+     *          'a checked value',
+     *          'another checked value',
+     *      ],
+     * ]);
+     * ```
+     *
+     * Additionally, checkbox values can be checked with a boolean.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('#form-id', [
+     *      'checkbox1' => true,        // passes if checked
+     *      'checkbox2' => false,       // passes if unchecked
+     * ]);
+     * ```
+     *
+     * Pair this with submitForm for quick testing magic.
+     *
+     * ``` php
+     * <?php
+     * $form = [
+     *      'field1' => 'value',
+     *      'field2' => 'another value',
+     *      'checkbox1' => true,
+     *      // ...
+     * ];
+     * $I->submitForm('//form[@id=my-form]', string $form, 'submitButton');
+     * // $I->amOnPage('/path/to/form-page') may be needed
+     * $I->seeInFormFields('//form[@id=my-form]', string $form);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInFormFields()
+     */
+    public function seeInFormFields($formSelector, array $params): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInFormFields', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks if the array of form parameters (name => value) are set on the form matched with the
+     * passed selector.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('form[name=myform]', [
+     *      'input1' => 'value',
+     *      'input2' => 'other value',
+     * ]);
+     * ```
+     *
+     * For multi-select elements, or to check values of multiple elements with the same name, an
+     * array may be passed:
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('.form-class', [
+     *      'multiselect' => [
+     *          'value1',
+     *          'value2',
+     *      ],
+     *      'checkbox[]' => [
+     *          'a checked value',
+     *          'another checked value',
+     *      ],
+     * ]);
+     * ```
+     *
+     * Additionally, checkbox values can be checked with a boolean.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('#form-id', [
+     *      'checkbox1' => true,        // passes if checked
+     *      'checkbox2' => false,       // passes if unchecked
+     * ]);
+     * ```
+     *
+     * Pair this with submitForm for quick testing magic.
+     *
+     * ``` php
+     * <?php
+     * $form = [
+     *      'field1' => 'value',
+     *      'field2' => 'another value',
+     *      'checkbox1' => true,
+     *      // ...
+     * ];
+     * $I->submitForm('//form[@id=my-form]', string $form, 'submitButton');
+     * // $I->amOnPage('/path/to/form-page') may be needed
+     * $I->seeInFormFields('//form[@id=my-form]', string $form);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInFormFields()
+     */
+    public function canSeeInFormFields($formSelector, array $params): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInFormFields', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks if the array of form parameters (name => value) are set on the form matched with the
+     * passed selector.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('form[name=myform]', [
+     *      'input1' => 'value',
+     *      'input2' => 'other value',
+     * ]);
+     * ```
+     *
+     * For multi-select elements, or to check values of multiple elements with the same name, an
+     * array may be passed:
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('.form-class', [
+     *      'multiselect' => [
+     *          'value1',
+     *          'value2',
+     *      ],
+     *      'checkbox[]' => [
+     *          'a checked value',
+     *          'another checked value',
+     *      ],
+     * ]);
+     * ```
+     *
+     * Additionally, checkbox values can be checked with a boolean.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInFormFields('#form-id', [
+     *      'checkbox1' => true,        // passes if checked
+     *      'checkbox2' => false,       // passes if unchecked
+     * ]);
+     * ```
+     *
+     * Pair this with submitForm for quick testing magic.
+     *
+     * ``` php
+     * <?php
+     * $form = [
+     *      'field1' => 'value',
+     *      'field2' => 'another value',
+     *      'checkbox1' => true,
+     *      // ...
+     * ];
+     * $I->submitForm('//form[@id=my-form]', string $form, 'submitButton');
+     * // $I->amOnPage('/path/to/form-page') may be needed
+     * $I->seeInFormFields('//form[@id=my-form]', string $form);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeInFormFields()
+     */
+    public function tryToSeeInFormFields($formSelector, array $params): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInFormFields', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInFormFields and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeInFormFields()
+     */
+    public function retrySeeInFormFields($formSelector, array $params) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInFormFields', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks if the array of form parameters (name => value) are not set on the form matched with
+     * the passed selector.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('form[name=myform]', [
+     *      'input1' => 'non-existent value',
+     *      'input2' => 'other non-existent value',
+     * ]);
+     * ```
+     *
+     * To check that an element hasn't been assigned any one of many values, an array can be passed
+     * as the value:
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('.form-class', [
+     *      'fieldName' => [
+     *          'This value shouldn\'t be set',
+     *          'And this value shouldn\'t be set',
+     *      ],
+     * ]);
+     * ```
+     *
+     * Additionally, checkbox values can be checked with a boolean.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('#form-id', [
+     *      'checkbox1' => true,        // fails if checked
+     *      'checkbox2' => false,       // fails if unchecked
+     * ]);
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInFormFields()
+     */
+    public function dontSeeInFormFields($formSelector, array $params): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInFormFields', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks if the array of form parameters (name => value) are not set on the form matched with
+     * the passed selector.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('form[name=myform]', [
+     *      'input1' => 'non-existent value',
+     *      'input2' => 'other non-existent value',
+     * ]);
+     * ```
+     *
+     * To check that an element hasn't been assigned any one of many values, an array can be passed
+     * as the value:
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('.form-class', [
+     *      'fieldName' => [
+     *          'This value shouldn\'t be set',
+     *          'And this value shouldn\'t be set',
+     *      ],
+     * ]);
+     * ```
+     *
+     * Additionally, checkbox values can be checked with a boolean.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('#form-id', [
+     *      'checkbox1' => true,        // fails if checked
+     *      'checkbox2' => false,       // fails if unchecked
+     * ]);
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInFormFields()
+     */
+    public function cantSeeInFormFields($formSelector, array $params): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInFormFields', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks if the array of form parameters (name => value) are not set on the form matched with
+     * the passed selector.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('form[name=myform]', [
+     *      'input1' => 'non-existent value',
+     *      'input2' => 'other non-existent value',
+     * ]);
+     * ```
+     *
+     * To check that an element hasn't been assigned any one of many values, an array can be passed
+     * as the value:
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('.form-class', [
+     *      'fieldName' => [
+     *          'This value shouldn\'t be set',
+     *          'And this value shouldn\'t be set',
+     *      ],
+     * ]);
+     * ```
+     *
+     * Additionally, checkbox values can be checked with a boolean.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInFormFields('#form-id', [
+     *      'checkbox1' => true,        // fails if checked
+     *      'checkbox2' => false,       // fails if unchecked
+     * ]);
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeInFormFields()
+     */
+    public function tryToDontSeeInFormFields($formSelector, array $params): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInFormFields', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInFormFields and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeInFormFields()
+     */
+    public function retryDontSeeInFormFields($formSelector, array $params) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInFormFields', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Selects an option in a select tag or in radio button group.
+     *
+     * ``` php
+     * <?php
+     * $I->selectOption('form select[name=account]', 'Premium');
+     * $I->selectOption('form input[name=payment]', 'Monthly');
+     * $I->selectOption('//form/select[@name=account]', 'Monthly');
+     * ```
+     *
+     * Provide an array for the second argument to select multiple options:
+     *
+     * ``` php
+     * <?php
+     * $I->selectOption('Which OS do you use?', array('Windows','Linux'));
+     * ```
+     *
+     * Or provide an associative array for the second argument to specifically define which selection method should be used:
+     *
+     * ``` php
+     * <?php
+     * $I->selectOption('Which OS do you use?', array('text' => 'Windows')); // Only search by text 'Windows'
+     * $I->selectOption('Which OS do you use?', array('value' => 'windows')); // Only search by value 'windows'
+     * ```
+     * @see \Codeception\Module\WebDriver::selectOption()
+     */
+    public function selectOption($select, $option): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('selectOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Selects an option in a select tag or in radio button group.
+     *
+     * ``` php
+     * <?php
+     * $I->selectOption('form select[name=account]', 'Premium');
+     * $I->selectOption('form input[name=payment]', 'Monthly');
+     * $I->selectOption('//form/select[@name=account]', 'Monthly');
+     * ```
+     *
+     * Provide an array for the second argument to select multiple options:
+     *
+     * ``` php
+     * <?php
+     * $I->selectOption('Which OS do you use?', array('Windows','Linux'));
+     * ```
+     *
+     * Or provide an associative array for the second argument to specifically define which selection method should be used:
+     *
+     * ``` php
+     * <?php
+     * $I->selectOption('Which OS do you use?', array('text' => 'Windows')); // Only search by text 'Windows'
+     * $I->selectOption('Which OS do you use?', array('value' => 'windows')); // Only search by value 'windows'
+     * ```
+     * @see \Codeception\Module\WebDriver::selectOption()
+     */
+    public function tryToSelectOption($select, $option): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('selectOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes selectOption and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::selectOption()
+     */
+    public function retrySelectOption($select, $option) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('selectOption', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Unselect an option in the given select box.
+     *
+     * @param string|array|WebDriverBy $select
+     * @param string|array|WebDriverBy $option
+     * @see \Codeception\Module\WebDriver::unselectOption()
+     */
+    public function unselectOption($select, $option): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('unselectOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Unselect an option in the given select box.
+     *
+     * @param string|array|WebDriverBy $select
+     * @param string|array|WebDriverBy $option
+     * @see \Codeception\Module\WebDriver::unselectOption()
+     */
+    public function tryToUnselectOption($select, $option): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('unselectOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes unselectOption and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::unselectOption()
+     */
+    public function retryUnselectOption($select, $option) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('unselectOption', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Ticks a checkbox. For radio buttons, use the `selectOption` method instead.
+     *
+     * ``` php
+     * <?php
+     * $I->checkOption('#agree');
+     * ```
+     * @see \Codeception\Module\WebDriver::checkOption()
+     */
+    public function checkOption($option): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('checkOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Ticks a checkbox. For radio buttons, use the `selectOption` method instead.
+     *
+     * ``` php
+     * <?php
+     * $I->checkOption('#agree');
+     * ```
+     * @see \Codeception\Module\WebDriver::checkOption()
+     */
+    public function tryToCheckOption($option): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('checkOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes checkOption and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::checkOption()
+     */
+    public function retryCheckOption($option) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('checkOption', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Unticks a checkbox.
+     *
+     * ``` php
+     * <?php
+     * $I->uncheckOption('#notify');
+     * ```
+     * @see \Codeception\Module\WebDriver::uncheckOption()
+     */
+    public function uncheckOption($option): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('uncheckOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Unticks a checkbox.
+     *
+     * ``` php
+     * <?php
+     * $I->uncheckOption('#notify');
+     * ```
+     * @see \Codeception\Module\WebDriver::uncheckOption()
+     */
+    public function tryToUncheckOption($option): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('uncheckOption', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes uncheckOption and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::uncheckOption()
+     */
+    public function retryUncheckOption($option) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('uncheckOption', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Fills a text field or textarea with the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->fillField("//input[@type='text']", "Hello World!");
+     * $I->fillField(['name' => 'email'], 'jon@example.com');
+     * ```
+     * @see \Codeception\Module\WebDriver::fillField()
+     */
+    public function fillField($field, $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('fillField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Fills a text field or textarea with the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->fillField("//input[@type='text']", "Hello World!");
+     * $I->fillField(['name' => 'email'], 'jon@example.com');
+     * ```
+     * @see \Codeception\Module\WebDriver::fillField()
+     */
+    public function tryToFillField($field, $value): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('fillField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes fillField and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::fillField()
+     */
+    public function retryFillField($field, $value) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('fillField', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Clears given field which isn't empty.
+     *
+     * ``` php
+     * <?php
+     * $I->clearField('#username');
+     * ```
+     *
+     * @param string|array|WebDriverBy $field
+     * @see \Codeception\Module\WebDriver::clearField()
+     */
+    public function clearField($field): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('clearField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Clears given field which isn't empty.
+     *
+     * ``` php
+     * <?php
+     * $I->clearField('#username');
+     * ```
+     *
+     * @param string|array|WebDriverBy $field
+     * @see \Codeception\Module\WebDriver::clearField()
+     */
+    public function tryToClearField($field): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('clearField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes clearField and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::clearField()
+     */
+    public function retryClearField($field) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('clearField', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Type in characters on active element.
+     * With a second parameter you can specify delay between key presses.
+     *
+     * ```php
+     * <?php
+     * // activate input element
+     * $I->click('#input');
+     *
+     * // type text in active element
+     * $I->type('Hello world');
+     *
+     * // type text with a 1sec delay between chars
+     * $I->type('Hello World', 1);
+     * ```
+     *
+     * This might be useful when you an input reacts to typing and you need to slow it down to emulate human behavior.
+     * For instance, this is how Credit Card fields can be filled in.
+     *
+     * @param int $delay [sec]
+     * @see \Codeception\Module\WebDriver::type()
+     */
+    public function type(string $text, int $delay = 0): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('type', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Type in characters on active element.
+     * With a second parameter you can specify delay between key presses.
+     *
+     * ```php
+     * <?php
+     * // activate input element
+     * $I->click('#input');
+     *
+     * // type text in active element
+     * $I->type('Hello world');
+     *
+     * // type text with a 1sec delay between chars
+     * $I->type('Hello World', 1);
+     * ```
+     *
+     * This might be useful when you an input reacts to typing and you need to slow it down to emulate human behavior.
+     * For instance, this is how Credit Card fields can be filled in.
+     *
+     * @param int $delay [sec]
+     * @see \Codeception\Module\WebDriver::type()
+     */
+    public function tryToType(string $text, int $delay = 0): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('type', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes type and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::type()
+     */
+    public function retryType(string $text, int $delay = 0) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('type', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Attaches a file relative to the Codeception `_data` directory to the given file upload field.
+     *
+     * ``` php
+     * <?php
+     * // file is stored in 'tests/_data/prices.xls'
+     * $I->attachFile('input[@type="file"]', 'prices.xls');
+     * ```
+     * @see \Codeception\Module\WebDriver::attachFile()
+     */
+    public function attachFile($field, string $filename): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('attachFile', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Attaches a file relative to the Codeception `_data` directory to the given file upload field.
+     *
+     * ``` php
+     * <?php
+     * // file is stored in 'tests/_data/prices.xls'
+     * $I->attachFile('input[@type="file"]', 'prices.xls');
+     * ```
+     * @see \Codeception\Module\WebDriver::attachFile()
+     */
+    public function tryToAttachFile($field, string $filename): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('attachFile', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes attachFile and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::attachFile()
+     */
+    public function retryAttachFile($field, string $filename) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('attachFile', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Finds and returns the text contents of the given element.
+     * If a fuzzy locator is used, the element is found using CSS, XPath,
+     * and by matching the full page source by regular expression.
+     *
+     * ``` php
+     * <?php
+     * $heading = $I->grabTextFrom('h1');
+     * $heading = $I->grabTextFrom('descendant-or-self::h1');
+     * $value = $I->grabTextFrom('~<input value=(.*?)]~sgi'); // match with a regex
+     * ```
+     * @see \Codeception\Module\WebDriver::grabTextFrom()
+     */
+    public function grabTextFrom($cssOrXPathOrRegex): mixed {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabTextFrom', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabTextFrom and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::grabTextFrom()
+     */
+    public function retryGrabTextFrom($cssOrXPathOrRegex) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabTextFrom', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Grabs the value of the given attribute value from the given element.
+     * Fails if element is not found.
+     *
+     * ``` php
+     * <?php
+     * $I->grabAttributeFrom('#tooltip', 'title');
+     * ```
+     * @see \Codeception\Module\WebDriver::grabAttributeFrom()
+     */
+    public function grabAttributeFrom($cssOrXpath, $attribute): ?string {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabAttributeFrom', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabAttributeFrom and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::grabAttributeFrom()
+     */
+    public function retryGrabAttributeFrom($cssOrXpath, $attribute) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabAttributeFrom', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Finds the value for the given form field.
+     * If a fuzzy locator is used, the field is found by field name, CSS, and XPath.
+     *
+     * ``` php
+     * <?php
+     * $name = $I->grabValueFrom('Name');
+     * $name = $I->grabValueFrom('input[name=username]');
+     * $name = $I->grabValueFrom('descendant-or-self::form/descendant::input[@name = 'username']');
+     * $name = $I->grabValueFrom(['name' => 'username']);
+     * ```
+     * @see \Codeception\Module\WebDriver::grabValueFrom()
+     */
+    public function grabValueFrom($field): ?string {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabValueFrom', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabValueFrom and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::grabValueFrom()
+     */
+    public function retryGrabValueFrom($field) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabValueFrom', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Grabs either the text content, or attribute values, of nodes
+     * matched by $cssOrXpath and returns them as an array.
+     *
+     * ```html
+     * <a href="#first">First</a>
+     * <a href="#second">Second</a>
+     * <a href="#third">Third</a>
+     * ```
+     *
+     * ```php
+     * <?php
+     * // would return ['First', 'Second', 'Third']
+     * $aLinkText = $I->grabMultiple('a');
+     *
+     * // would return ['#first', '#second', '#third']
+     * $aLinks = $I->grabMultiple('a', 'href');
+     * ```
+     *
+     * @return string[]
+     * @see \Codeception\Module\WebDriver::grabMultiple()
+     */
+    public function grabMultiple($cssOrXpath, $attribute = NULL): array {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabMultiple', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabMultiple and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::grabMultiple()
+     */
+    public function retryGrabMultiple($cssOrXpath, $attribute = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabMultiple', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the given element exists on the page and is visible.
+     * You can also specify expected attributes of this element.
+     * Only works if `<html>` tag is present.
+     *
+     * ``` php
+     * <?php
+     * $I->seeElement('.error');
+     * $I->seeElement('//form/input[1]');
+     * $I->seeElement('input', ['name' => 'login']);
+     * $I->seeElement('input', ['value' => '123456']);
+     *
+     * // strict locator in first arg, attributes in second
+     * $I->seeElement(['css' => 'form input'], ['name' => 'login']);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeElement()
+     */
+    public function seeElement($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeElement', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the given element exists on the page and is visible.
+     * You can also specify expected attributes of this element.
+     * Only works if `<html>` tag is present.
+     *
+     * ``` php
+     * <?php
+     * $I->seeElement('.error');
+     * $I->seeElement('//form/input[1]');
+     * $I->seeElement('input', ['name' => 'login']);
+     * $I->seeElement('input', ['value' => '123456']);
+     *
+     * // strict locator in first arg, attributes in second
+     * $I->seeElement(['css' => 'form input'], ['name' => 'login']);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeElement()
+     */
+    public function canSeeElement($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeElement', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the given element exists on the page and is visible.
+     * You can also specify expected attributes of this element.
+     * Only works if `<html>` tag is present.
+     *
+     * ``` php
+     * <?php
+     * $I->seeElement('.error');
+     * $I->seeElement('//form/input[1]');
+     * $I->seeElement('input', ['name' => 'login']);
+     * $I->seeElement('input', ['value' => '123456']);
+     *
+     * // strict locator in first arg, attributes in second
+     * $I->seeElement(['css' => 'form input'], ['name' => 'login']);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeElement()
+     */
+    public function tryToSeeElement($selector, array $attributes = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeElement', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeElement and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeElement()
+     */
+    public function retrySeeElement($selector, array $attributes = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeElement', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the given element is invisible or not present on the page.
+     * You can also specify expected attributes of this element.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeElement('.error');
+     * $I->dontSeeElement('//form/input[1]');
+     * $I->dontSeeElement('input', ['name' => 'login']);
+     * $I->dontSeeElement('input', ['value' => '123456']);
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeElement()
+     */
+    public function dontSeeElement($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeElement', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the given element is invisible or not present on the page.
+     * You can also specify expected attributes of this element.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeElement('.error');
+     * $I->dontSeeElement('//form/input[1]');
+     * $I->dontSeeElement('input', ['name' => 'login']);
+     * $I->dontSeeElement('input', ['value' => '123456']);
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeElement()
+     */
+    public function cantSeeElement($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeElement', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the given element is invisible or not present on the page.
+     * You can also specify expected attributes of this element.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeElement('.error');
+     * $I->dontSeeElement('//form/input[1]');
+     * $I->dontSeeElement('input', ['name' => 'login']);
+     * $I->dontSeeElement('input', ['value' => '123456']);
+     * ```
+     * @see \Codeception\Module\WebDriver::dontSeeElement()
+     */
+    public function tryToDontSeeElement($selector, array $attributes = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeElement', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeElement and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeElement()
+     */
+    public function retryDontSeeElement($selector, array $attributes = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeElement', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the given element exists on the page, even it is invisible.
+     *
+     * ``` php
+     * <?php
+     * $I->seeElementInDOM('//form/input[type=hidden]');
+     * ```
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::seeElementInDOM()
+     */
+    public function seeElementInDOM($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeElementInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the given element exists on the page, even it is invisible.
+     *
+     * ``` php
+     * <?php
+     * $I->seeElementInDOM('//form/input[type=hidden]');
+     * ```
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::seeElementInDOM()
+     */
+    public function canSeeElementInDOM($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeElementInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the given element exists on the page, even it is invisible.
+     *
+     * ``` php
+     * <?php
+     * $I->seeElementInDOM('//form/input[type=hidden]');
+     * ```
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::seeElementInDOM()
+     */
+    public function tryToSeeElementInDOM($selector, array $attributes = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeElementInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeElementInDOM and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeElementInDOM()
+     */
+    public function retrySeeElementInDOM($selector, array $attributes = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeElementInDOM', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Opposite of `seeElementInDOM`.
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::dontSeeElementInDOM()
+     */
+    public function dontSeeElementInDOM($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeElementInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Opposite of `seeElementInDOM`.
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::dontSeeElementInDOM()
+     */
+    public function cantSeeElementInDOM($selector, array $attributes = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeElementInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Opposite of `seeElementInDOM`.
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::dontSeeElementInDOM()
+     */
+    public function tryToDontSeeElementInDOM($selector, array $attributes = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeElementInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeElementInDOM and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeElementInDOM()
+     */
+    public function retryDontSeeElementInDOM($selector, array $attributes = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeElementInDOM', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that there are a certain number of elements matched by the given locator on the page.
+     *
+     * ``` php
+     * <?php
+     * $I->seeNumberOfElements('tr', 10);
+     * $I->seeNumberOfElements('tr', [0,10]); // between 0 and 10 elements
+     * ```
+     *
+     * @param int|int[] $expected
+     * @see \Codeception\Module\WebDriver::seeNumberOfElements()
+     */
+    public function seeNumberOfElements($selector, $expected): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeNumberOfElements', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that there are a certain number of elements matched by the given locator on the page.
+     *
+     * ``` php
+     * <?php
+     * $I->seeNumberOfElements('tr', 10);
+     * $I->seeNumberOfElements('tr', [0,10]); // between 0 and 10 elements
+     * ```
+     *
+     * @param int|int[] $expected
+     * @see \Codeception\Module\WebDriver::seeNumberOfElements()
+     */
+    public function canSeeNumberOfElements($selector, $expected): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeNumberOfElements', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that there are a certain number of elements matched by the given locator on the page.
+     *
+     * ``` php
+     * <?php
+     * $I->seeNumberOfElements('tr', 10);
+     * $I->seeNumberOfElements('tr', [0,10]); // between 0 and 10 elements
+     * ```
+     *
+     * @param int|int[] $expected
+     * @see \Codeception\Module\WebDriver::seeNumberOfElements()
+     */
+    public function tryToSeeNumberOfElements($selector, $expected): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeNumberOfElements', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeNumberOfElements and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeNumberOfElements()
+     */
+    public function retrySeeNumberOfElements($selector, $expected) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeNumberOfElements', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * @param string|array|WebDriverBy $selector
+     * @param int|array $expected
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::seeNumberOfElementsInDOM()
+     */
+    public function seeNumberOfElementsInDOM($selector, $expected) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeNumberOfElementsInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * @param string|array|WebDriverBy $selector
+     * @param int|array $expected
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::seeNumberOfElementsInDOM()
+     */
+    public function canSeeNumberOfElementsInDOM($selector, $expected) {
+        return $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeNumberOfElementsInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * @param string|array|WebDriverBy $selector
+     * @param int|array $expected
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::seeNumberOfElementsInDOM()
+     */
+    public function tryToSeeNumberOfElementsInDOM($selector, $expected): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeNumberOfElementsInDOM', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeNumberOfElementsInDOM and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeNumberOfElementsInDOM()
+     */
+    public function retrySeeNumberOfElementsInDOM($selector, $expected) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeNumberOfElementsInDOM', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the given option is selected.
+     *
+     * ``` php
+     * <?php
+     * $I->seeOptionIsSelected('#form input[name=payment]', 'Visa');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeOptionIsSelected()
+     */
+    public function seeOptionIsSelected($selector, $optionText): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeOptionIsSelected', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the given option is selected.
+     *
+     * ``` php
+     * <?php
+     * $I->seeOptionIsSelected('#form input[name=payment]', 'Visa');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeOptionIsSelected()
+     */
+    public function canSeeOptionIsSelected($selector, $optionText): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeOptionIsSelected', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the given option is selected.
+     *
+     * ``` php
+     * <?php
+     * $I->seeOptionIsSelected('#form input[name=payment]', 'Visa');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeOptionIsSelected()
+     */
+    public function tryToSeeOptionIsSelected($selector, $optionText): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeOptionIsSelected', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeOptionIsSelected and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeOptionIsSelected()
+     */
+    public function retrySeeOptionIsSelected($selector, $optionText) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeOptionIsSelected', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the given option is not selected.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeOptionIsSelected('#form input[name=payment]', 'Visa');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeOptionIsSelected()
+     */
+    public function dontSeeOptionIsSelected($selector, $optionText): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeOptionIsSelected', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the given option is not selected.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeOptionIsSelected('#form input[name=payment]', 'Visa');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeOptionIsSelected()
+     */
+    public function cantSeeOptionIsSelected($selector, $optionText): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeOptionIsSelected', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the given option is not selected.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeOptionIsSelected('#form input[name=payment]', 'Visa');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeOptionIsSelected()
+     */
+    public function tryToDontSeeOptionIsSelected($selector, $optionText): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeOptionIsSelected', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeOptionIsSelected and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeOptionIsSelected()
+     */
+    public function retryDontSeeOptionIsSelected($selector, $optionText) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeOptionIsSelected', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the page title contains the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInTitle('Blog - Post #1');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeInTitle()
+     */
+    public function seeInTitle($title) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInTitle', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the page title contains the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInTitle('Blog - Post #1');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeInTitle()
+     */
+    public function canSeeInTitle($title) {
+        return $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInTitle', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the page title contains the given string.
+     *
+     * ``` php
+     * <?php
+     * $I->seeInTitle('Blog - Post #1');
+     * ```
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::seeInTitle()
+     */
+    public function tryToSeeInTitle($title): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInTitle', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInTitle and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeInTitle()
+     */
+    public function retrySeeInTitle($title) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInTitle', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the page title does not contain the given string.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeInTitle()
+     */
+    public function dontSeeInTitle($title) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInTitle', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the page title does not contain the given string.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeInTitle()
+     */
+    public function cantSeeInTitle($title) {
+        return $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInTitle', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the page title does not contain the given string.
+     *
+     * @return mixed|void
+     * @see \Codeception\Module\WebDriver::dontSeeInTitle()
+     */
+    public function tryToDontSeeInTitle($title): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInTitle', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInTitle and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeInTitle()
+     */
+    public function retryDontSeeInTitle($title) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInTitle', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Accepts the active JavaScript native popup window, as created by `window.alert`|`window.confirm`|`window.prompt`.
+     * Don't confuse popups with modal windows,
+     * as created by [various libraries](https://jster.net/category/windows-modals-popups).
+     * @see \Codeception\Module\WebDriver::acceptPopup()
+     */
+    public function acceptPopup(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('acceptPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Accepts the active JavaScript native popup window, as created by `window.alert`|`window.confirm`|`window.prompt`.
+     * Don't confuse popups with modal windows,
+     * as created by [various libraries](https://jster.net/category/windows-modals-popups).
+     * @see \Codeception\Module\WebDriver::acceptPopup()
+     */
+    public function tryToAcceptPopup(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('acceptPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes acceptPopup and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::acceptPopup()
+     */
+    public function retryAcceptPopup() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('acceptPopup', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Dismisses the active JavaScript popup, as created by `window.alert`, `window.confirm`, or `window.prompt`.
+     * @see \Codeception\Module\WebDriver::cancelPopup()
+     */
+    public function cancelPopup(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('cancelPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Dismisses the active JavaScript popup, as created by `window.alert`, `window.confirm`, or `window.prompt`.
+     * @see \Codeception\Module\WebDriver::cancelPopup()
+     */
+    public function tryToCancelPopup(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('cancelPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes cancelPopup and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::cancelPopup()
+     */
+    public function retryCancelPopup() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('cancelPopup', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the active JavaScript popup,
+     * as created by `window.alert`|`window.confirm`|`window.prompt`, contains the given string.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::seeInPopup()
+     */
+    public function seeInPopup(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the active JavaScript popup,
+     * as created by `window.alert`|`window.confirm`|`window.prompt`, contains the given string.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::seeInPopup()
+     */
+    public function canSeeInPopup(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the active JavaScript popup,
+     * as created by `window.alert`|`window.confirm`|`window.prompt`, contains the given string.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::seeInPopup()
+     */
+    public function tryToSeeInPopup(string $text): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInPopup and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeInPopup()
+     */
+    public function retrySeeInPopup(string $text) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInPopup', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks that the active JavaScript popup,
+     * as created by `window.alert`|`window.confirm`|`window.prompt`, does NOT contain the given string.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::dontSeeInPopup()
+     */
+    public function dontSeeInPopup(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks that the active JavaScript popup,
+     * as created by `window.alert`|`window.confirm`|`window.prompt`, does NOT contain the given string.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::dontSeeInPopup()
+     */
+    public function cantSeeInPopup(string $text): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks that the active JavaScript popup,
+     * as created by `window.alert`|`window.confirm`|`window.prompt`, does NOT contain the given string.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::dontSeeInPopup()
+     */
+    public function tryToDontSeeInPopup(string $text): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInPopup and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dontSeeInPopup()
+     */
+    public function retryDontSeeInPopup(string $text) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInPopup', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Enters text into a native JavaScript prompt popup, as created by `window.prompt`.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::typeInPopup()
+     */
+    public function typeInPopup(string $keys): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('typeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Enters text into a native JavaScript prompt popup, as created by `window.prompt`.
+     *
+     * @throws ModuleException
+     * @see \Codeception\Module\WebDriver::typeInPopup()
+     */
+    public function tryToTypeInPopup(string $keys): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('typeInPopup', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes typeInPopup and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::typeInPopup()
+     */
+    public function retryTypeInPopup(string $keys) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('typeInPopup', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Reloads the current page.
+     * @see \Codeception\Module\WebDriver::reloadPage()
+     */
+    public function reloadPage(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('reloadPage', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Reloads the current page.
+     * @see \Codeception\Module\WebDriver::reloadPage()
+     */
+    public function tryToReloadPage(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('reloadPage', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes reloadPage and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::reloadPage()
+     */
+    public function retryReloadPage() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('reloadPage', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Moves back in history.
+     * @see \Codeception\Module\WebDriver::moveBack()
+     */
+    public function moveBack(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('moveBack', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Moves back in history.
+     * @see \Codeception\Module\WebDriver::moveBack()
+     */
+    public function tryToMoveBack(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('moveBack', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes moveBack and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::moveBack()
+     */
+    public function retryMoveBack() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('moveBack', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Moves forward in history.
+     * @see \Codeception\Module\WebDriver::moveForward()
+     */
+    public function moveForward(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('moveForward', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Moves forward in history.
+     * @see \Codeception\Module\WebDriver::moveForward()
+     */
+    public function tryToMoveForward(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('moveForward', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes moveForward and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::moveForward()
+     */
+    public function retryMoveForward() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('moveForward', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Submits the given form on the page, optionally with the given form
+     * values.  Give the form fields values as an array. Note that hidden fields
+     * can't be accessed.
+     *
+     * Skipped fields will be filled by their values from the page.
+     * You don't need to click the 'Submit' button afterwards.
+     * This command itself triggers the request to form's action.
+     *
+     * You can optionally specify what button's value to include
+     * in the request with the last parameter as an alternative to
+     * explicitly setting its value in the second parameter, as
+     * button values are not otherwise included in the request.
+     *
+     * Examples:
+     *
+     * ``` php
+     * <?php
+     * $I->submitForm('#login', [
+     *     'login' => 'davert',
+     *     'password' => '123456'
+     * ]);
+     * // or
+     * $I->submitForm('#login', [
+     *     'login' => 'davert',
+     *     'password' => '123456'
+     * ], 'submitButtonName');
+     *
+     * ```
+     *
+     * For example, given this sample "Sign Up" form:
+     *
+     * ``` html
+     * <form action="/sign_up">
+     *     Login:
+     *     <input type="text" name="user[login]" /><br/>
+     *     Password:
+     *     <input type="password" name="user[password]" /><br/>
+     *     Do you agree to our terms?
+     *     <input type="checkbox" name="user[agree]" /><br/>
+     *     Select pricing plan:
+     *     <select name="plan">
+     *         <option value="1">Free</option>
+     *         <option value="2" selected="selected">Paid</option>
+     *     </select>
+     *     <input type="submit" name="submitButton" value="Submit" />
+     * </form>
+     * ```
+     *
+     * You could write the following to submit it:
+     *
+     * ``` php
+     * <?php
+     * $I->submitForm(
+     *     '#userForm',
+     *     [
+     *         'user[login]' => 'Davert',
+     *         'user[password]' => '123456',
+     *         'user[agree]' => true
+     *     ],
+     *     'submitButton'
+     * );
+     * ```
+     * Note that "2" will be the submitted value for the "plan" field, as it is
+     * the selected option.
+     *
+     * Also note that this differs from PhpBrowser, in that
+     * ```'user' => [ 'login' => 'Davert' ]``` is not supported at the moment.
+     * Named array keys *must* be included in the name as above.
+     *
+     * Pair this with seeInFormFields for quick testing magic.
+     *
+     * ``` php
+     * <?php
+     * $form = [
+     *      'field1' => 'value',
+     *      'field2' => 'another value',
+     *      'checkbox1' => true,
+     *      // ...
+     * ];
+     * $I->submitForm('//form[@id=my-form]', $form, 'submitButton');
+     * // $I->amOnPage('/path/to/form-page') may be needed
+     * $I->seeInFormFields('//form[@id=my-form]', $form);
+     * ```
+     *
+     * Parameter values must be set to arrays for multiple input fields
+     * of the same name, or multi-select combo boxes.  For checkboxes,
+     * either the string value can be used, or boolean values which will
+     * be replaced by the checkbox's value in the DOM.
+     *
+     * ``` php
+     * <?php
+     * $I->submitForm('#my-form', [
+     *      'field1' => 'value',
+     *      'checkbox' => [
+     *          'value of first checkbox',
+     *          'value of second checkbox',
+     *      ],
+     *      'otherCheckboxes' => [
+     *          true,
+     *          false,
+     *          false,
+     *      ],
+     *      'multiselect' => [
+     *          'first option value',
+     *          'second option value',
+     *      ]
+     * ]);
+     * ```
+     *
+     * Mixing string and boolean values for a checkbox's value is not supported
+     * and may produce unexpected results.
+     *
+     * Field names ending in "[]" must be passed without the trailing square
+     * bracket characters, and must contain an array for its value.  This allows
+     * submitting multiple values with the same name, consider:
+     *
+     * ```php
+     * $I->submitForm('#my-form', [
+     *     'field[]' => 'value',
+     *     'field[]' => 'another value', // 'field[]' is already a defined key
+     * ]);
+     * ```
+     *
+     * The solution is to pass an array value:
+     *
+     * ```php
+     * // this way both values are submitted
+     * $I->submitForm('#my-form', [
+     *     'field' => [
+     *         'value',
+     *         'another value',
+     *     ]
+     * ]);
+     * ```
+     *
+     * The `$button` parameter can be either a string, an array or an instance
+     * of Facebook\WebDriver\WebDriverBy. When it is a string, the
+     * button will be found by its "name" attribute. If $button is an
+     * array then it will be treated as a strict selector and a WebDriverBy
+     * will be used verbatim.
+     *
+     * For example, given the following HTML:
+     *
+     * ``` html
+     * <input type="submit" name="submitButton" value="Submit" />
+     * ```
+     *
+     * `$button` could be any one of the following:
+     *   - 'submitButton'
+     *   - ['name' => 'submitButton']
+     *   - WebDriverBy::name('submitButton')
+     *
+     * @param string|array|WebDriverBy $selector
+     * @param string|array|WebDriverBy|null $button
+     * @see \Codeception\Module\WebDriver::submitForm()
+     */
+    public function submitForm($selector, array $params, $button = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('submitForm', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Submits the given form on the page, optionally with the given form
+     * values.  Give the form fields values as an array. Note that hidden fields
+     * can't be accessed.
+     *
+     * Skipped fields will be filled by their values from the page.
+     * You don't need to click the 'Submit' button afterwards.
+     * This command itself triggers the request to form's action.
+     *
+     * You can optionally specify what button's value to include
+     * in the request with the last parameter as an alternative to
+     * explicitly setting its value in the second parameter, as
+     * button values are not otherwise included in the request.
+     *
+     * Examples:
+     *
+     * ``` php
+     * <?php
+     * $I->submitForm('#login', [
+     *     'login' => 'davert',
+     *     'password' => '123456'
+     * ]);
+     * // or
+     * $I->submitForm('#login', [
+     *     'login' => 'davert',
+     *     'password' => '123456'
+     * ], 'submitButtonName');
+     *
+     * ```
+     *
+     * For example, given this sample "Sign Up" form:
+     *
+     * ``` html
+     * <form action="/sign_up">
+     *     Login:
+     *     <input type="text" name="user[login]" /><br/>
+     *     Password:
+     *     <input type="password" name="user[password]" /><br/>
+     *     Do you agree to our terms?
+     *     <input type="checkbox" name="user[agree]" /><br/>
+     *     Select pricing plan:
+     *     <select name="plan">
+     *         <option value="1">Free</option>
+     *         <option value="2" selected="selected">Paid</option>
+     *     </select>
+     *     <input type="submit" name="submitButton" value="Submit" />
+     * </form>
+     * ```
+     *
+     * You could write the following to submit it:
+     *
+     * ``` php
+     * <?php
+     * $I->submitForm(
+     *     '#userForm',
+     *     [
+     *         'user[login]' => 'Davert',
+     *         'user[password]' => '123456',
+     *         'user[agree]' => true
+     *     ],
+     *     'submitButton'
+     * );
+     * ```
+     * Note that "2" will be the submitted value for the "plan" field, as it is
+     * the selected option.
+     *
+     * Also note that this differs from PhpBrowser, in that
+     * ```'user' => [ 'login' => 'Davert' ]``` is not supported at the moment.
+     * Named array keys *must* be included in the name as above.
+     *
+     * Pair this with seeInFormFields for quick testing magic.
+     *
+     * ``` php
+     * <?php
+     * $form = [
+     *      'field1' => 'value',
+     *      'field2' => 'another value',
+     *      'checkbox1' => true,
+     *      // ...
+     * ];
+     * $I->submitForm('//form[@id=my-form]', $form, 'submitButton');
+     * // $I->amOnPage('/path/to/form-page') may be needed
+     * $I->seeInFormFields('//form[@id=my-form]', $form);
+     * ```
+     *
+     * Parameter values must be set to arrays for multiple input fields
+     * of the same name, or multi-select combo boxes.  For checkboxes,
+     * either the string value can be used, or boolean values which will
+     * be replaced by the checkbox's value in the DOM.
+     *
+     * ``` php
+     * <?php
+     * $I->submitForm('#my-form', [
+     *      'field1' => 'value',
+     *      'checkbox' => [
+     *          'value of first checkbox',
+     *          'value of second checkbox',
+     *      ],
+     *      'otherCheckboxes' => [
+     *          true,
+     *          false,
+     *          false,
+     *      ],
+     *      'multiselect' => [
+     *          'first option value',
+     *          'second option value',
+     *      ]
+     * ]);
+     * ```
+     *
+     * Mixing string and boolean values for a checkbox's value is not supported
+     * and may produce unexpected results.
+     *
+     * Field names ending in "[]" must be passed without the trailing square
+     * bracket characters, and must contain an array for its value.  This allows
+     * submitting multiple values with the same name, consider:
+     *
+     * ```php
+     * $I->submitForm('#my-form', [
+     *     'field[]' => 'value',
+     *     'field[]' => 'another value', // 'field[]' is already a defined key
+     * ]);
+     * ```
+     *
+     * The solution is to pass an array value:
+     *
+     * ```php
+     * // this way both values are submitted
+     * $I->submitForm('#my-form', [
+     *     'field' => [
+     *         'value',
+     *         'another value',
+     *     ]
+     * ]);
+     * ```
+     *
+     * The `$button` parameter can be either a string, an array or an instance
+     * of Facebook\WebDriver\WebDriverBy. When it is a string, the
+     * button will be found by its "name" attribute. If $button is an
+     * array then it will be treated as a strict selector and a WebDriverBy
+     * will be used verbatim.
+     *
+     * For example, given the following HTML:
+     *
+     * ``` html
+     * <input type="submit" name="submitButton" value="Submit" />
+     * ```
+     *
+     * `$button` could be any one of the following:
+     *   - 'submitButton'
+     *   - ['name' => 'submitButton']
+     *   - WebDriverBy::name('submitButton')
+     *
+     * @param string|array|WebDriverBy $selector
+     * @param string|array|WebDriverBy|null $button
+     * @see \Codeception\Module\WebDriver::submitForm()
+     */
+    public function tryToSubmitForm($selector, array $params, $button = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('submitForm', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes submitForm and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::submitForm()
+     */
+    public function retrySubmitForm($selector, array $params, $button = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('submitForm', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Waits up to $timeout seconds for the given element to change.
+     * Element "change" is determined by a callback function which is called repeatedly
+     * until the return value evaluates to true.
+     *
+     * ``` php
+     * <?php
+     * use \Facebook\WebDriver\WebDriverElement
+     * $I->waitForElementChange('#menu', function(WebDriverElement $el) {
+     *     return $el->isDisplayed();
+     * }, 100);
+     * ```
+     *
+     * @param string|array|WebDriverBy $element
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::waitForElementChange()
+     */
+    public function waitForElementChange($element, \Closure $callback, int $timeout = 30): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('waitForElementChange', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Waits up to $timeout seconds for an element to appear on the page.
+     * If the element doesn't appear, a timeout exception is thrown.
+     *
+     * ``` php
+     * <?php
+     * $I->waitForElement('#agree_button', 30); // secs
+     * $I->click('#agree_button');
+     * ```
+     *
+     * @param string|array|WebDriverBy $element
+     * @param int $timeout seconds
+     * @throws Exception
+     * @see \Codeception\Module\WebDriver::waitForElement()
+     */
+    public function waitForElement($element, int $timeout = 10): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('waitForElement', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Waits up to $timeout seconds for the given element to be visible on the page.
+     * If element doesn't appear, a timeout exception is thrown.
+     *
+     * ``` php
+     * <?php
+     * $I->waitForElementVisible('#agree_button', 30); // secs
+     * $I->click('#agree_button');
+     * ```
+     *
+     * @param string|array|WebDriverBy $element
+     * @param int $timeout seconds
+     * @throws Exception
+     * @see \Codeception\Module\WebDriver::waitForElementVisible()
+     */
+    public function waitForElementVisible($element, int $timeout = 10): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('waitForElementVisible', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Waits up to $timeout seconds for the given element to become invisible.
+     * If element stays visible, a timeout exception is thrown.
+     *
+     * ``` php
+     * <?php
+     * $I->waitForElementNotVisible('#agree_button', 30); // secs
+     * ```
+     *
+     * @param string|array|WebDriverBy $element
+     * @param int $timeout seconds
+     * @throws Exception
+     * @see \Codeception\Module\WebDriver::waitForElementNotVisible()
+     */
+    public function waitForElementNotVisible($element, int $timeout = 10): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('waitForElementNotVisible', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Waits up to $timeout seconds for the given element to be clickable.
+     * If element doesn't become clickable, a timeout exception is thrown.
+     *
+     * ``` php
+     * <?php
+     * $I->waitForElementClickable('#agree_button', 30); // secs
+     * $I->click('#agree_button');
+     * ```
+     *
+     * @param string|array|WebDriverBy $element
+     * @param int $timeout seconds
+     * @throws Exception
+     * @see \Codeception\Module\WebDriver::waitForElementClickable()
+     */
+    public function waitForElementClickable($element, int $timeout = 10): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('waitForElementClickable', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Waits up to $timeout seconds for the given string to appear on the page.
+     *
+     * Can also be passed a selector to search in, be as specific as possible when using selectors.
+     * waitForText() will only watch the first instance of the matching selector / text provided.
+     * If the given text doesn't appear, a timeout exception is thrown.
+     *
+     * ``` php
+     * <?php
+     * $I->waitForText('foo', 30); // secs
+     * $I->waitForText('foo', 30, '.title'); // secs
+     * ```
+     *
+     * @param int $timeout seconds
+     * @param null|string|array|WebDriverBy $selector
+     * @throws Exception
+     * @see \Codeception\Module\WebDriver::waitForText()
+     */
+    public function waitForText(string $text, int $timeout = 10, $selector = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('waitForText', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Wait for $timeout seconds.
+     *
+     * @param int|float $timeout secs
+     * @throws TestRuntimeException
+     * @see \Codeception\Module\WebDriver::wait()
+     */
+    public function wait($timeout): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('wait', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Low-level API method.
+     * If Codeception commands are not enough, this allows you to use Selenium WebDriver methods directly:
+     *
+     * ``` php
+     * $I->executeInSelenium(function(\Facebook\WebDriver\Remote\RemoteWebDriver $webdriver) {
+     *   $webdriver->get('https://google.com');
+     * });
+     * ```
+     *
+     * This runs in the context of the
+     * [RemoteWebDriver class](https://github.com/php-webdriver/php-webdriver/blob/master/lib/remote/RemoteWebDriver.php).
+     * Try not to use this command on a regular basis.
+     * If Codeception lacks a feature you need, please implement it and submit a patch.
+     *
+     * @param Closure $function
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::executeInSelenium()
+     */
+    public function executeInSelenium(\Closure $function) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('executeInSelenium', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Low-level API method.
+     * If Codeception commands are not enough, this allows you to use Selenium WebDriver methods directly:
+     *
+     * ``` php
+     * $I->executeInSelenium(function(\Facebook\WebDriver\Remote\RemoteWebDriver $webdriver) {
+     *   $webdriver->get('https://google.com');
+     * });
+     * ```
+     *
+     * This runs in the context of the
+     * [RemoteWebDriver class](https://github.com/php-webdriver/php-webdriver/blob/master/lib/remote/RemoteWebDriver.php).
+     * Try not to use this command on a regular basis.
+     * If Codeception lacks a feature you need, please implement it and submit a patch.
+     *
+     * @param Closure $function
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::executeInSelenium()
+     */
+    public function tryToExecuteInSelenium(\Closure $function): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('executeInSelenium', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes executeInSelenium and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::executeInSelenium()
+     */
+    public function retryExecuteInSelenium(\Closure $function) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('executeInSelenium', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Switch to another window identified by name.
+     *
+     * The window can only be identified by name. If the $name parameter is blank, the parent window will be used.
+     *
+     * Example:
+     * ``` html
+     * <input type="button" value="Open window" onclick="window.open('https://example.com', 'another_window')">
+     * ```
+     *
+     * ``` php
+     * <?php
+     * $I->click("Open window");
+     * # switch to another window
+     * $I->switchToWindow("another_window");
+     * # switch to parent window
+     * $I->switchToWindow();
+     * ```
+     *
+     * If the window has no name, match it by switching to next active tab using `switchToNextTab` method.
+     *
+     * Or use native Selenium functions to get access to all opened windows:
+     *
+     * ``` php
+     * <?php
+     * $I->executeInSelenium(function (\Facebook\WebDriver\Remote\RemoteWebDriver $webdriver) {
+     *      $handles=$webdriver->getWindowHandles();
+     *      $last_window = end($handles);
+     *      $webdriver->switchTo()->window($last_window);
+     * });
+     * ```
+     * @see \Codeception\Module\WebDriver::switchToWindow()
+     */
+    public function switchToWindow(?string $name = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('switchToWindow', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Switch to another window identified by name.
+     *
+     * The window can only be identified by name. If the $name parameter is blank, the parent window will be used.
+     *
+     * Example:
+     * ``` html
+     * <input type="button" value="Open window" onclick="window.open('https://example.com', 'another_window')">
+     * ```
+     *
+     * ``` php
+     * <?php
+     * $I->click("Open window");
+     * # switch to another window
+     * $I->switchToWindow("another_window");
+     * # switch to parent window
+     * $I->switchToWindow();
+     * ```
+     *
+     * If the window has no name, match it by switching to next active tab using `switchToNextTab` method.
+     *
+     * Or use native Selenium functions to get access to all opened windows:
+     *
+     * ``` php
+     * <?php
+     * $I->executeInSelenium(function (\Facebook\WebDriver\Remote\RemoteWebDriver $webdriver) {
+     *      $handles=$webdriver->getWindowHandles();
+     *      $last_window = end($handles);
+     *      $webdriver->switchTo()->window($last_window);
+     * });
+     * ```
+     * @see \Codeception\Module\WebDriver::switchToWindow()
+     */
+    public function tryToSwitchToWindow(?string $name = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('switchToWindow', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes switchToWindow and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::switchToWindow()
+     */
+    public function retrySwitchToWindow(?string $name = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('switchToWindow', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Switch to another iframe on the page.
+     *
+     * Example:
+     * ``` html
+     * <iframe name="another_frame" id="fr1" src="https://example.com">
+     *
+     * ```
+     *
+     * ``` php
+     * <?php
+     * # switch to iframe by name
+     * $I->switchToIFrame("another_frame");
+     * # switch to iframe by CSS or XPath
+     * $I->switchToIFrame("#fr1");
+     * # switch to parent page
+     * $I->switchToIFrame();
+     *
+     * ```
+     *
+     * @param string|null $locator (name, CSS or XPath)
+     * @see \Codeception\Module\WebDriver::switchToIFrame()
+     */
+    public function switchToIFrame(?string $locator = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('switchToIFrame', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Switch to another iframe on the page.
+     *
+     * Example:
+     * ``` html
+     * <iframe name="another_frame" id="fr1" src="https://example.com">
+     *
+     * ```
+     *
+     * ``` php
+     * <?php
+     * # switch to iframe by name
+     * $I->switchToIFrame("another_frame");
+     * # switch to iframe by CSS or XPath
+     * $I->switchToIFrame("#fr1");
+     * # switch to parent page
+     * $I->switchToIFrame();
+     *
+     * ```
+     *
+     * @param string|null $locator (name, CSS or XPath)
+     * @see \Codeception\Module\WebDriver::switchToIFrame()
+     */
+    public function tryToSwitchToIFrame(?string $locator = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('switchToIFrame', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes switchToIFrame and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::switchToIFrame()
+     */
+    public function retrySwitchToIFrame(?string $locator = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('switchToIFrame', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Switch to another frame on the page.
+     *
+     * Example:
+     * ``` html
+     * <frame name="another_frame" id="fr1" src="https://example.com">
+     *
+     * ```
+     *
+     * ``` php
+     * <?php
+     * # switch to frame by name
+     * $I->switchToFrame("another_frame");
+     * # switch to frame by CSS or XPath
+     * $I->switchToFrame("#fr1");
+     * # switch to parent page
+     * $I->switchToFrame();
+     *
+     * ```
+     *
+     * @param string|null $locator (name, CSS or XPath)
+     * @see \Codeception\Module\WebDriver::switchToFrame()
+     */
+    public function switchToFrame(?string $locator = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('switchToFrame', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Switch to another frame on the page.
+     *
+     * Example:
+     * ``` html
+     * <frame name="another_frame" id="fr1" src="https://example.com">
+     *
+     * ```
+     *
+     * ``` php
+     * <?php
+     * # switch to frame by name
+     * $I->switchToFrame("another_frame");
+     * # switch to frame by CSS or XPath
+     * $I->switchToFrame("#fr1");
+     * # switch to parent page
+     * $I->switchToFrame();
+     *
+     * ```
+     *
+     * @param string|null $locator (name, CSS or XPath)
+     * @see \Codeception\Module\WebDriver::switchToFrame()
+     */
+    public function tryToSwitchToFrame(?string $locator = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('switchToFrame', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes switchToFrame and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::switchToFrame()
+     */
+    public function retrySwitchToFrame(?string $locator = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('switchToFrame', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Executes JavaScript and waits up to $timeout seconds for it to return true.
+     *
+     * In this example we will wait up to 60 seconds for all jQuery AJAX requests to finish.
+     *
+     * ``` php
+     * <?php
+     * $I->waitForJS("return $.active == 0;", 60);
+     * ```
+     *
+     * @param int $timeout seconds
+     * @see \Codeception\Module\WebDriver::waitForJS()
+     */
+    public function waitForJS(string $script, int $timeout = 5): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('waitForJS', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Executes custom JavaScript.
+     *
+     * This example uses jQuery to get a value and assigns that value to a PHP variable:
+     *
+     * ```php
+     * <?php
+     * $myVar = $I->executeJS('return $("#myField").val()');
+     *
+     * // additional arguments can be passed as array
+     * // Example shows `Hello World` alert:
+     * $I->executeJS("window.alert(arguments[0])", ['Hello world']);
+     * ```
+     *
+     * @param array $arguments
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::executeJS()
+     */
+    public function executeJS(string $script, array $arguments = []) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('executeJS', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Executes custom JavaScript.
+     *
+     * This example uses jQuery to get a value and assigns that value to a PHP variable:
+     *
+     * ```php
+     * <?php
+     * $myVar = $I->executeJS('return $("#myField").val()');
+     *
+     * // additional arguments can be passed as array
+     * // Example shows `Hello World` alert:
+     * $I->executeJS("window.alert(arguments[0])", ['Hello world']);
+     * ```
+     *
+     * @param array $arguments
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::executeJS()
+     */
+    public function tryToExecuteJS(string $script, array $arguments = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('executeJS', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes executeJS and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::executeJS()
+     */
+    public function retryExecuteJS(string $script, array $arguments = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('executeJS', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Executes asynchronous JavaScript.
+     * A callback should be executed by JavaScript to exit from a script.
+     * Callback is passed as a last element in `arguments` array.
+     * Additional arguments can be passed as array in second parameter.
+     *
+     * ```js
+     * // wait for 1200 milliseconds my running `setTimeout`
+     * * $I->executeAsyncJS('setTimeout(arguments[0], 1200)');
+     *
+     * $seconds = 1200; // or seconds are passed as argument
+     * $I->executeAsyncJS('setTimeout(arguments[1], arguments[0])', [$seconds]);
+     * ```
+     *
+     * @param array $arguments
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::executeAsyncJS()
+     */
+    public function executeAsyncJS(string $script, array $arguments = []) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('executeAsyncJS', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Executes asynchronous JavaScript.
+     * A callback should be executed by JavaScript to exit from a script.
+     * Callback is passed as a last element in `arguments` array.
+     * Additional arguments can be passed as array in second parameter.
+     *
+     * ```js
+     * // wait for 1200 milliseconds my running `setTimeout`
+     * * $I->executeAsyncJS('setTimeout(arguments[0], 1200)');
+     *
+     * $seconds = 1200; // or seconds are passed as argument
+     * $I->executeAsyncJS('setTimeout(arguments[1], arguments[0])', [$seconds]);
+     * ```
+     *
+     * @param array $arguments
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::executeAsyncJS()
+     */
+    public function tryToExecuteAsyncJS(string $script, array $arguments = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('executeAsyncJS', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes executeAsyncJS and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::executeAsyncJS()
+     */
+    public function retryExecuteAsyncJS(string $script, array $arguments = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('executeAsyncJS', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Maximizes the current window.
+     * @see \Codeception\Module\WebDriver::maximizeWindow()
+     */
+    public function maximizeWindow(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('maximizeWindow', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Maximizes the current window.
+     * @see \Codeception\Module\WebDriver::maximizeWindow()
+     */
+    public function tryToMaximizeWindow(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('maximizeWindow', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes maximizeWindow and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::maximizeWindow()
+     */
+    public function retryMaximizeWindow() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('maximizeWindow', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Performs a simple mouse drag-and-drop operation.
+     *
+     * ``` php
+     * <?php
+     * $I->dragAndDrop('#drag', '#drop');
+     * ```
+     *
+     * @param string|array|WebDriverBy $source (CSS ID or XPath)
+     * @param string|array|WebDriverBy $target (CSS ID or XPath)
+     * @see \Codeception\Module\WebDriver::dragAndDrop()
+     */
+    public function dragAndDrop($source, $target): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dragAndDrop', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Performs a simple mouse drag-and-drop operation.
+     *
+     * ``` php
+     * <?php
+     * $I->dragAndDrop('#drag', '#drop');
+     * ```
+     *
+     * @param string|array|WebDriverBy $source (CSS ID or XPath)
+     * @param string|array|WebDriverBy $target (CSS ID or XPath)
+     * @see \Codeception\Module\WebDriver::dragAndDrop()
+     */
+    public function tryToDragAndDrop($source, $target): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dragAndDrop', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dragAndDrop and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::dragAndDrop()
+     */
+    public function retryDragAndDrop($source, $target) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dragAndDrop', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Move mouse over the first element matched by the given locator.
+     * If the first parameter null then the page is used.
+     * If the second and third parameters are given,
+     * then the mouse is moved to an offset of the element's top-left corner.
+     * Otherwise, the mouse is moved to the center of the element.
+     *
+     * ``` php
+     * <?php
+     * $I->moveMouseOver(['css' => '.checkout']);
+     * $I->moveMouseOver(null, 20, 50);
+     * $I->moveMouseOver(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param null|string|array|WebDriverBy $cssOrXPath css or xpath of the web element
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::moveMouseOver()
+     */
+    public function moveMouseOver($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('moveMouseOver', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Move mouse over the first element matched by the given locator.
+     * If the first parameter null then the page is used.
+     * If the second and third parameters are given,
+     * then the mouse is moved to an offset of the element's top-left corner.
+     * Otherwise, the mouse is moved to the center of the element.
+     *
+     * ``` php
+     * <?php
+     * $I->moveMouseOver(['css' => '.checkout']);
+     * $I->moveMouseOver(null, 20, 50);
+     * $I->moveMouseOver(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param null|string|array|WebDriverBy $cssOrXPath css or xpath of the web element
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::moveMouseOver()
+     */
+    public function tryToMoveMouseOver($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('moveMouseOver', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes moveMouseOver and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::moveMouseOver()
+     */
+    public function retryMoveMouseOver($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('moveMouseOver', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Performs click with the left mouse button on an element.
+     * If the first parameter `null` then the offset is relative to the actual mouse position.
+     * If the second and third parameters are given,
+     * then the mouse is moved to an offset of the element's top-left corner.
+     * Otherwise, the mouse is moved to the center of the element.
+     *
+     * ``` php
+     * <?php
+     * $I->clickWithLeftButton(['css' => '.checkout']);
+     * $I->clickWithLeftButton(null, 20, 50);
+     * $I->clickWithLeftButton(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param null|string|array|WebDriverBy $cssOrXPath css or xpath of the web element (body by default).
+     *
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::clickWithLeftButton()
+     */
+    public function clickWithLeftButton($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('clickWithLeftButton', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Performs click with the left mouse button on an element.
+     * If the first parameter `null` then the offset is relative to the actual mouse position.
+     * If the second and third parameters are given,
+     * then the mouse is moved to an offset of the element's top-left corner.
+     * Otherwise, the mouse is moved to the center of the element.
+     *
+     * ``` php
+     * <?php
+     * $I->clickWithLeftButton(['css' => '.checkout']);
+     * $I->clickWithLeftButton(null, 20, 50);
+     * $I->clickWithLeftButton(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param null|string|array|WebDriverBy $cssOrXPath css or xpath of the web element (body by default).
+     *
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::clickWithLeftButton()
+     */
+    public function tryToClickWithLeftButton($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('clickWithLeftButton', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes clickWithLeftButton and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::clickWithLeftButton()
+     */
+    public function retryClickWithLeftButton($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('clickWithLeftButton', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Performs contextual click with the right mouse button on an element.
+     * If the first parameter `null` then the offset is relative to the actual mouse position.
+     * If the second and third parameters are given,
+     * then the mouse is moved to an offset of the element's top-left corner.
+     * Otherwise, the mouse is moved to the center of the element.
+     *
+     * ``` php
+     * <?php
+     * $I->clickWithRightButton(['css' => '.checkout']);
+     * $I->clickWithRightButton(null, 20, 50);
+     * $I->clickWithRightButton(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param null|string|array|WebDriverBy $cssOrXPath css or xpath of the web element (body by default).
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::clickWithRightButton()
+     */
+    public function clickWithRightButton($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('clickWithRightButton', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Performs contextual click with the right mouse button on an element.
+     * If the first parameter `null` then the offset is relative to the actual mouse position.
+     * If the second and third parameters are given,
+     * then the mouse is moved to an offset of the element's top-left corner.
+     * Otherwise, the mouse is moved to the center of the element.
+     *
+     * ``` php
+     * <?php
+     * $I->clickWithRightButton(['css' => '.checkout']);
+     * $I->clickWithRightButton(null, 20, 50);
+     * $I->clickWithRightButton(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param null|string|array|WebDriverBy $cssOrXPath css or xpath of the web element (body by default).
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::clickWithRightButton()
+     */
+    public function tryToClickWithRightButton($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('clickWithRightButton', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes clickWithRightButton and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::clickWithRightButton()
+     */
+    public function retryClickWithRightButton($cssOrXPath = NULL, ?int $offsetX = NULL, ?int $offsetY = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('clickWithRightButton', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Performs a double click on an element matched by CSS or XPath.
+     *
+     * @param string|array|WebDriverBy $cssOrXPath
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::doubleClick()
+     */
+    public function doubleClick($cssOrXPath): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('doubleClick', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Performs a double click on an element matched by CSS or XPath.
+     *
+     * @param string|array|WebDriverBy $cssOrXPath
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::doubleClick()
+     */
+    public function tryToDoubleClick($cssOrXPath): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('doubleClick', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes doubleClick and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::doubleClick()
+     */
+    public function retryDoubleClick($cssOrXPath) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('doubleClick', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Presses the given key on the given element.
+     * To specify a character and modifier (e.g. <kbd>Ctrl</kbd>, Alt, Shift, Meta), pass an array for `$char` with
+     * the modifier as the first element and the character as the second.
+     * For special keys, use the constants from [`Facebook\WebDriver\WebDriverKeys`](https://github.com/php-webdriver/php-webdriver/blob/main/lib/WebDriverKeys.php).
+     *
+     * ``` php
+     * <?php
+     * // <input id="page" value="old" />
+     * $I->pressKey('#page','a'); // => olda
+     * $I->pressKey('#page',array('ctrl','a'),'new'); //=> new
+     * $I->pressKey('#page',array('shift','111'),'1','x'); //=> old!!!1x
+     * $I->pressKey('descendant-or-self::*[@id='page']','u'); //=> oldu
+     * $I->pressKey('#name', array('ctrl', 'a'), \Facebook\WebDriver\WebDriverKeys::DELETE); //=>''
+     * ```
+     *
+     * @param string|array|WebDriverBy $element
+     * @param array<string|string[]>$chars Can be char or array with modifier. You can provide several chars.
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::pressKey()
+     */
+    public function pressKey($element, $chars = null): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('pressKey', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Presses the given key on the given element.
+     * To specify a character and modifier (e.g. <kbd>Ctrl</kbd>, Alt, Shift, Meta), pass an array for `$char` with
+     * the modifier as the first element and the character as the second.
+     * For special keys, use the constants from [`Facebook\WebDriver\WebDriverKeys`](https://github.com/php-webdriver/php-webdriver/blob/main/lib/WebDriverKeys.php).
+     *
+     * ``` php
+     * <?php
+     * // <input id="page" value="old" />
+     * $I->pressKey('#page','a'); // => olda
+     * $I->pressKey('#page',array('ctrl','a'),'new'); //=> new
+     * $I->pressKey('#page',array('shift','111'),'1','x'); //=> old!!!1x
+     * $I->pressKey('descendant-or-self::*[@id='page']','u'); //=> oldu
+     * $I->pressKey('#name', array('ctrl', 'a'), \Facebook\WebDriver\WebDriverKeys::DELETE); //=>''
+     * ```
+     *
+     * @param string|array|WebDriverBy $element
+     * @param array<string|string[]>$chars Can be char or array with modifier. You can provide several chars.
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::pressKey()
+     */
+    public function tryToPressKey($element, $chars = null): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('pressKey', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes pressKey and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::pressKey()
+     */
+    public function retryPressKey($element, $chars = null) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('pressKey', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Append the given text to the given element.
+     * Can also add a selection to a select box.
+     *
+     * ``` php
+     * <?php
+     * $I->appendField('#mySelectbox', 'SelectValue');
+     * $I->appendField('#myTextField', 'appended');
+     * ```
+     *
+     * @param string|array|WebDriverBy $field
+     * @param string $value
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::appendField()
+     */
+    public function appendField($field, string $value): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('appendField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Append the given text to the given element.
+     * Can also add a selection to a select box.
+     *
+     * ``` php
+     * <?php
+     * $I->appendField('#mySelectbox', 'SelectValue');
+     * $I->appendField('#myTextField', 'appended');
+     * ```
+     *
+     * @param string|array|WebDriverBy $field
+     * @param string $value
+     * @throws ElementNotFound
+     * @see \Codeception\Module\WebDriver::appendField()
+     */
+    public function tryToAppendField($field, string $value): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('appendField', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes appendField and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::appendField()
+     */
+    public function retryAppendField($field, string $value) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('appendField', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Saves current cookies into named snapshot in order to restore them in other tests
+     * This is useful to save session state between tests.
+     * For example, if user needs log in to site for each test this scenario can be executed once
+     * while other tests can just restore saved cookies.
+     *
+     * ``` php
+     * <?php
+     * // inside AcceptanceTester class:
+     *
+     * public function login()
+     * {
+     *      // if snapshot exists - skipping login
+     *      if ($I->loadSessionSnapshot('login')) return;
+     *
+     *      // logging in
+     *      $I->amOnPage('/login');
+     *      $I->fillField('name', 'jon');
+     *      $I->fillField('password', '123345');
+     *      $I->click('Login');
+     *
+     *      // saving snapshot
+     *      $I->saveSessionSnapshot('login');
+     * }
+     * ```
+     *
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::saveSessionSnapshot()
+     */
+    public function saveSessionSnapshot($name) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('saveSessionSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Saves current cookies into named snapshot in order to restore them in other tests
+     * This is useful to save session state between tests.
+     * For example, if user needs log in to site for each test this scenario can be executed once
+     * while other tests can just restore saved cookies.
+     *
+     * ``` php
+     * <?php
+     * // inside AcceptanceTester class:
+     *
+     * public function login()
+     * {
+     *      // if snapshot exists - skipping login
+     *      if ($I->loadSessionSnapshot('login')) return;
+     *
+     *      // logging in
+     *      $I->amOnPage('/login');
+     *      $I->fillField('name', 'jon');
+     *      $I->fillField('password', '123345');
+     *      $I->click('Login');
+     *
+     *      // saving snapshot
+     *      $I->saveSessionSnapshot('login');
+     * }
+     * ```
+     *
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::saveSessionSnapshot()
+     */
+    public function tryToSaveSessionSnapshot($name): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('saveSessionSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes saveSessionSnapshot and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::saveSessionSnapshot()
+     */
+    public function retrySaveSessionSnapshot($name) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('saveSessionSnapshot', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Loads cookies from a saved snapshot.
+     * Allows to reuse same session across tests without additional login.
+     *
+     * See [saveSessionSnapshot](#saveSessionSnapshot)
+     *
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::loadSessionSnapshot()
+     */
+    public function loadSessionSnapshot($name, bool $showDebug = true): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('loadSessionSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Loads cookies from a saved snapshot.
+     * Allows to reuse same session across tests without additional login.
+     *
+     * See [saveSessionSnapshot](#saveSessionSnapshot)
+     *
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::loadSessionSnapshot()
+     */
+    public function tryToLoadSessionSnapshot($name, bool $showDebug = true): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('loadSessionSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes loadSessionSnapshot and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::loadSessionSnapshot()
+     */
+    public function retryLoadSessionSnapshot($name, bool $showDebug = true) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('loadSessionSnapshot', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Deletes session snapshot.
+     *
+     * See [saveSessionSnapshot](#saveSessionSnapshot)
+     *
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::deleteSessionSnapshot()
+     */
+    public function deleteSessionSnapshot($name) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('deleteSessionSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Deletes session snapshot.
+     *
+     * See [saveSessionSnapshot](#saveSessionSnapshot)
+     *
+     * @return mixed
+     * @see \Codeception\Module\WebDriver::deleteSessionSnapshot()
+     */
+    public function tryToDeleteSessionSnapshot($name): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('deleteSessionSnapshot', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes deleteSessionSnapshot and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::deleteSessionSnapshot()
+     */
+    public function retryDeleteSessionSnapshot($name) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('deleteSessionSnapshot', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Move to the middle of the given element matched by the given locator.
+     * Extra shift, calculated from the top-left corner of the element,
+     * can be set by passing $offsetX and $offsetY parameters.
+     *
+     * ``` php
+     * <?php
+     * $I->scrollTo(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::scrollTo()
+     */
+    public function scrollTo($selector, ?int $offsetX = NULL, ?int $offsetY = NULL): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('scrollTo', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Move to the middle of the given element matched by the given locator.
+     * Extra shift, calculated from the top-left corner of the element,
+     * can be set by passing $offsetX and $offsetY parameters.
+     *
+     * ``` php
+     * <?php
+     * $I->scrollTo(['css' => '.checkout'], 20, 50);
+     * ```
+     *
+     * @param string|array|WebDriverBy $selector
+     * @see \Codeception\Module\WebDriver::scrollTo()
+     */
+    public function tryToScrollTo($selector, ?int $offsetX = NULL, ?int $offsetY = NULL): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('scrollTo', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes scrollTo and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::scrollTo()
+     */
+    public function retryScrollTo($selector, ?int $offsetX = NULL, ?int $offsetY = NULL) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('scrollTo', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Opens a new browser tab and switches to it.
+     *
+     * ```php
+     * <?php
+     * $I->openNewTab();
+     * ```
+     * The tab is opened with JavaScript's `window.open()`, which means:
+     * * Some ad-blockers might restrict it.
+     * * The sessionStorage is copied to the new tab (contrary to a tab that was manually opened by the user)
+     * @see \Codeception\Module\WebDriver::openNewTab()
+     */
+    public function openNewTab(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('openNewTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Opens a new browser tab and switches to it.
+     *
+     * ```php
+     * <?php
+     * $I->openNewTab();
+     * ```
+     * The tab is opened with JavaScript's `window.open()`, which means:
+     * * Some ad-blockers might restrict it.
+     * * The sessionStorage is copied to the new tab (contrary to a tab that was manually opened by the user)
+     * @see \Codeception\Module\WebDriver::openNewTab()
+     */
+    public function tryToOpenNewTab(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('openNewTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes openNewTab and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::openNewTab()
+     */
+    public function retryOpenNewTab() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('openNewTab', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Checks current number of opened tabs
+     *
+     * ```php
+     * <?php
+     * $I->seeNumberOfTabs(2);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeNumberOfTabs()
+     */
+    public function seeNumberOfTabs(int $number): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeNumberOfTabs', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Checks current number of opened tabs
+     *
+     * ```php
+     * <?php
+     * $I->seeNumberOfTabs(2);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeNumberOfTabs()
+     */
+    public function canSeeNumberOfTabs(int $number): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeNumberOfTabs', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Checks current number of opened tabs
+     *
+     * ```php
+     * <?php
+     * $I->seeNumberOfTabs(2);
+     * ```
+     * @see \Codeception\Module\WebDriver::seeNumberOfTabs()
+     */
+    public function tryToSeeNumberOfTabs(int $number): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeNumberOfTabs', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeNumberOfTabs and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::seeNumberOfTabs()
+     */
+    public function retrySeeNumberOfTabs(int $number) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeNumberOfTabs', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Closes current browser tab and switches to previous active tab.
+     *
+     * ```php
+     * <?php
+     * $I->closeTab();
+     * ```
+     * @see \Codeception\Module\WebDriver::closeTab()
+     */
+    public function closeTab(): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('closeTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Closes current browser tab and switches to previous active tab.
+     *
+     * ```php
+     * <?php
+     * $I->closeTab();
+     * ```
+     * @see \Codeception\Module\WebDriver::closeTab()
+     */
+    public function tryToCloseTab(): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('closeTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes closeTab and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::closeTab()
+     */
+    public function retryCloseTab() {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('closeTab', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Switches to next browser tab.
+     * An offset can be specified.
+     *
+     * ```php
+     * <?php
+     * // switch to next tab
+     * $I->switchToNextTab();
+     * // switch to 2nd next tab
+     * $I->switchToNextTab(2);
+     * ```
+     * @see \Codeception\Module\WebDriver::switchToNextTab()
+     */
+    public function switchToNextTab(int $offset = 1): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('switchToNextTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Switches to next browser tab.
+     * An offset can be specified.
+     *
+     * ```php
+     * <?php
+     * // switch to next tab
+     * $I->switchToNextTab();
+     * // switch to 2nd next tab
+     * $I->switchToNextTab(2);
+     * ```
+     * @see \Codeception\Module\WebDriver::switchToNextTab()
+     */
+    public function tryToSwitchToNextTab(int $offset = 1): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('switchToNextTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes switchToNextTab and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::switchToNextTab()
+     */
+    public function retrySwitchToNextTab(int $offset = 1) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('switchToNextTab', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Switches to previous browser tab.
+     * An offset can be specified.
+     *
+     * ```php
+     * <?php
+     * // switch to previous tab
+     * $I->switchToPreviousTab();
+     * // switch to 2nd previous tab
+     * $I->switchToPreviousTab(2);
+     * ```
+     * @see \Codeception\Module\WebDriver::switchToPreviousTab()
+     */
+    public function switchToPreviousTab(int $offset = 1): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('switchToPreviousTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Switches to previous browser tab.
+     * An offset can be specified.
+     *
+     * ```php
+     * <?php
+     * // switch to previous tab
+     * $I->switchToPreviousTab();
+     * // switch to 2nd previous tab
+     * $I->switchToPreviousTab(2);
+     * ```
+     * @see \Codeception\Module\WebDriver::switchToPreviousTab()
+     */
+    public function tryToSwitchToPreviousTab(int $offset = 1): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('switchToPreviousTab', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes switchToPreviousTab and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::switchToPreviousTab()
+     */
+    public function retrySwitchToPreviousTab(int $offset = 1) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('switchToPreviousTab', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Waits for element and runs a sequence of actions inside its context.
+     * Actions can be defined with array, callback, or `Codeception\Util\ActionSequence` instance.
+     *
+     * Actions as array are recommended for simple to combine "waitForElement" with assertions;
+     * `waitForElement($el)` and `see('text', $el)` can be simplified to:
+     *
+     * ```php
+     * <?php
+     * $I->performOn($el, ['see' => 'text']);
+     * ```
+     *
+     * List of actions can be pragmatically build using `Codeception\Util\ActionSequence`:
+     *
+     * ```php
+     * <?php
+     * $I->performOn('.model', ActionSequence::build()
+     *     ->see('Warning')
+     *     ->see('Are you sure you want to delete this?')
+     *     ->click('Yes')
+     * );
+     * ```
+     *
+     * Actions executed from array or ActionSequence will print debug output for actions, and adds an action name to
+     * exception on failure.
+     *
+     * Whenever you need to define more actions a callback can be used. A WebDriver module is passed for argument:
+     *
+     * ```php
+     * <?php
+     * $I->performOn('.rememberMe', function (WebDriver $I) {
+     *      $I->see('Remember me next time');
+     *      $I->seeElement('#LoginForm_rememberMe');
+     *      $I->dontSee('Login');
+     * });
+     * ```
+     *
+     * In 3rd argument you can set number a seconds to wait for element to appear
+     *
+     * @param string|array|WebDriverBy $element
+     * @param callable|array|ActionSequence $actions
+     * @see \Codeception\Module\WebDriver::performOn()
+     */
+    public function performOn($element, $actions, int $timeout = 10): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('performOn', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Waits for element and runs a sequence of actions inside its context.
+     * Actions can be defined with array, callback, or `Codeception\Util\ActionSequence` instance.
+     *
+     * Actions as array are recommended for simple to combine "waitForElement" with assertions;
+     * `waitForElement($el)` and `see('text', $el)` can be simplified to:
+     *
+     * ```php
+     * <?php
+     * $I->performOn($el, ['see' => 'text']);
+     * ```
+     *
+     * List of actions can be pragmatically build using `Codeception\Util\ActionSequence`:
+     *
+     * ```php
+     * <?php
+     * $I->performOn('.model', ActionSequence::build()
+     *     ->see('Warning')
+     *     ->see('Are you sure you want to delete this?')
+     *     ->click('Yes')
+     * );
+     * ```
+     *
+     * Actions executed from array or ActionSequence will print debug output for actions, and adds an action name to
+     * exception on failure.
+     *
+     * Whenever you need to define more actions a callback can be used. A WebDriver module is passed for argument:
+     *
+     * ```php
+     * <?php
+     * $I->performOn('.rememberMe', function (WebDriver $I) {
+     *      $I->see('Remember me next time');
+     *      $I->seeElement('#LoginForm_rememberMe');
+     *      $I->dontSee('Login');
+     * });
+     * ```
+     *
+     * In 3rd argument you can set number a seconds to wait for element to appear
+     *
+     * @param string|array|WebDriverBy $element
+     * @param callable|array|ActionSequence $actions
+     * @see \Codeception\Module\WebDriver::performOn()
+     */
+    public function tryToPerformOn($element, $actions, int $timeout = 10): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('performOn', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes performOn and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\WebDriver::performOn()
+     */
+    public function retryPerformOn($element, $actions, int $timeout = 10) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('performOn', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Make sure you are connected to the right database.
+     *
+     * ```php
+     * <?php
+     * $I->seeNumRecords(2, 'users');   //executed on default database
+     * $I->amConnectedToDatabase('db_books');
+     * $I->seeNumRecords(30, 'books');  //executed on db_books database
+     * //All the next queries will be on db_books
+     * ```
+     *
+     * @throws ModuleConfigException
+     * @see \Codeception\Module\Db::amConnectedToDatabase()
+     */
+    public function amConnectedToDatabase(string $databaseKey): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Condition('amConnectedToDatabase', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Can be used with a callback if you don't want to change the current database in your test.
+     *
+     * ```php
+     * <?php
+     * $I->seeNumRecords(2, 'users');   //executed on default database
+     * $I->performInDatabase('db_books', function($I) {
+     *     $I->seeNumRecords(30, 'books');  //executed on db_books database
+     * });
+     * $I->seeNumRecords(2, 'users');  //executed on default database
+     * ```
+     * List of actions can be pragmatically built using `Codeception\Util\ActionSequence`:
+     *
+     * ```php
+     * <?php
+     * $I->performInDatabase('db_books', ActionSequence::build()
+     *     ->seeNumRecords(30, 'books')
+     * );
+     * ```
+     * Alternatively an array can be used:
+     *
+     * ```php
+     * $I->performInDatabase('db_books', ['seeNumRecords' => [30, 'books']]);
+     * ```
+     *
+     * Choose the syntax you like the most and use it,
+     *
+     * Actions executed from array or ActionSequence will print debug output for actions, and adds an action name to
+     * exception on failure.
+     *
+     * @param $databaseKey
+     * @param ActionSequence|array|callable $actions
+     * @throws ModuleConfigException
+     * @see \Codeception\Module\Db::performInDatabase()
+     */
+    public function performInDatabase($databaseKey, $actions): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('performInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Can be used with a callback if you don't want to change the current database in your test.
+     *
+     * ```php
+     * <?php
+     * $I->seeNumRecords(2, 'users');   //executed on default database
+     * $I->performInDatabase('db_books', function($I) {
+     *     $I->seeNumRecords(30, 'books');  //executed on db_books database
+     * });
+     * $I->seeNumRecords(2, 'users');  //executed on default database
+     * ```
+     * List of actions can be pragmatically built using `Codeception\Util\ActionSequence`:
+     *
+     * ```php
+     * <?php
+     * $I->performInDatabase('db_books', ActionSequence::build()
+     *     ->seeNumRecords(30, 'books')
+     * );
+     * ```
+     * Alternatively an array can be used:
+     *
+     * ```php
+     * $I->performInDatabase('db_books', ['seeNumRecords' => [30, 'books']]);
+     * ```
+     *
+     * Choose the syntax you like the most and use it,
+     *
+     * Actions executed from array or ActionSequence will print debug output for actions, and adds an action name to
+     * exception on failure.
+     *
+     * @param $databaseKey
+     * @param ActionSequence|array|callable $actions
+     * @throws ModuleConfigException
+     * @see \Codeception\Module\Db::performInDatabase()
+     */
+    public function tryToPerformInDatabase($databaseKey, $actions): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('performInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes performInDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::performInDatabase()
+     */
+    public function retryPerformInDatabase($databaseKey, $actions) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('performInDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Inserts an SQL record into a database. This record will be erased after the test,
+     * unless you've configured "skip_cleanup_if_failed", and the test fails.
+     *
+     * ```php
+     * <?php
+     * $I->haveInDatabase('users', array('name' => 'miles', 'email' => 'miles@davis.com'));
+     * ```
+     * @see \Codeception\Module\Db::haveInDatabase()
+     */
+    public function haveInDatabase(string $table, array $data): int {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('haveInDatabase', func_get_args()));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Asserts that a row with the given column values exists.
+     * Provide table name and column values.
+     *
+     * ```php
+     * <?php
+     * $I->seeInDatabase('users', ['name' => 'Davert', 'email' => 'davert@mail.com']);
+     * ```
+     * Fails if no such user found.
+     *
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $I->seeInDatabase('posts', ['num_comments >=' => '0']);
+     * $I->seeInDatabase('users', ['email like' => 'miles@davis.com']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     * @see \Codeception\Module\Db::seeInDatabase()
+     */
+    public function seeInDatabase(string $table, array $criteria = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Asserts that a row with the given column values exists.
+     * Provide table name and column values.
+     *
+     * ```php
+     * <?php
+     * $I->seeInDatabase('users', ['name' => 'Davert', 'email' => 'davert@mail.com']);
+     * ```
+     * Fails if no such user found.
+     *
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $I->seeInDatabase('posts', ['num_comments >=' => '0']);
+     * $I->seeInDatabase('users', ['email like' => 'miles@davis.com']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     * @see \Codeception\Module\Db::seeInDatabase()
+     */
+    public function canSeeInDatabase(string $table, array $criteria = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Asserts that a row with the given column values exists.
+     * Provide table name and column values.
+     *
+     * ```php
+     * <?php
+     * $I->seeInDatabase('users', ['name' => 'Davert', 'email' => 'davert@mail.com']);
+     * ```
+     * Fails if no such user found.
+     *
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $I->seeInDatabase('posts', ['num_comments >=' => '0']);
+     * $I->seeInDatabase('users', ['email like' => 'miles@davis.com']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     * @see \Codeception\Module\Db::seeInDatabase()
+     */
+    public function tryToSeeInDatabase(string $table, array $criteria = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeInDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::seeInDatabase()
+     */
+    public function retrySeeInDatabase(string $table, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeInDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Asserts that the given number of records were found in the database.
+     *
+     * ```php
+     * <?php
+     * $I->seeNumRecords(1, 'users', ['name' => 'davert'])
+     * ```
+     *
+     * @param int $expectedNumber Expected number
+     * @param string $table Table name
+     * @param array $criteria Search criteria [Optional]
+     * @see \Codeception\Module\Db::seeNumRecords()
+     */
+    public function seeNumRecords(int $expectedNumber, string $table, array $criteria = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Assertion('seeNumRecords', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Asserts that the given number of records were found in the database.
+     *
+     * ```php
+     * <?php
+     * $I->seeNumRecords(1, 'users', ['name' => 'davert'])
+     * ```
+     *
+     * @param int $expectedNumber Expected number
+     * @param string $table Table name
+     * @param array $criteria Search criteria [Optional]
+     * @see \Codeception\Module\Db::seeNumRecords()
+     */
+    public function canSeeNumRecords(int $expectedNumber, string $table, array $criteria = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('seeNumRecords', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Asserts that the given number of records were found in the database.
+     *
+     * ```php
+     * <?php
+     * $I->seeNumRecords(1, 'users', ['name' => 'davert'])
+     * ```
+     *
+     * @param int $expectedNumber Expected number
+     * @param string $table Table name
+     * @param array $criteria Search criteria [Optional]
+     * @see \Codeception\Module\Db::seeNumRecords()
+     */
+    public function tryToSeeNumRecords(int $expectedNumber, string $table, array $criteria = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('seeNumRecords', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes seeNumRecords and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::seeNumRecords()
+     */
+    public function retrySeeNumRecords(int $expectedNumber, string $table, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('seeNumRecords', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Effect is opposite to ->seeInDatabase
+     *
+     * Asserts that there is no record with the given column values in a database.
+     * Provide table name and column values.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInDatabase('users', ['name' => 'Davert', 'email' => 'davert@mail.com']);
+     * ```
+     * Fails if such user was found.
+     *
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $I->dontSeeInDatabase('posts', ['num_comments >=' => '0']);
+     * $I->dontSeeInDatabase('users', ['email like' => 'miles%']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     * @see \Codeception\Module\Db::dontSeeInDatabase()
+     */
+    public function dontSeeInDatabase(string $table, array $criteria = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('dontSeeInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Conditional Assertion: Test won't be stopped on fail
+     * Effect is opposite to ->seeInDatabase
+     *
+     * Asserts that there is no record with the given column values in a database.
+     * Provide table name and column values.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInDatabase('users', ['name' => 'Davert', 'email' => 'davert@mail.com']);
+     * ```
+     * Fails if such user was found.
+     *
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $I->dontSeeInDatabase('posts', ['num_comments >=' => '0']);
+     * $I->dontSeeInDatabase('users', ['email like' => 'miles%']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     * @see \Codeception\Module\Db::dontSeeInDatabase()
+     */
+    public function cantSeeInDatabase(string $table, array $criteria = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\ConditionalAssertion('dontSeeInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Effect is opposite to ->seeInDatabase
+     *
+     * Asserts that there is no record with the given column values in a database.
+     * Provide table name and column values.
+     *
+     * ``` php
+     * <?php
+     * $I->dontSeeInDatabase('users', ['name' => 'Davert', 'email' => 'davert@mail.com']);
+     * ```
+     * Fails if such user was found.
+     *
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $I->dontSeeInDatabase('posts', ['num_comments >=' => '0']);
+     * $I->dontSeeInDatabase('users', ['email like' => 'miles%']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     * @see \Codeception\Module\Db::dontSeeInDatabase()
+     */
+    public function tryToDontSeeInDatabase(string $table, array $criteria = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('dontSeeInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes dontSeeInDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::dontSeeInDatabase()
+     */
+    public function retryDontSeeInDatabase(string $table, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('dontSeeInDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Fetches all values from the column in database.
+     * Provide table name, desired column and criteria.
+     *
+     * ``` php
+     * <?php
+     * $mails = $I->grabColumnFromDatabase('users', 'email', array('name' => 'RebOOter'));
+     * ```
+     * @see \Codeception\Module\Db::grabColumnFromDatabase()
+     */
+    public function grabColumnFromDatabase(string $table, string $column, array $criteria = []): array {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabColumnFromDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabColumnFromDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::grabColumnFromDatabase()
+     */
+    public function retryGrabColumnFromDatabase(string $table, string $column, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabColumnFromDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Fetches a single column value from a database.
+     * Provide table name, desired column and criteria.
+     *
+     * ``` php
+     * <?php
+     * $mail = $I->grabFromDatabase('users', 'email', array('name' => 'Davert'));
+     * ```
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $postNum = $I->grabFromDatabase('posts', 'num_comments', ['num_comments >=' => 100]);
+     * $mail = $I->grabFromDatabase('users', 'email', ['email like' => 'miles%']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     *
+     * @return mixed Returns a single column value or false
+     * @see \Codeception\Module\Db::grabFromDatabase()
+     */
+    public function grabFromDatabase(string $table, string $column, array $criteria = []) {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabFromDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabFromDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::grabFromDatabase()
+     */
+    public function retryGrabFromDatabase(string $table, string $column, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabFromDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Fetches a whole entry from a database.
+     * Make the test fail if the entry is not found.
+     * Provide table name, desired column and criteria.
+     *
+     * ``` php
+     * <?php
+     * $mail = $I->grabEntryFromDatabase('users', array('name' => 'Davert'));
+     * ```
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $post = $I->grabEntryFromDatabase('posts', ['num_comments >=' => 100]);
+     * $user = $I->grabEntryFromDatabase('users', ['email like' => 'miles%']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     *
+     * @return array Returns a single entry value
+     * @throws PDOException|Exception
+     * @see \Codeception\Module\Db::grabEntryFromDatabase()
+     */
+    public function grabEntryFromDatabase(string $table, array $criteria = []): array {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabEntryFromDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabEntryFromDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::grabEntryFromDatabase()
+     */
+    public function retryGrabEntryFromDatabase(string $table, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabEntryFromDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Fetches a set of entries from a database.
+     * Provide table name and criteria.
+     *
+     * ``` php
+     * <?php
+     * $mail = $I->grabEntriesFromDatabase('users', array('name' => 'Davert'));
+     * ```
+     * Comparison expressions can be used as well:
+     *
+     * ```php
+     * <?php
+     * $post = $I->grabEntriesFromDatabase('posts', ['num_comments >=' => 100]);
+     * $user = $I->grabEntriesFromDatabase('users', ['email like' => 'miles%']);
+     * ```
+     *
+     * Supported operators: `<`, `>`, `>=`, `<=`, `!=`, `like`.
+     *
+     * @return array<array<string, mixed>> Returns an array of all matched rows
+     * @throws PDOException|Exception
+     * @see \Codeception\Module\Db::grabEntriesFromDatabase()
+     */
+    public function grabEntriesFromDatabase(string $table, array $criteria = []): array {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabEntriesFromDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabEntriesFromDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::grabEntriesFromDatabase()
+     */
+    public function retryGrabEntriesFromDatabase(string $table, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabEntriesFromDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Returns the number of rows in a database
+     *
+     * @param string $table    Table name
+     * @param array  $criteria Search criteria [Optional]
+     * @return int
+     * @see \Codeception\Module\Db::grabNumRecords()
+     */
+    public function grabNumRecords(string $table, array $criteria = []): int {
+        return $this->getScenario()->runStep(new \Codeception\Step\Action('grabNumRecords', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes grabNumRecords and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::grabNumRecords()
+     */
+    public function retryGrabNumRecords(string $table, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('grabNumRecords', func_get_args(), $retryNum, $retryInterval));
+    }
+
+ 
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * Update an SQL record into a database.
+     *
+     * ```php
+     * <?php
+     * $I->updateInDatabase('users', array('isAdmin' => true), array('email' => 'miles@davis.com'));
+     * ```
+     * @see \Codeception\Module\Db::updateInDatabase()
+     */
+    public function updateInDatabase(string $table, array $data, array $criteria = []): void {
+        $this->getScenario()->runStep(new \Codeception\Step\Action('updateInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated. Documentation taken from corresponding module.
+     *
+     * [!] Test won't be stopped on fail. Error won't be logged 
+     * Update an SQL record into a database.
+     *
+     * ```php
+     * <?php
+     * $I->updateInDatabase('users', array('isAdmin' => true), array('email' => 'miles@davis.com'));
+     * ```
+     * @see \Codeception\Module\Db::updateInDatabase()
+     */
+    public function tryToUpdateInDatabase(string $table, array $data, array $criteria = []): bool {
+        return $this->getScenario()->runStep(new \Codeception\Step\TryTo('updateInDatabase', func_get_args()));
+    }
+    /**
+     * [!] Method is generated.
+     * 
+     * * Executes updateInDatabase and retries on failure.
+     * 
+     * Retry number and interval set by $I->retry();
+     *
+     * @see \Codeception\Module\Db::updateInDatabase()
+     */
+    public function retryUpdateInDatabase(string $table, array $data, array $criteria = []) {
+        $retryNum = isset($this->retryNum) ? $this->retryNum : 1;
+        $retryInterval = isset($this->retryInterval) ? $this->retryInterval : 200;
+        return $this->getScenario()->runStep(new \Codeception\Step\Retry('updateInDatabase', func_get_args(), $retryNum, $retryInterval));
+    }
 }
