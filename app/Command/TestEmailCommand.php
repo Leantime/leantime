@@ -66,7 +66,7 @@ class TestEmailCommand extends Command
 
         $mailer = app()->make(Mailer::class);
         $mailer->setSubject('Leantime email test');
-        $mailer->setHtml('This is a test of the leantime mailer configuration. If you have received this email, then the mail configuration is correct.');
+        $mailer->setHtml('This is a test of the leantime mailer configuration. If you have received this email, then the mail configuration is correct.', true);
         $mailer->sendMail(array($input->getOption('address')), 'Command-line test');
 
         return Command::SUCCESS;

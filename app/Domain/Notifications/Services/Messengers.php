@@ -206,7 +206,7 @@ class Messengers
         $converter = false;
 
         for ($i = 1; 3 >= $i; $i++) {
-            $discordWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.discordWebhookURL.{$i}");
+            $discordWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.discordWebhookURL{$i}");
             if ($discordWebhookURL !== '' && $discordWebhookURL !== false) {
                 if (!$converter) {
                     $converter = new HtmlConverter();
@@ -235,7 +235,7 @@ class Messengers
                         [
                             'title' => $notification->subject,
                             'type' => 'rich',
-                            'description' => $converter->convert($notification->message),
+                            'description' => html_entity_decode($converter->convert($notification->message)),
                             'url' => $url_link,
                             'timestamp' => $timestamp,
                             'color' => hexdec('1b75bb'),

@@ -207,6 +207,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
+                            'milestoneId' => $params['milestoneId'] ?? '',
                         );
 
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {

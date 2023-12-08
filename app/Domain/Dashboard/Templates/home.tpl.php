@@ -452,8 +452,6 @@ $milestones = $tpl->get('milestones');
 
         leantime.dashboardController.initDueDateTimePickers();
 
-        jQuery('.todaysDate').text(moment().format('LLLL'));
-
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.dashboardController.prepareHiddenDueDate();
         leantime.ticketsController.initEffortDropdown();

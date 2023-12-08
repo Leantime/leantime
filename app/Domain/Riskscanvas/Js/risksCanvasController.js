@@ -31,38 +31,40 @@ leantime.risksCanvasController = (function () {
     var closeModal = false;
 
     //Variables
-    var canvasoptions = {
-        sizes: {
-            minW:  700,
-            minH: 1000,
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                if (closeModal == true) {
-                    closeModal = false;
+    var canvasoptions = function() {
+        return {
+            sizes: {
+                minW:  700,
+                minH: 1000,
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                beforeShowCont: function () {
+                    jQuery(".showDialogOnLoad").show();
+                    if (closeModal == true) {
+                        closeModal = false;
+                        location.reload();
+                    }
+                },
+                afterShowCont: function () {
+                    jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
+
+                },
+                beforeClose: function () {
                     location.reload();
                 }
             },
-            afterShowCont: function () {
-                jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+            titleFromIframe: true
 
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-        },
-        titleFromIframe: true
-
+        }
     };
 
 
     //Functions
 
     var _initModals = function () {
-        jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
+        jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
     };
 
     var openModalManually = function (url) {

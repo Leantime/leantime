@@ -90,7 +90,13 @@ namespace Leantime\Domain\Queue\Services {
             }
 
             foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser) {
+
                 $theuser = $this->userRepo->getUser($currentUserId);
+
+                if($theuser === null || $theuser === false) {
+                    continue;
+                }
+
                 $recipient = $theuser['username'];
 
                 // DONE : Deal with users parameters to allow them define a maximum (and minimum ?) frequency to receive mails

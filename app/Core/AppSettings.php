@@ -10,7 +10,7 @@ namespace Leantime\Core;
  */
 class AppSettings
 {
-    public string $appVersion = "2.4.7";
+    public string $appVersion = "2.4.8";
 
     public string $dbVersion = "2.4.7";
 
@@ -47,12 +47,13 @@ class AppSettings
             ini_set('display_errors', 0);
         }
 
-        if ($config->useRedis == "true" || $config->useRedis === true) {
-            ini_set('session.save_handler', 'redis');
-            ini_set('session.save_path', $config->redisUrl);
-        }
-
         if (session_status() !== PHP_SESSION_ACTIVE) {
+
+            if ($config->useRedis == "true" || $config->useRedis === true) {
+                ini_set('session.save_handler', 'redis');
+                ini_set('session.save_path', $config->redisUrl);
+            }
+
             ini_set('session.use_cookies', 1);
             ini_set('session.use_only_cookies', 1);
             ini_set('session.cookie_httponly', 1);

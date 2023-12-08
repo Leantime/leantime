@@ -58,7 +58,7 @@ namespace Leantime\Domain\Connector\Controllers {
             Canvas $canvasRepository,
             Connector $connectorService
         ) {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
             $this->providerService = $providerService;
             $this->leantimeEntities = $leantimeEntities;

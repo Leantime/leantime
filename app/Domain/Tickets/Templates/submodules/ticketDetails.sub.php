@@ -387,7 +387,7 @@ $ticketTypes = $tpl->get('ticketTypes');
 <script>
 
     jQuery(document).ready(function(){
-        jQuery(".ticketTabs select").chosen();
+
 
         //Set accordion states
         //All accordions start open

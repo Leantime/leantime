@@ -107,6 +107,7 @@
 
     </li>
 
+    @if ($login::userIsAtLeast("manager", true))
 
     <li>
         <div class="userloggedinfo">

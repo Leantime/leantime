@@ -22,15 +22,6 @@ namespace Leantime\Domain\Notifications\Repositories {
             $this->db = $db;
         }
 
-
-        /**
-         * @param $userId
-         * @param $showNewOnly
-         * @param $limitStart
-         * @param $limitEnd
-         * @param $filterOptions
-         * @return array|false
-         */
         /**
          * @param $userId
          * @param false  $showNewOnly
@@ -58,7 +49,8 @@ namespace Leantime\Domain\Notifications\Repositories {
                       zp_user.lastname
                 FROM zp_notifications
                 LEFT JOIN zp_user ON zp_notifications.authorId = zp_user.id
-                WHERE userId = :userId";
+                WHERE userId = :userId
+                AND zp_notifications.type != 'ainotification'";
 
 
             if ($showNewOnly === true) {

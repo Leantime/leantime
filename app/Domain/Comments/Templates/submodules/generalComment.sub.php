@@ -29,7 +29,7 @@ if (str_contains($formUrl, '?delComment=')) {
             </div>
         </div>
 
-        <div id="comment-<?=$formHash ?>-0" class="commentBox-<?=$formHash ?>" style="display:none;">
+        <div id="comment-<?=$formHash ?>-0" class="commentBox-<?=$formHash ?> commenterFields" style="display:none;">
             <div class="commentImage">
                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?= strtotime($_SESSION['userdata']['modified'] ?? '0') ?>" />
             </div>
@@ -37,8 +37,8 @@ if (str_contains($formUrl, '?delComment=')) {
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
                 <input type="submit" value="<?php echo $tpl->__('buttons.save') ?>" name="comment" class="btn btn-primary btn-success" style="margin-left: 0px;"/>
             </div>
-            <input type="hidden" name="comment" value="1"/>
-            <input type="hidden" name="father" id="father-<?=$formHash ?>" value="0"/>
+            <input type="hidden" name="comment" class="commenterField" value="1"/>
+            <input type="hidden" name="father" class="commenterField" id="father-<?=$formHash ?>" value="0"/>
             <br/>
         </div>
     <?php } ?>

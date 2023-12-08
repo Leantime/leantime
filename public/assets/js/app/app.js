@@ -16,8 +16,6 @@ leantime.appUrl = appURL;
 var leantimeVersion = jQuery('meta[name=leantime-version]').attr("content");
 leantime.version = leantimeVersion;
 
-jQuery.noConflict();
-
 leantime.replaceSVGColors = function () {
 
     jQuery(document).ready(function () {
@@ -44,12 +42,11 @@ leantime.handleAsyncResponse = function (response) {
     }
 };
 
+jQuery.noConflict();
+
 jQuery(document).ready(function () {
 
     leantime.replaceSVGColors();
-
-    //Set moment locale early in app creation
-    moment.locale(leantime.i18n.__("language.code"));
 
     jQuery(".confetti").click(function () {
         confetti.start();

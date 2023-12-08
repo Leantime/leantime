@@ -335,7 +335,7 @@ namespace Leantime\Domain\Projects\Services {
                 $this->notificationService->processMentions(
                     $contentToCheck,
                     $notification->module,
-                    $entityId,
+                    (int)$entityId,
                     $notification->authorId,
                     $notification->url["url"]
                 );
@@ -685,6 +685,11 @@ namespace Leantime\Domain\Projects\Services {
          */
         public function changeCurrentSessionProject($projectId): bool
         {
+            if(!is_numeric($projectId)){
+                return false;
+            }
+
+            $projectId = (int)$projectId;
 
             if (isset($_SESSION["currentProjectName"]) === false) {
                 $_SESSION["currentProjectName"] = '';
@@ -1190,10 +1195,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param $id
          * @return array
          */
-        /**
-         * @param $id
-         * @return array
-         */
         public function getProjectUserRelation($id): array
         {
             return $this->projectRepository->getProjectUserRelation($id);
@@ -1204,21 +1205,11 @@ namespace Leantime\Domain\Projects\Services {
          * @param $params
          * @return bool
          */
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         public function patch($id, $params): bool
         {
             return $this->projectRepository->patch($id, $params);
         }
 
-        /**
-         * @param $id
-         * @return mixed
-         * @throws BindingResolutionException
-         */
         /**
          * @param $id
          * @return mixed
@@ -1283,7 +1274,7 @@ namespace Leantime\Domain\Projects\Services {
                 ),
                 "goals" => array(
                     "title" => "label.setGoals",
-                    "description" => "checklist.goals.description ",
+                    "description" => "checklist.goals.description",
                     "tasks" => array(
                         "setGoals" => array(
                             "title" => "label.setGoals",
@@ -1295,7 +1286,7 @@ namespace Leantime\Domain\Projects\Services {
                 ),
                 "timeline" => array(
                     "title" => "label.setTimeline",
-                    "description" => "checklist.timeline.description ",
+                    "description" => "checklist.timeline.description",
                     "tasks" => array(
                         "createMilestones" => array(
                             "title" => "label.createMilestones",

@@ -132,6 +132,8 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initStatusDropdown();
 
+            jQuery(".ticketTabs select").chosen();
+
         <?php } else { ?>
             leantime.authController.makeInputReadonly(".nyroModalCont");
 
