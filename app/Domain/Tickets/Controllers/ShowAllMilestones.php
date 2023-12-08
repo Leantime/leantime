@@ -7,6 +7,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -41,17 +42,11 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws \Exception
-         */
-        public function get($params): void
+        public function get($params): Response
         {
-
             $searchCriteria = $this->ticketService->prepareTicketSearchArray($params);
 
             //Default to not_done tickets to reduce load and make the table easier to read.
@@ -77,8 +72,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
-            $this->tpl->display('tickets.showAllMilestones');
+            return $this->tpl->display('tickets.showAllMilestones');
         }
     }
-
 }

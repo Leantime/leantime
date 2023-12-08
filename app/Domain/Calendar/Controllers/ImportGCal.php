@@ -59,7 +59,7 @@ namespace Leantime\Domain\Calendar\Controllers {
             $this->tpl->assign('values', $values);
             $this->tpl->assign('info', $msgKey);
 
-            $this->tpl->display('calendar.importGCal');
+            return $this->tpl->display('calendar.importGCal');
         }
     }
 }

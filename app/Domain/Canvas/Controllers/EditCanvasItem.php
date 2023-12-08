@@ -105,8 +105,7 @@ class EditCanvasItem extends Controller
                     )
                 );
             } else {
-                $this->tpl->displayPartial('errors.error404');
-                exit();
+                return $this->tpl->displayPartial('errors.error404');
             }
         } else {
             if (isset($params['type'])) {
@@ -141,7 +140,7 @@ class EditCanvasItem extends Controller
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
         $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-        $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas' . '.canvasDialog');
+        return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas' . '.canvasDialog');
     }
 
     /**
@@ -228,7 +227,7 @@ class EditCanvasItem extends Controller
                         $closeModal = "?closeModal=true";
                     }
 
-                    $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $params['itemId'] . $closeModal);
+                    return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $params['itemId'] . $closeModal);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -283,7 +282,7 @@ class EditCanvasItem extends Controller
                         $closeModal = "?closeModal=true";
                     }
 
-                    $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $id . $closeModal);
+                    return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $id . $closeModal);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -324,7 +323,7 @@ class EditCanvasItem extends Controller
 
             $this->projectService->notifyProjectUsers($notification);
 
-            $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $_GET['id']);
+            return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $_GET['id']);
         }
 
         $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
@@ -354,7 +353,7 @@ class EditCanvasItem extends Controller
             $this->tpl->assign('canvasItem', $value);
         }
         $this->tpl->assign('comments', $comments);
-        $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas' . '.canvasDialog');
+        return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas' . '.canvasDialog');
     }
 
     /**

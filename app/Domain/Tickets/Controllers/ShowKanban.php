@@ -3,7 +3,7 @@
 namespace Leantime\Domain\Tickets\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-
+    use Symfony\Component\HttpFoundation\Response;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -45,28 +45,26 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * @param array $params
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function get(array $params): void
+        public function get(array $params): Response
         {
-
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
             $this->tpl->assign('allKanbanColumns', $this->ticketService->getKanbanColumns());
 
-            $this->tpl->display('tickets.showKanban');
+            return $this->tpl->display('tickets.showKanban');
         }
 
         /**
          * @param array $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post(array $params): void
+        public function post(array $params): Response
         {
-
             //QuickAdd
             if (isset($_POST['quickadd'])) {
                 $result = $this->ticketService->quickAddTicket($params);
@@ -76,7 +74,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
             }
 
-            $this->tpl->redirect(CURRENT_URL);
+            return $this->tpl->redirect(CURRENT_URL);
         }
     }
 

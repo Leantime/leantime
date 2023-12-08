@@ -60,7 +60,6 @@ namespace Leantime\Domain\Clients\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             $id = '';
@@ -112,7 +111,7 @@ namespace Leantime\Domain\Clients\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success", "clientfile_deleted");
-                        $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id . "#files");
+                        return $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id . "#files");
                     } else {
                         $this->tpl->setNotification($result["msg"], "error");
                     }
@@ -160,9 +159,9 @@ namespace Leantime\Domain\Clients\Controllers {
                 $this->tpl->assign('files', $file->getFilesByModule('client', $id));
 
 
-                $this->tpl->display('clients.showClient');
+                return $this->tpl->display('clients.showClient');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

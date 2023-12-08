@@ -6,30 +6,9 @@ define('APP_ROOT', dirname(__FILE__, 2));
 define('LEAN_CLI', true);
 
 if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
-    throw new RuntimeException('Install dependencies to run this script.');
+    throw new RuntimeException('Install dependencies to run this Leantime CLI.');
 }
 
 require $composer;
 
-use Leantime\Command\MigrateCommand;
-use Leantime\Command\AddUserCommand;
-use Leantime\Command\SaveSettingCommand;
-use Leantime\Command\TestEmailCommand;
-use Leantime\Command\RunCronCommand;
-use Leantime\Core\Environment;
-use Symfony\Component\Console\Application;
-
-$app = bootstrap_minimal_app();
-$config = $app->make(Environment::class);
-$settings = $app->make(Leantime\Core\AppSettings::class);
-$settings->loadSettings($config);
-
-! defined('BASE_URL') && define('BASE_URL', $config->appUrl);
-
-$application = new Application();
-$application->add(new AddUserCommand());
-$application->add(new MigrateCommand());
-$application->add(new SaveSettingCommand());
-$application->add(new TestEmailCommand());
-$application->add(new RunCronCommand());
-$application->run();
+Leantime\Core\Bootloader::getInstance()->boot();

@@ -51,13 +51,12 @@ namespace Leantime\Domain\Setting\Controllers {
         public function get($params)
         {
             if (! Auth::userIsAtLeast(Roles::$owner)) {
-                $this->tpl->display('error.error403');
-                return;
+                return $this->tpl->display('error.error403', responseCode: 403);
             }
 
             if (isset($_GET['resetLogo'])) {
                 $this->settingsSvc->resetLogo();
-                $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings#look");
+                return $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings#look");
             }
 
             $companySettings = array(
@@ -122,7 +121,7 @@ namespace Leantime\Domain\Setting\Controllers {
             $this->tpl->assign("languageList", $this->language->getLanguageList());
             $this->tpl->assign("companySettings", $companySettings);
 
-            $this->tpl->display('setting.editCompanySettings');
+            return $this->tpl->display('setting.editCompanySettings');
         }
 
         /**
@@ -157,8 +156,6 @@ namespace Leantime\Domain\Setting\Controllers {
             if (isset($params['name']) && $params['name'] != "" && isset($params['language']) && $params['language'] != "") {
                 $this->settingsRepo->saveSetting("companysettings.sitename", htmlspecialchars(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
-
-
                 $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
 
                 $_SESSION["companysettings.sitename"] = htmlspecialchars(addslashes($params['name']));
@@ -174,7 +171,7 @@ namespace Leantime\Domain\Setting\Controllers {
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
             }
 
-            $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings");
+            return $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings");
         }
 
         /**
@@ -197,5 +194,4 @@ namespace Leantime\Domain\Setting\Controllers {
         {
         }
     }
-
 }

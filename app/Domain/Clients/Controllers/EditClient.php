@@ -36,7 +36,6 @@ namespace Leantime\Domain\Clients\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
             //Only admins
@@ -76,20 +75,20 @@ namespace Leantime\Domain\Clients\Controllers {
                         if ($values['name'] !== '') {
                             $this->clientRepo->editClient($values, $id);
 
-                            $tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success', "client_updated");
+                            $this->tpl->setNotification('EDIT_CLIENT_SUCCESS', 'success', 'client_updated');
                         } else {
-                            $tpl->setNotification('NO_NAME', 'error');
+                            $this->tpl->setNotification('NO_NAME', 'error');
                         }
                     }
 
-                    $tpl->assign('values', $values);
+                    $this->tpl->assign('values', $values);
 
-                    $tpl->display('clients.editClient');
+                    return $this->tpl->display('clients.editClient');
                 } else {
-                    $tpl->display('errors.error403');
+                    return $this->tpl->display('errors.error403');
                 }
             } else {
-                $tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

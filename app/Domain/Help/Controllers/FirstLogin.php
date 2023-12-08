@@ -24,7 +24,6 @@ namespace Leantime\Domain\Help\Controllers {
          */
         public function get($params)
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
             $step = 1;
@@ -33,7 +32,7 @@ namespace Leantime\Domain\Help\Controllers {
             }
 
             $this->tpl->assign('currentStep', $step);
-            $this->tpl->displayPartial("help.firstLoginDialog");
+            return $this->tpl->displayPartial("help.firstLoginDialog");
         }
 
         /**
@@ -55,7 +54,7 @@ namespace Leantime\Domain\Help\Controllers {
 
                 $settingsRepo->saveSetting("companysettings.completedOnboarding", true);
 
-                $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=2");
+                return $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=2");
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 2) {
@@ -76,7 +75,7 @@ namespace Leantime\Domain\Help\Controllers {
                         error_log($e);
                     }
                 }
-                $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=3");
+                return $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=3");
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 3) {
@@ -108,7 +107,7 @@ namespace Leantime\Domain\Help\Controllers {
                     }
                 }
 
-                $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=complete");
+                return $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=complete");
             }
         }
 

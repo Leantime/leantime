@@ -5,6 +5,7 @@ namespace Leantime\Domain\Api\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -45,28 +46,23 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function post($params)
         {
-
             if (isset($params['action']) && $params['action'] == "ideaSort" && isset($params["payload"]) === true) {
-                $sortOrder = $params["payload"];
-
-                $results = $this->ideaAPIRepo->updateIdeaSorting($sortOrder);
-
-                if ($results === true) {
-                    echo "{status:ok}";
-                } else {
-                    echo "{status:failure}";
+                if (! $this->ideaAPIRepo->updateIdeaSorting($params['payload'])) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
                 }
-            } elseif (isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true) {
-                $results = $this->ideaAPIRepo->bulkUpdateIdeaStatus($params["payload"]);
 
-                if ($results === true) {
-                    echo "{status:ok}";
-                } else {
-                    echo "{status:failure}";
-                }
-            } else {
-                echo "{status:failure}";
+                return $this->tpl->displayJson(['status' => 'ok']);
             }
+
+            if (isset($params['action']) && $params['action'] == "statusUpdate" && isset($params["payload"]) === true) {
+                if (! $this->ideaAPIRepo->bulkUpdateIdeaStatus($params["payload"])) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
+                }
+
+                return $this->tpl->displayJson(['status' => 'ok']);
+            }
+
+            return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
         /**
@@ -77,13 +73,14 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function patch($params)
         {
-            $results = $this->ideaAPIRepo->patchCanvasItem($params['id'], $params);
-
-            if ($results === true) {
-                echo "{status:ok}";
-            } else {
-                echo "{status:failure}";
+            if (
+                ! isset($params['id']
+                || ! $this->ideaAPIRepo->patchCanvasItem($params['id'], $params);
+            ) {
+                return $this->tpl->displayJson(['status' => 'failure', 500);
             }
+
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**

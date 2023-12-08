@@ -9,6 +9,7 @@ namespace Leantime\Domain\Comments\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -37,17 +38,11 @@ namespace Leantime\Domain\Comments\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws Exception
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws Exception
-         */
-        public function get($params): void
+        public function get($params): Response
         {
-
             if (!isset($params['module'], $params['entitiyId'], $params['entity'])) {
                 throw new Exception("comments module needs to be initialized with module, entity id and entity");
             }
@@ -67,28 +62,22 @@ namespace Leantime\Domain\Comments\Controllers {
 
                 if ($this->commentService->deleteComment($commentId)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                    $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $this->id);
+                    return $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $this->id);
                 } else {
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted_error"), "error");
                 }
             }
 
-            $this->tpl->displayPartial('comments.showAll');
+            return $this->tpl->displayPartial('comments.showAll');
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
-        public function post($params): void
+        public function post($params): Response
         {
-
             if (isset($params['comment']) === true) {
                 if ($this->commentService->addComment($_POST, $this->module, $this->id, $this->entity)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
@@ -96,6 +85,8 @@ namespace Leantime\Domain\Comments\Controllers {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
                 }
             }
+
+            return new Response();
         }
     }
 

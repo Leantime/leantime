@@ -189,9 +189,9 @@ namespace Leantime\Domain\Users\Controllers {
                 $this->tpl->assign('id', $id);
 
 
-                $this->tpl->display('users.editUser');
+                return $this->tpl->display('users.editUser');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

@@ -39,10 +39,8 @@ namespace Leantime\Domain\Projects\Controllers {
          *
          * @access public
          */
-
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             if (Auth::userIsAtLeast(Roles::$manager)) {
@@ -69,11 +67,10 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $this->tpl->assign('showClosedProjects', $_SESSION['showClosedProjects']);
 
-                $this->tpl->display('projects.showAll');
+                return $this->tpl->display('projects.showAll');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }
-
 }

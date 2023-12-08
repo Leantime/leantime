@@ -5,6 +5,8 @@ namespace Leantime\Domain\Install\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Install\Repositories\Install as InstallRepository;
+    use Illuminate\Http\Exceptions\HttpResponseException;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -17,13 +19,14 @@ namespace Leantime\Domain\Install\Controllers {
          * init - initialize private variables
          *
          * @access public
+         * @throws HttpResponseException
          */
         public function init(InstallRepository $installRepo)
         {
             $this->installRepo = $installRepo;
 
             if ($this->installRepo->checkIfInstalled()) {
-                FrontcontrollerCore::redirect(BASE_URL);
+                throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL));
             }
         }
 
@@ -31,20 +34,19 @@ namespace Leantime\Domain\Install\Controllers {
          * get - handle get requests
          *
          * @access public
-         * @params parameters or body of the request
+         * @param $params parameters or body of the request
          */
         public function get($params)
         {
-            $this->tpl->display("install.new", "entry");
+            return $this->tpl->display("install.new", "entry");
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          */
-        public function post($params): void
+        public function post($params): Response
         {
-
             $values = array(
                 'email'         => "",
                 'password'      => "",
@@ -61,37 +63,44 @@ namespace Leantime\Domain\Install\Controllers {
                     'company' => ($params['company']),
                 );
 
-                if (!isset($params['email']) || $params['email'] == '') {
-                    $this->tpl->setNotification("notification.enter_email", "error");
-                } else {
-                    if (!isset($params['password']) || $params['password'] == '') {
-                        $this->tpl->setNotification("notification.enter_password", "error");
-                    } else {
-                        if (!isset($params['firstname']) || $params['firstname'] == '') {
-                            $this->tpl->setNotification("notification.enter_firstname", "error");
-                        } else {
-                            if (!isset($params['lastname']) || $params['lastname'] == '') {
-                                $this->tpl->setNotification("notification.enter_lastname", "error");
-                            } else {
-                                if (!isset($params['company']) || $params['company'] == '') {
-                                    $this->tpl->setNotification("notification.enter_company", "error");
-                                    ;
-                                } else {
-                                    $values['password'] = $_POST['password'];
+                $notificationSet = false; // Track whether a notification has been set
 
-                                    if ($this->installRepo->setupDB($values)) {
-                                        $this->tpl->setNotification(sprintf($this->language->__("notifications.installation_success"), BASE_URL), "success");
-                                    } else {
-                                        $this->tpl->setNotification($this->language->__('notification.error_installing'), "error");
-                                    }
-                                }
-                            }
-                        }
+                if (empty($params['email'])) {
+                    $this->tpl->setNotification("notification.enter_email", "error");
+                    $notificationSet = true;
+                }
+
+                if (empty($params['password']) && !$notificationSet) {
+                    $this->tpl->setNotification("notification.enter_password", "error");
+                    $notificationSet = true;
+                }
+
+                if (empty($params['firstname']) && !$notificationSet) {
+                    $this->tpl->setNotification("notification.enter_firstname", "error");
+                    $notificationSet = true;
+                }
+
+                if (empty($params['lastname']) && !$notificationSet) {
+                    $this->tpl->setNotification("notification.enter_lastname", "error");
+                    $notificationSet = true;
+                }
+
+                if (empty($params['company']) && !$notificationSet) {
+                    $this->tpl->setNotification("notification.enter_company", "error");
+                    $notificationSet = true;
+                }
+
+                if (!$notificationSet) {
+                    // No notifications were set, all fields are valid
+                    if ($this->installRepo->setupDB($values)) {
+                        $this->tpl->setNotification(sprintf($this->language->__("notifications.installation_success"), BASE_URL), "success");
+                    } else {
+                        $this->tpl->setNotification($this->language->__('notification.error_installing'), "error");
                     }
                 }
             }
 
-            FrontcontrollerCore::redirect(BASE_URL . "/install");
+            return FrontcontrollerCore::redirect(BASE_URL . "/install");
         }
     }
 }

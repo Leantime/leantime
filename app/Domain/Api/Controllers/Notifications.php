@@ -4,6 +4,7 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -34,7 +35,7 @@ namespace Leantime\Domain\Api\Controllers {
         {
             $notifications = $this->notificationsService->getAllNotifications($params['userId'], $params['read']);
 
-            echo json_encode($notifications);
+            return $this->tpl->displayJson($notifications);
         }
 
         /**
@@ -58,6 +59,8 @@ namespace Leantime\Domain\Api\Controllers {
             if (isset($params['action']) && $params['action'] == "read") {
                 $this->notificationsService->markNotificationRead($params['id'], $_SESSION['userdata']['id']);
             }
+
+            return new Response();
         }
 
         /**

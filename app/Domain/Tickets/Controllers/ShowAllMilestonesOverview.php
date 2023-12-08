@@ -10,6 +10,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Clients\Services\Clients as ClientService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -55,17 +56,11 @@ namespace Leantime\Domain\Tickets\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws \Exception
-         */
-        public function get($params): void
+        public function get($params): Response
         {
-
             $clientId = 0;
             $currentClientName = "";
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
@@ -105,8 +100,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('users', $this->userService->getAll());
             $this->tpl->assign('milestones', $this->ticketService->getAllMilestonesOverview());
 
-            $this->tpl->display('tickets.showAllMilestonesOverview');
+            return $this->tpl->display('tickets.showAllMilestonesOverview');
         }
     }
-
 }

@@ -6,6 +6,7 @@ use Leantime\Core\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
 use Leantime\Domain\Connector\Models\Provider;
 use Leantime\Domain\Connector\Services\ProviderIntegration;
+use Symfony\Component\HttpFoundation\Response;
 
 
 /**
@@ -59,13 +60,13 @@ class CsvImport extends Provider implements ProviderIntegration
     //Needs to manage new connection as well as existing connections.
     //Should return bool so we can drive logic in the frontend.
     /**
-     * @return void
+     * @return Response
      */
-    public function connect(): mixed
+    public function connect(): Response
     {
         //Connection done. Send to next step.
         //May just want to add a nextStep() method to provider model or so.
-        Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload");
+        return Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload");
     }
 
     //Sync the entities from the db

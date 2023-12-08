@@ -40,7 +40,7 @@ namespace Leantime\Domain\Sbcanvas\Controllers {
 
             $html .= '<div>' . $this->htmlListTitle('box.sb.risks', 'fa-person-falling') . '</div>';
             $html .= '<div style="margin-top: 5px; margin-bottom: 5px;">' .
-                sprintf($this->language->__('text.sb.risks_analysis'), $this->config->appUrl) . '</div><hr class="hr-black"/>';
+            sprintf($this->language->__('text.sb.risks_analysis'), $this->config->appUrl) . '</div><hr class="hr-black"/>';
 
             return $html;
         }

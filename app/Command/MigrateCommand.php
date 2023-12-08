@@ -11,16 +11,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Leantime\Domain\Install\Repositories\Install;
 use Exception;
 use Leantime\Domain\Users\Repositories\Users;
+use Symfony\Component\Console\Attribute\AsCommand;
 
-/**
- *
- */
+#[AsCommand(
+    name: 'db:migrate',
+    description: 'Runs and pending Database Migrations',
+)]
 class MigrateCommand extends Command
 {
-    protected static $defaultName = 'db:migrate';
-
-    protected static $defaultDescription = 'Runs any Pending Database Migrations';
-
     /**
      * @return void
      */

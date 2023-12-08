@@ -91,7 +91,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
-            $this->tpl->displayPartial('ideas.ideaDialog');
+            return $this->tpl->displayPartial('ideas.ideaDialog');
         }
 
         /**
@@ -139,7 +139,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$_GET['id']);
+                    return $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$_GET['id']);
                 }
             }
 
@@ -215,8 +215,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-
-                        $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId']);
+                        return $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId']);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
                     }
@@ -259,18 +258,16 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success', 'idea_created');
 
-                        $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$id);
+                        return $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$id);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
                     }
                 }
             }
 
-
-
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $this->ideaRepo->getSingleCanvasItem($_GET['id']));
-            $this->tpl->displayPartial('ideas.ideaDialog');
+            return $this->tpl->displayPartial('ideas.ideaDialog');
         }
 
         /**

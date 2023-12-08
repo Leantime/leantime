@@ -7,6 +7,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -28,10 +29,10 @@ namespace Leantime\Domain\Tickets\Controllers {
 
 
         /**
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get(): void
+        public function get(): Response
         {
 
             //Only admins
@@ -41,48 +42,35 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                $this->tpl->displayPartial('tickets.delMilestone');
+                return $this->tpl->displayPartial('tickets.delMilestone');
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayPartial('errors.error403');
             }
         }
 
         /**
          * @param $params
-         * @return void
-         */
-        /**
-         * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
-
-            if (isset($_GET['id'])) {
-                $id = (int)($_GET['id']);
+            if (! isset($_GET['id'], $params['del'])) {
+                return $this->tpl->displayPartial('errors.error400', responseCode: 400);
             }
 
-            //Only admins
-            if (Auth::userIsAtLeast(Roles::$editor)) {
-                if (isset($params['del'])) {
-                    $result = $this->ticketService->deleteMilestone($id);
-
-                    if ($result === true) {
-                        $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
-                        $this->tpl->redirect(BASE_URL . "/tickets/roadmap");
-                    } else {
-                        $this->tpl->setNotification($this->language->__($result['msg']), "error");
-                        $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
-                        $this->tpl->displayPartial('tickets.delMilestone');
-                    }
-                } else {
-                    $this->tpl->displayPartial('errors.error403');
-                }
-            } else {
-                $this->tpl->displayPartial('errors.error403');
+            if (! Auth::userIsAtLeast(Roles::$editor)) {
+                return $this->tpl->displayPartial('errors.error403', responseCode: 403);
             }
+
+            if ($result = $this->ticketService->deleteMilestone($id = (int)($_GET['id']))){
+                $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
+                return $this->tpl->redirect(BASE_URL . "/tickets/roadmap");
+            }
+
+            $this->tpl->setNotification($this->language->__($result['msg']), "error");
+            $this->tpl->assign('ticket', $this->ticketService->getTicket($id));
+            return $this->tpl->displayPartial('tickets.delMilestone');
         }
     }
-
 }

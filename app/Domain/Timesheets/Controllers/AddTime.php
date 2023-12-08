@@ -8,6 +8,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -52,9 +53,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
          * run - display template and edit data
          *
          * @access public
-         * @return void
+         * @return Response
          */
-        public function run(): void
+        public function run(): Response
         {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
@@ -192,9 +193,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
                 $this->tpl->assign('allProjects', $this->timesheetsRepo->getAll());
                 $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
                 $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-                $this->tpl->display('timesheets.addTime');
+                return $this->tpl->display('timesheets.addTime');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

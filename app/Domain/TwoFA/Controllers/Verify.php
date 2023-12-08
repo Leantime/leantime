@@ -5,6 +5,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -32,7 +33,6 @@ namespace Leantime\Domain\TwoFA\Controllers {
          */
         public function get($params)
         {
-
             $redirectUrl = BASE_URL . "/dashboard/home";
 
             if (isset($_GET['redirect'])) {
@@ -40,14 +40,14 @@ namespace Leantime\Domain\TwoFA\Controllers {
             }
 
             $this->tpl->assign("redirectUrl", $redirectUrl);
-            $this->tpl->display("twofa.verify", "entry");
+            return $this->tpl->display("twofa.verify", "entry");
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          */
-        public function post($params): void
+        public function post($params): Response
         {
 
             if (isset($_SESSION['userdata']) && $this->authService->use2FA()) {
@@ -56,17 +56,19 @@ namespace Leantime\Domain\TwoFA\Controllers {
 
                     if ($this->authService->verify2FA($params['twoFA_code'])) {
                         $this->authService->set2FAVerified();
-                        FrontcontrollerCore::redirect($redirectUrl);
+                        return FrontcontrollerCore::redirect($redirectUrl);
                     } else {
                         $this->tpl->setNotification("notification.incorrect_twoFA_code", "error");
-                        FrontcontrollerCore::redirect(BASE_URL . "/twoFA/verify");
+                        return FrontcontrollerCore::redirect(BASE_URL . "/twoFA/verify");
                     }
                 } else {
                     $this->tpl->setNotification("notification.incorrect_twoFA_code", "error");
-                    FrontcontrollerCore::redirect(BASE_URL . "/twoFA/verify");
+                    return FrontcontrollerCore::redirect(BASE_URL . "/twoFA/verify");
                 }
             }
+
+            /** @todo make a 400 response page **/
+            return $this->tpl->display('error.400');
         }
     }
-
 }

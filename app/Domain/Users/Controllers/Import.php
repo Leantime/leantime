@@ -11,6 +11,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Ldap\Services\Ldap as LdapService;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -36,35 +37,34 @@ namespace Leantime\Domain\Users\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function get(): void
+        public function get(): Response
         {
-
             //Only Admins
-            if (Auth::userIsAtLeast(Roles::$admin)) {
-                $this->tpl->assign('allUsers', $this->userRepo->getAll());
-                $this->tpl->assign('admin', true);
-                $this->tpl->assign('roles', Roles::getRoles());
-
-                if (isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
-                    $this->tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
-                    $this->tpl->assign('confirmUsers', true);
-                }
-
-                $this->tpl->displayPartial('users.importLdapDialog');
-            } else {
-                $this->tpl->display('errors.error403');
+            if (! Auth::userIsAtLeast(Roles::$admin)) {
+                return $this->tpl->display('errors.error403');
             }
+
+            $this->tpl->assign('allUsers', $this->userRepo->getAll());
+            $this->tpl->assign('admin', true);
+            $this->tpl->assign('roles', Roles::getRoles());
+
+            if (isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
+                $this->tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
+                $this->tpl->assign('confirmUsers', true);
+            }
+
+            return $this->tpl->displayPartial('users.importLdapDialog');
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
             $this->tpl = app()->make(TemplateCore::class);
             $this->ldapService = app()->make(LdapService::class);
@@ -98,7 +98,7 @@ namespace Leantime\Domain\Users\Controllers {
                 }
             }
 
-            $this->tpl->displayPartial('users.importLdapDialog');
+            return $this->tpl->displayPartial('users.importLdapDialog');
         }
     }
 }

@@ -6,7 +6,6 @@ namespace Leantime\Domain\Calendar\Controllers {
      * delUser Class - Deleting users
      *
      */
-
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
@@ -51,9 +50,9 @@ namespace Leantime\Domain\Calendar\Controllers {
                 //Assign variables
 
                 $this->tpl->assign('msg', $msgKey);
-                $this->tpl->display('calendar.delGCal');
+                return $this->tpl->display('calendar.delGCal');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

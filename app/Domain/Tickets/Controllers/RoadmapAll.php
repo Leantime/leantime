@@ -48,7 +48,6 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function get($params)
         {
-
             $clientId = 0;
             $currentClientName = "";
             if (isset($_GET['client']) === true && $_GET['client'] != '') {
@@ -68,7 +67,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('clients', $allClients);
-            $this->tpl->display('tickets.roadmapAll');
+            return $this->tpl->display('tickets.roadmapAll');
         }
 
         /**
@@ -79,11 +78,10 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function post($params)
         {
-
             $allProjectMilestones = $this->ticketService->getAllMilestonesOverview();
 
             $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->display('tickets.roadmapAll');
+            return $this->tpl->display('tickets.roadmapAll');
         }
 
         /**

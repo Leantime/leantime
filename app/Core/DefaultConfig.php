@@ -82,6 +82,11 @@ class DefaultConfig
     public string $logPath = APP_ROOT . '/logs/error.log';
 
     /**
+     * @var bool Whether or not to enable the Poor Man's Cron fallback
+     */
+    public bool $poorMansCron = true;
+
+    /**
      * @var bool Don't show user/pass form on login?
      */
     public bool $disableLoginForm = false;
@@ -126,7 +131,7 @@ class DefaultConfig
     public string $dbBackupPath = 'userfiles/';
 
 
-    # S3 configuration ==============================================================================
+    # S3 configuration ============================================================================
     /**
      * @var bool Set to true if you want to use S3 instead of local files
      */
@@ -342,11 +347,16 @@ class DefaultConfig
      */
     public int $ldapDefaultRoleKey = 20;
 
-    # Plugin Settings ================================================================================
+    # Plugin Settings ==============================================================================
     /**
      * @var string Comma separated list of plugins that will always be loaded
      */
     public string $plugins = '';
+
+    /**
+     * @var string The Url of the Marketplace
+     **/
+    public string $marketplaceUrl = 'https://marketplace.leantime.io/';
 
     # OIDC Settings ================================================================================
     /**

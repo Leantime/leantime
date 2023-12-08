@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Projects\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Symfony\Component\HttpFoundation\Response;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -38,42 +39,33 @@ namespace Leantime\Domain\Projects\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function get(): void
+        public function get(): Response
         {
-
-            //Only admins
-            if (Auth::userIsAtLeast(Roles::$manager)) {
-                if (isset($_GET['id']) === true) {
-                    $id = (int)($_GET['id']);
-                    $project = $this->projectService->getProject($id);
-
-
-                    $this->tpl->assign('allClients', $this->clientRepo->getAll());
-
-
-                    $this->tpl->assign("project", $project);
-                    $this->tpl->displayPartial('projects.duplicateProject');
-                } else {
-                    $this->tpl->displayPartial('errors.error403');
-                }
-            } else {
-                $this->tpl->displayPartial('errors.error403');
+            if (
+                ! Auth::userIsAtLeast(Roles::$manager)
+                || ! isset($_GET['id'])
+            ) {
+                return $this->tpl->displayPartial('errors.error403', responseCode: 403);
             }
+
+            $id = (int)($_GET['id']);
+            $project = $this->projectService->getProject($id);
+
+            $this->tpl->assign('allClients', $this->clientRepo->getAll());
+            $this->tpl->assign("project", $project);
+
+            return $this->tpl->displayPartial('projects.duplicateProject');
         }
 
         /**
          * @param $params
-         * @return void
-         */
-        /**
-         * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
 
             //Only admins
@@ -92,11 +84,10 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $this->tpl->setNotification(sprintf($this->language->__("notifications.project_copied_successfully"), BASE_URL . "/projects/changeCurrentProject/" . $result), 'success');
 
-                $this->tpl->redirect(BASE_URL . "/projects/duplicateProject/" . $id);
+                return $this->tpl->redirect(BASE_URL . "/projects/duplicateProject/" . $id);
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayPartial('errors.error403');
             }
         }
     }
-
 }
