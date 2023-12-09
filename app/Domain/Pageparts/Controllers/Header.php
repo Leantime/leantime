@@ -50,44 +50,38 @@ namespace Leantime\Domain\Pageparts\Controllers {
         {
 
             if (!isset($_SESSION["userdata"]["id"])) {
+
                 // This is a login session, we need to ensure the default theme and the default language (or the user's browser)
-                if (isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
-                    $theme = $_COOKIE['theme'];
-                } else {
-                    $theme = $this->config->defaultTheme;
-                }
+                $theme = $_COOKIE['theme'] ?? $this->config->defaultTheme;
+
             } else {
                 // This is not a login session
                 if (
-                    !isset($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"]) ||
-                        empty($_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"])
+                    !isset($_SESSION["usersettings.theme"]) ||
+                        empty($_SESSION["usersettings.theme"])
                 ) {
                     // User has a saved theme
                     $theme = $this->settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".theme");
                     if ($theme === false) {
-                        if (isset($this->config->keepTheme) && $this->config->keepTheme && isset($_COOKIE['theme'])) {
-                            $theme = $_COOKIE['theme'];
-                        } else {
-                            $theme = $this->config->defaultTheme;
-                        }
+                        $theme = $_COOKIE['theme'] ?? $this->config->defaultTheme;
                     }
                 } else {
-                    $theme = $_SESSION["usersettings." . $_SESSION["userdata"]["id"] . ".theme"];
+                    $theme = $_SESSION["usersettings.theme"];
                 }
 
                 /**
                  * This is placed here because the session isn't started yet when
                  * AppSettings::loadSettings() is called.  Plus, this is mostly cosmetic/UI
                  * change and should not apply to things such as date/times stored in the DB.
-                 * 
+                 *
                  * This also doesn't effect JS date-time any, only PHP calls for date-time, as
                  * they use incompatible formats.
                  */
                 if (isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id'])) {
                     $userId = $_SESSION['userdata']['id'];
 
-                    if (isset($_SESSION['usersettings.' . $userId . '.timezone'])) {
-                        date_default_timezone_set($_SESSION['usersettings.' . $userId . '.timezone']);
+                    if (isset($_SESSION['usersettings.timezone'])) {
+                        date_default_timezone_set($_SESSION['usersettings.timezone']);
                     }
                 }
             }

@@ -70,7 +70,7 @@
         <div class="projectSelectorFooter">
             <ul class="selectorList projectList">
                 @dispatchEvent('beforeProjectCreateLink')
-                <li><a href="{{ BASE_URL }}/projects/newProject">{!! __('menu.create_project') !!}</a></li>
+                <li><a href="#/projects/createnew">{!! __('menu.create') !!}</a></li>
                 @dispatchEvent('afterProjectCreateLink')
             </ul>
         </div>

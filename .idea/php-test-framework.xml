@@ -5,7 +5,7 @@
       <tool tool_name="Codeception">
         <settings>
           <configurations>
-            <local_configuration executable_path="$PROJECT_DIR$/vendor/codeception/codeception/codecept" />
+            <local_configuration configuration_file_path="$PROJECT_DIR$/codeception.yml" executable_path="$PROJECT_DIR$/vendor/codeception/codeception/codecept" use_configuration_file="true" />
           </configurations>
         </settings>
       </tool>
@@ -16,8 +16,8 @@
       <tool tool_name="Codeception">
         <cache>
           <versions>
-            <info id="Local" version="5.0.10" />
-            <info id="Local/Users/josephroberts/localdev/leantime/vendor/codeception/codeception/codecept" version="5.0.11" />
+            <info id="Local" version="5.0.11" />
+            <info id="$PROJECT_DIR$/vendor/codeception/codeception/codecept" version="5.0.11" />
           </versions>
         </cache>
       </tool>

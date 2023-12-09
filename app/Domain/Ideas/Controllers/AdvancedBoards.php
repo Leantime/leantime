@@ -7,6 +7,7 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -88,7 +89,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $queue->queueMessageToUsers($users, $message, $this->language->__('email_notifications.idea_board_created_subject'), $_SESSION["currentProject"]);
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    return $this->tpl->redirect(BASE_URL . "/ideas/advancedBoards/");
+                    return Frontcontroller::redirect(BASE_URL . "/ideas/advancedBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -101,7 +102,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
                     $this->tpl->setNotification($this->language->__("notification.board_edited"), "success", "ideaboard_edited");
-                    return $this->tpl->redirect(BASE_URL . "/ideas/advancedBoards/");
+                    return Frontcontroller::redirect(BASE_URL . "/ideas/advancedBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }

@@ -1,17 +1,4 @@
-.leftpanel {
-    width: 240px;
-    color: #fff;
-    float: left;
-    clear: both;
-    min-height: 800px;
-    background-color: var(--left-panel-bg);
-    box-shadow: var(--large-shadow);
-    position:fixed;
-    height:100%;
-    z-index: 11;
-    display: flex;
-    flex-direction: column;
-}
+
 
 
 .leftmenu .nav-header {
@@ -36,13 +23,13 @@
     line-height: 12px;
 }
 
-.leftmenu .project-selector {
+.headmenu .project-selector {
     padding: 10px 15px 20px 15px;
     position: relative;
 
 }
 
-.leftmenu .project-selector label {
+.headmenu .project-selector label {
     display: block;
     clear: both;
     float: none;
@@ -52,28 +39,28 @@
     font-size: var(--font-size-l);
 }
 
-.leftmenu .project-selector .chzn-container {
+.headmenu .project-selector .chzn-container {
     width: 100% !important;
     display: block;
 }
 
-.leftmenu .project-selector .chzn-container .chzn-single {
+.headmenu .project-selector .chzn-container .chzn-single {
     color: #555;
 }
 
-.leftmenu .project-selector .chzn-container .chzn-results li {
+.headmenu .project-selector .chzn-container .chzn-results li {
     color: #555;
 }
 
-.leftmenu .project-selector .chzn-container .chzn-results li.highlighted {
+.headmenu .project-selector .chzn-container .chzn-results li.highlighted {
     color: #fff;
 }
 
-.leftmenu .project-selector .chzn-container .chzn-drop {
+.headmenu .project-selector .chzn-container .chzn-drop {
     width: 100% !important;
 }
 
-.leftmenu .project-selector  .projectListFilter {
+.headmenu .projectselector  .projectListFilter {
     border-bottom:1px solid var(--main-border-color);
     padding:0px 15px;
 }
@@ -82,7 +69,7 @@
     vertical-align: middle;
 }
 
-.leftmenu .project-selector  .projectListFilter select{
+.headmenu .projectselector  .projectListFilter select{
     border-color:var(--secondary-background);
     box-shadow:none;
     max-width: 135px;
@@ -92,19 +79,18 @@
     padding-left: 0px;
 }
 
-.leftmenu .project-selector  .projectListFilter select:hover {
+.headmenu .projectselector  .projectListFilter select:hover {
     border-color:var(--main-border-color);
 }
 
 .logo {
-    width: 240px;
+    width: 170px;
     text-align: center;
     height: 50px;
-    padding:10px 5px 5px 15px;
-    margin-left: 0;
-    display: flex;
-
-    flex-direction: column;
+    padding:7px 5px 5px 5px;
+    margin-left: 55px;
+    display: block;
+    float: left;
 }
 
 .logo a {
@@ -121,24 +107,25 @@
     text-decoration:none;
 }
 
-.leftpanel a.barmenu {
+a.barmenu {
     position:absolute;
-    right:-50px;
-    margin-top:0;
+    left:0px;
+    margin-top:1px;
     margin-left:20px;
     font-size:20px;
-    color:#fff;
+    color:#fff !important;
     cursor:pointer;
     width:30px;
     height:50px;
     line-height:50px;
+    z-index:11;
 }
 
-.leftpanel a.barmenu.open {
+a.barmenu.open {
 
 }
 
-.leftpanel a.barmenu:hover {
+a.barmenu:hover {
     color:var(--header-action-hover-color);
 }
 
@@ -155,13 +142,13 @@
 }
 
 .nav {
-    background: #f3f4f5;
+
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.leftmenu .project-selector {
+.headmenu .project-selector {
     padding:0;
     min-height:10px;
     display: flex;
@@ -170,7 +157,8 @@
 }
 
 
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector {
+/*
+.bigProjectSelector {
     display:block;
     font-weight:normal;
     font-size: var(--font-size-l);
@@ -183,77 +171,65 @@
     overflow: hidden;
 }
 
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector i.fa {
+
+
+.bigProjectSelector i.fa {
     font-size: var(--base-font-size);
     position: absolute;
     top: 25px;
     right: 10px;
 }
 
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector .projectAvatar span.fa {
+.bigProjectSelector .projectAvatar span.fa {
     margin-right:0;
 }
+*/
 
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector:hover,
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector:active,
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector:focus {
+.bigProjectSelector:hover,
+.bigProjectSelector:active,
+.bigProjectSelector:focus {
     text-decoration:none;
     background:var(--project-selector-hover-bg);
     color:var(--project-selector-hover-color);
 }
 
-.leftmenu .bigProjectSelector span {
-    font-size: var(--base-font-size);
-    font-weight:normal;
-    color:#ccc;
-}
-
-.leftmenu .projectselector {
-    left: 245px;
-
+.headmenu .projectselector {
     z-index: 10000000;
-    top:0;
     border-radius: var(--box-radius);
-    min-width:375px;
+    min-width:400px;
 }
 
-.leftmenu .nav-tabs.nav-stacked .bigProjectSelector .projectAvatar {
-    float:left;
-    margin-top:15px;
-    margin-right:10px;
-}
-
-.leftpanel .leftmenu .nav-tabs .projectselector  li.intro {
+.headmenu .projectselector  li.intro {
     color:var(--primary-font-color);
     padding:10px 15px 20px 15px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li.intro .title {
+.headmenu .projectselector  li.intro .title {
     font-size: var(--font-size-l);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li.intro .sub {
+.headmenu .projectselector  li.intro .sub {
     font-size: var(--base-font-size);
     color: var(--secondary-font-color);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li.intro a {
+.headmenu .projectselector  li.intro a {
     display:inline;
     padding:0;
     margin:auto;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li.intro a:hover {
+.headmenu .projectselector  li.intro a:hover {
     background:var(--secondary-background);
     color:var(--secondary-action-color);
 
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector > li a:hover {
+.headmenu .projectselector > li a:hover {
     color:var(--dropdown-link-hover-color);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li.nav-header {
+.headmenu .projectselector  li.nav-header {
     display: block;
     padding: 3px 15px;
     font-size: var(--base-font-size);
@@ -265,15 +241,15 @@
     background:var(--secondary-background);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li.nav-header.border {
+.headmenu .projectselector  li.nav-header.border {
     border-top:1px solid var(--neutral);
     border-bottom:0;
     padding-top: 10px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li span.info {
+.headmenu .projectselector  li span.info {
     color:var(--primary-font-color);
-    padding: 0 15px;
+    padding: 10px 15px;
     display: block;
     margin-bottom: 15px;
 }
@@ -289,11 +265,11 @@
     color: #fff;
 }
 
-.leftmenu .nav-tabs.nav-stacked .project-selector .chzn-container a {
+.headmenu .project-selector .chzn-container a {
     padding: 0 20px;
 }
 
-.leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar {
+.headmenu .project-selector .projectAvatar {
     width:30px;
     height:30px;
     font-size:14px;
@@ -306,19 +282,17 @@
     background:var(--element-gradient);
 }
 
-.leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar img {
+.headmenu .project-selector .projectAvatar img {
     width:30px;
     height:30px;
     border-radius:var(--box-radius-small);
 }
 
-.leftmenu .nav-tabs.nav-stacked .project-selector .projectAvatar .fa {
+.headmenu .project-selector .projectAvatar .fa {
     font-weight:900;
     color:#fff;
     margin-right:0;
 }
-
-
 
 .leftmenu .nav-tabs.nav-stacked a {
     color: #555;
@@ -327,7 +301,6 @@
 }
 
 .leftmenu .nav-tabs.nav-stacked {
-    background-color:var(--left-panel-bg);
 }
 
 .leftmenu .nav-tabs.nav-stacked a span {
@@ -360,17 +333,17 @@
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown ul {
-    background: var(--main-menu-link-bg);
     display: none;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown ul.submenu li a{
-    padding-left:35px;
+    margin-left:15px;
+    padding-left:14px;
+    border-left:0px dotted var(--main-border-color);
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle {
     margin-top:0;
-    border-top:1px dotted var(--main-border-color);
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle:first-child {
@@ -413,32 +386,27 @@
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a {
     display: block;
     font-size: var(--base-font-size);
-    padding: 10px 10px 10px 10px;
-    color: var(--main-menu-link-color);
-    border-left:5px solid transparent;
-
+    padding: 10px 15px 10px 15px;
+    color: #fff;
+    border-radius:15px;
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    background-color: var(--main-menu-link-active-bg);
-    color: var(--main-menu-link-active-color);
-    border-left-color: var(--main-menu-link-active-color);
+    background: rgba(255, 255, 255, 0.2);
+
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
     text-decoration: none;
-    background-color: var(--main-menu-link-hover-bg);
-    color: var(--main-menu-link-hover-color);
-    border-left-color: var(--main-menu-link-hover-bg);
+    background:var(--main-menu-link-hover-bg);
 }
 
 .fixedMenuPoint {
-    background: var(--main-menu-link-bg);
     position:fixed;
     width:240px;
     bottom:0;
-    box-shadow: 0 -10px 10px var(--main-menu-link-bg);
     padding-bottom: 10px;
+    list-style: none;
 }
 
 
@@ -465,30 +433,37 @@
 }
 
 .nav-tabs li.separator {
-    border-bottom:1px dashed var(--main-border-color);
+    border-bottom:0px dashed var(--main-border-color);
     border-bottom-style: wave;
     height:5px;
     margin-bottom:5px;
 }
 
 .nav-tabs li .submenuCaret {
-    width: 15px;
+    width: 20px;
     float: right;
-    padding-top: 8px;
-    padding-right: 20px;
+    margin-top: 5px;
+    margin-right: 5px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius:var(--element-radius);
 }
+
+.nav-tabs li .submenuCaret:hover {
+    background: var(--light-layered-background);
+}
+
 
 
 
 .headmenu {
     list-style: none;
-    float: right
 }
 
 .headmenu .dropdown-menu {
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-top: 0;
     margin: 0;
+    left:-22px;
 }
 
 
@@ -655,26 +630,26 @@
     content: '';
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector {
+.projectselector {
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector .projectSelectorFooter {
+.projectselector .projectSelectorFooter {
     border-top:1px solid var(--main-border-color);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector .projectSelectorFooter li a {
+.projectselector .projectSelectorFooter li a {
     display: block;
     padding-left: 15px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector  li a{
+.projectselector  li a{
     color:var(--primary-font-color);
     font-size: var(--base-font-size);
     margin: 0;
     padding: 10px 20px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector li.active > a {
+.projectselector li.active > a {
     background-image:none;
     background:var(--main-menu-link-active-bg);
     color:var(--main-menu-link-active-color);
@@ -682,52 +657,52 @@
 }
 
 
-.leftmenu .projectselector .head {
+.headmenu .projectselector .head {
     padding:15px;
     color:var(--primary-font-color);
 }
 
-.leftmenu .projectselector .head .searchBar {
+.headmenu .projectselector .head .searchBar {
     float: right;
     padding-top: 5px;
 }
 
 
-.leftmenu .projectselector .head .title {
+.headmenu .projectselector .head .title {
     font-size: var(--font-size-xxl);
 }
 
 /* Project Selection Tabs and container */
-.leftpanel .leftmenu .nav-tabs .projectselector ul.tabs {
+.projectselector ul.tabs {
 
 }
-.leftpanel .leftmenu .nav-tabs .projectselector ul.tabs li a {
+.projectselector ul.tabs li a {
     padding: 0 15px;
     margin-left: 0px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector .ui-tabs-panel {
+.projectselector .ui-tabs-panel {
     padding:0;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector .scrollingTab {
+.projectselector .scrollingTab {
     padding:0;
     height:calc(100vh - 310px);
     overflow:auto;
 }
 
 /* Project Selection Lists */
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList {
+.projectselector ul.selectorList {
     padding-top:3px;
     padding-left: 0;
 }
 
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.last {
+.projectselector ul.selectorList.last {
     padding-left:0;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li{
+.projectselector ul.selectorList li{
     display:block;
     padding:0;
     list-style-type: none;
@@ -735,7 +710,7 @@
     cursor:pointer;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.nav-header {
+.projectselector ul.selectorList li.nav-header {
     border-color:transparent;
     font-size: var(--base-font-size);
     text-transform: none;
@@ -744,32 +719,31 @@
     border-bottom:1px dotted var(--main-border-color);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup {
+.projectselector ul.selectorList li.projectLineItem ul.projectGroup {
     clear:both;
     display:block;
     border-left:1px dotted var(--main-border-color);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup:hover {
+.projectselector ul.selectorList li.projectLineItem ul.projectGroup:hover {
     border-left:1px dotted var(--col-hover-bg);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup[class*=level-] {
+.projectselector ul.selectorList li.projectLineItem ul.projectGroup[class*=level-] {
     margin-left: 13px;
-    padding-left: 5px;
     margin-top: 0px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-0,
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-1{
+.projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-0,
+.projectselector ul.selectorList li.projectLineItem ul.projectGroup.level-1{
     margin-left: 18px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.closed {
+.projectselector ul.selectorList li.projectLineItem  ul.projectGroup.closed {
     display:none;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem  ul.projectGroup.open {
+.projectselector ul.selectorList li.projectLineItem  ul.projectGroup.open {
     display:inherit;
 }
 
@@ -777,14 +751,14 @@
 
 
 /* Individual project links */
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem a {
+.projectselector ul.selectorList li.projectLineItem a {
     line-height:30px;
     min-height:50px;
     padding-left:15px;
     display: block;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a .projectName {
+.projectselector ul.selectorList li.projectLineItem.hasSubtitle a .projectName {
     display: block;
     float: left;
     line-height: 12px;
@@ -795,12 +769,12 @@
     text-wrap: nowrap;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem.hasSubtitle a small {
+.projectselector ul.selectorList li.projectLineItem.hasSubtitle a small {
     font-size:var(--font-size-xs);
     opacity:0.5;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.projectLineItem .projectAvatar {
+.projectselector ul.selectorList li.projectLineItem .projectAvatar {
     height:30px;
     width:30px;
     display:block;
@@ -810,7 +784,7 @@
     border-radius:5px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li .fas {
+.projectselector ul.selectorList li .fas {
 
     padding-right:10px;
     padding-top:5px;
@@ -818,32 +792,32 @@
 
 
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li:hover >  a,
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.activeChild >  a{
-    background:var(--main-menu-link-active-bg);
+.projectselector ul.selectorList li:hover >  a,
+.projectselector ul.selectorList li.activeChild >  a{
+    background:var(--neutral);
     color:var(--main-menu-link-active-color);
 
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li:hover li a {
+.projectselector ul.selectorList li:hover li a {
     border-radius: 0 0 0 10px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.nav-header:hover {
+.projectselector ul.selectorList li.nav-header:hover {
     background:none;
 }
 
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.border {
+.projectselector ul.selectorList li.border {
     border-top:1px dotted var(--neutral);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.nav-header,
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.fixedBottom {
+.projectselector ul.selectorList li.nav-header,
+.projectselector ul.selectorList li.fixedBottom {
     display:block;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList li.fixedBottom {
+.projectselector ul.selectorList li.fixedBottom {
     position:absolute;
     width: 240px;
     bottom:0;
@@ -851,7 +825,7 @@
 
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .toggler {
+.projectselector ul.selectorList.projectList li.projectLineItem .toggler {
     float: left;
     line-height: 20px;
     width: 18px;
@@ -864,15 +838,15 @@
     min-height: 20px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .projectGroup .toggler {
+.projectselector ul.selectorList.projectList li.projectLineItem .projectGroup .toggler {
     margin-left:5px;
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .toggler:hover {
+.projectselector ul.selectorList.projectList li.projectLineItem .toggler:hover {
     background:var(--col-hover-bg);
 }
 
-.leftpanel .leftmenu .nav-tabs .projectselector ul.selectorList.projectList li.projectLineItem .favoriteIcon {
+.projectselector ul.selectorList.projectList li.projectLineItem .favoriteIcon {
     float:right;
     line-height:30px;
     width:30px;
@@ -900,6 +874,19 @@
     margin-right: 5px;
 }
 
+.header .userloggedinfo img.logo {
+    border-radius:0px;
+    border:0px;
+    background:transparent;
+    max-width: none;
+    max-height: 18px;
+    margin: 0px;
+    margin-top: 17px;
+    padding: 0px;
+    margin-right: 5px;
+}
+
+
 .userloggedinfo {
     color: #fff;
     float: right;
@@ -917,7 +904,7 @@
 
 .userloggedinfo .userinfo a.profileHandler {
     color: #fff;
-    padding:0 5px 0 10px;
+    padding:0 5px 0 5px;
     height:50px;
     line-height:50px;
     display: block;
@@ -1112,17 +1099,28 @@
 .mainwrapper.menuclosed .barmenu {}
 
 .mainwrapper.menuclosed .rightpanel {
-    margin-left:68px;
 }
-.mainwrapper.menuclosed .header {
-    margin-left:68px;
-    width:calc(100% - 68px);
+
+
+.mainwrapper.menuclosed .primaryContent {
+    padding-left:50px;
 }
-.mainwrapper.menuclosed .logo {
+
+.mainwrapper.menuclosed .headmenu {
+    margin-left:98px;
+
+}
+
+.mainwrapper.menuclosed .headmenu .headmenu-label {
     display:none;
 }
+
+.mainwrapper.menuclosed .logo {
+
+
+}
 .mainwrapper.menuclosed .leftpanel {
-    width:68px;
+    width:40px;
 }
 
 .mainwrapper.menuclosed .leftpanel .submenu {
@@ -1134,37 +1132,38 @@
 }
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a {
-    font-size:0px;
-    padding: 15px 0px 10px 0;
-    width: 68px;
+    font-size: 0px;
+    padding: 12px 0px 8px 0;
+    width: 39px;
     text-align: center;
-    color: var(--main-menu-link-color);
-    border-left: 5px solid transparent;
     display: block;
-    line-height:21px;
+    line-height: 13px;
+    margin-left: 0px;
+    margin-bottom:2px;
+}
+
+.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked a span {
+    margin-right:0px;
 }
 
 .mainwrapper.menuclosed .leftpanel .leftmenu .nav-tabs.nav-stacked > li.dropdown a span{
     font-size: var(--base-font-size);
 }
 
-.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector i.fa {
+.mainwrapper.menuclosed .bigProjectSelector i.fa {
     display:none;
 }
 
-.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector {
+.mainwrapper.menuclosed .bigProjectSelector {
     font-size: 0;
-    text-align:center;
-    height:51px;
-    line-height:51px;
-    border-bottom:1px solid var(--main-border-color);
+    width:auto;
 }
 
-.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector .fa {
+.mainwrapper.menuclosed .bigProjectSelector .fa {
     font-size:var(--font-size-l);
 }
 
-.mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .bigProjectSelector > .projectAvatar {
+.mainwrapper.menuclosed .bigProjectSelector > .projectAvatar {
     float:none;
     margin: 10px 0 0;
 }
@@ -1174,7 +1173,7 @@
 }
 
 .mainwrapper.menuclosed .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    border-left: 5px solid var(--primary-color);
+
 }
 
 .mainwrapper.menuclosed .leftmenu .fixedMenuPoint {
@@ -1194,19 +1193,22 @@
 
 /* Left Nav expanded + + + + + + + + + + + + + + + + + */
 
-.mainwrapper.menuopen .barmenu {}
+.mainwrapper.menuopen .barmenu {
+
+}
 .mainwrapper.menuopen .rightpanel {
-    margin-left:240px;
+    margin-left:0px;
 }
 .mainwrapper.menuopen .header {
-    margin-left:240px;
-    width:calc(100% - 240px);
+    margin-left: 0;
+    width: 100%;
 }
 .mainwrapper.menuopen .logo {
     display:block;
+    float:left;
 }
 .mainwrapper.menuopen .leftpanel {
-    width:240px;
+    width:215px;
 }
 
 .mainwrapper.menuopen .leftpanel .submenu.closed {
@@ -1226,8 +1228,10 @@
 .maincontentinner.tabs {
     height: 50px;
     margin-bottom: 7px;
-    padding: 5px;
-    padding-top:10px;
+    padding: 9px 14px;
+    position:sticky;
+    top:55px;
+    z-index: 9;
 }
 
 
@@ -1239,21 +1243,21 @@
 .maincontentinner.tabs ul li {
     display:inline-block;
     float:left;
-    padding:0 5px;
+    padding:0;
     margin-right:2px;
-    background:var(--secondary-background);
+
 
 }
 
 .maincontentinner.tabs ul li.active {
-    padding-bottom:20px;
     box-shadow: var(--regular-shadow);
     border-radius: 5px;
+    background:var(--secondary-background);
 }
 
 .maincontentinner.tabs ul li a {
     font-weight:bold;
-    padding:5px 12px;
+    padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
     border-radius:var(--element-radius);
     line-height:21px;
     display:block;
@@ -1281,4 +1285,122 @@
     padding-left: 10px;
     float: left;
 
+}
+
+.headerinner .bigProjectSelector {
+    width:270px;
+    overflow:hidden;
+}
+
+.headerinner .bigProjectSelector > .fa-caret-down {
+    float:right;
+    padding-top:17px;
+}
+
+.headerinner .bigProjectSelector .projectAvatar img{
+    max-height:30px;
+    margin:10px 5px 0px 0px;
+    border-radius:3px;
+    float:left;
+}
+
+
+
+.navbar {
+    margin-bottom: 15px;
+}
+
+.navbar-inner {
+    border-color: #ccc;
+    background: #f7f7f7;
+}
+
+.navbar .brand {
+    font-size: var(--font-size-l);
+    font-weight: bold;
+}
+
+.navbar .nav > li {
+    border-left: 1px solid #ccc;
+}
+
+.navbar .nav > li:last-child {
+    border-right: 1px solid #ccc;
+}
+
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus {
+    background: #fff;
+}
+
+.navbar .nav > li > a {
+    padding: 11px 15px;
+    font-size: var(--base-font-size);
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+.navbar .nav > li > a:hover {
+    background: #f3f4f5;
+}
+
+.navbar .nav li.dropdown.open > .dropdown-toggle,
+.navbar .nav li.dropdown.active > .dropdown-toggle,
+.navbar .nav li.dropdown.open.active > .dropdown-toggle {
+    background: #fff;
+}
+
+.navbar .navbar-search.pull-right .search-query {
+    margin-right: -15px;
+}
+
+.navbar .navbar-search.pull-left .search-query {
+    margin-left: -15px;
+}
+
+.navbar .navbar-form.pull-right {
+    margin-right: -15px;
+}
+
+.navbar .navbar-form.pull-left {
+    margin-left: -15px;
+}
+
+.navbar .navbar-form input {
+    width: 168px;
+}
+
+.navbar-inverse .navbar-inner {
+    background: #222;
+}
+
+.navbar-inverse .nav > .active > a,
+.navbar-inverse .nav > .active > a:hover,
+.navbar-inverse .nav > .active > a:focus {
+    background: #111;
+}
+
+.navbar-inverse .nav > li, .navbar-inverse .nav > li:last-child {
+    border-color: #373737;
+}
+
+.navbar-inverse .nav > li > a:hover {
+    background: #171717;
+}
+
+.navbar-inverse .nav li.dropdown.open > .dropdown-toggle,
+.navbar-inverse .nav li.dropdown.active > .dropdown-toggle,
+.navbar-inverse .nav li.dropdown.open.active > .dropdown-toggle {
+    background: #171717;
+}
+
+.navbar-search .search-query {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+.navbar-form .btn {
+    padding: 4px 10px;
+    font-size: var(--base-font-size);
+    text-transform: uppercase;
 }

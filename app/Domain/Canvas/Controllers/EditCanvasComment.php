@@ -14,6 +14,7 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Illuminate\Support\Str;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -168,7 +169,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $params['itemId']);
+                        return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $params['itemId']);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
                     }
@@ -217,7 +218,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
 
-                        return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $id);
+                        return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $id);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
                     }
@@ -254,7 +255,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $this->projectService->notifyProjectUsers($notification);
 
 
-                return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $_GET['id']);
+                return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $_GET['id']);
             }
 
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());

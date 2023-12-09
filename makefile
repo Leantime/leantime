@@ -103,10 +103,13 @@ clean:
 run-dev: build-dev
 	cd .dev && docker-compose up --build --remove-orphans
 
-acceptance-test: build-dev
-	php vendor/bin/codecept run Acceptance --steps
+functional-test: build-dev
+	php vendor/bin/codecept run Functional --steps
 
-acceptance-test-ci: build-dev
+unit-test: build-dev
+	php vendor/bin/codecept run Unit --steps
+
+functional-test-ci: build-dev
 	php vendor/bin/codecept build
 ifeq ($(strip $(RUNNING_DOCKER_CONTAINERS)),)
 	@echo "No running docker containers found"
@@ -118,7 +121,7 @@ ifeq ($(strip $(RUNNING_DOCKER_VOLUMES)),)
 else
 	docker volume rm $(RUNNING_DOCKER_VOLUMES)
 endif
-	php vendor/bin/codecept run Acceptance --steps
+	php vendor/bin/codecept run Functional --steps
 
 codesniffer:
 	./vendor/squizlabs/php_codesniffer/bin/phpcs app
@@ -127,7 +130,7 @@ codesniffer-fix:
 	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
 
 get-version:
-	@echo $(VERSION) 
+	@echo $(VERSION)
 
 .PHONY: install-deps build package clean run-dev
 

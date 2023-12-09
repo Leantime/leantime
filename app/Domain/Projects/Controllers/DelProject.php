@@ -8,6 +8,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -55,7 +56,7 @@ namespace Leantime\Domain\Projects\Controllers {
                         $this->projectService->setCurrentProject();
 
                         $this->tpl->setNotification($this->language->__("notification.project_deleted"), "success");
-                        return $this->tpl->redirect(BASE_URL . "/projects/showAll");
+                        return Frontcontroller::redirect(BASE_URL . "/projects/showAll");
                     }
 
                     //Assign vars

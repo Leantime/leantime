@@ -8,6 +8,7 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Wiki\Models\Article;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -50,7 +51,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 if ($results) {
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success", "articlemilestone_unlinked");
-                    return $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
+                    return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
                 }
             }
 
@@ -128,9 +129,9 @@ namespace Leantime\Domain\Wiki\Controllers {
                 }
             }
             if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                return $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
+                return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
             } else {
-                return $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
+                return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $id);
             }
         }
     }

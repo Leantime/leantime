@@ -17,7 +17,7 @@ module.exports = {
                 },
             },
             fontSize: {
-                'sm': 'var(--font-size-s)',
+                'sm': 'var(--font-size-sm)',
                 'base': 'var(--base-font-size)',
                 'l': 'var(--font-size-l)',
                 'xl': 'var(--font-size-xl)',

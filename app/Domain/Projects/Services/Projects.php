@@ -874,7 +874,7 @@ namespace Leantime\Domain\Projects\Services {
                 $values['start'] = $this->language->getISODateString($values['start']);
             }
             if ($values['end'] != null) {
-                $values['end'] = $this->language->getISODateString($values['end']);
+                $values['end'] = $this->language->getISODateString($values['end'], "e");
             }
             $this->projectRepository->addProject($values);
         }

@@ -53,10 +53,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $id
          * @return array|false
          */
-        /**
-         * @param $id
-         * @return array|false
-         */
         public function getSprint($id): false|Models\Sprints
         {
 
@@ -99,10 +95,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getUpcomingSprint($projectId): false|array
         {
 
@@ -115,10 +107,6 @@ namespace Leantime\Domain\Sprints\Services {
             return false;
         }
 
-        /**
-         * @param $projectId
-         * @return array
-         */
         /**
          * @param $projectId
          * @return array
@@ -140,10 +128,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllFutureSprints($projectId): false|array
         {
 
@@ -160,16 +144,12 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $params
          * @return false|object
          */
-        /**
-         * @param $params
-         * @return false|object
-         */
         public function addSprint($params): object|false
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = $this->language->getISODateString($sprint->startDate);
-            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
+            $sprint->startDate = $this->language->getISODateString($sprint->startDate, "b");
+            $sprint->endDate = $this->language->getISODateString($sprint->endDate, "e");
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];
@@ -187,16 +167,12 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $params
          * @return false|object
          */
-        /**
-         * @param $params
-         * @return false|object
-         */
         public function editSprint($params): object|false
         {
 
             $sprint = (object) $params;
             $sprint->startDate = $this->language->getISODateString($sprint->startDate);
-            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
+            $sprint->endDate = $this->language->getISODateString($sprint->endDate, "e");
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];
@@ -210,11 +186,6 @@ namespace Leantime\Domain\Sprints\Services {
             return false;
         }
 
-        /**
-         * @param $sprint
-         * @return array|false
-         * @throws \Exception
-         */
         /**
          * @param $sprint
          * @return array|false
@@ -264,11 +235,11 @@ namespace Leantime\Domain\Sprints\Services {
             } else {
                 //language formatted
                 $dateStart = new DateTime($this->language->getISODateString($sprint->startDate));
-                $dateEnd = new DateTime($this->language->getISODateString($sprint->endDate));
+                $dateEnd = new DateTime($this->language->getISODateString($sprint->endDate, "e"));
                 $period = new DatePeriod(
                     new DateTime($this->language->getISODateString($sprint->startDate)),
                     new DateInterval('P1D'),
-                    new DateTime($this->language->getISODateString($sprint->endDate))
+                    new DateTime($this->language->getISODateString($sprint->endDate, "e"))
                 );
             }
 

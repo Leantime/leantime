@@ -82,10 +82,12 @@ namespace Leantime\Domain\Plugins\Repositories {
                   license,
                   format
 
-                FROM zp_plugins";
+                FROM zp_plugins WHERE id = :id";
 
 
             $stmn = $this->db->database->prepare($query);
+
+            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
             $stmn->execute();
             $stmn->setFetchMode(PDO::FETCH_CLASS, InstalledPlugin::class);
@@ -145,10 +147,6 @@ namespace Leantime\Domain\Plugins\Repositories {
             return $id;
         }
 
-        /**
-         * @param int $id
-         * @return bool
-         */
         /**
          * @param int $id
          * @return bool

@@ -33,6 +33,7 @@ namespace Leantime\Domain\Menu\Repositories {
                     'type' => 'submenu', 'id' => 'materialize', 'title' => 'menu.make', 'visual' => 'open',
                     'submenu' => [
                         15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
+                        25 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.timeline', 'icon' => 'fa fa-fw fa-chart-gantt', 'tooltip' => 'menu.timeline_tooltip', 'href' => '', 'hrefFunction' => 'getTimelineMenu', 'active' => ['roadmap', 'showAllMilestones', 'showProjectCalendar']],
                         40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/dashboard', 'active' => ['showCanvas', 'dashboard']],
 
                     ],
@@ -104,7 +105,35 @@ namespace Leantime\Domain\Menu\Repositories {
                     ],
                 ],
             ],
+            'personal' => [
+                5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
+                10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_projects', 'icon' => 'fa fa-briefcase', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
+                15 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
+                20 => ['type' => 'item', 'module' => 'calendar', 'title' => 'menu.sidemenu_my_calendar', 'icon' => 'fa fa-calendar', 'tooltip' => 'menu.my_calendar_tooltip', 'href' => '/calendar/showMyCalendar', 'active' => ['showMyCalendar']],
+            ],
+            "company" => [
+                10 => [
+                    'type' => 'submenu', 'id' => 'Management', 'title' => 'menu.sidemenu_management', 'visual' => 'open', 'role' => 'manager',
+                    'submenu' => [
+                        5 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.all_timesheets', 'icon' => 'fa fa-fw fa-business-time', 'tooltip' => 'menu.all_timesheets_tooltip', 'href' => '/timesheets/showAll', 'active' => ['showAll']],
+                        10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.all_projects', 'icon' => 'fa fa-fw fa-briefcase', 'tooltip' => 'menu.all_projects_tooltip', 'href' => '/projects/showAll', 'active' => ['showAll']],
+                        15 => ['type' => 'item', 'module' => 'clients', 'title' => 'menu.all_clients', 'icon' => 'fa fa-fw fa-address-book', 'tooltip' => 'menu.all_clients_tooltip', 'href' => '/clients/showAll', 'active' => ['showAll']],
+                        20 => ['type' => 'item', 'module' => 'users', 'title' => 'menu.all_users', 'icon' => 'fa fa-fw fa-users', 'tooltip' => 'menu.all_users_tooltip', 'href' => '/users/showAll', 'active' => ['showAll']],
+                    ],
+                ],
+                15 => [
+                    'type' => 'submenu', 'id' => 'administration', 'title' => 'menu.sidemenu_administration', 'visual' => 'open', 'role' => 'administrator',
+                    'submenu' => [
+                        5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.leantime_apps', 'icon' => 'fa fa-fw fa-puzzle-piece', 'tooltip' => 'menu.leantime_apps_tooltip', 'href' => '/plugins/marketplace', 'active' => ['marketplace', 'myapps']],
+                        10 => ['type' => 'item', 'module' => 'connector', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
+                        15 => ['type' => 'item', 'module' => 'setting', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
+                    ],
+                ],
+            ]
         ];
+
+
+        private array $companyMenuStructure = [];
 
         private LanguageCore $language;
         private EnvironmentCore $config;
@@ -174,7 +203,7 @@ namespace Leantime\Domain\Menu\Repositories {
         public function setSubmenuState(string $submenu, string $state): void
         {
 
-            if(isset($_SESSION['submenuToggle']) && is_array($_SESSION['submenuToggle']) && $submenu !== false) {
+            if (isset($_SESSION['submenuToggle']) && is_array($_SESSION['submenuToggle']) && $submenu !== false) {
                 $_SESSION['submenuToggle'][$submenu] = $state;
             }
 
@@ -333,6 +362,18 @@ namespace Leantime\Domain\Menu\Repositories {
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
 
+        public function getTimelineMenu(): mixed
+        {
+
+            $ticketService = $this->ticketsService;
+
+            //Removing base URL from here since it is being added in the menu for loop in the template
+            $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
+            return str_replace($base_url, '', $ticketService->getLastTimelineViewUrl());
+        }
+
+
+
         /**
          * @return string
          */
@@ -346,6 +387,36 @@ namespace Leantime\Domain\Menu\Repositories {
             }
 
             return $url;
+        }
+
+        public function getSectionMenuType($currentRoute, $default = "default")
+        {
+
+            $sections = [
+                "dashboard.home" => "personal",
+                "projects.showMy" => "personal",
+                "timesheets.showMy" => "personal",
+                "calendar.showMyCalendar" => "personal",
+                "calendar.showMyList" => "personal",
+                "tickets.roadmapAll" => "personal",
+                "tickets.showAllMilestonesOverview" => "personal",
+                "users.editOwn" => "personal",
+                "setting.editCompanySettings" => "company",
+                "timesheets.showAll" => "company",
+                "projects.showAll" => "company",
+                "clients.showAll" => "company",
+                "users.showAll" => "company",
+                "plugins.show" => "company",
+                "plugins.marketplace" => "company",
+                "plugins.myapps" => "company",
+                "connector.show" => "company",
+            ];
+
+            if (isset($sections[$currentRoute])) {
+                return $sections[$currentRoute];
+            } else {
+                return $default;
+            }
         }
     }
 

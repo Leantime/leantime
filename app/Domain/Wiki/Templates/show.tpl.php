@@ -105,6 +105,10 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
 </div>
 
+
+
+
+
 <div class="maincontent">
 
 
@@ -293,11 +297,8 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
             </div>
 
-
-
-        </div>
-
 </div>
+
 
 
 <script type="text/javascript">

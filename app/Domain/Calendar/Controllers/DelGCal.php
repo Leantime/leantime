@@ -1,59 +1,34 @@
 <?php
+namespace Leantime\Domain\Calendar\Controllers;
 
-namespace Leantime\Domain\Calendar\Controllers {
+use Leantime\Core\Controller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Calendar\Services\Calendar;
+use Leantime\Domain\Auth\Services\Auth;
 
-    /**
-     * delUser Class - Deleting users
-     *
-     */
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-    use Leantime\Domain\Auth\Services\Auth;
+class DelGCal extends Controller
+{
+    private Calendar $calendarService;
 
-    /**
-     *
-     */
-    class DelGCal extends Controller
+    public function init(Calendar $calendarService)
     {
-        private CalendarRepository $calendarRepo;
+        $this->calendarService = $calendarService;
+    }
 
-        /**
-         * init - initialize private variables
-         */
-        public function init(CalendarRepository $calendarRepo)
-        {
-            $this->calendarRepo = $calendarRepo;
-        }
-
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
-            if (isset($_GET['id']) === true) {
-                $id = (int)($_GET['id']);
-
-                $msgKey = '';
-
-                //Delete User
-                if (isset($_POST['del']) === true) {
-                    $this->calendarRepo->deleteGCal($id);
-
-                    $msgKey = 'Kalender gelöscht';
-                }
-
-                //Assign variables
-
-                $this->tpl->assign('msg', $msgKey);
-                return $this->tpl->display('calendar.delGCal');
-            } else {
-                return $this->tpl->display('errors.error403', responseCode: 403);
+    public function run()
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        if (isset($_GET['id']) === true) {
+            $id = (int)($_GET['id']);
+            $msgKey = '';
+            if (isset($_POST['del']) === true) {
+                $this->calendarService->deleteGCal($id);
+                $msgKey = 'Kalender gelöscht';
             }
+            $this->tpl->assign('msg', $msgKey);
+           return $this->tpl->display('calendar.delGCal');
+        } else {
+           return $this->tpl->display('errors.error403');
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Leantime\Domain\Reports\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -131,7 +132,7 @@ namespace Leantime\Domain\Reports\Controllers {
          */
         public function post($params): Response
         {
-            return $this->tpl->redirect(BASE_URL . "/dashboard/show");
+            return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
         }
     }
 }

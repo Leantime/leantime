@@ -52,6 +52,7 @@ class Bootloader
         "install.update",
         "errors.error404",
         "errors.error500",
+        "errors.error501",
         "api.i18n",
         "calendar.ical",
         "oidc.login",

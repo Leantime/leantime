@@ -1,54 +1,12 @@
 @php use Leantime\Domain\Auth\Models\Roles; @endphp
 @dispatchEvent('beforeHeadMenu')
 
-<ul class="headmenu">
-
-    @dispatchEvent('afterHeadMenuOpen')
+<ul class="headmenu pull-right">
 
     @include('timesheets::partials.stopwatch', [
-                   'progressSteps' => $onTheClock
-               ])
-    <li>
-        <a
-            href="{{ BASE_URL }}/dashboard/home"
-            @if ($activePath == 'dashboard.home')
-                class="active"
-            @endif
-            data-tippy-content="{{ __('popover.home') }}"
-        >{!! __('menu.home') !!}</a>
-    </li>
+               'progressSteps' => $onTheClock
+           ])
 
-    <li>
-        <a
-            href='{{ BASE_URL }}/projects/showMy'
-            @if ($activePath == 'projects.showMy')
-                class="active"
-            @endif
-            data-tippy-content="{{ __('popover.my_projects') }}"
-        >{!! __("menu.my_projects") !!}</a>
-    </li>
-
-    <li>
-        <a
-            href='{{ BASE_URL }}/timesheets/showMy'
-            @if ($activePath == 'timesheets.showMy')
-                class="active"
-            @endif
-            data-tippy-content="{{ __('popover.my_timesheets') }}"
-        >{!! __("menu.my_timesheets") !!}</a>
-    </li>
-
-    <li>
-        <a
-            href='{{ BASE_URL }}/calendar/showMyCalendar'
-            @if ($activePath == 'calendar.showMyCalendar')
-                class="active"
-            @endif
-            data-tippy-content="{{ __('popover.my_calendar') }}"
-        >{!! __("menu.my_calendar") !!}</a>
-    </li>
-
-    </li>
     <li class="notificationDropdown">
 
         <a
@@ -149,86 +107,6 @@
 
     </li>
 
-    @if ($login::userIsAtLeast("manager", true))
-
-        <li class="appsDropdown">
-
-            <a
-                href="javascript:void(0);"
-                class="dropdown-toggle profileHandler"
-                data-toggle="dropdown"
-                data-tippy-content="{{ __('popover.company') }}"
-            >
-                <img src="{{ BASE_URL }}/dist/images/svg/apps-grid-icon.svg"
-                     style="width:13px; vertical-align: middle;"/>
-            </a>
-
-            <ul class="dropdown-menu">
-                <li class="nav-header">{{ __('header.management') }}</li>
-                <li><a href="{{ BASE_URL }}/timesheets/showAll">{!! __('menu.all_timesheets') !!}</a></li>
-
-                <li
-                    @if (str_starts_with($activePath, 'projects'))
-                        class="active"
-                    @endif
-                >
-                    <a href="{{ BASE_URL }}/projects/showAll">{!! __('menu.all_projects') !!}</a>
-                </li>
-
-                @if ($login::userIsAtLeast(Roles::$admin, true))
-                    <li
-                        @if (str_starts_with($activePath, 'clients'))
-                            class="active"
-                        @endif
-                    >
-                        <a href="{{ BASE_URL }}/clients/showAll">{!! __('menu.all_clients') !!}</a>
-                    </li>
-
-                    <li
-                        @if (str_starts_with($activePath, 'users'))
-                            class="active"
-                        @endif
-                    >
-                        <a href="{{ BASE_URL }}/users/showAll">{!! __('menu.all_users') !!}</a>
-                    </li>
-
-                    @if ($login::userIsAtLeast(Roles::$owner))
-                        <li class="nav-header border">{!! __('label.administration') !!}</li>
-
-                        <li
-                            @if (str_starts_with($activePath, 'plugins'))
-                                class="active"
-                            @endif
-                        >
-                            <a href="{{ BASE_URL }}/plugins/marketplace/">{!! __('menu.apps') !!}</a>
-                        </li>
-
-                        <li
-                            @if (str_starts_with($activePath, 'connector'))
-                                class="active"
-                            @endif
-                        >
-                            <a href="{{ BASE_URL }}/connector/show/">{!! __('menu.integrations') !!} <span class="label label-primary feature-label">Beta</span></a>
-                        </li>
-
-                        <li
-                            @if (str_starts_with($activePath, 'setting'))
-                                class="active"
-                            @endif
-                        >
-                            <a href="{{ BASE_URL }}/setting/editCompanySettings/">{!! __('menu.company_settings') !!}</a>
-                        </li>
-
-                        @dispatchEvent('companyMenuEnd', ["module" => explode('.', $activePath)[0]])
-
-                    @endif
-                @endif
-            </ul>
-
-        </li>
-
-    @endif
-
     <li>
         <div class="userloggedinfo">
 
@@ -243,6 +121,37 @@
     @dispatchEvent('beforeHeadMenuClose')
 
 </ul>
+
+<ul class="headmenu">
+
+    @dispatchEvent('afterHeadMenuOpen')
+    <li>
+        @include('menu::projectSelector')
+    </li>
+    <li>
+        <a
+            href="{{ BASE_URL }}/dashboard/home"
+            @if ($menuType == 'personal')
+                class="active"
+            @endif
+            data-tippy-content="{{ __('popover.my_work') }}"
+        >{!! __('menu.my_work') !!}</a>
+    </li>
+    @if ($login::userIsAtLeast("manager"))
+        <li>
+            <a
+                href="{{ BASE_URL }}/setting/editCompanySettings/"
+                @if ($menuType == 'company')
+                    class="active"
+                @endif
+                data-tippy-content="{{ __('popover.company') }}"
+            >{!! __('menu.company') !!}</a>
+        </li>
+    @endif
+
+</ul>
+
+
 
 @dispatchEvent('afterHeadMenu')
 

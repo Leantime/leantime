@@ -18,6 +18,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Files\Services\Files as FileService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -226,7 +227,7 @@ namespace Leantime\Domain\Projects\Controllers {
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
                         'start' => $this->language->getISODateString($_POST['start']),
-                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
+                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end'], "e") : '',
                     );
 
                     if ($values['name'] !== '') {
@@ -295,7 +296,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        return $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
+                        return Frontcontroller::redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
                     } else {
                         $this->tpl->setNotification('notifications.file_deleted_error', "success");
                     }

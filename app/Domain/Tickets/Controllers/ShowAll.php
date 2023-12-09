@@ -8,6 +8,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -43,7 +44,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $_SESSION['lastFilterdTicketTableView'] = CURRENT_URL;
 
             if(!isset($_SESSION['currentProjectName'])){
-               $this->tpl->redirect(BASE_URL."/");
+               Frontcontroller::redirect(BASE_URL."/");
             }
         }
 

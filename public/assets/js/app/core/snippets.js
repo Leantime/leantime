@@ -26,13 +26,13 @@ leantime.snippets = (function () {
     var accordionToggle = function (id) {
 
         var currentLink = jQuery("#accordion_toggle_"+id).find("i.fa").first();
-        var submenuName = '#accordion_'+id;
+        var submenuName = 'accordion_content-'+id;
         var submenuState = "closed";
 
         if(currentLink.hasClass("fa-angle-right")){
             currentLink.removeClass("fa-angle-right");
             currentLink.addClass("fa-angle-down");
-            jQuery('#accordion_'+id).slideDown("fast");
+            jQuery('#accordion_content-'+id).slideDown("fast");
             submenuState = "open";
 
         }else{
@@ -40,7 +40,7 @@ leantime.snippets = (function () {
             currentLink.removeClass("fa-angle-down");
             currentLink.addClass("fa-angle-right");
 
-            jQuery('#accordion_'+id).slideUp("fast");
+            jQuery('#accordion_content-'+id).slideUp("fast");
             submenuState = "closed";
         }
 
@@ -55,11 +55,44 @@ leantime.snippets = (function () {
 
     };
 
+    var toggleTheme = function (theme) {
+
+        var themeUrl = jQuery("#themeStyleSheet").attr("href");
+
+        if(theme == "light"){
+            themeUrl = themeUrl.replace("dark.css", "light.css");
+            jQuery("#themeStyleSheet").attr("href", themeUrl);
+        }else if (theme == "dark"){
+            themeUrl = themeUrl.replace("light.css", "dark.css");
+            jQuery("#themeStyleSheet").attr("href", themeUrl);
+        }
+
+    };
+
+    var toggleFont = function (font) {
+
+        jQuery("#fontStyleSetter").html(":root { --primary-font-family: '"+font+"', 'Helvetica Neue', Helvetica, sans-serif; }")
+
+
+    };
+
+    var toggleColors = function (accent1, accent2) {
+
+        jQuery("#colorSchemeSetter").html(":root { --accent1: "+accent1+"; --accent2: "+accent2+"}")
+
+
+    };
+
+
+
     // Make public what you want to have public, everything else is private
     return {
         copyUrl:copyUrl,
         initConfettiClick:initConfettiClick,
-        accordionToggle:accordionToggle
+        accordionToggle:accordionToggle,
+        toggleTheme:toggleTheme,
+        toggleFont:toggleFont,
+        toggleColors:toggleColors
     };
 
 })();

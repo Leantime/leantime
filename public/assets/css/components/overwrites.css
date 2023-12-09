@@ -4,9 +4,6 @@
 .inputwrapper button:hover { background: var(--main-action-hover-bg); border-color: var(--main-border-color) }
 
 /* background */
-
-body.loginpage,
-.header,
 .leftmenu .nav-tabs.nav-stacked > li.active > a,
 .leftmenu .nav-tabs.nav-stacked > li.active > a:hover,
 .shortcuts li a,
@@ -284,7 +281,7 @@ div.tagsinput {
 
 body .tox .tox-edit-area__iframe,
 body .tox .tox-toolbar-overlord{
-    background-color:var(--secondary-background);
+    background-color:transparent;
 }
 
 
@@ -406,4 +403,9 @@ body hr {
 
 .tippy-arrow {
     color:var(--secondary-action-hover-bg);
+}
+
+
+.ui-resizable-se {
+    opaciy:0.5
 }

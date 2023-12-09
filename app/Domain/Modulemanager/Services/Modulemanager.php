@@ -7,6 +7,9 @@
 
 namespace Leantime\Domain\Modulemanager\Services {
 
+    Use Leantime\Core\Eventhelpers;
+    use Leantime\Domain\Plugins\Services\Plugins;
+
     /**
      *
      */
@@ -42,14 +45,11 @@ namespace Leantime\Domain\Modulemanager\Services {
          *
          * @access private
          */
-        public function __construct()
+        public function __construct(Plugins $plugins)
         {
+            $this->pluginService = $plugins;
         }
 
-        /**
-         * @param $module
-         * @return bool
-         */
         /**
          * @param $module
          * @return bool
@@ -63,6 +63,32 @@ namespace Leantime\Domain\Modulemanager\Services {
             }
 
             return false;
+        }
+
+        /**
+         * Checks if a module is available.
+         * In Progress: This method is a stub to hook into via filters.
+         *
+         * @param string $module The name of the module to check availability for.
+         *
+         * @return bool Returns true if the module is available, false otherwise.
+         */
+        public function isModuleAvailable(string $module): bool
+        {
+            $available = true;
+
+
+            $plugins = $this->pluginService->getEnabledPlugins();
+
+            foreach($plugins as $plugin) {
+
+            }
+
+            $available = Eventhelpers::dispatch_filter("moduleAvailability", $available, ["module"=> $module]);
+
+
+            return $available;
+
         }
     }
 

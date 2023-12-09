@@ -10,6 +10,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -84,7 +85,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $this->tpl->setNotification(sprintf($this->language->__("notifications.project_copied_successfully"), BASE_URL . "/projects/changeCurrentProject/" . $result), 'success');
 
-                return $this->tpl->redirect(BASE_URL . "/projects/duplicateProject/" . $id);
+                return Frontcontroller::redirect(BASE_URL . "/projects/duplicateProject/" . $id);
             } else {
                 return $this->tpl->displayPartial('errors.error403');
             }

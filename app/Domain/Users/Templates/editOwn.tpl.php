@@ -32,42 +32,43 @@ $user = $tpl->get('user');
                     <ul>
                         <li><a href="#myProfile"><?php echo $tpl->__('tabs.myProfile'); ?></a></li>
                         <li><a href="#security"><?php echo $tpl->__('tabs.security'); ?></a></li>
-                        <li><a href="#look"><?php echo $tpl->__('tabs.look_feel'); ?></a></li>
+                        <li><a href="#settings"><?php echo $tpl->__('tabs.settings'); ?></a></li>
+                        <li><a href="#theme"><?php echo $tpl->__('tabs.theme'); ?></a></li>
                         <li><a href="#notifications"><?php echo $tpl->__('tabs.notifications'); ?></a></li>
                     </ul>
 
                     <div id="myProfile">
-                        <form action="" method="post" class='stdform'>
+                        <form action="" method="post">
 
                             <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="firstname" class="span3"><?php echo $tpl->__('label.firstname'); ?></label>
-                                    <span class='field span6'>
+                                    <label for="firstname" ><?php echo $tpl->__('label.firstname'); ?></label>
+                                    <span>
                                         <input type="text" class="input" name="firstname" id="firstname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['firstname']) ?>"/><br/>
                                     </span>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="lastname" class="span3"><?php echo $tpl->__('label.lastname'); ?></label>
-                                    <span class='field span6'>
+                                    <label for="lastname" ><?php echo $tpl->__('label.lastname'); ?></label>
+                                    <span>
                                         <input type="text" name="lastname" class="input" id="lastname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['lastname']) ?>"/><br/>
                                     </span>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="user" class="span3"><?php echo $tpl->__('label.email'); ?></label>
-                                    <span class='field span6'>
+                                    <label for="user" ><?php echo $tpl->__('label.email'); ?></label>
+                                    <span>
                                         <input type="text" name="user" class="input" id="user" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['user']) ?>"/><br/>
                                     </span>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="phone" class="span3"><?php echo $tpl->__('label.phone'); ?></label>
-                                    <span class='field span6'>
+                                    <label for="phone" ><?php echo $tpl->__('label.phone'); ?></label>
+                                    <span>
                                         <input type="text" name="phone" class="input" id="phone" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['phone']) ?>"/><br/>
                                     </span>
@@ -94,16 +95,16 @@ $user = $tpl->get('user');
                             <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="currentPassword" class="span3"><?php echo $tpl->__('label.old_password') ?></label>
-                                    <span class='field span6'>
+                                    <label for="currentPassword" ><?php echo $tpl->__('label.old_password') ?></label>
+                                    <span>
                                         <input type='password' value="" name="currentPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                id="currentPassword"/><br/>
                                     </span>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="newPassword" class="span3"><?php echo $tpl->__('label.new_password') ?></label>
-                                    <span class='field span6'>
+                                    <label for="newPassword" ><?php echo $tpl->__('label.new_password') ?></label>
+                                    <span>
                                         <input type='password' value="" name="newPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                id="newPassword"/>
                                         <span id="pwStrength"></span>
@@ -112,8 +113,8 @@ $user = $tpl->get('user');
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="confirmPassword" class="span3"><?php echo $tpl->__('label.password_repeat') ?></label>
-                                    <span class='field span6'>
+                                    <label for="confirmPassword" ><?php echo $tpl->__('label.password_repeat') ?></label>
+                                    <span>
                                         <input type="password" value="" name="confirmPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
                                                id="confirmPassword"/><br/>
                                         <?php if (!$_SESSION['userdata']['isLdap']) {?>
@@ -140,13 +141,13 @@ $user = $tpl->get('user');
                         <p><a href="<?=BASE_URL ?>/twoFA/edit"><?php echo $tpl->__('text.twoFA_manage'); ?></a></p>
                     </div>
 
-                    <div id="look">
+                    <div id="settings">
                         <form action="" method="post">
                             <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="language" class="span3"><?php echo $tpl->__('label.language') ?></label>
-                                    <span class='field span6'>
+                                    <label for="language" ><?php echo $tpl->__('label.language') ?></label>
+                                    <span class='field'>
                                         <select name="language" id="language" style="width: 220px">
                                             <?php foreach ($tpl->get("languageList") as $languagKey => $languageValue) {?>
                                                 <option value="<?=$languagKey?>" <?php if ($tpl->get('userLang') == $languagKey) {
@@ -157,24 +158,8 @@ $user = $tpl->get('user');
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="theme" class="span3"><?php echo $tpl->__('label.theme') ?></label>
-                                    <span class='field span6'>
-                                        <select name="theme" id="theme" style="width: 220px">
-                                            <?php
-                                            $themeCore = app()->make(Theme::class);
-                                            $themeAll = $themeCore->getAll();
-                                            foreach ($themeAll as $key => $name) {
-                                            ?>
-                                                <option value="<?= $key ?>" <?php if ($tpl->get('userTheme') == $key) {
-                                                                                echo "selected='selected'";
-                                                                            } ?>><?= $tpl->__($name) ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </span>
-                                </div>
-                                <div class="form-group">
-                                    <label for="date_format" class="span3"><?php echo $tpl->__('label.date_format') ?></label>
-                                    <span class='field span6'>
+                                    <label for="date_format" ><?php echo $tpl->__('label.date_format') ?></label>
+                                    <span>
                                         <select name="date_format" id="date_format" style="width: 220px">
                                             <?php
                                             $dateFormats = $tpl->get('dateTimeValues')['dates'];
@@ -190,8 +175,8 @@ $user = $tpl->get('user');
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="time_format" class="span3"><?php echo $tpl->__('label.time_format') ?></label>
-                                    <span class='field span6'>
+                                    <label for="time_format" ><?php echo $tpl->__('label.time_format') ?></label>
+                                    <span>
                                         <select name="time_format" id="time_format" style="width: 220px">
                                             <?php
                                             $timeFormats = $tpl->get('dateTimeValues')['times'];
@@ -207,8 +192,8 @@ $user = $tpl->get('user');
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="timezone" class="span3"><?php echo $tpl->__('label.timezone') ?></label>
-                                    <span class='field span6'>
+                                    <label for="timezone" ><?php echo $tpl->__('label.timezone') ?></label>
+                                    <span>
                                         <select name="timezone" id="timezone" style="width: 220px">
                                             <?php
                                             $userTZ = $tpl->get('timezone');
@@ -224,7 +209,86 @@ $user = $tpl->get('user');
                                     </span>
                                 </div>
                             </div>
-                            <input type="hidden" name="saveLook" value="1" />
+                            <input type="hidden" name="saveSettings" value="1" />
+                            <input type="submit" name="save" id="saveSettings" value="<?php echo $tpl->__('buttons.save'); ?>" class="button"/>
+                        </form>
+                    </div>
+
+                    <div id="theme">
+                        <form action="" method="post">
+                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <div class="row-fluid">
+                                <div class="form-group">
+                                    <label for="themeSelect" ><?php echo $tpl->__('label.theme') ?></label>
+                                    <span class='field'>
+                                        <select name="theme" id="themeSelect" style="width: 220px">
+                                            <?php
+                                            $themeCore = app()->make(Theme::class);
+                                            $themeAll = $themeCore->getAll();
+                                            foreach ($themeAll as $key => $theme) {
+                                                ?>
+                                                <option value="<?= $key ?>" <?php if ($tpl->get('userTheme') == $key) {
+                                                    echo "selected='selected'";
+                                                } ?>><?= $tpl->__($theme['name']) ?></option>
+                                            <?php } ?>
+                                        </select>
+
+                                    </span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="colormode" ><?php echo $tpl->__('label.colormode') ?></label>
+                                        <select name="colormode" id="colormode">
+                                           <option value="light" <?php if ($tpl->get('userColorMode') == "light") {
+                                               echo "selected='selected'";
+                                           } ?>><?= $tpl->__('label.light') ?></option>
+                                           <option value="dark" <?php if ($tpl->get('userColorMode') == "dark") {
+                                               echo "selected='selected'";
+                                           } ?>><?= $tpl->__('label.dark') ?></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr />
+                                        <label>Font</label>
+                                        <?php foreach($tpl->get('availableFonts') as $key => $font) { ?>
+                                            <div class="font-preview">
+                                                <label for="font-<?=$key?>" class="font"
+                                                       style="font-family:'<?=$font ?>'; ">
+                                                    The quick brown fox jumps over the lazy dog
+                                                </label>
+                                                <span class="font-name">
+                                                    <input type="radio" name="themeFont" id="font-<?=$key?>" value="<?=$font ?>" <?php if ($tpl->get('themeFont') == $key) {
+                                                        echo "checked='checked'";
+                                                    } ?>/>
+                                                    <label for="color-<?=$key?>"><?=$font ?></label>
+                                            </div>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr />
+                                        <label>Color Scheme</label>
+                                        <?php foreach($tpl->get('availableColorSchemes') as $key => $scheme) { ?>
+                                            <div class="color-circle">
+                                                <label for="color-<?=$key?>" class="color"
+                                                      style="background:linear-gradient(135deg, <?=$scheme["primaryColor"] ?> 20%, <?=$scheme["secondaryColor"] ?> 100%);">
+                                                </label>
+                                                <span class="color-name">
+                                                    <input type="radio" name="colorscheme" id="color-<?=$key?>" value="<?=$key ?>" <?php if ($tpl->get('userColorScheme') == $key) {
+                                                        echo "checked='checked'";
+                                                    } ?>/>
+                                                    <label for="color-<?=$key?>"><?=$tpl->__($scheme["name"]) ?></label>
+                                            </div>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="saveTheme" value="1" />
                             <input type="submit" name="save" id="saveTheme" value="<?php echo $tpl->__('buttons.save'); ?>" class="button"/>
                         </form>
                     </div>
@@ -234,8 +298,8 @@ $user = $tpl->get('user');
                             <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
-                                    <label for="notifications" class="span3"><?php echo $tpl->__('label.receive_notifications') ?></label>
-                                    <span class='field span6'>
+                                    <label for="notifications" ><?php echo $tpl->__('label.receive_notifications') ?></label>
+                                    <span>
                                         <input type="checkbox" value="" name="notifications" class="input"
                                                id="notifications" <?php if ($values['notifications'] == "1") {
                                                     echo " checked='checked' ";
@@ -243,8 +307,8 @@ $user = $tpl->get('user');
                                     </span>
                                 </div>
                                 <div class="form-group">
-                                    <label for="messagesfrequency" class="span3"><?php echo $tpl->__('label.messages_frequency') ?></label>
-                                    <span class='field span6'>
+                                    <label for="messagesfrequency" ><?php echo $tpl->__('label.messages_frequency') ?></label>
+                                    <span>
                                         <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
                                             <option value="">--<?php echo $tpl->__('label.choose_option') ?>--</option>
                                              <option value="60" <?php if ($values['messagesfrequency'] == "60") {
@@ -343,7 +407,7 @@ $user = $tpl->get('user');
 
         jQuery("#messagesfrequency").chosen();
         jQuery("#language").chosen();
-        jQuery("#theme").chosen();
+        jQuery("#themeSelect").chosen();
 
     });
 </script>

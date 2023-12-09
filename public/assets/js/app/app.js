@@ -4,7 +4,10 @@ var leantime = leantime || {};
 var themeColor = jQuery('meta[name=theme-color]').attr("content");
 leantime.companyColor = themeColor;
 
-var theme = jQuery('meta[name=color-scheme]').attr("content");
+var colorScheme = jQuery('meta[name=color-scheme]').attr("content");
+leantime.colorScheme = colorScheme;
+
+var theme = jQuery('meta[name=theme]').attr("content");
 leantime.theme = theme;
 
 var appURL = jQuery('meta[name=identifier-URL]').attr("content");
@@ -54,5 +57,9 @@ jQuery(document).ready(function () {
     if (jQuery('.login-alert .alert').text() !== '') {
         jQuery('.login-alert').fadeIn();
     }
+
+    document.addEventListener('scroll', () => {
+        document.documentElement.dataset.scroll = window.scrollY;
+    });
 
 });

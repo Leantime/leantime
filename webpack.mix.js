@@ -58,6 +58,7 @@ mix
         "./node_modules/tether-shepherd/dist/js/tether.js",
         "./node_modules/tether-shepherd/dist/js/shepherd.js",
         "./node_modules/isotope-layout/dist/isotope.pkgd.js",
+        "./node_modules/gridstack/dist/gridstack-all.js",
         "./node_modules/jstree/dist/jstree.js",
         "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
         "./node_modules/leader-line/leader-line.min.js",
@@ -65,7 +66,11 @@ mix
         "./public/assets/js/libs/emojipicker/vanillaEmojiPicker.js",
     ], `public/dist/js/compiled-global-component.${version}.min.js`)
     .combine([
+        "./node_modules/ical.js/build/ical.min.js",
         "./node_modules/fullcalendar/index.global.min.js",
+        "./node_modules/@fullcalendar/icalendar/index.global.min.js",
+        "./node_modules/@fullcalendar/google-calendar/index.global.min.js",
+
     ], `public/dist/js/compiled-calendar-component.${version}.min.js`)
     .combine([
         "./node_modules/datatables.net/js/jquery.dataTables.js",

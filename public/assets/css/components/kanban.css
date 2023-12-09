@@ -17,8 +17,8 @@
 .column {
     box-sizing: border-box;
     height:auto;
-    padding:5px;
-    flex:0 0 auto;
+    padding:0px 5px;
+    flex:1;
     min-width:150px;
 }
 
@@ -32,7 +32,7 @@
 .column .contentInner {
     background:var(--kanban-col-bg);
     border:0px solid var(--neutral);
-    padding: 5px 2px;
+    padding: 5px 0px;
     min-height:45px;
     /*overflow-y:scroll; Danger: when enabled the dropdowns will be hidden in the overflow. */
 }
@@ -179,8 +179,10 @@
 
 .sortableTicketList .ticketBox {
     background: var(--kanban-card-bg);
-    border:0px solid var(--main-border-color);
-    padding:10px 15px;
+    border:none;
+    border-left:3px solid transparent;
+    border-right: 3px solid transparent;
+    padding:10px 12px; /* account for 3px border */
     padding-bottom:10px;
     margin-bottom:10px;
     cursor:move;
@@ -336,7 +338,7 @@ body .maincontent .priority-text-5 a:link {
 .widgettitle {
     background: var(--kanban-col-title-bg) !important;
     color: var( --kanban-col-title-color);
-    padding: 10px 10px;
+    padding: 10px 15px;
     font-size: var(--base-font-size);
     line-height:17px;
     font-weight: bold;
@@ -375,7 +377,7 @@ body .maincontent .priority-text-5 a:link {
     position: absolute;
     left: 0;
     bottom: 0;
-    background: linear-gradient(transparent, var(--kanban-card-bg) 80% 100%);
+
 }
 
 .kanbanLane {

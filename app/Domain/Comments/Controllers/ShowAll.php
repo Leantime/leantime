@@ -10,6 +10,7 @@ namespace Leantime\Domain\Comments\Controllers {
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Auth\Services\Auth;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -62,7 +63,7 @@ namespace Leantime\Domain\Comments\Controllers {
 
                 if ($this->commentService->deleteComment($commentId)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                    return $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $this->id);
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $this->id);
                 } else {
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted_error"), "error");
                 }

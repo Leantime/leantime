@@ -41,6 +41,8 @@ namespace Leantime\Domain\Calendar\Controllers {
 
             $_SESSION['lastPage'] = BASE_URL . "/calendar/showMyCalendar/";
 
+            $this->tpl->assign('externalCalendars', $this->calendarRepo->getMyExternalCalendars($_SESSION['userdata']['id']));
+
             //ToDO: This should come from the ticket repo...
             //$this->tpl->assign('ticketEditDates', $this->calendarRepo->getTicketEditDates());
             //$this->tpl->assign('ticketWishDates', $this->calendarRepo->getTicketWishDates());

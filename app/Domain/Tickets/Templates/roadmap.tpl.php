@@ -10,11 +10,11 @@ echo $tpl->displayNotification();
 
 $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
 ?>
-<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
+<?php $tpl->displaySubmodule('tickets-timelineHeader') ?>
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-timelineTabs') ?>
 
     <div class="maincontentinner">
 

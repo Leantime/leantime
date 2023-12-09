@@ -15,6 +15,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
     use Leantime\Domain\Auth\Services\Auth;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -119,9 +120,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
 
                     if (isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
-                        return $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $result . "?closeModal=1");
+                        return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $result . "?closeModal=1");
                     } else {
-                        return $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $result);
+                        return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $result);
                     }
                 } else {
                     $this->tpl->setNotification($this->language->__($result["msg"]), "error");

@@ -67,11 +67,6 @@ class DefaultConfig
     public bool $enableMenuType = false;
 
     /**
-     * @var bool Keep theme and language from previous user for login screen
-     */
-    public bool $keepTheme = true;
-
-    /**
      * @var bool|int Debug flag
      */
     public int|bool $debug = 0;

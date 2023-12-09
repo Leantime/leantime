@@ -17,13 +17,17 @@ class Login extends Controller
 
     /**
      * @param OidcService     $oidc
-     * @param Frontcontroller $frontcontroller
      * @return void
      * @throws GuzzleException
      */
-    public function init(OidcService $oidc, Frontcontroller $frontcontroller): Response
+    public function init(OidcService $oidc)
     {
         $this->oidc = $oidc;
-        return $frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
+
+    }
+
+    public function run(): Response
+    {
+        return Frontcontroller::redirect($this->oidc->buildLoginUrl(), 302);
     }
 }

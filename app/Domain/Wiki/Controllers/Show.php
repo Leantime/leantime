@@ -8,6 +8,7 @@ namespace Leantime\Domain\Wiki\Controllers {
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -89,7 +90,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
                 } else {
-                    return $this->tpl->redirect(BASE_URL . "/wiki/show");
+                    return Frontcontroller::redirect(BASE_URL . "/wiki/show");
                 }
             } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
                 $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
@@ -103,7 +104,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                     );
 
                     $_SESSION['lastArticle'] = $currentArticle->id;
-                    return $this->tpl->redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
+                    return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
                 }
             } elseif (isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] > 0) {
                 $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
@@ -217,10 +218,10 @@ namespace Leantime\Domain\Wiki\Controllers {
                     }
                 }
 
-                return $this->tpl->redirect(BASE_URL . "/wiki/show/" . $id);
+                return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $id);
             }
 
-            return $this->tpl->redirect(BASE_URL . "/wiki/show/");
+            return Frontcontroller::redirect(BASE_URL . "/wiki/show/");
         }
     }
 

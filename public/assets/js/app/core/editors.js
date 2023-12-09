@@ -82,7 +82,7 @@ leantime.editorController = (function () {
                 // General options
                 width: "100%",
                 skin_url: leantime.appUrl + '/dist/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
+                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/'+ leantime.colorScheme +'.css,'
                     + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "autosave,imagetools,shortlink,checklist,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advlist,mention,slashcommands,textpattern",
@@ -216,7 +216,7 @@ leantime.editorController = (function () {
                 // General options
                 width: "100%",
                 skin_url: leantime.appUrl + '/dist/css/libs/tinymceSkin/oxide',
-                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/theme.css,'
+                content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/'+ leantime.colorScheme +'.css,'
                     + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
                 content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; } img { max-width: 100%; }",
                 plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",

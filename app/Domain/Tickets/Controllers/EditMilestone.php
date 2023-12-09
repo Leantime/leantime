@@ -13,6 +13,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use DateTime;
     use DateInterval;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -67,13 +68,13 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                 if (!isset($milestone->id)) {
                     $this->tpl->setNotification($this->language->__("notifications.could_not_find_milestone"), "error");
-                    return $this->tpl->redirect(BASE_URL . "/tickets/roadmap/");
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/roadmap/");
                 }
 
                 //Ensure this ticket belongs to the current project
                 if ($_SESSION["currentProject"] != $milestone->projectId) {
                     $this->projectService->changeCurrentSessionProject($milestone->projectId);
-                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $milestone->id);
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $milestone->id);
                 }
 
                 $comments = $this->commentsService->getComments('ticket', $params['id']);
@@ -153,7 +154,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                         $this->tpl->setNotification($this->language->__("notifications.problem_saving_your_comment"), "error");
                     }
 
-                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                 }
 
                 if (isset($params['headline']) === true) {
@@ -180,10 +181,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
                     }
-                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
                 }
 
-                return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
+                return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $params['id']);
             } else {
                 $result = $this->ticketService->quickAddMilestone($params);
 
@@ -210,10 +211,10 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/" . $result);
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $result);
                 } else {
                     $this->tpl->setNotification($this->language->__("notification.saving_milestone_error"), "error");
-                    return $this->tpl->redirect(BASE_URL . "/tickets/editMilestone/");
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/");
                 }
             }
 

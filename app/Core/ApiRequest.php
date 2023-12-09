@@ -3,6 +3,9 @@
 namespace Leantime\Core;
 
 /**
+ * Class ApiRequest
+ *
+ * Represents an API request.
  *
  */
 class ApiRequest extends IncomingRequest
@@ -22,9 +25,16 @@ class ApiRequest extends IncomingRequest
     }
 
     /**
-     * Get header Authorization
+     * Retrieves the Authorization header from the request.
+     * The method checks multiple keys in the request headers for Authorization,
+     * including 'Authorization', 'HTTP_AUTHORIZATION', and 'REDIRECT_HTTP_AUTHORIZATION'.
+     * If the header is found, it is trimmed and returned as a string.
+     * If the header is not found in the request headers, the method falls back to using the
+     * getallheaders() function to retrieve all the request headers and checks for the
+     * 'Authorization' header. If found, it is trimmed and returned as a string.
+     * If no Authorization header is found, an empty string is returned.
      *
-     * @return string
+     * @return string The Authorization header value, or an empty string if not found.
      */
     public function getAuthorizationHeader(): string
     {
@@ -56,9 +66,9 @@ class ApiRequest extends IncomingRequest
     }
 
     /**
-     * get api key from header
+     * Retrieves the API key from the request headers.
      *
-     * @return string
+     * @return string The API key, or an empty string if not found.
      */
     public function getAPIKey(): string
     {
@@ -66,9 +76,9 @@ class ApiRequest extends IncomingRequest
     }
 
     /**
-     * get access token from header
+     * Get the bearer token from the authorization header.
      *
-     * @return ?string
+     * @return string|null The bearer token if found, null otherwise.
      */
     public function getBearerToken(): ?string
     {
@@ -84,9 +94,9 @@ class ApiRequest extends IncomingRequest
     }
 
     /**
-     * determine whether or not in api context
+     * Checks if the current request is an API request.
      *
-     * @return bool
+     * @return bool Returns true if the current request is an API request, false otherwise.
      */
     public function isApiRequest(): bool {
         return str_starts_with($_SERVER['REQUEST_URI'], "/api/jsonrpc");

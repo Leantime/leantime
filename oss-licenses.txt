@@ -6441,3 +6441,6 @@
    ├─ url: https://sindresorhus.com
    ├─ path: /Users/marcel/Sites/leantime-oss/node_modules/yocto-queue
    └─ licenseFile: /Users/marcel/Sites/leantime-oss/node_modules/yocto-queue/license
+
+Images
+<a href="https://www.freepik.com/free-vector/abstract-stylish-grey-mosaic-background_1224634.htm#page=6&query=abstract%20shapes%20background%20transparent%20gray&position=25&from_view=search&track=ais&uuid=2edcdabd-a9ea-474a-9cea-c92c51203a16">Image by Creative_hat</a> on Freepik

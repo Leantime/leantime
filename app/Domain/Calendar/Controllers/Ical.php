@@ -11,6 +11,7 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -39,7 +40,7 @@ namespace Leantime\Domain\Calendar\Controllers {
             $idParts = explode("_", $calId);
 
             if (count($idParts) != 2) {
-                return $this->tpl->redirect(BASE_URL . "/errors/404");
+                return Frontcontroller::redirect(BASE_URL . "/errors/404");
             }
 
             $calendar = $this->calendarRepo->getCalendarBySecretHash($idParts[1], $idParts[0]);

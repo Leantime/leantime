@@ -82,7 +82,6 @@ class Menu extends Composer
         );
 
         if (isset($_SESSION['userdata'])) {
-
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)
             $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id'], $projectSelectFilter["client"]);
 
@@ -98,6 +97,9 @@ class Menu extends Composer
             $clients = $projectVars['clients'];
             $currentProject = $projectVars['currentProject'];
         }
+
+        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), $menuType);
+
 
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
             $redirectUrl = '/dashboard/show';
@@ -119,6 +121,7 @@ class Menu extends Composer
             'recentProjects' => $recentProjects,
             'currentProject' => $currentProject,
             'menuStructure' => $this->menuRepo->getMenuStructure($menuType ?? '') ?? [],
+            'menuType' => $menuType,
             'settingsLink' => [
                 'label' => __('menu.project_settings'),
                 'module' => 'projects',

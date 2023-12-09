@@ -12,6 +12,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
     use Leantime\Domain\Users\Services\Users as UserService;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -79,7 +80,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             //Ensure this ticket belongs to the current project
             if ($_SESSION["currentProject"] != $ticket->projectId) {
                 $this->projectService->changeCurrentSessionProject($ticket->projectId);
-                $response = $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $id);
+                $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id);
                 $response->headers->set('HX-Trigger', 'ticketUpdate');
                 return $response;
             }
@@ -88,7 +89,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             if (isset($params['delFile']) === true) {
                 if ($result = $this->fileService->deleteFile($params['delFile'])) {
                     $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                    $response = $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $id . "#files");
+                    $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id . "#files");
                     $response->headers->set('HX-Trigger', 'ticketUpdate');
                     return $response;
                 }
@@ -102,7 +103,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                 if ($this->commentService->deleteComment($commentId)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                    $response = $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $id);
+                    $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id);
                     $response->headers->set('HX-Trigger', 'ticketUpdate');
                     return $response;
                 }
@@ -247,13 +248,13 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 if (isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
-                    $response = $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $id . "?closeModal=1");
+                    $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id . "?closeModal=1");
                     $response->headers->set('HX-Trigger', 'ticketUpdate');
                     return $response;
                 }
             }
 
-            $response = $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $id . "" . $tab);
+            $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id . "" . $tab);
             $response->headers->set('HX-Trigger', 'ticketUpdate');
             return $response;
         }

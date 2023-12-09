@@ -18,6 +18,7 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Comments\Services\Comments as CommentService;
     use Leantime\Domain\Files\Services\Files as FileService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -111,7 +112,7 @@ namespace Leantime\Domain\Clients\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success", "clientfile_deleted");
-                        return $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id . "#files");
+                        return Frontcontroller::redirect(BASE_URL . "/clients/showClient/" . $id . "#files");
                     } else {
                         $this->tpl->setNotification($result["msg"], "error");
                     }

@@ -13,6 +13,7 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Calendar\Services\Calendar;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -73,7 +74,7 @@ namespace Leantime\Domain\Calendar\Controllers {
                 $this->tpl->setNotification('notification.please_enter_title', 'error');
             }
 
-            return $this->tpl->redirect(BASE_URL . '/calendar/editEvent/' . $params['id']);
+            return Frontcontroller::redirect(BASE_URL . '/calendar/editEvent/' . $params['id']);
         }
     }
 }

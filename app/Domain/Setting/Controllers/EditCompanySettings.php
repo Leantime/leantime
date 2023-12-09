@@ -11,6 +11,7 @@ namespace Leantime\Domain\Setting\Controllers {
     use Leantime\Domain\Setting\Services\Setting as SettingService;
     use Leantime\Domain\Reports\Services\Reports as ReportService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -56,16 +57,16 @@ namespace Leantime\Domain\Setting\Controllers {
 
             if (isset($_GET['resetLogo'])) {
                 $this->settingsSvc->resetLogo();
-                return $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings#look");
+                return Frontcontroller::redirect(BASE_URL . "/setting/editCompanySettings#look");
             }
 
             $companySettings = array(
-                "logo" => $_SESSION["companysettings.logoPath"],
-                "primarycolor" => $_SESSION["companysettings.primarycolor"],
-                "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
+                "logo" => $_SESSION["companysettings.logoPath"] ?? '',
+                "primarycolor" => $_SESSION['companysettings.primarycolor'] ?? '',
+                "secondarycolor" => $_SESSION["companysettings.secondarycolor"] ?? '',
                 "name" => $_SESSION["companysettings.sitename"],
                 "language" => $_SESSION["companysettings.language"],
-                "telemetryActive" => false,
+                "telemetryActive" => true,
                 "messageFrequency" => '',
             );
 
@@ -171,7 +172,7 @@ namespace Leantime\Domain\Setting\Controllers {
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
             }
 
-            return $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings");
+            return Frontcontroller::redirect(BASE_URL . "/setting/editCompanySettings");
         }
 
         /**

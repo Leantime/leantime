@@ -10,17 +10,18 @@
 
 <body class="loginpage" style="height:100%;">
 
-<div class="header hidden-gt-sm">
-    <div class="logo" style="margin-left:0px;">
-        <a
-            href="{!! BASE_URL !!}"
-            style="background-image: url({{{ str_replace('http:', '', $logoPath) }}}"
-        >&nbsp;</a>
-    </div>
+<div class="header hidden-gt-sm tw-p-[10px]" style="background:var(--header-gradient)">
+    <a href="{!! BASE_URL !!}" target="_blank">
+        <img src="{{ BASE_URL }}/dist/images/logo.svg" class="tw-h-full "/></a>
 </div>
 
 <div class="row " style="height:100%; width: 99%;">
     <div class="col-md-6 hidden-phone regLeft">
+
+        <div class="logo tw-absolute tw-top-[50px] tw-left-0 tw-ml-[100px] tw-p-0">
+            <a href="{!! BASE_URL !!}" target="_blank"><img src="{{{ $logoPath }}}" /></a>
+        </div>
+
         <div class="row">
             <div class="col-md-12" style="position:relative;">
                 <h1 class="mainWelcome">
@@ -36,7 +37,13 @@
 
         <div class="regpanel">
             <div class="regpanelinner">
-                <a href="{!! BASE_URL !!}" target="_blank"><img src="{{{ $logoPath }}}" /></a>
+
+                @if($logoPath != '')
+                    <a href="{!! BASE_URL !!}" target="_blank">
+                        <img src="{{{ $logoPath }}}" class="tw-h-full "/>
+                    </a>
+                @endif
+
                 @isset($action, $module)
                     @include("$module::$action")
                 @else

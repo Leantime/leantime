@@ -18,6 +18,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -164,7 +165,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                         $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success", "quickticket_created");
                     }
 
-                    return $this->tpl->redirect(BASE_URL . "/dashboard/show");
+                    return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
                 }
             }
 
@@ -180,7 +181,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 }
             }
 
-            return $this->tpl->redirect(BASE_URL . "/dashboard/show");
+            return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
         }
     }
 }

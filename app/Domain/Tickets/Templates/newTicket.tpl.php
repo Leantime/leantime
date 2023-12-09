@@ -47,8 +47,11 @@ $ticket = $tpl->get('ticket');
 
 <script type="text/javascript">
 
-    leantime.ticketsController.initTicketTabs();
-    leantime.ticketsController.initTagsInput();
+    jQuery(document).ready(function() {
+        leantime.ticketsController.initTicketTabs();
+        leantime.ticketsController.initTagsInput();
+    });
+
 
     jQuery(window).load(function () {
         jQuery(window).resize();

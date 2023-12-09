@@ -15,6 +15,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -173,7 +174,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    return $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
+                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
                 }
             }
 
@@ -199,7 +200,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             "id" => $params['itemId'],
                             'kpi' => $params['kpi'] ?? '',
                             'startDate' => $this->language->getISODateString($params['startDate']),
-                            'endDate' => $this->language->getISODateString($params['endDate']),
+                            'endDate' => $this->language->getISODateString($params['endDate'], "e"),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
@@ -258,7 +259,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
 
-                    return $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
+                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                 } else {
                     if (isset($_POST['title']) && !empty($_POST['title'])) {
                         $canvasItem = array(
@@ -275,7 +276,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
                             'startDate' => $this->language->getISODateString($params['startDate']),
-                            'endDate' => $this->language->getISODateString($params['endDate']),
+                            'endDate' => $this->language->getISODateString($params['endDate'], "e"),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
@@ -315,7 +316,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
 
-                    return $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $id);
+                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $id);
                 }
             }
 

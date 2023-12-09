@@ -13,10 +13,19 @@ min-width: 1200px
 
 @media (max-width:575px) {
 
-    .leftpanel .leftmenu .nav-tabs .projectselector .projectSelectorTabs .scrollingTab {
+     .leftmenu .nav-tabs .projectselector .projectSelectorTabs .scrollingTab {
         height:auto;
         overflow:scroll;
     }
+
+    .header .logo {
+        display:none !important;
+    }
+
+    .projectselector .scrollingTab {
+        overflow:inherit;
+    }
+
 
     .progressWrapper .step {
         display:none;
@@ -39,11 +48,37 @@ min-width: 1200px
         width:auto;
     }
 
-    .barmenu,
-    .headerCTA{
+    .mainwrapper.menuclosed .leftpanel {
         display:none;
+        z-index: 9999;
     }
 
+    .headmenu .projectselector {
+        min-width:320px;
+        width:320px;
+    }
+
+    .mainwrapper .primaryContent {
+        padding-left:0px !important;
+    }
+
+    .mainwrapper .leftpanel {
+        width:90%;
+        position:absolute;
+        top:50px;
+        left:5px;
+        background:#555;
+        z-index: 999;
+    }
+
+    .barmenu,
+    .headerCTA{
+
+    }
+
+    .mainwrapper.menuclosed .headmenu {
+        margin-left: 15px;
+    }
 
 
     .col-md-4 > .pull-right,
@@ -723,8 +758,8 @@ min-width: 1200px
     }
 
     .headerinner {
-        width: 100%;
-        margin-left: 0 !important;
+        width: calc(100% - 45px);
+        margin-left: 45px !important;
 
     }
 

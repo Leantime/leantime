@@ -1,0 +1,150 @@
+
+.mediamgr {
+    position: relative;
+    min-height: 400px;
+}
+
+.mediamgr .mediamgr_right {
+    position: absolute;
+    width: 250px;
+    top: 62px;
+    right: 0;
+}
+
+.mediamgr .mediamgr_rightinner {
+    margin: 20px 0;
+    padding-left: 20px;
+}
+
+.mediamgr .mediamgr_rightinner h4 {
+    font-size: var(--base-font-size);
+    text-transform: uppercase;
+    padding: 10px;
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.mediamgr_head {
+    padding: 10px;
+    background: #fcfcfc;
+    border: 1px solid #ccc;
+    overflow: visible;
+    margin-bottom: 20px;
+}
+
+.mediamgr_menu {
+    list-style: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.mediamgr_menu li {
+    display: inline-block;
+    float: left;
+}
+
+.mediamgr_menu li.right {
+    float: right;
+}
+
+.mediamgr_menu li a {
+    margin-bottom: 0;
+}
+
+.mediamgr_menu li a:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.mediamgr_menu li a.prev {
+    border-right: 0;
+}
+
+.mediamgr_menu li a.prev_disabled {
+    opacity: 0.6;
+}
+
+.mediamgr_menu li a.preview_disabled {
+    opacity: 0.6;
+}
+
+.mediamgr_menu form input.filekeyword {
+    padding: 5px 7px;
+    width: 200px;
+    background: #fff;
+    color: #999;
+    margin: 0;
+    font-style: italic;
+}
+
+.mediamgr_content {
+    padding: 20px 0;
+    margin-right: 250px;
+}
+
+.mediamgr_category {
+    padding: 10px 0;
+    border-bottom: 1px dashed #ddd;
+}
+
+.mediamgr_category ul {
+    list-style: none;
+}
+
+.mediamgr_category ul li {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.mediamgr_category ul li.right {
+    float: right;
+}
+
+.mediamgr_category ul li a {
+    display: block;
+    padding: 3px 10px;
+    color: #666;
+}
+
+.mediamgr_category ul li a:hover, .mediamgr_category ul li.current a {
+    background: #555;
+    color: #fff;
+    text-decoration: none;
+}
+
+.mediamgr_category ul li .pagenuminfo {
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.mediamgr_menu li a.newfilebutton {
+    display: block;
+    padding: 4px 10px 5px 10px;
+    text-align: center;
+    border: 1px solid #F0882C;
+    background: #FB9337;
+    color: #fff;
+    font-weight: bold;
+    font-size: var(--base-font-size);
+    -moz-box-shadow: inset 0 1px 0 rgba(250, 250, 250, 0.3);
+    -webkit-box-shadow: inset 0 1px 0 rgba(250, 250, 250, 0.3);
+    box-shadow: inset 0 1px 0 rgba(250, 250, 250, 0.3);
+}
+
+.mediamgr_menu li a.newfilebutton:hover {
+    background: #485B79;
+    border: 1px solid #3f526f;
+}
+
+.mediamgr_category {
+    width: 100%;
+}
+
+#mediafilter {
+    right: 0 !important;
+    left: auto !important;
+}
+
+.mediamgr_category ul li {
+    display: block !important;
+}

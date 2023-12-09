@@ -6,6 +6,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -47,7 +48,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                         $this->tpl->setNotification($this->language->__("notifications.user_deleted"), "success", "user_deleted");
 
-                        return $this->tpl->redirect(BASE_URL . "/users/showAll");
+                        return Frontcontroller::redirect(BASE_URL . "/users/showAll");
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                     }

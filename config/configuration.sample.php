@@ -24,7 +24,6 @@ class Config
     public $secondarycolor = '#81B1A8';                   //Secondary Theme Color
     public $defaultTimezone = 'America/Los_Angeles';      //Set default timezone
     public $enableMenuType = false;                       //Enable to specify menu on a project-by-project basis
-    public $keepTheme = true;                             //Keep theme and language from previous user for login screen
     public $debug = 0;                                    //Debug flag
     public $disableLoginForm = false;                     //If true then don't show the login form (useful only if additional auth method[s] are available)
 
