@@ -10,6 +10,7 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
     use Illuminate\Support\Str;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -56,9 +57,9 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                 //Create default canvas.
                 if (!$allCanvas || count($allCanvas) == 0) {
-                    return $this->tpl->redirect(BASE_URL . '/strategy/showBoards');
+                    return Frontcontroller::redirect(BASE_URL . '/strategy/showBoards');
                 } else {
-                    return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
+                    return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas');
                 }
             }
 

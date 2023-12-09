@@ -6,6 +6,7 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -42,7 +43,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                 unset($_SESSION['currentIdeaCanvas']);
                 $this->tpl->setNotification($this->language->__("notification.idea_board_deleted"), "success", "ideaboard_deleted");
-                return $this->tpl->redirect(BASE_URL . "/ideas/showBoards");
+                return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards");
             }
 
             return $this->tpl->display('ideas.delCanvas');

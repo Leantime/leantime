@@ -11,6 +11,7 @@ use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
 use Illuminate\Support\Str;
+use Leantime\Core\Frontcontroller;
 
 /**
  * editCanvasItem class - Generic canvas controller / Edit Canvas Item
@@ -227,7 +228,7 @@ class EditCanvasItem extends Controller
                         $closeModal = "?closeModal=true";
                     }
 
-                    return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $params['itemId'] . $closeModal);
+                    return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $params['itemId'] . $closeModal);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -282,7 +283,7 @@ class EditCanvasItem extends Controller
                         $closeModal = "?closeModal=true";
                     }
 
-                    return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $id . $closeModal);
+                    return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $id . $closeModal);
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -323,7 +324,7 @@ class EditCanvasItem extends Controller
 
             $this->projectService->notifyProjectUsers($notification);
 
-            return $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $_GET['id']);
+            return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $_GET['id']);
         }
 
         $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);

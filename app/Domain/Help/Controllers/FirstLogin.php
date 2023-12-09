@@ -54,7 +54,7 @@ namespace Leantime\Domain\Help\Controllers {
 
                 $settingsRepo->saveSetting("companysettings.completedOnboarding", true);
 
-                return $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=2");
+                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=2");
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 2) {
@@ -75,7 +75,7 @@ namespace Leantime\Domain\Help\Controllers {
                         error_log($e);
                     }
                 }
-                return $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=3");
+                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=3");
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 3) {
@@ -107,7 +107,7 @@ namespace Leantime\Domain\Help\Controllers {
                     }
                 }
 
-                return $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=complete");
+                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=complete");
             }
         }
 

@@ -11,6 +11,7 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -49,7 +50,7 @@ namespace Leantime\Domain\Calendar\Controllers {
         {
 
             if (isset($_GET['id']) === false) {
-                return $this->tpl->redirect(BASE_URL . "/calendar/showMyCalendar/");
+                return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
             }
 
             $id = (int)$_GET['id'];
@@ -58,7 +59,7 @@ namespace Leantime\Domain\Calendar\Controllers {
 
             if (is_numeric($result) === true) {
                 $this->tpl->setNotification('notification.event_removed_successfully', 'success');
-                return $this->tpl->redirect(BASE_URL . "/calendar/showMyCalendar/");
+                return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
             } else {
                 $this->tpl->setNotification('notification.could_not_delete_event', 'error');
                 return $this->tpl->displayPartial('calendar.delEvent');

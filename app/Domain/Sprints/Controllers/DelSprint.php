@@ -6,6 +6,7 @@ namespace Leantime\Domain\Sprints\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Sprints\Repositories\Sprints as SprintRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -48,9 +49,9 @@ namespace Leantime\Domain\Sprints\Controllers {
                     $_SESSION["currentSprint"] = "";
 
                     if (isset($_SESSION['lastPage'])) {
-                        return $this->tpl->redirect($_SESSION['lastPage']);
+                        return Frontcontroller::redirect($_SESSION['lastPage']);
                     } else {
-                        return $this->tpl->redirect(BASE_URL . "/tickets/showKanban");
+                        return Frontcontroller::redirect(BASE_URL . "/tickets/showKanban");
                     }
                 }
 

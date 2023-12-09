@@ -4,6 +4,7 @@ namespace Leantime\Domain\Auth\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Symfony\Component\HttpFoundation\JsonResponse;
 
     /**
      *
@@ -40,10 +41,12 @@ namespace Leantime\Domain\Auth\Controllers {
             // added security layer. If not we can log the user out.
             $return = $this->authService->updateUserSessionDB($userId, $sessionId);
 
+            $response = array("status" => "ok");
             if ($return) {
-                return $this->tpl->displayJson(['status' => 'ok']);
+                return new JsonResponse($response);
             } else {
-                return $this->tpl->displayJson(['status' => 'logout']);
+                $response["status"] = "logout";
+                return new JsonResponse($response);
             }
         }
     }

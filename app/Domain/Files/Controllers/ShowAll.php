@@ -7,6 +7,7 @@ use Leantime\Core\Controller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
 use Symfony\Component\HttpFoundation\Response;
+use Leantime\Core\Frontcontroller;
 
 /**
  *
@@ -55,7 +56,7 @@ class ShowAll extends Controller
 
             if ($result === true) {
                 $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success", "file_deleted");
-                return $this->tpl->redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp'] ?? '') ? "?modalPopUp=true" : "");
+                return Frontcontroller::redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp'] ?? '') ? "?modalPopUp=true" : "");
             } else {
                 $this->tpl->setNotification($result["msg"], "success");
             }

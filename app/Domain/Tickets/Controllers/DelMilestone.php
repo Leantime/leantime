@@ -8,6 +8,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -65,7 +66,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             if ($result = $this->ticketService->deleteMilestone($id = (int)($_GET['id']))){
                 $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
-                return $this->tpl->redirect(BASE_URL . "/tickets/roadmap");
+                return Frontcontroller::redirect(BASE_URL . "/tickets/roadmap");
             }
 
             $this->tpl->setNotification($this->language->__($result['msg']), "error");

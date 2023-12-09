@@ -75,7 +75,7 @@ class MyToDos extends HtmxController
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
                 }
 
-                $this->tpl->redirect(BASE_URL . "/dashboard/home");
+                Frontcontroller::redirect(BASE_URL . "/dashboard/home");
             }
         }
 

@@ -6,6 +6,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Setting\Services\Setting as SettingService;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -41,7 +42,7 @@ namespace Leantime\Domain\Projects\Controllers {
                 )
                 || ! $project = $this->projectService->getProject($id)
             ) {
-                return $this->tpl->redirect(BASE_URL . "/errors/error404", responseCode: 404);
+                return Frontcontroller::redirect(BASE_URL . "/errors/error404", $responseCode, 307);
             }
 
             $this->projectService->changeCurrentSessionProject($id);
@@ -49,7 +50,7 @@ namespace Leantime\Domain\Projects\Controllers {
             $defaultURL = "/dashboard/show";
             $redirectFilter = static::dispatch_filter("defaultProjectUrl", $defaultURL, $project);
 
-            return $this->tpl->redirect(BASE_URL . $redirectFilter);
+            return Frontcontroller::redirect(BASE_URL . $redirectFilter);
         }
 
 
@@ -63,7 +64,7 @@ namespace Leantime\Domain\Projects\Controllers {
         {
             if (isset($_GET['id'])) {
                 $id = filter_var($_GET['id'], FILTER_SANITIZE_NUMBER_INT);
-                return $this->tpl->redirect(BASE_URL . "/projects/changeCurrentProject/" . $id);
+                return Frontcontroller::redirect(BASE_URL . "/projects/changeCurrentProject/" . $id);
             }
         }
     }

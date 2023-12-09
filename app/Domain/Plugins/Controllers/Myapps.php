@@ -8,6 +8,7 @@ namespace Leantime\Domain\Plugins\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -43,10 +44,10 @@ namespace Leantime\Domain\Plugins\Controllers {
                         : ["notification.plugin_{$varName}_error", "error"];
 
                     $this->tpl->setNotification(...$notification);
-                    return $this->tpl->redirect(BASE_URL . "/plugins/myapps");
+                    return Frontcontroller::redirect(BASE_URL . "/plugins/myapps");
                 } catch (\Exception $e) {
                     $this->tpl->setNotification($e->getMessage(), "error");
-                    return $this->tpl->redirect(BASE_URL . "/plugins/myapps");
+                    return Frontcontroller::redirect(BASE_URL . "/plugins/myapps");
                 }
             }
 
@@ -64,7 +65,7 @@ namespace Leantime\Domain\Plugins\Controllers {
          */
         public function post($params): Response
         {
-            return $this->tpl->redirect(BASE_URL . "/plugins/myapps");
+            return Frontcontroller::redirect(BASE_URL . "/plugins/myapps");
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -139,7 +140,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    return $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$_GET['id']);
+                    return Frontcontroller::redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$_GET['id']);
                 }
             }
 
@@ -215,7 +216,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        return $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId']);
+                        return Frontcontroller::redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId']);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
                     }
@@ -258,7 +259,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.idea_created'), 'success', 'idea_created');
 
-                        return $this->tpl->redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$id);
+                        return Frontcontroller::redirect(BASE_URL . "/ideas/ideaDialog/" . (int)$id);
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.please_enter_title"), 'error');
                     }

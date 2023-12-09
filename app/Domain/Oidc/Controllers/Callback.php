@@ -7,6 +7,7 @@ use Leantime\Core\Controller;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Exception\HttpResponseException;
+use Leantime\Core\Frontcontroller;
 
 /**
  *
@@ -38,7 +39,7 @@ class Callback extends Controller
             return $this->oidc->callback($code, $state);
         } catch (\Exception $e) {
             $this->tpl->setNotification($e->getMessage(), 'danger', 'oidc_error');
-            return $this->tpl->redirect(BASE_URL . '/oidc/login');
+            return Frontcontroller::redirect(BASE_URL . '/oidc/login');
         }
     }
 }

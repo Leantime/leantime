@@ -12,6 +12,7 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -73,7 +74,7 @@ namespace Leantime\Domain\Clients\Controllers {
                         if ($this->clientRepo->isClient($values) !== true) {
                             $id = $this->clientRepo->addClient($values);
                             $this->tpl->setNotification($this->language->__('notification.client_added_successfully'), 'success', 'new_client');
-                            return $this->tpl->redirect(BASE_URL . "/clients/showClient/" . $id);
+                            return Frontcontroller::redirect(BASE_URL . "/clients/showClient/" . $id);
                         } else {
                             $this->tpl->setNotification($this->language->__('notification.client_exists_already'), 'error');
                         }

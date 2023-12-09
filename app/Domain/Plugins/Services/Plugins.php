@@ -368,7 +368,7 @@ namespace Leantime\Domain\Plugins\Services {
                 . 'Plugins\\'
                 . Str::studly($plugin->foldername)
                 . '\\Services\\'
-                . Str::studly($plugin->fodlername);
+                . Str::studly($plugin->foldername);
         }
 
         /**

@@ -12,6 +12,7 @@ namespace Leantime\Domain\Calendar\Controllers {
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Calendar\Services\Calendar;
     use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -57,7 +58,7 @@ namespace Leantime\Domain\Calendar\Controllers {
 
             if (is_numeric($result) === true) {
                 $this->tpl->setNotification('notification.event_created_successfully', 'success');
-                return $this->tpl->redirect(BASE_URL . "/calendar/editEvent/" . $result);
+                return Frontcontroller::redirect(BASE_URL . "/calendar/editEvent/" . $result);
             } else {
                 $this->tpl->setNotification('notification.please_enter_title', 'error');
                 $this->tpl->assign('values', $params);

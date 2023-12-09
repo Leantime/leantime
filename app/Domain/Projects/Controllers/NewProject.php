@@ -12,6 +12,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -145,7 +146,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', "project_created");
 
-                    return $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id);
+                    return Frontcontroller::redirect(BASE_URL . "/projects/showProject/" . $id);
                 }
 
 

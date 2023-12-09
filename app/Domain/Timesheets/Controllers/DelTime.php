@@ -6,6 +6,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -45,9 +46,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
                     $this->tpl->setNotification("notifications.time_deleted_successfully", "success");
 
                     if (isset($_SESSION['lastPage'])) {
-                        return $this->tpl->redirect($_SESSION['lastPage']);
+                        return Frontcontroller::redirect($_SESSION['lastPage']);
                     } else {
-                        return $this->tpl->redirect(BASE_URL . "/timsheets/showMyList");
+                        return Frontcontroller::redirect(BASE_URL . "/timsheets/showMyList");
                     }
                 }
 

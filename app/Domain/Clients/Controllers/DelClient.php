@@ -11,6 +11,7 @@ namespace Leantime\Domain\Clients\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -50,7 +51,7 @@ namespace Leantime\Domain\Clients\Controllers {
                             $this->clientRepo->deleteClient($id);
 
                             $this->tpl->setNotification($this->language->__('notification.client_deleted'), 'success');
-                            return $this->tpl->redirect(BASE_URL . "/clients/showAll");
+                            return Frontcontroller::redirect(BASE_URL . "/clients/showAll");
                         }
                     }
 

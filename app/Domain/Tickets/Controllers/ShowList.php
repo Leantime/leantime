@@ -9,6 +9,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -72,7 +73,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
             }
 
-            return $this->tpl->redirect(CURRENT_URL);
+            return Frontcontroller::redirect(CURRENT_URL);
         }
     }
 }
