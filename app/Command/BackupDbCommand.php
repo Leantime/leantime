@@ -24,7 +24,7 @@ use function PHPUnit\Framework\directoryExists;
     name: 'db:backup',
     description: 'Backs up database',
 )]
-class backupDbCommand extends Command
+class BackupDbCommand extends Command
 {
     /**
      * @return void
@@ -65,15 +65,15 @@ class backupDbCommand extends Command
         switch ($worked) {
             case 0:
                 chmod(APP_ROOT . '/' . $config->userFilePath, 0755);
-                $io->text("Success, database was backedup successfully");
+                $io->success("Success, database was backedup successfully");
                 return Command::SUCCESS;
                 break;
             case 1:
-                $io->text("There was an issue backing up the database");
+                $io->error("There was an issue backing up the database");
                 return Command::FAILURE;
                 break;
             case 2:
-                $io->text("There was an issue backing up the database");
+                $io->error("There was an issue backing up the database");
                 return Command::FAILURE;
                 break;
         }
