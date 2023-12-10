@@ -119,10 +119,14 @@ class UpdateLeantime extends Command
         $zip->extractTo( APP_ROOT."/cache/");
         $zip->close();
 
-        exec("cp -r ".APP_ROOT."/cache/leantime/* ".APP_ROOT."/")
-        
+        exec("cp -r ".APP_ROOT."/cache/leantime/* ".APP_ROOT."/");
 
-        exit();
+        $io->text("Clean Up");
+        rmdir(APP_ROOT."/cache/leantime");
+
+        $io->success("Update applied Successfully");
+
+        return Command::SUCCESS;
 
 
 
