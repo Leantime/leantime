@@ -2,20 +2,14 @@
 
 namespace Leantime\Domain\Help\Services;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Eventhelpers;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Domain\Notifications\Models\Notification;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
 /**
  *
  */
 class Helper
 {
-
-    Use Eventhelpers;
+    use Eventhelpers;
 
     private $availableModals = [
         "tickets.showAll" => "backlog",
@@ -34,10 +28,11 @@ class Helper
         "clients.showAll" => "showClients",
         "goalcanvas.dashboard" => "goalCanvas",
         "strategy.showBoards" => "blueprints",
-        "wiki.show" => "wiki"
+        "wiki.show" => "wiki",
     ];
 
-    public function __construct() {
+    public function __construct()
+    {
 
         $this->availableModals = self::dispatch_filter("addHelperModal", $this->availableModals);
     }
@@ -51,6 +46,4 @@ class Helper
     {
         return $this->availableModals[$route] ?? 'notfound';
     }
-
 }
-

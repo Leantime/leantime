@@ -41,7 +41,7 @@ namespace Leantime\Domain\Connector\Repositories {
                         "editTo" =>         ["name" => "Edit To", "accepts" => fieldTypes::$dateTime, "default" => ""],
                         "milestoneid" =>   ["name" => "Milestone", "accepts" => fieldTypes::$shortString, "default" => ""],
                         "projectName" =>    ["name" => "Project", "accepts" => fieldTypes::$shortString, "default" => ""],
-                    )
+                    ),
                 ),
                 "projects" => array(
                     "name" => "Projects",
@@ -72,7 +72,7 @@ namespace Leantime\Domain\Connector\Repositories {
                         "jobLevel" => ["name" => "Job Level"],
                         "department" => ["name" => "Department"],
                         "sendInvite" => ["name" => "Send Invite"],
-                    )
+                    ),
                 ),
                 "ideas" => array(
                     "name" => "Ideas",
@@ -84,7 +84,8 @@ namespace Leantime\Domain\Connector\Repositories {
                         "status" => ["name" => "Status"],
                         "canvasId" => ["name" => "CanvasId"],
                         "milestoneId" => ["name" => "MilestoneId"],
-                    )),
+                    ),
+            ),
                 "goals" => array(
                     "name" => "Goals",
                     "fields" => array(
@@ -104,7 +105,8 @@ namespace Leantime\Domain\Connector\Repositories {
                         'metricType' =>  ["name" => "Metric Type"], //should be number percent or currency
                         'assignedTo' => ["name" => "Assigned To"],
                         'parent' => ["name" => "Parent"],
-                    )),
+                    ),
+            ),
                 "milestones" => array(
                     "name" => "Milestones",
                     "fields" => array(
@@ -122,7 +124,8 @@ namespace Leantime\Domain\Connector\Repositories {
                         "editFrom" =>       ["name" => "Edit From", "accepts" => fieldTypes::$dateTime, "default" => ""],
                         "editTo" =>         ["name" => "Edit To", "accepts" => fieldTypes::$dateTime, "default" => ""],
                         "projectName" =>    ["name" => "Project", "accepts" => fieldTypes::$shortString, "default" => ""],
-                    ))
+                    ),
+            ),
 
             );
         }

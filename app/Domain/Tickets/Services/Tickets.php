@@ -4,6 +4,7 @@ namespace Leantime\Domain\Tickets\Services {
 
     use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Service;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Environment as EnvironmentCore;
@@ -367,32 +368,31 @@ namespace Leantime\Domain\Tickets\Services {
          * @param $searchCriteria
          * @return array|bool
          */
-        public function getAll($searchCriteria): bool|array
+        public function getAll(?array $searchCriteria= null): array|false
         {
 
             return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
         }
 
-        public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId) {
+        public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId)
+        {
 
             $totalTasks = $this->ticketRepository->getScheduledTasks($dateFrom, $dateTo, $userId);
 
             $statusLabels = [];
             $doneTasks = [];
 
-            foreach($totalTasks as $ticket) {
-
+            foreach ($totalTasks as $ticket) {
                 if (!isset($statusLabels[$ticket['projectId']])) {
                     $statusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
                 }
 
-                if(isset($statusLabels[$ticket['projectId']][$ticket['status']]) && $statusLabels[$ticket['projectId']][$ticket['status']]['statusType'] == "DONE") {
+                if (isset($statusLabels[$ticket['projectId']][$ticket['status']]) && $statusLabels[$ticket['projectId']][$ticket['status']]['statusType'] == "DONE") {
                     $doneTasks[] = $ticket;
                 }
-
             }
 
-            return array ("totalTasks" => $totalTasks, "doneTasks" => $doneTasks);
+            return array("totalTasks" => $totalTasks, "doneTasks" => $doneTasks);
         }
 
 
@@ -600,9 +600,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                 //There is a chance that the status was removed after it was assigned to a ticket
                 if (isset($statusLabels[$row['projectId']][$row['status']]) && ($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" || $includeDoneTickets === true)) {
-
                     if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
-
                         if (isset($tickets["later"]["tickets"])) {
                             $tickets["later"]["tickets"][] = $row;
                         } else {
@@ -612,9 +610,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 "order" => 3,
                             );
                         }
-
                     } else {
-
                         $today = new DateTime();
                         $date = new DateTime($row['dateToFinish']);
 
@@ -622,7 +618,7 @@ namespace Leantime\Domain\Tickets\Services {
                         $nextFridayDateTime = new DateTime();
                         $nextFridayDateTime->setTimestamp($nextFriday);
 
-                        if ($date <= $nextFridayDateTime && $date >= $today){
+                        if ($date <= $nextFridayDateTime && $date >= $today) {
                             if (isset($tickets["thisWeek"]["tickets"])) {
                                 $tickets["thisWeek"]["tickets"][] = $row;
                             } else {
@@ -632,8 +628,7 @@ namespace Leantime\Domain\Tickets\Services {
                                     "order" => 2,
                                 );
                             }
-                        } else if ($date <= $today){
-
+                        } else if ($date <= $today) {
                             if (isset($tickets["overdue"]["tickets"])) {
                                 $tickets["overdue"]["tickets"][] = $row;
                             } else {
@@ -643,7 +638,6 @@ namespace Leantime\Domain\Tickets\Services {
                                     "order" => 1,
                                 );
                             }
-
                         } else {
                             if (isset($tickets["later"]["tickets"])) {
                                 $tickets["later"]["tickets"][] = $row;
@@ -819,7 +813,8 @@ namespace Leantime\Domain\Tickets\Services {
             return $doneTasks;
         }
 
-        public function goalsRelatedToWork(int $userId, $projectId = null) {
+        public function goalsRelatedToWork(int $userId, $projectId = null)
+        {
 
             $statusLabelsByProject = array();
 
@@ -842,21 +837,18 @@ namespace Leantime\Domain\Tickets\Services {
 
             $contributedToGoal = [];
 
-            foreach($myTask as $task) {
-
-                if($task['milestoneid'] !== '' && $task['milestoneid'] > 0){
+            foreach ($myTask as $task) {
+                if ($task['milestoneid'] !== '' && $task['milestoneid'] > 0) {
                     $goals = $this->goalcanvasService->getGoalsByMilestone($task['milestoneid']);
-                    foreach($goals as $goal) {
-                        if(!isset($contributedToGoal[$goal['id']])) {
+                    foreach ($goals as $goal) {
+                        if (!isset($contributedToGoal[$goal['id']])) {
                             $contributedToGoal[$goal['id']] = $goal;
                         }
                     }
                 }
-
             }
 
             return $contributedToGoal;
-
         }
 
 
@@ -1078,11 +1070,11 @@ namespace Leantime\Domain\Tickets\Services {
          * @return array|bool
          * @throws BindingResolutionException
          */
-        public function updateTicket($id, $values): array|bool
+        public function updateTicket($values): array|bool
         {
 
             $values = array(
-                'id' => $id,
+                'id' => $values['id'],
                 'headline' => $values['headline'] ?? "",
                 'type' => $values['type'] ?? "",
                 'description' => $values['description'] ?? "",
@@ -1175,7 +1167,7 @@ namespace Leantime\Domain\Tickets\Services {
          * @param $params
          * @return bool
          */
-        public function patchTicket($id, $params): bool
+        public function patch($id, $params): bool
         {
 
             //$params is an array of field names. Exclude id
@@ -1183,6 +1175,8 @@ namespace Leantime\Domain\Tickets\Services {
 
             return $this->ticketRepository->patchTicket($id, $params);
         }
+
+
 
         /**
          * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
@@ -1203,12 +1197,12 @@ namespace Leantime\Domain\Tickets\Services {
                     $milestoneTickets = $this->getAll(array("milestone" => $ticket->id));
                     //Update child todos
                     foreach ($milestoneTickets as $childTicket) {
-                        $this->patchTicket($childTicket["id"], ["projectId" => $projectId, "sprint" => ""]);
+                        $this->patch($childTicket["id"], ["projectId" => $projectId, "sprint" => ""]);
                     }
                 }
 
                 //Update ticket
-                return $this->patchTicket($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => "", 'milestoneid' => '']);
+                return $this->patch($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => "", 'milestoneid' => '']);
             }
 
             return false;
@@ -1386,7 +1380,7 @@ namespace Leantime\Domain\Tickets\Services {
          * @return bool|string[]
          * @throws BindingResolutionException
          */
-        public function deleteTicket($id): array|bool
+        public function delete($id): array|bool
         {
 
             $ticket = $this->getTicket($id);

@@ -35,7 +35,7 @@ leantime.goalCanvasController = (function () {
     var closeModal = false;
 
     //Variables
-    var canvasoptions = function() {
+    var canvasoptions = function () {
         return {
             sizes: {
                 minW:  700,

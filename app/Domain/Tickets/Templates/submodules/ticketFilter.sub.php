@@ -82,7 +82,7 @@ $statusLabels = $tpl->get("allTicketStates");
                         <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" multiple="multiple" title="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="milestone" id="milestoneSelect">
                             <option value="" data-placeholder="true"><?=$tpl->__("label.all_milestones") ?></option>
                             <?php
-                            if(is_array($tpl->get('milestones'))){
+                            if (is_array($tpl->get('milestones'))) {
                                 foreach ($tpl->get('milestones') as $milestoneRow) {   ?>
                                     <?php echo"<option value='" . $milestoneRow->id . "'";
 

@@ -50,10 +50,8 @@ namespace Leantime\Domain\Pageparts\Controllers {
         {
 
             if (!isset($_SESSION["userdata"]["id"])) {
-
                 // This is a login session, we need to ensure the default theme and the default language (or the user's browser)
                 $theme = $_COOKIE['theme'] ?? $this->config->defaultTheme;
-
             } else {
                 // This is not a login session
                 if (

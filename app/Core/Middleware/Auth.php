@@ -3,13 +3,13 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\IncomingRequest;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Leantime\Core\Frontcontroller;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Core\Eventhelpers;
+use Leantime\Core\Frontcontroller;
+use Leantime\Core\IncomingRequest;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectsService;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class Auth
 {
@@ -51,7 +51,7 @@ class Auth
      * @return Response|RedirectResponse
      * @throws BindingResolutionException
      */
-    public function redirectWithOrigin(string $route, string $origin, ): false|RedirectResponse
+    public function redirectWithOrigin(string $route, string $origin,): false|RedirectResponse
     {
         $destination = BASE_URL . '/' . ltrim(str_replace('.', '/', $route), '/');
         $queryParams = !empty($origin)  && $origin !== '/' ? '?' . http_build_query(['redirect' => $origin]) : '';

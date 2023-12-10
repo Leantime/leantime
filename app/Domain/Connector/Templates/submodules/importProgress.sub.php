@@ -27,18 +27,22 @@ $i = 0;
             ><span class="sr-only"></span></div>
         </div>
 
-        <?php foreach($provider->steps as $step){
+        <?php foreach ($provider->steps as $step) {
             $i++;
             $stepClass = "";
-            if($currentStep == $step) $stepClass = "current";
-            if($provider->stepDetails[$currentStep]['position'] > $provider->stepDetails[$step]['position']) $stepClass = "complete";
+            if ($currentStep == $step) {
+                $stepClass = "current";
+            }
+            if ($provider->stepDetails[$currentStep]['position'] > $provider->stepDetails[$step]['position']) {
+                $stepClass = "complete";
+            }
             ?>
 
-        <div class="step <?=$stepClass ?>" style="left: <?=($i/$totalSteps * 100) - $halfStep?>%;">
+        <div class="step <?=$stepClass ?>" style="left: <?=($i / $totalSteps * 100) - $halfStep?>%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
-                    <?php if($provider->stepDetails[$currentStep]['position'] >  $provider->stepDetails[$step]['position']) {?>
+                    <?php if ($provider->stepDetails[$currentStep]['position'] >  $provider->stepDetails[$step]['position']) {?>
                      <i class="fa fa-check"></i>
                     <?php } ?>
                             <?=$provider->stepDetails[$step]['title'] ?>

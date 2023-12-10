@@ -3,9 +3,9 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
+use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Throwable;
-use Illuminate\Contracts\Support\Responsable;
 
 /**
  * currently super basic exception handler that just pushes it off to symfony
@@ -16,7 +16,7 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $e
+     * @param  \Throwable $e
      * @return void
      *
      * @throws \Throwable
@@ -29,7 +29,7 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Determine if the exception should be reported.
      *
-     * @param  \Throwable  $e
+     * @param  \Throwable $e
      * @return bool
      */
     public function shouldReport(Throwable $e)
@@ -40,8 +40,8 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $e
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Throwable               $e
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable
@@ -60,14 +60,14 @@ class ExceptionHandler implements ExceptionHandlerContract
     /**
      * Render an exception to the console.
      *
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @param  \Throwable  $e
+     * @param  \Symfony\Component\Console\Output\OutputInterface $output
+     * @param  \Throwable                                        $e
      * @return void
      *
      * @internal This method is not meant to be used or overwritten outside the framework.
      */
     public function renderForConsole($output, Throwable $e)
     {
-        (new \Illuminate\Console\Application)->renderThrowable($e, $output);
+        (new \Illuminate\Console\Application())->renderThrowable($e, $output);
     }
 }

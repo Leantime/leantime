@@ -3,12 +3,12 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
-use Leantime\Core\IncomingRequest;
-use Symfony\Component\HttpFoundation\Response;
-use Leantime\Core\Frontcontroller;
-use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-use Leantime\Core\Eventhelpers;
 use Leantime\Core\AppSettings;
+use Leantime\Core\Eventhelpers;
+use Leantime\Core\Frontcontroller;
+use Leantime\Core\IncomingRequest;
+use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+use Symfony\Component\HttpFoundation\Response;
 
 class Updated
 {

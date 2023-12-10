@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
-    use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Core\Controller;
+    use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
     use Symfony\Component\HttpFoundation\Response;
@@ -117,11 +117,13 @@ namespace Leantime\Domain\Api\Controllers {
             }
 
             $success = false;
-            foreach ([
+            foreach (
+                [
                 'patchModalSettings' => fn () => $this->usersService->updateUserSettings("modals", $params['settings'], 1),
                 'patchViewSettings' => fn () => $this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value']),
                 'patchMenuStateSettings' => fn () => $this->usersService->updateUserSettings("views", "menuState", $params['value']),
-            ] as $param => $callback) {
+                ] as $param => $callback
+            ) {
                 if (! isset($params[$param])) {
                     continue;
                 }
@@ -134,7 +136,7 @@ namespace Leantime\Domain\Api\Controllers {
                 return $this->tpl->displayJson(['status' => 'ok']);
             }
 
-            return $this->tpl->displayJson(['status' =>'failure'], 500);
+            return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
         /**

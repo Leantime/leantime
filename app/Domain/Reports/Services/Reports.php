@@ -468,7 +468,6 @@ namespace Leantime\Domain\Reports\Services {
             );
 
             foreach ($collectedReactions as $reaction) {
-
                 if (isset($reactions[$reaction["reaction"]])) {
                     $reactions[$reaction["reaction"]] = $reactions[$reaction["reaction"]] + $reaction["reactionCount"];
                 }

@@ -16,7 +16,6 @@ namespace Leantime\Domain\Widgets\Controllers {
      */
     class WidgetManager extends Controller
     {
-
         private Setting $settingRepo;
 
         /**
@@ -30,7 +29,6 @@ namespace Leantime\Domain\Widgets\Controllers {
             $this->settingRepo = $settingRepo;
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-
         }
 
         /**
@@ -58,11 +56,7 @@ namespace Leantime\Domain\Widgets\Controllers {
                 $this->settingRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
                 return;
             }
-
-
         }
-
-
     }
 
 }

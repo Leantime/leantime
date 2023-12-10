@@ -71,7 +71,7 @@ $size = floor(100 / $numberofColumns);
         ?>
 
         <?php foreach ($allTicketGroups as $group) {?>
-        <?php if ($group['label'] != 'all') { ?>
+            <?php if ($group['label'] != 'all') { ?>
         <h5 class="accordionTitle <?=$group['class']?>" id="accordion_link_<?=$group['id'] ?>">
             <a href="javascript:void(0)" class="accordion-toggle" id="accordion_toggle_<?=$group['id'] ?>" onclick="leantime.snippets.accordionToggle('<?=$group['id'] ?>');">
                 <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
@@ -191,7 +191,7 @@ $size = floor(100 / $numberofColumns);
                                     <a class="dropdown-toggle" href="javascript:void(0);" role="button" id="userDropdownMenuLink<?=$row["id"]?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text">
                                                                     <?php if ($row["editorFirstname"] != "") {
-                                                                        echo "<span id='userImage" . $row["id"] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row["editorId"]. "' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row["id"] . "'> " . $tpl->escape($row["editorFirstname"]) . "</span>";
+                                                                        echo "<span id='userImage" . $row["id"] . "'><img src='" . BASE_URL . "/api/users?profileImage=" . $row["editorId"] . "' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row["id"] . "'> " . $tpl->escape($row["editorFirstname"]) . "</span>";
                                                                     } else {
                                                                         echo "<span id='userImage" . $row["id"] . "'><img src='" . BASE_URL . "/api/users?profileImage=false' width='25' style='vertical-align: middle; margin-right:5px;'/></span><span id='user" . $row["id"] . "'>" . $tpl->__("dropdown.not_assigned") . "</span>";
                                                                     }?>
@@ -233,8 +233,8 @@ $size = floor(100 / $numberofColumns);
 
                                 <div class="progress " style="width: 100%;">
 
-                                    <div class="progress-bar progress-bar-success " role="progressbar" aria-valuenow="<?php echo $row["percentDone"]?? 0; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row["percentDone"]?? 0; ?>%">
-                                        <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row["percentDone"]?? 0)?></span>
+                                    <div class="progress-bar progress-bar-success " role="progressbar" aria-valuenow="<?php echo $row["percentDone"] ?? 0; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row["percentDone"] ?? 0; ?>%">
+                                        <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row["percentDone"] ?? 0)?></span>
                                     </div>
                                 </div>
                             </td>

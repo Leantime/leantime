@@ -6,9 +6,9 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
+    use Illuminate\Support\Str;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Illuminate\Support\Str;
 
     /**
      *

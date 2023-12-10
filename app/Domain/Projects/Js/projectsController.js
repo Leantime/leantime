@@ -337,26 +337,22 @@ leantime.projectsController = (function () {
                                 let entityId = 0;
                                 let entityType = "";
 
-                                if(idParts.length > 1){
-                                    if(idParts[0] == "ticket") {
+                                if (idParts.length > 1) {
+                                    if (idParts[0] == "ticket") {
                                         entityId = idParts[1];
                                         entityType = "ticket"
-                                    }else  if(idParts[0] == "pgm") {
+                                    } else if (idParts[0] == "pgm") {
                                         entityId = idParts[1];
                                         entityType = "project"
                                     }
-                                }else{
+                                } else {
                                     entityId = idParts;
                                 }
 
 
-                                if(entityType == "ticket") {
-
+                                if (entityType == "ticket") {
                                     leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, task._index);
-
-                                }else{
-
-
+                                } else {
                                     jQuery.ajax(
                                         {
                                             type: 'PATCH',

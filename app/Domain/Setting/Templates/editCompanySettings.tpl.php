@@ -165,7 +165,7 @@ $companySettings = $tpl->get('companySettings');
                                     <div class="row">
 
                                         <div class="col-md-12">
-                                            <?php if($companySettings['logo'] != ""){ ?>
+                                            <?php if ($companySettings['logo'] != "") { ?>
                                             <img src='<?php echo $companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
                                             <?php } else { ?>
                                                 <?=$tpl->__("text.no_logo") ?>

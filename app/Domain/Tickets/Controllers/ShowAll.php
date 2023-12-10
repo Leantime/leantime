@@ -43,8 +43,8 @@ namespace Leantime\Domain\Tickets\Controllers {
             $_SESSION['lastTicketView'] = "table";
             $_SESSION['lastFilterdTicketTableView'] = CURRENT_URL;
 
-            if(!isset($_SESSION['currentProjectName'])){
-               Frontcontroller::redirect(BASE_URL."/");
+            if (!isset($_SESSION['currentProjectName'])) {
+                Frontcontroller::redirect(BASE_URL . "/");
             }
         }
 

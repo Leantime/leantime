@@ -3,7 +3,6 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Plugins;
 
 /**
  * Events class - Handles all events and filters
@@ -188,7 +187,6 @@ class Events
             isset(app(Environment::class)->plugins)
             && $configplugins = explode(',', app(Environment::class)->plugins)
         ) {
-
             //TODO: Do phar plugins get to be system plugins? Right now they dont
             foreach ($configplugins as $plugin) {
                 if (file_exists($pluginEventsPath = APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {

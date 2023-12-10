@@ -3,12 +3,12 @@
 namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Api\Services\Api as ApiService;
+    use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Domain\Users\Services\Users as UserService;
 
     /**
      *

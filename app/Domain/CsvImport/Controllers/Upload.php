@@ -71,9 +71,8 @@ class Upload extends Controller
 
         try {
             $records = Statement::create()->process($csv);
-        }catch(Exception $e){
-            return $this->tpl->displayJson(json_encode(array("error"=>$e->getMessage())), 500);
-
+        } catch (Exception $e) {
+            return $this->tpl->displayJson(json_encode(array("error" => $e->getMessage())), 500);
         }
 
         $header = $records->getHeader();  //returns the CSV header record
@@ -94,7 +93,6 @@ class Upload extends Controller
         $integrationService = app()->make(Integrations::class);
         $id = $integrationService->create($integration);
 
-        return $this->tpl->displayJson(json_encode(array("id"=>$id)));
-
+        return $this->tpl->displayJson(json_encode(array("id" => $id)));
     }
 }

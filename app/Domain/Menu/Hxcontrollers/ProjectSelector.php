@@ -6,7 +6,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\HtmxController;
 use Leantime\Domain\Menu\Services\Menu;
-use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 
 /**
@@ -70,7 +69,6 @@ class ProjectSelector extends HtmxController
         $_SESSION['userdata']["projectSelectFilter"] = $projectSelectFilter;
 
         if (isset($_SESSION['userdata'])) {
-
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)
             $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id'], $projectSelectFilter["client"]);
 

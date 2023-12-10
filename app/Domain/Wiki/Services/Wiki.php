@@ -46,7 +46,7 @@ namespace Leantime\Domain\Wiki\Services {
          * @param $projectId
          * @return array|false
          */
-        public function getAllProjectWikis($projectId): false|array
+        public function getAllProjectWikis($projectId): array|false
         {
             return $this->wikiRepository->getAllProjectWikis($projectId);
         }

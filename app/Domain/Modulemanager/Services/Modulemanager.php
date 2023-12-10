@@ -7,7 +7,7 @@
 
 namespace Leantime\Domain\Modulemanager\Services {
 
-    Use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Domain\Plugins\Services\Plugins;
 
     /**
@@ -80,15 +80,13 @@ namespace Leantime\Domain\Modulemanager\Services {
 
             $plugins = $this->pluginService->getEnabledPlugins();
 
-            foreach($plugins as $plugin) {
-
+            foreach ($plugins as $plugin) {
             }
 
-            $available = Eventhelpers::dispatch_filter("moduleAvailability", $available, ["module"=> $module]);
+            $available = Eventhelpers::dispatch_filter("moduleAvailability", $available, ["module" => $module]);
 
 
             return $available;
-
         }
     }
 

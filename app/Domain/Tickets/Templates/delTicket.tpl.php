@@ -9,8 +9,7 @@ $ticket = $tpl->get("ticket");
 
 <h4 class="widgettitle title-light"><?php echo $tpl->__("subtitles.delete") ?></h4>
 
-<?php if(is_object($ticket)) { ?>
-
+<?php if (is_object($ticket)) { ?>
 <form method="post" action="<?=BASE_URL ?>/tickets/delTicket/<?=$ticket->id?>">
     <p><?php echo $tpl->__('text.confirm_ticket_deletion'); ?></p><br />
     <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
@@ -20,6 +19,6 @@ $ticket = $tpl->get("ticket");
 
 </form>
 
-<?php }else{ ?>
+<?php } else { ?>
     <p>Ticket not found</p>
 <?php } ?>

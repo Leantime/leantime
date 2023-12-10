@@ -3,14 +3,14 @@
 namespace Leantime\Domain\Menu\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Theme;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
 
 /**
  *
@@ -104,7 +104,7 @@ class HeadMenu extends Composer
 
         $modal = $this->helperService->getHelperModalByRoute(FrontcontrollerCore::getCurrentRoute());
 
-        if(!isset($_SESSION['companysettings.logoPath'])) {
+        if (!isset($_SESSION['companysettings.logoPath'])) {
             $_SESSION['companysettings.logoPath'] = $this->themeCore->getLogoUrl();
         }
 

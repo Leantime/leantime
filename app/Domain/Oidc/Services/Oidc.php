@@ -4,19 +4,15 @@ namespace Leantime\Domain\Oidc\Services;
 
 //This class Handles authentication via OpenID Connect (OIDC)
 
-use GuzzleHttp\Exception\GuzzleException;
-
-use Illuminate\Http\RedirectResponse;
-use Leantime\Core\Environment;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Leantime\Core\Environment;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\Language;
-use Leantime\Core\Template;
-use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -94,11 +90,10 @@ class Oidc
         $this->fieldEmail = $this->config->get('oidcFieldEmail', '');
         $this->fieldFirstName = $this->config->get('oidcFieldFirstName', '');
         $this->fieldLastName = $this->config->get('oidcFieldLastName', '');
-        $this->fieldPhone= $this->config->get('oidcFieldPhone', '');
+        $this->fieldPhone = $this->config->get('oidcFieldPhone', '');
         $this->fieldJobtitle = $this->config->get('oidcFieldJobtitle', '');
         $this->fieldJoblevel = $this->config->get('oidcFieldJoblevel', '');
         $this->fieldDepartment = $this->config->get('oidcFieldDepartment', '');
-
     }
 
     /**
@@ -198,8 +193,7 @@ class Oidc
         $user = $this->userRepo->getUserByEmail($userName);
 
         if ($user === false) {
-
-            if($this->createUser) {
+            if ($this->createUser) {
                 //create user if it doesn't exist yet
                 $userArray = [
                     'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
@@ -221,16 +215,12 @@ class Oidc
                 if ($userId !== false) {
                     $user = $this->userRepo->getUserByEmail($userName);
                 } else {
-
                     throw new \Exception("OIDC user creation failed.");
                 }
-
-            }else{
+            } else {
                 $this->displayError('oidc.error.user_not_found');
             }
-
         } else {
-
             //update user if it exists
             $user['user'] = $user['username'];
             $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldFirstName) : $user['firstname'];

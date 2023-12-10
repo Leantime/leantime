@@ -250,7 +250,7 @@ class DefaultConfig
     public string $ldapHost = '';
 
     /**
-     * @var integer LDAP port
+     * @var int LDAP port
      */
     public int $ldapPort = 389;
 
@@ -443,7 +443,7 @@ class DefaultConfig
     /**
      * @var string OIDC Field Phone
      */
-    public string $oidcFieldPhone= '';
+    public string $oidcFieldPhone = '';
 
     /**
      * @var string OIDC Field Job Title

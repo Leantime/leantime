@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Tags\Services {
 
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Canvas\Repositories\Canvas as CanvaRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 
     /**

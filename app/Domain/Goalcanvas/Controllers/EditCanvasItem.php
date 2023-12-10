@@ -139,7 +139,6 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
         {
 
             if (isset($params['comment'])) {
-
                 $values = array(
                     'text' => $params['text'],
                     'date' => date('Y-m-d H:i:s'),

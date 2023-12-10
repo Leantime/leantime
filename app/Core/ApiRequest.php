@@ -98,7 +98,8 @@ class ApiRequest extends IncomingRequest
      *
      * @return bool Returns true if the current request is an API request, false otherwise.
      */
-    public function isApiRequest(): bool {
+    public function isApiRequest(): bool
+    {
         return str_starts_with($_SERVER['REQUEST_URI'], "/api/jsonrpc");
     }
 }

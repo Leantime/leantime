@@ -195,7 +195,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                        $this->tpl->setNotification($canvasTypes[$params['box']] . ' successfully created', 'success',  strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
+                        $this->tpl->setNotification($canvasTypes[$params['box']] . ' successfully created', 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
 
 
                         $notification = app()->make(NotificationModel::class);

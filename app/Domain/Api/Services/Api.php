@@ -3,11 +3,9 @@
 namespace Leantime\Domain\Api\Services;
 
 use Exception;
-use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Core\Eventhelpers;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
-use Leantime\Core\Eventhelpers;
-use Ramsey\Uuid\Uuid;
 use RangeException;
 
 /**
@@ -57,7 +55,7 @@ class Api
 
         $apiUser = $this->apiRepository->getAPIKeyUser($user);
 
-        if($apiUser) {
+        if ($apiUser) {
             if (password_verify($key, $apiUser['password'])) {
                 return $apiUser;
             }

@@ -246,8 +246,6 @@ namespace Leantime\Domain\Install\Repositories {
                 error_log($e);
                 return false;
             }
-
-            return "Could not initialize transaction";
         }
 
         /**
@@ -1836,7 +1834,8 @@ namespace Leantime\Domain\Install\Repositories {
 
             $errors = array();
 
-            $sql = ["ALTER TABLE `zp_canvas_items`
+            $sql = [
+            "ALTER TABLE `zp_canvas_items`
                     CHANGE COLUMN `data1` `data1` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data2` `data2` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data3` `data3` MEDIUMTEXT NULL DEFAULT NULL,
@@ -1860,7 +1859,8 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        public function update_sql_20407(): bool|array {
+        public function update_sql_20407(): bool|array
+        {
 
             $errors = array();
 
@@ -1897,9 +1897,6 @@ namespace Leantime\Domain\Install\Repositories {
             } else {
                 return true;
             }
-
         }
-
-
     }
 }

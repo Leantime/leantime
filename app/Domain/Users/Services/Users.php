@@ -228,7 +228,8 @@ namespace Leantime\Domain\Users\Services {
             return $result;
         }
 
-        public function sendUserInvite(string $inviteCode, string $user) {
+        public function sendUserInvite(string $inviteCode, string $user)
+        {
 
 
             $mailer = app()->make(MailerCore::class);
@@ -239,7 +240,7 @@ namespace Leantime\Domain\Users\Services {
 
             $message = sprintf(
                 $this->language->__("email_notifications.user_invite_message"),
-                $_SESSION["userdata"]["name"] ?? "Leantime" ,
+                $_SESSION["userdata"]["name"] ?? "Leantime",
                 $actual_link,
                 $user
             );
@@ -279,7 +280,7 @@ namespace Leantime\Domain\Users\Services {
                 "createdOn" => $values["createdOn"] ?? '',
                 "jobTitle" => $values["jobTitle"] ?? '',
                 "jobLevel" => $values["jobLevel"] ?? '',
-                "department" => $values["department"] ?? ''
+                "department" => $values["department"] ?? '',
             );
 
             return $this->userRepo->addUser($values);

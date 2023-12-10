@@ -53,7 +53,8 @@ class MyProjects extends HtmxController
         $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
     }
 
-    public function get() {
+    public function get()
+    {
 
         $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
         $clients = array();
@@ -84,10 +85,5 @@ class MyProjects extends HtmxController
 
 
         $this->tpl->assign("allProjects", $projectResults);
-
-
-
     }
-
-
 }

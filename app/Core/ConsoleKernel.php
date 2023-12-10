@@ -2,18 +2,17 @@
 
 namespace Leantime\Core;
 
+use Illuminate\Console\Command as LaravelCommand;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
-use \Illuminate\Console\Command as LaravelCommand;
-use Symfony\Component\Console\Application as ConsoleApplication;
-use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
-use Leantime\Core\Eventhelpers;
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ProcessUtils;
-use Symfony\Component\Process\PhpExecutableFinder;
+use Illuminate\Support\Str;
 use Leantime\Domain\Plugins\Services\Plugins as PluginsService;
+use Symfony\Component\Console\Application as ConsoleApplication;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Process\PhpExecutableFinder;
 
 class ConsoleKernel implements ConsoleKernelContract
 {
@@ -51,9 +50,9 @@ class ConsoleKernel implements ConsoleKernelContract
             /**
              * Run an Artisan console command by name.
              *
-             * @param  string  $command
-             * @param  array  $parameters
-             * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
+             * @param  string                                                 $command
+             * @param  array                                                  $parameters
+             * @param  \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
              * @return int
              *
              * @throws \Symfony\Component\Console\Exception\CommandNotFoundException
@@ -69,7 +68,8 @@ class ConsoleKernel implements ConsoleKernelContract
                 }
 
                 return $this->run(
-                    $input, $this->lastOutput = $outputBuffer ?: new \Symfony\Component\Console\Output\BufferedOutput
+                    $input,
+                    $this->lastOutput = $outputBuffer ?: new \Symfony\Component\Console\Output\BufferedOutput()
                 );
             }
 
@@ -92,7 +92,7 @@ class ConsoleKernel implements ConsoleKernelContract
              */
             public static function phpBinary()
             {
-                return ProcessUtils::escapeArgument((new PhpExecutableFinder)->find(false));
+                return ProcessUtils::escapeArgument((new PhpExecutableFinder())->find(false));
             }
 
             /**
@@ -197,8 +197,8 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Handle an incoming console command.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $output
+     * @param  \Symfony\Component\Console\Input\InputInterface        $input
+     * @param  \Symfony\Component\Console\Output\OutputInterface|null $output
      * @return int
      */
     public function handle($input, $output = null)
@@ -219,9 +219,9 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Run an Artisan console command by name.
      *
-     * @param  string  $command
-     * @param  array  $parameters
-     * @param  \Symfony\Component\Console\Output\OutputInterface|null  $outputBuffer
+     * @param  string                                                 $command
+     * @param  array                                                  $parameters
+     * @param  \Symfony\Component\Console\Output\OutputInterface|null $outputBuffer
      * @return int
      */
     public function call($command, array $parameters = [], $outputBuffer = null)
@@ -234,7 +234,7 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Queue an Artisan console command by name.
      *
-     * @param  string  $command
+     * @param  string $command
      * @param  array  $parameters
      * @return \Illuminate\Foundation\Bus\PendingDispatch
      * @todo Implement
@@ -271,8 +271,8 @@ class ConsoleKernel implements ConsoleKernelContract
     /**
      * Terminate the application.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  int  $status
+     * @param  \Symfony\Component\Console\Input\InputInterface $input
+     * @param  int                                             $status
      * @return void
      */
     public function terminate($input, $status)

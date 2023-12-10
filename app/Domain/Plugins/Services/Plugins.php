@@ -65,7 +65,7 @@ namespace Leantime\Domain\Plugins\Services {
          * @param PluginRepository $pluginRepository
          * @param EnvironmentCore  $config
          * @param SettingsService  $settingsService
-         * @param UsersService  $usersService
+         * @param UsersService     $usersService
          * @return void
          * @throws BindingResolutionException
          **/
@@ -152,7 +152,6 @@ namespace Leantime\Domain\Plugins\Services {
         {
 
             if (isset($_SESSION['enabledPlugins'])) {
-
                 $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
                 return $enabledPlugins;
             }
@@ -205,7 +204,7 @@ namespace Leantime\Domain\Plugins\Services {
             $json = file_get_contents($composerPath);
             $pluginFile = json_decode($json, true);
 
-            $plugin = build(new InstalledPlugin)
+            $plugin = build(new InstalledPlugin())
                 ->setName($pluginFile['name'])
                 ->setEnabled(0)
                 ->setDescription($pluginFile['description'])
@@ -388,10 +387,9 @@ namespace Leantime\Domain\Plugins\Services {
 
             $plugins = [];
 
-            if(isset($pluginArray["data"] )) {
-
+            if (isset($pluginArray["data"])) {
                 foreach ($pluginArray["data"] as $plugin) {
-                    $plugins[] = build(new MarketplacePlugin)
+                    $plugins[] = build(new MarketplacePlugin())
                         ->setIdentifier($plugin['identifier'] ?? '')
                         ->setName($plugin['post_title'] ?? '')
                         ->setExcerpt($plugin['excerpt'] ?? '')
@@ -452,7 +450,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             $response->throwIf(in_array(true, [
                 ! $response->ok(),
-                $response->header('Content-Type') !== 'application/zip'
+                $response->header('Content-Type') !== 'application/zip',
             ]), fn () => new RequestException($response));
 
             $filename = $response->header('Content-Disposition');
@@ -462,10 +460,12 @@ namespace Leantime\Domain\Plugins\Services {
                 throw new \Exception('Wrong file downloaded');
             }
 
-            if (! file_put_contents(
-                $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
-                $response->body()
-            )) {
+            if (
+                ! file_put_contents(
+                    $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
+                    $response->body()
+                )
+            ) {
                 throw new \Exception('Could not download plugin');
             }
 

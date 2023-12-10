@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7dda19a330f5a9d03c6e3935ec199b7",
+    "content-hash": "ad190e58e8603bd8423a572d757cd162",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2836,16 +2836,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.72.0",
+            "version": "2.72.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "a6885fcbad2ec4360b0e200ee0da7d9b7c90786b"
+                "reference": "2b3b3db0a2d0556a177392ff1a3bf5608fa09f78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/a6885fcbad2ec4360b0e200ee0da7d9b7c90786b",
-                "reference": "a6885fcbad2ec4360b0e200ee0da7d9b7c90786b",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/2b3b3db0a2d0556a177392ff1a3bf5608fa09f78",
+                "reference": "2b3b3db0a2d0556a177392ff1a3bf5608fa09f78",
                 "shasum": ""
             },
             "require": {
@@ -2939,7 +2939,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-11-28T10:13:25+00:00"
+            "time": "2023-12-08T23:47:49+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -8669,6 +8669,68 @@
             "time": "2023-11-26T18:29:22+00:00"
         },
         {
+            "name": "phpstan/phpstan",
+            "version": "1.10.48",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan.git",
+                "reference": "087ed4b5f4a7a6e8f3bbdfbfe98ce5c181380bc6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/087ed4b5f4a7a6e8f3bbdfbfe98ce5c181380bc6",
+                "reference": "087ed4b5f4a7a6e8f3bbdfbfe98ce5c181380bc6",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0"
+            },
+            "conflict": {
+                "phpstan/phpstan-shim": "*"
+            },
+            "bin": [
+                "phpstan",
+                "phpstan.phar"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan - PHP Static Analysis Tool",
+            "keywords": [
+                "dev",
+                "static analysis"
+            ],
+            "support": {
+                "docs": "https://phpstan.org/user-guide/getting-started",
+                "forum": "https://github.com/phpstan/phpstan/discussions",
+                "issues": "https://github.com/phpstan/phpstan/issues",
+                "security": "https://github.com/phpstan/phpstan/security/policy",
+                "source": "https://github.com/phpstan/phpstan-src"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ondrejmirtes",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/phpstan",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2023-12-08T14:34:28+00:00"
+        },
+        {
             "name": "phpunit/php-code-coverage",
             "version": "9.2.29",
             "source": {
@@ -10831,6 +10893,41 @@
                 }
             ],
             "time": "2023-11-20T00:12:19+00:00"
+        },
+        {
+            "name": "zebra-north/phpcs-short-types",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ZebraNorth/phpcs-short-types.git",
+                "reference": "19405baa823a61c0bfb7193c86facecce895ff66"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ZebraNorth/phpcs-short-types/zipball/19405baa823a61c0bfb7193c86facecce895ff66",
+                "reference": "19405baa823a61c0bfb7193c86facecce895ff66",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zebra North",
+                    "email": "mrzebra@mrzebra.co.uk"
+                }
+            ],
+            "description": "Require the use of short scalar type names (bool, int) in comments, instead of long names (boolean, integer).",
+            "support": {
+                "issues": "https://github.com/ZebraNorth/phpcs-short-types/issues",
+                "source": "https://github.com/ZebraNorth/phpcs-short-types/tree/v1.0.1"
+            },
+            "time": "2021-12-20T20:01:29+00:00"
         }
     ],
     "aliases": [],

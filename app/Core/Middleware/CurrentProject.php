@@ -2,11 +2,11 @@
 
 namespace Leantime\Core\Middleware;
 
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Core\IncomingRequest;
-use Symfony\Component\HttpFoundation\Response;
 use Closure;
+use Leantime\Core\IncomingRequest;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Symfony\Component\HttpFoundation\Response;
 
 class CurrentProject
 {

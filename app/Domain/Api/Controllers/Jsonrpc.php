@@ -6,12 +6,12 @@
 
 namespace Leantime\Domain\Api\Controllers;
 
+use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
-use Exception;
 
 /**
  *
@@ -358,9 +358,9 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param string     $errorMessage
-     * @param int        $errorcode
-     * @param mixed|null $additional_info
+     * @param string      $errorMessage
+     * @param int         $errorcode
+     * @param mixed|null  $additional_info
      * @param string|null $id
      * @return Response
      */
@@ -382,7 +382,7 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null $additional_info
+     * @param mixed|null  $additional_info
      * @param string|null $id
      *
      * @return Response
@@ -397,7 +397,7 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null $additional_info
+     * @param mixed|null  $additional_info
      * @param string|null $id
      *
      * @return Response
@@ -412,7 +412,7 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null $additional_info
+     * @param mixed|null  $additional_info
      * @param string|null $id
      *
      * @return Response
@@ -427,7 +427,7 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null $additional_info
+     * @param mixed|null  $additional_info
      * @param string|null $id
      *
      * @return Response
@@ -442,7 +442,7 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null $additional_info
+     * @param mixed|null  $additional_info
      * @param string|null $id
      *
      * @return void

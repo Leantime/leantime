@@ -122,8 +122,8 @@ namespace Leantime\Domain\Canvas\Repositories {
         public function __construct(
             DbCore $db,
             LanguageCore $language,
-            Tickets $ticketRepo)
-        {
+            Tickets $ticketRepo
+        ) {
             $this->db = $db;
             $this->language = $language;
             $this->ticketRepo = $ticketRepo;

@@ -116,7 +116,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
     <?php
     $externalCalendars = $tpl->get("externalCalendars");
 
-    foreach($externalCalendars as $externalCalendar) { ?>
+    foreach ($externalCalendars as $externalCalendar) { ?>
         eventSources.push(
             {
                 url: '<?=BASE_URL ?>/calendar/externalCal/<?=$externalCalendar['id'] ?>',

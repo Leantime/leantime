@@ -90,10 +90,9 @@ namespace Leantime\Domain\Queue\Services {
             }
 
             foreach ($allMessagesToSend as $currentUserId => $messageToSendToUser) {
-
                 $theuser = $this->userRepo->getUser($currentUserId);
 
-                if($theuser === null || $theuser === false) {
+                if ($theuser === null || $theuser === false) {
                     continue;
                 }
 

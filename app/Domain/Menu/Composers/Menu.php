@@ -3,13 +3,13 @@
 namespace Leantime\Domain\Menu\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\IncomingRequest as IncomingRequestCore;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
+use Leantime\Domain\Projects\Services\Projects as ProjectService;
+use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 /**
  *

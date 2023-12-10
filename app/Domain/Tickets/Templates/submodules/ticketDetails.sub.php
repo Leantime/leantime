@@ -74,7 +74,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                             <select  name="dependingTicketId"  class="span11" >
                                 <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
                                 <?php
-                                if(is_array($tpl->get('ticketParents'))){
+                                if (is_array($tpl->get('ticketParents'))) {
                                     foreach ($tpl->get('ticketParents') as $ticketRow) {
                                         ?>
                                         <?php echo"<option value='" . $ticketRow->id . "'";

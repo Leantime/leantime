@@ -26,17 +26,8 @@ namespace Leantime\Domain\Connector\Controllers {
         private Providers $providerService;
         private IntegrationService $integrationService;
         private LeantimeEntities $leantimeEntities;
-
-        private Users $userService;
-        private Tickets $ticketService;
-
-        private Projects $projectService;
-
         private array $values = array();
         private array $fields = array();
-        private Ideas $ideaRepository;
-        private Canvas $canvasRepository;
-        private Goalcanvas $goalRepository;
 
         private Connector $connectorService;
 
@@ -50,12 +41,6 @@ namespace Leantime\Domain\Connector\Controllers {
             Providers $providerService,
             IntegrationService $integrationService,
             LeantimeEntities $leantimeEntities,
-            Users $userService,
-            Tickets $ticketService,
-            Projects $projectService,
-            Ideas $ideaRepository,
-            Goalcanvas $goalRepository,
-            Canvas $canvasRepository,
             Connector $connectorService
         ) {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
@@ -63,12 +48,6 @@ namespace Leantime\Domain\Connector\Controllers {
             $this->providerService = $providerService;
             $this->leantimeEntities = $leantimeEntities;
             $this->integrationService = $integrationService;
-            $this->userService = $userService;
-            $this->ticketService = $ticketService;
-            $this->projectService = $projectService;
-            $this->ideaRepository = $ideaRepository;
-            $this->goalRepository = $goalRepository;
-            $this->canvasRepository = $canvasRepository;
             $this->connectorService = $connectorService;
         }
 
@@ -83,13 +62,11 @@ namespace Leantime\Domain\Connector\Controllers {
         {
 
             $params = $_REQUEST;
-            if(!isset($_SESSION['currentImportEntity'])){
+            if (!isset($_SESSION['currentImportEntity'])) {
                 $_SESSION['currentImportEntity'] = '';
             }
 
             if (isset($params["provider"])) {
-
-
                 //New integration with provider
                 //Get the provider
                 $provider = $this->providerService->getProvider($params["provider"]);
@@ -107,19 +84,18 @@ namespace Leantime\Domain\Connector\Controllers {
 
                 //STEP 0: No Step defined, new integration
                 if (!isset($params["step"])) {
-                    $this->tpl->display('connector.newIntegration');
-                    return;
+                    return $this->tpl->display('connector.newIntegration');
                 }
 
                 //STEP 1: Initiate connection
-                if (isset($params["step"])  && $params["step"] == "connect") {
+                if ($params["step"] == "connect") {
                     //This should handle connection UI
                     $provider->connect();
                 }
 
 
                 //STEP 2: Choose Entities to sync
-                if (isset($params["step"]) && $params["step"] == "entity") {
+                if ($params["step"] == "entity") {
                     $this->tpl->assign("providerEntities", $provider->getEntities());
                     $this->tpl->assign("leantimeEntities", $this->leantimeEntities->availableLeantimeEntities);
 
@@ -128,14 +104,13 @@ namespace Leantime\Domain\Connector\Controllers {
                 }
 
                 //STEP 3: Choose Entities to sync
-                if (isset($params["step"]) && $params["step"] == "fields") {
-
-                    if(isset($_POST['leantimeEntities'])){
+                if ($params["step"] == "fields") {
+                    if (isset($_POST['leantimeEntities'])) {
                         $entity = $_POST['leantimeEntities'];
                         $_SESSION['currentImportEntity'] = $entity;
-                    }else if(isset($_SESSION['currentImportEntity']) && $_SESSION['currentImportEntity'] != "") {
+                    } else if (isset($_SESSION['currentImportEntity']) && $_SESSION['currentImportEntity'] != "") {
                         $entity = $_SESSION['currentImportEntity'];
-                    }else{
+                    } else {
                         $this->tpl->setNotification("Entity not set", "error");
 
                         return Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $provider->id . "");
@@ -158,14 +133,13 @@ namespace Leantime\Domain\Connector\Controllers {
                 }
 
                 //STEP 4: Choose Entities to sync
-                if (isset($params["step"]) && $params["step"] == "sync") {
+                if ($params["step"] == "sync") {
                     //TODO UI to show sync schedule/options
                     return $this->tpl->display('connector.integrationSync');
                 }
 
                 //STEP 5: import Review
-                if (isset($params["step"]) && $params["step"] == "parse") {
-
+                if ($params["step"] == "parse") {
                     $this->values = $provider->geValues();
 
                     //Fetching the field matching and putting it in an array
@@ -173,7 +147,7 @@ namespace Leantime\Domain\Connector\Controllers {
                     $this->fields = $this->connectorService->getFieldMappings($_POST);
 
                     $flags = array();
-                    $flags = $this->connectorService->parseValues($this->fields, $this->values, $_SESSION['currentImportEntity'] );
+                    $flags = $this->connectorService->parseValues($this->fields, $this->values, $_SESSION['currentImportEntity']);
 
                     //show the imported data as confirmation
                     $this->tpl->assign("values", $this->values);
@@ -184,8 +158,7 @@ namespace Leantime\Domain\Connector\Controllers {
                 }
 
                 //STEP 6: Do the import
-                if (isset($params["step"]) && $params["step"] == "import") {
-
+                if ($params["step"] == "import") {
                     //Store data in DB
                     $values = unserialize($_SESSION['serValues']);
                     $fields = unserialize($_SESSION['serFields']);
@@ -196,7 +169,6 @@ namespace Leantime\Domain\Connector\Controllers {
                     //display stored successfully message
                     return $this->tpl->display('connector.integrationConfirm');
                 }
-
             }
         }
     }

@@ -166,10 +166,10 @@ $user = $tpl->get('user');
                                             $dateTimeNow = date_create();
 
                                             foreach ($dateFormats as $format) {
-                                            ?>
+                                                ?>
                                                 <option value="<?php echo ($format); ?>" <?php if ($tpl->get('dateFormat') == $format) {
                                                                                             echo "selected='selected'";
-                                                                                        } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
+                                                               } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -183,10 +183,10 @@ $user = $tpl->get('user');
                                             $dateTimeNow = date_create();
 
                                             foreach ($timeFormats as $format) {
-                                            ?>
+                                                ?>
                                                 <option value="<?php echo ($format); ?>" <?php if ($tpl->get('timeFormat') == $format) {
                                                                                             echo "selected='selected'";
-                                                                                        } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
+                                                               } ?>><?php echo (date_format($dateTimeNow, $format)); ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -200,10 +200,10 @@ $user = $tpl->get('user');
                                             $TZlist = $tpl->get('timezoneOptions');
 
                                             foreach ($TZlist as $tz) {
-                                            ?>
+                                                ?>
                                                 <option value="<?php echo ($tz); ?>" <?php if ($userTZ === $tz) {
                                                                                             echo "selected='selected'";
-                                                                                        } ?>><?php echo ($tz); ?></option>
+                                                               } ?>><?php echo ($tz); ?></option>
                                             <?php } ?>
                                         </select>
                                     </span>
@@ -229,7 +229,7 @@ $user = $tpl->get('user');
                                                 ?>
                                                 <option value="<?= $key ?>" <?php if ($tpl->get('userTheme') == $key) {
                                                     echo "selected='selected'";
-                                                } ?>><?= $tpl->__($theme['name']) ?></option>
+                                                               } ?>><?= $tpl->__($theme['name']) ?></option>
                                             <?php } ?>
                                         </select>
 
@@ -240,11 +240,11 @@ $user = $tpl->get('user');
                                         <label for="colormode" ><?php echo $tpl->__('label.colormode') ?></label>
                                         <select name="colormode" id="colormode">
                                            <option value="light" <?php if ($tpl->get('userColorMode') == "light") {
-                                               echo "selected='selected'";
-                                           } ?>><?= $tpl->__('label.light') ?></option>
+                                                echo "selected='selected'";
+                                                                 } ?>><?= $tpl->__('label.light') ?></option>
                                            <option value="dark" <?php if ($tpl->get('userColorMode') == "dark") {
-                                               echo "selected='selected'";
-                                           } ?>><?= $tpl->__('label.dark') ?></option>
+                                                echo "selected='selected'";
+                                                                } ?>><?= $tpl->__('label.dark') ?></option>
                                         </select>
                                     </div>
                                 </div>
@@ -252,7 +252,7 @@ $user = $tpl->get('user');
                                     <div class="col-md-12">
                                         <hr />
                                         <label>Font</label>
-                                        <?php foreach($tpl->get('availableFonts') as $key => $font) { ?>
+                                        <?php foreach ($tpl->get('availableFonts') as $key => $font) { ?>
                                             <div class="font-preview">
                                                 <label for="font-<?=$key?>" class="font"
                                                        style="font-family:'<?=$font ?>'; ">
@@ -261,7 +261,7 @@ $user = $tpl->get('user');
                                                 <span class="font-name">
                                                     <input type="radio" name="themeFont" id="font-<?=$key?>" value="<?=$font ?>" <?php if ($tpl->get('themeFont') == $key) {
                                                         echo "checked='checked'";
-                                                    } ?>/>
+                                                                                                  } ?>/>
                                                     <label for="color-<?=$key?>"><?=$font ?></label>
                                             </div>
                                         <?php } ?>
@@ -272,7 +272,7 @@ $user = $tpl->get('user');
                                     <div class="col-md-12">
                                         <hr />
                                         <label>Color Scheme</label>
-                                        <?php foreach($tpl->get('availableColorSchemes') as $key => $scheme) { ?>
+                                        <?php foreach ($tpl->get('availableColorSchemes') as $key => $scheme) { ?>
                                             <div class="color-circle">
                                                 <label for="color-<?=$key?>" class="color"
                                                       style="background:linear-gradient(135deg, <?=$scheme["primaryColor"] ?> 20%, <?=$scheme["secondaryColor"] ?> 100%);">
@@ -280,7 +280,7 @@ $user = $tpl->get('user');
                                                 <span class="color-name">
                                                     <input type="radio" name="colorscheme" id="color-<?=$key?>" value="<?=$key ?>" <?php if ($tpl->get('userColorScheme') == $key) {
                                                         echo "checked='checked'";
-                                                    } ?>/>
+                                                                                                     } ?>/>
                                                     <label for="color-<?=$key?>"><?=$tpl->__($scheme["name"]) ?></label>
                                             </div>
                                         <?php } ?>
@@ -312,8 +312,8 @@ $user = $tpl->get('user');
                                         <select name="messagesfrequency" class="input" id="messagesfrequency" style="width: 220px">
                                             <option value="">--<?php echo $tpl->__('label.choose_option') ?>--</option>
                                              <option value="60" <?php if ($values['messagesfrequency'] == "60") {
-                                                 echo " selected ";
-                                             } ?>><?php echo $tpl->__('label.1min') ?></option>
+                                                    echo " selected ";
+                                                                } ?>><?php echo $tpl->__('label.1min') ?></option>
                                             <option value="300" <?php if ($values['messagesfrequency'] == "300") {
                                                 echo " selected ";
                                                                 } ?>><?php echo $tpl->__('label.5min') ?></option>

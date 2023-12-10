@@ -51,7 +51,7 @@ namespace Leantime\Domain\Api\Controllers {
             }
 
             if ($params["action"] == "remove") {
-                if(! $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
+                if (! $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
                     return $this->tpl->displayJson(['status' => 'failure'], 500);
                 }
 

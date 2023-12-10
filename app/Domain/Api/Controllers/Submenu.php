@@ -6,8 +6,8 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
-    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use Leantime\Core\Controller;
+    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
     /**
      *

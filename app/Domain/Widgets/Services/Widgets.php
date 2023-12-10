@@ -118,8 +118,8 @@ class Widgets
             }
 
             $widgets = array();
-            foreach($unserializedData as $key => $widget) {
-                if(isset($this->availableWidgets[$widget["id"]])) {
+            foreach ($unserializedData as $key => $widget) {
+                if (isset($this->availableWidgets[$widget["id"]])) {
                     $widget["name"] = $this->availableWidgets[$widget["id"]]->name;
                     $widget["widgetBackground"] = $this->availableWidgets[$widget["id"]]->widgetBackground;
 
@@ -132,7 +132,8 @@ class Widgets
         return $widgets;
     }
 
-    public function resetDashboard(int $userId): void {
+    public function resetDashboard(int $userId): void
+    {
         $this->settingRepo->deleteSetting("usersettings." . $userId . ".dashboardGrid");
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
-    use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Core\Controller;
+    use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Users\Services\Users as UserService;
@@ -122,13 +122,15 @@ namespace Leantime\Domain\Api\Controllers {
                 return $this->tpl->displayJson(['status' => 'failure', 'error' => 'Required params not included in request'], 400);
             }
 
-            foreach ([
+            foreach (
+                [
                 'id' => fn () => $this->projectService->patch($params['id'], $params),
                 'patchModalSettings' => fn () => $this->usersService->updateUserSettings("modals", $params['settings'], 1),
                 'patchViewSettings' => fn () => $this->usersService->updateUserSettings("views", $params['patchViewSettings'], $params['value']),
                 'patchMenuStateSettings' => fn () => $this->usersService->updateUserSettings("views", "menuState", $params['value']),
                 'patchProjectProgress' => fn () => $this->projectService->updateProjectProgress($params['values'], $_SESSION['currentProject']),
-            ] as $param => $callback) {
+                ] as $param => $callback
+            ) {
                 if (! isset($params[$param])) {
                     continue;
                 }

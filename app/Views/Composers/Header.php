@@ -2,11 +2,11 @@
 
 namespace Leantime\Views\Composers;
 
-use Leantime\Core\Composer;
-use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Core\Environment;
 use Leantime\Core\AppSettings;
+use Leantime\Core\Composer;
+use Leantime\Core\Environment;
 use Leantime\Core\Theme;
+use Leantime\Domain\Setting\Repositories\Setting;
 
 /**
  *
@@ -68,7 +68,6 @@ class Header extends Composer
         }
 
         if (isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id'])) {
-
             if (isset($_SESSION['usersettings.timezone'])) {
                 date_default_timezone_set($_SESSION['usersettings.timezone']);
             }

@@ -53,20 +53,22 @@ namespace Leantime\Domain\Projects\Controllers {
                     "description" => "description.strategy",
                     "url" => "/strategyPro/newStrategy",
                     "image" => "undraw_thought_process_re_om58.svg",
-                    "active"=>true
+                    "active" => true,
                 ),
                 "plan" => array(
                     "label" => "label.plan",
                     "description" => "description.plan",
                     "url" => "/pgmPro/newProgram",
                     "image" => "undraw_join_re_w1lh.svg",
-                    "active"=>$this->modulemanager->isModuleAvailable("strategyPro")),
+                    "active" => $this->modulemanager->isModuleAvailable("strategyPro"),
+            ),
                 "project" => array(
                     "label" => "label.project",
                     "description" => "description.project",
                     "url" => "/projects/newProject",
                     "image" => "undraw_complete_task_u2c3.svg",
-                    "active"=>$this->modulemanager->isModuleAvailable("pgmPro")),
+                    "active" => $this->modulemanager->isModuleAvailable("pgmPro"),
+            ),
             );
 
             $this->tpl->assign("projectTypes", $projectTypes);

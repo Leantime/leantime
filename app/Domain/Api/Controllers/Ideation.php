@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Ideas\Repositories\Ideas as IdeationRepository;
     use Leantime\Core\Controller;
+    use Leantime\Domain\Ideas\Repositories\Ideas as IdeationRepository;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 
     /**
      *
@@ -52,10 +52,12 @@ namespace Leantime\Domain\Api\Controllers {
                 return $this->tpl->displayJson(['status' => 'failure'], 400);
             }
 
-            foreach ([
+            foreach (
+                [
                 'ideationSort' => fn () => $this->ideationAPIRepo->updateIdeationSorting($params['payload']),
                 'statusUpdate' => fn () => $this->ideationAPIRepo->bulkUpdateIdeationStatus($params["payload"]),
-            ] as $param => $callback) {
+                ] as $param => $callback
+            ) {
                 if ($param !== $params['action']) {
                     continue;
                 }

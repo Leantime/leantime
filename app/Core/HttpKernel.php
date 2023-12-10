@@ -3,12 +3,9 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
-use Illuminate\Pipeline\Pipeline;
-use Leantime\Core\Middleware;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use \Symfony\Component\HttpFoundation\RedirectResponse;
-use Leantime\Core\Eventhelpers;
-
+use Illuminate\Pipeline\Pipeline;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class HttpKernel implements HttpKernelContract
 {
@@ -21,7 +18,8 @@ class HttpKernel implements HttpKernelContract
      *
      * @return void
      */
-    public function bootstrap() {
+    public function bootstrap()
+    {
         if ($this->getApplication()->hasBeenBootstrapped()) {
             return;
         }
@@ -32,7 +30,7 @@ class HttpKernel implements HttpKernelContract
     /**
      * Handle an incoming HTTP request.
      *
-     * @param  \Symfony\Component\HttpFoundation\Request  $request
+     * @param  \Symfony\Component\HttpFoundation\Request $request
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function handle($request)
@@ -59,7 +57,7 @@ class HttpKernel implements HttpKernelContract
      * Perform any final actions for the request lifecycle.
      *
      * @param  \Symfony\Component\HttpFoundation\Request  $request
-     * @param  \Symfony\Component\HttpFoundation\Response  $response
+     * @param  \Symfony\Component\HttpFoundation\Response $response
      * @return void
      */
     public function terminate($request, $response)
