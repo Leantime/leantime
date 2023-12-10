@@ -2,22 +2,18 @@
 
 namespace Leantime\Domain\Menu\Services;
 
-    use Couchbase\UpsertOptions;
-    use DateTime;
-    use Leantime\Core\Eventhelpers;
-    use Leantime\Core\Template as TemplateCore;
-    use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Environment as EnvironmentCore;
+    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Language as LanguageCore;
+    use Leantime\Core\Template as TemplateCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+    use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Setting\Services\Setting;
+    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-    use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-    use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-    use Leantime\Domain\Sprints\Services\Sprints as SprintService;
-    use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
-    use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Leantime\Domain\Users\Services\Users;
 
     /**

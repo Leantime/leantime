@@ -17,6 +17,5 @@ class Cache implements ServiceProvider
 
     private function instanceCacheManager(): \Illuminate\Contracts\Cache\Store
     {
-
     }
 }

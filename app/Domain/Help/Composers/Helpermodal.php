@@ -3,15 +3,11 @@
 namespace Leantime\Domain\Help\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\IncomingRequest as IncomingRequestCore;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Help\Services\Helper;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
-use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
 /**
  *
@@ -56,10 +52,11 @@ class Helpermodal extends Composer
         $currentModal = $this->helperService->getHelperModalByRoute($action);
 
 
-        if ($completedOnboarding == "1"
+        if (
+            $completedOnboarding == "1"
             && $currentModal !== 'notfound'
-            && (isset($_SESSION['userdata']['settings']["modals"][$currentModal]) === false || $_SESSION['userdata']['settings']["modals"][$currentModal] == 0)) {
-
+            && (isset($_SESSION['userdata']['settings']["modals"][$currentModal]) === false || $_SESSION['userdata']['settings']["modals"][$currentModal] == 0)
+        ) {
             if (!isset($_SESSION['userdata']['settings']["modals"])) {
                 $_SESSION['userdata']['settings']["modals"] = array();
             }
@@ -73,7 +70,7 @@ class Helpermodal extends Composer
         return [
             "completedOnboarding" => $completedOnboarding,
             "showHelperModal" => $showHelperModal,
-            "currentModal" => $currentModal
+            "currentModal" => $currentModal,
         ];
     }
 }

@@ -5,8 +5,6 @@ namespace Leantime\Views\Composers;
 use Leantime\Core\Composer;
 use Leantime\Core\Environment;
 use Leantime\Core\Theme;
-use Leantime\Domain\Menu\Repositories\Menu;
-use Leantime\Domain\Setting\Repositories\Setting;
 
 /**
  *

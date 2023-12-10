@@ -4,7 +4,6 @@ namespace Leantime\Core;
 
 use Error;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Template;
 use Illuminate\Support\Str;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;

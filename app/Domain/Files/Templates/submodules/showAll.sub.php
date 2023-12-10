@@ -118,7 +118,6 @@ $moduleId = $_GET['id'] ?? '';
             //jQuery("#medialist a").colorbox();
 
             <?php if (isset($_GET['modalPopUp'])) { ?>
-
                 jQuery('#medialist a.imageLink').on("click", function(event){
 
                     event.preventDefault();

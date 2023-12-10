@@ -1051,6 +1051,7 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
     margin: 5px 10px 5px 0;
     border: 1px solid var(--main-border-color);
     padding: 10px;
+    border-radius: var(--box-radius);
     background: var(--secondary-background);
 }
 

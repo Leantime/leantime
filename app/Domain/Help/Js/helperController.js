@@ -265,11 +265,11 @@ leantime.helperController = (function () {
                         text: leantime.i18n.__("tour.back"),
                         classes: 'shepherd-button-secondary',
                         action: tour.back
-                    },
+                },
                     {
                         text: leantime.i18n.__("tour.next"),
                         action: tour.next
-                    }
+                }
                 ]
             }
         );

@@ -2,9 +2,9 @@
 
 namespace Leantime\Domain\Auth\Controllers {
 
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
     use Leantime\Core\Environment;
+    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
 
     /**

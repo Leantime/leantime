@@ -3,9 +3,8 @@
 namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Ideas\Repositories\Ideas as IdeaRepository;
-    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 
     /**
      *
@@ -74,10 +73,9 @@ namespace Leantime\Domain\Api\Controllers {
         public function patch($params)
         {
             if (
-                ! isset($params['id']
-                || ! $this->ideaAPIRepo->patchCanvasItem($params['id'], $params);
-            ) {
-                return $this->tpl->displayJson(['status' => 'failure', 500);
+                ! isset($params['id'])
+                || ! $this->ideaAPIRepo->patchCanvasItem($params['id'], $params)) {
+                return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
             return $this->tpl->displayJson(['status' => 'ok']);

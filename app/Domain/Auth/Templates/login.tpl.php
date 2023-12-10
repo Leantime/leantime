@@ -19,10 +19,10 @@ $redirectUrl = $tpl->get('redirectUrl');
     <?php $tpl->dispatchTplEvent('afterRegcontentOpen'); ?>
         <?php if (false === $tpl->get('noLoginForm')) { ?>
     <form id="login" action="<?=BASE_URL . "/auth/login"?>" method="post">
-        <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
+            <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
 
-        <?php echo $tpl->displayInlineNotification(); ?>
+            <?php echo $tpl->displayInlineNotification(); ?>
 
         <div class="">
             <label for="username">Email</label>
@@ -35,18 +35,18 @@ $redirectUrl = $tpl->get('redirectUrl');
                 <a href="<?=BASE_URL ?>/auth/resetPw" class="forgotPw"><?php echo $tpl->language->__("links.forgot_password"); ?></a>
             </div>
         </div>
-        <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
+            <?php $tpl->dispatchTplEvent('beforeSubmitButton'); ?>
         <div class="">
             <input type="submit" name="login" value="<?php echo $tpl->language->__("buttons.login"); ?>" class="btn btn-primary"/>
         </div>
         <div>
         </div>
-        <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
+            <?php $tpl->dispatchTplEvent('beforeFormClose'); ?>
 
     </form>
-    <?php } else {
-        echo ($tpl->language->__("text.no_login_form"));
-        ?><br /><br />
+        <?php } else {
+            echo ($tpl->language->__("text.no_login_form"));
+            ?><br /><br />
         <?php }// if disableLoginForm ?>
     <?php if ($tpl->get('oidcEnabled')) { ?>
         <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>

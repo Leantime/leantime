@@ -3,11 +3,11 @@
 namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Domain\Api\Services\Api as ApiService;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Api\Services\Api as ApiService;
-    use Leantime\Domain\Auth\Services\Auth as AuthService;
-    use Leantime\Domain\Auth\Models\Roles;
 
     /**
      *
@@ -111,7 +111,7 @@ namespace Leantime\Domain\Api\Controllers {
 
             ob_start();
 
-            if (! $this->ticketsApiService->patchTicket($params['id'], $params)) {
+            if (! $this->ticketsApiService->patch($params['id'], $params)) {
                 ob_end_clean();
                 return $this->tpl->displayJson(['error' => 'Could not update status'], 500);
             }

@@ -49,7 +49,7 @@ class EditGCal extends Controller
             $this->tpl->assign('info', $msgKey);
             return $this->tpl->display('calendar.editGCal');
         } else {
-           return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403');
         }
     }
 }

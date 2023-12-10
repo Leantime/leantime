@@ -5,11 +5,7 @@ namespace Leantime\Core;
 use DateTime;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Facades\Date;
-use Leantime\Domain\Reports\Repositories\Reports;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Core\Eventhelpers;
-use Leantime\Core\ApiRequest;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 /**
@@ -130,10 +126,8 @@ class Language
 
         //Get user language
         if (!isset($_SESSION["userdata"]["id"])) {
-
             // This is a not a login session, we need to ensure the default language (or the user's browser)
             $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
-
         } else {
             // This is not a login session
             if (
@@ -521,7 +515,6 @@ class Language
             $timestamp = date_create_from_format($this->__("language.dateformat"), $date, new \DateTimeZone($_SESSION['usersettings.timezone']));
 
             if (is_object($timestamp)) {
-
                 switch ($timeOfDay) {
                     case "b":
                         $timestamp->setTime(0, 0, 0);
@@ -611,10 +604,12 @@ class Language
     public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
     {
 
-        if(isset($_SESSION['usersettings.language.dateTimeFormat'])
+        if (
+            isset($_SESSION['usersettings.language.dateTimeFormat'])
             && isset($_SESSION['userdata'])
             && $_SESSION['usersettings.language.dateTimeFormat']["date"] !== false
-            && $_SESSION['usersettings.language.dateTimeFormat']["time"] !== false) {
+            && $_SESSION['usersettings.language.dateTimeFormat']["time"] !== false
+        ) {
             return $_SESSION['usersettings.language.dateTimeFormat'];
         }
 
@@ -630,7 +625,7 @@ class Language
         }
 
         //Only cache when user is logged in.
-        if(isset($_SESSION['userdata'])){
+        if (isset($_SESSION['userdata'])) {
             $_SESSION['usersettings.language.dateTimeFormat'] = $results;
         }
 

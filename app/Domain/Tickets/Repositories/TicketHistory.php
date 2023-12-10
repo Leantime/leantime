@@ -30,7 +30,7 @@ class TicketHistory
                     WHERE
                     dateModified >= :startingFrom";
 
-        if($ticketId !== null){
+        if ($ticketId !== null) {
             $query .= " AND ticketId = :ticketId";
         }
 
@@ -40,7 +40,7 @@ class TicketHistory
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':startingFrom', $startingFrom->format("Y-m-d"), PDO::PARAM_STR);
 
-        if($ticketId !== null){
+        if ($ticketId !== null) {
             $stmn->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
         }
         $stmn->execute();
@@ -48,8 +48,5 @@ class TicketHistory
         $stmn->closeCursor();
 
         return $values;
-
     }
-
-
 }

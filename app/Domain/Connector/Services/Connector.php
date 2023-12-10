@@ -24,7 +24,8 @@ namespace Leantime\Domain\Connector\Services {
             private \Leantime\Domain\Tickets\Repositories\Tickets $ticketRepository,
             private Goalcanvas $goalCanvasRepo,
             private Ideas $ideaRepo,
-        ){}
+        ) {
+        }
 
         public function getEntityFlags($entity)
         {
@@ -76,16 +77,14 @@ namespace Leantime\Domain\Connector\Services {
                 // Checking if the field mapping is selected
                 if (
                     !empty($fieldmapping)
-                    && strpos($fieldmapping,'|') !== false
-                    ){
+                    && strpos($fieldmapping, '|') !== false
+                ) {
                         $mappingParts = explode("|", $fieldmapping);
                         $sourceField = $mappingParts[0];
                         $leantimeField = $mappingParts[1];
 
                         $fields[] = array("sourceField" => $sourceField, "leantimeField" => $leantimeField);
-
                 }
-
             }
 
             return $fields;
@@ -176,7 +175,6 @@ namespace Leantime\Domain\Connector\Services {
                     if (!$projectId) {
                         $flags[] = $row[$matchingProjectSourceField] . " " . "is not a valid Project";
                     } else {
-
                         $row['projectId'] = $projectId;
                         $statusLabels = $this->ticketService->getStatusLabels($projectId);
                     }
@@ -195,18 +193,15 @@ namespace Leantime\Domain\Connector\Services {
                 }
             }
 
-            if($matchingStatusField) {
-
+            if ($matchingStatusField) {
                 foreach ($values as &$row) {
                     $getStatus = $this->ticketRepository->getStatusIdByName($row[$matchingStatusField], $row['projectId'] ?? null);
-                    if($getStatus !== false) {
+                    if ($getStatus !== false) {
                         $row['status'] = $getStatus;
-                    } else{
+                    } else {
                         $row['status'] = 3;
                     }
                 }
-
-
             }
 
             $this->cacheSerializedFieldValues($fields, $values);
@@ -333,7 +328,8 @@ namespace Leantime\Domain\Connector\Services {
             return $flags;
         }
 
-        private function parseIdeas($fields, $values){
+        private function parseIdeas($fields, $values)
+        {
 
             $matchingAuthorSourceField = '';
             $matchingCanvasIdSourceField = '';
@@ -380,9 +376,11 @@ namespace Leantime\Domain\Connector\Services {
             }
             if ($matchingCanvasIdSourceField) {
                 foreach ($values as &$row) {
-                    if (!$this->ideaRepo->getSingleCanvas(
-                        $row[$matchingCanvasIdSourceField]
-                    )) {
+                    if (
+                        !$this->ideaRepo->getSingleCanvas(
+                            $row[$matchingCanvasIdSourceField]
+                        )
+                    ) {
                         $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
                     }
                 }
@@ -402,7 +400,8 @@ namespace Leantime\Domain\Connector\Services {
             return $flags;
         }
 
-        private function parseGoals($fields, $values) {
+        private function parseGoals($fields, $values)
+        {
             //TODO add import logic and validation
             $matchingStartValueSourceField = '';
             $matchingCurrentValueSourceField = '';
@@ -431,9 +430,11 @@ namespace Leantime\Domain\Connector\Services {
 
             if ($matchingCanvasIdSourceField) {
                 foreach ($values as &$row) {
-                    if (!$this->goalCanvasRepo->getSingleCanvas(
-                        $row[$matchingCanvasIdSourceField]
-                    )) {
+                    if (
+                        !$this->goalCanvasRepo->getSingleCanvas(
+                            $row[$matchingCanvasIdSourceField]
+                        )
+                    ) {
                         $flags[] = $row[$matchingCanvasIdSourceField] . " " . "is not a valid Canvas.";
                     }
                 }
@@ -460,7 +461,8 @@ namespace Leantime\Domain\Connector\Services {
             return $flags;
         }
 
-        private function parseMilestones($fields, $values) {
+        private function parseMilestones($fields, $values)
+        {
             $matchingSourceField = '';
             $flags = [];
 
@@ -589,24 +591,20 @@ namespace Leantime\Domain\Connector\Services {
         private function importTickets($finalMappings, $finalValues)
         {
             foreach ($finalValues as $row) {
-
                 $ticket = array();
 
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
-
                     $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
                 $ticket['editorId'] = $row['editorId'];
                 $ticket['projectId'] = $row['projectId'];
                 $ticket['status'] = $row['status'];
 
-                if(isset($ticket["id"])){
-                    $this->ticketService->updateTicket($ticket["id"], $ticket);
-                }
-                else{
+                if (isset($ticket["id"])) {
+                    $this->ticketService->updateTicket($ticket);
+                } else {
                     $this->ticketService->addTicket($ticket);
                 }
-
             }
             return;
         }
@@ -624,13 +622,11 @@ namespace Leantime\Domain\Connector\Services {
                     }
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                if(isset($values["id"])){
+                if (isset($values["id"])) {
                     $this->projectService->editProject($values, $values["id"],);
-                }
-                else{
+                } else {
                     $this->projectService->addProject($values);
                 }
-
             }
         }
 
@@ -640,23 +636,21 @@ namespace Leantime\Domain\Connector\Services {
             foreach ($finalValues as $row) {
                 $values = array();
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
-                    if ($finalMappings[$i + 1] != 'sendInvite' || $finalMappings[$i + 1] != 'id'){
+                    if ($finalMappings[$i + 1] != 'sendInvite' || $finalMappings[$i + 1] != 'id') {
                         $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                     }
                 }
                 $values["notifications"] = 1;
                 $values['source'] = "csvImport"; //TODO: will have to change when other integrations are added
-                if(isset($row['id']) && $row['id'] > 0){
-
+                if (isset($row['id']) && $row['id'] > 0) {
                     $currentUser = $this->userService->getUser($row['id']);
                     $currentUser['user'] = $values['user'];
-                    foreach($currentUser as $key => &$userValues) {
-                        if(isset($values[$key])){
+                    foreach ($currentUser as $key => &$userValues) {
+                        if (isset($values[$key])) {
                             $userValues = $values[$key];
                         }
                     }
                     $this->userService->editUser($currentUser, $row['id']);
-
                 } else if (isset($row['sendInvite']) && $row['sendInvite'] == true) {
                     $this->userService->createUserInvite($values);
                 } else {
@@ -667,55 +661,51 @@ namespace Leantime\Domain\Connector\Services {
                     }
                     $this->userService->addUser($values);
                 }
-
             }
         }
 
-        private function importIdeas($finalMappings, $finalValues){
+        private function importIdeas($finalMappings, $finalValues)
+        {
 
             foreach ($finalValues as $row) {
                 $values = array();
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
-                if(isset($values["itemId"])){
+                if (isset($values["itemId"])) {
                     $this->ideaRepo->editCanvasItem($values);
-                }
-                else{
+                } else {
                     $this->ideaRepo->addCanvasItem($values);
                 }
-
             }
         }
 
-        private function importGoals($finalMappings, $finalValues) {
+        private function importGoals($finalMappings, $finalValues)
+        {
             foreach ($finalValues as $row) {
                 $values = array();
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
                     $values[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
                 $values["box"] = "goal";
-                if(!isset($values['author'])){
+                if (!isset($values['author'])) {
                     $values['author'] = $_SESSION['userdata']['id'];
                 }
-                if(isset($values["itemId"])){
+                if (isset($values["itemId"])) {
                     $this->goalCanvasRepo->editCanvasItem($values);
-                }
-                else{
+                } else {
                     $this->goalCanvasRepo->addCanvasItem($values);
                 }
-
             }
         }
 
-        private function importMilestones($finalMappings, $finalValues) {
+        private function importMilestones($finalMappings, $finalValues)
+        {
             //TODO add milestones
             foreach ($finalValues as $row) {
-
                 $ticket = array();
 
                 for ($i = 0; $i < sizeof($finalMappings); $i = $i + 2) {
-
                     $ticket[$finalMappings[$i + 1]] = $row[$finalMappings[$i]];
                 }
                 $ticket['editorId'] = $row['editorId'];
@@ -724,23 +714,22 @@ namespace Leantime\Domain\Connector\Services {
                     $ticket['status'] = 3;
                 }
                 $ticket['type'] = 'milestone';
-                if(isset($ticket["id"])){
-                    $this->ticketService->updateTicket($ticket["id"], $ticket);
-                }
-                else{
+                if (isset($ticket["id"])) {
+                    $this->ticketService->updateTicket($ticket);
+                } else {
                     $this->ticketService->addTicket($ticket);
                 }
             }
         }
 
-        private function cacheSerializedFieldValues($fields, $values) {
+        private function cacheSerializedFieldValues($fields, $values)
+        {
 
             $serializedFields = serialize($fields);
             $serializedValues = serialize($values);
 
             $_SESSION['serFields'] = $serializedFields;
             $_SESSION['serValues'] = $serializedValues;
-
         }
     }
 }

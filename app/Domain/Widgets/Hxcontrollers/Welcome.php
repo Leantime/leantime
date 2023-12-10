@@ -86,27 +86,27 @@ class Welcome extends HtmxController
 
         $closedTicketsCount = 0;
         $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser($_SESSION["userdata"]["id"], null);
-        if(is_array($closedTickets)){
+        if (is_array($closedTickets)) {
             $closedTicketsCount = count($closedTickets);
         }
 
         $ticketsInGoals = 0;
         $goalTickets = $this->ticketsService->goalsRelatedToWork($_SESSION["userdata"]["id"], null);
-        if(is_array($goalTickets)){
+        if (is_array($goalTickets)) {
             $ticketsInGoals = count($goalTickets);
         }
 
         $todayTaskCount = 0;
         $todayStart = new \DateTime();
 
-        if($_SESSION['usersettings.timezone'] !== null){
+        if ($_SESSION['usersettings.timezone'] !== null) {
             $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
         }
 
         $todayStart->setTime(0, 0, 0);
 
         $todayEnd = new \DateTime();
-        if($_SESSION['usersettings.timezone'] !== null){
+        if ($_SESSION['usersettings.timezone'] !== null) {
             $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
         }
         $todayEnd->setTime(23, 59, 59);

@@ -685,7 +685,7 @@ namespace Leantime\Domain\Projects\Services {
          */
         public function changeCurrentSessionProject($projectId): bool
         {
-            if(!is_numeric($projectId)){
+            if (!is_numeric($projectId)) {
                 return false;
             }
 
@@ -857,7 +857,8 @@ namespace Leantime\Domain\Projects\Services {
         }
 
 
-        public function addProject($values) {
+        public function addProject($values)
+        {
             $values = array(
                 "name" => $values['name'],
                 'details' => $values['details'] ?? '',
@@ -1233,7 +1234,8 @@ namespace Leantime\Domain\Projects\Services {
             return $this->projectRepository->setPicture($file, $project);
         }
 
-        public function getAllProjects(){
+        public function getAllProjects()
+        {
             return $this->projectRepository->getAll();
         }
 
@@ -1257,18 +1259,21 @@ namespace Leantime\Domain\Projects\Services {
                         "description" => array(
                             "title" => "label.projectDescription",
                             "status" => "",
-                            "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."",
-                            "description" => "checklist.define.tasks.description"),
+                            "link" => BASE_URL . "/projects/showProject/" . $_SESSION['currentProject'] . "",
+                            "description" => "checklist.define.tasks.description",
+                    ),
                         "defineTeam" => array(
                             "title" => "label.defineTeam",
                             "status" => "",
-                            "link" =>BASE_URL."/projects/showProject/".$_SESSION['currentProject']."#team",
-                            "description" => "checklist.define.tasks.defineTeam"),
+                            "link" => BASE_URL . "/projects/showProject/" . $_SESSION['currentProject'] . "#team",
+                            "description" => "checklist.define.tasks.defineTeam",
+                    ),
                         "createBlueprint" => array(
                             "title" => "label.createBlueprint",
                             "status" => "",
-                            "link" =>BASE_URL."/strategy/showBoards/",
-                            "description" => "checklist.define.tasks.createBlueprint"),
+                            "link" => BASE_URL . "/strategy/showBoards/",
+                            "description" => "checklist.define.tasks.createBlueprint",
+                    ),
                     ),
                     "status" => '',
                 ),
@@ -1279,8 +1284,9 @@ namespace Leantime\Domain\Projects\Services {
                         "setGoals" => array(
                             "title" => "label.setGoals",
                             "status" => "",
-                            "link" =>BASE_URL."/goalcanvas/dashboard",
-                            "description" => "checklist.goals.tasks.setGoals"),
+                            "link" => BASE_URL . "/goalcanvas/dashboard",
+                            "description" => "checklist.goals.tasks.setGoals",
+                    ),
                     ),
                     "status" => '',
                 ),
@@ -1291,8 +1297,9 @@ namespace Leantime\Domain\Projects\Services {
                         "createMilestones" => array(
                             "title" => "label.createMilestones",
                             "status" => "",
-                            "link" =>BASE_URL."/tickets/roadmap",
-                            "description" => "checklist.timeline.tasks.createMilestones"),
+                            "link" => BASE_URL . "/tickets/roadmap",
+                            "description" => "checklist.timeline.tasks.createMilestones",
+                    ),
 
                     ),
                     "status" => '',
@@ -1303,13 +1310,15 @@ namespace Leantime\Domain\Projects\Services {
                     "tasks" => array(
                         "createTasks" =>  array(
                             "title" => "label.createTasks",
-                            "status" => "", "link" =>BASE_URL."/tickets/showAll",
-                            "description" => "checklist.implementation.tasks.createTasks "),
+                            "status" => "", "link" => BASE_URL . "/tickets/showAll",
+                            "description" => "checklist.implementation.tasks.createTasks ",
+                    ),
                         "finish80percent" =>  array(
                             "title" => "label.finish80percent",
                             "status" => "",
-                            "link" =>BASE_URL."/reports/show",
-                            "description" => "checklist.implementation.tasks.finish80percent"),
+                            "link" => BASE_URL . "/reports/show",
+                            "description" => "checklist.implementation.tasks.finish80percent",
+                    ),
                     ),
                     "status" => '',
                 ),
@@ -1451,7 +1460,8 @@ namespace Leantime\Domain\Projects\Services {
             );
         }
 
-        public function getProjectIdbyName($allProjects, $projectName){
+        public function getProjectIdbyName($allProjects, $projectName)
+        {
             foreach ($allProjects as $project) {
                 if (strtolower(trim($project['name'])) == strtolower(trim($projectName))) {
                     return $project['id'];
@@ -1474,7 +1484,8 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        public function editProject($values, $id){
+        public function editProject($values, $id)
+        {
             $this->projectRepository->editProject($values, $id);
         }
 

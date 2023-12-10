@@ -3,9 +3,8 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use Leantime\Core\Eventhelpers;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Mail class - mails with php mail()

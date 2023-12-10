@@ -4,10 +4,10 @@ namespace Leantime\Domain\Wiki\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Domain\Wiki\Models\Wiki;
     use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Frontcontroller;
 
     /**
      *

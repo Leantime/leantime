@@ -36,7 +36,7 @@ namespace Leantime\Domain\Connector\Services {
          * @param object|array $object
          * @return bool
          */
-        public function update(object|array $object): bool
+        public function updateTicket(object|array $object): bool
         {
             // TODO: Implement update() method.
             return false;

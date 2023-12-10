@@ -44,9 +44,9 @@ leantime.menuController = (function () {
 
         let currentTab = localStorage.getItem("currentMenuTab");
 
-        if(typeof currentTab === 'undefined') {
+        if (typeof currentTab === 'undefined') {
             activeTabIndex = 0;
-        }else{
+        } else {
             activeTabIndex = jQuery('.projectSelectorTabs').find('a[href="#' + currentTab + '"]').parent().index();
         }
 

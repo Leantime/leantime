@@ -3,6 +3,7 @@
 <?php
 
 use Leantime\Core\Frontcontroller;
+
 /**
  * @param $route
  * @return string

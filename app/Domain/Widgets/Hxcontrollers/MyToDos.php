@@ -53,17 +53,18 @@ class MyToDos extends HtmxController
         $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
     }
 
-    public function get() {
+    public function get()
+    {
 
         $params =  $this->incomingRequest->query->all();
 
 
         $tplVars = $this->ticketsService->getToDoWidgetAssignments($params);
         array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
-
     }
 
-    public function addTodo() {
+    public function addTodo()
+    {
 
         if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
             if (isset($params['quickadd']) == true) {
@@ -78,8 +79,5 @@ class MyToDos extends HtmxController
                 Frontcontroller::redirect(BASE_URL . "/dashboard/home");
             }
         }
-
     }
-
-
 }

@@ -99,10 +99,10 @@ $milestones = $tpl->get('milestones');
                                     <ul class="dropdown-menu">
                                         <li><span class="radio"><input type="radio" name="groupBy" <?php if ($groupBy == "time") {
                                                     echo "checked='checked'";
-                                                }?> value="time" id="groupByDate" onclick="form.submit();"/><label for="groupByDate"><?=$tpl->__("label.dates") ?></label></span></li>
+                                                                                                   }?> value="time" id="groupByDate" onclick="form.submit();"/><label for="groupByDate"><?=$tpl->__("label.dates") ?></label></span></li>
                                         <li><span class="radio"><input type="radio" name="groupBy" <?php if ($groupBy == "project") {
                                                     echo "checked='checked'";
-                                                }?> value="project" id="groupByProject" onclick="form.submit();"/><label for="groupByProject"><?=$tpl->__("label.project") ?></label></span></li>
+                                                                                                   }?> value="project" id="groupByProject" onclick="form.submit();"/><label for="groupByProject"><?=$tpl->__("label.project") ?></label></span></li>
                                     </ul>
                                 </div>
                                 <div class="right disableOnPrioritizedList">
@@ -212,11 +212,11 @@ $milestones = $tpl->get('milestones');
                                                             <div class="dropdown ticketDropdown effortDropdown show">
                                                                 <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                                        echo $efforts["" . $row['storypoints']];
-                                                                    } else {
-                                                                        echo $tpl->__("label.story_points_unkown");
-                                                                    }?>
+                                                                if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
+                                                                    echo $efforts["" . $row['storypoints']];
+                                                                } else {
+                                                                    echo $tpl->__("label.story_points_unkown");
+                                                                }?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                                 </a>
@@ -234,11 +234,11 @@ $milestones = $tpl->get('milestones');
                                                             <div class="dropdown ticketDropdown milestoneDropdown colorized show">
                                                                 <a style="background-color:<?=$tpl->escape($row['milestoneColor'])?>" class="dropdown-toggle f-left  label-default milestone" href="javascript:void(0);" role="button" id="milestoneDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
-                                                                        $tpl->e($row['milestoneHeadline']);
-                                                                    } else {
-                                                                        echo $tpl->__("label.no_milestone");
-                                                                    }?>
+                                                                if ($row['milestoneid'] != "" && $row['milestoneid'] != 0) {
+                                                                    $tpl->e($row['milestoneHeadline']);
+                                                                } else {
+                                                                    echo $tpl->__("label.no_milestone");
+                                                                }?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                                 </a>
@@ -252,14 +252,14 @@ $milestones = $tpl->get('milestones');
                                                                             if ($milestone != null && is_object($milestone)) {
                                                                                 echo "<li class='dropdown-item'>
                                                                                     <a href='javascript:void(0);' data-label='" . $tpl->escape(
-                                                                                        $milestone->headline
-                                                                                    ) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape(
-                                                                                        $milestone->tags
-                                                                                    ) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape(
-                                                                                        $milestone->tags
-                                                                                    ) . "'>" . $tpl->escape(
-                                                                                        $milestone->headline
-                                                                                    ) . "</a>";
+                                                                                    $milestone->headline
+                                                                                ) . "' data-value='" . $row['id'] . "_" . $milestone->id . "_" . $tpl->escape(
+                                                                                    $milestone->tags
+                                                                                ) . "' id='ticketMilestoneChange" . $row['id'] . $milestone->id . "' style='background-color:" . $tpl->escape(
+                                                                                    $milestone->tags
+                                                                                ) . "'>" . $tpl->escape(
+                                                                                    $milestone->headline
+                                                                                ) . "</a>";
                                                                                 echo "</li>";
                                                                             }
                                                                         }
@@ -271,12 +271,12 @@ $milestones = $tpl->get('milestones');
                                                             <div class="dropdown ticketDropdown statusDropdown colorized show">
                                                                 <a class="dropdown-toggle f-left status <?=$statusLabels[$row['projectId']][$row['status']]["class"]?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                 <span class="text"><?php
-                                                                    if (isset($statusLabels[$row['projectId']][$row['status']])) {
-                                                                        echo $statusLabels[$row['projectId']][$row['status']]["name"];
-                                                                    } else {
-                                                                        echo "unknown";
-                                                                    }
-                                                                    ?>
+                                                                if (isset($statusLabels[$row['projectId']][$row['status']])) {
+                                                                    echo $statusLabels[$row['projectId']][$row['status']]["name"];
+                                                                } else {
+                                                                    echo "unknown";
+                                                                }
+                                                                ?>
                                                                 </span>
                                                                     &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                                 </a>
@@ -499,7 +499,7 @@ $milestones = $tpl->get('milestones');
             enitityType: "ticket",
             <?php endif; ?>
         },
-        <?php endforeach; ?>];
+                  <?php endforeach; ?>];
 
 
 

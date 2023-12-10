@@ -26,4 +26,3 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
 
     $params['schedule']->call(fn () => $reportService->dailyIngestion())->daily();
 });
-

@@ -64,7 +64,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } else { ?>
             <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?? array_key_first(
                 $hiddenStatusLabels
-                                                      ) ?>" />
+            ) ?>" />
         <?php } ?>
 
         <?php if (!empty($relatesLabels)) { ?>
@@ -74,7 +74,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
                 $hiddenRelatesLabels
-                                                       ) ?>" />
+            ) ?>" />
         <?php } ?>
 
         <?php if ($dataLabels[1]['active']) { ?>

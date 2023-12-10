@@ -8,7 +8,6 @@ use Leantime\Domain\Connector\Models\Provider;
 use Leantime\Domain\Connector\Services\ProviderIntegration;
 use Symfony\Component\HttpFoundation\Response;
 
-
 /**
  *
  */
@@ -26,7 +25,7 @@ class CsvImport extends Provider implements ProviderIntegration
         "entity",
         "fields",
         "parse",
-        "import"
+        "import",
     ];
 
     public array $button = array(
@@ -53,7 +52,6 @@ class CsvImport extends Provider implements ProviderIntegration
         );
 
         $this->button["url"] = BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload";
-
     }
 
     //Logic to connect to provider goes here.
@@ -130,12 +128,11 @@ class CsvImport extends Provider implements ProviderIntegration
             $headers = array_shift($rows);
         }
         return $rows;
-
     }
 
-    public function geValues(){
+    public function geValues()
+    {
 
         return $_SESSION['csv_records'] ?? [];
-
     }
 }

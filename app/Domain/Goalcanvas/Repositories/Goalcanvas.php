@@ -127,8 +127,5 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
             $stmn->closeCursor();
             return $values;
         }
-
-
-
     }
 }

@@ -102,15 +102,15 @@ namespace Leantime\Domain\Calendar\Repositories {
             $dbTickets =  $ticketService->getOpenUserTicketsThisWeekAndLater($userId, "", true);
 
             $tickets = array();
-            if (isset($dbTickets["thisWeek"]["tickets"])){
+            if (isset($dbTickets["thisWeek"]["tickets"])) {
                 $tickets = array_merge($tickets, $dbTickets["thisWeek"]["tickets"]);
             }
 
-            if (isset($dbTickets["later"]["tickets"])){
+            if (isset($dbTickets["later"]["tickets"])) {
                 $tickets = array_merge($tickets, $dbTickets["later"]["tickets"]);
             }
 
-            if (isset($dbTickets["overdue"]["tickets"])){
+            if (isset($dbTickets["overdue"]["tickets"])) {
                 $tickets = array_merge($tickets, $dbTickets["overdue"]["tickets"]);
             }
 
@@ -586,7 +586,7 @@ namespace Leantime\Domain\Calendar\Repositories {
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':userId',$userId, PDO::PARAM_INT);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
 
             $stmn->execute();
             $values = $stmn->fetchAll();
@@ -604,8 +604,8 @@ namespace Leantime\Domain\Calendar\Repositories {
             $query = "SELECT id, url, name, colorClass FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
 
             $stmn = $this->db->database->prepare($query);
-            $stmn->bindValue(':userId',$userId, PDO::PARAM_INT);
-            $stmn->bindValue(':id',$calendarId, PDO::PARAM_INT);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmn->bindValue(':id', $calendarId, PDO::PARAM_INT);
 
             $stmn->execute();
             $values = $stmn->fetch();

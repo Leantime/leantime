@@ -89,13 +89,13 @@ if (! function_exists('array_sort')) {
     function array_sort(array $array, mixed $sortyBy): array
     {
 
-        if(is_string($sortyBy)){
+        if (is_string($sortyBy)) {
             $collection = collect($array);
 
             $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
 
             return $sorted->values()->all();
-        }else{
+        } else {
             return \Illuminate\Support\Collection::make($array)->sortBy($sortyBy)->all();
         }
     }
@@ -106,8 +106,8 @@ if (! function_exists('do_once')) {
      * Execute a callback only once.
      *
      * @param Closure $callback
-     * @param bool $across_requests
-     * @param string $key
+     * @param bool    $across_requests
+     * @param string  $key
      * @return void
      **/
     function do_once(string $key, Closure $callback, bool $across_requests = false): void
@@ -142,7 +142,7 @@ if (! function_exists('config')) {
      * Get / set the specified configuration value.
      * If an array is passed as the key, we will assume you want to set an array of values.
      * @param array|string|null $key
-     * @param mixed $default
+     * @param mixed             $default
      * @return mixed|Application
      * @throws BindingResolutionException
     **/

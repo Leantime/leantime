@@ -4,7 +4,6 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Tags\Services\Tags as TagService;
-    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *

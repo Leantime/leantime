@@ -3,11 +3,8 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Wiki\Models\Wiki;
-    use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Leantime\Domain\Comments\Services\Comments as CommentService;
-    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Wiki\Services\Wiki as WikiService;
     use Symfony\Component\HttpFoundation\Response;
 
     /**

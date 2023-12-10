@@ -47,7 +47,6 @@ namespace Leantime\Domain\Projects\Controllers {
          *
          * @access public
          */
-
         public function get()
         {
 

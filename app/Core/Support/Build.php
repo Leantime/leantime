@@ -7,11 +7,13 @@ class Build
     /**
      * @param object $object
      **/
-    public function __construct(private object $object) {}
+    public function __construct(private object $object)
+    {
+    }
 
     /**
-     * @param string $key The property name
-     * @param mixed $value The property value or a callable to set the nested property value
+     * @param string $key   The property name
+     * @param mixed  $value The property value or a callable to set the nested property value
      * @return self
      **/
     public function set(string $key, mixed $value): self
@@ -34,7 +36,7 @@ class Build
     }
 
     /**
-     * @param string $key
+     * @param string   $key
      * @param callable $configurator
      * @return self
      **/
@@ -50,7 +52,7 @@ class Build
 
     /**
      * @param string $method
-     * @param array $params
+     * @param array  $params
      * @return mixed
      **/
     public function __call($method, $params): mixed
@@ -73,10 +75,12 @@ class Build
         foreach ($properties as &$property) {
             $isset = false;
             foreach ([$property, lcfirst($property)] as $propName) {
-                if (in_array(true, [
+                if (
+                    in_array(true, [
                     is_object($currentElement) && ! property_exists($currentElement, $propName),
                     is_array($currentElement) && ! isset($currentElement[$propName]),
-                ])) {
+                    ])
+                ) {
                     continue;
                 }
 
@@ -127,8 +131,8 @@ class Build
 
     /**
      * @param object|array $property
-     * @param string $key
-     * @param mixed $value
+     * @param string       $key
+     * @param mixed        $value
      * @return void
      **/
     private function setValue(object|array &$property, string $key, mixed $value): void
@@ -174,4 +178,3 @@ class Build
         return tap($result, $callback);
     }
 }
-

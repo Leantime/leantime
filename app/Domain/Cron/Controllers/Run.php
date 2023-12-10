@@ -3,10 +3,10 @@
 namespace Leantime\Domain\Cron\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Environment;
+    use Leantime\Core\Events;
     use PHPMailer\PHPMailer\Exception;
     use Symfony\Component\HttpFoundation\Response;
-    use Leantime\Core\Events;
-    use Leantime\Core\Environment;
 
     /**
      *
@@ -34,7 +34,7 @@ namespace Leantime\Domain\Cron\Controllers {
         public function run(): Response
         {
             if (! $this->config->poorMansCron) {
-                return new Response;
+                return new Response();
             }
 
             Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
@@ -49,7 +49,7 @@ namespace Leantime\Domain\Cron\Controllers {
                     flush();
                 }
 
-                $output = new \Symfony\Component\Console\Output\BufferedOutput;
+                $output = new \Symfony\Component\Console\Output\BufferedOutput();
 
                 if ($this->config->debug) {
                     register_shutdown_function(function () use ($output) {
@@ -61,14 +61,13 @@ namespace Leantime\Domain\Cron\Controllers {
                 }
 
                 /** @return never **/
-                (new \Leantime\Core\ConsoleKernel)->call('schedule:run', [], $output);
+                (new \Leantime\Core\ConsoleKernel())->call('schedule:run', [], $output);
             });
 
-            return tap(new Response, function ($response) {
+            return tap(new Response(), function ($response) {
                 $response->headers->set('Content-Length', '0');
                 $response->headers->set('Connection', 'close');
             });
         }
     }
 }
-

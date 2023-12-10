@@ -67,17 +67,17 @@ namespace Leantime\Domain\Users\Controllers {
 
             $userTheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".theme");
             $userColorMode = $this->settingsService->getSetting("usersettings." . $this->userId . ".colorMode");
-            if(!$userColorMode) {
+            if (!$userColorMode) {
                 $userColorMode = "light";
             }
 
             $userColorScheme = $this->settingsService->getSetting("usersettings." . $this->userId . ".colorScheme");
-            if(!$userColorScheme) {
+            if (!$userColorScheme) {
                 $userColorScheme = "companyColors";
             }
 
             $themeFont = $this->settingsService->getSetting("usersettings." . $this->userId . ".themeFont");
-            if(!$themeFont) {
+            if (!$themeFont) {
                 $themeFont = "Roboto";
             }
 
@@ -152,7 +152,6 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //profile Info
                 if (isset($_POST['profileInfo'])) {
-
                     $tab = '#myProfile';
 
                     $values = array(
@@ -193,7 +192,6 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Save Password
                 if (isset($_POST['savepw'])) {
-
                     $tab = '#security';
 
                     $values = array(
@@ -237,7 +235,6 @@ namespace Leantime\Domain\Users\Controllers {
                 }
 
                 if (isset($_POST['saveTheme'])) {
-
                     $tab = '#theme';
 
                     $postTheme = htmlentities($_POST['theme']);
@@ -261,7 +258,6 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Save Look & Feel
                 if (isset($_POST['saveSettings'])) {
-
                     $tab = '#settings';
 
                     $postLang = htmlentities($_POST['language']);
@@ -348,7 +344,7 @@ namespace Leantime\Domain\Users\Controllers {
                     'm-d-Y',
                     'dmY',
                     'F d, Y',
-                    'd F Y'
+                    'd F Y',
                 ],
                 'times' => [
                     $this->language->__("language.timeformat"),
@@ -357,7 +353,7 @@ namespace Leantime\Domain\Users\Controllers {
                     'H:i T',
                     'H:i:s',
                     'H:i',
-                ]
+                ],
             ];
         }
     }

@@ -6,13 +6,12 @@
 
 namespace Leantime\Domain\Menu\Repositories {
 
+    use Leantime\Core\Environment as EnvironmentCore;
     use Leantime\Core\Eventhelpers;
     use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Environment as EnvironmentCore;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Auth\Services\Auth as AuthService;
-    use Leantime\Domain\Auth\Models\Roles;
 
     /**
      *
@@ -129,7 +128,7 @@ namespace Leantime\Domain\Menu\Repositories {
                         15 => ['type' => 'item', 'module' => 'setting', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
                     ],
                 ],
-            ]
+            ],
         ];
 
 

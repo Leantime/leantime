@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Wiki\Repositories {
 
-    use Leantime\Core\Db as DbCore;
     use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Wiki\Models\Article;
     use PDO;

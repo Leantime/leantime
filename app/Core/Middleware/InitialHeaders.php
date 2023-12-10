@@ -3,9 +3,9 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
+use Leantime\Core\Eventhelpers;
 use Leantime\Core\IncomingRequest;
 use Symfony\Component\HttpFoundation\Response;
-use Leantime\Core\Eventhelpers;
 
 class InitialHeaders
 {
@@ -21,12 +21,14 @@ class InitialHeaders
     {
         $response = $next($request);
 
-        foreach(self::dispatch_filter('headers', [
+        foreach (
+            self::dispatch_filter('headers', [
             'X-Frame-Options' => 'SAMEORIGIN',
             'X-XSS-Protection' => '1; mode=block',
             'X-Content-Type-Options' => 'nosniff',
             'Access-Control-Allow-Origin' => BASE_URL,
-        ]) as $key => $value) {
+            ]) as $key => $value
+        ) {
             if ($response->headers->has($key)) {
                 continue;
             }
@@ -37,4 +39,3 @@ class InitialHeaders
         return $response;
     }
 }
-

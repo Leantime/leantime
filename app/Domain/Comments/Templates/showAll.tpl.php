@@ -47,7 +47,7 @@ if (str_contains($formUrl, '?delComment=')) {
                         $tpl->__('text.written_on'),
                         $tpl->getFormattedDateString($row['date']),
                         $tpl->getFormattedTimeString($row['date'])
-                    ); ?></div>
+                                       ); ?></div>
                     <strong>
                     <?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
                     </strong><br/>

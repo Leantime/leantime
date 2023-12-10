@@ -56,31 +56,31 @@ leantime.dbmCanvasController = (function () {
     var closeModal = false;
 
     //Variables
-    var canvasoptions = function() {
+    var canvasoptions = function () {
         return {
-        sizes: {
-            minW:  700,
-            minH: 1000,
-        },
-        resizable: true,
-        autoSizable: true,
-        callbacks: {
-            beforeShowCont: function () {
-                jQuery(".showDialogOnLoad").show();
-                if (closeModal == true) {
-                    closeModal = false;
+            sizes: {
+                minW:  700,
+                minH: 1000,
+            },
+            resizable: true,
+            autoSizable: true,
+            callbacks: {
+                beforeShowCont: function () {
+                    jQuery(".showDialogOnLoad").show();
+                    if (closeModal == true) {
+                        closeModal = false;
+                        location.reload();
+                    }
+                },
+                afterShowCont: function () {
+                    jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
+
+                },
+                beforeClose: function () {
                     location.reload();
                 }
             },
-            afterShowCont: function () {
-                jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
-
-            },
-            beforeClose: function () {
-                location.reload();
-            }
-        },
-        titleFromIframe: true
+            titleFromIframe: true
 
         }
     }

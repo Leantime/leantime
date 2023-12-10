@@ -2,14 +2,12 @@
 
 namespace Leantime\Core;
 
-use GuzzleHttp\Exception\RequestException;
-use Leantime\Core\Eventhelpers;
 use Aws\S3\Exception\S3Exception;
-use Aws\S3;
 use Aws\S3\S3Client;
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Fileupload class - Data filuploads
@@ -311,7 +309,7 @@ class Fileupload
     private function uploadToS3(): bool
     {
 
-        if($this->file_tmp_name == null || $this->file_tmp_name == '') {
+        if ($this->file_tmp_name == null || $this->file_tmp_name == '') {
             return false;
         }
 
@@ -386,13 +384,15 @@ class Fileupload
 
                 $response = new Response($result->get('Body')->getContents());
 
-                foreach ([
+                foreach (
+                    [
                     'Content-Type' => $result['ContentType'],
                     'Pragma' => 'public',
                     'Cache-Control' => 'max-age=86400',
                     'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
                     'Content-disposition' => 'inline; filename="' . $imageName . '";',
-                ] as $header => $value) {
+                    ] as $header => $value
+                ) {
                     $response->headers->set($header, $value);
                 }
 
@@ -422,13 +422,15 @@ class Fileupload
         readfile($fullPath);
         $response = new Response(ob_get_clean());
 
-        foreach ([
+        foreach (
+            [
             'Content-Type' => $mimes[$ext],
             'Content-disposition' => 'inline; filename="' . $imageName . '";',
             'Pragma' => 'public',
             'Cache-Control' => 'max-age=86400',
             'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
-        ] as $header => $value) {
+            ] as $header => $value
+        ) {
             $response->headers->set($header, $value);
         }
 

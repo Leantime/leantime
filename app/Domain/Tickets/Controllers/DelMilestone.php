@@ -64,7 +64,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 return $this->tpl->displayPartial('errors.error403', responseCode: 403);
             }
 
-            if ($result = $this->ticketService->deleteMilestone($id = (int)($_GET['id']))){
+            if ($result = $this->ticketService->deleteMilestone($id = (int)($_GET['id']))) {
                 $this->tpl->setNotification($this->language->__("notification.milestone_deleted"), "success");
                 return Frontcontroller::redirect(BASE_URL . "/tickets/roadmap");
             }

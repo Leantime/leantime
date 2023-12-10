@@ -53,7 +53,7 @@ abstract class DTO
      * Validates values.
      *
      * @param string[] $params validations rules to apply to the value
-     * @param mixed $value
+     * @param mixed    $value
      * @return mixed
      * @todo Implement. May use illuminate/validation later on.
      * @see https://github.com/mattstauffer/Torch/tree/master/components/validation
@@ -67,7 +67,7 @@ abstract class DTO
      * Typecasts values.
      *
      * @param string $caster caster class name, must implement Caster
-     * @param mixed $value
+     * @param mixed  $value
      * @return mixed
      **/
     private function castWith(string $caster, mixed $value): mixed

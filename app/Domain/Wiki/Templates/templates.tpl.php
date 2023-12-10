@@ -1,6 +1,5 @@
 <?php
 
-use Leantime\Core\Eventhelpers;
 use Leantime\Domain\Wiki\Models\Template;
 
 foreach ($__data as $var => $val) {

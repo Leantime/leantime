@@ -4,8 +4,8 @@ namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Frontcontroller class
@@ -112,7 +112,7 @@ class Frontcontroller
                 $pluginEnabled = true;
 
                 if ($obj->format == "phar") {
-                    include APP_ROOT."/app/Plugins/".$obj->foldername."/".$obj->foldername.".phar";
+                    include APP_ROOT . "/app/Plugins/" . $obj->foldername . "/" . $obj->foldername . ".phar";
                 }
 
                 break;

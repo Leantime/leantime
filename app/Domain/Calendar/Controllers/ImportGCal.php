@@ -43,7 +43,6 @@ namespace Leantime\Domain\Calendar\Controllers {
             );
 
             if (isset($_POST['name']) === true) {
-
                 $values = array(
                     'url' => ($_POST['url']),
                     'name' => ($_POST['name']),
@@ -52,7 +51,6 @@ namespace Leantime\Domain\Calendar\Controllers {
 
                 $this->calendarRepo->addGUrl($values);
                 $this->tpl->setNotification('notification.gcal_imported_successfully', 'success', 'externalcalendar_created');
-
             }
 
             $this->tpl->assign('values', $values);

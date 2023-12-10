@@ -1151,13 +1151,13 @@ leantime.ticketsController = (function () {
             var left_pos = item.position().left,
                 move_handler = function (e) {
 
-                    if ((e.pageX +5) > left_pos) {
+                    if ((e.pageX + 5) > left_pos) {
                         item.addClass("right");
                         item.removeClass("left");
-                    } else if (e.pageX < (left_pos +5)) {
+                    } else if (e.pageX < (left_pos + 5)) {
                         item.addClass("left");
                         item.removeClass("right");
-                    }else{
+                    } else {
                         item.removeClass("left");
                         item.removeClass("right");
                     }
@@ -1503,11 +1503,11 @@ leantime.ticketsController = (function () {
                                 }
                             }
                         }
-                    },
+                },
                     {
                         extend: 'colvis',
                         columns: ':not(.noVis)'
-                    }
+                }
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
 

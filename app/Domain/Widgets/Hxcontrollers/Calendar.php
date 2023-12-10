@@ -53,12 +53,10 @@ class Calendar extends HtmxController
         $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
     }
 
-    public function get() {
+    public function get()
+    {
 
         $this->tpl->assign('externalCalendars', $this->calendarRepo->getMyExternalCalendars($_SESSION['userdata']['id']));
         $this->tpl->assign('calendar', $this->calendarRepo->getCalendar($_SESSION['userdata']['id']));
-
     }
-
-
 }

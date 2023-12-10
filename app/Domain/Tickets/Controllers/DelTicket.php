@@ -62,7 +62,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             //Only admins
             if (Auth::userIsAtLeast(Roles::$editor)) {
                 if (isset($params['del'])) {
-                    $result = $this->ticketService->deleteTicket($id);
+                    $result = $this->ticketService->delete($id);
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notification.todo_deleted"), "success");

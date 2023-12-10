@@ -187,7 +187,8 @@ namespace Leantime\Domain\Users\Repositories {
             $sql .=  " LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':email', $email, PDO::PARAM_STR);$stmn->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetch();

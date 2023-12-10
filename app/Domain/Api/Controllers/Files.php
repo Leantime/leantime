@@ -62,9 +62,8 @@ namespace Leantime\Domain\Api\Controllers {
                     . http_build_query([
                         'encName' => $file['encName'],
                         'ext' => $file['extension'],
-                        'realName' => $file['realName']
-                    ])
-                );
+                        'realName' => $file['realName'],
+                    ]));
             }
         }
 

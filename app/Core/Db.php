@@ -4,7 +4,6 @@ namespace Leantime\Core;
 
 use PDO;
 use PDOException;
-use Leantime\Core\Eventhelpers;
 
 /**
  * Database Class - Very simple abstraction layer for pdo connection

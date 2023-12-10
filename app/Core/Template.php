@@ -7,6 +7,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\Compilers\CompilerInterface;
@@ -18,10 +19,9 @@ use Illuminate\View\View;
 use Illuminate\View\ViewFinderInterface;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Illuminate\Support\Str;
 use ReflectionClass;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Template class - Template routing
@@ -192,19 +192,19 @@ class Template
 
             $plugins = collect(app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins());
 
-            $pluginPaths = $plugins->mapWithKeys( function ($plugin) use ($domainPaths) {
+            $pluginPaths = $plugins->mapWithKeys(function ($plugin) use ($domainPaths) {
 
                 //Catch issue when plugins are cached on load but autoloader is not quite done loading.
                 //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
                 //Clearing session cache in that case.
                 //@TODO: Check on callstack to make sure autoload loads before sessions
-                if(!is_a($plugin, '__PHP_Incomplete_Class')) {
+                if (!is_a($plugin, '__PHP_Incomplete_Class')) {
                     if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
                         throw new Exception("Plugin $basename conflicts with domain");
                     }
 
-                    if($plugin->format == "phar"){
-                        $path = 'phar://' . APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/'. $plugin->foldername . '.phar/Templates';
+                    if ($plugin->format == "phar") {
+                        $path = 'phar://' . APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/' . $plugin->foldername . '.phar/Templates';
                     } else {
                         $path = APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Templates';
                     }
@@ -474,7 +474,7 @@ class Template
      * @access public
      * @param string $template
      * @param string $layout
-     * @param int $responseCode
+     * @param int    $responseCode
      * @return Response
      * @throws Exception
      */
@@ -566,8 +566,8 @@ class Template
      * display - display only the template from the template folder without a wrapper
      *
      * @access  public
-     * @param   string  $template
-     * @param   int     $responseCode (optional)
+     * @param   string $template
+     * @param   int    $responseCode (optional)
      * @return  Response
      * @throws  Exception
      */
@@ -655,7 +655,8 @@ class Template
         );
 
         if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification = app('blade.compiler')::render('<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
+            $notification = app('blade.compiler')::render(
+                '<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
                 [
                     'message' => $message,
                     'style' => $note['type'],
@@ -674,7 +675,7 @@ class Template
 
     public function getToggleState(string $name): string
     {
-        if(isset($_SESSION['submenuToggle'][$name])){
+        if (isset($_SESSION['submenuToggle'][$name])) {
             return $_SESSION['submenuToggle'][$name];
         }
 
@@ -1070,7 +1071,6 @@ class Template
      * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
      *                 local filenames or AWS URLs
      */
-
     public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
     {
         $patchedTextHtml = $this->convertRelativePaths($textHtml);

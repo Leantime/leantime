@@ -8,7 +8,6 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Eventhelpers;
 
 /**
  * Session Class - login procedure
@@ -38,7 +37,7 @@ class Session
     /**
      * __construct - get and test Session or make session
      *
-     * @param Environment $config
+     * @param Environment     $config
      * @param IncomingRequest $request
      * @return void
      */
@@ -47,7 +46,6 @@ class Session
          * @var Environment
          */
         private Environment $config,
-
         /**
          * @var IncomingRequest
          **/

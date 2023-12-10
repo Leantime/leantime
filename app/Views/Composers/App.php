@@ -3,12 +3,9 @@
 namespace Leantime\Views\Composers;
 
 use Leantime\Core\Composer;
-use Leantime\Core\AppSettings;
 use Leantime\Core\Environment;
-use Leantime\Core\Controller;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Theme;
-use Exception;
 use Leantime\Domain\Menu\Repositories\Menu;
 use Leantime\Domain\Setting\Repositories\Setting;
 

@@ -7,7 +7,6 @@ namespace Leantime\Domain\Cron\Services {
     use Leantime\Domain\Audit\Repositories\Audit;
     use Leantime\Domain\Queue\Services\Queue;
     use Leantime\Domain\Reports\Services\Reports;
-    use PDO;
     use PHPMailer\PHPMailer\Exception;
 
     /**
@@ -77,7 +76,7 @@ namespace Leantime\Domain\Cron\Services {
             //Process Queue
             $this->queueSvc->processQueue();
 
-            if($telemetryResponse != null) {
+            if ($telemetryResponse != null) {
                 try {
                     $telemetryResponse->wait();
                 } catch (Exception $e) {

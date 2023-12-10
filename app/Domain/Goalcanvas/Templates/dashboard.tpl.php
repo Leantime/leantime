@@ -332,7 +332,7 @@ $goalStats = $tpl->get("goalStats");
                                                                             $tpl->__("text.full_name"),
                                                                             $tpl->escape($user["firstname"]),
                                                                             $tpl->escape($user['lastname'])
-                                                                                    ) ?>'
+                                                                        ) ?>'
                                                                         data-value='<?=$row['id'] . "_" . $user['id'] . "_" . $user['profileId'] ?>'
                                                                         id='userStatusChange<?=$row['id'] . $user['id'] ?>'
                                                                     >

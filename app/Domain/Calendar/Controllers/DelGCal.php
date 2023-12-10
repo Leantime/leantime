@@ -1,4 +1,5 @@
 <?php
+
 namespace Leantime\Domain\Calendar\Controllers;
 
 use Leantime\Core\Controller;
@@ -26,9 +27,9 @@ class DelGCal extends Controller
                 $msgKey = 'Kalender gelöscht';
             }
             $this->tpl->assign('msg', $msgKey);
-           return $this->tpl->display('calendar.delGCal');
+            return $this->tpl->display('calendar.delGCal');
         } else {
-           return $this->tpl->display('errors.error403');
+            return $this->tpl->display('errors.error403');
         }
     }
 }

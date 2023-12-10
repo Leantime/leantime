@@ -3,8 +3,8 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\View\View;
 use Illuminate\Support\Fluent;
+use Illuminate\View\View;
 
 /**
  *

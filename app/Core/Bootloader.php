@@ -3,17 +3,17 @@
 namespace Leantime\Core;
 
 use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
-use Psr\Container\ContainerInterface as PsrContainerContract;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Oidc\Services\Oidc as OidcService;
-use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
-use Symfony\Component\ErrorHandler\Debug;
-use Illuminate\Support\Facades\Facade;
-use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Support\Facades\Facade;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
+use Leantime\Domain\Oidc\Services\Oidc as OidcService;
 use Leantime\Domain\Setting\Services\Setting as SettingsService;
+use Psr\Container\ContainerInterface as PsrContainerContract;
+use Symfony\Component\ErrorHandler\Debug;
 
 /**
  * Bootloader
@@ -202,7 +202,7 @@ class Bootloader
         $this->app->singleton(AuthService::class, AuthService::class);
         $this->app->singleton(OidcService::class, OidcService::class);
         $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
-        $this->app->singleton(\Illuminate\Filesystem\Filesystem::class, fn () => new \Illuminate\Filesystem\Filesystem);
+        $this->app->singleton(\Illuminate\Filesystem\Filesystem::class, fn () => new \Illuminate\Filesystem\Filesystem());
         $this->app->singleton(\Illuminate\Cache\CacheManager::class, function ($app) {
             $cacheManager = new \Illuminate\Cache\CacheManager($app);
             $companyId = $app->make(SettingsService::class)->getCompanyId();
@@ -216,7 +216,7 @@ class Bootloader
         });
         $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
         $this->app->singleton('cache.psr6', fn ($app) => new \Symfony\Component\Cache\Adapter\Psr16Adapter($app['cache.store']));
-        $this->app->singleton('memcached.connector', fn () => new \Illuminate\Support\MemcachedConnector);
+        $this->app->singleton('memcached.connector', fn () => new \Illuminate\Support\MemcachedConnector());
         $this->app->singleton(\Illuminate\Cache\RateLimiter::class, fn ($app) => new \Illuminate\Cache\RateLimiter($app['cache']->driver($app['config']['cache.limiter'])));
     }
 
@@ -255,8 +255,8 @@ class Bootloader
             $kernel = $this->app->make(ConsoleKernel::class);
 
             $status = $kernel->handle(
-                $input = new \Symfony\Component\Console\Input\ArgvInput,
-                new \Symfony\Component\Console\Output\ConsoleOutput
+                $input = new \Symfony\Component\Console\Input\ArgvInput(),
+                new \Symfony\Component\Console\Output\ConsoleOutput()
             );
 
             $kernel->terminate($input, $status);
@@ -273,7 +273,8 @@ class Bootloader
     {
         $incomingRequest = app(IncomingRequest::class);
 
-        if ($debug == 0
+        if (
+            $debug == 0
             || $incomingRequest instanceof HtmxRequest
             || $incomingRequest instanceof ApiRequest
         ) {
@@ -293,11 +294,13 @@ class Bootloader
     private function bindRequest(): void
     {
         $headers = collect(getallheaders())
-            ->mapWithKeys(fn ($val, $key) => [strtolower($key) => match (true) {
+            ->mapWithKeys(fn ($val, $key) => [
+strtolower($key) => match (true) {
                 in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
                 preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
                 default => $val,
-            }])
+},
+])
             ->all();
 
         $this->app->singleton(IncomingRequest::class, function () use ($headers) {
