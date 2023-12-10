@@ -162,7 +162,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                        */?>
                                         </div>
-                                            <?php if ($wikis && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
+                                            <?php if ($wikis && count($wikis) >= 1 && $login::userIsAtLeast($roles::$editor)) {?>
                                             <div class="creationLinks">
                                                 <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
                                             </div>
@@ -205,7 +205,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                         <?php
                                         $tagsArray = explode(",", $currentArticle->tags);
-                                        if (count($tagsArray) > 0) {
+                                        if (count($tagsArray) >= 1) {
                                             echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
                                         }
 

@@ -58,6 +58,7 @@ namespace Leantime\Domain\Wiki\Controllers {
                 $this->wikiService->updateWiki($wiki, $id);
                 $this->tpl->setNotification("notification.wiki_updated_successfully", "success", "wiki_updated");
                 return Frontcontroller::redirect(BASE_URL . "/wiki/wikiModal/" . $id);
+
             } else {
             //New
                 $wiki->title = $params['title'];
@@ -72,6 +73,8 @@ namespace Leantime\Domain\Wiki\Controllers {
                     $this->tpl->setNotification("notification.wiki_created_successfully", "success", "wiki_created");
                     return Frontcontroller::redirect(BASE_URL . "/wiki/wikiModal/" . $id . "?closeModal=1");
                 }
+
+                return Frontcontroller::redirect(BASE_URL . "/wiki/wikiModal/" . $id . "");
             }
         }
     }

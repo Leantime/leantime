@@ -22,37 +22,31 @@ class Welcome extends HtmxController
     private ProjectService $projectsService;
     private TicketService $ticketsService;
     private UserService $usersService;
-    private TimesheetService $timesheetsService;
-    private ReportService $reportsService;
-    private SettingRepository $settingRepo;
-    private CalendarRepository $calendarRepo;
 
     /**
-     * Controller constructor
+     * Initializes the class by assigning the given services and setting the last page session variable.
      *
-     * @param \Leantime\Domain\Projects\Services\Projects $projectService The projects domain service.
+     * @param ProjectService $projectsService The project service object.
+     * @param TicketService $ticketsService The ticket service object.
+     * @param UserService $usersService The user service object.
      * @return void
      */
     public function init(
         ProjectService $projectsService,
         TicketService $ticketsService,
         UserService $usersService,
-        TimesheetService $timesheetsService,
-        ReportService $reportsService,
-        SettingRepository $settingRepo,
-        CalendarRepository $calendarRepo
     ) {
         $this->projectsService = $projectsService;
         $this->ticketsService = $ticketsService;
         $this->usersService = $usersService;
-        $this->timesheetsService = $timesheetsService;
-        $this->reportsService = $reportsService;
-        $this->settingRepo = $settingRepo;
-        $this->calendarRepo = $calendarRepo;
-
         $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
     }
 
+    /**
+     * Retrieves various data and assigns them to a template for display.
+     *
+     * @return void
+     */
     public function get()
     {
 
@@ -112,8 +106,8 @@ class Welcome extends HtmxController
         $todayEnd->setTime(23, 59, 59);
 
         $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, $_SESSION["userdata"]["id"]);
-        $totalToday = count($todaysTasks['totalTasks']) ?? 0;
-        $doneToday = count($todaysTasks['doneTasks']) ?? 0;
+        $totalToday = count($todaysTasks['totalTasks'] ?? []);
+        $doneToday = count($todaysTasks['doneTasks'] ?? []);
 
         $this->tpl->assign('tickets', $tickets);
         $this->tpl->assign('totalTickets', $totalTickets);

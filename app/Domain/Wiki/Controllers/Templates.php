@@ -12,8 +12,6 @@ namespace Leantime\Domain\Wiki\Controllers {
      */
     class Templates extends Controller
     {
-        private WikiService $wikiService;
-        private CommentService $commentService;
 
         /**
          * @return void
@@ -24,7 +22,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws \Exception
          */
         public function get($params): Response

@@ -4,6 +4,9 @@ parameters:
         - public/
         - app/
         - bin/
+    scanDirectories:
+        - vendor
+        - config
     ignoreErrors:
         - '#Variable \$tpl might not be defined\.#'
         - '#Variable \$login might not be defined\.#'
