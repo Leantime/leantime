@@ -265,6 +265,8 @@
                     }
                 });
             }
+
+            calendar.scrollToTime( Date.now() );
         });
 
 
@@ -320,13 +322,15 @@
                         };
                     }
                 });
+
+                calendar.scrollToTime( Date.now() );
             }
 
         });
 
         calendar.setOption('locale', leantime.i18n.__("language.code"));
         calendar.render();
-        calendar.scrollToTime( Date.now() );
+
         jQuery("#calendarTitle h2").text(calendar.getCurrentData().viewTitle);
 
         jQuery('.fc-prev-button').click(function() {
@@ -358,6 +362,8 @@
             });
 
         });
+
+
 
 
 

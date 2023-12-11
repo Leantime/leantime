@@ -551,7 +551,7 @@ class Template
         if (is_array($jsonContent) || is_object($jsonContent)) {
             $jsonContent = json_encode($jsonContent);
 
-            if (json_last_error() == JSON_ERROR_NONE) {
+            if (json_last_error() !== JSON_ERROR_NONE) {
                 return $response;
             }
         }

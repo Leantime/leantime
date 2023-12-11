@@ -19,6 +19,7 @@
                 gs-min-h="{{ $widget->gridMinHeight }}"
                 background="{{ $widget->widgetBackground }}"
 
+
             >
                 <div hx-get="{{$widget->widgetUrl }}" hx-trigger="{{$widget->widgetTrigger }}" id="{{ $widget->id }}">
                     <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />

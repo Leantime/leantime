@@ -44,8 +44,8 @@ class Widgets
             "name" => "Welcome",
             "gridHeight" => 9,
             "gridWidth" => 12,
-            "gridMinHeight" => 4,
-            "gridMinWidth" => 2,
+            "gridMinHeight" => 8,
+            "gridMinWidth" => 4,
             "gridX" => 0,
             "gridY" => 0,
             "widgetBackground" => "",
@@ -56,31 +56,44 @@ class Widgets
         $this->availableWidgets["calendar"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "calendar",
             "name" => "Calendar",
-            "gridHeight" => 17,
+            "gridHeight" => 30,
             "gridWidth" => 4,
             "gridMinHeight" => 12,
             "gridMinWidth" => 2,
             "gridX" => 8,
-            "gridY" => 9,
+            "gridY" => 10,
             "widgetUrl" => BASE_URL . "/widgets/calendar/get",
         ]);
 
         $this->availableWidgets["todos"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "todos",
             "name" => "My ToDos",
-            "gridHeight" => 34,
+            "gridHeight" => 30,
             "gridWidth" => 8,
             "gridMinHeight" => 16,
             "gridMinWidth" => 2,
             "gridX" => 0,
-            "gridY" => 9,
+            "gridY" =>10,
             "widgetUrl" => BASE_URL . "/widgets/myToDos/get",
+        ]);
+
+        $this->availableWidgets["myProjects"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            "id" => "myprojects",
+            "name" => "My Projects",
+            "gridHeight" => 20,
+            "gridWidth" => 8,
+            "gridMinHeight" => 8,
+            "gridMinWidth" => 2,
+            "gridX" => 0,
+            "gridY" =>10,
+            "widgetUrl" => BASE_URL . "/widgets/myProjects/get",
         ]);
 
         $this->defaultWidgets = [
             $this->availableWidgets["welcome"],
             $this->availableWidgets["calendar"],
             $this->availableWidgets["todos"],
+            $this->availableWidgets["myProjects"]
         ];
     }
 

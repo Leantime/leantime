@@ -115,7 +115,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
 
             //Debug uncomment to reset dashboard
-            //$this->widgetService->resetDashboard($_SESSION['userdata']['id']);
+            $this->widgetService->resetDashboard($_SESSION['userdata']['id']);
             $dashboardGrid = $this->widgetService->getActiveWidgets($_SESSION['userdata']['id']);
             $this->tpl->assign("dashboardGrid", $dashboardGrid);
 
