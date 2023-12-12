@@ -16,7 +16,7 @@
     "datatables.net-rowgroup": "^1.4.1",
     "datatables.net-rowreorder": "^1.4.1",
     "fullcalendar": "^6.1.9",
-    "htmx.org": "^1.9.8",
+    "htmx.org": "^1.9.9",
     "imagesloaded": "^5.0.0",
     "isotope-layout": "^3.0.6",
     "jquery": "3.7.1",
