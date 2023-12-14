@@ -200,31 +200,25 @@ namespace Leantime\Domain\Users\Repositories {
         /**
          * @return int
          */
-        public function getNumberOfUsers($filters = []): int
+        public function getNumberOfUsers($activeOnly = false, $includeApi = true): int
         {
-
             $sql = "SELECT COUNT(id) AS userCount FROM `zp_user`";
+            $conditions = [];
 
-            foreach ($filters as $key => $filter) {
-                if (
-                    ! isset($filter[0], $filter[1], $filter[2])
-                    || ! in_array($filter[1], ['=', '!=', '>', '<', '>=', '<=', 'LIKE', 'NOT LIKE'])
-                    || ! in_array($filter[0], ['status', 'source'])
-                ) {
-                    unset($filters[$key]);
-                    continue;
-                }
+            if ($activeOnly) {
+                $conditions[] = "status = 'a'";
+            }
 
-                $appender = str_contains('WHERE', $sql) ? ' AND ' : ' WHERE ';
+            if ($includeApi) {
+                $conditions[] = "(source != 'api' OR source IS NULL)";
+            }
 
-                $sql .= "{$appender} {$filter[0]} {$filter[1]} ':{$filter[0]}'";
+            foreach ($conditions as $condition) {
+                $sql .= str_contains($sql, 'WHERE') ? ' AND' : ' WHERE';
+                $sql .= " $condition";
             }
 
             $stmn = $this->db->database->prepare($sql);
-
-            foreach ($filters as $key => $filter) {
-                $stmn->bindValue(":{$filter[0]}", $filter[2], PDO::PARAM_STR);
-            }
 
             $stmn->execute();
             $values = $stmn->fetch();

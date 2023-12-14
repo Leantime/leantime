@@ -390,12 +390,15 @@ namespace Leantime\Domain\Plugins\Services {
             if (isset($pluginArray["data"])) {
                 foreach ($pluginArray["data"] as $plugin) {
                     $plugins[] = build(new MarketplacePlugin())
-                        ->setIdentifier($plugin['identifier'] ?? '')
-                        ->setName($plugin['post_title'] ?? '')
-                        ->setExcerpt($plugin['excerpt'] ?? '')
-                        ->set('imageUrl', $plugin['featured_image'] ?? '')
-                        /** @todo Send from marketplace **/
-                        ->setAuthors('')
+                        ->set('identifier', $plugin['identifier'] ?? '')
+                        ->set('name', $plugin['post_title'] ?? '')
+                        ->set('excerpt', $plugin['excerpt'] ?? '')
+                        ->set('imageUrl', $plugin['icon'] ?? '')
+                        ->set('vendorDisplayName', $plugin['vendor'] ?? '')
+                        ->set('vendorId', $plugin['vendor_id'] ?? '')
+                        ->set('vendorEmail', $plugin['vendor_email'] ?? '')
+                        ->set('startingPrice', '$' . ($plugin['price'] ?? '') . (! empty($plugin['sub_interval']) ? '/' . $plugin['sub_interval'] : ''))
+                        ->set('rating', $plugin['rating'] ?? '')
                         ->get();
                 }
             }
@@ -407,46 +410,49 @@ namespace Leantime\Domain\Plugins\Services {
          * @param string $identifier
          * @return MarketplacePlugin[]
          */
-        public function getMarketplacePlugin(string $identifier): array
+        public function getMarketplacePlugin(string $identifier): MarketplacePlugin|false
         {
-            return Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/versions/$identifier")
-                ->collect()
-                ->mapWithKeys(function ($data, $version) use ($identifier) {
-                    static $count;
-                    $count ??= 0;
+            $response = Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/details/$identifier");
 
-                    $pluginModel = app()->make(MarketplacePlugin::class);
-                    $pluginModel->identifier = $identifier;
-                    $pluginModel->name = $data['name'];
-                    $pluginModel->excerpt = '';
-                    $pluginModel->description = $data['description'];
-                    $pluginModel->marketplaceUrl = $data['marketplace_url'];
-                    $pluginModel->thumbnailUrl = $data['thumbnail_url'] ?: '';
-                    $pluginModel->authors = $data['author'];
-                    $pluginModel->version = $version;
-                    $pluginModel->price = $data['price'];
-                    $pluginModel->license = $data['license'];
-                    $pluginModel->rating = $data['rating'];
-                    $pluginModel->marketplaceId = $data['product_id'];
+            if (! $response->ok()) {
+                return false;
+            }
 
-                    return [$count++ => $pluginModel];
-                })
-                ->all();
+            $data = $response->json();
+
+            return build(new MarketplacePlugin)
+                ->set('identifier', $identifier ?? '')
+                ->set('name', $data['name'] ?? '')
+                ->set('icon', $data['icon'] ?? '')
+                ->set('description', nl2br($data['description'] ?? ''))
+                ->set('marketplaceUrl', $data['marketplaceUrl'] ?? '')
+                ->set('vendorId', (int) $data['vendor']['id'] ?? null)
+                ->set('vendorDisplayName', $data['vendor']['name'] ?? '')
+                ->set('rating', $data['reviews']['average'] ?? 'N/A')
+                ->set('reviewCount', $data['reviews']['count'] ?? 0)
+                ->set('reviews', $data['reviews']['list'])
+                ->set('marketplaceId', $data['productId'])
+                ->set('pricingTiers', $data['tiers'])
+                ->set('categories', $data['categories'] ?? [])
+                ->set('tags', $data['tags'] ?? [])
+                ->set('compatibility', $data['compatibility'] ?? [])
+                ->get();
         }
 
         /**
          * @param MarketplacePlugin $plugin
+         * @param string $version
          * @return void
          * @throws Illuminate\Http\Client\RequestException|Exception
          */
-        public function installMarketplacePlugin(MarketplacePlugin $plugin): void
+        public function installMarketplacePlugin(MarketplacePlugin $plugin, string $version): void
         {
             $response = Http::withoutVerifying()->withHeaders([
                     'X-License-Key' => $plugin->license,
                     'X-Instance-Id' => $this->settingsService->getCompanyId(),
                     'X-User-Count' => $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false),
                 ])
-                ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->marketplaceId}");
+                ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
 
             $response->throwIf(in_array(true, [
                 ! $response->ok(),
@@ -455,22 +461,18 @@ namespace Leantime\Domain\Plugins\Services {
 
             $filename = $response->header('Content-Disposition');
             $filename = substr($filename, strpos($filename, 'filename=') + 9);
+            $foldername = Str::studly(basename($filename, '.zip'));
+            $filename = Str::finish($foldername, '.zip');
 
-            if (! str_starts_with($filename, $plugin->identifier)) {
-                throw new \Exception('Wrong file downloaded');
-            }
-
-            if (
-                ! file_put_contents(
-                    $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
-                    $response->body()
-                )
-            ) {
+            if (! file_put_contents(
+                $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
+                $response->body()
+            )) {
                 throw new \Exception('Could not download plugin');
             }
 
             if (
-                is_dir($pluginDir = "{$this->pluginDirectory}{$plugin->identifier}")
+                is_dir($pluginDir = "{$this->pluginDirectory}{$foldername}")
                 && ! File::deleteDirectory($pluginDir)
             ) {
                 throw new \Exception('Could not remove existing plugin');
@@ -503,7 +505,7 @@ namespace Leantime\Domain\Plugins\Services {
             unlink($temporaryFile);
 
             # read the composer.json content from the plugin phar file
-            $pluginModel = $this->createPluginFromComposer($plugin->identifier, $plugin->license);
+            $pluginModel = $this->createPluginFromComposer($foldername, $plugin->license);
 
             if (! $this->pluginRepository->addPlugin($pluginModel)) {
                 throw new \Exception('Could not add plugin to database');

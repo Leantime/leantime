@@ -25,7 +25,7 @@ class Updated
         $dbVersion = app()->make(SettingRepository::class)->getSetting('db-version');
         $settingsDbVersion = app()->make(AppSettings::class)->dbVersion;
 
-        $_SESSION['isUpdated'] = $dbVersion == $settingsDbVersion;
+        $_SESSION['isUpdated'] ??= $dbVersion == $settingsDbVersion;
 
         self::dispatch_event('system_update', ['dbVersion' => $dbVersion, 'settingsDbVersion' => $settingsDbVersion]);
 

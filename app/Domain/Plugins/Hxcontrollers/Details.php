@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Plugins\Hxcontrollers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Leantime\Core\HtmxController;
 use Leantime\Domain\Plugins\Models\MarketplacePlugin;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
@@ -39,22 +40,30 @@ class Details extends HtmxController
      */
     public function install(): string
     {
-        $pluginModel = app(MarketplacePlugin::class);
         $pluginProps = $this->incomingRequest->request->all()['plugin'];
-        collect($pluginProps)->each(fn($value, $key) => $pluginModel->{$key} = $value ?? '');
+        $version = $pluginProps['version'];
+        unset($pluginProps['version']);
+        $builder = build(new MarketplacePlugin);
 
-        if (! empty($pluginModel->identifier)) {
-            $pluginModel->identifier = Str::studly($pluginModel->identifier);
+        foreach ($pluginProps as $key => $value) {
+            $newValue = json_decode(json: $value, flags: JSON_OBJECT_AS_ARRAY);
+
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $value = $newValue;
+            }
+
+            $builder->set($key, $value);
         }
 
-        $this->tpl->assign('versions', [$pluginModel->version => $pluginModel]);
+        $pluginModel = $builder->get();
+
+        $this->tpl->assign('plugin', $pluginModel);
 
         try {
-            $this->pluginService->installMarketplacePlugin($pluginModel);
+            $this->pluginService->installMarketplacePlugin($pluginModel, $version);
         } catch (\Throwable $e) {
-            Frontcontroller::setResponseCode(200);
-            $this->tpl->assign('formError', $e->getMessage());
-            return 'plugin-installation';
+             $this->tpl->assign('formError', $e->getMessage());
+             return 'plugin-installation';
         }
 
         if ($this->pluginService->isPluginEnabled($pluginModel->identifier)) {

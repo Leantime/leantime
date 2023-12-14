@@ -10,10 +10,10 @@ module.exports = {
         extend: {
             colors: {
                 'primary': {
-                    default: 'var(--primary-color)',
+                    DEFAULT: 'var(--primary-color)',
                 },
                 'secondary': {
-                    default: 'var(--secondary-color)',
+                    DEFAULT: 'var(--secondary-color)',
                 },
             },
             fontSize: {
@@ -47,7 +47,16 @@ module.exports = {
                 'm': '15px',
                 'l': '20px',
                 'xl': '30px',
-            }
+	    },
+	    gap: {
+                'none': '0',
+                'xs': '5px',
+                'sm': '10px',
+                'base': '15px',
+                'm': '15px',
+                'l': '20px',
+                'xl': '30px',
+	    },
         },
     },
     plugins: [],
