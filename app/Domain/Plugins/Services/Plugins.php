@@ -511,5 +511,30 @@ namespace Leantime\Domain\Plugins\Services {
 
             unset($_SESSION['enabledPlugins']);
         }
+
+        public function canActivate(InstalledPlugin $plugin): bool
+        {
+            if ($plugin->type !== $this->pluginTypes['marketplace']) {
+                return true;
+            }
+
+            $numberOfUsers = $this->usersService->getNumberOfUsers(activeOnly: true, includeApi: false);
+            $instanceId = $this->settingsService->getCompanyId();
+
+            $response = Http::get($this->marketplaceUrl, [
+                'wp-api' => 'software-api',
+                'request' => 'check',
+                'product_id' => $plugin->id,
+                'license_key' => $plugin->license,
+                'instance' => $instanceId,
+                'user_count' => $numberOfUsers,
+            ]);
+
+            if (! $response->ok()) {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
