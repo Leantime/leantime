@@ -132,7 +132,6 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function isPluginEnabled($pluginFolder): bool
         {
-
             $plugins = $this->getEnabledPlugins();
 
             foreach ($plugins as $plugin) {
@@ -150,7 +149,6 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getEnabledPlugins(): mixed
         {
-
             if (isset($_SESSION['enabledPlugins'])) {
                 $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
                 return $enabledPlugins;
@@ -198,23 +196,23 @@ namespace Leantime\Domain\Plugins\Services {
             } elseif (file_exists($composerPath = "phar://{$pluginPath}{$pluginFolder}.phar" . DIRECTORY_SEPARATOR . 'composer.json')) {
                 $format = 'phar';
             } else {
-                throw new \Exception('Could not find composer.json');
+                throw new \Exception(__('notifications.plugin_install_cant_find_composer'));
             }
 
             $json = file_get_contents($composerPath);
             $pluginFile = json_decode($json, true);
 
             $plugin = build(new InstalledPlugin())
-                ->setName($pluginFile['name'])
-                ->setEnabled(0)
-                ->setDescription($pluginFile['description'])
-                ->setVersion($pluginFile['version'])
-                ->setInstalldate(date("y-m-d"))
-                ->setFoldername($pluginFolder)
-                ->setLicense($license_key)
-                ->setFormat($format)
-                ->setHomepage($pluginFile['homepage'])
-                ->setAuthors(json_encode($pluginFile['authors']))
+                ->set('name', $pluginFile['name'])
+                ->set('enabled', 0)
+                ->set('description', $pluginFile['description'])
+                ->set('version', $pluginFile['version'])
+                ->set('installdate', date("y-m-d"))
+                ->set('foldername', $pluginFolder)
+                ->set('license', $license_key)
+                ->set('format', $format)
+                ->set('homepage', $pluginFile['homepage'])
+                ->set('authors', json_encode($pluginFile['authors']))
                 ->get();
 
             return $plugin;
@@ -468,14 +466,14 @@ namespace Leantime\Domain\Plugins\Services {
                 $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
                 $response->body()
             )) {
-                throw new \Exception('Could not download plugin');
+                throw new \Exception(__('notification.plugin_cant_download'));
             }
 
             if (
                 is_dir($pluginDir = "{$this->pluginDirectory}{$foldername}")
                 && ! File::deleteDirectory($pluginDir)
             ) {
-                throw new \Exception('Could not remove existing plugin');
+                throw new \Exception(__('notification.plugin_cant_remove'));
             }
 
             mkdir($pluginDir);
@@ -483,21 +481,21 @@ namespace Leantime\Domain\Plugins\Services {
             $zip = new \ZipArchive();
 
             match ($zip->open($temporaryFile)) {
-                \ZipArchive::ER_EXISTS => throw new \Exception('Zip: File already exists'),
-                \ZipArchive::ER_INCONS => throw new \Exception('Zip: Archive inconsistent'),
-                \ZipArchive::ER_INVAL => throw new \Exception('Zip: Invalid argument'),
-                \ZipArchive::ER_MEMORY => throw new \Exception('Zip: Malloc failure'),
-                \ZipArchive::ER_NOENT => throw new \Exception('Zip: No such file'),
-                \ZipArchive::ER_NOZIP => throw new \Exception('Zip: Not a zip archive'),
-                \ZipArchive::ER_OPEN => throw new \Exception('Zip: Can\'t open file'),
-                \ZipArchive::ER_READ => throw new \Exception('Zip: Read error'),
-                \ZipArchive::ER_SEEK => throw new \Exception('Zip: Seek error'),
-                default => throw new \Exception('Zip: Unknown error'),
+                \ZipArchive::ER_EXISTS => throw new \Exception(__('notification.plugin_zip_exists')),
+                \ZipArchive::ER_INCONS => throw new \Exception(__('notification.plugin_zip_inconsistent')),
+                \ZipArchive::ER_INVAL => throw new \Exception(__('notification.plugin_zip_invalid_arg')),
+                \ZipArchive::ER_MEMORY => throw new \Exception(__('notification.plugin_zip_malloc')),
+                \ZipArchive::ER_NOENT => throw new \Exception(__('notification.plugin_zip_no_file')),
+                \ZipArchive::ER_NOZIP => throw new \Exception(__('notification.plugin_zip_not_zip')),
+                \ZipArchive::ER_OPEN => throw new \Exception(__('notification.plugin_zip_cant_open')),
+                \ZipArchive::ER_READ => throw new \Exception(__('notification.plugin_zip_read_err')),
+                \ZipArchive::ER_SEEK => throw new \Exception(__('notification.plugin_zip_seek_err')),
+                default => throw new \Exception(__('notification.plugin_zip_unknown_err')),
                 true => null,
             };
 
             if (! $zip->extractTo($pluginDir)) {
-                throw new \Exception('Could not extract plugin');
+                throw new \Exception(__('notification.plugin_zip_cant_extract'));
             }
 
             $zip->close();
@@ -508,7 +506,7 @@ namespace Leantime\Domain\Plugins\Services {
             $pluginModel = $this->createPluginFromComposer($foldername, $plugin->license);
 
             if (! $this->pluginRepository->addPlugin($pluginModel)) {
-                throw new \Exception('Could not add plugin to database');
+                throw new \Exception(__('notification_cant_add_to_db'));
             }
 
             unset($_SESSION['enabledPlugins']);

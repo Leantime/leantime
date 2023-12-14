@@ -11,7 +11,7 @@
                 @if($plugin instanceof \Leantime\Domain\Plugins\Models\MarketplacePlugin)
                     <div
                         class="certififed label-default tw-absolute tw-top-[10px] tw-right-[10px] tw-text-primary tw-rounded-full tw-text-sm"
-                        data-tippy-content="This plugin was downloaded from the Leantime Marketplace and is signature verified"
+                        data-tippy-content="{{ __('marketplace.certified_tooltip') }}"
                     >
                         <i class="fa fa-certificate"></i>
                         Certified
