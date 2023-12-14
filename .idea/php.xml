@@ -15,6 +15,11 @@
     <option name="showSniffs" value="true" />
     <option name="transferred" value="true" />
   </component>
+  <component name="PhpCSFixer">
+    <phpcsfixer_settings>
+      <PhpCSFixerConfiguration tool_path="$PROJECT_DIR$/phpcs.xml" />
+    </phpcsfixer_settings>
+  </component>
   <component name="PhpCodeSniffer">
     <phpcs_settings>
       <PhpCSConfiguration beautifier_path="$PROJECT_DIR$/vendor/bin/phpcbf" standards="Modernize;MySource;NormalizedArrays;PEAR;PHPCSUtils;PSR1;PSR12;PSR2;Squiz;Universal;Zend" tool_path="$PROJECT_DIR$/vendor/bin/phpcs" />

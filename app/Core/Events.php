@@ -195,7 +195,7 @@ class Events
             }
         }
 
-        Events::add_event_listener('leantime.core.bootloader.boot.after_install', function () {
+        Events::add_event_listener('leantime.core.middleware.installed.handle.after_install', function () {
             if (! $_SESSION['isInstalled']) {
                 return;
             }

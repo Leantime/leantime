@@ -44,7 +44,7 @@
                                     id="progress_{{ $key }}"
                                     hx-patch="{{ BASE_URL }}/hx/projects/checklist/update-subtask/"
                                     hx-target="#progressForm"
-                                    hx-swap="outerHTML"
+                                    hx-swap="outerHTML transition:true"
                                     @if ($task['status'] == 'done') checked @endif
                                     @if (! in_array($step['stepType'], ['complete', 'current']))
                                         disabled

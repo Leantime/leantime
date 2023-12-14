@@ -584,6 +584,33 @@ leantime.projectsController = (function () {
 
     };
 
+    var favoriteProject = function(id, element) {
+
+        jQuery(element).addClass("go");
+        if (jQuery(element).hasClass("isFavorite")) {
+            leantime.reactionsController.removeReaction(
+                'project',
+                id,
+            'favorite',
+                function() {
+                    jQuery(element).find("i").removeClass("fa-solid").addClass("fa-regular");
+                    jQuery(element).removeClass("isFavorite");
+                }
+        );
+        } else {
+            leantime.reactionsController.addReactions(
+                'project',
+                id,
+            'favorite',
+                function() {
+                    jQuery(element).find("i").removeClass("fa-regular").addClass("fa-solid");
+                    jQuery(element).addClass("isFavorite");
+                }
+            );
+        }
+
+    }
+
     // Make public what you want to have public, everything else is private
     return {
         initDates:initDates,
@@ -600,7 +627,8 @@ leantime.projectsController = (function () {
         readURL:readURL,
         initGanttChart:initGanttChart,
         setUpKanbanColumns:setUpKanbanColumns,
-        initProjectsKanban:initProjectsKanban
+        initProjectsKanban:initProjectsKanban,
+        favoriteProject:favoriteProject
 
     };
 })();

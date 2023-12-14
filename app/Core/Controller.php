@@ -101,6 +101,13 @@ abstract class Controller
         }
     }
 
+    /**
+     * getResponse - returns the response
+     *
+     * @access public
+     *
+     * @return Response The response object.
+     */
     public function getResponse(): Response
     {
         return $this->response;

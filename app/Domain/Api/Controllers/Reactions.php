@@ -43,6 +43,7 @@ namespace Leantime\Domain\Api\Controllers {
         public function post($params)
         {
             if ($params["action"] == "add") {
+
                 if (! $this->reactionsService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
                     return $this->tpl->displayJson(['status' => 'failure'], 500);
                 }

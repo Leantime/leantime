@@ -39,7 +39,8 @@ class EventsTest extends Unit
         $context = 'testContext';
         $eventListeners = [$listenerName => [$payload]];
 
-        Events::add_event_listener($listenerName, function () {}, 10);
+        Events::add_event_listener($listenerName, function () {
+        }, 10);
         // Test that the event listener has been found
         $this->assertEquals([$payload], Events::findEventListeners($listenerName, $eventListeners));
     }
@@ -55,10 +56,12 @@ class EventsTest extends Unit
         $filterName = 'filter.test.name';
 
         // Add an event listener
-        Events::add_event_listener($eventName, function () {}, 10);
+        Events::add_event_listener($eventName, function () {
+        }, 10);
 
         // Add a filter listener
-        Events::add_filter_listener($filterName, function () {}, 10);
+        Events::add_filter_listener($filterName, function () {
+        }, 10);
 
         // Get registries
         $registries = Events::get_registries();

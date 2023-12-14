@@ -42,7 +42,7 @@ $currentClientName = $tpl->get("currentClientName");
                 <div class="col-md-3">
                     <div class="projectBox">
 
-                        <div class="row " id="projectProgressContainer">
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="row" style="padding-bottom:10px;">
                                     <div class="col-md-9">
