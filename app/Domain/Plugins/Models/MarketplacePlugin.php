@@ -14,13 +14,18 @@ class MarketplacePlugin implements PluginDisplayStrategy
     public string $excerpt;
     public string $description;
     public string $imageUrl;
-    public array|string $authors;
-    public string $version;
+    public string $vendorDisplayName;
+    public int $vendorId;
+    public string $vendorEmail;
     public string $marketplaceUrl;
-    public ?string $price;
+    public ?string $startingPrice;
+    public ?array $pricingTiers;
     public ?string $license;
     public ?string $rating;
+    public ?int $reviewCount;
+    public array $reviews;
     public string $marketplaceId;
+    public array $compatibility;
 
     public function getCardDesc(): string
     {
@@ -31,12 +36,28 @@ class MarketplacePlugin implements PluginDisplayStrategy
     {
         $links = [];
 
-        if (! empty($plugin->authors)) {
-            $author = is_array($plugin->authors) ? $plugin->authors[0] : $plugin->authors;
-            $links[] = [
+        if (! empty($this->vendorDisplayName) && (! empty($this->vendorId) || ! empty($this->vendorEmail))) {
+            $vendor = [
                 'prefix' => __('text.by'),
-                'link' => "mailto:{$author->email}",
-                'text' => $author->name,
+                'display' => $this->vendorDisplayName,
+            ];
+
+            $vendor['link'] = ! empty($this->vendorId) ? "/plugins/marketplace?" . http_build_query(['vendor_id' => $this->vendorId]) : "mailto:{$this->vendorEmail}";
+
+            $links[] = $vendor;
+        }
+
+        if (! empty($this->startingPrice)) {
+            $links[] = [
+                'prefix' => __('text.starting_at', 'Starting At'),
+                'display' => $this->startingPrice,
+            ];
+        }
+
+        if (! empty($this->rating)) {
+            $links[] = [
+                'prefix' => __('text.rating', 'Rating: '),
+                'display' => $this->rating,
             ];
         }
 

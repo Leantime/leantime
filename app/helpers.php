@@ -56,12 +56,13 @@ if (! function_exists('__')) {
      * Translate a string.
      *
      * @param string $index
+     * @param string $default
      * @return string
      * @throws BindingResolutionException
      */
-    function __(string $index): string
+    function __(string $index, $default = ''): string
     {
-        return app()->make(Language::class)->__($index);
+        return app()->make(Language::class)->__(index: $index, default: $default);
     }
 }
 

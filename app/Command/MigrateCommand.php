@@ -46,8 +46,8 @@ class MigrateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        define('BASE_URL', "");
-        define('CURRENT_URL', "");
+        ! defined('BASE_URL') && define('BASE_URL', "");
+        ! defined('CURRENT_URL') && define('CURRENT_URL', "");
 
         $install = app()->make(Install::class);
         $io = new SymfonyStyle($input, $output);
@@ -99,8 +99,8 @@ class MigrateCommand extends Command
                 $io->text("Successfully Installed DB");
             }
             $success = $install->updateDB();
-            if (!$success) {
-                throw new Exception("Migration Failed; Please Check Logs");
+            if ($success !== true) {
+                throw new Exception("Migration Failed; See below" . PHP_EOL . implode(PHP_EOL, $success));
             }
         } catch (Exception $ex) {
             $io->error($ex);

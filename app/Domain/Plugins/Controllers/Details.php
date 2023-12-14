@@ -32,13 +32,17 @@ class Details extends Controller
         }
 
         /**
-         * @var \Leantime\Domain\Plugins\Models\MarketplacePlugin[] $versions
+         * @var \Leantime\Domain\Plugins\Models\MarketplacePlugin|false $plugin
          */
-        $versions = $this->pluginService->getMarketplacePlugin(
+        $plugin = $this->pluginService->getMarketplacePlugin(
             $this->incomingRequest->query->get('id'),
         );
 
-        $this->tpl->assign('versions', $versions);
+        if (! $plugin) {
+            return $this->tpl->display('error.error404', 'blank');
+        }
+
+        $this->tpl->assign('plugin', $plugin);
 
         return $this->tpl->display('plugins.plugindetails', 'blank');
     }

@@ -6,6 +6,8 @@ use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Pipeline\Pipeline;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
 
 class HttpKernel implements HttpKernelContract
 {
@@ -46,7 +48,16 @@ class HttpKernel implements HttpKernelContract
             return $e->getResponse();
         } catch (\Throwable $e) {
             if (! app()->make(Environment::class)->debug) {
-                return new RedirectResponse(BASE_URL . "/errors/error500", 500);
+                return new RedirectResponse(BASE_URL . "/errors/error500", 201);
+            }
+
+            if ($request instanceof HtmxRequest) {
+                /** @todo Replace with a proper error template for htmx requests */
+                return new Response(sprintf(
+                    '<dialog style="%s" open>%s</dialog>',
+                    'width: 90vw; height: 90vh; z-index: 9999999; position: fixed; top: 5vh; left: 5vh; overflow: scroll',
+                    (new HtmlErrorRenderer(true))->render($e)->getAsString(),
+                ));
             }
 
             throw $e;

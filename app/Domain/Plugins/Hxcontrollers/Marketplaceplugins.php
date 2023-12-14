@@ -37,6 +37,7 @@ class Marketplaceplugins extends HtmxController
      */
     public function getlist(): void
     {
+        /** @var MarketplacePlugin[] $plugins */
         $plugins = $this->pluginService->getMarketplacePlugins(
             $this->incomingRequest->query->get('page', 1),
             $this->incomingRequest->query->get('search', ''),

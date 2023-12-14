@@ -75,9 +75,11 @@ namespace Leantime\Domain\Users\Services {
         }
 
         /**
+         * @param bool $activeOnly
+         * @param bool $includeApi
          * @return int
          */
-        public function getNumberOfUsers($activeOnly = false, $includeApi = true): int
+        public function getNumberOfUsers(bool $activeOnly = false, bool $includeApi = true): int
         {
             $filters = [];
 
