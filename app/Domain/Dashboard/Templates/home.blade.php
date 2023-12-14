@@ -33,23 +33,7 @@
 
 jQuery(document).ready(function() {
 
-
-
-
-
-
-    // 2.x method
-    function saveGrid() {
-
-
-
-    }
-
-
-
-
-
-
+    leantime.widgetController.initGrid();
 
     @if($completedOnboarding === false)
         leantime.helperController.firstLoginModal();
