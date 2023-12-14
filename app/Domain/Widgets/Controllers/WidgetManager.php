@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Widgets\Controllers {
 
+    use GuzzleHttp\Psr7\Response;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Setting\Repositories\Setting;
@@ -10,51 +11,69 @@ namespace Leantime\Domain\Widgets\Controllers {
     use DateTime;
     use DateInterval;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Widgets\Services\Widgets;
+    use Symfony\Component\HttpFoundation;
 
     /**
+     * Class WidgetManager
      *
+     * This class represents a widget manager.
      */
     class WidgetManager extends Controller
     {
+        /**
+         * @var SettingRepository $settingRepo
+         */
         private Setting $settingRepo;
 
         /**
-         * constructor - initialize private variables
-         *
-         * @access public
-         *
+         * @var WidgetService $widgetService
          */
-        public function init(Setting $settingRepo)
+        private Widgets $widgetService;
+
+        /**
+         * Initializes the object.
+         *
+         * @param Setting $settingRepo   The setting repository object.
+         * @param Widgets $widgetService The widget service object.
+         * @return void
+         */
+        public function init(Setting $settingRepo, Widgets $widgetService)
         {
             $this->settingRepo = $settingRepo;
+            $this->widgetService = $widgetService;
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
         }
 
         /**
-         * get - handle get requests
+         * Returns an HTTP response.
          *
-         * @access public
-         *
+         * @param array $params An array of parameters.
+         * @return HttpFoundation\Response The HTTP response.
          */
-        public function get($params)
+        public function get(array $params): HttpFoundation\Response
         {
+            $availableWidgets = $this->widgetService->getAll();
+            $activeWidgets = $this->widgetService->getActiveWidgets($_SESSION['userdata']['id']);
 
+            $this->tpl->assign("availableWidgets", $availableWidgets);
+            $this->tpl->assign("activeWidgets", $activeWidgets);
 
-            $this->tpl->displayPartial('widgets.widget-manager');
+            return $this->tpl->displayPartial('widgets.widgetManager');
         }
 
         /**
-         * post - handle post requests
+         * Posts data and returns an HTTP response.
          *
-         * @access public
-         *
+         * @param array $params An array of parameters.
+         * @return HttpFoundation\Response|null The HTTP response, or null if the parameters are invalid.
          */
-        public function post($params)
+        public function post(array $params): HttpFoundation\Response
         {
             if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
                 $this->settingRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
-                return;
+                return new \Symfony\Component\HttpFoundation\Response();
             }
         }
     }

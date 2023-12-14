@@ -2480,6 +2480,7 @@ h3.todaysDate {
     box-shadow: var(--large-shadow);
     border-radius:var(--box-radius);
     padding:15px;
+    color:var(--main-action-color);
     background:var(--secondary-background);
 }
 

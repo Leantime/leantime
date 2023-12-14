@@ -19,12 +19,12 @@
                     </a>
                 </div>
                 <div class="col-md-2 tw-text-right">
-                        <a
-                            href="javascript:void(0);"
-                            onclick="leantime.projectsController.favoriteProject({{ $project['id'] }} ,this)"
-                            class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw-mr-[5px]"
-                            data-tippy-content="{{ __('label.favorite_tooltip') }}"
-                        ><i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
+                    <a  href="javascript:void(0);"
+                        onclick="leantime.projectsController.favoriteProject({{ $project['id'] }}, this)"
+                        class="favoriteClick favoriteStar pull-right margin-right {{ $project['isFavorite'] ? 'isFavorite' : ''}} tw-mr-[5px]"
+                        data-tippy-content="{{ __('label.favorite_tooltip') }}">
+                            <i class="{{ $project['isFavorite'] ? 'fa-solid' : 'fa-regular' }} fa-star"></i>
+                    </a>
                 </div>
             </div>
 

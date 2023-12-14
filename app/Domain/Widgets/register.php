@@ -8,6 +8,6 @@ use Leantime\Core\Eventhelpers;
         "module" => "widgets",
         "action" => "widgetManager",
         "url" => CURRENT_URL . "#/widgets/widgetManager",
-        "label" => "Dashboard Settings",
+        "label" => "links.dashboard_settings",
     ];
 });

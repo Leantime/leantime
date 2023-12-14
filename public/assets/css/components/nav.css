@@ -269,7 +269,7 @@ a.barmenu:hover {
     padding: 0 20px;
 }
 
-.headmenu .project-selector .projectAvatar {
+.projectselector .projectAvatar {
     width:30px;
     height:30px;
     font-size:14px;
@@ -282,13 +282,13 @@ a.barmenu:hover {
     background:var(--element-gradient);
 }
 
-.headmenu .project-selector .projectAvatar img {
+.headmenu .projectselector .projectAvatar img {
     width:30px;
     height:30px;
     border-radius:var(--box-radius-small);
 }
 
-.headmenu .project-selector .projectAvatar .fa {
+.headmenu .projectselector .projectAvatar .fa {
     font-weight:900;
     color:#fff;
     margin-right:0;
@@ -403,7 +403,7 @@ a.barmenu:hover {
 
 .fixedMenuPoint {
     position:fixed;
-    width:240px;
+    width:215px;
     bottom:0;
     padding-bottom: 10px;
     list-style: none;

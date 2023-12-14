@@ -512,7 +512,7 @@ class Language
             && $date != "1969-12-31 00:00:00"
             && $date != "0000-00-00 00:00:00"
         ) {
-            $timestamp = date_create_from_format($this->__("language.dateformat"), $date, new \DateTimeZone($_SESSION['usersettings.timezone']));
+            $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
 
             if (is_object($timestamp)) {
                 switch ($timeOfDay) {
@@ -545,7 +545,7 @@ class Language
     public function getISODateTimeString(?string $date, $time): bool|string
     {
         if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format($this->__("language.dateformat"), $date, new \DateTimeZone($_SESSION['usersettings.timezone']));
+            $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
 
             //Time is coming in as 24hour format with :
             $timeparts = explode(":", $time);
@@ -571,7 +571,7 @@ class Language
     public function getISOTimeString(?string $time): bool|string
     {
         if (is_null($time) === false && $time != "" && $time != "1969-12-31 00:00:00" && $time != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format($this->__("language.timeformat"), $time, new \DateTimeZone($_SESSION['usersettings.timezone']));
+            $timestamp = date_create_from_format($this->__("language.timeformat"), $time);
 
             if (is_object($timestamp)) {
                 return date("H:i:00", $timestamp->getTimestamp());
@@ -591,7 +591,7 @@ class Language
     public function extractTime(?string $dateTime): bool|string
     {
         if (is_null($dateTime) === false && $dateTime != "" && $dateTime != "1969-12-31 00:00:00" && $dateTime != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime, new \DateTimeZone($_SESSION['usersettings.timezone']));
+            $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime);
 
             if (is_object($timestamp)) {
                 return date("H:i:00", $timestamp->getTimestamp());
