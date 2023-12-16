@@ -119,7 +119,7 @@ class Frontcontroller
             }
 
             if (!$pluginEnabled || !class_exists($classname)) {
-                return self::redirect(BASE_URL . "/errors/error404", 404);
+                return self::redirect(BASE_URL . "/errors/error404", 307);
             }
         }
 

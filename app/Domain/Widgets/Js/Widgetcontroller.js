@@ -6,7 +6,7 @@ leantime.widgetController = (function () {
     var initGrid = function () {
 
         grid = GridStack.init({
-            margin: 5,
+            margin: '0px 15px 15px 0px',
             handle: ".grid-handler-top",
             minRow: 2, // don't let it collapse when empty
             cellHeight: '30px',
@@ -89,19 +89,73 @@ leantime.widgetController = (function () {
     }
 
     var resizeWidget = function (el) {
-
+        let grid = document.querySelector('.grid-stack').gridstack;
         grid.resizeToContent(el, false);
         saveGrid();
     }
 
+    var toggleWidgetVisibility = function(id, element, widget) {
 
+        let grid = document.querySelector('.grid-stack').gridstack;
 
+        //When we click on a checked checkbox, the checked status will change
+        //Then it will get here. So once it is here it is already unchecked
+        //which means that we need to check if it is not checked to remove the widget
+        if (!jQuery(element).is(":checked")){
+
+            removeWidget(jQuery("#" + id).closest(".grid-stack-item")[0]);
+
+        } else {
+
+            grid.addWidget(buildWidget(widget), {
+                w: widget.gridWidth,
+                h: widget.gridHeight,
+                minW: widget.gridMinWidth,
+                minH: widget.gridMinHeight,
+                x: widget.gridX,
+                y: widget.gridY
+            });
+            htmx.process(document.body);
+            saveGrid();
+
+        }
+
+    }
+
+    var buildWidget = function(widget) {
+        console.log(widget);
+
+        var widgetHtml = '<div class="grid-stack-item">\n' +
+            '    <div class="grid-stack-item-content tw-p-none '+ (widget.widgetBackground == "default" ? "maincontentinner" : widget.background)  +'">\n' +
+            '        <div class="'+(widget.widgetBackground == "default" ? "tw-px-m tw-py-l" : "") +'">\n' +
+            '            <div class="grid-handler-top tw-w-full tw-h-[40px] tw-cursor-grab tw-group tw-absolute tw-top-0 tw-left-0 tw-z-10">\n' +
+            '            <div class="inlineDropDownContainer tw-float-right tw-p-m">\n' +
+            '                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">\n' +
+            '                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>\n' +
+            '                </a>\n' +
+            '                <ul class="dropdown-menu">\n' +
+            '                    <li><a href="javascript:void(0)" class="fitContent"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Resize to fit content</a></li>\n' +
+            '                        <li><a href="javascript:void(0)" class="removeWidget"><i class="fa fa-eye-slash"></i> Hide</a></li>\n' +
+            '                </ul>\n' +
+            '            </div>\n' +
+            '\n' +
+            '        </div>\n' +
+            '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" id="'+widget.id+'"></div>\n' +
+            '        </div>\n' +
+            '        <div class="clear"></div>\n' +
+            '    </div>\n' +
+            '</div>\n';
+
+        return jQuery(widgetHtml)[0];
+
+    }
 
     // Make public what you want to have public, everything else is private
     return {
         resizeWidget: resizeWidget,
         removeWidget: removeWidget,
         saveGrid: saveGrid,
-        initGrid:initGrid
+        initGrid:initGrid,
+        toggleWidgetVisibility:toggleWidgetVisibility
     };
 })();

@@ -47,7 +47,7 @@ class Widgets
         $this->availableWidgets["welcome"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "welcome",
             "name" => "Welcome",
-            "description" => "Description",
+            "description" => "The welcome widgets which gives you a quick overview of your progress and goals. This widget cannot be removed",
             "gridHeight" => 9,
             "gridWidth" => 12,
             "gridMinHeight" => 8,
@@ -62,8 +62,8 @@ class Widgets
 
         $this->availableWidgets["calendar"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "calendar",
-            "name" => "Calendar",
-            "description" => "Description",
+            "name" => "🗓️ Calendar",
+            "description" => "The calendar widget allows you to manage your events and timebox your tasks. Just drag a task into the calendar.",
             "gridHeight" => 30,
             "gridWidth" => 4,
             "gridMinHeight" => 12,
@@ -76,8 +76,8 @@ class Widgets
 
         $this->availableWidgets["todos"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "todos",
-            "name" => "My ToDos",
-            "description" => "Description",
+            "name" => "📥 My ToDos",
+            "description" => "Your To-Dos grouped by date, project or goals.",
             "gridHeight" => 30,
             "gridWidth" => 8,
             "gridMinHeight" => 16,
@@ -90,8 +90,8 @@ class Widgets
 
         $this->availableWidgets["myprojects"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "myprojects",
-            "name" => "My Projects",
-            "description" => "Description",
+            "name" => "🚧 My Projects",
+            "description" => "This is an overview of your projects listing your favorited projects first.",
             "gridHeight" => 20,
             "gridWidth" => 8,
             "gridMinHeight" => 8,
@@ -149,6 +149,7 @@ class Widgets
                 if (isset($this->availableWidgets[$widget["id"]])) {
                     $widget["name"] = $this->availableWidgets[$widget["id"]]->name;
                     $widget["widgetBackground"] = $this->availableWidgets[$widget["id"]]->widgetBackground;
+                    $widget["description"] = $this->availableWidgets[$widget["id"]]->description;
 
 
                     $widgets[$widget["id"]] = app()->make(Widget::class, $widget);
