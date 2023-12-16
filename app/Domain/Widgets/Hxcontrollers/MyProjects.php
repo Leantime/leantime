@@ -17,7 +17,7 @@ class MyProjects extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'widgets::partials.myProjects';
+    protected static string $view = 'widgets::partials.myProjects';
 
     private ProjectService $projectsService;
     private TicketService $ticketsService;

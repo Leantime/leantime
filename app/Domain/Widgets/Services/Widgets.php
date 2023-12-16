@@ -46,8 +46,8 @@ class Widgets
 
         $this->availableWidgets["welcome"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "welcome",
-            "name" => "Welcome",
-            "description" => "The welcome widgets which gives you a quick overview of your progress and goals. This widget cannot be removed",
+            "name" => "widgets.title.welcome",
+            "description" => "widgets.descriptions.welcome",
             "gridHeight" => 9,
             "gridWidth" => 12,
             "gridMinHeight" => 8,
@@ -62,8 +62,8 @@ class Widgets
 
         $this->availableWidgets["calendar"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "calendar",
-            "name" => "🗓️ Calendar",
-            "description" => "The calendar widget allows you to manage your events and timebox your tasks. Just drag a task into the calendar.",
+            "name" => "widgets.title.calendar",
+            "description" => "widgets.descriptions.calendar",
             "gridHeight" => 30,
             "gridWidth" => 4,
             "gridMinHeight" => 12,
@@ -76,8 +76,8 @@ class Widgets
 
         $this->availableWidgets["todos"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "todos",
-            "name" => "📥 My ToDos",
-            "description" => "Your To-Dos grouped by date, project or goals.",
+            "name" => "widgets.title.my_todos",
+            "description" => "widgets.descriptions.my_todos",
             "gridHeight" => 30,
             "gridWidth" => 8,
             "gridMinHeight" => 16,
@@ -90,8 +90,8 @@ class Widgets
 
         $this->availableWidgets["myprojects"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
             "id" => "myprojects",
-            "name" => "🚧 My Projects",
-            "description" => "This is an overview of your projects listing your favorited projects first.",
+            "name" => "widgets.title.my_projects",
+            "description" => "widgets.descriptions.my_projects",
             "gridHeight" => 20,
             "gridWidth" => 8,
             "gridMinHeight" => 8,

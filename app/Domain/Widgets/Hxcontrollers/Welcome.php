@@ -17,7 +17,7 @@ class Welcome extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'widgets::partials.welcome';
+    protected static string $view = 'widgets::partials.welcome';
 
     private ProjectService $projectsService;
     private TicketService $ticketsService;

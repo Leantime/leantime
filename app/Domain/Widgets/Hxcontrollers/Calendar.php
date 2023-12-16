@@ -17,7 +17,7 @@ class Calendar extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'widgets::partials.calendar';
+    protected static string $view = 'widgets::partials.calendar';
 
     private ProjectService $projectsService;
     private TicketService $ticketsService;
