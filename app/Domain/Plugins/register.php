@@ -27,19 +27,11 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
                 $instanceId ??= app()->make(SettingsService::class)->getCompanyId();
                 $numberOfUsers ??= app()->make(UsersService::class)->getNumberOfUsers(activeOnly: true, includeApi: false);
 
-                $response = Http::get($pluginsService->marketplaceUrl, [
-                    'wp-api' => 'software-api',
-                    'request' => 'check',
-                    'users' => $numberOfUsers,
-                    'product_id' => $plugin->id,
-                    'license_key' => $plugin->license,
-                    'instance' => $instanceId,
-                    'user_count' => $numberOfUsers,
-                ]);
-
-                if (! $response->ok()) {
-                    $pluginsService->disablePlugin($plugin->id);
+                if ($pluginsService->canActivate($plugin)) {
+                    return;
                 }
+
+                $pluginsService->disablePlugin($plugin->id);
             });
     })->daily();
 });

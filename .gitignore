@@ -13,6 +13,7 @@ vendor/*
 release/*
 logs/*
 target/*
+backupdb/*
 public/js/*.min.js
 public/js/*.map
 public/css/*.css

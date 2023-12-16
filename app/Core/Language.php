@@ -359,51 +359,55 @@ class Language
     /**
      * __ - returns a language specific string
      *
-     * @access public
-     * @param  string $index
-     * @param  bool   $convertValue If true then if a value has a conversion (i.e.: PHP -> JavaScript) then do it, otherwise return PHP value
-     * @return string
+     * @param   string  $index
+     * @param   bool    $convertValue   If true then if a value has a conversion (i.e.: PHP -> JavaScript) then do it, otherwise return PHP value
+     * @param   string  $default        If the index is not found, return this value
+     * @return  string
      */
-    public function __(string $index, bool $convertValue = false): string
+    public function __(string $index, bool $convertValue = false, $default = ''): string
     {
-        if (isset($this->ini_array[$index]) === true) {
-            $index = trim($index);
-
-            // @TODO: move the date/time format logic into here and have Api/Controllers/I18n call this for each type?
-            $dateTimeIniSettings = [
-                'language.dateformat',
-                'language.jsdateformat',
-                'language.timeformat',
-                'language.jstimeformat',
-                'language.momentJSDate',
-            ];
-
-            $dateTimeFormat = $this->getCustomDateTimeFormat();
-
-            if (in_array($index, $dateTimeIniSettings) && $convertValue) {
-                $isMoment = stristr($index, 'momentjs') !== false;
-                $isJs = stristr($index, '.js') !== false;
-                $isDate = stristr($index, 'date') !== false;
-
-                if ($isJs || $isMoment) {
-                    return $this->convertDateFormatToJS($isDate ? $dateTimeFormat['date'] : $dateTimeFormat['time'], $isMoment);
-                } else if ($isDate) {
-                    return $this->convertDateFormatToJS($dateTimeFormat['date'], false);
-                }
-            } else if ($index === 'language.dateformat') {
-                return $dateTimeFormat['date'];
-            } else if ($index === 'language.timeformat') {
-                return $dateTimeFormat['time'];
+        if (! isset($this->ini_array[$index])) {
+            if (! empty($default)) {
+                return $default;
             }
 
-            return (string) $this->ini_array[$index];
-        } else {
-            if ($this->alert === true) {
-                return '<span style="color: red; font-weight:bold;">' . $index . '</span>';
-            } else {
-                return $index;
+            if ($this->alert) {
+                return sprintf('<span style="color: red; font-weight:bold;">%s</span>', $index);
             }
+
+            return $index;
         }
+
+        $index = trim($index);
+
+        // @TODO: move the date/time format logic into here and have Api/Controllers/I18n call this for each type?
+        $dateTimeIniSettings = [
+            'language.dateformat',
+            'language.jsdateformat',
+            'language.timeformat',
+            'language.jstimeformat',
+            'language.momentJSDate',
+        ];
+
+        $dateTimeFormat = $this->getCustomDateTimeFormat();
+
+        if (in_array($index, $dateTimeIniSettings) && $convertValue) {
+            $isMoment = stristr($index, 'momentjs') !== false;
+            $isJs = stristr($index, '.js') !== false;
+            $isDate = stristr($index, 'date') !== false;
+
+            if ($isJs || $isMoment) {
+                return $this->convertDateFormatToJS($isDate ? $dateTimeFormat['date'] : $dateTimeFormat['time'], $isMoment);
+            } else if ($isDate) {
+                return $this->convertDateFormatToJS($dateTimeFormat['date'], false);
+            }
+        } else if ($index === 'language.dateformat') {
+            return $dateTimeFormat['date'];
+        } else if ($index === 'language.timeformat') {
+            return $dateTimeFormat['time'];
+        }
+
+        return (string) $this->ini_array[$index];
     }
 
     /**

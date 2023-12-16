@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  *
  * @package    leantime
  * @subpackage core
+ * @method string|null run() The fallback method to be initialized.
  */
 abstract class HtmxController
 {
@@ -21,6 +22,7 @@ abstract class HtmxController
     protected IncomingRequest $incomingRequest;
     protected Template $tpl;
     protected Response $response;
+    protected static string $view;
 
     /**
      * constructor - initialize private variables
@@ -28,12 +30,12 @@ abstract class HtmxController
      * @access public
      *
      * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param template        $tpl             The template to be initialized.
+     * @param Template        $tpl             The template to be initialized.
      * @throws BindingResolutionException
      */
     public function __construct(
         IncomingRequest $incomingRequest,
-        template $tpl
+        Template $tpl
     ) {
         self::dispatch_event('begin');
 
@@ -69,11 +71,11 @@ abstract class HtmxController
 
         $action = Str::camel($this->incomingRequest->query->get('id', 'run'));
 
-        if (! method_exists($this, $action)) {
-            throw new Error("Method $action doesn't exist.");
+        if (! method_exists($this, $action) && ! method_exists($this, 'run')) {
+            throw new Error("Method $action doesn't exist and no fallback method.");
         }
 
-        $fragment = $this->$action();
+        $fragment = method_exists($this, $action) ? $this->$action() : $this->run();
 
         $this->response = $this->tpl->displayFragment($this::$view, $fragment ?? '');
     }

@@ -5,13 +5,14 @@
 <div class="col-md-4">
     <div class="ticketBox fixed" style="padding-top:0px; overflow: hidden;">
         <div class="row">
-            <div class="col-md-12 tw-p-none tw-overflow-hidden tw-mb-m tw-text-center tw-max-h-[150px]">
-                <img src="{{ $plugin->getPluginImageData() }}" style="max-height:350px"/>
+            <div class="col-md-12 tw-p-none tw-overflow-hidden tw-mb-m tw-max-h-[150px]">
+                <img src="{{ $plugin->getPluginImageData() }}" width="100" height="100" class="tw-rounded tw-ml-base tw-mt-base"/>
 
                 @if($plugin instanceof \Leantime\Domain\Plugins\Models\MarketplacePlugin)
-                    <div class="certififed label-default tw-absolute tw-top-[10px] tw-right-[10px] tw-text-primary tw-rounded-full tw-text-sm"
-
-                         data-tippy-content="This plugin was downloaded from the Leantime Marketplace and is signature verified">
+                    <div
+                        class="certififed label-default tw-absolute tw-top-[10px] tw-right-[10px] tw-text-primary tw-rounded-full tw-text-sm"
+                        data-tippy-content="{{ __('marketplace.certified_tooltip') }}"
+                    >
                         <i class="fa fa-certificate"></i>
                         Certified
                     </div>
@@ -25,12 +26,12 @@
                 </div>
             </div>
         @endif
-        <div class="row" style="margin-bottom:15px;">
-            <div class="col tw-flex tw-flex-col tw-gap-4">
+        <div class="row tw-mb-base">
+            <div class="col tw-flex tw-flex-col tw-gap-base">
+                <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
                 @if (! empty($desc = $plugin->getCardDesc()))
                     <p>{{ $desc }}</p>
                 @endif
-                <x-global::inlineLinks :links="$plugin->getMetadataLinks()" />
             </div>
         </div>
         <div class="row tw-border-t tw-border-[var(--main-border-color)] tw-px-base">
