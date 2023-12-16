@@ -49,14 +49,14 @@ class MarketplacePlugin implements PluginDisplayStrategy
 
         if (! empty($this->startingPrice)) {
             $links[] = [
-                'prefix' => __('text.starting_at', 'Starting At'),
+                'prefix' => __('text.starting_at'),
                 'display' => $this->startingPrice,
             ];
         }
 
         if (! empty($this->rating)) {
             $links[] = [
-                'prefix' => __('text.rating', 'Rating: '),
+                'prefix' => __('text.rating'),
                 'display' => $this->rating,
             ];
         }
