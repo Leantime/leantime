@@ -23,7 +23,7 @@ class MyToDos extends HtmxController
     /**
      * @var string
      */
-    protected static $view = 'widgets::partials.myToDos';
+    protected static string $view = 'widgets::partials.myToDos';
 
     private TicketService $ticketsService;
 

@@ -45,7 +45,7 @@
         <div class="clear"></div>
     </div>
     <div class="clear"></div>
-    <div id="calendarWrapper" class="minCalendar tw-h-full" style="height:calc(100% - 55px)"></div>
+    <div class="minCalendarWrapper minCalendar tw-h-full" style="height:calc(100% - 55px)"></div>
 </div>
 
 <script>
@@ -110,11 +110,11 @@
 
         <?php } ?>
 
-        const calendarEl = document.getElementById('calendarWrapper');
+        let calendarEl = document.querySelector(".minCalendarWrapper")
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
                 height:'auto',
-                initialView: '{{ $tpl->getToggleState("dashboardCalendarView") ? $tpl->getToggleState("dashboardCalendarView") : "multiMonthOneMonth" }}',
+                initialView: '{{ $tpl->getToggleState("dashboardCalendarView") ? $tpl->getToggleState("dashboardCalendarView") : "timeGridDay" }}',
                 views: {
                     multiMonthOneMonth: {
                         type: 'multiMonth',
@@ -132,7 +132,6 @@
                 eventSources: eventSources,
                 editable: true,
                 headerToolbar: false,
-
                 nowIndicator: true,
                 bootstrapFontAwesome: {
                     close: 'fa-times',
@@ -219,6 +218,17 @@
                 eventDragStart: function(event) {
                     console.log(event);
                 },
+                eventDidMount: function (info) {
+                    console.log(info);
+                    if (info.event.extendedProps.location != null
+                        && info.event.extendedProps.location != ""
+                        && info.event.extendedProps.location.indexOf("http") == 0
+                    ) {
+                        //jQuery(info.el).prepend("<div class='pull-right'><a href='"+info.event.extendedProps.location+"'>Join Call</a></div>")
+                        jQuery(info.el).attr("href", info.event.extendedProps.location);
+                        jQuery(info.el).attr("target", "_blank");
+                    }
+                }
             });
 
         jQuery(document).ready(function() {
