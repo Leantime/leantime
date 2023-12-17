@@ -81,7 +81,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             if (isset($_POST['date']) && $_POST['date'] != '') {
                                 $timestamp = date_create_from_format($this->language->__("language.dateformat"), $_POST['date']);
 
-                                $values['date'] = $this->language->getISODateString($_POST['date'], "m");
+                                $values['date'] = format($_POST['date'])->isoDateMid();
                             }
 
                             if (isset($_POST['hours']) && $_POST['hours'] != '') {
@@ -99,7 +99,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                                     }
 
                                     if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                                        $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate'], "m");
+                                        $values['invoicedEmplDate'] = format($_POST['invoicedEmplDate'])->isoDateMid();
                                     } else {
                                         $values['invoicedEmplDate'] = date("Y-m-d");
                                     }
@@ -114,7 +114,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                                     }
 
                                     if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                                        $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate'], "m");
+                                        $values['invoicedCompDate'] = format($_POST['invoicedCompDate'])->isoDateMid();
                                     } else {
                                         $values['invoicedCompDate'] = date("Y-m-d");
                                     }
@@ -129,7 +129,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                                     }
 
                                     if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                                        $values['paidDate'] = $this->language->getISODateString($_POST['paidDate'], "m");
+                                        $values['paidDate'] = format($_POST['paidDate'])->isoDateMid();
                                     } else {
                                         $values['paidDate'] = date("Y-m-d");
                                     }

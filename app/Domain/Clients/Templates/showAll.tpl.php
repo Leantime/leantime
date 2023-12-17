@@ -23,8 +23,8 @@ foreach ($__data as $var => $val) {
         <?php echo $tpl->displayNotification() ?>
 
         <?php
-        if ($login::userIsAtLeast('manager')) {
-            echo $tpl->displayLink('clients.newClient', "<i class='fa fa-plus'></i> " . $tpl->__('link.new_client'), null, array('class' => 'btn btn-primary btn-rounded')); ?>
+        if ($login::userIsAtLeast('manager')) { ?>
+             <a class="btn btn-primary" href="<?=BASE_URL ?>/clients/newClient"><i class='fa fa-plus'></i> <?=$tpl->__('link.new_client') ?></a>
         <?php } ?>
 
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allClientsTable">
@@ -47,7 +47,7 @@ foreach ($__data as $var => $val) {
                 <tr>
                     <td><?php echo $row['id']; ?></td>
                     <td>
-                <?php echo $tpl->displayLink('clients.showClient', $tpl->escape($row['name']), array('id' => $tpl->escape($row['id']))) ?>
+                        <a class="" href="<?=BASE_URL ?>/clients/showClient/<?=$row['id'] ?>"><i class='fa fa-plus'></i> <?=$tpl->escape($row['name'])?></a>
                     </td>
                     <td><a href="<?php $tpl->e($row['internet']); ?>" target="_blank"><?php $tpl->e($row['internet']); ?></a></td>
                     <td><?php echo $row['numberOfProjects']; ?></td>

@@ -1,11 +1,11 @@
-leantime.dates = (function () {
+leantime.dateController = (function () {
 
-    function getBaseDatePickerConfig()
+    function getBaseDatePickerConfig(callback)
     {
 
         return {
             numberOfMonths: 1,
-            dateFormat:  leantime.i18n.__("language.jsdateformat"),
+            dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
             dayNames: leantime.i18n.__("language.dayNames").split(","),
             dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
             dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -18,15 +18,15 @@ leantime.dates = (function () {
             prevText: leantime.i18n.__("language.prevText"),
             weekHeader: leantime.i18n.__("language.weekHeader"),
             firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+            onSelect: callback
 
         };
     }
 
-
     function getDate( element )
     {
 
-        var dateFormat = leantime.i18n.__("language.jsdateformat");
+        var dateFormat =  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery");
         var date;
 
         try {
@@ -37,18 +37,6 @@ leantime.dates = (function () {
         }
 
         return date;
-    }
-
-    var formattedDateString = function (dateString) {
-        return DateFormat.format (date, leantime.i18n.__("language.jsdateformat"));
-    }
-
-    var formattedTimeString = function(date) {
-        return DateFormat.format (date, leantime.i18n.__("language.jsdateformat"));
-    }
-
-    var formatToISO = function (date) {
-        return DateFormat.format (date, "yy-mm-dd hh:mm:ss");
     }
 
     var initDateRangePicker = function (fromElement, toElement, minDistance) {
@@ -67,30 +55,37 @@ leantime.dates = (function () {
             }
         });
 
-        var from = jQuery(fromElement).datepicker(getBaseConfig())
+        var from = jQuery(fromElement).datepicker(getBaseDatePickerConfig())
                    .on(
-                        "change",
-                        function (date) {
-                            to.datepicker("option", "minDate", getDate(this));
+                       "change",
+                       function (date) {
+                           to.datepicker("option", "minDate", getDate(this));
 
-                            if (jQuery(toElement).val() == '') {
-                                jQuery(toElement).val(jQuery(fromElement).val());
-                            }
-                        }
+                           if (jQuery(toElement).val() == '') {
+                               jQuery(toElement).val(jQuery(fromElement).val());
+                           }
+                       }
                    );
 
-        var to = jQuery(toElement).datepicker(getBaseConfig())
+        var to = jQuery(toElement).datepicker(getBaseDatePickerConfig())
                  .on(
                      "change",
-                     function () {
-                         from.datepicker("option", "maxDate", getDate(this));
-                     }
+                        function () {
+                            from.datepicker("option", "maxDate", getDate(this));
+                        }
                  );
     };
 
+    var initDatePicker = function (element, callback) {
+        jQuery(element).datepicker(
+            getBaseDatePickerConfig(callback)
+        );
+    }
+
     // Make public what you want to have public, everything else is private
     return {
-        initDateRange:initDateRange
+        initDateRangePicker:initDateRangePicker,
+        initDatePicker:initDatePicker,
     };
 
 })();

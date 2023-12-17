@@ -528,7 +528,7 @@ $state = $tpl->get('state');
 
         jQuery(".dates").datepicker(
             {
-                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),

@@ -81,7 +81,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 ],
             ]);
 
-            $ticket->date =  $this->language->getFormattedDateString(date("Y-m-d H:i:s"));
+            $ticket->date =  format(date("Y-m-d H:i:s"))->date();
 
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('ticketParents', $this->ticketService->getAllPossibleParents($ticket));

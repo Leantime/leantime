@@ -21,6 +21,8 @@ mix
         "./public/assets/js/app/core/snippets.js",
         "./public/assets/js/app/core/modals.js",
         "./public/assets/js/app/core/tableHandling.js",
+        "./public/assets/js/app/core/datePickers.js",
+        "./public/assets/js/app/core/dateHelper.js",
         ...[
             ...glob.sync("./app/Domain/**/*.js"),
             ...glob.sync("./custom/Domain/**/*.js"),
@@ -70,6 +72,7 @@ mix
         "./node_modules/fullcalendar/index.global.min.js",
         "./node_modules/@fullcalendar/icalendar/index.global.min.js",
         "./node_modules/@fullcalendar/google-calendar/index.global.min.js",
+        "./node_modules/@fullcalendar/luxon3/index.global.min.js",
 
     ], `public/dist/js/compiled-calendar-component.${version}.min.js`)
     .combine([
@@ -124,7 +127,7 @@ mix
     ], `public/dist/js/compiled-gantt-component.${version}.min.js`)
     .combine([
         "./node_modules/chart.js/dist/chart.js",
-        "./node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",
+        "./node_modules/chartjs-adapter-luxon/dist/chartjs-adapter-luxon.umd.js",
     ], `public/dist/js/compiled-chart-component.${version}.min.js`)
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
         sourceMap: true,

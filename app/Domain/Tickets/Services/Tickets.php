@@ -550,19 +550,6 @@ namespace Leantime\Domain\Tickets\Services {
 
             //Check if user is allowed to see ticket
             if ($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
-                //Fix date conversion
-                $ticket->date = $this->language->getFormattedDateString($ticket->date);
-
-                $ticket->timeToFinish = $this->language->extractTime($ticket->dateToFinish);
-                $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
-
-                $ticket->timeFrom = $this->language->extractTime($ticket->editFrom);
-                $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
-
-                $ticket->timeTo = $this->language->extractTime($ticket->editTo);
-                $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
-
-
                 return $ticket;
             }
 
@@ -891,8 +878,8 @@ namespace Leantime\Domain\Tickets\Services {
                 'acceptanceCriteria' => '',
                 'priority' => '',
                 'tags' => '',
-                'editFrom' => '',
-                'editTo' => '',
+                'editFrom' => $params['editFrom'],
+                'editTo' => $params['editTo'],
                 'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : "",
                 'dependingTicketId' => '',
             );
@@ -901,6 +888,8 @@ namespace Leantime\Domain\Tickets\Services {
                 $error = array("status" => "error", "message" => "Headline Missing");
                 return $error;
             }
+
+            $values = $this->prepareTicketDates($values);
 
             $result = $this->ticketRepository->addTicket($values);
 
@@ -945,7 +934,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $_SESSION['currentProject'],
                 'editorId' =>  $params['editorId'] ?? $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date("Y-m-d H:i:s"),
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => "",
                 'status' => 3,
                 'storypoints' => '',
@@ -957,9 +946,11 @@ namespace Leantime\Domain\Tickets\Services {
                 'milestoneid' => $params['dependentMilestone'] ?? '',
                 'acceptanceCriteria' => '',
                 'tags' => $params['tags'],
-                'editFrom' => $this->language->getISODateString($params['editFrom'], "b"),
-                'editTo' => $this->language->getISODateString($params['editTo'], "e"),
+                'editFrom' => $params['editFrom'] ?? '',
+                'editTo' => $params['editTo'] ?? ''
             );
+
+            $values = $this->prepareTicketDates($values);
 
             if ($values['headline'] == "") {
                 $error = array("status" => "error", "message" => "Headline Missing");
@@ -985,7 +976,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'] ,
                 'editorId' => $values['editorId'] ?? "",
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date('Y-m-d  H:i:s') ?? "",
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
                 'status' => (int) $values['status'] ?? 3,
@@ -996,9 +987,9 @@ namespace Leantime\Domain\Tickets\Services {
                 'hourRemaining' => $values['hourRemaining'] ?? "",
                 'priority' => $values['priority'] ?? "",
                 'acceptanceCriteria' => $values['acceptanceCriteria'] ?? "",
-                'editFrom' => $this->language->getISODateString($values['editFrom'] ?? ''),
+                'editFrom' => $values['editFrom'] ?? '',
                 'timeFrom' => $values['timeFrom'] ?? "",
-                'editTo' => $this->language->getISODateString($values['editTo'] ?? "", "e"),
+                'editTo' => $values['editTo'] ?? "",
                 'timeTo' => $values['timeTo'] ?? "",
                 'dependingTicketId' => $values['dependingTicketId'] ?? "",
                 'milestoneid' => $values['milestoneid'] ?? "",
@@ -1011,30 +1002,8 @@ namespace Leantime\Domain\Tickets\Services {
             if ($values['headline'] === '') {
                 return array("msg" => "notifications.ticket_save_error_no_headline", "type" => "error");
             } else {
-                //Prepare dates for db
-                if ($values['dateToFinish'] != "" && $values['dateToFinish'] != null) {
-                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish'], "e");
 
-                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'] . ":00", $values['dateToFinish']);
-                    }
-                }
-
-                if ($values['editFrom'] != "" && $values['editFrom'] != null) {
-                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
-
-                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
-                    }
-                }
-
-                if ($values['editTo'] != "" && $values['editTo'] != null) {
-                    $values['editTo'] = $this->language->getISODateString($values['editTo'], "e");
-
-                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
-                    }
-                }
+                $values = $this->prepareTicketDates($values);
 
                 //Update Ticket
                 $addTicketResponse = $this->ticketRepository->addTicket($values);
@@ -1064,12 +1033,31 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         //Update
+
         /**
-         * @param $id
-         * @param $values
-         * @return array|bool
-         * @throws BindingResolutionException
-         */
+         * Updates a ticket with the given values.
+         *
+         * @param array $values The array containing the ticket values to update.
+         *                      Accepted keys are:
+         *                      - 'id' => The ticket ID.
+         *                      - 'headline' => The ticket headline. (optional)
+         *                      - 'type' => The ticket type. (optional)
+         *                      - 'description' => The ticket description. (optional)
+         *                      - 'projectId' => The project ID. Defaults to $_SESSION['currentProject']. (optional)
+         *                      - 'editorId' => The editor ID. (optional)
+         *                      - 'date' => The ticket date. Defaults to the current date and time. (optional)
+         *                      - 'dateToFinish' => The ticket deadline date. (optional)
+         *                      - 'timeToFinish' => The ticket deadline time. (optional)
+         *                      - 'status' => The ticket status. (optional)
+         *                      - 'planHours' => The planned hours for the ticket. (optional)
+         *                      - 'tags' => The tags for the ticket. (optional)
+         *                      - 'sprint' => The sprint for the ticket. (optional)
+         *                      - 'storypoints' => The story points for the ticket. (optional)
+         *                      - 'hourRemaining' => The remaining hours for the ticket. (optional)
+         *                      - 'priority' => The ticket priority. (optional)
+         *                      - 'acceptanceCriteria' => The ticket acceptance criteria. (optional)
+         *                      - 'editFrom' => The ticket edit 'from' date-time. (optional)
+         *                      - 'time*/
         public function updateTicket($values): array|bool
         {
 
@@ -1080,7 +1068,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'description' => $values['description'] ?? "",
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'] ?? "",
-                'date' => date('Y-m-d  H:i:s'),
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
                 'status' => $values['status'] ?? "",
@@ -1106,37 +1094,14 @@ namespace Leantime\Domain\Tickets\Services {
             if ($values['headline'] === '') {
                 return array("msg" => "notifications.ticket_save_error_no_headline", "type" => "error");
             } else {
-                //Prepare dates for db
-                if ($values['dateToFinish'] != "" && $values['dateToFinish'] != null) {
-                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish'], "e");
 
-                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'] . ":00", $values['dateToFinish']);
-                    }
-                }
-
-                if ($values['editFrom'] != "" && $values['editFrom'] != null) {
-                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
-
-                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
-                    }
-                }
-
-                if ($values['editTo'] != "" && $values['editTo'] != null) {
-                    $values['editTo'] = $this->language->getISODateString($values['editTo'], "e");
-
-                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
-                    }
-                }
+                $values = $this->prepareTicketDates($values);
 
                 //Update Ticket
-                if ($this->ticketRepository->updateTicket($values, $id) === true) {
-                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $values['headline']);
-                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $id;
+                if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
+                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $values['id'], $values['headline']);
+                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $values['id'];
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $values['headline']);
-
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = array(
@@ -1172,6 +1137,8 @@ namespace Leantime\Domain\Tickets\Services {
 
             //$params is an array of field names. Exclude id
             unset($params["id"]);
+
+            $params = $this->prepareTicketDates($params);
 
             return $this->ticketRepository->patchTicket($id, $params);
         }
@@ -1223,7 +1190,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $_SESSION['currentProject'],
                 'editorId' => $params['editorId'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date("Y-m-d H:i:s"),
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => "",
                 'status' => $params['status'],
                 'storypoints' => '',
@@ -1235,14 +1202,16 @@ namespace Leantime\Domain\Tickets\Services {
                 'dependingTicketId' => '',
                 'milestoneid' => $params['dependentMilestone'],
                 'tags' => $params['tags'],
-                'editFrom' => $this->language->getISODateString($params['editFrom']),
-                'editTo' => $this->language->getISODateString($params['editTo'], "e"),
+                'editFrom' => $params['editFrom'] ?? '',
+                'editTo' => $params['editTo'] ?? ''
             );
 
             if ($values['headline'] == "") {
                 $error = array("status" => "error", "message" => "Headline Missing");
                 return $error;
             }
+
+            $values = $this->prepareTicketDates($values);
 
             //$params is an array of field names. Exclude id
             return $this->ticketRepository->updateTicket($values, $params["id"]);
@@ -1265,8 +1234,8 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date("Y-m-d H:i:s"),
-                'dateToFinish' => "",
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
+                'dateToFinish' => $values['dateToFinish'] ?? '',
                 'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
                 'storypoints' => "",
@@ -1275,11 +1244,13 @@ namespace Leantime\Domain\Tickets\Services {
                 'sprint' => "",
                 'acceptanceCriteria' => "",
                 'tags' => "",
-                'editFrom' => "",
-                'editTo' => "",
+                'editFrom' => $values['editFrom'] ?? '',
+                'editTo' => $values['editTo'] ?? '',
                 'dependingTicketId' => $parentTicket->id,
                 'milestoneid' => $parentTicket->milestoneid,
             );
+
+            $values = $this->prepareTicketDates($values);
 
             if ($subtaskId == "new" || $subtaskId == "") {
                 //New Ticket
@@ -1751,6 +1722,40 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectFilter' => $projectFilter,
                 'groupBy' => $groupBy,
             );
+        }
+
+        public function prepareTicketDates(&$values) {
+
+            //Prepare dates for db
+            if (!empty($values['dateToFinish'])) {
+
+                if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
+                    $values['dateToFinish'] = format($values['dateToFinish']." ".$values['timeToFinish'].":00")->isoDateTime();
+                }else{
+                    $values['dateToFinish'] = format($values['dateToFinish'])->isoDateEnd();
+                }
+
+            }
+
+            if (!empty($values['editFrom'])) {
+
+                if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                    $values['editFrom'] = format($values['editFrom']." ".$values['timeFrom'].":00")->isoDateTime();
+                }else{
+                    $values['editFrom'] = format($values['editFrom'])->isoDateStart();
+                }
+            }
+
+            if (!empty($values['editTo'])) {
+
+                if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                    $values['editTo'] = format($values['editTo']." ".$values['timeTo'].":00")->isoDateTime();
+                }else{
+                    $values['editTo'] = format($values['editTo'])->isoDateEnd();
+                }
+            }
+
+            return $values;
         }
     }
 

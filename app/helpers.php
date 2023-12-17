@@ -6,6 +6,7 @@ use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
+use \Leantime\Core\Support\Format;
 
 if (! function_exists('app')) {
     /**
@@ -170,5 +171,17 @@ if (! function_exists('build')) {
     function build(object $object): Build
     {
         return new Build($object);
+    }
+}
+
+if (! function_exists('format')) {
+    /**
+     * Returns a format object to format string values
+     * @param string|int|float $value
+     * @return Format
+     **/
+    function format(string|int|float|null $value): Format
+    {
+        return new Format($value);
     }
 }

@@ -75,8 +75,8 @@ $currentClientName = $tpl->get("currentClientName");
                                             <h4 class="">
                                                 <?php printf(
                                                     $tpl->__('text.report_written_on'),
-                                                    $tpl->getFormattedDateString($project['lastUpdate']['date']),
-                                                    $tpl->getFormattedTimeString($project['lastUpdate']['date'])
+                                                    format($project['lastUpdate']['date'])->date(),
+                                                    format($project['lastUpdate']['date'])->time()
                                                 ); ?>
 
                                             </h4>

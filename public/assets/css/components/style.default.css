@@ -2575,6 +2575,7 @@ h3.todaysDate {
 
 .minCalendar .fc-theme-standard .fc-popover {
     border-radius:var(--box-radius);
+    max-width: 60%;
 }
 
 .minCalendar .fc-popover-body  .fc-h-event .fc-event-title-container {
@@ -2663,10 +2664,18 @@ h3.todaysDate {
     padding: 3px 1px 0px;
 }
 
-.maincontent .fc-event:not(.fc-event-draggable):before {
+.maincontent .fc-event.locked:after {
     content: "🔒";
+    background:var(--layered-background);
+    padding: 1px 4px;
+    top: 2px;
+    border-radius: 50%;
     position: absolute;
-    right: 5px;
+    right: 2px;
+}
+
+.maincontent tr.fc-event {
+    position:relative;
 }
 
 .ticketBox {

@@ -129,7 +129,7 @@ $bookedHours = $tpl->get('bookedHours');
         $sum = $sum + $row['hours'];?>
         <tr>
             <td><a href="<?=BASE_URL ?>/timesheets/editTime/<?php echo $row['id']; ?>"><?php echo $row['id']; ?></a></td>
-            <td><?php echo $tpl->getFormattedDateString($row['workDate']); ?></td>
+            <td><?php echo format($row['workDate'])->date(); ?></td>
             <td><?php echo $row['hours']; ?></td>
             <td><?php echo $row['planHours']; ?></td>
                 <?php $diff = $row['planHours'] - $row['hours']; ?>
@@ -142,12 +142,12 @@ $bookedHours = $tpl->get('bookedHours');
             <td><?php echo $tpl->__($row['kind']); ?></td>
             <td><?php echo $row['description']; ?></td>
             <td><?php if ($row['invoicedEmpl'] == '1') {
-                ?> <?php echo $tpl->getFormattedDateString($row['invoicedEmplDate']); ?>
+                ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
                 <?php } else {
                     ?>  <?php
                 } ?></td>
             <td><?php if ($row['invoicedComp'] == '1') {
-                ?> <?php echo $tpl->getFormattedDateString($row['invoicedCompDate']); ?>
+                ?> <?php echo format($row['invoicedCompDate'])->date(); ?>
                 <?php } else {
                     ?> <?php
                 } ?></td>

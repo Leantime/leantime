@@ -36,7 +36,7 @@ $values = $tpl->get('values');
         jQuery(document).ready(function ($) {
             jQuery("#datepicker, #date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
                 numberOfMonths: 1,
-                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery")
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -104,7 +104,7 @@ $values = $tpl->get('values');
 
 </select><br />
 <label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
-    id="datepicker" name="date" value="<?php echo $tpl->getFormattedDateString($values['date']); ?>" size="7" />
+    id="datepicker" name="date" value="<?php echo format($values['date'])->date(); ?>" size="7" />
 <br />
 <label for="hours"><?php echo $tpl->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"
@@ -126,7 +126,7 @@ $values = $tpl->get('values');
 
             <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
-                                                  value="<?php echo $tpl->getFormattedDateString($values['invoicedEmplDate']); ?>"
+                                                  value="<?php echo format($values['invoicedEmplDate'])->date(); ?>"
                                                   size="7"/><br/>
 
 
@@ -141,7 +141,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
-                                                      value="<?php echo $tpl->getFormattedDateString($values['invoicedCompDate']); ?>"
+                                                      value="<?php echo format($values['invoicedCompDate'])->date(); ?>"
                                                       size="7"/><br/>
 
         <br/>
@@ -155,7 +155,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                           id="paidDate"
                                                           name="paidDate"
-                                                          value="<?php echo $tpl->getFormattedDateString($values['paidDate']); ?>"
+                                                          value="<?php echo format($values['paidDate'])->date(); ?>"
                                                           size="7"/><br/>
     <?php } ?>
 
@@ -163,8 +163,7 @@ $values = $tpl->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <?php echo $tpl->displayLink('timesheets.delTime', $tpl->__('links.delete'), array('id' => $_GET['id']), array('class' => 'delete editTimeModal pull-right')); ?>
-
+        <a class="elete editTimeModal pull-right" href="<?=BASE_URL?>/timesheets/delTime/<?=$_GET['id']?>"><?=$tpl->__('links.delete') ?></a>
         <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>

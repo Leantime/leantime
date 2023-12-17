@@ -89,7 +89,7 @@ if (is_array($tpl->get('sprints'))) {
                     </li>
                     <?php foreach ($tpl->get('sprints') as $sprintRow) {   ?>
                         <li>
-                            <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val(<?=$sprintRow->id?>); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->escape($sprintRow->name)?><br /><small><?=sprintf($tpl->__("label.date_from_date_to"), $tpl->getFormattedDateString($sprintRow->startDate), $tpl->getFormattedDateString($sprintRow->endDate));?></small></a>
+                            <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val(<?=$sprintRow->id?>); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->escape($sprintRow->name)?><br /><small><?=sprintf($tpl->__("label.date_from_date_to"), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date());?></small></a>
                         </li>
                     <?php } ?>
                 </ul>

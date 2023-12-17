@@ -105,7 +105,7 @@
 
 
                                         @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
-                                            <i class="fa-regular fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} @formatDate($row['editFrom']) "></i>
+                                            <i class="fa-regular fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }} "></i>
                                         @else
                                             <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-sm" data-tippy-content="{{ __('text.not_scheduled') }}"></i>
                                         @endif
@@ -114,9 +114,7 @@
                                              <input
                                             type="text"
                                             title="{{ __('label.due') }}"
-                                            value="{{ $row['dateToFinish'] == '0000-00-00 00:00:00' || $row['dateToFinish'] == '1969-12-31 00:00:00'
-                                                ? __('text.anytime') : (new \DateTime($row['dateToFinish']))->format(__('language.dateformat'))
-                                            }}"
+                                            value="{{ format($row['dateToFinish'])->date(__('text.anytime')) }}"
                                             class="duedates secretInput"
                                             data-id="{{ $row['id'] }}"
                                             name="date"
@@ -338,8 +336,8 @@
                                             <h3>
                                                 {{ sprintf(
                                                     __('text.report_written_on'),
-                                                    $tpl->getFormattedDateString($row['date']),
-                                                    $tpl->getFormattedTimeString($row['date'])
+                                                    format($row['date'])->date(),
+                                                    format($row['date'])->time()
                                                 ) }}
 
                                                 @if ($login::userIsAtLeast($roles::$editor))
@@ -377,8 +375,8 @@
                                             <small class="right">
                                                 {!! sprintf(
                                                     __('text.written_on_by'),
-                                                    $tpl->getFormattedDateString($row['date']),
-                                                    $tpl->getFormattedTimeString($row['date']),
+                                                    format($row['date'])->date(),
+                                                    format($row['date'])->time(),
                                                     $tpl->escape($row['firstname']),
                                                     $tpl->escape($row['lastname'])
                                                 ) !!}
@@ -467,10 +465,7 @@
                                         <div class="row">
                                             <div class="col-md-7">
                                                 {{ __('label.due') }}
-                                                {{ $row->editTo == "0000-00-00 00:00:00"
-                                                    ? __('text.no_date_defined')
-                                                    : (new \DateTime($row->editTo))->format(__('language.dateformat'))
-                                                }}
+                                                {{ format($row->editTo)->date(__('text.no_date_defined')) }}
                                             </div>
 
                                             <div class="col-md-5 tw-text-right">
@@ -552,7 +547,6 @@
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initMilestoneDropdown();
             leantime.ticketsController.initStatusDropdown();
-            leantime.ticketsController.initDueDateTimePickers();
             leantime.usersController.initUserEditModal();
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");
@@ -587,6 +581,9 @@
                 );
             }
         });
+
+        leantime.ticketsController.initDueDateTimePickers();
+        leantime.ticketsController.initDueDateTimePickers();
     });
 
     @dispatchEvent('scripts.beforeClose')

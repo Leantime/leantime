@@ -319,7 +319,7 @@ class ApiSession
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'headers' => ['Authorization' => "Bearer $token"],
+                    'headers' => ['Authorization' => "Bearer ".$creds['token'].""],
                 ]
             )
         );

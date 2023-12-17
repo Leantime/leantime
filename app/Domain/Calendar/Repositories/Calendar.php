@@ -3,9 +3,11 @@
 namespace Leantime\Domain\Calendar\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Language;
     use Leantime\Core\Repository as RepositoryCore;
     use Leantime\Core\Db as DbCore;
     use Leantime\Core\Language as LanguageCore;
+    use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Domain\Setting\Repositories\Setting;
     use Leantime\Domain\Tickets\Services\Tickets;
     use Leantime\Domain\Users\Repositories\Users;
@@ -23,6 +25,8 @@ namespace Leantime\Domain\Calendar\Repositories {
         private ?DbCore $db;
 
         private LanguageCore $language;
+
+        private DateTimeHelper $dateTimeHelper;
 
         private array $classColorMap = array(
              "label-warning" => "var(--yellow)",
@@ -49,11 +53,12 @@ namespace Leantime\Domain\Calendar\Repositories {
          *
          * @access public
          */
-        public function __construct(DbCore $db, LanguageCore $language)
+        public function __construct(DbCore $db, LanguageCore $language, DateTimeHelper $dateTimeHelper)
         {
             $this->db = $db;
             $this->language = $language;
             $this->entity = "calendar";
+            $this->dateTimeHelper = $dateTimeHelper;
         }
 
         /**
@@ -126,8 +131,9 @@ namespace Leantime\Domain\Calendar\Repositories {
 
             $newValues = array();
             foreach ($values as $value) {
-                $dateFrom     = strtotime($value['dateFrom']);
-                $dateTo     = strtotime($value['dateTo']);
+
+                $dateFrom   = $this->dateTimeHelper->getTimestamp($value['dateFrom']);
+                $dateTo     = $this->dateTimeHelper->getTimestamp($value['dateTo']);
 
                 $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
@@ -181,8 +187,8 @@ namespace Leantime\Domain\Calendar\Repositories {
 
                     $context = "";
                     if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
-                        $dateFrom = strtotime($ticket['dateToFinish']);
-                        $dateTo = strtotime($ticket['dateToFinish']);
+                        $dateFrom = $this->dateTimeHelper->getTimestamp($ticket['dateToFinish']);
+                        $dateTo = $this->dateTimeHelper->getTimestamp($ticket['dateToFinish']);
                         $context = '❕ ' . $this->language->__("label.due_todo");
 
                         $newValues[] = $this->mapEventData(
@@ -200,8 +206,8 @@ namespace Leantime\Domain\Calendar\Repositories {
                     }
 
                     if ($ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00") {
-                         $dateFrom = strtotime($ticket['editFrom']);
-                         $dateTo = strtotime($ticket['editTo']);
+                         $dateFrom = $this->dateTimeHelper->getTimestamp($ticket['editFrom']);
+                         $dateTo = $this->dateTimeHelper->getTimestamp($ticket['editTo']);
                          $context = $this->language->__("label.planned_edit");
 
                          $newValues[] = $this->mapEventData(

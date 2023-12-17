@@ -1,5 +1,5 @@
 parameters:
-    level: 4
+    level: 0
     paths:
         - public/
         - app/

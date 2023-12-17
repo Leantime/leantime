@@ -24,9 +24,8 @@ class I18n extends Controller
         $languageIni = $this->language->readIni();
 
         $dateTimeIniSettings = [
-            'language.jsdateformat',
-            'language.jstimeformat',
-            'language.momentJSDate',
+            'language.dateformat',
+            'language.timeformat',
         ];
 
         foreach ($dateTimeIniSettings as $index) {

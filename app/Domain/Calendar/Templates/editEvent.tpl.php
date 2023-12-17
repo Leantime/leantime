@@ -18,22 +18,22 @@ $values = $tpl->get('values');
     <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
 
     <label for="dateFrom"><?php echo $tpl->__('label.start_date') ?></label>
-    <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="<?php echo $tpl->getFormattedDateString($values['dateFrom']); ?>" />
+    <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="<?php echo format($values['dateFrom'])->date(); ?>" />
 
     <div class="par">
         <label> <?php echo $tpl->__('label.start_time') ?></label>
         <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_from" name="timeFrom" value="<?php echo $tpl->get24HourTimestring($values['dateFrom']); ?>" />
+                <input type="time" id="event_time_from" name="timeFrom" value="<?php echo format(($values['dateFrom'])->time24()); ?>" />
            </div>
     </div>
 
     <label for="dateTo"><?php echo $tpl->__('label.end_date') ?></label>
-    <input type="text" id="event_date_to" autocomplete="off" name="dateTo" value="<?php echo $tpl->getFormattedDateString($values['dateTo']); ?>" />
+    <input type="text" id="event_date_to" autocomplete="off" name="dateTo" value="<?php echo format($values['dateTo'])->date(); ?>" />
 
     <div class="par">
         <label for=""><?php echo $tpl->__('label.end_time') ?> </label>
         <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_to" name="timeTo" value="<?php echo $tpl->get24HourTimestring($values['dateTo']); ?>" />
+                <input type="time" id="event_time_to" name="timeTo" value="<?php echo format($values['dateTo'])->time24(); ?>" />
            </div>
     </div>
 

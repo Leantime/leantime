@@ -206,7 +206,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
 
             //Add a comment
-            if (isset($params['comment']) === true) {
+            if (isset($params['comment']) === true && isset($params['text']) && $params['text'] != '') {
                 if ($this->commentService->addComment($_POST, "ticket", $id, $ticket)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
                 } else {

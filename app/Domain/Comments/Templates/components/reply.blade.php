@@ -7,8 +7,8 @@
             <div class="right commendDate">
             {!! sprintf(
                 __('text.written_on'),
-                $tpl->getFormattedDateString($comment['date']),
-                $tpl->getFormattedTimeString($comment['date'])
+                format($comment['date'])->date(),
+                format($comment['date'])->time()
             ) !!}
             </div>
             <span class="name">{!! sprintf(

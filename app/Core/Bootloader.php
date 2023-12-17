@@ -3,6 +3,7 @@
 namespace Leantime\Core;
 
 use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
@@ -86,7 +87,7 @@ class Bootloader
      */
     public static function getInstance(?PsrContainerContract $app = null): self
     {
-        return static::$instance ??= new static($app);
+        return static::$instance ??= new self($app);
     }
 
     /**
@@ -216,7 +217,7 @@ class Bootloader
         });
         $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
         $this->app->singleton('cache.psr6', fn ($app) => new \Symfony\Component\Cache\Adapter\Psr16Adapter($app['cache.store']));
-        $this->app->singleton('memcached.connector', fn () => new \Illuminate\Support\MemcachedConnector());
+        $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
         $this->app->singleton(\Illuminate\Cache\RateLimiter::class, fn ($app) => new \Illuminate\Cache\RateLimiter($app['cache']->driver($app['config']['cache.limiter'])));
     }
 

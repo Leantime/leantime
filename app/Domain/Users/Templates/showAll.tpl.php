@@ -54,7 +54,7 @@ $roles = $tpl->get('roles');
             <?php foreach ($tpl->get('allUsers') as $row) { ?>
                     <tr>
                         <td style="padding:6px 10px;">
-                        <?php echo $tpl->displayLink('users.editUser', sprintf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row["lastname"])), array('id' => $row['id'])); ?>
+                             <a href="<?=BASE_URL ?>/users/editUser/<?=$row['id']?>"><?=sprintf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row["lastname"])); ?></a>
                         </td>
                         <td><a href="<?=BASE_URL ?>/users/editUser/<?=$row['id']?>"><?=$tpl->escape($row['username']); ?></a></td>
                         <td><?=$tpl->escape($row['clientName']); ?></td>
