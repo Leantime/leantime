@@ -88,11 +88,11 @@ namespace Leantime\Domain\Timesheets\Controllers {
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-                $dateFrom = $this->language->getISODateString($_POST['dateFrom']);
+                $dateFrom = format($_POST['dateFrom'])->isoDate();
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-                $dateTo = $this->language->getISODateString($_POST['dateTo'], "e");
+                $dateTo = format($_POST['dateTo'])->isoDateEnd();
             }
 
             if (isset($_POST['invEmpl']) === true) {

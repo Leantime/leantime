@@ -198,7 +198,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                 </h1>
                                 <div class="articleMeta">
                                     <div class="metaContent">
-                                    <?=sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), $tpl->getFormattedDateString($currentArticle->created), $tpl->getFormattedDateString($currentArticle->modified)); ?>
+                                    <?=sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), format($currentArticle->created)->date(), format($currentArticle->modified)->date()); ?>
                                     <br />
                                     </div>
                                     <div class="tagsinput readonly">

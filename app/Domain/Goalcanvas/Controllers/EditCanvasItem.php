@@ -198,8 +198,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'parent' => $params['parent'] ?? null,
                             "id" => $params['itemId'],
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => $this->language->getISODateString($params['startDate']),
-                            'endDate' => $this->language->getISODateString($params['endDate'], "e"),
+                            'startDate' => format($params['startDate'])->isoDate(),
+                            'endDate' => format($params['endDate'])->isoDateEnd(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
@@ -209,8 +209,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                             $params['headline'] = $params['newMilestone'];
                             $params['tags'] = '#ccc';
-                            $params['editFrom'] = date('Y-m-d');
-                            $params['editTo'] = date('Y-m-d', strtotime('+1 week'));
+                            $params['editFrom'] = format(date($this->language->__("language.dateformat")))->isoDate();
+                            $params['editTo'] = format(date($this->language->__("language.dateformat"), strtotime('+1 week')))->isoDate();
                             $params['dependentMilestone'] = '';
                             $id = $this->ticketService->quickAddMilestone($params);
 
@@ -274,8 +274,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'canvasId' => $params['canvasId'],
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => $this->language->getISODateString($params['startDate']),
-                            'endDate' => $this->language->getISODateString($params['endDate'], "e"),
+                            'startDate' => format($params['startDate'])->isoDate(),
+                            'endDate' => format($params['endDate'])->isoDateEnd(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',

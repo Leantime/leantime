@@ -447,7 +447,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     content: '';
 }
 
-.ticketDropdown.dropRight  ul::after {
+.dropdown-menu.pull-right::after {
     right: 10px;
     left:auto;
 }

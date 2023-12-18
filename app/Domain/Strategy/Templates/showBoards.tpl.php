@@ -36,7 +36,7 @@ $canvasProgress = $tpl->get('canvasProgress');
                                     <a href="<?=BASE_URL . '/' . $board['module'] . "/showCanvas/" . $board['lastCanvasId']?>">
                                         <?=$tpl->escape($board['lastTitle']) ?>
                                     </a><br />
-                                <small><?=$tpl->__('label.last_updated')?> <?=$tpl->getFormattedDateString($board['lastUpdate'])?> <?=$tpl->getFormattedTimeString($board['lastUpdate'])?></p>
+                                <small><?=$tpl->__('label.last_updated')?> <?=format($board['lastUpdate'])->date()?> <?=format($board['lastUpdate'])->time()?></p>
                                 </small>
                                 </span>
                                <div class="clearall"></div>
@@ -93,7 +93,7 @@ $canvasProgress = $tpl->get('canvasProgress');
                                             <?php $tpl->e($canvas['title'])?>
                                         </a>
                                     </h3>
-                                    <p><?=$tpl->__('label.last_updated')?> <?=$tpl->getFormattedDateString($canvas['modified'])?> <?=$tpl->getFormattedTimeString($canvas['modified'])?></p>
+                                    <p><?=$tpl->__('label.last_updated')?> <?=format($canvas['modified'])?> <?=format($canvas['modified'])->time()->date?></p>
                                 </div>
 
                             </li>

@@ -289,7 +289,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <div class="">
 
                             <input type="text" class="dates" style="width:200px;" id="submittedDate" disabled="disabled"
-                                   value="<?php echo $ticket->date; ?>" name="date"/>
+                                   value="<?=format($ticket->date)->date(); ?>" name="date"/>
                         </div>
                     </div>
 
@@ -297,11 +297,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <label class=" control-label"><?php echo $tpl->__('label.due_date'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:90px;" id="deadline" autocomplete="off"
-                                   value="<?php echo $ticket->dateToFinish; ?>"
+                                   value="<?=format($ticket->dateToFinish)->date(); ?>"
                                    name="dateToFinish" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                             <input type="time" class="timepicker" style="width:120px;" id="dueTime" autocomplete="off"
-                                   value="<?php echo $ticket->timeToFinish; ?>"
+                                   value="<?=format($ticket->timeToFinish)->time(); ?>"
                                    name="timeToFinish"/>
                         </div>
                     </div>
@@ -309,10 +309,10 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_from'); ?></label>
                         <div class="">
-                            <input type="text" class="dates" style="width:90px;" name="editFrom" autocomplete="off"
-                                   value="<?php echo $ticket->editFrom; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                            <input type="text" class="editFrom" style="width:90px;" name="editFrom" autocomplete="off"
+                                   value="<?=format($ticket->editFrom)->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
-                                   value="<?php echo $ticket->timeFrom; ?>"
+                                   value="<?=format($ticket->timeFrom)->time(); ?>"
                                    name="timeFrom"/>
                         </div>
                     </div>
@@ -320,10 +320,10 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_to'); ?></label>
                         <div class="">
-                            <input type="text" class="dates" style="width:90px;" name="editTo" autocomplete="off"
-                                   value="<?php echo $ticket->editTo; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                            <input type="text" class="editTo" style="width:90px;" name="editTo" autocomplete="off"
+                                   value="<?=format($ticket->editTo)->date() ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
-                                   value="<?php echo $ticket->timeTo; ?>"
+                                   value="<?=format($ticket->timeTo)->time() ?>"
                                    name="timeTo"/>
                         </div>
                     </div>
@@ -387,8 +387,6 @@ $ticketTypes = $tpl->get('ticketTypes');
 <script>
 
     jQuery(document).ready(function(){
-
-
         //Set accordion states
         //All accordions start open
     });
@@ -403,8 +401,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                 function() {
                     leantime.editorController.initComplexEditor();
 
-                });
-
+                }
+            );
         }
     });
 

@@ -140,7 +140,24 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
                 eventSources:eventSources,
                 editable: true,
                 headerToolbar: false,
+                dayHeaderFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
+                eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+                slotLabelFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+                views: {
+                    timeGridDay: {
 
+                    },
+                    timeGridWeek: {
+
+                    },
+                    dayGridMonth: {
+                        dayHeaderFormat: { weekday: 'short' },
+                    },
+                    multiMonthYear: {
+                        multiMonthTitleFormat: { month: 'long', year: 'numeric' },
+                        dayHeaderFormat: { weekday: 'short' },
+                    }
+                },
                 nowIndicator: true,
                 bootstrapFontAwesome: {
                     close: 'fa-times',

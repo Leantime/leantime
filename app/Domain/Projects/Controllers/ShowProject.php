@@ -226,8 +226,8 @@ namespace Leantime\Domain\Projects\Controllers {
                         'menuType' => $_POST['menuType'],
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
-                        'start' => $this->language->getISODateString($_POST['start']),
-                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end'], "e") : '',
+                        'start' => format($_POST['start'])->isoDate(),
+                        'end' => $_POST['end'] ? format($_POST['end'])->isoDateEnd() : '',
                     );
 
                     if ($values['name'] !== '') {

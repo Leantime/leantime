@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 use Illuminate\View\Compilers\Compiler;
 use Illuminate\View\Compilers\CompilerInterface;
+use Illuminate\View\DynamicComponent;
 use Illuminate\View\Engines\CompilerEngine;
 use Illuminate\View\Engines\EngineResolver;
 use Illuminate\View\Engines\PhpEngine;
@@ -359,12 +360,12 @@ class Template
 
         $this->bladeCompiler->directive(
             'formatDate',
-            fn ($args) => "<?php echo \$tpl->getFormattedDateString($args); ?>",
+            fn ($args) => "<?php echo \format($args)->date(); ?>",
         );
 
         $this->bladeCompiler->directive(
             'formatTime',
-            fn ($args) => "<?php echo \$tpl->getFormattedTimeString($args); ?>",
+            fn ($args) => "<?php echo \format($args)->time(); ?>",
         );
 
         $this->bladeCompiler->directive(
@@ -401,6 +402,10 @@ class Template
      */
     public function assign(string $name, mixed $value): void
     {
+        /**
+         * Filter to access template variable names after they have been assigned
+         * @var mixed $value The current value of the variable.
+         */
         $value = self::dispatch_filter("var.$name", $value);
 
         $this->vars[$name] = $value;
@@ -478,7 +483,7 @@ class Template
      * @return Response
      * @throws Exception
      */
-    public function display(string $template, string $layout = "app", $responseCode = 200): Response
+    public function display(string $template, string $layout = "app", int $responseCode = 200): Response
     {
         $template = self::dispatch_filter('template', $template);
         $template = self::dispatch_filter("template.$template", $template);
@@ -495,7 +500,7 @@ class Template
         $this->hookContext = "tpl.$module.$action";
         $this->viewFactory->share(['tpl' => $this]);
 
-        /** @var View $this */
+        /** @var View $view */
         $view = $this->viewFactory->make($loadFile);
 
         /** @todo this can be reduced to just the 'if' code after removal of php template support */
@@ -520,12 +525,13 @@ class Template
 
 
     /**
-     * @param $layoutName
-     * @param $template
-     * @return bool|string
-     * @throws Exception
+     * Confirm the layout name based on the provided parameters.
+     *
+     * @param string $layoutName The layout name to be confirmed.
+     * @param string $template   The template name associated with the layout.
+     * @return bool|string The confirmed layout name, or false if not found.
      */
-    protected function confirmLayoutName($layoutName, $template): bool|string
+    protected function confirmLayoutName(string $layoutName, string $template): bool|string
     {
         $layout = htmlspecialchars($layoutName);
         $layout = self::dispatch_filter("layout", $layout);
@@ -537,13 +543,13 @@ class Template
     }
 
     /**
-     * displayJson - returns json data
+     * Display JSON content with an optional response code.
      *
-     * @access public
-     * @param  $jsonContent
-     * @return Response
+     * @param array|object|string $jsonContent The JSON content to be displayed.
+     * @param int                 $statusCode  The HTTP response code to be returned (default: 200).
+     * @return Response The response object after displaying the JSON content.
      */
-    public function displayJson(array|object|string $jsonContent, $statusCode = 200): Response
+    public function displayJson(array|object|string $jsonContent, int $statusCode = 200): Response
     {
         $response = new Response(json_encode(['error' => 'Invalid Json']), 500);
         $response->headers->set('Content-Type', 'application/json; charset=utf-8');
@@ -563,15 +569,13 @@ class Template
     }
 
     /**
-     * display - display only the template from the template folder without a wrapper
+     * Display a partial template with an optional response code.
      *
-     * @access  public
-     * @param   string $template
-     * @param   int    $responseCode (optional)
-     * @return  Response
-     * @throws  Exception
+     * @param string $template     The path to the partial template file.
+     * @param int    $responseCode The HTTP response code to be returned (default: 200).
+     * @return Response The response object after displaying the partial template.
      */
-    public function displayPartial($template, $responseCode = 200): Response
+    public function displayPartial(string $template, int $responseCode = 200): Response
     {
         return $this->display($template, 'blank', $responseCode);
     }
@@ -673,6 +677,13 @@ class Template
         return $notification;
     }
 
+    /**
+     * getToggleState - retrieves the toggle state of a submenu by name from the session
+     *
+     * @access  public
+     * @param string $name - the name of the submenu toggle
+     * @return  string - the toggle state of the submenu (either "true" or "false")
+     */
     public function getToggleState(string $name): string
     {
         if (isset($_SESSION['submenuToggle'][$name])) {
@@ -740,22 +751,6 @@ class Template
     public function redirect(string $url): RedirectResponse
     {
         return Frontcontroller::redirect($url);
-    }
-
-    /**
-     * getSubdomain - get subdomain from url
-     *
-     * @return string
-     */
-    public function getSubdomain(): string
-    {
-        preg_match('/(?:http[s]*\:\/\/)*(.*?)\.(?=[^\/]*\..{2,5})/i', $_SERVER['HTTP_HOST'], $match);
-
-        $domain = $_SERVER['HTTP_HOST'];
-        $tmp = explode('.', $domain); // split into parts
-        $subdomain = $tmp[0];
-
-        return $subdomain;
     }
 
     /**
@@ -828,46 +823,6 @@ class Template
         }
 
         return '';
-    }
-
-    /**
-     * getFormattedDateString - returns a language specific formatted date string. wraps language class method
-     *
-     * @access public
-     * @param
-     * @return string
-     */
-    public function getFormattedDateString($date): string
-    {
-        if ($date == null) {
-            return '';
-        }
-
-        return $this->language->getFormattedDateString($date);
-    }
-
-    /**
-     * getFormattedTimeString - returns a language specific formatted time string. wraps language class method
-     *
-     * @access public
-     * @param string $date
-     * @return string
-     */
-    public function getFormattedTimeString(string $date): string
-    {
-        return $this->language->getFormattedTimeString($date);
-    }
-
-    /**
-     * getFormattedDateTimeString - returns a language specific formatted date and time string. wraps language class method
-     *
-     * @access public
-     * @param string $dateTime
-     * @return string
-     */
-    public function get24HourTimestring(string $dateTime): string
-    {
-        return $this->language->get24HourTimestring($dateTime);
     }
 
     /**
@@ -1001,7 +956,7 @@ class Template
      */
     public function getModulePicture(): string
     {
-        $module = frontcontroller::getModuleName($this->template);
+        $module = Frontcontroller::getModuleName($this->template);
 
         $picture = $this->picture['default'];
         if (isset($this->picture[$module])) {
@@ -1009,54 +964,6 @@ class Template
         }
 
         return $picture;
-    }
-
-    /**
-     * displayLink - display link
-     *
-     * @access public
-     * @param string     $module
-     * @param string     $name
-     * @param array|null $params
-     * @param array|null $attribute
-     * @return false|string
-     */
-    public function displayLink(string $module, string $name, array $params = null, array $attribute = null): false|string
-    {
-
-        $mod = explode('.', $module);
-
-        if (is_array($mod) === true && count($mod) == 2) {
-            $action = $mod[1];
-            $module = $mod[0];
-
-            $mod = $module . '/class.' . $action . '.php';
-        } else {
-            $mod = array();
-            return false;
-        }
-
-        $returnLink = false;
-
-        $url = "/" . $module . "/" . $action . "/";
-
-        if (!empty($params)) {
-            foreach ($params as $key => $value) {
-                $url .= $value . "/";
-            }
-        }
-
-        $attr = '';
-
-        if ($attribute != null) {
-            foreach ($attribute as $key => $value) {
-                $attr .= $key . " = '" . $value . "' ";
-            }
-        }
-
-        $returnLink = "<a href='" . BASE_URL . "" . $url . "' " . $attr . ">" . $name . "</a>";
-
-        return $returnLink;
     }
 
     /**
@@ -1082,8 +989,11 @@ class Template
     }
 
     /**
-     * @param string $hookName
-     * @param mixed  $payload
+     * Dispatch a template event with an optional payload.
+     *
+     * @param string $hookName The name of the event hook.
+     * @param mixed  $payload  The payload to be passed to the event hook (default: null).
+     * @return void
      */
     public function dispatchTplEvent(string $hookName, mixed $payload = null): void
     {
@@ -1105,7 +1015,7 @@ class Template
     /**
      * @param string $type
      * @param string $hookName
-     * @param array  $payload
+     * @param mixed  $payload
      * @param array  $available_params
      *
      * @return null|mixed

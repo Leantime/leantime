@@ -271,12 +271,11 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $timeFormat);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".timezone", $tz);
 
-                    $_SESSION['usersettings.timezone'] = $tz;
-
-                    unset($_SESSION["companysettings.logoPath"]);
                     unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage()]);
-                    unset($_SESSION['usersettings.language.dateTimeFormat']);
 
+                    $_SESSION['usersettings.language.date_format'] = $dateFormat;
+                    $_SESSION['usersettings.language.time_format'] = $timeFormat;
+                    $_SESSION['usersettings.timezone'] = $tz;
 
                     $this->language->setLanguage($postLang);
 

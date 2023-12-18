@@ -142,21 +142,6 @@
 
                             @foreach ($ticketGroup['tickets'] as $row)
 
-                                @if($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00")
-
-                                    @php
-                                        $date = __("text.anytime")
-                                    @endphp
-
-                                @else
-
-                                    @php
-                                        $date = new DateTime($row['dateToFinish']);
-                                        $date = $date->format(__("language.dateformat"));
-                                    @endphp
-
-                                @endif
-
                                 <li class="ui-state-default" id="ticket_{{ $row['id'] }}" >
                                     <div class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}">
                                         <div class="row">
@@ -174,13 +159,13 @@
                                         <div class="row">
                                             <div class="col-md-4" style="padding:0 15px;">
                                                 @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
-                                                    <i class="fa-solid fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} @formatDate($row['editFrom']) "></i>
+                                                    <i class="fa-solid fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
                                                 @else
                                                     <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-sm" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
                                                 @endif
 
                                                <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
-                                               <input type="text" title="{{ __("label.due") }}" value="{{ $date }}" class="duedates secretInput" data-id="{{ $row['id'] }}" name="date" />
+                                               <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" data-id="{{ $row['id'] }}" name="date" />
                                             </div>
                                             <div class="col-md-8" style="padding-top:5px;">
                                                 <div class="right">
@@ -228,7 +213,7 @@
                                                             </span>
                                                             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                         </a>
-                                                        <ul class="dropdown-menu" aria-labelledby="milestoneDropdownMenuLink{{ $row['id'] }}">
+                                                        <ul class="dropdown-menu pull-right" aria-labelledby="milestoneDropdownMenuLink{{ $row['id'] }}">
                                                             <li class="nav-header border">{{ __("dropdown.choose_milestone") }}</li>
                                                             <li class='dropdown-item'>
                                                                 <a style='background-color:#b0b0b0'
@@ -267,7 +252,7 @@
                                                         </span>
                                                             &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
                                                         </a>
-                                                        <ul class="dropdown-menu" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                                                        <ul class="dropdown-menu pull-right" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
                                                             <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
 
                                                             @foreach ($statusLabels[$row['projectId']] as $key => $label)

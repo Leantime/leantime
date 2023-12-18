@@ -132,5 +132,8 @@ codesniffer-fix:
 get-version:
 	@echo $(VERSION)
 
+phpstan:
+	./vendor/bin/phpstan analyse --memory-limit 512M
+
 .PHONY: install-deps build package clean run-dev
 

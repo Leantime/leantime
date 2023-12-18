@@ -411,7 +411,7 @@
     border-color: var(--neutral);
     border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
-    padding: 4px 12px;
+    padding: 6px 12px;
     line-height: 21px;
     text-align: center;
     vertical-align: baseline;

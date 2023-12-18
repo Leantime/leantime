@@ -94,7 +94,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                     }
 
                     if (isset($_POST['date']) && $_POST['date'] != '') {
-                        $values['date'] = $this->language->getISODateString($_POST['date'], "b");
+                        $values['date'] = format($_POST['date'])->isoDateStart();
                     }
 
                     if (isset($_POST['hours']) && $_POST['hours'] != '') {
@@ -107,7 +107,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                         }
 
                         if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                            $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate'], "m");
+                            $values['invoicedEmplDate'] = format($_POST['invoicedEmplDate'])->isoDateMid();
                         }
                     }
 
@@ -118,7 +118,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             }
 
                             if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                                $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate'], "m");
+                                $values['invoicedCompDate'] = format($_POST['invoicedCompDate'])->isoDateMid();
                             }
                         }
                     }
@@ -130,7 +130,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             }
 
                             if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                                $values['paidDate'] = $this->language->getISODateString($_POST['paidDate'], "m");
+                                $values['paidDate'] = format($_POST['paidDate'])->isoDateMid();
                             }
                         }
                     }
@@ -161,12 +161,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
                     }
 
                     if (isset($_POST['save']) === true) {
-                        $values['date'] = $this->language->getFormattedDateString($values['date']);
-                        $values['invoicedCompDate'] = $this->language->getFormattedDateString($values['invoicedCompDate']);
-                        $values['invoicedEmplDate'] = $this->language->getFormattedDateString($values['invoicedEmplDate']);
-                        $values['paidDate'] = $this->language->getFormattedDateString($values['paidDate']);
-
-
                         $this->tpl->assign('values', $values);
                     } elseif (isset($_POST['saveNew']) === true) {
                         $values = array(

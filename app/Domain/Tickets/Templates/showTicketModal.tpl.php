@@ -125,7 +125,9 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
-            leantime.ticketsController.initDates();
+
+            leantime.dateController.initDatePicker(".dates");
+            leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
 
             leantime.ticketsController.initTagsInput();
 

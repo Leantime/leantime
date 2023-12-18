@@ -872,10 +872,10 @@ namespace Leantime\Domain\Projects\Services {
                 'end' => $values['end'],
             );
             if ($values['start'] != null) {
-                $values['start'] = $this->language->getISODateString($values['start']);
+                $values['start'] = format($values['start'])->isoDate();
             }
             if ($values['end'] != null) {
-                $values['end'] = $this->language->getISODateString($values['end'], "e");
+                $values['end'] = format($values['end'])->isoDateEnd();
             }
             $this->projectRepository->addProject($values);
         }

@@ -5,14 +5,15 @@ namespace Leantime\Core;
 use DateTime;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Middleware\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 /**
- * Language class - Internationilsation with ini-Files
- *
- * @package    leantime
- * @subpackage core
+ * Either takes the translation from ini_array or the default
+ * @param string $index - The index of the translated string.
+ * @param mixed $default - The default value to return if the index is not found.
+ * @return string - The translated string or the default value if the index is not found.
  */
 class Language
 {
@@ -79,16 +80,13 @@ class Language
 
 
     /**
-     * __construct - Check standard language otherwise get language from browser
+     * Constructor method for initializing an instance of the class.
      *
-     * @param Environment $config
-     * @param Setting     $settingsRepo
-     * @param ApiRequest  $apiRequest
-     * @throws BindingResolutionException
+     * @param Environment $config     The configuration environment.
+     * @param ApiRequest  $apiRequest The API request object.
      */
     public function __construct(
         Environment $config,
-        Setting $settingsRepo,
         ApiRequest $apiRequest,
     ) {
 
@@ -96,86 +94,32 @@ class Language
         $this->apiRequest = $apiRequest;
 
         //Get list of available languages
-        if (isset($_SESSION['cache.langlist'])) {
-            $this->langlist = $_SESSION['cache.langlist'];
-        } else {
-            if (file_exists(static::CUSTOM_LANG_FOLDER . '/languagelist.ini')) {
-                $parsedLangList = parse_ini_file(static::CUSTOM_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
-            } elseif (file_exists(static::DEFAULT_LANG_FOLDER . 'languagelist.ini')) {
-                $parsedLangList = parse_ini_file(static::DEFAULT_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
-            } else {
-                throw new Exception("Language list missing");
-            }
+        $this->langlist = $this->getLanguageList();
 
-            $parsedLangList = self::dispatch_filter('languages', $parsedLangList);
-
-            $this->langlist = $_SESSION['cache.langlist'] = $parsedLangList;
-        }
-
-        //Get company language
-        if (!isset($_SESSION["companysettings.language"])) {
-            $language = $settingsRepo->getSetting("companysettings.language");
-
-            if ($language === false) {
-                $language = $this->config->language;
-            }
-        } else {
-            $language = $_SESSION["companysettings.language"];
-        }
-        $_SESSION["companysettings.language"] = $language;
-
-        //Get user language
-        if (!isset($_SESSION["userdata"]["id"])) {
-            // This is a not a login session, we need to ensure the default language (or the user's browser)
-            $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
-        } else {
-            // This is not a login session
-            if (
-                ! isset($_SESSION["usersettings.language"])
-                || empty($_SESSION["usersettings.language"])
-            ) {
-                // User has a saved language
-                $languageSettings = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".language");
-                if ($languageSettings === false) {
-                    $language = $_COOKIE['language'] ?? $this->getBrowserLanguage();
-                } else {
-                    $language = $languageSettings;
-                }
-            } else {
-                $language = $_SESSION["usersettings.language"];
-            }
-
-            $_SESSION["usersettings.language"] = $language;
-        }
-        $_SESSION['usersettings.language'] = $language;
+        //Get language that was set in middleware
+        $language =  $_SESSION["usersettings.language"] ?? $this->config->language;
 
         //Start checking if the user has a language set
-        if ($this->isValidLanguage($language)) {
-            $this->setLanguage($language);
-        } elseif ($this->isValidLanguage($_SESSION['companysettings.language'])) {
-            $this->setLanguage($_SESSION['companysettings.language']);
-        } else {
+        if (!$this->setLanguage($language)) {
             $this->setLanguage($this->config->language);
         }
     }
 
     /**
-     * setLanguage - set the language (format: de-DE, languageCode-CountryCode)
+     * Set the language for the application.
      *
-     * @access public
-     * @param  $lang
-     * @return void
-     * @throws Exception
+     * @param string $lang The language code to be set.
+     * @return bool True if the language is valid and successfully set, False otherwise.
      */
-    public function setLanguage($lang): void
+    public function setLanguage(string $lang): bool
     {
+        if (!$this->isValidLanguage($lang)) {
+            return false;
+        }
+
         $this->language = $lang;
 
         $_SESSION['usersettings.language'] = $lang;
-        if (isset($_SESSION["userdata"]["id"])) {
-            $_SESSION["usersettings.language"] = $lang;
-        }
-
 
         if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
             setcookie('language', $lang, [
@@ -185,29 +129,16 @@ class Language
             ]);
         }
 
-
-        $_SESSION['usersettings.language'] = $lang;
-        if (isset($_SESSION["userdata"]["id"])) {
-            $_SESSION["usersettings.language"] = $lang;
-        }
-
-
-        if (!isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-            setcookie('language', $lang, [
-            'expires' => time() + 60 * 60 * 24 * 30,
-                'path' => $this->config->appDir . '/',
-                'samesite' => 'Strict',
-            ]);
-        }
 
         $this->readIni();
+
+        return true;
     }
 
     /**
-     * getLanguage - set the language (format: de-DE, languageCode-CountryCode)
+     * Get the currently selected language.
      *
-     * @access public
-     * @return string
+     * @return string The currently selected language.
      */
     public function getCurrentLanguage(): string
     {
@@ -215,23 +146,22 @@ class Language
     }
 
     /**
-     * isValidLanguage - check if language is valid
+     * Check if a given language code is valid.
      *
-     * @access public
-     * @param  $langCode
-     * @return bool
+     * @param string $langCode The language code to check.
+     * @return bool True if the language code is valid, false otherwise.
      */
-    public function isValidLanguage($langCode): bool
+    public function isValidLanguage(string $langCode): bool
     {
         return isset($this->langlist[$langCode]);
     }
 
     /**
-     * readIni - read File and return values
+     * Read and load the language resources from the ini files.
      *
-     * @access public
-     * @return array
-     * @throws Exception
+     * @return array The array of language resources loaded from the ini files.
+     *
+     * @throws Exception If the default english language file en-US.ini cannot be found.
      */
     public function readIni(): array
     {
@@ -278,14 +208,13 @@ class Language
     }
 
     /**
-     * includeOverrides - include overrides from ini file
+     * Include language overrides from an ini file.
      *
-     * @access public
-     * @param array  $language
-     * @param string $filepath
-     * @param bool   $foreignLanguage
-     * @return array
-     * @throws Exception
+     * @param array  $language        The original language array.
+     * @param string $filepath        The path to the ini file.
+     * @param bool   $foreignLanguage Whether the language is foreign or not. Defaults to false.
+     * @return array The modified language array.
+     * @throws Exception If the ini file cannot be parsed.
      */
     protected function includeOverrides(array $language, string $filepath, bool $foreignLanguage = false): array
     {
@@ -311,61 +240,54 @@ class Language
     }
 
     /**
-     * getLanguageList - gets the list of possible languages
+     * Get the list of languages.
      *
-     * @access public
-     * @return array|bool
+     * Retrieves the list of languages from a cache or from INI files if the cache is not available.
+     * The list of languages is stored in an associative array where the keys represent the language codes
+     * and the values represent the language names.
+     *
+     * @return bool|array The list of languages as an associative array, or false if the list is empty or cannot be retrieved.
      */
     public function getLanguageList(): bool|array
     {
-        if (file_exists(static::CUSTOM_LANG_FOLDER . '/languagelist.ini')) {
-            $this->langlist = parse_ini_file(static::CUSTOM_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
-            return $this->langlist;
+        if (isset($_SESSION['cache.langlist'])) {
+            return $_SESSION['cache.langlist'];
         }
 
+        $langlist = false;
         if (file_exists(static::DEFAULT_LANG_FOLDER . '/languagelist.ini')) {
-            $this->langlist = parse_ini_file(static::DEFAULT_LANG_FOLDER . '/languagelist.ini', false, INI_SCANNER_RAW);
-            return $this->langlist;
+            $langlist  = parse_ini_file(
+                static::DEFAULT_LANG_FOLDER . '/languagelist.ini',
+                false,
+                INI_SCANNER_RAW
+            );
         }
 
-        return false;
+        if (file_exists(static::CUSTOM_LANG_FOLDER . '/languagelist.ini')) {
+            $langlist = parse_ini_file(
+                static::CUSTOM_LANG_FOLDER . '/languagelist.ini',
+                false,
+                INI_SCANNER_RAW
+            );
+        }
+
+        $parsedLangList = self::dispatch_filter('languages', $langlist);
+        $_SESSION['cache.langlist'] = $parsedLangList;
+
+        return $_SESSION['cache.langlist'];
     }
 
     /**
-     * getBrowserLanguage - gets the language that is setted in the browser
+     * Get a translated string or a default value if the index is not found.
      *
-     * @access public
-     * @return string
+     * @param string $index   The index of the translated string.
+     * @param string $default The default value to return if the index is not found. Defaults to an empty string.
+     * @return string The translated string or the default value if the index is not found.
      */
-    public function getBrowserLanguage(): string
+    public function __(string $index, string $default = ''): string
     {
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            $language = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-        }
 
-        if (empty($language)) {
-            return $this->language;
-        }
-
-        $langCode = explode("-", $language);
-
-        if (isset($this->langlist[$langCode[0]]) === true) {
-            return $langCode[0];
-        }
-
-        return $this->language;
-    }
-
-    /**
-     * __ - returns a language specific string
-     *
-     * @param   string  $index
-     * @param   bool    $convertValue   If true then if a value has a conversion (i.e.: PHP -> JavaScript) then do it, otherwise return PHP value
-     * @param   string  $default        If the index is not found, return this value
-     * @return  string
-     */
-    public function __(string $index, bool $convertValue = false, $default = ''): string
-    {
+        //If index cannot be found return default or original string
         if (! isset($this->ini_array[$index])) {
             if (! empty($default)) {
                 return $default;
@@ -380,320 +302,19 @@ class Language
 
         $index = trim($index);
 
-        // @TODO: move the date/time format logic into here and have Api/Controllers/I18n call this for each type?
         $dateTimeIniSettings = [
             'language.dateformat',
-            'language.jsdateformat',
             'language.timeformat',
-            'language.jstimeformat',
-            'language.momentJSDate',
         ];
 
-        $dateTimeFormat = $this->getCustomDateTimeFormat();
+        $returnValue = match ($index) {
+            'language.dateformat' => $_SESSION['usersettings.language.date_format'] ?? $this->ini_array['language.dateformat'],
+            'language.timeformat' => $_SESSION['usersettings.language.time_format'] ?? $this->ini_array['language.timeformat'],
+            default => $this->ini_array[$index],
+        };
 
-        if (in_array($index, $dateTimeIniSettings) && $convertValue) {
-            $isMoment = stristr($index, 'momentjs') !== false;
-            $isJs = stristr($index, '.js') !== false;
-            $isDate = stristr($index, 'date') !== false;
-
-            if ($isJs || $isMoment) {
-                return $this->convertDateFormatToJS($isDate ? $dateTimeFormat['date'] : $dateTimeFormat['time'], $isMoment);
-            } else if ($isDate) {
-                return $this->convertDateFormatToJS($dateTimeFormat['date'], false);
-            }
-        } else if ($index === 'language.dateformat') {
-            return $dateTimeFormat['date'];
-        } else if ($index === 'language.timeformat') {
-            return $dateTimeFormat['time'];
-        }
-
-        return (string) $this->ini_array[$index];
+        return (string) $returnValue;
     }
 
-    /**
-     * getFormattedDateString - returns a language specific formatted date string
-     *
-     * @access public
-     * @param string $date
-     * @return string
-     */
-    public function getFormattedDateString(string|DateTime $date): string
-    {
-        if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-            if ($this->apiRequest->isApiRequest()) {
-                if (is_string($date)) {
-                    $date = new DateTime($date);
-                }
 
-                return $date->format(DateTime::ATOM);
-            }
-            $formats = $this->getCustomDateTimeFormat();
-            $dateFormat = $formats['date'];
-
-            //If datetime object
-            if ($date instanceof DateTime) {
-                return $date->format($this->__("language.dateformat"));
-            }
-
-            //If length of string is 10 we only have a date(Y-m-d), otherwise it comes from the db with second strings.
-            if (strlen($date) == 10) {
-                $timestamp = date_create_from_format("!Y-m-d", $date);
-            } else {
-                $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
-            }
-
-            if (is_object($timestamp)) {
-                return date($this->__("language.dateformat"), $timestamp->getTimestamp());
-            }
-        }
-
-        return "";
-    }
-
-    /**
-     * getFormattedTimeString - returns a language specific formatted time string
-     *
-     * @access public
-     * @param string $date
-     * @return string
-     */
-    public function getFormattedTimeString(?string $date): string
-    {
-        if (
-            is_null($date) === false
-            && $date != ""
-            && $date != "1969-12-31 00:00:00"
-            && $date != "0000-00-00 00:00:00"
-        ) {
-            $timestamp = date_create_from_format("!Y-m-d H:i:s", $date);
-
-            if (is_object($timestamp)) {
-                return date($this->__("language.timeformat"), $timestamp->getTimestamp());
-            }
-        }
-
-        return "";
-    }
-
-    /**
-     * getFormattedDateTimeString - returns a language specific formatted date time string
-     *
-     * @access public
-     * @param string $date
-     * @return false|string
-     */
-    public function get24HourTimestring(?string $date): false|string
-    {
-        if (
-            is_null($date) === false
-            && $date != ""
-            && $date != "1969-12-31 00:00:00"
-            && $date != "0000-00-00 00:00:00"
-        ) {
-            $timePart = explode(" ", $date);
-
-            if (is_array($timePart) && count($timePart) == 2) {
-                return $timePart[1];
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * getISODateString - returns an ISO date string (hours, minutes seconds zeroed out) based on language specific format
-     *
-     * @access public
-     * @param string $date
-     * @param string $timeOfDay b beginning, m mid day, e end of day
-     * @return string|bool
-     */
-    public function getISODateString(?string $date, string $timeOfDay = "b"): bool|string
-    {
-        if (
-            is_null($date) === false
-            && $date != ""
-            && $date != "1969-12-31 00:00:00"
-            && $date != "0000-00-00 00:00:00"
-        ) {
-            $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
-
-            if (is_object($timestamp)) {
-                switch ($timeOfDay) {
-                    case "b":
-                        $timestamp->setTime(0, 0, 0);
-                        break;
-                    case "m":
-                        $timestamp->setTime(12, 0, 0);
-                        break;
-                    case "e":
-                        $timestamp->setTime(23, 59, 59);
-                        break;
-                }
-
-                return date("Y-m-d 00:00:00", $timestamp->getTimestamp());
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * getISODateString - returns an ISO date string (hours, minutes seconds zeroed out) based on language specific format
-     *
-     * @access public
-     * @param string $date
-     * @param $time
-     * @return string|bool
-     */
-    public function getISODateTimeString(?string $date, $time): bool|string
-    {
-        if (is_null($date) === false && $date != "" && $date != "1969-12-31 00:00:00" && $date != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format($this->__("language.dateformat"), $date);
-
-            //Time is coming in as 24hour format with :
-            $timeparts = explode(":", $time);
-            if (is_array($timeparts) && count($timeparts) >= 2) {
-                $timestamp->setTime($timeparts[0], $timeparts[1]);
-            }
-
-            if (is_object($timestamp)) {
-                return date("Y-m-d H:i:00", $timestamp->getTimestamp());
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * getISOTimeString - returns an ISO time string (hours, minutes seconds zeroed out) based on language specific format
-     *
-     * @access public
-     * @param string $time
-     * @return string|bool
-     */
-    public function getISOTimeString(?string $time): bool|string
-    {
-        if (is_null($time) === false && $time != "" && $time != "1969-12-31 00:00:00" && $time != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format($this->__("language.timeformat"), $time);
-
-            if (is_object($timestamp)) {
-                return date("H:i:00", $timestamp->getTimestamp());
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * extractTime - returns an ISO time string (hours, minutes seconds zeroed out) based on language specific format
-     *
-     * @access public
-     * @param string $dateTime
-     * @return string|bool
-     */
-    public function extractTime(?string $dateTime): bool|string
-    {
-        if (is_null($dateTime) === false && $dateTime != "" && $dateTime != "1969-12-31 00:00:00" && $dateTime != "0000-00-00 00:00:00") {
-            $timestamp = date_create_from_format("Y-m-d H:i:00", $dateTime);
-
-            if (is_object($timestamp)) {
-                return date("H:i:00", $timestamp->getTimestamp());
-            }
-        }
-
-        return false;
-    }
-
-    public function getCustomDateTimeFormat(string $defaultDateKey = 'dateformat', string $defaultTimeKey = 'timeformat'): array
-    {
-
-        if (
-            isset($_SESSION['usersettings.language.dateTimeFormat'])
-            && isset($_SESSION['userdata'])
-            && $_SESSION['usersettings.language.dateTimeFormat']["date"] !== false
-            && $_SESSION['usersettings.language.dateTimeFormat']["time"] !== false
-        ) {
-            return $_SESSION['usersettings.language.dateTimeFormat'];
-        }
-
-        $settings = app()->make(SettingService::class);
-
-        $results = ['date' => $this->ini_array['language.' . $defaultDateKey], 'time' => $this->ini_array['language.' . $defaultTimeKey]];
-
-        $userId = isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id']) ? $_SESSION['userdata']['id'] : 0;
-
-        if ($userId) {
-            $results['date'] = $settings->getSetting("usersettings." . $userId . ".date_format") !== false ? $settings->getSetting("usersettings." . $userId . ".date_format") : $results['date'];
-            $results['time'] = $settings->getSetting("usersettings." . $userId . ".time_format") !== false ? $settings->getSetting("usersettings." . $userId . ".time_format") : $results['time'];
-        }
-
-        //Only cache when user is logged in.
-        if (isset($_SESSION['userdata'])) {
-            $_SESSION['usersettings.language.dateTimeFormat'] = $results;
-        }
-
-        return $results;
-    }
-
-    /**
-     * Converts php DateTime format to Javascript Moment format.
-     * @link https://stackoverflow.com/a/55173613
-     * @param string $phpFormat
-     * @return string
-     */
-    public function convertDateFormatToJS(string $phpFormat, bool $toMoment = true): string
-    {
-        $momentReplacements = [
-            'A' => 'A',      // for the sake of escaping below
-            'a' => 'a',      // for the sake of escaping below
-            'B' => '',       // Swatch internet time (.beats), no equivalent
-            'c' => 'YYYY-MM-DD[T]HH:mm:ssZ', // ISO 8601
-            'D' => 'ddd',
-            'd' => 'DD',
-            'e' => 'zz',     // deprecated since version 1.6.0 of moment.js
-            'F' => 'MMMM',
-            'G' => 'H',
-            'g' => 'h',
-            'H' => 'HH',
-            'h' => 'hh',
-            'I' => '',       // Daylight Saving Time? => moment().isDST();
-            'i' => 'mm',
-            'j' => 'D',
-            'L' => '',       // Leap year? => moment().isLeapYear();
-            'l' => 'dddd',
-            'M' => 'MMM',
-            'm' => 'MM',
-            'N' => 'E',
-            'n' => 'M',
-            'O' => 'ZZ',
-            'o' => 'YYYY',
-            'P' => 'Z',
-            'r' => 'ddd, DD MMM YYYY HH:mm:ss ZZ', // RFC 2822
-            'S' => 'o',
-            's' => 'ss',
-            'T' => 'z',      // deprecated since version 1.6.0 of moment.js
-            't' => '',       // days in the month => moment().daysInMonth();
-            'U' => 'X',
-            'u' => 'SSSSSS', // microseconds
-            'v' => 'SSS',    // milliseconds (from PHP 7.0.0)
-            'W' => 'W',      // for the sake of escaping below
-            'w' => 'e',
-            'Y' => 'YYYY',
-            'y' => 'YY',
-            'Z' => '',       // time zone offset in minutes => moment().zone();
-            'z' => 'DDD',
-        ];
-
-        // @TODO: Additional format support (this covers the most popular)
-        $jsReplacements = [
-            'Y' => 'yy',
-            'm' => 'mm',
-            'd' => 'dd',
-            'F' => 'MM',
-            'l' => 'DD',
-        ];
-
-        return strtr($phpFormat, $toMoment ? $momentReplacements : $jsReplacements);
-    }
 }

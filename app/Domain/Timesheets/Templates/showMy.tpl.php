@@ -12,14 +12,18 @@ jQuery(document).ready(function(){
     var endDate;
 
     var selectCurrentWeek = function () {
+
         window.setTimeout(function () {
             jQuery('.ui-weekpicker').find('.ui-datepicker-current-day a').addClass('ui-state-active').removeClass('ui-state-default');
         }, 1);
+
     };
 
     var setDates = function (input) {
+
         var $input = jQuery(input);
         var date = $input.datepicker('getDate');
+
         if (date !== null) {
             var firstDay = $input.datepicker( "option", "firstDay" );
             var dayAdjustment = date.getDay() - firstDay;
@@ -31,14 +35,26 @@ jQuery(document).ready(function(){
 
             var inst = $input.data('datepicker');
             var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
+
             jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
             jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         }
     };
 
-
-
     jQuery('.week-picker').datepicker({
+        dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
+        dayNames: leantime.i18n.__("language.dayNames").split(","),
+        dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
+        dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
+        monthNames: leantime.i18n.__("language.monthNames").split(","),
+        currentText: leantime.i18n.__("language.currentText"),
+        closeText: leantime.i18n.__("language.closeText"),
+        buttonText: leantime.i18n.__("language.buttonText"),
+        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
+        nextText: leantime.i18n.__("language.nextText"),
+        prevText: leantime.i18n.__("language.prevText"),
+        weekHeader: leantime.i18n.__("language.weekHeader"),
+        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
 
         beforeShow: function () {
             jQuery('#ui-datepicker-div').addClass('ui-weekpicker');
@@ -50,6 +66,7 @@ jQuery(document).ready(function(){
         showOtherMonths: true,
         selectOtherMonths: true,
         onSelect: function (dateText, inst) {
+
             setDates(this);
             selectCurrentWeek();
             jQuery(this).change();
@@ -64,22 +81,9 @@ jQuery(document).ready(function(){
         onChangeMonthYear: function (year, month, inst) {
             selectCurrentWeek();
         },
-        dateFormat:  leantime.i18n.__("language.jsdateformat"),
-        dayNames: leantime.i18n.__("language.dayNames").split(","),
-        dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-        dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-        monthNames: leantime.i18n.__("language.monthNames").split(","),
-        currentText: leantime.i18n.__("language.currentText"),
-        closeText: leantime.i18n.__("language.closeText"),
-        buttonText: leantime.i18n.__("language.buttonText"),
-        isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-        nextText: leantime.i18n.__("language.nextText"),
-        prevText: leantime.i18n.__("language.prevText"),
-        weekHeader: leantime.i18n.__("language.weekHeader"),
-        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+
     });
 
-    setDates('.week-picker');
 
     var $calendarTR = jQuery('.ui-weekpicker .ui-datepicker-calendar tr');
     $calendarTR.on('mousemove', function () {
@@ -89,8 +93,10 @@ jQuery(document).ready(function(){
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
-    jQuery("#startDate").datepicker("setDate", new Date(<?php echo $tpl->get("dateFrom")->format('Y, m-1, d'); ?>));
-    jQuery("#endDate").datepicker("setDate", new Date(<?php echo $tpl->get("dateFrom")->add(new DateInterval('P6D'))->format('Y, m-1, d'); ?>));
+    //console.log("Setting star date");
+    //console.log(new Date(<?php echo $tpl->get("dateFrom")->format('Y, m-1, d') ?>));
+    //jQuery("#startDate").datepicker({ dateFormat:  leantime.i18n.__("language.jsdateformat")}).datepicker("setDate", '<?php echo $tpl->get("dateFrom")->format(__('language.dateformat')); ?>');
+    //jQuery("#endDate").datepicker("setDate", new Date(<?php echo $tpl->get("dateFrom")->add(new DateInterval('P6D'))->format('Y, m-1, d'); ?>));
 
     <?php $tpl->get("dateFrom")->sub(new DateInterval('P6D')); ?>
 
@@ -236,8 +242,8 @@ jQuery(document).ready(function(){
                 <div class="padding-top-sm">
                     <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.jsdateformat')?>" value="" style="margin-top:5px;"/> <?php echo $tpl->__('label.until'); ?>
-                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.jsdateformat')?>" style="margin-top:6px;"/>
+                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?=$tpl->get("dateFrom")->format(__("language.dateformat")) ?>" style="margin-top:5px;"/> <?php echo $tpl->__('label.until'); ?>
+                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?=$tpl->get("dateFrom")->add(new DateInterval('P6D'))->format(__("language.dateformat")) ?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
 

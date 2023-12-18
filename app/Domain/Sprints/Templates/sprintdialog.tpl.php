@@ -21,10 +21,10 @@ if (isset($currentSprint->id)) {
     <input type="text" name="name" value="<?php echo $currentSprint->name?>" placeholder="<?=$tpl->__('input.placeholders.sprint_x') ?>"/><br />
 
     <label><?=$tpl->__('label.first_day') ?></label>
-    <input type="text" name="startDate" autocomplete="off" value="<?php echo $currentSprint->startDate?>" placeholder="<?=$tpl->__('language.jsdateformat') ?>" id="sprintStart" /><br />
+    <input type="text" name="startDate" autocomplete="off" value="<?php echo $currentSprint->startDate?>" placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
 
     <label><?=$tpl->__('label.last_day') ?></label>
-    <input type="text" name="endDate" autocomplete="off" value="<?php echo $currentSprint->endDate?>"  placeholder="<?=$tpl->__('language.jsdateformat') ?>" id="sprintEnd"  />
+    <input type="text" name="endDate" autocomplete="off" value="<?php echo $currentSprint->endDate?>"  placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintEnd"  />
 
     <br />
 

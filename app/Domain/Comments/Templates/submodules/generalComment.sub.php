@@ -55,8 +55,8 @@ if (str_contains($formUrl, '?delComment=')) {
                             <div class="right commentDate">
                                 <?php printf(
                                     $tpl->__('text.written_on'),
-                                    $tpl->getFormattedDateString($row['date']),
-                                    $tpl->getFormattedTimeString($row['date'])
+                                    format($row['date'])->date(),
+                                    format($row['date'])->time()
                                 ); ?>
                                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                         <div class="inlineDropDownContainer" style="float:right; margin-left:10px;">
@@ -107,8 +107,8 @@ if (str_contains($formUrl, '?delComment=')) {
                                                 <div class="right commentDate">
                                                     <?php printf(
                                                         $tpl->__('text.written_on'),
-                                                        $tpl->getFormattedDateString($comment['date']),
-                                                        $tpl->getFormattedTimeString($comment['date'])
+                                                        format($comment['date'])->date(),
+                                                        format($comment['date'])->time()
                                                     ); ?>
                                                 </div>
                                                 <span class="name"><?php printf($tpl->__('text.full_name'), $tpl->escape($comment['firstname']), $tpl->escape($comment['lastname'])); ?></span>

@@ -59,7 +59,6 @@ foreach ($__data as $var => $val) {
 
             <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
-            <?php echo $tpl->displayLink('calendar.importGCal', $tpl->__('GOOGLE_CALENDAR_IMPORT'), null, array('class' => 'btn btn-primary btn-rounded')) ?>
 
             <table cellpadding="0" cellspacing="0" border="0" class="allTickets table table-bordered"
                 id="allTickets">

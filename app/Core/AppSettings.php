@@ -32,12 +32,6 @@ class AppSettings
     {
         $config = $config ?? $this->config;
 
-        if ($config->defaultTimezone != '') {
-            date_default_timezone_set($config->defaultTimezone);
-        } else {
-            date_default_timezone_set('America/Los_Angeles');
-        }
-
         if ($config->debug === 1 || $config->debug === true) {
             error_reporting(E_ALL);
             ini_set('display_errors', 1);

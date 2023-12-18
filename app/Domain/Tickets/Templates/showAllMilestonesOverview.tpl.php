@@ -201,11 +201,11 @@ $size = floor(100 / $numberofColumns);
                             </td>
 
                             <td data-order="<?php echo $row->editFrom ?>" >
-                                <?php echo $tpl->__("label.due_icon"); ?><input type="text" title="<?php echo $tpl->__("label.planned_start_date"); ?>" value="<?php echo $tpl->getFormattedDateString($row->editFrom) ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editFrom" class=""/>
+                                <?php echo $tpl->__("label.due_icon"); ?><input type="text" title="<?php echo $tpl->__("label.planned_start_date"); ?>" value="<?php echo format($row->editFrom)->date() ?>" class="editFromDate secretInput milestoneEditFromAsync fromDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editFrom" class=""/>
                             </td>
 
                             <td data-order="<?php echo $row->editTo ?>" >
-                                <?php echo $tpl->__("label.due_icon"); ?><input type="text" title="<?php echo $tpl->__("label.planned_end_date"); ?>" value="<?php echo $tpl->getFormattedDateString($row->editTo) ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editTo" class="" />
+                                <?php echo $tpl->__("label.due_icon"); ?><input type="text" title="<?php echo $tpl->__("label.planned_end_date"); ?>" value="<?php echo format($row->editTo)->date() ?>" class="editToDate secretInput milestoneEditToAsync toDateTicket-<?php echo $row->id;?>" data-id="<?php echo $row->id;?>" name="editTo" class="" />
 
                             </td>
 

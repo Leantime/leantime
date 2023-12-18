@@ -98,13 +98,13 @@ namespace Leantime\Domain\Calendar\Services {
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                $dateFrom = $this->language->getISODateTimeString($values['dateFrom'], $values['timeFrom']);
+                $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTime();
             }
             $values['dateFrom'] = $dateFrom;
 
             $dateTo = null;
             if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                $dateTo =  $this->language->getISODateTimeString($values['dateTo'], $values['timeTo']);
+                $dateTo =  format($values['dateTo'], $values['timeTo'])->isoDateTime();
             }
             $values['dateTo'] = $dateTo;
 
@@ -161,13 +161,13 @@ namespace Leantime\Domain\Calendar\Services {
 
                 $dateFrom = null;
                 if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                    $dateFrom = $this->language->getISODateTimeString($values['dateFrom'], $values['timeFrom']);
+                    $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTime();
                 }
                 $values['dateFrom'] = $dateFrom;
 
                 $dateTo = null;
                 if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                    $dateTo = $this->language->getISODateTimeString($values['dateTo'], $values['timeTo']);
+                    $dateTo = format($values['dateTo'], $values['timeTo'])->isoDateTime();
                 }
                 $values['dateTo'] = $dateTo;
 

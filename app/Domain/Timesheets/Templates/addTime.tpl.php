@@ -160,7 +160,7 @@ $values = $tpl->get('values');
 
         jQuery("#date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
 
-                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),

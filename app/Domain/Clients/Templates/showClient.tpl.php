@@ -252,41 +252,6 @@ $users = $tpl->get('users');
 
 
             </div>
-
-            <?php /*
-<div id='projects'>
-    <?php echo $tpl->displayLink('projects.newProject', $tpl->__('NEW_PROJECT'), null, array('class' => 'btn btn-primary btn-rounded')) ?><br/>
-    <table class='table table-bordered'>
-     <colgroup>
-            <col class="con0"/>
-          <col class="con1" />
-            <col class="con0"/>
-          <col class="con1" />
-     </colgroup>
-     <thead>
-         <tr>
-             <th><?php echo $tpl->__('ID') ?></th>
-             <th><?php echo $tpl->__('TITLE') ?></th>
-             <th><?php echo $tpl->__('OPEN_TICKETS') ?></th>
-             <th><?php echo $tpl->__('HOUR_BUDGET') ?></th>
-         </tr>
-     </thead>
-     <tbody>
-    <?php foreach($tpl->get('clientProjects') as $project): ?>
-        <?php if(isset($project['id']) && $project['id'] > 0) : ?>
-            <tr>
-                <td><?php echo $project['id'] ?></td>
-                <td><a href="/projects/showProject/<?php echo $project['id']?>"><?php $tpl->e($project['name']); ?></a></td>
-                <td><?php echo $project['numberOfTickets'] ?></td>
-                <td><?php $tpl->e($project['hourBudget']) ?></td>
-            </tr>
-        <?php endif; ?>
-    <?php endforeach; ?>
-     </tbody>
-    </table>
-
-</div>*/?>
-
         </div>
     </div>
 </div>
