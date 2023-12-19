@@ -150,7 +150,7 @@ class Widgets
                     $widget["name"] = $this->availableWidgets[$widget["id"]]->name;
                     $widget["widgetBackground"] = $this->availableWidgets[$widget["id"]]->widgetBackground;
                     $widget["description"] = $this->availableWidgets[$widget["id"]]->description;
-
+                    $widget["alwaysVisible"] = $this->availableWidgets[$widget["id"]]->alwaysVisible;
 
                     $widgets[$widget["id"]] = app()->make(Widget::class, $widget);
                 }

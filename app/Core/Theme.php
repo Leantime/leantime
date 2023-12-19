@@ -107,8 +107,8 @@ class Theme
     public array $colorSchemes = [
             "themeDefault" => "themeDefault",
             "companyColors" => "companyColors",
-            "leantime" => array(
-                "name" => "Leantime Colors",
+            "leantime2_0" => array(
+                "name" => "Leantime 2.0 Colors",
                 "primaryColor" => "#1b75bb",
                 "secondaryColor" => "#81B1A8",
             ),
@@ -232,7 +232,7 @@ class Theme
             $settingsRepo = app()->make(Setting::class);
             $colorMode = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".colorMode");
             if ($colorMode !== false) {
-                $this->setColorScheme($colorMode);
+                $this->setColorMode($colorMode);
                 return $colorMode;
             }
         }
@@ -664,7 +664,7 @@ class Theme
         //Logo will be in there. Session will be renewed when new logo is updated or theme is changed
 
         $logoPath = false;
-        if (isset($_SESSION["companysettings.logoPath"]) === false) {
+        if (isset($_SESSION["companysettings.logoPath"]) === false || $_SESSION["companysettings.logoPath"] == '') {
             $settingsRepo = app()->make(Setting::class);
             $logoPath = $settingsRepo->getSetting("companysettings.logoPath");
 
@@ -680,9 +680,11 @@ class Theme
 
                 return $_SESSION["companysettings.logoPath"];
             }
+
+            //If we can't find a logo in the db, the company doesn't have a logo. Stop trying
+            $_SESSION["companysettings.logoPath"] = false;
         }
 
-        $_SESSION["companysettings.logoPath"] = false;
         return false;
     }
 
@@ -745,8 +747,6 @@ class Theme
      */
     public function setSchemeColors($colorscheme)
     {
-        $primary = "#1b75bb";
-        $secondary = "#81B1A8";
 
         if (isset($this->colorSchemes[$colorscheme]["primaryColor"])) {
             $primary = $this->colorSchemes[$colorscheme]["primaryColor"];
@@ -761,6 +761,31 @@ class Theme
 
 
         return;
+    }
+
+    public function getPrimaryColor() {
+
+        if(isset($_SESSION["usersettings.colorScheme.primaryColor"])
+            && $_SESSION["usersettings.colorScheme.primaryColor"] != '') {
+            return $_SESSION["usersettings.colorScheme.primaryColor"];
+        }
+
+        $colorSchemes = $this->getAvailableColorSchemes();
+        $_SESSION["usersettings.colorScheme.primaryColor"] = $colorSchemes['themeDefault']['primaryColor'];
+        return $_SESSION["usersettings.colorScheme.primaryColor"];
+    }
+
+    public function getSecondaryColor() {
+
+        if(isset($_SESSION["usersettings.colorScheme.secondaryColor"])
+        && $_SESSION["usersettings.colorScheme.secondaryColor"] != '') {
+            return $_SESSION["usersettings.colorScheme.secondaryColor"];
+        }
+
+        $colorSchemes = $this->getAvailableColorSchemes();
+        $_SESSION["usersettings.colorScheme.secondaryColor"] = $colorSchemes['themeDefault']['secondaryColor'];
+
+        return $_SESSION["usersettings.colorScheme.secondaryColor"];
     }
 
     /**

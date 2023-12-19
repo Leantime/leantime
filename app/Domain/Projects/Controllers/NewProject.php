@@ -144,6 +144,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
+                    $this->tpl->sendConfetti();
                     $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', "project_created");
 
                     return Frontcontroller::redirect(BASE_URL . "/projects/showProject/" . $id);

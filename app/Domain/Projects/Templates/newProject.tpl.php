@@ -39,14 +39,9 @@ $project = $tpl->get('project');
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-
                                         <input type="text" name="name" id="name" class="main-title-input" style="width:99%"  value="<?php $tpl->e($project['name']) ?>" placeholder="<?=$tpl->__('input.placeholders.enter_title_of_project')?>"/>
-
                                     </div>
-
-
                                     <input type="hidden" name="projectState"  id="projectState" value="0" />
-
 
                                 </div>
                             </div>
@@ -55,6 +50,8 @@ $project = $tpl->get('project');
                                     <br />
                                     <p>
                                         <?php echo $tpl->__('label.accomplish'); ?>
+                                        <?php echo $tpl->__('label.describe_outcome'); ?>
+                                        <br /><br />
                                     </p>
                                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
 
@@ -96,13 +93,13 @@ $project = $tpl->get('project');
                                 <div>
                                     <label><?php echo $tpl->__('label.project_start'); ?></label>
                                     <div class="">
-                                        <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
+                                        <input type="text" class="dates dateFrom" style="width:90px;" name="start" autocomplete="off"
                                                value="<?php echo $project['start']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                                     </div>
                                     <label ><?php echo $tpl->__('label.project_end'); ?></label>
                                     <div class="">
-                                        <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
+                                        <input type="text" class="dates dateTo" style="width:90px;" name="end" autocomplete="off"
                                                value="<?php echo $project['end']; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                                     </div>
@@ -161,24 +158,9 @@ $project = $tpl->get('project');
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
+
         jQuery("#projectdetails select").chosen();
-        jQuery(".dates").datepicker(
-            {
-                dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),,
-                dayNames: leantime.i18n.__("language.dayNames").split(","),
-                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-                monthNames: leantime.i18n.__("language.monthNames").split(","),
-                currentText: leantime.i18n.__("language.currentText"),
-                closeText: leantime.i18n.__("language.closeText"),
-                buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-                nextText: leantime.i18n.__("language.nextText"),
-                prevText: leantime.i18n.__("language.prevText"),
-                weekHeader: leantime.i18n.__("language.weekHeader"),
-                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
-            }
-        );
+        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 2);
 
         leantime.projectsController.initProjectTabs();
         leantime.editorController.initComplexEditor();

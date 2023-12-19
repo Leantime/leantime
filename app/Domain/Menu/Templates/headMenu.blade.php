@@ -62,8 +62,8 @@
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
                                 <span class="notificationDate">
-                                    @formatDate($notif['datetime'])
-                                    @formatTime($notif['datetime'])
+                                    {{ format($notif['datetime'])->date() }}
+                                    {{ format($notif['datetime'])->time() }}
                                 </span>
                                 <span class="notificationTitle">{!! $tpl->convertRelativePaths($notif['message']) !!}</span>
                             </a>
@@ -93,8 +93,8 @@
                                     <img src="{{ BASE_URL }}/api/users?profileImage={{ $notif['authorId'] }}"/>
                                 </span>
                                 <span class="notificationDate">
-                                    @formatDate($notif['datetime'])
-                                    @formatTime($notif['datetime'])
+                                    {{ format($notif['datetime'])->date() }}
+                                    {{  format($notif['datetime'])->time() }}
                                 </span>
                                 <span class="notificationTitle">{!! $tpl->convertRelativePaths($notif['message']) !!}</span>
                             </a>
@@ -126,7 +126,18 @@
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>
-        @include('menu::projectSelector')
+        @if ($menuType == 'project')
+            @include('menu::projectSelector')
+        @else
+            <a
+                href="{{ BASE_URL }}/projects/showMy"
+                @if ($menuType == 'projecthub')
+                    class="active"
+                @endif
+
+                data-tippy-content="{{ __('popover.projects') }}"
+            >{!! __('menu.projects') !!}</a>
+        @endif
     </li>
     <li>
         <a

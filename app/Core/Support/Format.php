@@ -195,4 +195,8 @@ class Format
         $percent = ($this->value / $this->value2) * 100;
         return number_format($percent, 2) . "%";
     }
+
+    public function decimal() {
+        return number_format($this->value, 2);
+    }
 }

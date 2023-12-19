@@ -57,6 +57,7 @@ class Header extends Composer
         $colorScheme = $this->themeCore->getColorScheme();
         $themeFont = $this->themeCore->getFont();
 
+
         // Set colors to use
         if (! isset($_SESSION["companysettings.sitename"])) {
             $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
@@ -67,15 +68,9 @@ class Header extends Composer
             }
         }
 
-        if (isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id'])) {
-            if (isset($_SESSION['usersettings.timezone'])) {
-                date_default_timezone_set($_SESSION['usersettings.timezone']);
-            }
-        }
-
         return [
             'sitename' => $_SESSION['companysettings.sitename'] ?? '',
-            'primaryColor' => $_SESSION['usersettings.colorScheme.primaryColor'] ?? '',
+            'primaryColor' => $this->themeCore->getPrimaryColor(),
             'theme' => $theme,
             'version' => $this->appSettings->appVersion ?? '',
             'themeScripts' => [
@@ -95,8 +90,8 @@ class Header extends Composer
                 ],
             ],
             'accents' => [
-                $_SESSION['usersettings.colorScheme.primaryColor'] ?? "",
-                $_SESSION['usersettings.colorScheme.secondaryColor'] ?? "",
+                $this->themeCore->getPrimaryColor(),
+                $this->themeCore->getSecondaryColor(),
             ],
         ];
     }

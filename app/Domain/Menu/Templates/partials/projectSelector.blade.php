@@ -10,10 +10,10 @@
     </div>
     <div class="tabbedwidget tab-primary projectSelectorTabs">
         <ul class="tabs">
-            <li><a href="#myProjects">My Projects</a></li>
-            <li><a href="#allProjects">All Projects</a></li>
-            <li><a href="#favorites">Favorites</a></li>
-            <li><a href="#recentProjects">Recent</a></li>
+            <li><a href="#myProjects">{{ __('menu.projectselector.my_projects') }}</a></li>
+            <li><a href="#favorites">{{ __('menu.projectselector.favorites') }}</a></li>
+            <li><a href="#recentProjects">{{ __('menu.projectselector.recent') }}</a></li>
+            <li><a href="#allProjects">{{ __('menu.projectselector.all_projects') }}</a></li>
         </ul>
 
         <div id="myProjects" class="scrollingTab">
@@ -66,15 +66,26 @@
             </ul>
         </div>
     </div>
-    @if ($login::userIsAtLeast("manager"))
+
         <div class="projectSelectorFooter">
             <ul class="selectorList projectList">
-                @dispatchEvent('beforeProjectCreateLink')
-                <li><a href="#/projects/createnew">{!! __('menu.create') !!}</a></li>
-                @dispatchEvent('afterProjectCreateLink')
+
+                @if ($login::userIsAtLeast("manager"))
+                    @dispatchEvent('beforeProjectCreateLink')
+                    <li><a href="#/projects/createnew">
+                            <span class="fancyLink">
+                                {!! __('menu.create_something_new') !!}
+                            </span>
+                        </a>
+                    </li>
+                    @dispatchEvent('afterProjectCreateLink')
+                @endif
+                <li>
+                    <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-arrow-left"></i> Back to Project Hub</a>
+                </li>
             </ul>
         </div>
-    @endif
+
 </div>
 
 <script>

@@ -3,7 +3,7 @@
     'id'
 ])
 
-<div class="accordionWrapper" {{ $attributes }}>
+<div {{ $attributes->merge([ 'class' => 'accordionWrapper' ]) }}>
     <h5 class="accordionTitle tw-pb-15 tw-text-l" id="accordion_link_{{ $id }}">
 
         <a href="javascript:void(0)"

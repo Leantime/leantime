@@ -333,7 +333,7 @@
                                 <div class="clearall">
                                     <div>
                                         <div class="commentContent statusUpdate commentStatus-{{ $row['status'] }}">
-                                            <h3>
+                                            <strong class="fancyLink">
                                                 {{ sprintf(
                                                     __('text.report_written_on'),
                                                     format($row['date'])->date(),
@@ -366,7 +366,7 @@
                                                         </ul>
                                                     </div>
                                                 @endif
-                                            </h3>
+                                            </strong>
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                                         </div>
