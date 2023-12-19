@@ -12,7 +12,8 @@
 
 <div class="header hidden-gt-sm tw-p-[10px]" style="background:var(--header-gradient)">
     <a href="{!! BASE_URL !!}" target="_blank">
-        <img src="{{ BASE_URL }}/dist/images/logo.svg" class="tw-h-full "/></a>
+        <img src="{{ BASE_URL }}/dist/images/logo.svg" class="tw-h-full "/>
+    </a>
 </div>
 
 <div class="row " style="height:100%; width: 99%;">

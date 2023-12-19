@@ -1,6 +1,7 @@
 @props([
     'includeTitle' => true,
-    'allProjects' => []
+    'allProjects' => [],
+    'background' => ''
 ])
 
 <div id="myProjectsWidget"
@@ -23,7 +24,7 @@
             </div>
     @endif
 
-    <x-global::accordion id="myProjectWidget-favorites">
+    <x-global::accordion id="myProjectWidget-favorites" class="{{ $background }}">
         <x-slot name="title">
             ⭐ My Favorites
         </x-slot>
@@ -36,7 +37,7 @@
                 @foreach ($allProjects as $project)
                     @if($project['isFavorite'] == true)
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project])
+                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
                         </div>
                         @php
                             $hasFavorites = true;
@@ -51,7 +52,7 @@
     </x-global::accordion>
 
 
-    <x-global::accordion id="myProjectWidget-otherProjects">
+    <x-global::accordion id="myProjectWidget-otherProjects" class="{{ $background }}">
         <x-slot name="title">
             🗂️ All Assigned Projects
         </x-slot>
@@ -62,7 +63,7 @@
                     @if($project['isFavorite'] == false)
 
                         <div class="col-md-4">
-                            @include("projects::partials.projectCard", ["project" => $project])
+                            @include("projects::partials.projectCard", ["project" => $project, "type" => $type])
                         </div>
 
                     @endif

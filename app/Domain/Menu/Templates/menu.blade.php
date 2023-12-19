@@ -21,8 +21,6 @@
 
         @if ($allAvailableProjects || !empty($_SESSION['currentProject']))
 
-
-
             <li class="dropdown scrollableMenu">
 
                 <ul style="display:block;">
@@ -101,7 +99,7 @@
                         @endswitch
                     @endforeach
 
-                    @if ($login::userIsAtLeast(Roles::$manager) && $menuType != 'company' && $menuType != 'personal')
+                    @if ($login::userIsAtLeast(Roles::$manager) && $menuType != 'company' && $menuType != 'personal' && $menuType != 'projecthub')
                         <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
                             <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ $_SESSION['currentProject'] }}">
                                 {!! $settingsLink['label']  !!}

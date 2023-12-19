@@ -49,23 +49,26 @@ namespace Leantime\Domain\Projects\Controllers {
 
             $projectTypes = array(
                 "strategy" => array(
-                    "label" => "label.strategy",
+                    "label" => "label.set_direction",
+                    "btnLabel" => "label.create_strategy",
                     "description" => "description.strategy",
-                    "url" => "/strategyPro/newStrategy",
+                    "url" => "strategyPro/newStrategy",
                     "image" => "undraw_thought_process_re_om58.svg",
                     "active" => true,
                 ),
                 "plan" => array(
-                    "label" => "label.plan",
+                    "label" => "label.map_steps",
+                    "btnLabel" => "label.create_plan",
                     "description" => "description.plan",
-                    "url" => "/pgmPro/newProgram",
+                    "url" => "pgmPro/newProgram",
                     "image" => "undraw_join_re_w1lh.svg",
                     "active" => $this->modulemanager->isModuleAvailable("strategyPro"),
             ),
                 "project" => array(
-                    "label" => "label.project",
+                    "label" => "label.launch_endeavour",
+                    "btnLabel" => "label.create_project",
                     "description" => "description.project",
-                    "url" => "/projects/newProject",
+                    "url" => "projects/newProject",
                     "image" => "undraw_complete_task_u2c3.svg",
                     "active" => $this->modulemanager->isModuleAvailable("pgmPro"),
             ),

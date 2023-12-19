@@ -445,6 +445,8 @@ body {
     width: 100%;
     padding: 10px 15px;
     margin-top:-95px;
+    position:relative;
+    z-index:5;
 }
 
 .maincontentinner {

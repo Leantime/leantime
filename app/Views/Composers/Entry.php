@@ -30,9 +30,10 @@ class Entry extends Composer
     {
 
         $this->themeCore->getActive();
+        $logoUrl = $this->themeCore->getLogoUrl();
 
         return [
-            'logoPath' =>  $this->themeCore->getLogoUrl(),
+            'logoPath' =>  $logoUrl ? $logoUrl : BASE_URL."/dist/images/logo.svg",
         ];
     }
 }

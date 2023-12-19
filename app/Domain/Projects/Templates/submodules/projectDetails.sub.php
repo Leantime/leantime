@@ -28,7 +28,8 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?php echo $tpl->__('label.accomplish'); ?><br />
+                        <?php echo $tpl->__('label.accomplish'); ?>
+                        <br /><br />
                     </p>
                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
                 </div>

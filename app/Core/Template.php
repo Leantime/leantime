@@ -360,12 +360,12 @@ class Template
 
         $this->bladeCompiler->directive(
             'formatDate',
-            fn ($args) => "<?php echo \format($args)->date(); ?>",
+            fn ($args) => "<?php echo format($args)->date(); ?>",
         );
 
         $this->bladeCompiler->directive(
             'formatTime',
-            fn ($args) => "<?php echo \format($args)->time(); ?>",
+            fn ($args) => "<?php echo format($args)->time(); ?>",
         );
 
         $this->bladeCompiler->directive(
@@ -424,6 +424,17 @@ class Template
         $_SESSION['notification'] = $msg;
         $_SESSION['notifcationType'] = $type;
         $_SESSION['event_id'] = $event_id;
+    }
+
+    /**
+     * Set a flag to indicate that confetti should be displayed.
+     * Will be displayed next time a notification is displayed
+     *
+     * @return void confetti, duh
+     */
+    public function sendConfetti()
+    {
+        $_SESSION['confettiInYourFace'] = true;
     }
 
     /**
@@ -659,7 +670,7 @@ class Template
         );
 
         if (!empty($note) && $note['msg'] != '' && $note['type'] != '') {
-            $notification = app('blade.compiler')::render(
+            $notification .= app('blade.compiler')::render(
                 '<script type="text/javascript">jQuery.growl({message: "{{ $message }}", style: "{{ $style }}"});</script>',
                 [
                     'message' => $message,
@@ -672,6 +683,15 @@ class Template
             $_SESSION['notification'] = "";
             $_SESSION['notificationType'] = "";
             $_SESSION['event_id'] = "";
+        }
+
+        if (isset($_SESSION['confettiInYourFace']) && $_SESSION['confettiInYourFace'] === true) {
+            $notification .= app('blade.compiler')::render(
+                '<script type="text/javascript">confetti.start();</script>',
+                []
+            );
+
+            $_SESSION['confettiInYourFace'] = false;
         }
 
         return $notification;
@@ -737,6 +757,15 @@ class Template
             $_SESSION['notification'] = "";
             $_SESSION['notificationType'] = "";
             $_SESSION['event_id'] = "";
+        }
+
+        if (isset($_SESSION['confettiInYourFace']) && $_SESSION['confettiInYourFace'] === true) {
+            $notification .= app('blade.compiler')::render(
+                '<script type="text/javascript">confetti.start();</script>',
+                []
+            );
+
+            $_SESSION['confettiInYourFace'] = false;
         }
 
         return $notification;

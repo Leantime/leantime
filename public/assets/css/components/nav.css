@@ -1,5 +1,7 @@
 
-
+.nav-tabs.nav-stacked>li>a {
+    border:none;
+}
 
 .leftmenu .nav-header {
     font-weight: normal;
@@ -307,30 +309,7 @@ a.barmenu:hover {
     margin-right: 5px;
 }
 
-.leftmenu .nav-tabs.nav-stacked > li > a {
-    border: 0;
-    border-bottom: 1px solid #232323;
-    border-top: 1px solid #232323;
-}
 
-.leftmenu .nav-tabs.nav-stacked > li > a:hover,
-.leftmenu .nav-tabs.nav-stacked > li > a:focus {
-    background-color: #2c2c2c;
-    color: #fff;
-    border-bottom-color: #232323;
-}
-
-.leftmenu .nav-tabs.nav-stacked > li.active > a {
-    color: #fff;
-    border-bottom-color: rgba(0, 0, 0, 0.2);
-}
-
-.leftmenu .nav-tabs.nav-stacked > li.active > a:hover {
-}
-
-.leftmenu .nav-tabs > li {
-    margin-bottom: 0;
-}
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown ul {
     display: none;
@@ -1302,6 +1281,17 @@ a.barmenu:hover {
     margin:10px 5px 0px 0px;
     border-radius:3px;
     float:left;
+}
+
+.headerinner .bigProjectSelector .projectAvatar .fa {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    line-height: 30px;
+    text-align: center;
+    background: var(--header-gradient);
+    border-radius: var(--element-radius);
+    margin-right: 5px;
 }
 
 

@@ -366,6 +366,10 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding: 5px 0px;
 }
 
+.maincontent .noBackground .accordionTitle a {
+    color: var(--main-action-color);
+}
+
 .maincontent .accordionTitle i {
     display:inline-block;
     width:10px;
@@ -644,4 +648,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .inlineDropDownContainer .dropdown-menu li>span {
     padding-left:15px;
+}
+
+.grid-stack-item-content .inlineDropDownContainer .ticketDropDown {
+    color:var(--main-action-color);
+}
+
+.grid-stack-item-content.maincontentinner .inlineDropDownContainer .ticketDropDown {
+    color: var(--interactive-icon-color);
 }

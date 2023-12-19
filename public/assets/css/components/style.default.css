@@ -2386,7 +2386,7 @@ a.titleInsertLink:hover {
     border-radius:var(--box-radius);
     box-shadow:var(--regular-shadow);
     padding:10px;
-    margin-bottom:10px;
+    margin-bottom:15px;
     background:var(--layered-background);
 }
 
@@ -2404,14 +2404,22 @@ a.titleInsertLink:hover {
     height:50px;
     float:left;
     margin-right:10px;
+    text-align:center;
     border-radius:var(--box-radius-small);
-    background:var(--neutral);
+    background:var(--header-gradient);
 }
 
 .projectBox .projectAvatar img,
 .ticketBox .projectAvatar img{
     width:50px;
     border-radius:var(--box-radius-small);
+}
+
+.projectBox .projectAvatar .fa {
+
+    color:var(--main-action-color);
+    font-size: 23px;
+    line-height: 50px;
 }
 
 .stickyColumn {
@@ -2913,4 +2921,23 @@ h4 .helperTooltip,
 ::view-transition-new(fade-it) {
     animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
     600ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
+}
+
+body .fancyLink {
+    background-color: var(--accent1);
+    font-weight:bold;
+
+    /* Create the gradient. */
+    background-image: var(--element-gradient);
+
+    /* Set the background size and repeat properties. */
+    background-size: 100%;
+    background-repeat: repeat;
+
+    /* Use the text as a mask for the background. */
+    /* This will show the gradient as a text color rather than element bg. */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-background-clip: text;
+    -moz-text-fill-color: transparent;
 }

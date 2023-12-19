@@ -1,8 +1,10 @@
 <?php
 
-namespace Leantime\Domain\Widgets\Hxcontrollers;
+namespace Leantime\Domain\Projects\Hxcontrollers;
 
 use Leantime\Core\HtmxController;
+use Leantime\Domain\Clients\Repositories\Clients;
+use Leantime\Domain\Comments\Services\Comments;
 use Leantime\Domain\Menu\Services\Menu;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -13,12 +15,12 @@ use Leantime\Domain\Reports\Services\Reports as ReportService;
 use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
 
-class MyProjects extends HtmxController
+class ProjectHubProjects extends HtmxController
 {
     /**
      * @var string
      */
-    protected static string $view = 'widgets::partials.myProjects';
+    protected static string $view = 'projects::partials.projectHubProjects';
 
     private ProjectService $projectsService;
     private TicketService $ticketsService;
@@ -28,7 +30,12 @@ class MyProjects extends HtmxController
     private SettingRepository $settingRepo;
     private CalendarRepository $calendarRepo;
 
+    private Clients $clientRepo;
+
+    private Comments $commentsService;
+
     private Menu $menuService;
+
 
     /**
      * Controller constructor
@@ -44,6 +51,8 @@ class MyProjects extends HtmxController
         ReportService $reportsService,
         SettingRepository $settingRepo,
         CalendarRepository $calendarRepo,
+        Clients $clientRepo,
+        Comments $commentsService,
         Menu $menuService
     ) {
         $this->projectsService = $projectsService;
@@ -53,7 +62,10 @@ class MyProjects extends HtmxController
         $this->reportsService = $reportsService;
         $this->settingRepo = $settingRepo;
         $this->calendarRepo = $calendarRepo;
+        $this->clientRepo = $clientRepo;
+        $this->commentsService = $commentsService;
         $this->menuService = $menuService;
+
 
         $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
     }
@@ -61,26 +73,46 @@ class MyProjects extends HtmxController
     public function get()
     {
 
+        $clientId = "";
+        $currentClientName = "";
+        if (isset($_GET['client']) === true && $_GET['client'] != '') {
+            $clientId = (int)$_GET['client'];
+            $currentClient = $this->clientRepo->getClient($clientId);
+            if (is_array($currentClient) && count($currentClient) > 0) {
+                $currentClientName = $currentClient['name'];
+            }
+        }
+
+
         $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
         $clients = array();
+
 
         $projectResults = array();
         $i = 0;
 
         $clientId = "";
 
-        $this->tpl->assign("background", $_GET['noBackground'] ?? "");
-        $this->tpl->assign("type", $_GET['type'] ?? "simple");
-
         if (is_array($allprojects)) {
             foreach ($allprojects as $project) {
                 if (!array_key_exists($project["clientId"], $clients)) {
-                    $clients[$project["clientId"]] = $project['clientName'];
+                    $clients[$project["clientId"]] = array("name" => $project['clientName'], "id" => $project["clientId"]);
                 }
 
                 if ($clientId == "" || $project["clientId"] == $clientId) {
                     $projectResults[$i] = $project;
                     $projectResults[$i]['progress'] = $this->projectsService->getProjectProgress($project['id']);
+
+                    $allProjectMilestones = $this->ticketsService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+
+                    $projectResults[$i]['milestones'] = $allProjectMilestones;
+                    $projectComment = $this->commentsService->getComments("project", $project['id']);
+
+                    if (is_array($projectComment) && count($projectComment) > 0) {
+                        $projectResults[$i]['lastUpdate'] = $projectComment[0];
+                    } else {
+                        $projectResults[$i]['lastUpdate'] = false;
+                    }
 
                     $fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
 
@@ -95,6 +127,10 @@ class MyProjects extends HtmxController
 
         $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
 
+        $this->tpl->assign("currentClientName", $currentClientName);
+        $this->tpl->assign("currentClient", $clientId);
+        $this->tpl->assign("clients", $clients);
+        $this->tpl->assign("allProjects", $projectResults);
         $this->tpl->assign("allProjects", $projectResults);
     }
 }
