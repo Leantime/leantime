@@ -189,7 +189,7 @@ if (! function_exists('format')) {
 
 if (! function_exists('cast')) {
     /**
-     * Casts an object to a different class.
+     * Casts a variable to a different type if possible.
      *
      * @param mixed $obj The object to be cast.
      * @param string $to_class The class to which the object should be cast.
@@ -198,7 +198,11 @@ if (! function_exists('cast')) {
      * @throws \InvalidArgumentException If the class does not exist.
      * @throws \RuntimeException On serialization errors.
      */
-    function cast(object $sourceObj, string $classDest, array $constructParams = []): object {
-        return (new Cast($sourceObj))->castTo($classDest, $constructParams);
+    function cast(mixed $source, string $classOrType, array $constructParams = []): object {
+        if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean'])) {
+            return Cast::castSimple($source, $classOrType);
+        }
+
+        return (new Cast($source))->castTo($classOrType, $constructParams);
     }
 }

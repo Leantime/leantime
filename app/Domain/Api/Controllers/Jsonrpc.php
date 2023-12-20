@@ -290,31 +290,17 @@ class Jsonrpc extends Controller
 
             // check if type is correct or can be correct
             if ($methodparam->hasType()) {
-                if ($type == gettype($params[$name])) {
-                    $filtered_parameters[$position] = $params[$name];
-                    continue;
-                }
-
-                //If it's a nullable type and the parameter is null, set the value to null
-                if ($type->allowsNull()) {
-                    if ($params[$name] == null || $params[$name] == "null") {
-                        $filtered_parameters[$position] = $params[$name];
+                try {
+                    $filtered_parameters[$position] = cast($params[$name], $type->getName());
+                } catch (\Throwable $e) {
+                    if ($type->allowsNull()) {
+                        $filtered_parameters[$position] = null;
                         continue;
                     }
 
-                    //GetName will return base types even if the type is nullable.
-                    if (settype($params[$name], $typeName = $type->getName())) {
-                        $filtered_parameters[$position] = $typeName == "bool" ? filter_var($params[$name], FILTER_VALIDATE_BOOL) : $params[$name];
-                        continue;
-                    }
+                    error_log($e);
+                    throw new \Exception("Incorrect Type on Parameter: $name");
                 }
-
-                if (settype($params[$name], $type)) {
-                    $filtered_parameters[$position] = $type->getName() == "bool" ? filter_var($params[$name], FILTER_VALIDATE_BOOL) : $params[$name];
-                    continue;
-                }
-
-                throw new Exception("Incorrect Type on Parameter: $name");
             }
 
             $filtered_parameters[$position] = $params[$name];
