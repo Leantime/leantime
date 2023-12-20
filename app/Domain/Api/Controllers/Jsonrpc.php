@@ -290,6 +290,11 @@ class Jsonrpc extends Controller
 
             // check if type is correct or can be correct
             if ($methodparam->hasType()) {
+                if ($type == gettype($params[$name])) {
+                    $filtered_parameters[$position] = $params[$name];
+                    continue;
+                }
+
                 if ($params[$name] === null && ! $type->allowsNull()) {
                     throw new Exception("Parameter $name can't be null");
                 }
