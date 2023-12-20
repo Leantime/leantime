@@ -199,7 +199,7 @@ if (! function_exists('cast')) {
      * @throws \RuntimeException On serialization errors.
      */
     function cast(mixed $source, string $classOrType, array $constructParams = []): object {
-        if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean'])) {
+        if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean', 'object', 'array'])) {
             return Cast::castSimple($source, $classOrType);
         }
 
