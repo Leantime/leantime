@@ -385,15 +385,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             $plugins = [];
 
-<<<<<<< Updated upstream
             if (isset($pluginArray["data"])) {
-||||||| Stash base
-            if(isset($pluginArray["data"] )) {
-
-=======
-            if (isset($pluginArray["data"] )) {
-
->>>>>>> Stashed changes
                 foreach ($pluginArray["data"] as $plugin) {
                     $plugins[] = build(new MarketplacePlugin())
                         ->set('identifier', $plugin['identifier'] ?? '')
@@ -420,7 +412,6 @@ namespace Leantime\Domain\Plugins\Services {
         {
             $response = Http::withoutVerifying()->get("$this->marketplaceUrl/ltmp-api/details/$identifier");
 
-<<<<<<< Updated upstream
             if (! $response->ok()) {
                 return false;
             }
@@ -444,42 +435,6 @@ namespace Leantime\Domain\Plugins\Services {
                 ->set('tags', $data['tags'] ?? [])
                 ->set('compatibility', $data['compatibility'] ?? [])
                 ->get();
-||||||| Stash base
-                    $pluginModel = app()->make(MarketplacePlugin::class);
-                    $pluginModel->identifier = $identifier;
-                    $pluginModel->name = $data['name'];
-                    $pluginModel->excerpt = '';
-                    $pluginModel->description = $data['description'];
-                    $pluginModel->marketplaceUrl = $data['marketplace_url'];
-                    $pluginModel->thumbnailUrl = $data['thumbnail_url'] ?: '';
-                    $pluginModel->authors = $data['author'];
-                    $pluginModel->version = $version;
-                    $pluginModel->price = $data['price'];
-                    $pluginModel->license = $data['license'];
-                    $pluginModel->rating = $data['rating'];
-                    $pluginModel->marketplaceId = $data['product_id'];
-
-                    return [$count++ => $pluginModel];
-                })
-                ->all();
-=======
-                    return [$count++ => build(new MarketplacePlugin)
-                        ->setIdentifier($identifier)
-                        ->setName($data['name'])
-                        ->setDescription($data['description'])
-                        ->set('marketplaceUrl', $data['marketplace_url'])
-                        ->set('thumbnailUrl', $data['thumbnail_url'] ?: '')
-                        ->set('authors', $data['author'])
-                        ->set('version', $version)
-                        ->setPrice($data['price'])
-                        ->setLicense($data['license'])
-                        ->setRating($data['rating'])
-                        ->set('marketplaceId', $data['product_id'])
-                        ->get()
-                    ];
-                })
-                ->all();
->>>>>>> Stashed changes
         }
 
         /**
