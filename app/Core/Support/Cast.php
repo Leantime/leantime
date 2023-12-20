@@ -76,11 +76,15 @@ class Cast
         return $castedValue;
     }
 
+    /**
+     * @param array|object $iterator
+     * @return array|object
+     **/
     protected function handleIterator(array|object $iterator): array|object {
         $result = is_object($iterator) ? new \stdClass : [];
         foreach ($iterator as $key => $value) {
             $result[$key] = match (true) {
-                ($class = get_class($value)) !== 'stdClass' && class_exists($class) => (new self($value))->castTo(get_class($value)),
+                is_object($value) && ($class = get_class($value)) !== 'stdClass' && class_exists($class) => (new self($value))->castTo(get_class($value)),
                 is_array($value) || is_object($value) => $this->{__FUNCTION__}($value),
                 default => $value,
             };
