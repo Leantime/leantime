@@ -6,7 +6,8 @@ use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
-use \Leantime\Core\Support\Format;
+use Leantime\Core\Support\Format;
+use Leantime\Core\Support\Cast;
 
 if (! function_exists('app')) {
     /**
@@ -183,5 +184,25 @@ if (! function_exists('format')) {
     function format(string|int|float|null $value): Format
     {
         return new Format($value);
+    }
+}
+
+if (! function_exists('cast')) {
+    /**
+     * Casts a variable to a different type if possible.
+     *
+     * @param mixed $obj The object to be cast.
+     * @param string $to_class The class to which the object should be cast.
+     * @param array $construct_params Optional parameters to pass to the constructor.
+     * @return mixed The casted object, or throws an exception on failure.
+     * @throws \InvalidArgumentException If the class does not exist.
+     * @throws \RuntimeException On serialization errors.
+     */
+    function cast(mixed $source, string $classOrType, array $constructParams = []): object {
+        if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean', 'object', 'stdClass', 'array'])) {
+            return Cast::castSimple($source, $classOrType);
+        }
+
+        return (new Cast($source))->castTo($classOrType, $constructParams);
     }
 }
