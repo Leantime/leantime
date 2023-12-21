@@ -162,6 +162,16 @@ $statusLabels = $tpl->get("allTicketStates");
                     </div>
                 </div>
 
+                <div class="">
+                    <div class="form-group">
+                        <label class="inline"><?=$tpl->__("label.search_term")?></label>
+                        <input type="text" name="termInput" id="termInput" 
+                        style="width: 230px"
+                        value="<?=$searchCriteria['term']?>" 
+                        placeholder="<?=$tpl->__("label.search_term")?>">
+                    </div>
+                </div>
+
                 <div class="" style="margin-top:15px;">
                     <input type="submit" value="<?=$tpl->__("buttons.search") ?>" name="search" class="form-control btn btn-primary" />
                 </div>
