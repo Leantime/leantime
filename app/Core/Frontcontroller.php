@@ -119,7 +119,7 @@ class Frontcontroller
             }
 
             if (!$pluginEnabled || !class_exists($classname)) {
-                return self::redirect(BASE_URL . "/errors/error404", 307);
+                return $controllerType == 'Hxcontrollers' ? new Response('', 404) : self::redirect(BASE_URL . "/errors/error404", 307);
             }
         }
 

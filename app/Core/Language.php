@@ -2,12 +2,7 @@
 
 namespace Leantime\Core;
 
-use DateTime;
 use Exception;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Middleware\Auth;
-use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
 
 /**
  * Either takes the translation from ini_array or the default
@@ -128,7 +123,6 @@ class Language
                 'samesite' => 'Strict',
             ]);
         }
-
 
         $this->readIni();
 
@@ -286,7 +280,6 @@ class Language
      */
     public function __(string $index, string $default = ''): string
     {
-
         //If index cannot be found return default or original string
         if (! isset($this->ini_array[$index])) {
             if (! empty($default)) {
@@ -300,14 +293,7 @@ class Language
             return $index;
         }
 
-        $index = trim($index);
-
-        $dateTimeIniSettings = [
-            'language.dateformat',
-            'language.timeformat',
-        ];
-
-        $returnValue = match ($index) {
+        $returnValue = match (trim($index)) {
             'language.dateformat' => $_SESSION['usersettings.language.date_format'] ?? $this->ini_array['language.dateformat'],
             'language.timeformat' => $_SESSION['usersettings.language.time_format'] ?? $this->ini_array['language.timeformat'],
             default => $this->ini_array[$index],

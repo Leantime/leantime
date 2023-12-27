@@ -1898,5 +1898,6 @@ namespace Leantime\Domain\Install\Repositories {
                 return true;
             }
         }
+
     }
 }

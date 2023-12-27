@@ -43,7 +43,7 @@ class Cast
 
             $returnObj->set($name, match ($type) {
                 $type !== 'stdClass' && class_exists($type) => (new self($sourceObj->$name))->castTo($type),
-                'array', 'object', 'stdClass' => $this->handleIterator($sourceObj->$name),
+                'array', 'object', 'stdClass' => $this->handleIterator($sourceObj->$name, $name),
                 is_null($type) => $sourceObj->$name,
                 default => self::castSimple($sourceObj->$name, $type),
             });
@@ -80,15 +80,24 @@ class Cast
      * @param array|object $iterator
      * @return array|object
      **/
-    protected function handleIterator(array|object $iterator): array|object {
+    protected function handleIterator(array|object $iterator, string $propertyName): array|object {
         $result = is_object($iterator) ? new \stdClass : [];
+
         foreach ($iterator as $key => $value) {
+            $type = preg_match('/\<[a-zA-Z0-9\\\\]+\>/', $propertyName);
+
+            if ($type) {
+                $key = preg_replace('/\<[a-zA-Z0-9\\\\]+\>/', '', $key);
+            }
+
             $result[$key] = match (true) {
-                is_object($value) && ($class = get_class($value)) !== 'stdClass' && class_exists($class) => (new self($value))->castTo(get_class($value)),
-                is_array($value) || is_object($value) => $this->{__FUNCTION__}($value),
+                $type && class_exists($type) => (new self($value))->castTo($type),
+                $type && in_array($type, ['string', 'str', 'int', 'integer', 'float', 'bool', 'boolean']) => self::castSimple($value, $type),
+                $type && in_array($type, ['array', 'object', 'stdClass']), is_array($value), is_object($value) => $this->{__FUNCTION__}($value, $key),
                 default => $value,
             };
         }
+
         return $result;
     }
 }
