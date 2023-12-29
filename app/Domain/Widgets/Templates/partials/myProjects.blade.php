@@ -9,8 +9,6 @@
      hx-trigger="click from:.favoriteClick"
      hx-target="#myProjectsWidget"
      hx-swap="outerHTML transition:true">
-
-    <h5 class="subtitle tw-pb-m">🚧 {{ __("headline.your_projects") }}</h5>
     @if (count($allProjects) == 0)
             <br /><br />
             <div class='center'>

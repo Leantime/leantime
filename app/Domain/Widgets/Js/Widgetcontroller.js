@@ -10,6 +10,7 @@ leantime.widgetController = (function () {
             handle: ".grid-handler-top",
             minRow: 2, // don't let it collapse when empty
             cellHeight: '30px',
+
         });
 
         grid.on('dragstop', function(event, item) {
@@ -37,6 +38,7 @@ leantime.widgetController = (function () {
         let items = grid.save();
 
         items.forEach(function(item) {
+            console.log(item);
             //get hx links
             let htmxElement = jQuery(item.content).find("[hx-get]").first();
 
@@ -55,12 +57,12 @@ leantime.widgetController = (function () {
             item.gridY = item.y;
 
             if(item.w == undefined) {
-                item.w = 2;
+                item.w = 1;
             }
             item.gridWidth = item.w;
 
             if(item.h == undefined) {
-                item.h = 2;
+                item.h = 1;
             }
             item.gridHeight = item.h;
 
@@ -126,10 +128,14 @@ leantime.widgetController = (function () {
         console.log(widget);
 
         var widgetHtml = '<div class="grid-stack-item">\n' +
-            '    <div class="grid-stack-item-content tw-p-none '+ (widget.widgetBackground == "default" ? "maincontentinner" : widget.background)  +'">\n' +
-            '        <div class="'+(widget.widgetBackground == "default" ? "tw-px-m tw-py-l" : "") +'">\n' +
-            '            <div class="grid-handler-top tw-w-full tw-h-[40px] tw-cursor-grab tw-group tw-absolute tw-top-0 tw-left-0 tw-z-10">\n' +
-            '            <div class="inlineDropDownContainer tw-float-right tw-p-m">\n' +
+            '    <div class="grid-stack-item-content tw-p-none ' + (widget.widgetBackground == "default" ? "maincontentinner" : widget.background) + '">\n' +
+            '        <div class="' + (widget.widgetBackground == "default" ? "tw-pb-l" : "") + '">\n' +
+            '            <div class="stickyHeader" style="padding:15px; height:50px;  width:100%;">\n' +
+            '               <div class="grid-handler-top tw-h-[40px] tw-cursor-grab tw-float-left tw-mr-sm">\n' +
+            '                    <i class="fa-solid fa-grip-vertical"></i>\n' +
+            '                </div>\n' +
+            '           ' + (widget.name != '' ? '<h5 class="subtitle tw-pb-m tw-float-left tw-mr-sm">' + widget.name + '</h5>' : '') + '\n' +
+            '            <div class="inlineDropDownContainer tw-float-right">\n' +
             '                <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">\n' +
             '                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>\n' +
             '                </a>\n' +
@@ -140,8 +146,10 @@ leantime.widgetController = (function () {
             '            </div>\n' +
             '\n' +
             '        </div>\n' +
+            ' <div class="widgetContent tw-px-l">\n' +
             '             <div hx-get="'+widget.widgetUrl+'" hx-trigger="'+widget.widgetTrigger+'" id="'+widget.id+'"></div>\n' +
             '        </div>\n' +
+            '       </div>\n' +
             '        <div class="clear"></div>\n' +
             '    </div>\n' +
             '</div>\n';

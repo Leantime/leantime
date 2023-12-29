@@ -185,14 +185,19 @@ leantime.calendarController = (function () {
 
     var initWidgetCalendar = function (element, initialView) {
 
-        let calendarEl = document.querySelector(element)
+        let calendarEl = document.querySelector(element);
+        let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
+        let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
+
+        console.log(userDateFormat);
+        console.log(userTimeFormat);
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             height:'auto',
             initialView: initialView,
-            dayHeaderFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
-            eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
-            slotLabelFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+            dayHeaderFormat: userDateFormat,
+            eventTimeFormat: userTimeFormat,
+            slotLabelFormat: userTimeFormat,
             views: {
                 multiMonthOneMonth: {
                     type: 'multiMonth',
@@ -221,13 +226,18 @@ leantime.calendarController = (function () {
             eventDrop: function (event) {
 
                 if(event.event.extendedProps.enitityType == "ticket") {
+
+                    console.log(event);
+
                     jQuery.ajax({
                         type : 'PATCH',
                         url  : leantime.appUrl + '/api/tickets',
                         data : {
                             id: event.event.extendedProps.enitityId,
-                            editFrom: event.event.startStr,
-                            editTo: event.event.endStr
+                            editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
+                            timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
+                            editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
+                            timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
                     });
 
@@ -252,8 +262,10 @@ leantime.calendarController = (function () {
                         url  : leantime.appUrl + '/api/tickets',
                         data : {
                             id: event.event.extendedProps.enitityId,
-                            editFrom: event.event.startStr,
-                            editTo: event.event.endStr
+                            editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
+                            timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
+                            editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
+                            timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
                     })
                 }else if(event.event.extendedProps.enitityType == "event") {
@@ -279,15 +291,19 @@ leantime.calendarController = (function () {
             },
             eventReceive: function(event) {
 
-                console.log(event.event);
+                console.log(event);
+
 
                 jQuery.ajax({
                     type : 'PATCH',
                     url  : leantime.appUrl + '/api/tickets',
                     data : {
                         id: event.event.id,
-                        editFrom: event.event.startStr,
-                        editTo: event.event.endStr
+                        editFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userDateFormat),
+                        timeFrom: luxon.DateTime.fromJSDate(event.event.start).toFormat(userTimeFormat),
+                        editTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userDateFormat),
+                        timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
+
                     }
                 })
 
@@ -321,7 +337,7 @@ leantime.calendarController = (function () {
                 jQuery(this).data('event', {
                     id: currentTicket.attr("data-val"),
                     title: currentTicket.find(".timerContainer strong").text(),
-                    color: 'var(--accent1)',
+                    color: 'var(--accent2)',
                     enitityType: "ticket",
                     url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
                 });
@@ -348,7 +364,7 @@ leantime.calendarController = (function () {
                         return {
                             id: jQuery(eventEl).attr("data-val"),
                             title: jQuery(eventEl).find(".timerContainer strong").text(),
-                            borderColor: 'var(--accent1)',
+                            borderColor: 'var(--accent2)',
                             enitityType: "ticket",
                             duration: '01:00',
                             url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),
@@ -382,7 +398,7 @@ leantime.calendarController = (function () {
                     jQuery(this).data('event', {
                         id: currentTicket.attr("data-val"),
                         title: currentTicket.find(".timerContainer strong").text(),
-                        borderColor: 'var(--accent1)',
+                        borderColor: 'var(--accent2)',
                         enitityType: "ticket",
                         url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
                     });
@@ -406,7 +422,7 @@ leantime.calendarController = (function () {
                         return {
                             id: jQuery(eventEl).attr("data-val"),
                             title: jQuery(eventEl).find(".timerContainer strong").text(),
-                            color: 'var(--accent1)',
+                            color: 'var(--accent2)',
                             enitityType: "ticket",
                             duration: '01:00',
                             url: '#/tickets/showTicket/' + jQuery(eventEl).attr("data-val"),

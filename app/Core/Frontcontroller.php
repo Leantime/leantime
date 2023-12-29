@@ -95,6 +95,9 @@ class Frontcontroller
         $namespace = app()->getNamespace(false);
         $actionName = Str::studly(self::getActionName($completeName));
         $moduleName = Str::studly(self::getModuleName($completeName));
+
+        self::dispatch_event("execute_action_start", ["action"=>$actionName, "module"=>$moduleName ]);
+
         $controllerNs = "Domain";
         $controllerType = self::$incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
         $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
@@ -119,7 +122,7 @@ class Frontcontroller
             }
 
             if (!$pluginEnabled || !class_exists($classname)) {
-                return self::redirect(BASE_URL . "/errors/error404", 307);
+                return $controllerType == 'Hxcontrollers' ? new Response('', 404) : self::redirect(BASE_URL . "/errors/error404", 307);
             }
         }
 
@@ -127,6 +130,8 @@ class Frontcontroller
         self::setResponseCode(200);
 
         self::$lastAction = $completeName;
+
+        self::dispatch_event("execute_action_end", ["action"=>$actionName, "module"=>$moduleName ]);
 
         return app()->make($classname)->getResponse();
     }

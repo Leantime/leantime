@@ -11,4 +11,8 @@ if (! file_exists($composer = APP_ROOT . '/vendor/autoload.php')) {
 
 require $composer;
 
+// ini_set('session.save_handler', 'redis');
+// ini_set('session.save_path', $_SERVER['LEAN_REDIS_URL']);
+
+
 Leantime\Core\Bootloader::getInstance()->boot();

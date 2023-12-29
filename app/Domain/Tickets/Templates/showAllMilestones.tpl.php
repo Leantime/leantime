@@ -95,7 +95,7 @@ $size = floor(100 / $numberofColumns);
                     <col class="con0" >
                     <col class="con1" >
                     <col class="con0" >
-
+                    <col class="con1" >
 
                 </colgroup>
                 <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHead', ['tickets' => $allTickets]); ?>
@@ -103,7 +103,7 @@ $size = floor(100 / $numberofColumns);
                 <?php $tpl->dispatchTplEvent('allTicketsTable.beforeHeadRow', ['tickets' => $allTickets]); ?>
                 <tr>
                     <th><?= $tpl->__("label.title"); ?></th>
-
+                    <th><?= $tpl->__("label.todo_type"); ?></th>
                     <th class="milestone-col"><?= $tpl->__("label.dependent_on"); ?></th>
 
                     <th><?= $tpl->__("label.todo_status"); ?></th>
@@ -126,13 +126,20 @@ $size = floor(100 / $numberofColumns);
                     <?php foreach ($allTickets as $rowNum => $row) {?>
                         <tr>
                             <?php $tpl->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                            <td data-order="<?=$tpl->e($row["headline"]); ?>"><a href="<?=BASE_URL ?>/tickets/editMilestone/<?=$tpl->e($row["id"]); ?>" class="milestoneModal"><?=$tpl->e($row["headline"]); ?></a></td>
-                            <?php
-                            if ($row["milestoneid"] != "" && $row["milestoneid"] != 0) {
-                                $milestoneHeadline = $tpl->escape($row["milestoneid"]);
-                            } else {
-                                $milestoneHeadline = $tpl->__("label.no_milestone");
-                            }?>
+                            <td data-order="<?=$tpl->e($row["headline"]); ?>">
+                                <?php if($row['type'] == 'milestone'){ ?>
+                                    <a href="#/tickets/editMilestone/<?=$tpl->e($row["id"]); ?>"><?=$tpl->e($row["headline"]); ?></a>
+                                <?php }else{ ?>
+                                    <a href="#/tickets/showTicket/<?=$tpl->e($row["id"]); ?>"><?=$tpl->e($row["headline"]); ?></a>
+                                <?php } ?>
+                            </td>
+                            <td><?php echo $tpl->__("label." . strtolower($row['type'])); ?></td>
+                                <?php
+                                if ($row["milestoneid"] != "" && $row["milestoneid"] != 0) {
+                                    $milestoneHeadline = $tpl->escape($row["milestoneid"]);
+                                } else {
+                                    $milestoneHeadline = $tpl->__("label.no_milestone");
+                                }?>
 
                             <td data-order="<?=$milestoneHeadline?>">
                                 <div class="dropdown ticketDropdown milestoneDropdown colorized show">

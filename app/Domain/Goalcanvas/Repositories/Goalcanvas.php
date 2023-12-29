@@ -127,5 +127,36 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
             $stmn->closeCursor();
             return $values;
         }
+
+        /**
+         * @param $canvasId
+         * @return array|false
+         */
+        public function getSingleCanvas($canvasId): false|array
+        {
+            $sql = "SELECT
+                        zp_canvas.id,
+                        zp_canvas.title,
+                        zp_canvas.author,
+                        zp_canvas.created,
+                        zp_canvas.projectId,
+                        t1.firstname AS authorFirstname,
+                        t1.lastname AS authorLastname
+
+                FROM
+                zp_canvas
+                LEFT JOIN zp_user AS t1 ON zp_canvas.author = t1.id
+                WHERE type = '" . static::CANVAS_NAME . "canvas' AND zp_canvas.id = :canvasId
+                ORDER BY zp_canvas.title, zp_canvas.created";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':canvasId', $canvasId, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values;
+        }
     }
 }

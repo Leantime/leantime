@@ -129,7 +129,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                 $paidCheck = '0';
             }
 
-            $projectFilter = $_SESSION['currentProject'];
+            $projectFilter = "";
             if (isset($_POST['project']) && $_POST['project'] != '') {
                 $projectFilter = strip_tags($_POST['project']);
             }

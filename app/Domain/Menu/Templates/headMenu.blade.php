@@ -126,18 +126,7 @@
 
     @dispatchEvent('afterHeadMenuOpen')
     <li>
-        @if ($menuType == 'project')
-            @include('menu::projectSelector')
-        @else
-            <a
-                href="{{ BASE_URL }}/projects/showMy"
-                @if ($menuType == 'projecthub')
-                    class="active"
-                @endif
-
-                data-tippy-content="{{ __('popover.projects') }}"
-            >{!! __('menu.projects') !!}</a>
-        @endif
+        @include('menu::projectSelector')
     </li>
     <li>
         <a

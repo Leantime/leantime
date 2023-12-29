@@ -40,8 +40,13 @@ class Localization
 
         $timezone = $config->defaultTimezone;
         if (!isset($_SESSION['usersettings.timezone']) && $userId !== false) {
-            $timezone = $settings->getSetting("usersettings." . $userId . ".timezone");
-            $_SESSION['usersettings.timezone'] = $timezone === false ? $config->defaultTimezone : $timezone;
+            $timezoneTest = $settings->getSetting("usersettings." . $userId . ".timezone");
+            if($timezoneTest !== false && $timezoneTest != '') {
+                $_SESSION['usersettings.timezone'] = $timezoneTest;
+                $timezone = $timezoneTest;
+            }else{
+                $_SESSION['usersettings.timezone'] = $config->defaultTimezone;
+            }
         }
 
         date_default_timezone_set($timezone);

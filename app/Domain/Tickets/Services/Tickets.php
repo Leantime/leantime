@@ -4,6 +4,7 @@ namespace Leantime\Domain\Tickets\Services {
 
     use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Eventhelpers;
     use Leantime\Core\Service;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
@@ -25,6 +26,8 @@ namespace Leantime\Domain\Tickets\Services {
      */
     class Tickets
     {
+
+        Use Eventhelpers;
         private TemplateCore $tpl;
         private LanguageCore $language;
         private EnvironmentCore $config;
@@ -1710,6 +1713,8 @@ namespace Leantime\Domain\Tickets\Services {
             $projectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
+            $tickets = self::dispatch_filter("myTodoWidgetTasks", $tickets);
+
             return array(
                 'tickets' => $tickets,
                 'onTheClock' => $onTheClock,
@@ -1727,10 +1732,12 @@ namespace Leantime\Domain\Tickets\Services {
         public function prepareTicketDates(&$values) {
 
             //Prepare dates for db
+
             if (!empty($values['dateToFinish'])) {
 
                 if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
                     $values['dateToFinish'] = format($values['dateToFinish']." ".$values['timeToFinish'].":00")->isoDateTime();
+                    unset($values['timeToFinish']);
                 }else{
                     $values['dateToFinish'] = format($values['dateToFinish'])->isoDateEnd();
                 }
@@ -1740,7 +1747,8 @@ namespace Leantime\Domain\Tickets\Services {
             if (!empty($values['editFrom'])) {
 
                 if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                    $values['editFrom'] = format($values['editFrom']." ".$values['timeFrom'].":00")->isoDateTime();
+                    $values['editFrom'] = format($values['editFrom']." ".$values['timeFrom']."")->isoDateTime();
+                    unset($values['timeFrom']);
                 }else{
                     $values['editFrom'] = format($values['editFrom'])->isoDateStart();
                 }
@@ -1749,7 +1757,8 @@ namespace Leantime\Domain\Tickets\Services {
             if (!empty($values['editTo'])) {
 
                 if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                    $values['editTo'] = format($values['editTo']." ".$values['timeTo'].":00")->isoDateTime();
+                    $values['editTo'] = format($values['editTo']." ".$values['timeTo']."")->isoDateTime();
+                    unset($values['timeTo']);
                 }else{
                     $values['editTo'] = format($values['editTo'])->isoDateEnd();
                 }

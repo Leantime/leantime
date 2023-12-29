@@ -7,7 +7,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Auth\Services\Auth;
 
-class EditGCal extends Controller
+class EditExternal extends Controller
 {
     private Calendar $calendarService;
 
@@ -25,29 +25,27 @@ class EditGCal extends Controller
         if (isset($_GET['id']) === true) {
             $id = ($_GET['id']);
 
-            $calendar = $this->calendarService->getGCalendar($id);
+            $calendar = $this->calendarService->getExternalCalendar($id, $_SESSION['userdata']['id']);
 
-            $values = array(
-                'url' => $calendar['url'],
-                'name' => $calendar['name'],
-                'colorClass' => $calendar['colorClass'],
-            );
+            $values = $calendar;
 
             if (isset($_POST['save']) === true) {
                 $values = array(
+                    'id' => ($calendar['id']),
                     'url' => ($_POST['url']),
                     'name' => ($_POST['name']),
-                    'colorClass' => ($_POST['color']),
+                    'colorClass' => ($_POST['colorClass']),
                 );
 
-                $this->calendarService->editGCalendar($values, $id);
+                $this->calendarService->editExternalCalendar($values, $id);
 
-                $msgKey = 'Kalender bearbeitet';
+                $this->tpl->setNotification("notification.external_calendar_edited", "success", "externalCalendar_edited");
             }
 
             $this->tpl->assign('values', $values);
-            $this->tpl->assign('info', $msgKey);
-            return $this->tpl->display('calendar.editGCal');
+
+            return $this->tpl->displayPartial('calendar.editExternalCalendar');
+
         } else {
             return $this->tpl->display('errors.error403');
         }

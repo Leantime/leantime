@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller;
+use Leantime\Core\IncomingRequest;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -134,12 +135,16 @@ class Jsonrpc extends Controller
      */
     private function executeApiRequest(array $params): Response
     {
+
+        //$requestParameters = IncomingRequest::g
         /**
          * checks to see if array keys are incremented, if so, assume it's a batch request
          *
          * @see https://jsonrpc.org/specification#batch
          */
-        if (array_keys($params) !== range(0, count($params) - 1)) {
+        $array_keys = array_keys($params);
+        $range = range(0, count($params) - 1);
+        if (array_keys($params) == range(0, count($params) - 1)) {
             return $this->tpl->displayJson(array_map(
                 fn ($requestParams) => json_decode($this->executeApiRequest($requestParams)->getContent()),
                 $params
@@ -302,8 +307,13 @@ class Jsonrpc extends Controller
                         continue;
                     }
 
+                    $typeName = $type->getName();
+                    if($typeName == "mixed"){
+                        $typeName = "string";
+                    }
+
                     //GetName will return base types even if the type is nullable.
-                    if (settype($params[$name], $typeName = $type->getName())) {
+                    if (settype($params[$name], $typeName)) {
                         $filtered_parameters[$position] = $typeName == "bool" ? filter_var($params[$name], FILTER_VALIDATE_BOOL) : $params[$name];
                         continue;
                     }

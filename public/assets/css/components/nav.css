@@ -198,7 +198,7 @@ a.barmenu:hover {
 .headmenu .projectselector {
     z-index: 10000000;
     border-radius: var(--box-radius);
-    min-width:400px;
+    min-width:415px;
 }
 
 .headmenu .projectselector  li.intro {
@@ -701,11 +701,11 @@ a.barmenu:hover {
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup {
     clear:both;
     display:block;
-    border-left:1px dotted var(--main-border-color);
+    border-left:1px dotted var(--grey);
 }
 
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup:hover {
-    border-left:1px dotted var(--col-hover-bg);
+    border-left:1px dotted var(--grey);
 }
 
 .projectselector ul.selectorList li.projectLineItem ul.projectGroup[class*=level-] {

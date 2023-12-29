@@ -1768,13 +1768,6 @@ namespace Leantime\Domain\Install\Repositories {
         {
             $errors = [];
 
-            $stmn = $this->database->prepare("SELECT CASE WHEN COL_LENGTH('zp_plugins', 'format') IS NOT NULL THEN 1 ELSE 0 END AS result");
-            $stmn->execute();
-
-            if ((int) $stmn->fetch(PDO::FETCH_ASSOC)) {
-                return true;
-            }
-
             $sql = [
                 "ALTER TABLE `zp_plugins`
                 ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",

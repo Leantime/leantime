@@ -38,6 +38,7 @@ namespace Leantime\Domain\Widgets\Models {
             public int $gridY = 0,
             public int $gridHeight = 1,
             public int $gridWidth = 1,
+            public bool $noTitle = false,
             public string $widgetLoadingIndicator = "text",
             public string $widgetBackground = "default",
             public bool $alwaysVisible = false

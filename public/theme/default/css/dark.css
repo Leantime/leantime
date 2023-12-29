@@ -15,7 +15,7 @@
     --light-layered-background: rgba(0, 0, 0, 0.2);
 
     --primary-font-color: #bbbbbb;
-    --secondary-font-color: #bbbbbb;
+    --secondary-font-color: #eee;
 
     --neutral: rgba(0, 0, 0, 0.2);
     --solid-neutral:rgba(40, 40, 40, 1);
@@ -426,5 +426,3 @@ body .ticketDropdown ul::after {
 .articleBody table td {
     border:1px solid var(--neutral);
 }
-
-

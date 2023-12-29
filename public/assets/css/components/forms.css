@@ -97,29 +97,37 @@ select {
 }
 
 ::selection {
-    background: #ccc;
-    color: #fff;
+    background: var(--accent1);
+    color: var(--main-action-color);
     text-shadow: none;
 }
 
 /* Safari */
 ::-moz-selection {
-    background: #ccc;
-    color: #fff;
+    background: var(--accent1);
+    color: var(--main-action-color);
     text-shadow: none;
 }
 
 /* Firefox */
-:-moz-placeholder {
-    color: #bbb;
+input:-moz-placeholder,
+textarea:-moz-placeholder{
+    color: var(--primary-font-color);
 }
 
-::-webkit-input-placeholder {
-    color: #bbb;
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder{
+    color: var(--primary-font-color);
 }
 
-:-ms-input-placeholder {
-    color: #bbb;
+input::-moz-placeholder,
+textarea::-moz-placeholder { /* Firefox 19+ */
+    color: var(--primary-font-color);
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder{
+    color: var(--primary-font-color);
 }
 
 
@@ -894,7 +902,7 @@ input.secretInput:active {
 
 
 .profileBox.active {
-    border-color:var(--main-action-bg);
+    border:1px solid var(--main-action-bg);
     box-shadow:var(--large-shadow);
 }
 
@@ -1469,4 +1477,138 @@ input[type="checkbox"].toggle:checked {
 input[type="checkbox"].toggle:checked:after {
     transform: translatex(20px);
     background:#fff;
+}
+
+body a.textInputSwitch {
+    display:block;
+    border:1px solid var(--main-border-color);
+    cursor:text;
+    height:40px;
+    line-height:40px;
+    font-size:var(--font-size-l);
+    text-align:left;
+    background:var(--layered-background);
+    margin-bottom:10px;
+    padding-left:10px;
+    border-radius: var(--element-radius);
+    color:var(--primary-font-color);
+    font-weight:bold;
+}
+
+.textInputSwitch:hover {
+    border:1px solid var(--primary-font-color);
+}
+
+.undrawContainer.noBg {
+    color:var(--main-action-color);
+}
+
+.undrawContainer.noBg h3 {
+    color:var(--main-action-color);
+    background: none;
+    -webkit-text-fill-color: unset;
+    -webkit-background-clip: unset;
+    -moz-background-clip: unset;
+    -moz-text-fill-color: unset;
+}
+
+
+.notesEditor {
+    background:var(--secondary-background);
+    border-radius:var(--box-radius);
+}
+
+
+.noteContainer {
+    position:relative;
+    background:var(--layered-background);
+    overflow:hidden;
+    margin:0px auto;
+    padding:10px;
+    border-radius:0 0 0 30px/45px;
+    box-shadow:
+            inset 0 -40px 40px rgba(100,100,100,0.1),
+            inset 0 25px 10px rgba(100,100,100,0.1),
+            0 5px 6px 5px rgba(100,100,100,0.1);
+    color:var(--secondary-font-color);
+    border: 1px solid var(--main-border-color);
+}
+
+.noteContainer:before {
+    content:"";
+    display:block;
+    position:absolute;
+    width:20px;
+    height:25px;
+    background:var(--layered-background);
+    box-shadow:
+            3px -2px 10px rgba(100,0,0,0.1),
+            inset 15px -15px 15px rgba(0,0,0,0.1);
+    left:0;
+    bottom:0;
+    z-index:2;
+    transform:skewX(25deg);
+}
+
+.noteContainer:after {
+    content:"";
+    display:block;
+    position:absolute;
+    width:75%;
+    height:20px;
+    border-radius: 50% ;
+    bottom:0px;
+    left:10%;
+}
+
+.noteContainer input[type=text],
+.noteContainer textarea,
+.clearForm input[type=text],
+.clearForm textarea {
+    background:transparent;
+    border:none !important;
+    box-shadow:none;
+    width:100%;
+    color:var(--secondary-font-color);
+}
+
+.noteContainer input::-webkit-input-placeholder,
+.noteContainer textarea::-webkit-input-placeholder,
+.noteContainer input::-moz-placeholder,
+.noteContainer textarea::-moz-placeholder {
+    color: var(--secondary-font-color);
+}
+
+body .noteContainer div.tagsinput,
+body .clearForm div.tagsinput {
+    background:transparent;
+    border:none;
+    width:100%;
+}
+
+body div.tagsinput input,
+body div.clearForm input
+{
+    width:50% !important;
+    border:0px;
+    padding-left: 10px;
+}
+
+body .noteContainer div.tagsinput input,
+body .clearForm div.tagsinput input {
+    padding-left:7px;
+    color:var(--secondary-font-color);
+}
+
+body .noteContainer div.tagsinput input:focus,
+body .clearForm div.tagsinput input:focus{
+    border:none;
+}
+
+.headerEditDropdown {
+    margin-left:10px;
+}
+
+.headerEditDropdown .caret {
+    border-top-color:var(--main-action-color);
 }

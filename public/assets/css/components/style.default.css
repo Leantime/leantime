@@ -2614,9 +2614,14 @@ h3.todaysDate {
 .maincontent .fc .fc-timegrid-col.fc-day-today,
 .maincontent .fc .fc-daygrid-day.fc-day-today,
 .maincontent  .fc .fc-button-primary {
-    background-color: var(--secondary-background);
+    background-color: var(--col-title-bg);
     color:var(--primary-font-color);
-    border: 1px solid var(--secondary-action-bg);
+    border-radius: var(--element-radius) !important;
+}
+
+.maincontent .fc .fc-day-today .fc-daygrid-day-number {
+    color:var(--main-action-color);
+    background:var(--accent1);
     border-radius: var(--element-radius) !important;
 }
 
@@ -2789,11 +2794,13 @@ h3.todaysDate {
     fill:currentColor
 }
 
-.htmx-indicator {
+.htmx-indicator,
+.htmx-indicator-small {
     display:none;
 }
 
-.htmx-indicator img{
+.htmx-indicator img,
+.htmx-indicator-small img{
     width:75px;
     margin:auto;
 }
@@ -2801,6 +2808,11 @@ h3.todaysDate {
 .htmx-request.htmx-indicator {
     display:block;
 }
+
+.htmx-request.htmx-indicator-small {
+    display:inline-block;
+}
+
 
 .htmx-request .htmx-loaded-content {
     display: none;
@@ -2830,7 +2842,7 @@ h4 .helperTooltip,
 
 .bigNumberBox {
     border-radius: 10px;
-    background: linear-gradient(180deg, var(--secondary-background) -85%, transparent 100%);
+    background: linear-gradient(180deg, var(--col-row-striped) -85%, transparent 100%);
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow: var(--large-shadow);
@@ -2940,4 +2952,102 @@ body .fancyLink {
     -webkit-text-fill-color: transparent;
     -moz-background-clip: text;
     -moz-text-fill-color: transparent;
+}
+
+body a.btn.btn-fancy {
+    background-image: var(--element-gradient);
+}
+
+body a.btn-link.btn-fancy {
+    background-color: var(--accent1);
+    font-weight:bold;
+
+    /* Create the gradient. */
+    background-image: var(--element-gradient);
+
+    /* Set the background size and repeat properties. */
+    background-size: 100%;
+    background-repeat: repeat;
+
+    /* Use the text as a mask for the background. */
+    /* This will show the gradient as a text color rather than element bg. */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -moz-background-clip: text;
+    -moz-text-fill-color: transparent;
+}
+
+body a.btn-link.btn-fancy:hover {
+    background-image: var(--element-gradient);
+    color:var(--main-action-color);
+    -webkit-text-fill-color: inherit;
+    border: 1px solid var(--main-action-color);
+}
+
+
+.aiPriority li {
+    margin-bottom: 10px;
+    background-image: var(--element-gradient);
+    padding: 2px;
+    border-radius: 7px;
+    box-shadow: var(--regular-shadow);
+}
+
+.aiPriority .ticketBox {
+    margin:0px;
+    background:var(--secondary-background);
+}
+
+
+.aiPriority li:after {
+
+    content: "";
+
+}
+
+
+.xOut {
+    font-size: var(--font-size-xxl);
+    text-indent: 0;
+    color: #aaa !important;
+    border-radius: 5px;
+    height: 25px;
+    line-height: 26px;
+    text-align: center;
+    width: 25px;
+    float:right;
+}
+
+.xOut:hover {
+    text-decoration: none;
+    color: var(--primary-font-color) !important;
+    background-color: var(--col-hover-bg);
+}
+
+.indicatorCircle {
+    display:inline-block;
+    background:#ccc;
+    width:15px;
+    height:15px;
+    border-radius:50%;
+    margin-right:10px;
+    vertical-align: sub;
+}
+
+.simpleList {
+    list-style-type: none;
+}
+
+.simpleList li {
+
+    padding-bottom:5px;
+}
+
+
+.fc-v-event .fc-event-main-frame {
+    flex-direction: column-reverse;
+}
+
+.modal-backdrop {
+    display:none;
 }

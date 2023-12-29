@@ -6,9 +6,6 @@
 @dispatchEvent('beforeCalendar')
 
 <div class="tw-h-full minCalendar">
-
-    <h5 class="subtitle tw-pb-m">🗓️ {{ __('headlines.calendar') }}</h5>
-
     <div class="clear"></div>
     <div class="fc-toolbar">
         <div class="fc-left pull-left">
@@ -33,7 +30,7 @@
                     <option class="fc-agendaDay-button fc-button fc-state-default fc-
            corner-right" value="multiMonthOneMonth" @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>Month</option>
                     <option class="fc-agendaWeek-button fc-button fc-state-
-          default" value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay') selected='selected' @endif>Day</option>
+          default" value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>Day</option>
                     <option class="fc-agendaWeek-button fc-button fc-state-
           default" value="listWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'listWeek') selected='selected' @endif>List</option>
                 </select>

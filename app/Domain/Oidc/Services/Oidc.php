@@ -428,24 +428,28 @@ class Oidc
     }
 
     /**
-     * @return void
+     * @return bool
      * @throws GuzzleException
      */
-    private function loadEndpoints(): void
+    private function loadEndpoints(): bool
     {
         if ($this->configLoaded) {
-            return;
+            return true;
         }
 
         if ($this->authUrl && $this->tokenUrl && $this->jwksUrl) {
             $this->configLoaded = true;
-            return;
+            return true;
         }
 
         $httpClient = new Client();
-        $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
-        $endpoints = json_decode($response->getBody()->getContents(), true);
-
+        try {
+            $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
+            $endpoints = json_decode($response->getBody()->getContents(), true);
+        }catch(\Exception $e) {
+            error_log($e);
+            return false;
+        }
         //load all not yet defined endpoints from well-known configuration
 
         if (!$this->authUrl || $this->authUrl == '') {
@@ -463,6 +467,8 @@ class Oidc
         if (!$this->userInfoUrl || $this->userInfoUrl == '') {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
+
+        return true;
     }
 
     /**

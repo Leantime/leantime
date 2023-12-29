@@ -26,15 +26,14 @@ namespace Leantime\Domain\Calendar\Services {
         }
 
         /**
-         * Deletes a Google Calendar event with the specified ID.
+         * Deletes a Google Calendar.
          *
-         * @param int $id The ID of the Google Calendar event to be deleted.
-         *
-         * @return void
+         * @param int $id The ID of the Google Calendar to delete.
+         * @return bool Returns true if the Google Calendar was successfully deleted, false otherwise.
          */
-        public function deleteGCal(int $id): void
+        public function deleteGCal(int $id): bool
         {
-            $this->calendarRepo->deleteGCal($id);
+            return $this->calendarRepo->deleteGCal($id);
         }
 
         /**
@@ -98,13 +97,13 @@ namespace Leantime\Domain\Calendar\Services {
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTime();
+                $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTimeFrom24h();
             }
             $values['dateFrom'] = $dateFrom;
 
             $dateTo = null;
             if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                $dateTo =  format($values['dateTo'], $values['timeTo'])->isoDateTime();
+                $dateTo =  format($values['dateTo'], $values['timeTo'])->isoDateTimeFrom24h();
             }
             $values['dateTo'] = $dateTo;
 
@@ -192,6 +191,14 @@ namespace Leantime\Domain\Calendar\Services {
         {
             $result = $this->calendarRepo->delPersonalEvent($id);
             return $result;
+        }
+
+        public function getExternalCalendar($id, $userId) {
+            return $this->calendarRepo->getExternalCalendar($id, $userId);
+        }
+
+        public function editExternalCalendar($values, $id) {
+            return $this->calendarRepo->editGUrl($values, $id);
         }
     }
 }

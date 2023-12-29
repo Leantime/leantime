@@ -42,6 +42,7 @@ $_SESSION['filter_relates'] = $filter['relates'];
 foreach ($tpl->get('allCanvas') as $canvasRow) {
     if ($canvasRow["id"] == $tpl->get('currentCanvas')) {
         $canvasTitle = $canvasRow["title"];
+        $canvasId = $canvasRow["id"];
         break;
     }
 }
@@ -69,7 +70,7 @@ $goalStats = $tpl->get("goalStats");
 
                 <ul class="dropdown-menu canvasSelector">
                      <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                         <li><a href="javascript:void(0)" class="addCanvasLink"><?=$tpl->__("links.icon.create_new_board") ?></a></li>
+                         <li><a href="#/goalcanvas/bigRock"><?=$tpl->__("links.icon.create_new_bigrock") ?></a></li>
 
                      <?php } ?>
                     <li class="border"></li>
@@ -414,6 +415,14 @@ $goalStats = $tpl->get("goalStats");
     <?php } ?>
 
 <?php } ?>
+
+        <?php if($canvasTitle == ''){ ?>
+            <script>
+                jQuery(document).ready(function(){
+                   window.location = "#/goalcanvas/bigRock/<?=$canvasId ?>"
+                });
+            </script>
+        <?php } ?>
 
 <?php /*
 

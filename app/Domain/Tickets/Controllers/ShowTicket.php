@@ -80,18 +80,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             //Ensure this ticket belongs to the current project
             if ($_SESSION["currentProject"] != $ticket->projectId) {
                 $this->projectService->changeCurrentSessionProject($ticket->projectId);
-                $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id);
-                $response->headers->set('HX-Trigger', 'ticketUpdate');
-                return $response;
+
+                return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id);
             }
 
             //Delete file
             if (isset($params['delFile']) === true) {
                 if ($result = $this->fileService->deleteFile($params['delFile'])) {
                     $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                    $response = Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id . "#files");
-                    $response->headers->set('HX-Trigger', 'ticketUpdate');
-                    return $response;
+
+                    return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id . "#files");;
                 }
 
                 $this->tpl->setNotification($result["msg"], "error");
@@ -240,6 +238,12 @@ namespace Leantime\Domain\Tickets\Controllers {
             if (isset($params["saveTicket"]) === true || isset($params["saveAndCloseTicket"]) === true) {
                 $params["projectId"] = $ticket->projectId;
                 $params['id'] = $id;
+
+                //Prepare values, time comes in as 24hours from time input. Service expects time to be in local user format
+                $params['dueTime'] = format($params['dueTime'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeFrom'] = format($params['timeFrom'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeTo'] = format($params['timeTo'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+
                 $result = $this->ticketService->updateTicket($params);
 
                 if ($result === true) {

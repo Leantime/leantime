@@ -22,7 +22,11 @@
                 <br />
                 {!! __($projectType["description"]) !!}
                 <br /><br />
-                <a href="{{ BASE_URL }}/{{$projectType["url"] }}" class="btn btn-primary {{ $projectType["active"] !== true ? "disabled" : "" }}">{{  __($projectType['btnLabel'])  }}</a>
+                @if($projectType["active"] == true )
+                    <a href="{{ BASE_URL }}/{{$projectType["url"] }}" class="btn btn-primary {{ $projectType["active"] !== true ? "disabled" : "" }}">{{  __($projectType['btnLabel'])  }}</a>
+                @else
+                    <a href="#" class="btn btn-primary disabled">Not Available in this plan</a>
+                @endif
                 <div class="clearall"></div>
 
             </div>

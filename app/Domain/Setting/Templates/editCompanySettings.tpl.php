@@ -233,7 +233,7 @@ $companySettings = $tpl->get('companySettings');
                                     </div>
                                     <a href="#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />
                                     lt_<?=$apiKey["username"] ?>***
-                                    | <?=$tpl->__("labels.created_on")?>: <?=format($apiKey["createdOn"]) ?> | <?=$tpl->__("labels.last_used")?>: <?= format($apiKey["lastlogin"])->date() ?>
+                                    | <?=$tpl->__("labels.created_on")?>: <?=format($apiKey["createdOn"])->date() ?> | <?=$tpl->__("labels.last_used")?>: <?= format($apiKey["lastlogin"])->date() ?>
 
                                 </div>
                             </li>
