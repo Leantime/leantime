@@ -14,8 +14,7 @@
         <div class="col-md-12">
             <div class="">
                 <form method="get">
-                    <h5 class="subtitle">📥 {{ __('headlines.your_todos') }}</h5>
-
+                    @dispatchEvent("beforeTodoWidgetGroupByDropdown")
                     <div class="btn-group viewDropDown right">
                         <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">{!! __("links.group_by") !!}</button>
                         <ul class="dropdown-menu">
@@ -89,6 +88,7 @@
 
                         </ul>
                     </div>
+                    @dispatchEvent("afterTodoWidgetGroupByDropdown")
                     <div class="clearall"></div>
                 </form>
             </div>
@@ -134,7 +134,7 @@
                         {{ __($ticketGroup["labelName"]) }} ({{ count($ticketGroup["tickets"]) }})
                     </x-slot>
                     <x-slot name="content">
-                        <ul class="sortableTicketList" >
+                        <ul class="sortableTicketList {{ $ticketGroup["extraClass"] ?? '' }}">
 
                             @if (count($ticketGroup['tickets']) == 0)
                                 <em>Nothing to see here. Move on.</em><br /><br />
@@ -148,7 +148,13 @@
                                             <div class="col-md-12 timerContainer" style="padding:5px 15px;" id="timerContainer-{{ $row['id'] }}">
 
                                                 @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
-
+                                                <div class="scheduler pull-right">
+                                                    @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
+                                                        <i class="fa-solid fa-calendar-check infoIcon tw-mr-xs" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
+                                                    @else
+                                                        <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-xs" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
+                                                    @endif
+                                                </div>
                                                 <small>{{ $row['projectName'] }}</small><br />
                                                 @if($row['dependingTicketId'] > 0)
                                                     <a href="#/tickets/showTicket/{{ $row['dependingTicketId'] }}">{{ $row['parentHeadline'] }}</a> //
@@ -158,11 +164,6 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4" style="padding:0 15px;">
-                                                @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
-                                                    <i class="fa-solid fa-calendar-check infoIcon tw-mr-sm" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
-                                                @else
-                                                    <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-sm" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
-                                                @endif
 
                                                <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
                                                <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" data-id="{{ $row['id'] }}" name="date" />
@@ -278,9 +279,12 @@
                     </x-slot>
                 </x-global::accordion>
             @endforeach
+            @dispatchEvent("afterTodoListWidgetBox")
         </div>
     </div>
 </div>
+
+
 
 
 <script type="text/javascript">

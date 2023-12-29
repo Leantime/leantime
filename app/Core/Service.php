@@ -29,7 +29,7 @@ interface Service
      *
      * @return array|bool                 Returns true on success, false on failure
      */
-    public function updateTicket(object|array $object): array|bool;
+    public function update(object|array $object): array|bool;
 
     /**
      * Creates a new object

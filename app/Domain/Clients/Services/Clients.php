@@ -13,7 +13,7 @@ use Leantime\Domain\Projects\Repositories\Projects;
 /**
  *
  */
-class Clients implements Service
+class Clients
 {
     private ProjectRepository $projectRepository;
     private ClientRepository $clientRepository;

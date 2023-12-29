@@ -106,11 +106,11 @@ namespace Leantime\Domain\Menu\Repositories {
             ],
             'personal' => [
                 5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
-               15 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
+                15 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
                 20 => ['type' => 'item', 'module' => 'calendar', 'title' => 'menu.sidemenu_my_calendar', 'icon' => 'fa fa-calendar', 'tooltip' => 'menu.my_calendar_tooltip', 'href' => '/calendar/showMyCalendar', 'active' => ['showMyCalendar']],
             ],
             'projecthub' => [
-                10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa fa-briefcase', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
+                10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa fa-house-flag', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
             ],
             "company" => [
                 10 => [
@@ -258,7 +258,10 @@ namespace Leantime\Domain\Menu\Repositories {
             ksort($menuStructure);
 
             foreach ($menuStructure as $key => $element) {
-                $menuStructure[$key]['title'] = $language->__($element['title']);
+
+                if(isset($menuStructure[$key]['title'])){
+                    $menuStructure[$key]['title'] = $language->__($element['title']);
+                }
 
                 switch ($element['type']) {
                     case 'header':
@@ -400,6 +403,8 @@ namespace Leantime\Domain\Menu\Repositories {
                 "calendar.showMyCalendar" => "personal",
                 "calendar.showMyList" => "personal",
                 "tickets.roadmapAll" => "personal",
+                "notes.showNotes" => "personal",
+                "notes.showNotesList" => "personal",
                 "tickets.showAllMilestonesOverview" => "personal",
                 "users.editOwn" => "personal",
                 "setting.editCompanySettings" => "company",
@@ -411,7 +416,12 @@ namespace Leantime\Domain\Menu\Repositories {
                 "plugins.marketplace" => "company",
                 "plugins.myapps" => "company",
                 "connector.show" => "company",
+                "billing.subscriptions" => "company",
+                "llamadorian.statusCollector" => "personal",
             ];
+
+            $sections = self::dispatch_filter('menuSections', $sections, array("currentRoute" => $currentRoute, "default" => $default));
+
 
             if (isset($sections[$currentRoute])) {
                 return $sections[$currentRoute];

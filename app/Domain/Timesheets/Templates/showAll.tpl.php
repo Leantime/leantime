@@ -112,7 +112,7 @@ foreach ($__data as $var => $val) {
             </td>
             <td>
                 <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
-                <select name="project">
+                <select name="project" style="max-width:120px;">
                     <option value="-1"><?php echo strip_tags($tpl->__("menu.all_projects")) ?></option>
                     <?php foreach ($tpl->get('allProjects') as $project) {?>
                         <option value="<?=$project['id'] ?>"
@@ -124,13 +124,13 @@ foreach ($__data as $var => $val) {
             </td>
             <td><label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?></label>
                 <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
-                value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" size="7" style="margin-bottom:10px"/></td>
+                value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px"/></td>
             <td><label for="dateTo"><?php echo $tpl->__('label.date_to'); ?></label>
                 <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-                value="<?php echo format($tpl->get('dateTo'))->date(); ?>" size="7" style="margin-bottom:10px" /></td>
+                value="<?php echo format($tpl->get('dateTo'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px" /></td>
             <td>
             <label for="userId"><?php echo $tpl->__("label.employee"); ?></label>
-            <select name="userId" id="userId" onchange="submit();">
+            <select name="userId" id="userId" onchange="submit();" style="max-width:120px;">
                 <option value="all"><?php echo $tpl->__("label.all_employees"); ?></option>
 
                 <?php foreach ($tpl->get('employees') as $row) {
@@ -145,7 +145,7 @@ foreach ($__data as $var => $val) {
             </td>
             <td>
             <label for="kind"><?php echo $tpl->__("label.type")?></label>
-            <select id="kind" name="kind" onchange="submit();">
+            <select id="kind" name="kind" onchange="submit();" style="max-width:120px;">
                 <option value="all"><?php echo $tpl->__("label.all_types"); ?></option>
                 <?php foreach ($tpl->get('kind') as $key => $row) {
                     echo'<option value="' . $key . '"';

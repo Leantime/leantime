@@ -20,7 +20,7 @@
     <div class="col-md-6 hidden-phone regLeft">
 
         <div class="logo tw-absolute tw-top-[50px] tw-left-0 tw-ml-[100px] tw-p-0">
-            <a href="{!! BASE_URL !!}" target="_blank"><img src="{{{ $logoPath }}}" /></a>
+            <a href="{!! BASE_URL !!}" target="_blank"><img src="{{ BASE_URL }}/dist/images/logo.svg" /></a>
         </div>
 
         <div class="row">

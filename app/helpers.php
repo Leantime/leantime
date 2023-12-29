@@ -181,9 +181,14 @@ if (! function_exists('format')) {
      * @param string|int|float $value
      * @return Format
      **/
-    function format(string|int|float|null $value): Format
+    function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format
     {
-        return new Format($value);
+        if($value instanceof \DateTime) {
+            $value = $value->format("Y-m-d H:i:s");
+        }
+
+
+        return new Format($value, $value2);
     }
 }
 

@@ -650,10 +650,12 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding-left:15px;
 }
 
-.grid-stack-item-content .inlineDropDownContainer .ticketDropDown {
+.grid-stack-item-content .inlineDropDownContainer .ticketDropDown,
+.grid-stack-item-content .grid-handler-top{
     color:var(--main-action-color);
 }
 
-.grid-stack-item-content.maincontentinner .inlineDropDownContainer .ticketDropDown {
+.grid-stack-item-content.maincontentinner .inlineDropDownContainer .ticketDropDown,
+.grid-stack-item-content.maincontentinner .grid-handler-top {
     color: var(--interactive-icon-color);
 }

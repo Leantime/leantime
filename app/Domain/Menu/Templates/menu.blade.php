@@ -7,7 +7,7 @@
     $settingsLink = $tpl->dispatchTplFilter(
         'settingsLink',
         $settingsLink,
-        ['type' => $currentProjectType]
+        ['type' => $menuType]
     );
 @endphp
 

@@ -49,14 +49,15 @@ class Widgets
             "name" => "widgets.title.welcome",
             "description" => "widgets.descriptions.welcome",
             "gridHeight" => 9,
-            "gridWidth" => 12,
+            "gridWidth" => 4,
             "gridMinHeight" => 8,
-            "gridMinWidth" => 4,
+            "gridMinWidth" => 6,
             "gridX" => 0,
             "gridY" => 0,
             "widgetBackground" => "",
-            "widgetTrigger" => "load, every 1m",
+            "widgetTrigger" => "load, every 5m",
             "alwaysVisible" => true,
+            "noTitle" => true,
             "widgetUrl" => BASE_URL . "/widgets/welcome/get",
         ]);
 
@@ -65,12 +66,13 @@ class Widgets
             "name" => "widgets.title.calendar",
             "description" => "widgets.descriptions.calendar",
             "gridHeight" => 30,
-            "gridWidth" => 4,
+            "gridWidth" => 2,
             "gridMinHeight" => 12,
-            "gridMinWidth" => 2,
-            "gridX" => 8,
+            "gridMinWidth" => 3,
+            "gridX" => 2,
             "gridY" => 10,
             "alwaysVisible" => false,
+            "noTitle" => false,
             "widgetUrl" => BASE_URL . "/widgets/calendar/get",
         ]);
 
@@ -79,12 +81,13 @@ class Widgets
             "name" => "widgets.title.my_todos",
             "description" => "widgets.descriptions.my_todos",
             "gridHeight" => 30,
-            "gridWidth" => 8,
+            "gridWidth" => 4,
             "gridMinHeight" => 16,
-            "gridMinWidth" => 2,
+            "gridMinWidth" => 3,
             "gridX" => 0,
             "gridY" => 10,
             "alwaysVisible" => false,
+            "noTitle" => false,
             "widgetUrl" => BASE_URL . "/widgets/myToDos/get",
         ]);
 
@@ -92,13 +95,14 @@ class Widgets
             "id" => "myprojects",
             "name" => "widgets.title.my_projects",
             "description" => "widgets.descriptions.my_projects",
-            "gridHeight" => 20,
-            "gridWidth" => 8,
-            "gridMinHeight" => 8,
+            "gridHeight" => 22,
+            "gridWidth" => 2,
+            "gridMinHeight" => 10,
             "gridMinWidth" => 2,
             "gridX" => 0,
-            "gridY" => 10,
+            "gridY" => 40,
             "alwaysVisible" => false,
+            "noTitle" => false,
             "widgetUrl" => BASE_URL . "/widgets/myProjects/get",
         ]);
 
@@ -108,6 +112,9 @@ class Widgets
             "todos"       => $this->availableWidgets["todos"],
             "myprojects"  => $this->availableWidgets["myprojects"]
         ];
+
+        $this->availableWidgets = self::dispatch_filter("availableWidgets", $this->availableWidgets);
+        $this->defaultWidgets = self::dispatch_filter("defaultWidgets", $this->defaultWidgets, array("availableWidgets"=> $this->availableWidgets));
     }
 
     /**
@@ -150,8 +157,11 @@ class Widgets
                     $widget["name"] = $this->availableWidgets[$widget["id"]]->name;
                     $widget["widgetBackground"] = $this->availableWidgets[$widget["id"]]->widgetBackground;
                     $widget["description"] = $this->availableWidgets[$widget["id"]]->description;
+                    $widget["widgetTrigger"] = $this->availableWidgets[$widget["id"]]->widgetTrigger;
                     $widget["alwaysVisible"] = $this->availableWidgets[$widget["id"]]->alwaysVisible;
-
+                    $widget["gridMinWidth"] = $this->availableWidgets[$widget["id"]]->gridMinWidth;
+                    $widget["gridMinHeight"] = $this->availableWidgets[$widget["id"]]->gridMinHeight;
+                    $widget["noTitle"] = $this->availableWidgets[$widget["id"]]->noTitle;
                     $widgets[$widget["id"]] = app()->make(Widget::class, $widget);
                 }
             }

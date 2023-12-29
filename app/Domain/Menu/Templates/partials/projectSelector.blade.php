@@ -4,10 +4,35 @@
 ])
 
 <div class="dropdown-menu projectselector" id="mainProjectSelector">
-    <div class="head">
-        <span class="sub">{{ __("menu.current_project") }}</span><br />
-        <span class="title">{{ $_SESSION['currentProjectName'] }}</span>
-    </div>
+
+        @if ($menuType == 'project')
+        <div class="head">
+            <span class="sub">{{ __("menu.current_project") }}</span><br />
+            <span class="title">{{ $_SESSION['currentProjectName'] }}</span>
+        </div>
+        @else
+            <div class="projectSelectorFooter" style="border:none; border-bottom:1px solid var(--main-border-color)">
+            <ul class="selectorList projectList">
+                <li>
+                    <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
+                </li>
+
+                @if ($login::userIsAtLeast("manager"))
+                    @dispatchEvent('beforeProjectCreateLink')
+                    <li><a href="#/projects/createnew">
+                            <span class="fancyLink">
+                                {!! __('menu.create_something_new') !!}
+                            </span>
+                        </a>
+                    </li>
+                    @dispatchEvent('afterProjectCreateLink')
+                @endif
+
+            </ul>
+            </div>
+        @endif
+
+
     <div class="tabbedwidget tab-primary projectSelectorTabs">
         <ul class="tabs">
             <li><a href="#myProjects">{{ __('menu.projectselector.my_projects') }}</a></li>
@@ -67,6 +92,7 @@
         </div>
     </div>
 
+            @if ($menuType == 'project')
         <div class="projectSelectorFooter">
             <ul class="selectorList projectList">
 
@@ -80,11 +106,16 @@
                     </li>
                     @dispatchEvent('afterProjectCreateLink')
                 @endif
-                <li>
-                    <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-arrow-left"></i> Back to Project Hub</a>
-                </li>
+
+
+                    <li>
+                        <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-circle-nodes"></i> Project Hub</a>
+                    </li>
+
             </ul>
         </div>
+
+            @endif
 
 </div>
 

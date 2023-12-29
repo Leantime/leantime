@@ -458,6 +458,10 @@ class Events
                 );
                 continue;
             }
+
+            if($index == 0) {
+                $filteredPayload = $payload;
+            }
         }
 
         if (!$isEvent) {

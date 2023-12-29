@@ -46,8 +46,7 @@ $ticketTypes = $tpl->get('ticketTypes');
         </div>
 
         <?php if ($ticket->id) {?>
-            <br />
-            <hr />
+          
 
             <h4 class="widgettitle title-light"><span
                     class="fa-solid fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
@@ -301,7 +300,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                                    name="dateToFinish" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                             <input type="time" class="timepicker" style="width:120px;" id="dueTime" autocomplete="off"
-                                   value="<?=format($ticket->timeToFinish)->time(); ?>"
+                                   value="<?=format($ticket->dateToFinish)->time24(); ?>"
                                    name="timeToFinish"/>
                         </div>
                     </div>
@@ -312,7 +311,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                             <input type="text" class="editFrom" style="width:90px;" name="editFrom" autocomplete="off"
                                    value="<?=format($ticket->editFrom)->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
-                                   value="<?=format($ticket->timeFrom)->time(); ?>"
+                                   value="<?=format($ticket->editFrom)->time24(); ?>"
                                    name="timeFrom"/>
                         </div>
                     </div>
@@ -323,7 +322,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                             <input type="text" class="editTo" style="width:90px;" name="editTo" autocomplete="off"
                                    value="<?=format($ticket->editTo)->date() ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
-                                   value="<?=format($ticket->timeTo)->time() ?>"
+                                   value="<?=format($ticket->editTo)->time24() ?>"
                                    name="timeTo"/>
                         </div>
                     </div>
@@ -358,8 +357,9 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <label class=" control-label"><?php echo $tpl->__('label.estimated_hours_remaining'); ?></label>
                         <div class="">
                             <input type="text" value="<?php $tpl->e($ticket->hourRemaining); ?>" name="hourRemaining" style="width:90px;"/>
-                            <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-original-title="<?php echo $tpl->__('tooltip.how_many_hours_remaining'); ?>">
-                                &nbsp;<i class="fa fa-question-circle"></i>&nbsp;</a>
+                            <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="<?php echo $tpl->__('tooltip.how_many_hours_remaining'); ?>">
+                                &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
+                            </a>
                         </div>
                     </div>
 

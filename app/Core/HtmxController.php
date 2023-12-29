@@ -24,6 +24,8 @@ abstract class HtmxController
     protected Response $response;
     protected static string $view;
 
+    protected array $headers = [];
+
     /**
      * constructor - initialize private variables
      *
@@ -77,11 +79,34 @@ abstract class HtmxController
 
         $fragment = method_exists($this, $action) ? $this->$action() : $this->run();
 
-        $this->response = $this->tpl->displayFragment($this::$view, $fragment ?? '');
+        $response = $this->tpl->displayFragment($this::$view, $fragment ?? '');
+        if(count($this->headers) > 0){
+            foreach($this->headers as $key => $value) {
+
+                if(is_array($value)) {
+                    $header =implode(",", $value);
+                }else{
+                    $header = $value;
+                }
+
+                $response->headers->set($key, $header);
+            }
+        }
+        $this->response = $response;
+    }
+
+    public function setHTMXEvent(string $eventName) {
+        if(isset($this->headers["HX-Trigger"])){
+            $this->headers["HX-Trigger"][] = $eventName;
+        }else{
+            $this->headers["HX-Trigger"] = [$eventName];
+        }
     }
 
     public function getResponse(): Response
     {
         return $this->response;
     }
+
+
 }

@@ -277,10 +277,7 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
-        /**
-         * @param $canvasId
-         * @return array|false
-         */
+
         /**
          * @param $canvasId
          * @return array|false

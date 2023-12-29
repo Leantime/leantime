@@ -67,12 +67,13 @@ a .label-default:after, a .label-primary:after {
 }
 
 a .label.feature-label {
-    background: var(--primary-color);
+    background: var(--layered-background);
     margin-top: 4px;
     display: block;
     float: right;
     border-radius: 6px;
     padding: 1px 5px;
+    color:var(--primary-font-color);
 }
 
 a .label.feature-label:after {
@@ -143,4 +144,8 @@ blockquote.pull-right {
     background-position: right 5px;
     padding: 0 40px 0 0;
     border-right: 0;
+}
+
+.maincontent > h2 {
+    color:var(--main-action-color);
 }

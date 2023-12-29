@@ -320,7 +320,6 @@ namespace Leantime\Domain\Reports\Services {
                         return $promise;
                     } catch (Exception $e) {
                         error_log($e);
-                        $_SESSION['skipTelemetry'] = true;
                         return false;
                     }
                 }

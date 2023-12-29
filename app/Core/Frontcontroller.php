@@ -95,6 +95,9 @@ class Frontcontroller
         $namespace = app()->getNamespace(false);
         $actionName = Str::studly(self::getActionName($completeName));
         $moduleName = Str::studly(self::getModuleName($completeName));
+
+        self::dispatch_event("execute_action_start", ["action"=>$actionName, "module"=>$moduleName ]);
+
         $controllerNs = "Domain";
         $controllerType = self::$incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
         $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
@@ -127,6 +130,8 @@ class Frontcontroller
         self::setResponseCode(200);
 
         self::$lastAction = $completeName;
+
+        self::dispatch_event("execute_action_end", ["action"=>$actionName, "module"=>$moduleName ]);
 
         return app()->make($classname)->getResponse();
     }

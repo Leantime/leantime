@@ -183,10 +183,12 @@ namespace Leantime\Domain\Calendar\Repositories {
                         $statusColor = "var(--grey)";
                     }
 
-                    $backgroundColor = "var(--accent1)";
+                    $backgroundColor = "var(--accent2)";
 
                     $context = "";
                     if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
+
+
                         $dateFrom = $this->dateTimeHelper->getTimestamp($ticket['dateToFinish']);
                         $dateTo = $this->dateTimeHelper->getTimestamp($ticket['dateToFinish']);
                         $context = '❕ ' . $this->language->__("label.due_todo");
@@ -206,13 +208,25 @@ namespace Leantime\Domain\Calendar\Repositories {
                     }
 
                     if ($ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00") {
-                         $dateFrom = $this->dateTimeHelper->getTimestamp($ticket['editFrom']);
+
+                        //Set ticket to all day ticket when no time is set
+                        $timeStart = format($ticket['editFrom'])->time24();
+                        $timeEnd = format($ticket['editTo'])->time24();
+
+                        if($timeStart == '00:00' &&
+                            ($timeEnd == '00:00' ||  $timeEnd == '23:59')){
+                            $allDay = true;
+                        }else{
+                            $allDay = false;
+                        }
+
+                        $dateFrom = $this->dateTimeHelper->getTimestamp($ticket['editFrom']);
                          $dateTo = $this->dateTimeHelper->getTimestamp($ticket['editTo']);
                          $context = $this->language->__("label.planned_edit");
 
                          $newValues[] = $this->mapEventData(
                              title: $context . $ticket['headline'] . " (" . $statusName . ")",
-                             allDay:false,
+                             allDay:$allDay,
                              id: $ticket['id'],
                              projectId: $ticket['projectId'],
                              eventType: "ticket",
@@ -679,7 +693,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param $id
          * @return void
          */
-        public function deleteGCal($id): void
+        public function deleteGCal($id): bool
         {
 
             $query = "DELETE FROM zp_gcallinks WHERE userId = :userId AND id = :id LIMIT 1";
@@ -689,8 +703,10 @@ namespace Leantime\Domain\Calendar\Repositories {
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
             $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
         /**

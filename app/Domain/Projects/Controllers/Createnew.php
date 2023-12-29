@@ -54,7 +54,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     "description" => "description.strategy",
                     "url" => "strategyPro/newStrategy",
                     "image" => "undraw_thought_process_re_om58.svg",
-                    "active" => true,
+                    "active" =>  $this->modulemanager->isModuleAvailable("pgmPro"),
                 ),
                 "plan" => array(
                     "label" => "label.map_steps",
@@ -70,7 +70,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     "description" => "description.project",
                     "url" => "projects/newProject",
                     "image" => "undraw_complete_task_u2c3.svg",
-                    "active" => $this->modulemanager->isModuleAvailable("pgmPro"),
+                    "active" => true,
             ),
             );
 

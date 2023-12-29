@@ -7,7 +7,7 @@
 
 namespace Leantime\Domain\Modulemanager\Services {
 
-    use Leantime\Core\Eventhelpers;
+
     use Leantime\Domain\Plugins\Services\Plugins;
 
     /**
@@ -15,6 +15,8 @@ namespace Leantime\Domain\Modulemanager\Services {
      */
     class Modulemanager
     {
+        use \Leantime\Core\Eventhelpers;
+
         private static array $modules = array(
             "api" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
             "calendar" => array("required" => false, "enabled" => true, "dependsOn" => "", "scope" => "project"),
@@ -83,7 +85,7 @@ namespace Leantime\Domain\Modulemanager\Services {
             foreach ($plugins as $plugin) {
             }
 
-            $available = Eventhelpers::dispatch_filter("moduleAvailability", $available, ["module" => $module]);
+            $available = static::dispatch_filter("moduleAvailability", $available, ["module" => $module]);
 
 
             return $available;

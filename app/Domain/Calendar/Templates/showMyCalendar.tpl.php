@@ -20,41 +20,83 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 </div><!--pageheader-->
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 
+<?php
+    echo $tpl->displayNotification();
+?>
+
 <div class="maincontent">
-    <div class="maincontentinner">
 
-        <div class="row">
-            <div class="col-md-4">
-                <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_event')?></a>
-            </div>
-            <div class="col-md-4">
-                <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
-                    <h2>..</h2>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <a href="#/calendar/export" class="btn btn-default right">Export</a>
-                <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
-                    <span class="fc-icon fc-icon-chevron-right"></span>
-                </button>
-                <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px;">
-                    <span class="fc-icon fc-icon-chevron-left"></span>
-                </button>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="maincontentinner">
+                <h5 class="subtitle tw-pb-m">Calendars</h5>
 
-                <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+                <ul class="simpleList">
+                    <li><span class="indicatorCircle" style="background:var(--accent1)"></span>Events</li>
+                    <li><span class="indicatorCircle" style="background:var(--accent2)"></span>Projects & Tasks</li>
 
 
-                <select id="my-select" style="margin-right:5px;" class="right">
-                    <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'timeGridDay' ? "selected" : '' ?>>Day</option>
-                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'timeGridWeek' ? "selected" : '' ?>>Week</option>
-                    <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'dayGridMonth' ? "selected" : '' ?>>Month</option>
-                    <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
-                </select>
+                <?php foreach($tpl->get('externalCalendars') as $calendars) { ?>
+                    <li>
+                        <div class="inlineDropDownContainer" style="float:right;">
+                            <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
+                                <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+                            </a>
+
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#/calendar/editExternal/<?=$calendars['id']?>"><i class="fa-solid fa-pen-to-square"></i> <?=$tpl->__('links.edit_calendar')?></a>
+                                </li>
+                                <li><a href="#/calendar/delExternalCalendar/<?=$calendars['id']?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__('links.delete_external_calendar')?></a></li>
+                            </ul>
+                        </div>
+                        <span class="indicatorCircle" style="background:<?=$calendars['colorClass'] ?>"></span><?=$calendars['name'] ?>
+
+                    </li>
+                <?php } ?>
+
+                </ul>
+                <hr />
+                <a href="#/calendar/importGCal"><i class="fa-regular fa-calendar-plus"></i> Import Calendar</a>
             </div>
         </div>
-        <div id="calendar"></div>
+        <div class="col-md-10">
+            <div class="maincontentinner">
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="#/calendar/addEvent" class="btn btn-primary formModal"><i class='fa fa-plus'></i> <?=$tpl->__('buttons.add_event')?></a>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="fc-center center" id="calendarTitle" style="padding-top:5px;">
+                            <h2>..</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="#/calendar/export" class="btn btn-default right">Export</a>
+                        <button class="fc-next-button btn btn-default right" type="button" style="margin-right:5px;">
+                            <span class="fc-icon fc-icon-chevron-right"></span>
+                        </button>
+                        <button class="fc-prev-button btn btn-default right" type="button" style="margin-right:5px;">
+                            <span class="fc-icon fc-icon-chevron-left"></span>
+                        </button>
 
+                        <button class="fc-today-button btn btn-default right" style="margin-right:5px;">today</button>
+
+
+                        <select id="my-select" style="margin-right:5px;" class="right">
+                            <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'timeGridDay' ? "selected" : '' ?>>Day</option>
+                            <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'timeGridWeek' ? "selected" : '' ?>>Week</option>
+                            <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'dayGridMonth' ? "selected" : '' ?>>Month</option>
+                            <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=$_SESSION['submenuToggle']["myCalendarView"] == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="calendar"></div>
+            </div>
+        </div>
     </div>
+
+
 </div>
 
 
@@ -154,6 +196,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
                         dayHeaderFormat: { weekday: 'short' },
                     },
                     multiMonthYear: {
+                        showNonCurrentDates: true,
                         multiMonthTitleFormat: { month: 'long', year: 'numeric' },
                         dayHeaderFormat: { weekday: 'short' },
                     }
@@ -219,7 +262,8 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
 
                 },
                 eventMouseEnter: function() {
-                }
+                },
+
             }
             );
         calendar.setOption('locale', leantime.i18n.__("language.code"));

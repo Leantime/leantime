@@ -18,8 +18,13 @@
                 gs-min-w="{{ $widget->gridMinWidth }}"
                 gs-min-h="{{ $widget->gridMinHeight }}"
                 background="{{ $widget->widgetBackground }}"
+                noTitle="{{ $widget->noTitle }}"
+                name="{{ $widget->name }}"
                 alwaysVisible="{{ $widget->alwaysVisible }}">
-                <div hx-get="{{$widget->widgetUrl }}" hx-trigger="{{$widget->widgetTrigger }}" id="{{ $widget->id }}">
+                <div hx-get="{{$widget->widgetUrl }}"
+                     hx-trigger="{{$widget->widgetTrigger }}"
+                     id="{{ $widget->id }}"
+                    hx-swap="#{{ $widget->id }} transition:true">
                     <x-global::loadingText type="{{ $widget->widgetLoadingIndicator }}" count="1" includeHeadline="true" />
                 </div>
             </x-widgets::moveableWidget>

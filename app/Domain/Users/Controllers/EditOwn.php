@@ -297,7 +297,6 @@ namespace Leantime\Domain\Users\Controllers {
                         'lastname' => $row['lastname'],
                         'user' => $row['username'],
                         'phone' => $row['phone'],
-                        'password' => $row['password'],
                         'notifications' => $row['notifications'],
                         'twoFAEnabled' => $row['twoFAEnabled'],
                     );

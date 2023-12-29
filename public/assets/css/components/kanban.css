@@ -431,6 +431,10 @@ body .maincontent .priority-text-5 a:link {
     box-shadow: 0px 0px 7px 2px var(--grey);
 }
 
+.sortableTicketList .ticketBox.active {
+    box-shadow: var(--regular-shadow);
+    font-weight: bold;
+}
 
 /*
 
@@ -496,3 +500,7 @@ body .maincontent .priority-text-5 a:link {
 }
 
  */
+
+.leader-line {
+    z-index:20;
+}

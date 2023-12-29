@@ -366,10 +366,6 @@ $allTicketGroups = $tpl->get("allTickets");
 
     leantime.ticketsController.setUpKanbanColumns();
 
-
-
-
-
         <?php if (isset($_GET['showTicketModal'])) {
             if ($_GET['showTicketModal'] == "") {
                 $modalUrl = "";
@@ -385,14 +381,15 @@ $allTicketGroups = $tpl->get("allTickets");
 
 
         <?php foreach ($allTicketGroups as $group) {
+
             foreach ($group['items'] as $ticket) {
                 if ($ticket['dependingTicketId'] > 0) {
                     ?>
-            var startElement = jQuery('#subtaskLink_<?=$ticket['dependingTicketId']; ?>')[0];
+            var startElement =  document.getElementById('subtaskLink_<?=$ticket['dependingTicketId']; ?>');
             var endElement =  document.getElementById('ticket_<?=$ticket['id']; ?>');
 
-            if ( startElement != null && endElement != undefined) {
 
+            if ( startElement != undefined && endElement != undefined) {
 
                 var startAnchor = LeaderLine.mouseHoverAnchor({
                     element: startElement,
@@ -400,6 +397,8 @@ $allTicketGroups = $tpl->get("allTickets");
                     style: {background: 'none', backgroundColor: 'none'},
                     hoverStyle: {background: 'none', backgroundColor: 'none', cursor: 'pointer'}
                 });
+
+                console.log(startAnchor);
 
                 var line<?=$ticket['id'] ?> = new LeaderLine(startAnchor, endElement, {
                     startPlugColor: 'var(--accent1)',

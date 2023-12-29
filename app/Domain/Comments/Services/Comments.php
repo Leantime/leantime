@@ -61,7 +61,6 @@ namespace Leantime\Domain\Comments\Services {
         public function addComment($values, $module, $entityId, $entity): bool
         {
 
-
             if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)) {
                 $mapper = array(
                     'text' => $values['text'],
@@ -96,7 +95,6 @@ namespace Leantime\Domain\Comments\Services {
                             $linkLabel = $this->language->__("email_notifications.new_comment_general_cta");
                             break;
                     }
-
 
                     $notification = app()->make(Notification::class);
                     $notification->url = array(

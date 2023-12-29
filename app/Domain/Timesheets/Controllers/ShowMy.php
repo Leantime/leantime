@@ -83,7 +83,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $this->tpl->assign('dateFrom', new DateTime($dateFrom));
             $this->tpl->assign('actKind', $kind);
             $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-            $this->tpl->assign('allProjects', $this->projects->getUserProjects($_SESSION["userdata"]["id"]));
+            $this->tpl->assign('allProjects', $this->projects->getUserProjects(userId: $_SESSION["userdata"]["id"], projectTypes: "project" ));
             $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
             $this->tpl->assign('allTimesheets', $myTimesheets);
             return $this->tpl->display('timesheets.showMy');

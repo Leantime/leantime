@@ -63,3 +63,10 @@ jQuery(document).ready(function () {
     });
 
 });
+
+
+window.addEventListener("Htmx.ShowNotification", function(evt) {
+    jQuery.get(leantime.appURL+"/notifications/get-latest-growl", function(){
+        console.log(data);
+    })
+});

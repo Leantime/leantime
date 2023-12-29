@@ -409,3 +409,8 @@ body hr {
 .ui-resizable-se {
     opaciy:0.5
 }
+
+#freshworks-container,
+#freshworks-container #launcher-frame{
+    z-index:90 !important;
+}

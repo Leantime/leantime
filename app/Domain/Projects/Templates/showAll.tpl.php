@@ -40,7 +40,7 @@ $showClosedProjects = $tpl->get('showClosedProjects');
         <a class="btn btn-primary" href="<?=BASE_URL?>/projects/newProject"><i class='fa fa-plus'></i> <?=$tpl->__('link.new_project') ?></a>
         <div class="clearall"></div>
         <table class="table table-bordered" cellpadding="0" cellspacing="0" border="0" id="allProjectsTable">
-            <?php if ($config->enableMenuType) { ?>
+
             <colgroup>
                 <col class="con1"/>
                 <col class="con0" />
@@ -48,49 +48,31 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                 <col class="con0" />
                 <col class="con1"/>
                 <col class="con0"/>
-                <col class="con1"/>
             </colgroup>
             <thead>
                 <tr>
                     <th class="head0"><?php echo $tpl->__('label.project_name'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
-                    <th class="head0"><?php echo $tpl->__('label.menu_type'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.project_state'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.hourly_budget'); ?></th>
-                    <th class="head0"><?php echo $tpl->__('label.budget_cost'); ?></th>
-                </tr>
-            </thead>
-            <?php } else { ?>
-            <colgroup>
-                <col class="con1"/>
-                <col class="con0" />
-                <col class="con1"/>
-                <col class="con0" />
-                <col class="con1"/>
-            </colgroup>
-            <thead>
-                <tr>
-                    <th class="head0"><?php echo $tpl->__('label.project_name'); ?></th>
-                    <th class="head1"><?php echo $tpl->__('label.client_product'); ?></th>
+                    <th class="head1"><?php echo $tpl->__('label.project_type'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.project_state'); ?></th>
                     <th class="head0"><?php echo $tpl->__('label.hourly_budget'); ?></th>
                     <th class="head1"><?php echo $tpl->__('label.budget_cost'); ?></th>
                 </tr>
             </thead>
-            <?php } ?>
+
             <tbody>
 
              <?php foreach ($tpl->get('allProjects') as $row) : ?>
                 <tr class='gradeA'>
 
                     <td style="padding:6px;">
-                        <a class="btn btn-primary" href="<?=BASE_URL?>/projects/showProject/<?=$row['clientId']?>"><?= $tpl->escape($row['name']) ?></a>
+                        <a class="" href="<?=BASE_URL?>/projects/showProject/<?=$row['clientId']?>"><?= $tpl->escape($row['name']) ?></a>
                     <td>
-                        <a class="btn btn-primary" href="<?=BASE_URL?>/clients/showClient/<?=$row['clientId']?>"><?= $tpl->escape($row['clientName']) ?></a>
+                        <a class="" href="<?=BASE_URL?>/clients/showClient/<?=$row['clientId']?>"><?= $tpl->escape($row['clientName']) ?></a>
                     </td>
-                    <?php if ($config->enableMenuType) {
-                        ?><td><?php echo $menuTypes[$row['menuType']] ?? Menu::DEFAULT_MENU ?><?php
-                    } ?>
+
+                    <td> <?=$row['type'] ?> </td>
+
                     <td><?php if ($row['state'] == -1) {
                         echo $tpl->__('label.closed');
                         } else {

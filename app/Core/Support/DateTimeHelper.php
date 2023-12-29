@@ -155,6 +155,59 @@ class DateTimeHelper
     }
 
     /**
+     * Converts a date and time string to an ISO format date-time string with time being 24hours format.
+     * This is the case when using time fields in html. Date always comes back as 24h
+     *
+     * @param ?string $date         The date string to convert. Can be null.
+     * @param ?string $time         The time string to convert. Can be null.
+     * @param string  $fromTimezone The timezone of the input date and time. Defaults to "user".
+     * @return string The ISO format date-time string in the UTC timezone.
+     */
+    public function getISODateTimeStringFrom24h(?string $date, ?string $time, string $fromTimezone = "user"): string
+    {
+
+        return $this->convertDateTime(
+            dateTime: $date . " " . $time,
+            fromFormat: $this->language->__("language.dateformat"). " H:i",
+            fromTz: $fromTimezone,
+            toFormat: "Y-m-d H:i:s",
+            toTz: "UTC"
+        );
+    }
+
+
+    /**
+     * Converts a date and time string to an ISO format date-time string with time being 24hours format.
+     * This is the case when using time fields in html. Date always comes back as 24h
+     *
+     * @param ?string $date         The date string to convert. Can be null.
+     * @param ?string $time         The time string to convert. Can be null.
+     * @param string  $fromTimezone The timezone of the input date and time. Defaults to "user".
+     * @return string The ISO format date-time string in the UTC timezone.
+     */
+    public function getLocalFormatFrom24hTime(?string $time, bool $ignoreTimezone = true): string
+    {
+        if ($ignoreTimezone) {
+            return $this->convertDateTime(
+                dateTime: $time,
+                fromFormat: "H:i",
+                fromTz: "UTC",
+                toFormat: $this->language->__("language.timeformat"),
+                toTz: "UTC"
+            );
+        }else{
+
+            return $this->convertDateTime(
+                dateTime: $time,
+                fromFormat: "H:i",
+                fromTz: "user",
+                toFormat: $this->language->__("language.timeformat"),
+                toTz: "UTC"
+            );
+        }
+    }
+
+    /**
      * Converts a date string to a timestamp.
      *
      * @param ?string $date    The date string to convert.
@@ -209,6 +262,8 @@ class DateTimeHelper
         if ($fromTz == "user") {
             $fromTz = $_SESSION['usersettings.timezone'];
         }
+
+        $dateTime = trim($dateTime);
 
         if ($this->isValidDateString($dateTime)) {
             $fromDateTimeZone = new \DateTimeZone($fromTz);

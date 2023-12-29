@@ -23,7 +23,7 @@ $values = $tpl->get('values');
     <div class="par">
         <label> <?php echo $tpl->__('label.start_time') ?></label>
         <div class="input-append bootstrap-timepicker">
-                <input type="time" id="event_time_from" name="timeFrom" value="<?php echo format(($values['dateFrom'])->time24()); ?>" />
+                <input type="time" id="event_time_from" name="timeFrom" value="<?php echo format($values['dateFrom'])->time24(); ?>" />
            </div>
     </div>
 

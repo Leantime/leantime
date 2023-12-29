@@ -90,7 +90,7 @@ class ProjectSelector extends Composer
             $allAvailableProjectsHierarchy  = $projectVars['availableProjectsHierarchy'];
             $allAssignedprojectsHierarchy  = $projectVars['assignedHierarchy'];
             $currentClient  = $projectVars['currentClient'];
-            $menuType  = $projectVars['menuType'];
+
             $projectType  = $projectVars['projectType'];
             $recentProjects  = $projectVars['recentProjects'];
             $favoriteProjects = $projectVars['favoriteProjects'];
@@ -117,7 +117,6 @@ class ProjectSelector extends Composer
             'projectHierarchy' => $allAssignedprojectsHierarchy,
             'recentProjects' => $recentProjects,
             'currentProject' => $currentProject,
-            'menuStructure' => $this->menuRepo->getMenuStructure($menuType ?? '') ?? [],
             'settingsLink' => [
                 'label' => __('menu.project_settings'),
                 'module' => 'projects',

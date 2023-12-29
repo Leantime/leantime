@@ -80,6 +80,17 @@ class Format
         return $this->dateTimeHelper->get24HourTimestringFromISO($this->value);
     }
 
+    public function time24toLocalTime(bool $ignoreTimezone = false): string
+    {
+        if ($this->value == null) {
+            return "";
+        }
+
+        return $this->dateTimeHelper->getLocalFormatFrom24hTime($this->value, $ignoreTimezone);
+
+    }
+
+
     /**
      * Generates an ISO 8601 formatted date and time string.
      *
@@ -91,6 +102,20 @@ class Format
             return "";
         }
         return $this->dateTimeHelper->getISODateTimeString($this->value, $this->value2);
+    }
+
+    /**
+     * Generates an ISO 8601 formatted date and time string from user defined date and 24h time.
+     * Html time fields will always return 24h time
+     *
+     * @return string The ISO 8601 formatted date and time string. Returns an empty string if the value is null.
+     */
+    public function isoDateTimeFrom24h(): string
+    {
+        if ($this->value == null) {
+            return "";
+        }
+        return $this->dateTimeHelper->getISODateTimeStringFrom24h($this->value, $this->value2);
     }
 
     /**

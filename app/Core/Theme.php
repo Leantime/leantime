@@ -244,6 +244,7 @@ class Theme
         }
 
         //Return default
+        $_SESSION['usersettings.colorMode'] = 'light';
         return 'light';
     }
 
