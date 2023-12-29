@@ -6,13 +6,19 @@ use Closure;
 use Leantime\Core\Environment;
 use Leantime\Core\IncomingRequest;
 use Leantime\Core\Language;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
 class Localization
 {
+    public function __construct(
+        private Setting $settings,
+        private Environment $config,
+        private Language $language,
+    ) {
+        //
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -22,51 +28,18 @@ class Localization
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+        $_SESSION['companysettings.language'] ??= $this->settings->getSetting("companysettings.language") ?: $this->config->language;
 
-        $settings = app()->make(Setting::class);
-        $config = app()->make(Environment::class);
-
-        $userId = isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id']) ? $_SESSION['userdata']['id'] : false;
-
-        if (!isset($_SESSION["companysettings.language"])) {
-            $language = $settings->getSetting("companysettings.language");
-            $_SESSION["companysettings.language"] = $language === false ? $config->language : $language;
+        if (! $userId = $_SESSION['userdata']['id'] ?? false) {
+            return $next($request);
         }
 
-        if (!isset($_SESSION['usersettings.language']) && $userId !== false) {
-            $language = $settings->getSetting("usersettings." . $userId . ".language");
-            $_SESSION["usersettings.language"] = $language === false ? $_SESSION["companysettings.language"] : $language;
-        }
+        $_SESSION['usersettings.language'] ??= $this->settings->getSetting("usersettings.$userId.language") ?: $_SESSION["companysettings.language"];
+        $_SESSION['usersettings.timezone'] ??= $this->settings->getSetting("usersettings.$userId." . $_SESSION['usersettings.language']) ?: $this->config->defaultTimezone;
+        date_default_timezone_set($_SESSION['usersettings.timezone']);
 
-        $timezone = $config->defaultTimezone;
-        if (!isset($_SESSION['usersettings.timezone']) && $userId !== false) {
-            $timezoneTest = $settings->getSetting("usersettings." . $userId . ".timezone");
-            if($timezoneTest !== false && $timezoneTest != '') {
-                $_SESSION['usersettings.timezone'] = $timezoneTest;
-                $timezone = $timezoneTest;
-            }else{
-                $_SESSION['usersettings.timezone'] = $config->defaultTimezone;
-            }
-        }
-
-        date_default_timezone_set($timezone);
-
-        if (
-            (!isset($_SESSION['usersettings.language.date_format'])
-            || !isset($_SESSION['usersettings.language.time_format'])) && $userId !== false
-        ) {
-            $language = app()->make(Language::class);
-
-            //Language manager will get the default if user setting is not set
-            $dateformatDefault = $language->__("language.dateformat");
-            $timeformatDefault = $language->__("language.timeformat");
-
-            $userDateformat = $settings->getSetting("usersettings." . $userId . ".date_format");
-            $userTimeformat = $settings->getSetting("usersettings." . $userId . ".time_format");
-
-            $_SESSION['usersettings.language.date_format'] = $userDateformat === false ? $dateformatDefault : $userDateformat;
-            $_SESSION['usersettings.language.time_format'] = $userTimeformat === false ? $timeformatDefault : $userTimeformat;
-        }
+        $_SESSION['usersettings.language.date_format'] ??= $this->settings->getSetting("usersettings.$userId.date_format") ?: $this->language->__("language.dateformat");
+        $_SESSION['usersettings.language.time_format'] ??= $this->settings->getSetting("usersettings.$userId.time_format") ?: $this->language->__("language.timeformat");
 
         return $next($request);
     }
