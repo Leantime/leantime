@@ -110,7 +110,7 @@ namespace Leantime\Domain\Menu\Repositories {
                 20 => ['type' => 'item', 'module' => 'calendar', 'title' => 'menu.sidemenu_my_calendar', 'icon' => 'fa fa-calendar', 'tooltip' => 'menu.my_calendar_tooltip', 'href' => '/calendar/showMyCalendar', 'active' => ['showMyCalendar']],
             ],
             'projecthub' => [
-                10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa fa-house-flag', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
+                10 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa-solid fa-house-flag', 'tooltip' => 'menu.my_projects_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy']],
             ],
             "company" => [
                 10 => [
@@ -411,6 +411,8 @@ namespace Leantime\Domain\Menu\Repositories {
                 "timesheets.showAll" => "company",
                 "projects.showAll" => "company",
                 "clients.showAll" => "company",
+                "clients.newClient" => "company",
+                "clients.showClient" => "company",
                 "users.showAll" => "company",
                 "plugins.show" => "company",
                 "plugins.marketplace" => "company",

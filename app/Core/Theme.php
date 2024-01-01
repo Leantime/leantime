@@ -337,8 +337,9 @@ class Theme
             $id = 'default';
         }
 
+        //not a valid theme. Use default
         if (!is_dir(ROOT . '/theme/' . $id) || !file_exists(ROOT . '/theme/' . $id . '/' . static::DEFAULT_INI . '.ini')) {
-            throw new Exception("Selected theme '$id' does not exist");
+            $id = 'default';
         }
 
         $_SESSION['usersettings.theme'] = $id;
@@ -751,13 +752,15 @@ class Theme
 
         if (isset($this->colorSchemes[$colorscheme]["primaryColor"])) {
             $primary = $this->colorSchemes[$colorscheme]["primaryColor"];
-            $_SESSION["usersettings.colorScheme.primaryColor"] = $primary;
         }
 
         if (isset($this->colorSchemes[$colorscheme]["secondaryColor"])) {
             $secondary = $this->colorSchemes[$colorscheme]["secondaryColor"];
-            $_SESSION["usersettings.colorScheme.secondaryColor"] = $secondary;
         }
+
+        $_SESSION["usersettings.colorScheme.primaryColor"] = $primary;
+        $_SESSION["usersettings.colorScheme.secondaryColor"] = $secondary;
+
 
         return;
     }

@@ -93,13 +93,6 @@ jQuery(document).ready(function(){
         jQuery(this).find('td a').removeClass('ui-state-hover');
     });
 
-    //console.log("Setting star date");
-    //console.log(new Date(<?php echo $tpl->get("dateFrom")->format('Y, m-1, d') ?>));
-    //jQuery("#startDate").datepicker({ dateFormat:  leantime.i18n.__("language.jsdateformat")}).datepicker("setDate", '<?php echo $tpl->get("dateFrom")->format(__('language.dateformat')); ?>');
-    //jQuery("#endDate").datepicker("setDate", new Date(<?php echo $tpl->get("dateFrom")->add(new DateInterval('P6D'))->format('Y, m-1, d'); ?>));
-
-    <?php $tpl->get("dateFrom")->sub(new DateInterval('P6D')); ?>
-
     jQuery(".project-select").chosen();
     jQuery(".ticket-select").chosen();
 
@@ -247,6 +240,10 @@ jQuery(document).ready(function(){
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
 
+                    <?php
+                        //Return date to beginning
+                        $tpl->get("dateFrom")->sub(new DateInterval('P6D'));
+                    ?>
 
                 </div>
 

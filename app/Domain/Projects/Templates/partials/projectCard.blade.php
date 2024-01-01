@@ -45,16 +45,21 @@
                         {{ sprintf(__("text.percent_complete"), $percentDone) }}
                     </div>
                 </div>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-success"
-                         role="progressbar"
-                         aria-valuenow="{{ $percentDone }}"
-                         aria-valuemin="0"
-                         aria-valuemax="100"
-                         style="width: {{ $percentDone }}%">
-                        <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
+
+
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-success"
+                             role="progressbar"
+                             aria-valuenow="{{ $percentDone }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100"
+                             style="width: {{ $percentDone }}%">
+                            <span class="sr-only">{{ sprintf(__("text.percent_complete"), $percentDone) }}</span>
+                        </div>
                     </div>
-                </div>
+
+
+
                 <div class="row">
                     <div class="col-md-12">
                         @if ($project['status'] !== null && $project['status'] != '')

@@ -40,6 +40,12 @@ class Template
     private array $vars = array();
 
     /**
+     *
+     * @var string|Frontcontroller
+     */
+    public string|Frontcontroller $frontcontroller = '';
+
+    /**
      * @var string
      */
     private string $notifcation = '';
@@ -47,7 +53,7 @@ class Template
     /**
      * @var string
      */
-    private string $notifcationType = '';
+    private string $notificationType = '';
 
     /**
      * @var string
@@ -58,6 +64,16 @@ class Template
      * @var string
      */
     public string $tmpError = '';
+
+    /**
+     * @var IncomingRequest|string
+     */
+    public string|IncomingRequest $incomingRequest = '';
+
+    /**
+     * @var language|string
+     */
+    public Language|string $language = '';
 
     /**
      * @var string
@@ -83,6 +99,22 @@ class Template
     );
 
     /**
+     * @var Theme
+     */
+    private Theme $theme;
+
+    /**
+     * @var \Illuminate\View\Factory
+     */
+    public Factory $viewFactory;
+    private AppSettings $settings;
+    private Environment $config;
+    private AuthService $login;
+    private Roles $roles;
+    private CompilerInterface $bladeCompiler;
+
+
+    /**
      * __construct - get instance of frontcontroller
      *
      * @param Theme           $theme
@@ -100,44 +132,35 @@ class Template
      * @access public
      */
     public function __construct(
-        /** @var Theme */
-        private Theme $theme,
-
-        /** @var Language */
-        public Language $language,
-
-        /** @var Frontcontroller */
-        public Frontcontroller $frontcontroller,
-
-        /** @var IncomingRequest */
-        public IncomingRequest $incomingRequest,
-
-        /** @var Environment */
-        private Environment $config,
-
-        /** @var AppSettings */
-        private AppSettings $settings,
-
-        /** @var AuthService */
-        private AuthService $login,
-
-        /** @var Roles */
-        private Roles $roles,
-
-        /** @var \Illuminate\View\Factory|null */
-        public ?Factory $viewFactory = null,
-
-        /** @var CompilerInterface|null */
-        private ?CompilerInterface $bladeCompiler = null,
+        Theme $theme,
+        Language $language,
+        Frontcontroller $frontcontroller,
+        IncomingRequest $incomingRequest,
+        Environment $config,
+        AppSettings $settings,
+        AuthService $login,
+        Roles $roles,
+        Factory $viewFactory = null,
+        Compiler $bladeCompiler = null
     ) {
-        if (! is_null($this->viewFactory) && ! is_null($this->bladeCompiler)) {
-            return;
-        }
+        $this->theme = $theme;
+        $this->language = $language;
+        $this->frontcontroller = $frontcontroller;
+        $this->incomingRequest = $incomingRequest;
+        $this->config = $config;
+        $this->settings = $settings;
+        $this->login = $login;
+        $this->roles = $roles;
 
-        app()->call([$this, 'setupBlade']);
-        $this->attachComposers();
-        $this->setupDirectives();
-        $this->setupGlobalVars();
+        if (! is_null($viewFactory) && ! is_null($bladeCompiler)) {
+            $this->viewFactory = $viewFactory;
+            $this->bladeCompiler = $bladeCompiler;
+        } else {
+            app()->call([$this, 'setupBlade']);
+            $this->attachComposers();
+            $this->setupDirectives();
+            $this->setupGlobalVars();
+        }
     }
 
     /**
@@ -399,7 +422,7 @@ class Template
     public function setNotification(string $msg, string $type, string $event_id = ''): void
     {
         $_SESSION['notification'] = $msg;
-        $_SESSION['notifcationType'] = $type;
+        $_SESSION['notificationType'] = $type;
         $_SESSION['event_id'] = $event_id;
     }
 
@@ -592,9 +615,9 @@ class Template
      */
     public function getNotification(): array
     {
-        if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
+        if (isset($_SESSION['notificationType']) && isset($_SESSION['notification'])) {
             $event_id = $_SESSION['event_id'] ?? '';
-            return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
+            return array('type' => $_SESSION['notificationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
         } else {
             return array('type' => "", 'msg' => "", 'event_id' => "");
         }

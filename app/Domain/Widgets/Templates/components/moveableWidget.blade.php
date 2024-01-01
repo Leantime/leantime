@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="clearall"></div>
-            <div class="widgetContent tw-px-m">
+            <div class="widgetContent {{ ($background == "default") ? 'tw-px-m' : '' }}">
                 {{ $slot }}
             </div>
         </div>

@@ -70,7 +70,7 @@ $goalStats = $tpl->get("goalStats");
 
                 <ul class="dropdown-menu canvasSelector">
                      <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                         <li><a href="#/goalcanvas/bigRock"><?=$tpl->__("links.icon.create_new_bigrock") ?></a></li>
+                         <li><a href="#/goalcanvas/bigRock"><?=$tpl->__("links.icon.create_new_board") ?></a></li>
 
                      <?php } ?>
                     <li class="border"></li>

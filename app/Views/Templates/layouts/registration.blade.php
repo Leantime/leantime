@@ -44,7 +44,7 @@
                 <div class="col-md-7">
                     <div class="regpanelinner" style="padding:30px;">
 
-                        <a href=""><img src="{{ BASE_URL }}/dist/images/logo.png" style="width:50%;"/></a><br /><br />
+                        <a href=""><img src="{{ BASE_URL }}/dist/images/logo_blue.svg" style="width:50%;"/></a><br /><br />
 
                         @isset($action, $module)
                             @include("$module::$action")

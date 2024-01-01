@@ -1,14 +1,13 @@
 <h4 class="widgettitle title-light">
     <i class="fa-solid fa-mountain"></i>
-    {{ empty($bigRock["title"]) ? __('label.create_bigrock') : __('label.bigrock') }} {{  $bigRock["title"] }}</h4>
+    {{ empty($bigRock["title"]) ? __('label.create_new_goalboard') : __('label.goalboard') }} {{  $bigRock["title"] }}</h4>
 
 {!!  $tpl->displayNotification();  !!}
 
 <form class="formModal" method="post" action="{{ BASE_URL }}/goalcanvas/bigRock/{{ !empty($bigRock['id']) ? $bigRock['id'] : '' }}">
 
-    <p>{!! __('text.what_are_bigrocks') !!}</p>
     <br />
-    <label>{{ __('label.big_rock_description') }}</label>
+    <label>{{ __('label.goal_description') }}</label>
     <input type="text" name="title" id="wikiTitle" value="{{ $bigRock['title']}}" style="width:100%;"/><br />
 
     <br />

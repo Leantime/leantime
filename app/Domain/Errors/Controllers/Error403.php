@@ -17,7 +17,7 @@ namespace Leantime\Domain\Errors\Controllers {
          */
         public function run(): Response
         {
-            return $this->tpl->display('errors.error403', responseCode: 403);
+            return $this->tpl->display('errors.error403',layout:"error", responseCode: 403);
         }
     }
 }

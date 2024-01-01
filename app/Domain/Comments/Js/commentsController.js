@@ -2,8 +2,6 @@ leantime.commentsController = (function () {
 
     var enableCommenterForms = function () {
 
-        console.log("in");
-
         jQuery(".commentBox").show();
 
         //Hide reply comment boxes

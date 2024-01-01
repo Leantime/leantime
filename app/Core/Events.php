@@ -205,6 +205,15 @@ class Events
             $enabledPlugins = $pluginService->getEnabledPlugins();
 
             foreach ($enabledPlugins as $plugin) {
+
+                //Catch issue when plugins are cached on load but autoloader is not quite done loading.
+                //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
+                //Clearing session cache in that case.
+                //@TODO: Check on callstack to make sure autoload loads before sessions
+                if (is_a($plugin, '__PHP_Incomplete_Class')) {
+                    continue;
+                }
+
                 if ($plugin == null) {
                     continue;
                 }

@@ -150,7 +150,7 @@
                                                 @include("tickets::partials.ticketsubmenu", ["ticket" => $row, "onTheClock" => $onTheClock])
                                                 <div class="scheduler pull-right">
                                                     @if( $row['editFrom'] != "0000-00-00 00:00:00" && $row['editFrom'] != "1969-12-31 00:00:00")
-                                                        <i class="fa-solid fa-calendar-check infoIcon tw-mr-xs" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
+                                                        <i class="fa-solid fa-calendar-check infoIcon tw-mr-xs" style="color:var(--accent2)" data-tippy-content="{{ __('text.schedule_to_start_on') }} {{ format($row['editFrom'])->date() }}"></i>
                                                     @else
                                                         <i class="fa-regular fa-calendar-xmark infoIcon tw-mr-xs" data-tippy-content="{{ __('text.not_scheduled_drag_ai') }}"></i>
                                                     @endif

@@ -93,9 +93,9 @@ namespace Leantime\Domain\Projects\Controllers {
                             $projectResults[$i]['lastUpdate'] = false;
                         }
 
-                        $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
+                        //$fullReport = $this->reportService->getRealtimeReport($project['id'], "");
 
-                        $projectResults[$i]['report'] = $fullReport;
+                        //$projectResults[$i]['report'] = $fullReport;
 
                         $i++;
                     }

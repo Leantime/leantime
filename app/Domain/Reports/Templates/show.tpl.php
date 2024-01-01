@@ -37,7 +37,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                     <div class="col-md-12">
 
                             <h5 class="subtitle"><?=$tpl->__("subtitles.summary")?> <?php if ($fullReportLatest) {
-                                ?>(<?=format(fullReportLatest['date'])->date() ?>)<?php
+                                ?>(<?=format($fullReportLatest['date'])->date() ?>)<?php
                                                  } ?> </h5>
                             <div class="row">
                                 <div class="col-md-3">

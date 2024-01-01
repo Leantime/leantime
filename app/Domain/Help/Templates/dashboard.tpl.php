@@ -109,7 +109,6 @@ $currentSprint = $tpl->get('sprint');
     <div class="row">
         <div class="col-md-12 center">
             <br />
-            <a href="javascript:void(0);" class="btn btn-default" onclick="leantime.helperController.startDashboardTour()">Take a quick tour of the UI</a><br /><br />
             <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('dashboard')">Skip and don't show this page again</a>
         </div>
     </div>

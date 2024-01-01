@@ -6,12 +6,13 @@
 
 namespace Leantime\Domain\Notifications\Controllers {
 
+    use Leantime\Core\Controller;
     use Symfony\Component\HttpFoundation\JsonResponse;
 
     /**
      *
      */
-    class GetLatestGrowl
+    class GetLatestGrowl extends Controller
     {
         public function init(
 
@@ -19,20 +20,17 @@ namespace Leantime\Domain\Notifications\Controllers {
 
         public function get() {
 
-            $_SESSION['notification'];
-            $_SESSION['notifcationType'];
-            $_SESSION['event_id'];
 
             $jsonEncoded = false;
             if($_SESSION['notification'] != ''){
                 $notificationArray = array(
-                    "notification" => $_SESSION['notification'],
-                    "type" => $_SESSION['notifcationType'],
-                    "eventId" => $_SESSION['eventId']
+                    "notification" => $_SESSION['notification'] ?? '',
+                    "type" => $_SESSION['notificationType'] ?? '',
+                    "eventId" => $_SESSION['eventId'] ?? ''
                 );
 
                 $_SESSION['notification'] = '';
-                $_SESSION['notifcationType'] = '';
+                $_SESSION['notificationType'] = '';
                 $_SESSION['eventId'] = '';
 
                 $jsonEncoded = json_encode($notificationArray);

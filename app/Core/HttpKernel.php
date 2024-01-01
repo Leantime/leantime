@@ -48,7 +48,9 @@ class HttpKernel implements HttpKernelContract
             return $e->getResponse();
         } catch (\Throwable $e) {
             if (! app()->make(Environment::class)->debug) {
-                return new RedirectResponse(BASE_URL . "/errors/error500", 201);
+                echo "An error occured";
+                error_log($e);
+                //return new RedirectResponse(BASE_URL . "/errors/error500", 201);
             }
 
             if ($request instanceof HtmxRequest) {

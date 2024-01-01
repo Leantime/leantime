@@ -288,7 +288,7 @@ class Mailer
         $this->mailAgent->Subject = $this->subject;
 
         if (str_contains($this->logo, 'images/logo.svg')) {
-            $this->logo = "/dist/images/logo.png";
+            $this->logo = "/dist/images/logo_blue.png";
         }
 
         $logoParts = parse_url($this->logo);
@@ -297,8 +297,13 @@ class Mailer
             //Logo is URL
             $inlineLogoContent = $this->logo;
         } else {
-            //Logo comes from local file system
-            $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
+            if(file_exists(ROOT . "" . $this->logo)) {
+                //Logo comes from local file system
+                $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
+            }else{
+                $this->mailAgent->addEmbeddedImage(ROOT . "/dist/images/logo_blue.png", 'companylogo');
+            }
+
             $inlineLogoContent = "cid:companylogo";
         }
 

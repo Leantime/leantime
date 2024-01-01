@@ -29,8 +29,8 @@ namespace Leantime\Domain\Widgets\Models {
         public function __construct(
             public string $id,
             public string $name,
-            public string $description = "",
             public string $widgetUrl,
+            public string $description = "",
             public string $widgetTrigger = "load",
             public int $gridMinWidth = 1,
             public int $gridMinHeight = 1,

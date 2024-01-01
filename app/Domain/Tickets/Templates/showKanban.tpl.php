@@ -203,7 +203,7 @@ $allTicketGroups = $tpl->get("allTickets");
                                                     <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text"><?php
                                                         if ($row['storypoints'] != '' && $row['storypoints'] > 0) {
-                                                            echo $efforts["" . $row['storypoints']];
+                                                            echo $efforts["" . $row['storypoints']] ?? $row['storypoints'];
                                                         } else {
                                                             echo $tpl->__("label.story_points_unkown");
                                                         }?>
@@ -397,8 +397,6 @@ $allTicketGroups = $tpl->get("allTickets");
                     style: {background: 'none', backgroundColor: 'none'},
                     hoverStyle: {background: 'none', backgroundColor: 'none', cursor: 'pointer'}
                 });
-
-                console.log(startAnchor);
 
                 var line<?=$ticket['id'] ?> = new LeaderLine(startAnchor, endElement, {
                     startPlugColor: 'var(--accent1)',

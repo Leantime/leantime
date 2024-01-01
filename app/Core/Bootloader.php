@@ -51,6 +51,7 @@ class Bootloader
         "auth.userInvite",
         "install",
         "install.update",
+        "errors.error403",
         "errors.error404",
         "errors.error500",
         "errors.error501",

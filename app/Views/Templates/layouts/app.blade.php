@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <div class="mainwrapper menu{{ $_SESSION['menuState'] }}">
+    <div class="mainwrapper menu{{ $_SESSION['menuState'] ?? "closed" }}">
 
         <div class="header">
 

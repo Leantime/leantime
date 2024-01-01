@@ -122,6 +122,7 @@ leantime.ticketsController = (function () {
                             },
                             on_date_change: function (task, start, end) {
 
+
                                 leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
 
                             },
@@ -1027,7 +1028,6 @@ leantime.ticketsController = (function () {
             var height = 250;
 
             jQuery(".sortableTicketList .column .contentInner").each(function () {
-                console.log(jQuery(this).height());
                 if (jQuery(this).height() > height) {
                     height = jQuery(this).height();
                 }

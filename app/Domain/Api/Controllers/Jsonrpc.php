@@ -299,7 +299,7 @@ class Jsonrpc extends Controller
                     $filtered_parameters[$position] = $params[$name];
                     continue;
                 }
-                
+
                 if ($params[$name] === null && ! $type->allowsNull()) {
                     throw new Exception("Parameter $name can't be null");
                 }

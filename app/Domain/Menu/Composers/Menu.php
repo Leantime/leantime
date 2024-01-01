@@ -108,6 +108,23 @@ class Menu extends Composer
         $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
         $projectSelectGroupOptions = $this->menuService->getProjectSelectorGroupingOptions();
 
+        $settingsLink = [
+            'label' => '',
+            'module' => '',
+            'action' => '',
+            'settingsIcon' => '',
+            'settingsTooltip' => '',
+            ];
+
+        if($menuType == "project" || $menuType == "default") {
+            $settingsLink = [
+                'label' => __('menu.project_settings'),
+                'module' => 'projects',
+                'action' => 'showProject',
+                'settingsIcon' => __('menu.project_settings_icon'),
+                'settingsTooltip' => __('menu.project_settings_tooltip'),
+            ];
+        }
 
         return [
             'currentClient' => $currentClient,
@@ -122,13 +139,7 @@ class Menu extends Composer
             'currentProject' => $currentProject,
             'menuStructure' => $this->menuRepo->getMenuStructure($menuType ?? '') ?? [],
             'menuType' => $menuType,
-            'settingsLink' => [
-                'label' => __('menu.project_settings'),
-                'module' => 'projects',
-                'action' => 'showProject',
-                'settingsIcon' => __('menu.project_settings_icon'),
-                'settingsTooltip' => __('menu.project_settings_tooltip'),
-            ],
+            'settingsLink' => $settingsLink,
             'redirectUrl' => $redirectUrl,
             'projectTypeAvatars' => $projectTypeAvatars,
             'favoriteProjects' => $favoriteProjects,

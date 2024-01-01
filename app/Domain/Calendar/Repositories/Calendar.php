@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Calendar\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Environment;
     use Leantime\Core\Language;
     use Leantime\Core\Repository as RepositoryCore;
     use Leantime\Core\Db as DbCore;
@@ -27,6 +28,8 @@ namespace Leantime\Domain\Calendar\Repositories {
         private LanguageCore $language;
 
         private DateTimeHelper $dateTimeHelper;
+
+        private Environment $config;
 
         private array $classColorMap = array(
              "label-warning" => "var(--yellow)",
@@ -53,12 +56,13 @@ namespace Leantime\Domain\Calendar\Repositories {
          *
          * @access public
          */
-        public function __construct(DbCore $db, LanguageCore $language, DateTimeHelper $dateTimeHelper)
+        public function __construct(DbCore $db, LanguageCore $language, DateTimeHelper $dateTimeHelper, Environment $config)
         {
             $this->db = $db;
             $this->language = $language;
             $this->entity = "calendar";
             $this->dateTimeHelper = $dateTimeHelper;
+            $this->config = $config;
         }
 
         /**
@@ -318,6 +322,9 @@ namespace Leantime\Domain\Calendar\Repositories {
             //Check if setting exists
             $settingService = app()->make(Setting::class);
             $hash = $settingService->getSetting("usersettings." . $user['id'] . ".icalSecret");
+
+            $_SESSION['usersettings.timezone'] ??= $settingService->getSetting("usersettings.". $user['id'] .".timezone") ?: $this->config->defaultTimezone;
+            date_default_timezone_set($_SESSION['usersettings.timezone']);
 
             if ($hash !== false && $calHash == $hash) {
                 return $this->getCalendar($user['id']);

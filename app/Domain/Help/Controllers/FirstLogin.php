@@ -4,6 +4,7 @@ namespace Leantime\Domain\Help\Controllers {
 
     use Exception;
     use Leantime\Core\Controller;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Core\Theme;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
@@ -66,11 +67,8 @@ namespace Leantime\Domain\Help\Controllers {
                     //Only save if it is actually available.
                     //Should not be an issue unless some shenanigans is happening
                     try {
-                        $themeCore->setActive($postTheme);
-                        $settingsRepo->saveSetting(
-                            "usersettings." . $_SESSION['userdata']['id'] . ".theme",
-                            $postTheme
-                        );
+                        $themeCore->setColorMode($postTheme);
+
                     } catch (Exception $e) {
                         error_log($e);
                     }

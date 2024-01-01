@@ -678,8 +678,12 @@ namespace Leantime\Domain\Tickets\Services {
             $tickets = array();
 
             foreach ($allTickets as $row) {
+
                 //Only include todos that are not done
-                if ($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE") {
+                if (isset( $statusLabels[$row['projectId']]) &&
+                    isset( $statusLabels[$row['projectId']][$row['status']]) &&
+                    $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE") {
+
                     if (isset($tickets[$row['projectId']])) {
                         $tickets[$row['projectId']]['tickets'][] = $row;
                     } else {
@@ -881,8 +885,8 @@ namespace Leantime\Domain\Tickets\Services {
                 'acceptanceCriteria' => '',
                 'priority' => '',
                 'tags' => '',
-                'editFrom' => $params['editFrom'],
-                'editTo' => $params['editTo'],
+                'editFrom' => $params['editFrom'] ?? '',
+                'editTo' => $params['editTo'] ?? '',
                 'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : "",
                 'dependingTicketId' => '',
             );
@@ -1228,7 +1232,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function upsertSubtask($values, $parentTicket): bool
         {
 
-            $subtaskId = $values['subtaskId'];
+            $subtaskId = $values['subtaskId'] ?? 'new';
 
             $values = array(
                 'headline' => $values['headline'],
@@ -1241,7 +1245,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'dateToFinish' => $values['dateToFinish'] ?? '',
                 'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
-                'storypoints' => "",
+                'storypoints' => $values['storypoints'] ?? '',
                 'hourRemaining' => $values['hourRemaining'] ?? 0,
                 'planHours' => $values['planHours'] ?? 0,
                 'sprint' => "",
@@ -1285,6 +1289,8 @@ namespace Leantime\Domain\Tickets\Services {
                     return false;
                 }
             }
+
+            return true;
         }
 
         /**
