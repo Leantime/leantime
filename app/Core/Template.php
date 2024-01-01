@@ -40,12 +40,6 @@ class Template
     private array $vars = array();
 
     /**
-     *
-     * @var string|Frontcontroller
-     */
-    public string|Frontcontroller $frontcontroller = '';
-
-    /**
      * @var string
      */
     private string $notifcation = '';
@@ -66,21 +60,6 @@ class Template
     public string $tmpError = '';
 
     /**
-     * @var IncomingRequest|string
-     */
-    public string|IncomingRequest $incomingRequest = '';
-
-    /**
-     * @var language|string
-     */
-    public Language|string $language = '';
-
-    /**
-     * @var string
-     */
-    public string $template = '';
-
-    /**
      * @var array
      */
     public array $picture = array(
@@ -97,21 +76,6 @@ class Template
         'users' => 'fa-people-group',
         'default' => 'fa-off',
     );
-
-    /**
-     * @var Theme
-     */
-    private Theme $theme;
-
-    /**
-     * @var \Illuminate\View\Factory
-     */
-    public Factory $viewFactory;
-    private AppSettings $settings;
-    private Environment $config;
-    private AuthService $login;
-    private Roles $roles;
-    private CompilerInterface $bladeCompiler;
 
 
     /**
@@ -132,16 +96,35 @@ class Template
      * @access public
      */
     public function __construct(
-        Theme $theme,
-        Language $language,
-        Frontcontroller $frontcontroller,
-        IncomingRequest $incomingRequest,
-        Environment $config,
-        AppSettings $settings,
-        AuthService $login,
-        Roles $roles,
-        Factory $viewFactory = null,
-        Compiler $bladeCompiler = null
+        /** @var Theme */
+        private Theme $theme,
+
+        /** @var Language */
+        public Language $language,
+
+        /** @var Frontcontroller */
+        public Frontcontroller $frontcontroller,
+
+        /** @var IncomingRequest */
+        public IncomingRequest $incomingRequest,
+
+        /** @var Environment */
+        private Environment $config,
+
+        /** @var AppSettings */
+        private AppSettings $settings,
+
+        /** @var AuthService */
+        private AuthService $login,
+
+        /** @var Roles */
+        private Roles $roles,
+
+        /** @var \Illuminate\View\Factory|null */
+        public ?Factory $viewFactory = null,
+
+        /** @var CompilerInterface|null */
+        private ?CompilerInterface $bladeCompiler = null,
     ) {
         $this->theme = $theme;
         $this->language = $language;

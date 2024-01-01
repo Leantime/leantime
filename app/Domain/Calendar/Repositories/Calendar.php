@@ -19,17 +19,6 @@ namespace Leantime\Domain\Calendar\Repositories {
      */
     class Calendar extends RepositoryCore
     {
-        /**
-         * @access public
-         * @var    DbCore|null
-         */
-        private ?DbCore $db;
-
-        private LanguageCore $language;
-
-        private DateTimeHelper $dateTimeHelper;
-
-        private Environment $config;
 
         private array $classColorMap = array(
              "label-warning" => "var(--yellow)",
@@ -52,11 +41,19 @@ namespace Leantime\Domain\Calendar\Repositories {
         );
 
         /**
-         * __construct - get database connection
+         * Class constructor.
          *
-         * @access public
+         * @param DbCore $db The DbCore object.
+         * @param LanguageCore $language The LanguageCore object.
+         * @param DateTimeHelper $dateTimeHelper The DateTimeHelper object.
+         * @param Environment $config The Environment object.
+         * @return void
          */
-        public function __construct(DbCore $db, LanguageCore $language, DateTimeHelper $dateTimeHelper, Environment $config)
+        public function __construct(
+            private DbCore $db,
+            private LanguageCore $language,
+            private DateTimeHelper $dateTimeHelper,
+            private Environment $config)
         {
             $this->db = $db;
             $this->language = $language;
@@ -65,11 +62,6 @@ namespace Leantime\Domain\Calendar\Repositories {
             $this->config = $config;
         }
 
-        /**
-         * @param $dateFrom
-         * @param $dateTo
-         * @return array|false
-         */
         /**
          * @param $dateFrom
          * @param $dateTo
@@ -247,8 +239,6 @@ namespace Leantime\Domain\Calendar\Repositories {
             return $newValues;
         }
 
-
-
         /**
          * Generates event array for fullcalendar.io frontend.
          *
@@ -264,7 +254,17 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param int|null $dateTo
          * @return array
          */
-        private function mapEventData(string $title, bool $allDay, int $id, int $projectId, string $eventType, string $dateContext, string $backgroundColor, string $borderColor, ?int $dateFrom, ?int $dateTo): array
+        private function mapEventData(
+            string $title,
+            bool $allDay,
+            int $id,
+            int $projectId,
+            string $eventType,
+            string $dateContext,
+            string $backgroundColor,
+            string $borderColor,
+            ?int $dateFrom,
+            ?int $dateTo): array
         {
 
             return array(

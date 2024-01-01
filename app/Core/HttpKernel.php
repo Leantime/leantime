@@ -13,10 +13,15 @@ class HttpKernel implements HttpKernelContract
 {
     use Eventhelpers;
 
+    /**
+     * The timestamp when the request started.
+     *
+     * @var null|int
+     */
     protected $requestStartedAt = null;
 
     /**
-     * Bootstrap the application for HTTP requests.
+     * Bootstrap the application if it has not been previously bootstrapped.
      *
      * @return void
      */
@@ -30,10 +35,13 @@ class HttpKernel implements HttpKernelContract
     }
 
     /**
-     * Handle an incoming HTTP request.
+     * Handle the incoming request.
      *
-     * @param  \Symfony\Component\HttpFoundation\Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param \Symfony\Component\HttpFoundation\Request $request The incoming request.
+     * @return \Symfony\Component\HttpFoundation\Response  The response.
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException  If an HTTP response exception occurs.
+     * @throws \Throwable  If an error occurs and it is not caught.
      */
     public function handle($request)
     {
@@ -47,10 +55,12 @@ class HttpKernel implements HttpKernelContract
         } catch (HttpResponseException $e) {
             return $e->getResponse();
         } catch (\Throwable $e) {
-            if (! app()->make(Environment::class)->debug) {
-                echo "An error occured";
+            if (
+                ! app()->make(Environment::class)->debug
+                && Frontcontroller::getCurrentRoute() !== 'error.error500'
+            ) {
                 error_log($e);
-                //return new RedirectResponse(BASE_URL . "/errors/error500", 201);
+                return new RedirectResponse(BASE_URL . "/errors/error500", 201);
             }
 
             if ($request instanceof HtmxRequest) {
@@ -67,10 +77,11 @@ class HttpKernel implements HttpKernelContract
     }
 
     /**
-     * Perform any final actions for the request lifecycle.
+     * Terminate the request.
      *
-     * @param  \Symfony\Component\HttpFoundation\Request  $request
-     * @param  \Symfony\Component\HttpFoundation\Response $response
+     * @param mixed $request The request object.
+     * @param mixed $response The response object.
+     *
      * @return void
      */
     public function terminate($request, $response)

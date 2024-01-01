@@ -752,15 +752,13 @@ class Theme
 
         if (isset($this->colorSchemes[$colorscheme]["primaryColor"])) {
             $primary = $this->colorSchemes[$colorscheme]["primaryColor"];
+            $_SESSION["usersettings.colorScheme.primaryColor"] = $primary;
         }
 
         if (isset($this->colorSchemes[$colorscheme]["secondaryColor"])) {
             $secondary = $this->colorSchemes[$colorscheme]["secondaryColor"];
+            $_SESSION["usersettings.colorScheme.secondaryColor"] = $secondary;
         }
-
-        $_SESSION["usersettings.colorScheme.primaryColor"] = $primary;
-        $_SESSION["usersettings.colorScheme.secondaryColor"] = $secondary;
-
 
         return;
     }
