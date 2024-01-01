@@ -46,9 +46,22 @@ $ticketTypes = $tpl->get('ticketTypes');
         </div>
 
         <?php if ($ticket->id) {?>
-          
+            <br />
+            <hr />
+            <?php $tpl->dispatchTplEvent("beforeSubtasks", ["ticketId" => $ticket->id]); ?>
+            <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> <?php echo $tpl->__('subtitles.subtasks'); ?></h4>
 
-            <h4 class="widgettitle title-light"><span
+            <div
+                id="ticketSubtasks"
+                hx-get="<?=BASE_URL ?>/tickets/subtasks/get?ticketId=<?=$ticket->id ?>"
+                hx-trigger="load"
+                hx-indicator=".subtaskIndicator"
+            ></div>
+            <div class="htmx-indicator subtaskIndicator">
+                Loading Subtasks ...<br /><br />
+            </div>
+
+        <h4 class="widgettitle title-light"><span
                     class="fa-solid fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
 
         <div class="row-fluid">

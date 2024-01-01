@@ -48,8 +48,9 @@ class Widgets
             "id" => "welcome",
             "name" => "widgets.title.welcome",
             "description" => "widgets.descriptions.welcome",
+            "widgetUrl" => BASE_URL . "/widgets/welcome/get",
             "gridHeight" => 9,
-            "gridWidth" => 4,
+            "gridWidth" => 12,
             "gridMinHeight" => 8,
             "gridMinWidth" => 6,
             "gridX" => 0,
@@ -58,7 +59,23 @@ class Widgets
             "widgetTrigger" => "load, every 5m",
             "alwaysVisible" => true,
             "noTitle" => true,
-            "widgetUrl" => BASE_URL . "/widgets/welcome/get",
+
+        ]);
+
+        $this->availableWidgets["todos"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
+            "id" => "todos",
+            "name" => "widgets.title.my_todos",
+            "description" => "widgets.descriptions.my_todos",
+            "widgetUrl" => BASE_URL . "/widgets/myToDos/get",
+            "gridHeight" => 30,
+            "gridWidth" => 8,
+            "gridMinHeight" => 16,
+            "gridMinWidth" => 3,
+            "gridX" => 0,
+            "gridY" => 10,
+            "alwaysVisible" => false,
+            "noTitle" => false,
+
         ]);
 
         $this->availableWidgets["calendar"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
@@ -66,29 +83,14 @@ class Widgets
             "name" => "widgets.title.calendar",
             "description" => "widgets.descriptions.calendar",
             "gridHeight" => 30,
-            "gridWidth" => 2,
+            "gridWidth" => 4,
             "gridMinHeight" => 12,
             "gridMinWidth" => 3,
-            "gridX" => 2,
+            "gridX" => 8,
             "gridY" => 10,
             "alwaysVisible" => false,
             "noTitle" => false,
             "widgetUrl" => BASE_URL . "/widgets/calendar/get",
-        ]);
-
-        $this->availableWidgets["todos"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
-            "id" => "todos",
-            "name" => "widgets.title.my_todos",
-            "description" => "widgets.descriptions.my_todos",
-            "gridHeight" => 30,
-            "gridWidth" => 4,
-            "gridMinHeight" => 16,
-            "gridMinWidth" => 3,
-            "gridX" => 0,
-            "gridY" => 10,
-            "alwaysVisible" => false,
-            "noTitle" => false,
-            "widgetUrl" => BASE_URL . "/widgets/myToDos/get",
         ]);
 
         $this->availableWidgets["myprojects"] = app()->make("Leantime\Domain\Widgets\Models\Widget", [
@@ -96,7 +98,7 @@ class Widgets
             "name" => "widgets.title.my_projects",
             "description" => "widgets.descriptions.my_projects",
             "gridHeight" => 22,
-            "gridWidth" => 2,
+            "gridWidth" => 8,
             "gridMinHeight" => 10,
             "gridMinWidth" => 2,
             "gridX" => 0,

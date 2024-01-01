@@ -38,7 +38,7 @@ leantime.widgetController = (function () {
         let items = grid.save();
 
         items.forEach(function(item) {
-            console.log(item);
+
             //get hx links
             let htmxElement = jQuery(item.content).find("[hx-get]").first();
 
@@ -125,7 +125,6 @@ leantime.widgetController = (function () {
     }
 
     var buildWidget = function(widget) {
-        console.log(widget);
 
         var widgetHtml = '<div class="grid-stack-item">\n' +
             '    <div class="grid-stack-item-content tw-p-none ' + (widget.widgetBackground == "default" ? "maincontentinner" : widget.background) + '">\n' +

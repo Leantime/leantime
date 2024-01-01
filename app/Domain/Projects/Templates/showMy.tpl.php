@@ -138,6 +138,9 @@ $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCur
                                     <br />
                                 <?php } ?>
 
+                                <?php
+                                //Removing for now due to performance impact on progress calculation.
+                                /*
                                 <div class="row">
                                     <div class="col-md-7">
                                         <?=$tpl->__("subtitles.project_progress") ?>
@@ -152,6 +155,8 @@ $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCur
                                     </div>
                                 </div>
                                 <br />
+
+                                */ ?>
 
 
                             </div>

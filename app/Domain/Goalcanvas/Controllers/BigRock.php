@@ -81,7 +81,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
          */
         public function post($params): Response
         {
-            $bigrock = array("id"=>'', "title" => "", "prpojectId" => "", "author" => '');
+            $bigrock = array("id"=>'', "title" => "", "projectId" => "", "author" => '');
 
             if (isset($_GET["id"])) {
                 $id = (int) $_GET["id"];
@@ -89,7 +89,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $bigrock['id'] = $id;
                 $bigrock['title'] = $params['title'];
                 $this->goalService->updateGoalboard($bigrock);
-                $this->tpl->setNotification("notification.bigrock_updated_successfully", "success", "goalcanvas_updated");
+                $this->tpl->setNotification("notification.goalboard_updated_successfully", "success", "goalcanvas_updated");
                 return Frontcontroller::redirect(BASE_URL . "/goalcanvas/bigRock/" . $id);
 
             } else {
@@ -102,7 +102,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
 
                 if ($id) {
-                    $this->tpl->setNotification("notification.bigrock_created_successfully", "success", "wiki_created");
+                    $this->tpl->setNotification("notification.goalboard_created_successfully", "success", "wiki_created");
                     return Frontcontroller::redirect(BASE_URL . "/goalcanvas/bigRock/" . $id . "?closeModal=1");
                 }
 

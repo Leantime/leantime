@@ -68,7 +68,7 @@ namespace Leantime\Domain\Api\Controllers {
                     };
                 }
 
-                $response = new Response($return->toXMLString());
+                $response = new Response($svg->toXMLString());
                 $response->headers->set('Content-type', 'image/svg+xml');
                 return $response;
             }

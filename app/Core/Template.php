@@ -47,7 +47,7 @@ class Template
     /**
      * @var string
      */
-    private string $notifcationType = '';
+    private string $notificationType = '';
 
     /**
      * @var string
@@ -58,11 +58,6 @@ class Template
      * @var string
      */
     public string $tmpError = '';
-
-    /**
-     * @var string
-     */
-    public string $template = '';
 
     /**
      * @var array
@@ -81,6 +76,7 @@ class Template
         'users' => 'fa-people-group',
         'default' => 'fa-off',
     );
+
 
     /**
      * __construct - get instance of frontcontroller
@@ -130,14 +126,17 @@ class Template
         /** @var CompilerInterface|null */
         private ?CompilerInterface $bladeCompiler = null,
     ) {
+
         if (! is_null($this->viewFactory) && ! is_null($this->bladeCompiler)) {
             return;
+
         }
 
         app()->call([$this, 'setupBlade']);
         $this->attachComposers();
         $this->setupDirectives();
         $this->setupGlobalVars();
+
     }
 
     /**
@@ -399,7 +398,7 @@ class Template
     public function setNotification(string $msg, string $type, string $event_id = ''): void
     {
         $_SESSION['notification'] = $msg;
-        $_SESSION['notifcationType'] = $type;
+        $_SESSION['notificationType'] = $type;
         $_SESSION['event_id'] = $event_id;
     }
 
@@ -592,9 +591,9 @@ class Template
      */
     public function getNotification(): array
     {
-        if (isset($_SESSION['notifcationType']) && isset($_SESSION['notification'])) {
+        if (isset($_SESSION['notificationType']) && isset($_SESSION['notification'])) {
             $event_id = $_SESSION['event_id'] ?? '';
-            return array('type' => $_SESSION['notifcationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
+            return array('type' => $_SESSION['notificationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
         } else {
             return array('type' => "", 'msg' => "", 'event_id' => "");
         }

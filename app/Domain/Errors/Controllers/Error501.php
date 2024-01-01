@@ -18,7 +18,7 @@ namespace Leantime\Domain\Errors\Controllers {
         {
 
             FrontcontrollerCore::setResponseCode(501);
-            $this->tpl->display('errors.error501');
+            $this->tpl->display('errors.error501', layout:"error",);
         }
     }
 

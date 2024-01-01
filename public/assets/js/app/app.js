@@ -65,8 +65,12 @@ jQuery(document).ready(function () {
 });
 
 
-window.addEventListener("Htmx.ShowNotification", function(evt) {
-    jQuery.get(leantime.appURL+"/notifications/get-latest-growl", function(){
+window.addEventListener("HTMX.ShowNotification", function(evt) {
+    jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
         console.log(data);
+        let notification = JSON.parse(data);
+        jQuery.growl({
+            message: notification.notification, style: notification.notificationType
+        });
     })
 });

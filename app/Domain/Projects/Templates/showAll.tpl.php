@@ -66,7 +66,7 @@ $showClosedProjects = $tpl->get('showClosedProjects');
                 <tr class='gradeA'>
 
                     <td style="padding:6px;">
-                        <a class="" href="<?=BASE_URL?>/projects/showProject/<?=$row['clientId']?>"><?= $tpl->escape($row['name']) ?></a>
+                        <a class="" href="<?=BASE_URL?>/projects/showProject/<?=$row['id']?>"><?= $tpl->escape($row['name']) ?></a>
                     <td>
                         <a class="" href="<?=BASE_URL?>/clients/showClient/<?=$row['clientId']?>"><?= $tpl->escape($row['clientName']) ?></a>
                     </td>

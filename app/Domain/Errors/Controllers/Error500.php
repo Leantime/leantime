@@ -17,7 +17,7 @@ namespace Leantime\Domain\Errors\Controllers {
          */
         public function run(): Response
         {
-            return $this->tpl->display('errors.error500', responseCode: 500);
+            return $this->tpl->display('errors.error500', layout:"error", responseCode: 500,);
         }
     }
 

@@ -6,6 +6,14 @@ leantime.ticketsRepository = (function () {
 
     var updateMilestoneDates = function (id, start, end, sortIndex) {
 
+        let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
+        let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
+
+        let editFrom = luxon.DateTime.fromSQL(start).toFormat(userDateFormat);
+        let timeFrom = luxon.DateTime.fromSQL(start).toFormat(userTimeFormat);
+        let editTo = luxon.DateTime.fromSQL(end).toFormat(userDateFormat);
+        let timeTo = luxon.DateTime.fromSQL(end).toFormat(userTimeFormat);
+
         jQuery.ajax(
             {
                 type: 'PATCH',
@@ -13,8 +21,10 @@ leantime.ticketsRepository = (function () {
                 data:
                 {
                     id : id,
-                    editFrom:start,
-                    editTo:end,
+                    editFrom:editFrom,
+                    editTo:editTo,
+                    timeFrom: timeFrom,
+                    timeTo: timeTo,
                     sortIndex: sortIndex
                 }
             }

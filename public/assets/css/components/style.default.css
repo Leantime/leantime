@@ -1526,7 +1526,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .modal.fade {
-    top:-50%;
+    top:-500%;
 }
 
 .modal-title {
@@ -2985,12 +2985,12 @@ body a.btn-link.btn-fancy:hover {
 }
 
 
-.aiPriority li {
+.aiPriority > li {
     margin-bottom: 10px;
     background-image: var(--element-gradient);
     padding: 2px;
     border-radius: 7px;
-    box-shadow: var(--regular-shadow);
+    box-shadow: 0 7px 0 rgba(54, 45, 89, 0.15), -3px -3px 0 0px var(--accent1), 0 0 0 3px var(--accent2);
 }
 
 .aiPriority .ticketBox {

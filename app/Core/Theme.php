@@ -337,8 +337,9 @@ class Theme
             $id = 'default';
         }
 
+        //not a valid theme. Use default
         if (!is_dir(ROOT . '/theme/' . $id) || !file_exists(ROOT . '/theme/' . $id . '/' . static::DEFAULT_INI . '.ini')) {
-            throw new Exception("Selected theme '$id' does not exist");
+            $id = 'default';
         }
 
         $_SESSION['usersettings.theme'] = $id;

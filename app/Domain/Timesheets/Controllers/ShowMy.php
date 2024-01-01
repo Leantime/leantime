@@ -80,7 +80,8 @@ namespace Leantime\Domain\Timesheets\Controllers {
 
             $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
 
-            $this->tpl->assign('dateFrom', new DateTime($dateFrom));
+            $dateFromDate = new  DateTime($dateFrom);
+            $this->tpl->assign('dateFrom',$dateFromDate);
             $this->tpl->assign('actKind', $kind);
             $this->tpl->assign('kind', $this->timesheetsRepo->kind);
             $this->tpl->assign('allProjects', $this->projects->getUserProjects(userId: $_SESSION["userdata"]["id"], projectTypes: "project" ));

@@ -17,7 +17,7 @@ namespace Leantime\Domain\Errors\Controllers {
          */
         public function run(): Response
         {
-            return $this->tpl->display('errors.error404', responseCode: 404);
+            return $this->tpl->display('errors.error404', layout:"error", responseCode: 404);
         }
     }
 

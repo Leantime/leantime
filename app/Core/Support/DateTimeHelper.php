@@ -227,7 +227,7 @@ class DateTimeHelper
 
             if (is_object($timestamp)) {
                 if ($db2User == true) {
-                    $toTz = new \DateTimeZone($_SESSION['usersettings.timezone']);
+                    $toTz = new \DateTimeZone($_SESSION['usersettings.timezone'] ?? "UTC");
                 } else {
                     $toTz = new \DateTimeZone("UTC");
                 }
@@ -313,7 +313,7 @@ class DateTimeHelper
      * @param string $dateTimeString The date and time string to be validated
      * @return bool Returns true if the string is a valid date and time string, false otherwise
      */
-    private function isValidDateString(string $dateTimeString): bool
+    private function isValidDateString(?string $dateTimeString): bool
     {
 
         if (

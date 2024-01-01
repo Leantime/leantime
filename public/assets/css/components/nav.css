@@ -1269,6 +1269,7 @@ a.barmenu:hover {
 .headerinner .bigProjectSelector {
     width:270px;
     overflow:hidden;
+    height: 50px;
 }
 
 .headerinner .bigProjectSelector > .fa-caret-down {

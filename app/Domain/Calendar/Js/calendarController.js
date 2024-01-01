@@ -189,8 +189,6 @@ leantime.calendarController = (function () {
         let userDateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "luxon");
         let userTimeFormat = leantime.dateHelper.getFormatFromSettings("timeformat", "luxon");
 
-        console.log(userDateFormat);
-        console.log(userTimeFormat);
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
             height:'auto',
@@ -226,8 +224,6 @@ leantime.calendarController = (function () {
             eventDrop: function (event) {
 
                 if(event.event.extendedProps.enitityType == "ticket") {
-
-                    console.log(event);
 
                     jQuery.ajax({
                         type : 'PATCH',
@@ -290,9 +286,6 @@ leantime.calendarController = (function () {
                 }
             },
             eventReceive: function(event) {
-
-                console.log(event);
-
 
                 jQuery.ajax({
                     type : 'PATCH',

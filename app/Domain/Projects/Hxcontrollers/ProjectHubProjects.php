@@ -91,8 +91,6 @@ class ProjectHubProjects extends HtmxController
         $projectResults = array();
         $i = 0;
 
-        $clientId = "";
-
         if (is_array($allprojects)) {
             foreach ($allprojects as $project) {
                 if (!array_key_exists($project["clientId"], $clients)) {
@@ -103,9 +101,9 @@ class ProjectHubProjects extends HtmxController
                     $projectResults[$i] = $project;
                     $projectResults[$i]['progress'] = $this->projectsService->getProjectProgress($project['id']);
 
-                    $allProjectMilestones = $this->ticketsService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+                    //$allProjectMilestones = $this->ticketsService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
 
-                    $projectResults[$i]['milestones'] = $allProjectMilestones;
+                    //$projectResults[$i]['milestones'] = $allProjectMilestones;
                     $projectComment = $this->commentsService->getComments("project", $project['id']);
 
                     if (is_array($projectComment) && count($projectComment) > 0) {
@@ -114,9 +112,9 @@ class ProjectHubProjects extends HtmxController
                         $projectResults[$i]['lastUpdate'] = false;
                     }
 
-                    $fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
+                    //$fullReport = $this->reportsService->getRealtimeReport($project['id'], "");
 
-                    $projectResults[$i]['report'] = $fullReport;
+                    //$projectResults[$i]['report'] = $fullReport;
 
                     $i++;
                 }
