@@ -126,24 +126,17 @@ class Template
         /** @var CompilerInterface|null */
         private ?CompilerInterface $bladeCompiler = null,
     ) {
-        $this->theme = $theme;
-        $this->language = $language;
-        $this->frontcontroller = $frontcontroller;
-        $this->incomingRequest = $incomingRequest;
-        $this->config = $config;
-        $this->settings = $settings;
-        $this->login = $login;
-        $this->roles = $roles;
 
-        if (! is_null($viewFactory) && ! is_null($bladeCompiler)) {
-            $this->viewFactory = $viewFactory;
-            $this->bladeCompiler = $bladeCompiler;
-        } else {
-            app()->call([$this, 'setupBlade']);
-            $this->attachComposers();
-            $this->setupDirectives();
-            $this->setupGlobalVars();
+        if (! is_null($this->viewFactory) && ! is_null($this->bladeCompiler)) {
+            return;
+
         }
+
+        app()->call([$this, 'setupBlade']);
+        $this->attachComposers();
+        $this->setupDirectives();
+        $this->setupGlobalVars();
+
     }
 
     /**

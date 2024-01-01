@@ -54,13 +54,7 @@ namespace Leantime\Domain\Calendar\Repositories {
             private LanguageCore $language,
             private DateTimeHelper $dateTimeHelper,
             private Environment $config)
-        {
-            $this->db = $db;
-            $this->language = $language;
-            $this->entity = "calendar";
-            $this->dateTimeHelper = $dateTimeHelper;
-            $this->config = $config;
-        }
+        {}
 
         /**
          * @param $dateFrom
