@@ -55,12 +55,10 @@ class HttpKernel implements HttpKernelContract
         } catch (HttpResponseException $e) {
             return $e->getResponse();
         } catch (\Throwable $e) {
-            if (
-                ! app()->make(Environment::class)->debug
-                && Frontcontroller::getCurrentRoute() !== 'error.error500'
-            ) {
+
+            if (! app()->make(Environment::class)->debug) {
                 error_log($e);
-                return new RedirectResponse(BASE_URL . "/errors/error500", 201);
+                return app()->make(Template::class)->display('errors.error500');
             }
 
             if ($request instanceof HtmxRequest) {
