@@ -1,3 +1,8 @@
+
+
+
+
+
 //Lets get this party started.
 var leantime = leantime || {};
 
@@ -74,3 +79,6 @@ window.addEventListener("HTMX.ShowNotification", function(evt) {
         });
     })
 });
+
+
+

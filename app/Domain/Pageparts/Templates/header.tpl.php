@@ -24,6 +24,7 @@ foreach ($__data as $var => $val) {
 <meta name="color-scheme" content="<?php $tpl->e($theme ?? 'default') ?>">
 <meta name="identifier-URL" content="<?=BASE_URL?>">
 <meta name="leantime-version" content="<?=$settings->appVersion ?>">
+<meta name="view-transition" content="same-origin" />
 <?php $tpl->dispatchTplEvent('afterMetaTags'); ?>
 
 <link rel="shortcut icon" href="<?=BASE_URL?>/dist/images/favicon.png"/>

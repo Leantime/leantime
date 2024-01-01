@@ -58,7 +58,7 @@ class HttpKernel implements HttpKernelContract
 
             if (! app()->make(Environment::class)->debug) {
                 error_log($e);
-                return app()->make(Template::class)->display('errors.error500');
+                return app()->make(Template::class)->display('errors.error500', 'error');
             }
 
             if ($request instanceof HtmxRequest) {
