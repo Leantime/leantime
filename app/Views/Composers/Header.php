@@ -17,10 +17,7 @@ class Header extends Composer
         'global::sections.header',
     ];
 
-    private Setting $SettingsRepo;
     private Environment $config;
-    private AppSettings $AppSettings;
-    private Theme $ThemeCore;
     private Theme $themeCore;
     private AppSettings $appSettings;
     private Setting $settingsRepo;
@@ -47,16 +44,12 @@ class Header extends Composer
     /**
      * @return array
      */
-    /**
-     * @return array
-     */
     public function with(): array
     {
         $theme = $this->themeCore->getActive();
         $colorMode = $this->themeCore->getColorMode();
         $colorScheme = $this->themeCore->getColorScheme();
         $themeFont = $this->themeCore->getFont();
-
 
         // Set colors to use
         if (! isset($_SESSION["companysettings.sitename"])) {

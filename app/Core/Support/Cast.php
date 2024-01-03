@@ -2,8 +2,12 @@
 
 namespace Leantime\Core\Support;
 
+use Illuminate\Support\Str;
+
 class Cast
 {
+    protected array $mappings;
+
     /**
      * @param object|array $object
      **/
@@ -17,13 +21,16 @@ class Cast
     /**
      * @param string $classDest
      * @param array $constructParams
+     * @param array $mappings
      * @return object
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
      * @throws \ReflectionException
      **/
-    public function castTo(string $classDest, array $constructParams = []): object
+    public function castTo(string $classDest, array $constructParams = [], array $mappings = []): object
     {
+        $this->mappings ??= $mappings;
+
         if (! class_exists($classDest)) {
             throw new \InvalidArgumentException(sprintf('Class %s does not exist.', $classDest));
         }
@@ -36,14 +43,30 @@ class Cast
             $name = $property->getName();
 
             if (! isset($sourceObj->$name)) {
+                if ($property->hasDefaultValue()) {
+                    $returnObj->set($name, $property->getDefaultValue());
+                    continue;
+                }
+
                 throw new \RuntimeException(sprintf('Property %s does not exist in source object.', $name));
             }
 
-            $type = ($reflectionType = $property->getType()) ? $reflectionType->getName() : null;
+            try {
+                $type = collect($mappings)->firstOrFail(fn ($mapping, $key) => in_array($key, [$name, '*']));
+            } catch (\Illuminate\Support\ItemNotFoundException) {
+                $type = ($reflectionType = $property->getType()) ? $reflectionType->getName() : null;
+            }
 
-            $returnObj->set($name, match ($type) {
-                $type !== 'stdClass' && class_exists($type) => (new self($sourceObj->$name))->castTo($type),
-                'array', 'object', 'stdClass' => $this->handleIterator($sourceObj->$name, $name),
+            $returnObj->set($name, match (true) {
+                enum_exists($type) => self::castEnum($sourceObj->$name, $type),
+                $type !== 'stdClass' && class_exists($type) => (new self($sourceObj->$name))->castTo(
+                    classDest: $type,
+                    mappings: $this->getMatchingMappings($mappings, $name),
+                ),
+                in_array($type, ['array', 'object', 'stdClass']) => $this->handleIterator(
+                    $sourceObj->$name,
+                    $this->getMatchingMappings($mappings, $name)
+                ),
                 is_null($type) => $sourceObj->$name,
                 default => self::castSimple($sourceObj->$name, $type),
             });
@@ -77,27 +100,82 @@ class Cast
     }
 
     /**
+     * Cast to backed enum
+     *
+     * @param mixed $value
+     * @param string $enumClass
+     **/
+    public static function castEnum(mixed $value, string $enumClass): mixed
+    {
+        // For non-backed enums, iterate and match by name.
+        if (is_string($value)) {
+            foreach ($enumClass::cases() as $case) {
+                if ($case->name === $value) {
+                    return $case;
+                }
+            }
+        }
+
+        // For backed enums, try to get the case by value
+        if (
+            is_subclass_of($enumClass, \BackedEnum::class)
+            && ($enum = $enumClass::tryFrom($value) ?? false)
+        ) {
+            return $enum;
+        }
+
+        throw new \InvalidArgumentException(sprintf('Value cannot be casted to %s.', $enumClass));
+    }
+
+    /**
      * @param array|object $iterator
+     * @param array $mappings
      * @return array|object
      **/
-    protected function handleIterator(array|object $iterator, string $propertyName): array|object {
+    protected function handleIterator(array|object $iterator, array $mappings = []): array|object {
         $result = is_object($iterator) ? new \stdClass : [];
 
         foreach ($iterator as $key => $value) {
-            $type = preg_match('/\<[a-zA-Z0-9\\\\]+\>/', $propertyName);
-
-            if ($type) {
-                $key = preg_replace('/\<[a-zA-Z0-9\\\\]+\>/', '', $key);
+            if (is_numeric($key)) {
+                $type = $mappings['*'] ?? false;
+            } else {
+                if ($type = preg_match('/\<[a-zA-Z0-9\\\\]+\>/', $key)) {
+                    $key = preg_replace('/\<[a-zA-Z0-9\\\\]+\>/', '', $key);
+                } else {
+                    $type = $mappings[$key] ?? $mappings['*'] ?? false;
+                }
             }
 
-            $result[$key] = match (true) {
+            $value = match (true) {
+                $type && enum_exists($type) => self::castEnum($value, $type),
                 $type && class_exists($type) => (new self($value))->castTo($type),
                 $type && in_array($type, ['string', 'str', 'int', 'integer', 'float', 'bool', 'boolean']) => self::castSimple($value, $type),
-                $type && in_array($type, ['array', 'object', 'stdClass']), is_array($value), is_object($value) => $this->{__FUNCTION__}($value, $key),
+                $type && in_array($type, ['array', 'object', 'stdClass']),
+                is_array($value),
+                is_object($value) => $this->{__FUNCTION__}($value, $this->getMatchingMappings($mappings, (string) $key)),
                 default => $value,
             };
+
+            if (is_object($result)) {
+                $result->$key = $value;
+            } else {
+                $result[$key] = $value;
+            }
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $mappings
+     * @param string $propName
+     * @return array
+     **/
+    protected function getMatchingMappings(array $mappings, string $propName): array
+    {
+        return collect($mappings)
+            ->filter(fn ($mapping) => Str::startsWith($mapping, "$propName.") || Str::startsWith($mapping, "*."))
+            ->map(fn ($mapping) => Str::after('.', $mapping))
+            ->all();
     }
 }

@@ -3,7 +3,6 @@
 namespace Leantime\Views\Composers;
 
 use Leantime\Core\Composer;
-use Leantime\Core\Environment;
 use Leantime\Core\Theme;
 
 /**
@@ -15,20 +14,17 @@ class Entry extends Composer
         'global::layouts.entry',
     ];
 
-    public function init(
-        Theme $themeCore,
-        Environment $config
-    ): void {
+    private Theme $themeCore;
+
+    public function init(Theme $themeCore): void {
         $this->themeCore = $themeCore;
-        $this->config = $config;
     }
 
     /**
-     * @return array|string[]
+     * @return array
      */
     public function with(): array
     {
-
         $this->themeCore->getActive();
         $logoUrl = $this->themeCore->getLogoUrl();
 

@@ -11,33 +11,34 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * HtmxController Class - Base class For all htmx controllers
  *
- * @package    leantime
- * @subpackage core
  * @method string|null run() The fallback method to be initialized.
  */
 abstract class HtmxController
 {
     use Eventhelpers;
 
-    protected IncomingRequest $incomingRequest;
-    protected Template $tpl;
+    /** @var Response $response */
     protected Response $response;
+
+    /** @var string $view */
     protected static string $view;
 
+    /** @var array $headers */
     protected array $headers = [];
 
     /**
      * constructor - initialize private variables
-     *
-     * @access public
      *
      * @param IncomingRequest $incomingRequest The request to be initialized.
      * @param Template        $tpl             The template to be initialized.
      * @throws BindingResolutionException
      */
     public function __construct(
-        IncomingRequest $incomingRequest,
-        Template $tpl
+        /** @var IncomingRequest $incomingRequest */
+        protected IncomingRequest $incomingRequest,
+
+        /** @var Template $tpl */
+        protected Template $tpl,
     ) {
         self::dispatch_event('begin');
 
@@ -53,10 +54,10 @@ abstract class HtmxController
     /**
      * Allows hooking into all controllers with events
      *
-     * @access private
-     *
      * @return void
      * @throws BindingResolutionException
+     * @throws Error
+     * @throws LogicException
      */
     private function executeActions(): void
     {
@@ -79,34 +80,36 @@ abstract class HtmxController
 
         $fragment = method_exists($this, $action) ? $this->$action() : $this->run();
 
-        $response = $this->tpl->displayFragment($this::$view, $fragment ?? '');
-        if(count($this->headers) > 0){
-            foreach($this->headers as $key => $value) {
-
-                if(is_array($value)) {
-                    $header =implode(",", $value);
-                }else{
-                    $header = $value;
+        $this->response = tap(
+            $this->tpl->displayFragment($this::$view, $fragment ?? ''),
+            function (Response $response): void {
+                foreach ($this->headers as $key => $value) {
+                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
                 }
-
-                $response->headers->set($key, $header);
-            }
-        }
-        $this->response = $response;
+            },
+        );
     }
 
-    public function setHTMXEvent(string $eventName) {
-        if(isset($this->headers["HX-Trigger"])){
-            $this->headers["HX-Trigger"][] = $eventName;
-        }else{
-            $this->headers["HX-Trigger"] = [$eventName];
-        }
+    /**
+     * Sets the response header to trigger an htmx event
+     *
+     * @param string $eventName
+     * @return void
+     **/
+    public function setHTMXEvent(string $eventName): void
+    {
+        $this->headers['HX-Trigger'] ??= [];
+        $this->headers['HX-Trigger'][] = $eventName;
     }
 
+    /**
+     * Gets the response
+     *
+     * @return Response
+     **/
     public function getResponse(): Response
     {
         return $this->response;
     }
-
-
 }
+

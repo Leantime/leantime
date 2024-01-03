@@ -17,21 +17,6 @@ abstract class Controller
     use Eventhelpers;
 
     /**
-     * @var Template
-     */
-    protected Template $tpl;
-
-    /**
-     * @var Language
-     */
-    protected Language $language;
-
-    /**
-     * @var IncomingRequest
-     */
-    protected IncomingRequest $incomingRequest;
-
-    /**
      * @var Response
      */
     protected Response $response;
@@ -47,15 +32,16 @@ abstract class Controller
      * @throws BindingResolutionException
      */
     public function __construct(
-        IncomingRequest $incomingRequest,
-        Template $tpl,
-        Language $language
+        /** @var IncomingRequest */
+        protected IncomingRequest $incomingRequest,
+
+        /** @var Template */
+        protected Template $tpl,
+
+        /** @var Language */
+        protected Language $language,
     ) {
         self::dispatch_event('begin');
-
-        $this->incomingRequest = $incomingRequest;
-        $this->tpl = $tpl;
-        $this->language = $language;
 
         // initialize
         $this->executeActions(

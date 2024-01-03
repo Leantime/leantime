@@ -7,9 +7,6 @@ use Leantime\Core\Composer;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
-use Leantime\Domain\Projects\Services\Projects as ProjectService;
-use Leantime\Domain\Setting\Services\Setting as SettingService;
-use Leantime\Domain\Tickets\Services\Tickets as TicketService;
 
 /**
  *
@@ -20,42 +17,26 @@ class ProjectSelector extends Composer
         'menu::projectSelector',
     ];
 
-    private ProjectService $projectService;
-    private TicketService $ticketService;
-    private SettingService $settingSvc;
     private MenuRepository $menuRepo;
     private IncomingRequestCore $incomingRequest;
     private \Leantime\Domain\Menu\Services\Menu $menuService;
 
     /**
-     * @param ProjectService                      $projectService
-     * @param TicketService                       $ticketService
-     * @param SettingService                      $settingSvc
      * @param MenuRepository                      $menuRepo
      * @param \Leantime\Domain\Menu\Services\Menu $menuService
      * @param IncomingRequestCore                 $request
      * @return void
      */
     public function init(
-        ProjectService $projectService,
-        TicketService $ticketService,
-        SettingService $settingSvc,
         MenuRepository $menuRepo,
         \Leantime\Domain\Menu\Services\Menu $menuService,
         IncomingRequestCore $request
     ): void {
-        $this->projectService = $projectService;
-        $this->ticketService = $ticketService;
-        $this->settingSvc = $settingSvc;
         $this->menuRepo = $menuRepo;
         $this->menuService = $menuService;
         $this->incomingRequest = $request;
     }
 
-    /**
-     * @return array
-     * @throws BindingResolutionException
-     */
     /**
      * @return array
      * @throws BindingResolutionException
@@ -68,8 +49,7 @@ class ProjectSelector extends Composer
         $favoriteProjects =
         $clients =
         $allAvailableProjectsHierarchy =
-        $allAssignedprojectsHierarchy  =
-        $returnVars = [];
+        $allAssignedprojectsHierarchy = [];
 
         $currentClient = '';
         $currentProject = '';

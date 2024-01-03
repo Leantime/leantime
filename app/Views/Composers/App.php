@@ -18,39 +18,22 @@ class App extends Composer
         'global::layouts.app',
         'global::layouts.entry',
     ];
-    private Environment $config;
-    private Theme $themeCore;
-    private Setting $settingsRepo;
+
     private Menu $menuRepo;
 
     /**
      * @param Menu        $menuRepo
-     * @param Setting     $settingsRepo
-     * @param Theme       $themeCore
-     * @param Environment $config
      * @return void
      */
-    public function init(
-        Menu $menuRepo,
-        Setting $settingsRepo,
-        Theme $themeCore,
-        Environment $config
-    ): void {
+    public function init(Menu $menuRepo): void {
         $this->menuRepo = $menuRepo;
-        $this->settingsRepo = $settingsRepo;
-        $this->themeCore = $themeCore;
-        $this->config = $config;
     }
 
     /**
      * @return array
      */
-    /**
-     * @return array
-     */
     public function with(): array
     {
-
         //These needs to live in the main app since menu open or closed changes the entire html layout
         if (isset($_SESSION["userdata"]["id"])) {
             $_SESSION['menuState'] = $this->menuRepo->getSubmenuState('mainMenu') ?: 'open';

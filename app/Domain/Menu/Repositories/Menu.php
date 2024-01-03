@@ -3,7 +3,6 @@
 /**
  * menu class - Menu definitions
  */
-
 namespace Leantime\Domain\Menu\Repositories {
 
     use Leantime\Core\Environment as EnvironmentCore;
@@ -27,29 +26,22 @@ namespace Leantime\Domain\Menu\Repositories {
         private array $menuStructures = [
             'default' => [
                 5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.overview', 'icon' => 'fa fa-fw fa-gauge-high', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/show', 'active' => ['show']],
-
                 10 => [
                     'type' => 'submenu', 'id' => 'materialize', 'title' => 'menu.make', 'visual' => 'open',
                     'submenu' => [
                         15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
                         25 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.timeline', 'icon' => 'fa fa-fw fa-chart-gantt', 'tooltip' => 'menu.timeline_tooltip', 'href' => '', 'hrefFunction' => 'getTimelineMenu', 'active' => ['roadmap', 'showAllMilestones', 'showProjectCalendar']],
                         40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/dashboard', 'active' => ['showCanvas', 'dashboard']],
-
                     ],
                 ],
-
                 30 => [
                     'type' => 'submenu', 'id' => 'understand', 'title' => 'menu.think', 'visual' => 'closed',
                     'submenu' => [
-
                         30 => ['type' => 'item', 'module' => 'ideas', 'title' => 'menu.ideas', 'icon' => 'fa fa-fw fa-lightbulb', 'tooltip' => 'menu.ideas_tooltip', 'href' => '', 'hrefFunction' => 'getIdeaMenu', 'active' => ['showBoards', 'advancedBoards']],
                         50 => ['type' => 'item', 'module' => 'strategy', 'title' => 'menu.blueprints', 'icon' => 'fa fa-fw fa-compass-drafting', 'tooltip' => 'menu.blueprints_tooltip', 'href' => '/strategy/showBoards', 'active' => ['showBoards']],
-
-
                         70 => ['type' => 'item', 'module' => 'retroscanvas', 'title' => 'menu.retroscanvas', 'icon' => 'fa fa-fw fa-hand-spock', 'tooltip' => 'menu.retroscanvas_tooltip', 'href' => '/retroscanvas/showCanvas'],
                     ],
                 ],
-
                 40 => [
                     'type' => 'submenu', 'id' => 'dataroom', 'title' => 'menu.dataroom', 'visual' => 'closed',
                     'submenu' => [
@@ -58,7 +50,6 @@ namespace Leantime\Domain\Menu\Repositories {
                         80 => ['type' => 'item', 'module' => 'reports', 'title' => 'menu.reports', 'icon' => 'fa fa-fw fa-chart-bar', 'tooltip' => 'menu.reports_tooltip', 'href' => '/reports/show', 'role' => 'editor'],
                     ],
                 ],
-
             ],
             //Display all menu items
             'full_menu' => [
@@ -71,7 +62,6 @@ namespace Leantime\Domain\Menu\Repositories {
                         40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/showCanvas'],
                     ],
                 ],
-
                 50 => [
                     'type' => 'submenu', 'id' => 'dts-process', 'title' => 'menu.dts.process', 'visual' => 'closed',
                     'submenu' => [
@@ -133,14 +123,7 @@ namespace Leantime\Domain\Menu\Repositories {
             ],
         ];
 
-
         private array $companyMenuStructure = [];
-
-        private LanguageCore $language;
-        private EnvironmentCore $config;
-        private SettingRepository $settingsRepo;
-        private TicketService $ticketsService;
-        private AuthService $authService;
 
         /**
          * @param SettingRepository $settingsRepo
@@ -150,18 +133,21 @@ namespace Leantime\Domain\Menu\Repositories {
          * @param AuthService       $authService
          */
         public function __construct(
-            SettingRepository $settingsRepo,
-            LanguageCore $language,
-            EnvironmentCore $config,
-            TicketService $ticketsService,
-            AuthService $authService,
-        ) {
-            $this->language = $language;
-            $this->config = $config;
-            $this->settingsRepo = $settingsRepo;
-            $this->ticketsService = $ticketsService;
-            $this->authService = $authService;
+            /** @var SettingRepository */
+            private SettingRepository $settingsRepo,
 
+            /** @var LanguageCore */
+            private LanguageCore $language,
+
+            /** @var EnvironmentCore */
+            private EnvironmentCore $config,
+
+            /** @var TicketService */
+            private TicketService $ticketsService,
+
+            /** @var AuthService */
+            private AuthService $authService,
+        ) {
             if (isset($_SESSION['submenuToggle']) === false && isset($_SESSION['userdata']) === true) {
                 $setting = $this->settingsRepo;
                 $_SESSION['submenuToggle'] = unserialize(
@@ -181,7 +167,7 @@ namespace Leantime\Domain\Menu\Repositories {
             $language = $this->language;
             $config = $this->config;
 
-            if (!isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
+            if (! isset($config->enableMenuType) || (isset($config->enableMenuType) && $config->enableMenuType === false)) {
                 return [self::DEFAULT_MENU => $language->__('label.menu_type.' . self::DEFAULT_MENU)];
             }
 
@@ -220,13 +206,31 @@ namespace Leantime\Domain\Menu\Repositories {
          */
         public function getSubmenuState(string $submenu)
         {
-
             $setting = $this->settingsRepo;
             $subStructure = $setting->getSetting("usersetting." . $_SESSION['userdata']['id'] . ".submenuToggle");
 
             $_SESSION['submenuToggle'] = unserialize($subStructure);
 
             return $_SESSION['submenuToggle'][$submenu] ?? false;
+        }
+
+        protected function buildMenuStructure(array $menuStructure, string $filter): array
+        {
+            return collect($menuStructure)
+                ->map(function ($menuItem) use ($filter) {
+                    if ($menuItem['type'] !== 'submenu') {
+                        return $menuItem;
+                    }
+
+                    $filter = $filter . '.' . $menuItem['id'];
+                    $menuItem['submenu'] = self::dispatch_filter(
+                        hook: $filter,
+                        payload: $this->buildMenuStructure($menuItem['submenu'], $filter),
+                        function: 'getMenuStructure'
+                    );
+
+                    return $menuItem;
+                })->all();
         }
 
         /**
@@ -238,18 +242,23 @@ namespace Leantime\Domain\Menu\Repositories {
          */
         public function getMenuStructure(string $menuType = ''): array
         {
-
             $language = $this->language;
 
-            $this->menuStructures = self::dispatch_filter('menuStructures', $this->menuStructures, array("menuType" => $menuType));
+            $this->menuStructures = self::dispatch_filter(
+                'menuStructures',
+                collect($this->menuStructures)->map(fn ($menu, $menuType) => self::dispatch_filter(
+                    hook: $filter = "menuStructures.$menuType",
+                    payload: $this->buildMenuStructure($menu, $filter),
+                    function: 'getMenuStructure'
+                ))->all(),
+                ['menuType' => $menuType]
+            );
 
-            if (!isset($this->menuStructures[$menuType]) || empty($menuType)) {
+            if (! isset($this->menuStructures[$menuType]) || empty($menuType)) {
                 $menuType = self::DEFAULT_MENU;
             }
 
             $menuStructure = $this->menuStructures[$menuType];
-
-            ksort($menuStructure);
 
             if (isset($_SESSION['submenuToggle']) === false || is_array($_SESSION['submenuToggle']) === false) {
                 $_SESSION['submenuToggle'] = array();
@@ -265,8 +274,6 @@ namespace Leantime\Domain\Menu\Repositories {
 
                 switch ($element['type']) {
                     case 'header':
-                        break;
-
                     case 'separator':
                         break;
 
@@ -395,7 +402,6 @@ namespace Leantime\Domain\Menu\Repositories {
 
         public function getSectionMenuType($currentRoute, $default = "default")
         {
-
             $sections = [
                 "dashboard.home" => "personal",
                 "projects.showMy" => "projecthub",
