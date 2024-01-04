@@ -691,9 +691,7 @@ namespace Leantime\Domain\Projects\Services {
 
             $projectId = (int)$projectId;
 
-            if (isset($_SESSION["currentProjectName"]) === false) {
-                $_SESSION["currentProjectName"] = '';
-            }
+            $_SESSION["currentProjectName"] = '';
 
             if ($this->isUserAssignedToProject($_SESSION['userdata']['id'], $projectId) === true) {
                 //Get user project role

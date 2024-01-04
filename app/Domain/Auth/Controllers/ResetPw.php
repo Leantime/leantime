@@ -66,6 +66,8 @@ namespace Leantime\Domain\Auth\Controllers {
                 //Always return success to prevent db attacks checking which email address are in there
                 $this->authService->generateLinkAndSendEmail($_POST["username"]);
                 $this->tpl->setNotification($this->language->__('notifications.email_was_sent_to_reset'), "success");
+
+                return FrontcontrollerCore::redirect(BASE_URL . '/auth/resetPw/');
             }
 
             if (isset($_POST['password']) === true && isset($_POST['password2']) === true) {
@@ -107,7 +109,7 @@ namespace Leantime\Domain\Auth\Controllers {
                 "error"
             );
 
-            return FrontcontrollerCore::redirect(BASE_URL . '/auth/resetPw/' . $_GET['id']);
+            return FrontcontrollerCore::redirect(BASE_URL . '/auth/resetPw/'.$_GET["id"] ?? '');
         }
     }
 }

@@ -297,7 +297,7 @@ class Mailer
             //Logo is URL
             $inlineLogoContent = $this->logo;
         } else {
-            if(file_exists(ROOT . "" . $this->logo)) {
+            if(file_exists(ROOT . "" . $this->logo) && $this->logo != '' && is_file(ROOT . "" . $this->logo)) {
                 //Logo comes from local file system
                 $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
             }else{

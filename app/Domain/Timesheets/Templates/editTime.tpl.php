@@ -104,7 +104,7 @@ $values = $tpl->get('values');
 
 </select><br />
 <label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
-    id="datepicker" name="date" value="<?php echo format($values['date'])->date(); ?>" size="7" />
+    id="datepicker" name="date" value="<?php echo format($values['date'])->dateUtc(); ?>" size="7" />
 <br />
 <label for="hours"><?php echo $tpl->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"

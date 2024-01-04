@@ -91,7 +91,18 @@ namespace Leantime\Domain\Projects\Controllers {
             if (isset($_GET['id']) === true) {
                 $projectTypes = $this->projectService->getProjectTypes();
 
+
                 $id = (int)($_GET['id']);
+
+                $project = $this->projectRepo->getProject($id);
+
+                if (isset($project['id']) === false) {
+                    return FrontcontrollerCore::redirect(BASE_URL . "/error/error404");
+                }
+
+                if($_SESSION['currentProject'] != $project['id'] ){
+                    $this->projectService->changeCurrentSessionProject($project['id']);
+                }
 
                 //Mattermost integration
                 if (isset($_POST['mattermostSave'])) {
@@ -171,11 +182,9 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $_SESSION['lastPage'] = BASE_URL . "/projects/showProject/" . $id;
 
-                $project = $this->projectRepo->getProject($id);
 
-                if (isset($project['id']) === false) {
-                    return FrontcontrollerCore::redirect(BASE_URL . "/error/error404");
-                }
+
+
 
                 $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
@@ -206,7 +215,6 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     $this->projectRepo->editProjectRelations($values, $id);
 
-                    $project = $this->projectRepo->getProject($id);
                     $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                     $this->tpl->setNotification($this->language->__("notifications.user_was_added_to_project"), "success");
@@ -236,7 +244,6 @@ namespace Leantime\Domain\Projects\Controllers {
                         } else {
                             $this->projectRepo->editProject($values, $id);
 
-                            $project = $this->projectRepo->getProject($id);
                             $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                             $this->tpl->setNotification($this->language->__("notification.project_saved"), 'success');
