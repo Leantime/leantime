@@ -34,13 +34,37 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
 <script type="text/javascript">
 
-    jQuery(function(){
+
+    jQuery(document).ready(function(){
+
+        <?php if (isset($_GET['closeModal'])) { ?>
+        jQuery.nmTop().close();
+        <?php } ?>
 
         leantime.ticketsController.initTicketTabs();
-        leantime.ticketsController.initTagsInput();
 
-        leantime.ticketsController.initDueDateTimePickers();
-        leantime.ticketsController.initDates();
+        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+
+            leantime.ticketsController.initDueDateTimePickers();
+
+            leantime.dateController.initDatePicker(".dates");
+            leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
+
+            leantime.ticketsController.initTagsInput();
+
+            leantime.ticketsController.initEffortDropdown();
+            leantime.ticketsController.initStatusDropdown();
+
+        jQuery(".ticketTabs select").chosen();
+
+        <?php } else { ?>
+            leantime.authController.makeInputReadonly(".nyroModalCont");
+
+        <?php } ?>
+
+        <?php if ($login::userHasRole([$roles::$commenter])) { ?>
+            leantime.commentsController.enableCommenterForms();
+        <?php }?>
 
     });
 
