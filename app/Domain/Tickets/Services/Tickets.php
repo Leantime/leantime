@@ -1147,7 +1147,33 @@ namespace Leantime\Domain\Tickets\Services {
 
             $params = $this->prepareTicketDates($params);
 
-            return $this->ticketRepository->patchTicket($id, $params);
+            $return = $this->ticketRepository->patchTicket($id, $params);
+
+            //Todo: create events and move notification logic to notification module
+            if(isset($params['status']) && $return) {
+
+                $ticket = $this->getTicket($id);
+                $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $ticket->headline);
+                $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $id;
+                $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
+
+                $notification = app()->make(NotificationModel::class);
+                $notification->url = array(
+                    "url" => $actual_link,
+                    "text" => $this->language->__("email_notifications.todo_update_cta"),
+                );
+                $notification->entity = $ticket;
+                $notification->module = "tickets";
+                $notification->projectId = $_SESSION['currentProject'];
+                $notification->subject = $subject;
+                $notification->authorId = $_SESSION['userdata']['id'];
+                $notification->message = $message;
+
+                $this->projectService->notifyProjectUsers($notification);
+
+            }
+
+            return $return;
         }
 
 
