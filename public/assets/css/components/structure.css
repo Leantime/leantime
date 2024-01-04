@@ -353,8 +353,7 @@ body {
 }
 
 .rightpanel:before {
-
-    content: "";
+    content: " ";
     height: 100%;
     left: 0;
     opacity: .2;
@@ -362,6 +361,9 @@ body {
     background-size: cover;
     top: 0px;
     width: 100%;
+
+
+
 }
 
 .rightpanel.personal:before {
@@ -386,6 +388,21 @@ body {
     padding-bottom:10px;
 
 }
+
+.primaryContent:before{
+
+    content: "";
+    height: 100%;
+    left: 0;
+    opacity: .2;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    background-image:url(/dist/images/03-1.png);
+    background-repeat:no-repeat;
+    background-position:calc(100% - 10px) 10px;
+}
+
 
 
 .leftpanel {
