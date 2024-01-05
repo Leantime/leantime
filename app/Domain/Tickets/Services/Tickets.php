@@ -373,8 +373,7 @@ namespace Leantime\Domain\Tickets\Services {
          */
         public function getAll(?array $searchCriteria= null): array|false
         {
-
-            return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
+            return $this->ticketRepository->getAllBySearchCriteria($searchCriteria ?? [], $searchCriteria['orderBy'] ?? 'date');
         }
 
         public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId)
