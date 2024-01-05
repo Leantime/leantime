@@ -678,11 +678,6 @@ namespace Leantime\Domain\Projects\Services {
          * @return bool
          * @throws BindingResolutionException
          */
-        /**
-         * @param $projectId
-         * @return bool
-         * @throws BindingResolutionException
-         */
         public function changeCurrentSessionProject($projectId): bool
         {
             if (!is_numeric($projectId)) {

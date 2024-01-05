@@ -749,7 +749,6 @@ class Theme
      */
     public function setSchemeColors($colorscheme)
     {
-
         if (isset($this->colorSchemes[$colorscheme]["primaryColor"])) {
             $primary = $this->colorSchemes[$colorscheme]["primaryColor"];
             $_SESSION["usersettings.colorScheme.primaryColor"] = $primary;
@@ -765,7 +764,7 @@ class Theme
 
     public function getPrimaryColor() {
 
-        if(isset($_SESSION["usersettings.colorScheme.primaryColor"])
+        if (isset($_SESSION["usersettings.colorScheme.primaryColor"])
             && $_SESSION["usersettings.colorScheme.primaryColor"] != '') {
             return $_SESSION["usersettings.colorScheme.primaryColor"];
         }
@@ -777,7 +776,7 @@ class Theme
 
     public function getSecondaryColor() {
 
-        if(isset($_SESSION["usersettings.colorScheme.secondaryColor"])
+        if (isset($_SESSION["usersettings.colorScheme.secondaryColor"])
         && $_SESSION["usersettings.colorScheme.secondaryColor"] != '') {
             return $_SESSION["usersettings.colorScheme.secondaryColor"];
         }
@@ -797,7 +796,7 @@ class Theme
      */
     private function readIniData(): void
     {
-        if (!file_exists(ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini')) {
+        if (! file_exists(ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini')) {
             throw new Exception("Configuration file for theme " . $this->getActive() . " not found");
         }
         $this->iniData = parse_ini_file(
