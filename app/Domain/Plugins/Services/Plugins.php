@@ -295,12 +295,10 @@ namespace Leantime\Domain\Plugins\Services {
 
             $pluginModel = $this->pluginRepository->getPlugin($id);
 
-            if (
-                is_dir($pluginDirectory = Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR) . $pluginModel->foldername)
-                && $pluginModel->format == 'phar'
-            ) {
+            if ($pluginModel->format == 'phar') {
                 $phar = new \Phar(
-                    Str::finish($pluginDirectory, DIRECTORY_SEPARATOR)
+                    Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR)
+                    . Str::finish($pluginModel->foldername, DIRECTORY_SEPARATOR)
                     . Str::finish($pluginModel->foldername, '.phar')
                 );
 
@@ -331,35 +329,29 @@ namespace Leantime\Domain\Plugins\Services {
         public function removePlugin(int $id): bool
         {
             unset($_SESSION['enabledPlugins']);
+            /** @var PluginModel|false $plugin */
+            $plugin = $this->pluginRepository->getPlugin($id);
 
-            /** @var InstalledPlugin|false $plugin */
-            if (! $plugin = $this->pluginRepository->getPlugin($id)) {
+            if (! $plugin) {
                 return false;
             }
 
-            // Run uninstall routine if it exists
-            if (
-                class_exists($pluginClassName = $this->getPluginClassName($plugin))
-                && method_exists($pluginSvc = app()->make($pluginClassName), "uninstall")
-            ) {
+            //Any installation calls should happen right here.
+            $pluginClassName = $this->getPluginClassName($plugin);
+            $newPluginSvc = app()->make($pluginClassName);
+
+            if (method_exists($newPluginSvc, "uninstall")) {
                 try {
-                    $pluginSvc->uninstall();
+                    $newPluginSvc->uninstall();
                 } catch (\Exception $e) {
                     error_log($e);
                     return false;
                 }
             }
 
-            // Remove plugin from filesystem
-            if (
-                is_dir($pluginDirectory = Str::finish($this->pluginDirectory, DIRECTORY_SEPARATOR) . $plugin->foldername)
-                && ! File::deleteDirectory($pluginDirectory)
-            ) {
-                return false;
-            }
-
-            // Remove plugin from database
             return $this->pluginRepository->removePlugin($id);
+
+            //TODO remove files savely
         }
 
         /**

@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Leantime\Core\Controller;
+use Leantime\Core\IncomingRequest;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 

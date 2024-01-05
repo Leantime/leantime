@@ -19,7 +19,6 @@ class InitialHeaders
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        /** @var Response $response */
         $response = $next($request);
 
         foreach (
