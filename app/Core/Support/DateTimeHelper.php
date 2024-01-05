@@ -57,6 +57,33 @@ class DateTimeHelper
     }
 
     /**
+     * Get the formatted date string from ISO format.
+     *
+     * @param string|null $date         The date string in ISO format or null.
+     * @param string      $fromTimezone The timezone string from which to convert the date. Defaults to "UTC".
+     * @return string The formatted date string or an empty string if the input is invalid.
+     */
+    public function getFormattedUTCDateStringFromISO(?string $date, string $fromTimezone = "UTC"): string
+    {
+
+        //By default, string values in db are stored as UTC time.
+        if (strlen($date) == 10) {
+            $isoFromFormat = "!Y-m-d";
+        } else {
+            $isoFromFormat = "!Y-m-d H:i:s";
+        }
+
+        return $this->convertDateTime(
+            dateTime: $date,
+            fromFormat: $isoFromFormat,
+            fromTz: $fromTimezone,
+            toFormat:$this->language->__("language.dateformat"),
+            toTz: "UTC"
+        );
+    }
+
+
+    /**
      * Converts an ISO format date string to a formatted time string.
      *
      * @param ?string $date         The ISO format date string to convert.

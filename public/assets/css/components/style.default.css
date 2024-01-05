@@ -2936,12 +2936,6 @@ h4 .helperTooltip,
     600ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out;
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-    animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
-    600ms cubic-bezier(0.4, 0, 0.2, 1) both fade-in;
-}
-
 body .fancyLink {
     background-color: var(--accent1);
     font-weight:bold;

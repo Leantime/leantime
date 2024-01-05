@@ -77,12 +77,17 @@ namespace Leantime\Domain\Modulemanager\Services {
          */
         public function isModuleAvailable(string $module): bool
         {
-            $available = true;
+            $available = false;
 
 
             $plugins = $this->pluginService->getEnabledPlugins();
 
-            foreach ($plugins as $plugin) {
+            $filtered = collect($plugins)->filter(function ($plugin) use ($module) {
+                return strtolower($plugin->foldername) == strtolower($module);
+            });
+
+            if($filtered->count() > 0){
+                $available = true;
             }
 
             $available = static::dispatch_filter("moduleAvailability", $available, ["module" => $module]);

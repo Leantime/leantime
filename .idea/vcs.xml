@@ -13,7 +13,6 @@
     <mapping directory="$PROJECT_DIR$/app/Plugins/Sentry" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins/StrategyPro" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins/Subscriptions" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Vwo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins/Whiteboardscanvas" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins/Wootric" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins/WorkspaceManager" vcs="Git" />

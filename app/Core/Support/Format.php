@@ -42,13 +42,31 @@ class Format
      *
      * @return string The formatted date string or the $emptyOutput if the 'value' property is empty or the formatted date string is empty.
      */
-    public function date(string $emptyOutput = ""): string
+    public function date(string $emptyOutput = "", ): string
     {
 
         if (empty($this->value)) {
             return $emptyOutput;
         }
         $formattedDate = $this->dateTimeHelper->getFormattedDateStringFromISO($this->value);
+
+        return $formattedDate !== "" ? $formattedDate : $emptyOutput;
+    }
+
+    /**
+     * Returns the formatted date string based on the 'value' property.
+     *
+     * @param string $emptyOutput The output to be returned when the 'value' property is empty. Defaults to an empty string.
+     *
+     * @return string The formatted date string or the $emptyOutput if the 'value' property is empty or the formatted date string is empty.
+     */
+    public function dateUtc(string $emptyOutput = "", ): string
+    {
+
+        if (empty($this->value)) {
+            return $emptyOutput;
+        }
+        $formattedDate = $this->dateTimeHelper->getFormattedUTCDateStringFromISO($this->value);
 
         return $formattedDate !== "" ? $formattedDate : $emptyOutput;
     }

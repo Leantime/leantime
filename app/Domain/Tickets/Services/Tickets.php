@@ -1716,7 +1716,21 @@ namespace Leantime\Domain\Tickets\Services {
             $priorityLabels = $this->getPriorityLabels();
             $ticketTypes = $this->getTicketTypes();
             $statusLabels = $this->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]);
-            $projectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+
+            $milestoneArray = array();
+            foreach($tickets as $ticketGroup){
+                foreach($ticketGroup["tickets"] as $ticket) {
+                    if(isset($milestoneArray[$ticket["projectId"]])){
+                        continue;
+                    }else{
+                        $milestoneArray[$ticket["projectId"]] = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $ticket["projectId"]]);
+                    }
+                }
+            }
+
+
+
+
             $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
 
             $tickets = self::dispatch_filter("myTodoWidgetTasks", $tickets);
@@ -1728,7 +1742,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'priorities' => $priorityLabels,
                 'ticketTypes' =>  $ticketTypes,
                 'statusLabels' => $statusLabels,
-                'milestones' => $projectMilestones,
+                'milestones' => $milestoneArray,
                 'allAssignedprojects' => $allAssignedprojects,
                 'projectFilter' => $projectFilter,
                 'groupBy' => $groupBy,
