@@ -34,14 +34,10 @@ class Template
 {
     use Eventhelpers;
 
-    /**
-     * @var array - vars that are set in the action
-     */
+    /** @var array - vars that are set in the action */
     private array $vars = array();
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private string $notifcation = '';
 
     /**
@@ -49,19 +45,16 @@ class Template
      */
     private string $notificationType = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private string $hookContext = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public string $tmpError = '';
 
-    /**
-     * @var array
-     */
+    /** @var string */
+    public string $template = '';
+
+    /** @var array */
     public array $picture = array(
         'calendar' => 'fa-calendar',
         'clients' => 'fa-people-group',
@@ -93,7 +86,6 @@ class Template
      * @param Compiler|null   $bladeCompiler
      * @throws BindingResolutionException
      * @throws \ReflectionException
-     * @access public
      */
     public function __construct(
         /** @var Theme */
@@ -283,12 +275,18 @@ class Template
             $appComposerClasses = collect(glob(APP_ROOT . '/app/Views/Composers/*.php'))
                 ->concat(glob(APP_ROOT . '/app/Domain/*/Composers/*.php'));
 
+            $pluginComposerClasses = collect(app()->make(\Leantime\Domain\Plugins\Services\Plugins::class)->getEnabledPlugins())
+                ->map(fn ($plugin) => glob(APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Composers/*.php'))
+                ->flatten();
+
             $testers = $customComposerClasses->map(fn ($path) => str_replace('/custom/', '/app/', $path));
 
-            $filteredAppComposerClasses = $appComposerClasses->filter(fn ($composerClass) => ! $testers->contains($composerClass));
+            $stockComposerClasses = $appComposerClasses
+                ->concat($pluginComposerClasses)
+                ->filter(fn ($composerClass) => ! $testers->contains($composerClass));
 
             $_SESSION['composers'] = $customComposerClasses
-                ->concat($filteredAppComposerClasses)
+                ->concat($stockComposerClasses)
                 ->map(fn ($filepath) => Str::of($filepath)
                     ->replace([APP_ROOT . '/app/', APP_ROOT . '/custom/', '.php'], ['', '', ''])
                     ->replace('/', '\\')
@@ -581,6 +579,16 @@ class Template
         }
 
         return $this->vars[$name];
+    }
+
+    /**
+     * getAll - get all assigned values
+     *
+     * @return array
+     **/
+    public function getAll(): array
+    {
+        return $this->vars ?? [];
     }
 
     /**

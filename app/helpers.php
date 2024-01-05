@@ -183,10 +183,9 @@ if (! function_exists('format')) {
      **/
     function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format
     {
-        if($value instanceof \DateTime) {
+        if ($value instanceof \DateTime) {
             $value = $value->format("Y-m-d H:i:s");
         }
-
 
         return new Format($value, $value2);
     }
@@ -199,15 +198,20 @@ if (! function_exists('cast')) {
      * @param mixed $obj The object to be cast.
      * @param string $to_class The class to which the object should be cast.
      * @param array $construct_params Optional parameters to pass to the constructor.
+     * @param array $mappings Make sure certain sub properties are casted to specific types.
      * @return mixed The casted object, or throws an exception on failure.
      * @throws \InvalidArgumentException If the class does not exist.
      * @throws \RuntimeException On serialization errors.
      */
-    function cast(mixed $source, string $classOrType, array $constructParams = []): object {
+    function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): object {
         if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean', 'object', 'stdClass', 'array'])) {
             return Cast::castSimple($source, $classOrType);
         }
 
-        return (new Cast($source))->castTo($classOrType, $constructParams);
+        if (enum_exists($classOrType)) {
+            return Cast::castEnum($source, $classOrType);
+        }
+
+        return (new Cast($source))->castTo($classOrType, $constructParams, $mappings);
     }
 }

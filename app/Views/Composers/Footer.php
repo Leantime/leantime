@@ -28,9 +28,6 @@ class Footer extends Composer
     /**
      * @return array
      */
-    /**
-     * @return array
-     */
     public function with(): array
     {
         return [

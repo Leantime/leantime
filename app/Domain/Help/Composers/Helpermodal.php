@@ -5,7 +5,6 @@ namespace Leantime\Domain\Help\Composers;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Composer;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-use Leantime\Core\IncomingRequest as IncomingRequestCore;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Setting\Repositories\Setting;
 
@@ -14,7 +13,6 @@ use Leantime\Domain\Setting\Repositories\Setting;
  */
 class Helpermodal extends Composer
 {
-    private IncomingRequestCore $incomingRequest;
     private Setting $settingsRepo;
     private Helper $helperService;
 
@@ -23,15 +21,12 @@ class Helpermodal extends Composer
     ];
 
     /**
-
      * @return void
      */
     public function init(
-        IncomingRequestCore $request,
         Setting $settingsRepo,
         Helper $helperService
     ): void {
-        $this->incomingRequest = $request;
         $this->settingsRepo = $settingsRepo;
         $this->helperService = $helperService;
     }
@@ -43,14 +38,12 @@ class Helpermodal extends Composer
      */
     public function with(): array
     {
-
         $action = FrontcontrollerCore::getCurrentRoute();
 
         $showHelperModal = false;
         $completedOnboarding = $this->settingsRepo->getSetting("companysettings.completedOnboarding");
 
         $currentModal = $this->helperService->getHelperModalByRoute($action);
-
 
         if (
             $completedOnboarding == "1"
