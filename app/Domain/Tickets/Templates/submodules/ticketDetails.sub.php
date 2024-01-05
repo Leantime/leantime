@@ -394,6 +394,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
             </div>
         </div>
+
+        <?php $tpl->dispatchTplEvent('beforeEndRightColumn', ['ticket' => $ticket]); ?>
     </div>
 </div>
 

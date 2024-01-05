@@ -18,7 +18,6 @@ namespace Leantime\Domain\Setting\Controllers {
      */
     class EditCompanySettings extends Controller
     {
-        private EnvironmentCore $config;
         private SettingRepository $settingsRepo;
         private ApiService $APIService;
         private SettingService $settingsSvc;
@@ -30,14 +29,12 @@ namespace Leantime\Domain\Setting\Controllers {
          *
          */
         public function init(
-            EnvironmentCore $config,
             SettingRepository $settingsRepo,
             ApiService $APIService,
             SettingService $settingsSvc
         ) {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-            $this->config = $config;
             $this->settingsRepo = $settingsRepo;
             $this->APIService = $APIService;
             $this->settingsSvc = $settingsSvc;
@@ -117,7 +114,6 @@ namespace Leantime\Domain\Setting\Controllers {
 
             $apiKeys = $this->APIService->getAPIKeys();
 
-
             $this->tpl->assign("apiKeys", $apiKeys);
             $this->tpl->assign("languageList", $this->language->getLanguageList());
             $this->tpl->assign("companySettings", $companySettings);
@@ -133,7 +129,6 @@ namespace Leantime\Domain\Setting\Controllers {
          */
         public function post($params)
         {
-
             //Look & feel updates
             if (isset($params['primarycolor']) && $params['primarycolor'] != "") {
                 $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
@@ -145,7 +140,6 @@ namespace Leantime\Domain\Setting\Controllers {
                 if ($mainColor !== false) {
                     $this->settingsRepo->deleteSetting("companysettings.mainColor");
                 }
-
 
                 $_SESSION["companysettings.primarycolor"] = htmlentities(addslashes($params['primarycolor']));
                 $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));

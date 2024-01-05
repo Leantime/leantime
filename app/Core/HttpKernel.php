@@ -51,7 +51,16 @@ class HttpKernel implements HttpKernelContract
             return (new Pipeline($this->getApplication()))
                 ->send($request)
                 ->through($this->getMiddleware())
-                ->then(fn () => Frontcontroller::dispatch());
+                ->then(fn ($request) =>
+                    (new Pipeline($this->getApplication()))
+                    ->send($request)
+                    ->through(self::dispatch_filter(
+                        hook: 'plugins_middleware',
+                        payload: [],
+                        function: 'handle',
+                    ))
+                    ->then(fn () => Frontcontroller::dispatch())
+                );
         } catch (HttpResponseException $e) {
             return $e->getResponse();
         } catch (\Throwable $e) {
@@ -112,9 +121,9 @@ class HttpKernel implements HttpKernelContract
     /**
      * Get the application instance.
      *
-     * @return \Illuminate\Contracts\Foundation\Application
+     * @return \Leantime\Core\Application
      */
-    public function getApplication()
+    public function getApplication(): \Leantime\Core\Application
     {
         return app();
     }
@@ -123,7 +132,7 @@ class HttpKernel implements HttpKernelContract
      * Get the application middleware
      * @return array
      **/
-    public function getMiddleware()
+    public function getMiddleware(): array
     {
         return self::dispatch_filter('http_middleware', [
             Middleware\InitialHeaders::class,

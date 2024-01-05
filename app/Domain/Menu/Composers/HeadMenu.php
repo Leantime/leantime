@@ -11,6 +11,7 @@ use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
+use Leantime\Domain\Menu\Repositories\Menu as MenuRepo;
 
 /**
  *
@@ -27,6 +28,7 @@ class HeadMenu extends Composer
     private AuthService $authService;
     private Helper $helperService;
     private Theme $themeCore;
+    private MenuRepo $menuRepo;
 
     /**
      * @param NotificationService $notificationService
@@ -41,7 +43,7 @@ class HeadMenu extends Composer
         UserService $userService,
         AuthService $authService,
         Helper $helperService,
-        \Leantime\Domain\Menu\Repositories\Menu $menuRepo,
+        MenuRepo $menuRepo,
         Theme $themeCore
     ): void {
         $this->notificationService = $notificationService;
@@ -53,9 +55,6 @@ class HeadMenu extends Composer
         $this->themeCore = $themeCore;
     }
 
-    /**
-     * @return array
-     */
     /**
      * @return array
      * @throws BindingResolutionException
