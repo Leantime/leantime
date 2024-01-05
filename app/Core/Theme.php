@@ -4,10 +4,7 @@ namespace Leantime\Core;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Str;
 use Leantime\Domain\Setting\Repositories\Setting;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * theme - Engine for handling themes
@@ -346,16 +343,14 @@ class Theme
         }
 
         $_SESSION['usersettings.theme'] = $id;
-
-        Events::add_event_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
-                Cookie::create('theme')
-                ->withValue($id)
-                ->withExpires(time() + 60 * 60 * 24 * 30)
-                ->withPath(Str::finish($this->config->appDir, '/'))
-                ->withSameSite('Strict')
-            )
+        setcookie(
+            'theme',
+            $id,
+            [
+                'expires' => time() + 60 * 60 * 24 * 30,
+                'path' => $this->config->appDir . '/',
+                'samesite' => 'Strict',
+            ]
         );
     }
 
@@ -375,16 +370,14 @@ class Theme
         }
 
         $_SESSION['usersettings.colorMode'] = $colorMode;
-
-        Events::add_event_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
-                Cookie::create('colorMode')
-                ->withValue($colorMode)
-                ->withExpires(time() + 60 * 60 * 24 * 30)
-                ->withPath(Str::finish($this->config->appDir, '/'))
-                ->withSameSite('Strict')
-            )
+        setcookie(
+            'colorMode',
+            $colorMode,
+            [
+                'expires' => time() + 60 * 60 * 24 * 30,
+                'path' => $this->config->appDir . '/',
+                'samesite' => 'Strict',
+            ]
         );
     }
 
@@ -404,16 +397,14 @@ class Theme
         }
 
         $_SESSION['usersettings.themeFont'] = $font;
-
-        Events::add_event_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
-                Cookie::create('themeFont')
-                ->withValue($font)
-                ->withExpires(time() + 60 * 60 * 24 * 30)
-                ->withPath(Str::finish($this->config->appDir, '/'))
-                ->withSameSite('Strict')
-            )
+        setcookie(
+            'themeFont',
+            $font,
+            [
+                'expires' => time() + 60 * 60 * 24 * 30,
+                'path' => $this->config->appDir . '/',
+                'samesite' => 'Strict',
+            ]
         );
     }
 
@@ -433,16 +424,14 @@ class Theme
         }
 
         $_SESSION['usersettings.colorScheme'] = $colorScheme;
-
-        Events::add_event_listener(
-            'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
-                Cookie::create('colorScheme')
-                ->withValue($colorScheme)
-                ->withExpires(time() + 60 * 60 * 24 * 30)
-                ->withPath(Str::finish($this->config->appDir, '/'))
-                ->withSameSite('Strict')
-            )
+        setcookie(
+            'colorScheme',
+            $colorScheme,
+            [
+                'expires' => time() + 60 * 60 * 24 * 30,
+                'path' => $this->config->appDir . '/',
+                'samesite' => 'Strict',
+            ]
         );
 
         $this->setAccentColors($colorScheme);
