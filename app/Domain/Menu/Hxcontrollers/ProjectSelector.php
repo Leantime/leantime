@@ -85,12 +85,33 @@ class ProjectSelector extends HtmxController
             $currentProject = $projectVars['currentProject'];
         }
 
+        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), $menuType);
+
         if (str_contains($redirectUrl = $this->incomingRequest->getRequestUri(), 'showProject')) {
             $redirectUrl = '/dashboard/show';
         }
 
         $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
         $projectSelectGroupOptions = $this->menuService->getProjectSelectorGroupingOptions();
+
+        $settingsLink = [
+            'label' => '',
+            'module' => '',
+            'action' => '',
+            'settingsIcon' => '',
+            'settingsTooltip' => '',
+        ];
+
+        if($menuType == "project" || $menuType == "default") {
+            $settingsLink = [
+                'label' => __('menu.project_settings'),
+                'module' => 'projects',
+                'action' => 'showProject',
+                'settingsIcon' => __('menu.project_settings_icon'),
+                'settingsTooltip' => __('menu.project_settings_tooltip'),
+            ];
+        }
+
 
         $this->tpl->assign('currentClient', $currentClient);
         $this->tpl->assign('module', FrontcontrollerCore::getModuleName());
@@ -103,13 +124,8 @@ class ProjectSelector extends HtmxController
         $this->tpl->assign('recentProjects', $recentProjects);
         $this->tpl->assign('currentProject', $currentProject);
         $this->tpl->assign('menuStructure', $this->menuRepo->getMenuStructure($menuType) ?? []);
-        $this->tpl->assign('settingsLink', [
-            'label' => __('menu.project_settings'),
-            'module' => 'projects',
-            'action' => 'showProject',
-            'settingsIcon' => __('menu.project_settings_icon'),
-            'settingsTooltip' => __('menu.project_settings_tooltip'),
-        ]);
+        $this->tpl->assign('menuType', $menuType);
+        $this->tpl->assign('settingsLink', $settingsLink);
         $this->tpl->assign('redirectUrl', $redirectUrl);
         $this->tpl->assign('projectTypeAvatars', $projectTypeAvatars);
         $this->tpl->assign('favoriteProjects', $favoriteProjects);

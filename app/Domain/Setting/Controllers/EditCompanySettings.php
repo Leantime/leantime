@@ -49,7 +49,7 @@ namespace Leantime\Domain\Setting\Controllers {
         public function get($params)
         {
             if (! Auth::userIsAtLeast(Roles::$owner)) {
-                return $this->tpl->display('error.error403', responseCode: 403);
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
 
             if (isset($_GET['resetLogo'])) {

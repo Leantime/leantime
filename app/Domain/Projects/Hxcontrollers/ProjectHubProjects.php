@@ -123,8 +123,10 @@ class ProjectHubProjects extends HtmxController
 
         $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
 
-        $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
+        $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
 
+        $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
+        $this->tpl->assign("currentUrlPath", $currentUrlPath);
         $this->tpl->assign("currentClientName", $currentClientName);
         $this->tpl->assign("currentClient", $clientId);
         $this->tpl->assign("clients", $clients);

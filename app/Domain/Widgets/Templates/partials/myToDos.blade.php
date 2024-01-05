@@ -71,6 +71,8 @@
                                 >{{ __('labels.all_projects') }}
 
                                 </a></li>
+
+                                @if($allAssignedprojects)
                                     @foreach($allAssignedprojects as $project)
                                         <li
                                                 @if($projectFilter == $project['id'])
@@ -85,6 +87,7 @@
                                             hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
                                             >{{ $project['name'] }}</a></li>
                                     @endforeach
+                               @endif
 
                         </ul>
                     </div>

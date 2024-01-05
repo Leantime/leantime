@@ -8,6 +8,7 @@ use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Fileupload class - Data filuploads
@@ -418,22 +419,25 @@ class Fileupload
             throw new HttpResponseException($responseFailure);
         }
 
-        ob_start();
-        readfile($fullPath);
-        $response = new Response(ob_get_clean());
 
-        foreach (
-            [
-            'Content-Type' => $mimes[$ext],
-            'Content-disposition' => 'inline; filename="' . $imageName . '";',
-            'Pragma' => 'public',
-            'Cache-Control' => 'max-age=86400',
-            'Expires' => gmdate('D, d M Y H:i:s \G\M\T', time() + 86400),
-            ] as $header => $value
-        ) {
-            $response->headers->set($header, $value);
-        }
 
-        return $response;
+        $sLastModified = filemtime($fullPath);
+        $sEtag = md5_file($fullPath);
+
+        $sFileSize = filesize($fullPath);
+        $aInfo = getimagesize($fullPath);
+
+
+        $oStreamResponse = new StreamedResponse();
+        $oStreamResponse->headers->set("Content-Type", $aInfo['mime']);
+        $oStreamResponse->headers->set("Content-Length", $sFileSize);
+        $oStreamResponse->headers->set("ETag", $sEtag);
+        $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified)." GMT");
+
+        $oStreamResponse->setCallback(function() use ($fullPath) {
+            readfile($fullPath);
+        });
+
+        return $oStreamResponse;
     }
 }
