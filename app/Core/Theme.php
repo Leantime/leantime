@@ -144,8 +144,8 @@ class Theme
         $parsedColorSchemes = $this->colorSchemes;
         $parsedColorSchemes["themeDefault"] = array(
             "name" => "label.themeDefault",
-            "primaryColor" => $this->iniData["general"]["primaryColor"],
-            "secondaryColor" => $this->iniData["general"]["secondaryColor"],
+            "primaryColor" => $this->iniData["general"]["primaryColor"] ?? $this->colorSchemes["leantime2_0"]["primaryColor"],
+            "secondaryColor" => $this->iniData["general"]["secondaryColor"] ?? $this->colorSchemes["leantime2_0"]["secondaryColor"],
         );
 
         $settingsRepo = app()->make(Setting::class);
@@ -153,8 +153,8 @@ class Theme
         $secondaryColor = $settingsRepo->getSetting("companysettings.secondarycolor");
         $parsedColorSchemes["companyColors"] = array(
             "name" => "label.companyColors",
-            "primaryColor" => $primaryColor ?? $this->iniData["primaryColor"],
-            "secondaryColor" => $secondaryColor ?? $this->iniData["secondaryColor"],
+            "primaryColor" => $primaryColor ?? $parsedColorSchemes["themeDefault"]["primaryColor"],
+            "secondaryColor" => $secondaryColor ?? $parsedColorSchemes["themeDefault"]["secondaryColor"],
         );
 
         $colorschemes = Events::dispatch_filter("colorschemes", $parsedColorSchemes);
