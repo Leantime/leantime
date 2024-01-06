@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Install\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\AppSettings;
     use Leantime\Domain\Setting\Repositories\Setting;
     use Leantime\Core\Environment;
     use PDO;
@@ -1742,14 +1741,11 @@ namespace Leantime\Domain\Install\Repositories {
 
             $errors = array();
 
-            // $sql = [
-            //     "ALTER TABLE `zp_plugins`
-            //     ADD COLUMN `license` TEXT NULL DEFAULT NULL,
-            //     ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
-            // ];
-
-            $sql = [];
-
+            $sql = [
+                "ALTER TABLE `zp_plugins`
+                ADD COLUMN `license` TEXT NULL DEFAULT NULL,
+                ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+            ];
 
             foreach ($sql as $statement) {
                 try {
@@ -1771,12 +1767,10 @@ namespace Leantime\Domain\Install\Repositories {
         {
             $errors = [];
 
-            // $sql = [
-            //     "ALTER TABLE `zp_plugins`
-            //     ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
-            // ];
-
-            $sql = [];
+            $sql = [
+                "ALTER TABLE `zp_plugins`
+                ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+            ];
 
             foreach ($sql as $statement) {
                 try {
