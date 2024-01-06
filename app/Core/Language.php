@@ -120,15 +120,15 @@ class Language
         $_SESSION['usersettings.language'] = $lang;
 
         if (! isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-            Events::add_event_listener(
+            Events::add_filter_listener(
                 'leantime.core.httpkernel.handle.beforeSendResponse',
-                fn (Response $response) => $response->headers->setCookie(
+                fn (Response $response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                     Cookie::create('language')
                     ->withValue($lang)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
                     ->withSameSite('Strict')
-                )
+                ))
             );
         }
 

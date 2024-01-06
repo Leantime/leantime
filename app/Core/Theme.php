@@ -347,15 +347,15 @@ class Theme
 
         $_SESSION['usersettings.theme'] = $id;
 
-        Events::add_event_listener(
+        Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
+            fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('theme')
                 ->withValue($id)
                 ->withExpires(time() + 60 * 60 * 24 * 30)
                 ->withPath(Str::finish($this->config->appDir, '/'))
                 ->withSameSite('Strict')
-            )
+            ))
         );
     }
 
@@ -369,22 +369,21 @@ class Theme
      */
     public function setColorMode(string $colorMode): void
     {
-
         if ($colorMode == '') {
             $colorMode = 'light';
         }
 
         $_SESSION['usersettings.colorMode'] = $colorMode;
 
-        Events::add_event_listener(
+        Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
+            fn (Response $response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('colorMode')
                 ->withValue($colorMode)
                 ->withExpires(time() + 60 * 60 * 24 * 30)
                 ->withPath(Str::finish($this->config->appDir, '/'))
                 ->withSameSite('Strict')
-            )
+            ))
         );
     }
 
@@ -407,13 +406,13 @@ class Theme
 
         Events::add_event_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
+            fn (Response $response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('themeFont')
                 ->withValue($font)
                 ->withExpires(time() + 60 * 60 * 24 * 30)
                 ->withPath(Str::finish($this->config->appDir, '/'))
                 ->withSameSite('Strict')
-            )
+            ))
         );
     }
 
@@ -434,15 +433,15 @@ class Theme
 
         $_SESSION['usersettings.colorScheme'] = $colorScheme;
 
-        Events::add_event_listener(
+        Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
-            fn (Response $response) => $response->headers->setCookie(
+            fn (Response $response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('colorScheme')
                 ->withValue($colorScheme)
                 ->withExpires(time() + 60 * 60 * 24 * 30)
                 ->withPath(Str::finish($this->config->appDir, '/'))
                 ->withSameSite('Strict')
-            )
+            ))
         );
 
         $this->setAccentColors($colorScheme);
