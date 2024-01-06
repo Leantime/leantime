@@ -3,9 +3,6 @@
 namespace Leantime\Core;
 
 use Exception;
-use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Either takes the translation from ini_array or the default
@@ -120,15 +117,15 @@ class Language
         $_SESSION['usersettings.language'] = $lang;
 
         if (! isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
-            Events::add_filter_listener(
+            Events::add_event_listener(
                 'leantime.core.httpkernel.handle.beforeSendResponse',
-                fn (Response $response) => tap($response, fn (Response $response) => $response->headers->setCookie(
+                fn (Response $response) => $response->headers->setCookie(
                     Cookie::create('language')
                     ->withValue($lang)
                     ->withExpires(time() + 60 * 60 * 24 * 30)
                     ->withPath(Str::finish($this->config->appDir, '/'))
                     ->withSameSite('Strict')
-                ))
+                )
             );
         }
 

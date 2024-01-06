@@ -39,6 +39,7 @@ class HttpKernel implements HttpKernelContract
      *
      * @param \Symfony\Component\HttpFoundation\Request $request The incoming request.
      * @return \Symfony\Component\HttpFoundation\Response  The response.
+     *
      * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException  If an HTTP response exception occurs.
      * @throws \Throwable  If an error occurs and it is not caught.
      */
@@ -46,19 +47,6 @@ class HttpKernel implements HttpKernelContract
     {
         $this->requestStartedAt = microtime(true);
 
-        return self::dispatch_filter('beforeSendResponse', $this->getResponseForRequest($request));
-    }
-
-    /**
-     * Gets the response for a request.
-     *
-     * @param \Symfony\Component\HttpFoundation\Request $request The incoming request.
-     * @return \Symfony\Component\HttpFoundation\Response  The response.
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpResponseException  If an HTTP response exception occurs.
-     * @throws \Throwable  If an error occurs and it is not caught.
-     */
-    protected function getResponseForRequest($request): Response
-    {
         try {
             return (new Pipeline($this->getApplication()))
                 ->send($request)
