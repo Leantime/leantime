@@ -2813,7 +2813,6 @@ h3.todaysDate {
     display:inline-block;
 }
 
-.htmx-loaded-content,
 .htmx-request .htmx-loaded-content {
     display: none;
 }
@@ -3051,4 +3050,8 @@ body a.btn-link.btn-fancy:hover {
 
 .modal-backdrop {
     display:none;
+}
+
+.projectBox {
+    color:var(--primary-font-color);
 }
