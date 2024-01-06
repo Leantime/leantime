@@ -385,75 +385,74 @@ namespace Leantime\Domain\Tickets\Repositories {
          */
         public function getAllBySearchCriteria(array $searchCriteria, string $sort = 'standard', $limit = null): bool|array
         {
-
-            $query = "SELECT
-							zp_tickets.id,
-							zp_tickets.headline,
-							zp_tickets.description,
-							zp_tickets.date,
-							zp_tickets.sprint,
-							zp_sprints.name as sprintName,
-							zp_tickets.storypoints,
-							zp_tickets.sortindex,
-							zp_tickets.dateToFinish,
-							zp_tickets.projectId,
-							zp_tickets.priority,
-							zp_tickets.type,
-							zp_tickets.status,
-							zp_tickets.tags,
-							zp_tickets.editorId,
-							zp_tickets.dependingTicketId,
-							zp_tickets.milestoneid,
-							zp_tickets.planHours,
-							zp_tickets.editFrom,
-							zp_tickets.editTo,
-							zp_tickets.hourRemaining,
-							(SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
-							zp_projects.name AS projectName,
-							zp_clients.name AS clientName,
-							zp_clients.id AS clientId,
-							t1.id AS authorId,
-							t1.lastname AS authorLastname,
-							t1.firstname AS authorFirstname,
-							t1.profileId AS authorProfileId,
-							t2.firstname AS editorFirstname,
-							t2.lastname AS editorLastname,
-							t2.profileId AS editorProfileId,
-							milestone.headline AS milestoneHeadline,
-							IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,
-							COUNT(DISTINCT zp_comment.id) AS commentCount,
-							COUNT(DISTINCT zp_file.id) AS fileCount,
-							COUNT(DISTINCT subtasks.id) AS subtaskCount,
-							parent.headline AS parentHeadline
-						FROM
-							zp_tickets
-						LEFT JOIN zp_relationuserproject USING (projectId)
-						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
-						LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
-						LEFT JOIN zp_user AS t1 ON zp_tickets.userId = t1.id
-						LEFT JOIN zp_user AS t2 ON zp_tickets.editorId = t2.id
-						LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
-						LEFT JOIN zp_comment ON zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket'
-						LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
-						LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
-						LEFT JOIN zp_tickets AS milestone ON zp_tickets.milestoneid = milestone.id AND zp_tickets.milestoneid > 0 AND milestone.type = 'milestone'
-						LEFT JOIN zp_tickets AS parent ON zp_tickets.dependingTicketId = parent.id
-						LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0
-						LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
-						WHERE
-						    (   zp_relationuserproject.userId = :userId
-						        OR zp_projects.psettings = 'all'
-				                OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
-						        OR (requestor.role >= 40)
-						        )";
-
-            $query .= " AND zp_tickets.type <> 'milestone'";
+            $query = <<<SQL
+                SELECT
+                    zp_tickets.id,
+                    zp_tickets.headline,
+                    zp_tickets.description,
+                    zp_tickets.date,
+                    zp_tickets.sprint,
+                    zp_sprints.name as sprintName,
+                    zp_tickets.storypoints,
+                    zp_tickets.sortindex,
+                    zp_tickets.dateToFinish,
+                    zp_tickets.projectId,
+                    zp_tickets.priority,
+                    zp_tickets.type,
+                    zp_tickets.status,
+                    zp_tickets.tags,
+                    zp_tickets.editorId,
+                    zp_tickets.dependingTicketId,
+                    zp_tickets.milestoneid,
+                    zp_tickets.planHours,
+                    zp_tickets.editFrom,
+                    zp_tickets.editTo,
+                    zp_tickets.hourRemaining,
+                    (SELECT ROUND(SUM(hours), 2) FROM zp_timesheets WHERE zp_tickets.id = zp_timesheets.ticketId) AS bookedHours,
+                    zp_projects.name AS projectName,
+                    zp_clients.name AS clientName,
+                    zp_clients.id AS clientId,
+                    t1.id AS authorId,
+                    t1.lastname AS authorLastname,
+                    t1.firstname AS authorFirstname,
+                    t1.profileId AS authorProfileId,
+                    t2.firstname AS editorFirstname,
+                    t2.lastname AS editorLastname,
+                    t2.profileId AS editorProfileId,
+                    milestone.headline AS milestoneHeadline,
+                    IF((milestone.tags IS NULL OR milestone.tags = ''), 'var(--grey)', milestone.tags) AS milestoneColor,
+                    COUNT(DISTINCT zp_comment.id) AS commentCount,
+                    COUNT(DISTINCT zp_file.id) AS fileCount,
+                    COUNT(DISTINCT subtasks.id) AS subtaskCount,
+                    parent.headline AS parentHeadline
+                FROM
+                    zp_tickets
+                LEFT JOIN zp_relationuserproject USING (projectId)
+                LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+                LEFT JOIN zp_user AS t1 ON zp_tickets.userId = t1.id
+                LEFT JOIN zp_user AS t2 ON zp_tickets.editorId = t2.id
+                LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+                LEFT JOIN zp_comment ON zp_tickets.id = zp_comment.moduleId and zp_comment.module = 'ticket'
+                LEFT JOIN zp_file ON zp_tickets.id = zp_file.moduleId and zp_file.module = 'ticket'
+                LEFT JOIN zp_sprints ON zp_tickets.sprint = zp_sprints.id
+                LEFT JOIN zp_tickets AS milestone ON zp_tickets.milestoneid = milestone.id AND zp_tickets.milestoneid > 0 AND milestone.type = 'milestone'
+                LEFT JOIN zp_tickets AS parent ON zp_tickets.dependingTicketId = parent.id
+                LEFT JOIN zp_tickets AS subtasks ON zp_tickets.id = subtasks.dependingTicketId AND subtasks.dependingTicketId > 0
+                LEFT JOIN zp_timesheets AS timesheets ON zp_tickets.id = timesheets.ticketId
+                WHERE (
+                    zp_relationuserproject.userId = :userId
+                    OR zp_projects.psettings = 'all'
+                    OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
+                    OR (requestor.role >= 40)
+                )
+                AND zp_tickets.type <> 'milestone'
+            SQL;
 
             //Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"]  != "") {
                 $query .= " AND zp_tickets.projectId = :projectId";
             }
-
 
             if (isset($searchCriteria["users"]) && $searchCriteria["users"]  != "") {
                 $editorIdIn = DbCore::arrayToPdoBindingString("users", count(explode(",", $searchCriteria["users"])));
@@ -536,6 +535,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             $stmn = $this->db->database->prepare($query);
 
+            // NOTE: This should not be removed as it is used for authorization
             if (isset($searchCriteria["currentUser"])) {
                 $stmn->bindValue(':userId', $searchCriteria["currentUser"], PDO::PARAM_INT);
             } else {
@@ -550,12 +550,11 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'] ?? '-1', PDO::PARAM_INT);
             }
 
-
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"] != "") {
                 $stmn->bindValue(':projectId', $searchCriteria["currentProject"], PDO::PARAM_INT);
             }
 
-            if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"]  != "") {
+            if (isset($searchCriteria["milestone"]) && $searchCriteria["milestone"] != "") {
                 foreach (explode(",", $searchCriteria["milestone"]) as $key => $milestone) {
                     $stmn->bindValue(":milestone" . $key, $milestone, PDO::PARAM_STR);
                 }
