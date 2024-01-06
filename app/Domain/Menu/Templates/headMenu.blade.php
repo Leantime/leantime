@@ -8,6 +8,28 @@
            ])
 
     <li class="notificationDropdown">
+        <a
+            class="dropdown-toggle profileHandler newsDropDownHandler"
+            hx-get="{{ BASE_URL }}/notifications/news/get"
+            hx-target="#newsDropdown"
+            hx-indicator=".htmx-indicator"
+            hx-trigger="click"
+            data-toggle='dropdown'
+            data-tippy-content='{{ __('popover.notifications') }}'
+        >
+            <span class="fa-solid fa-bolt-lightning"></span>
+            <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>
+
+        </a>
+
+        <div class='dropdown-menu tw-p-m' id='newsDropdown'>
+            <div class="htmx-indicator">
+                <x-global::loadingText type="text" count="3" includeHeadline="true" />
+            </div>
+        </div>
+    </li>
+
+    <li class="notificationDropdown">
 
         <a
             href='javascript:void(0);'
