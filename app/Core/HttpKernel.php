@@ -64,7 +64,6 @@ class HttpKernel implements HttpKernelContract
         } catch (HttpResponseException $e) {
             return $e->getResponse();
         } catch (\Throwable $e) {
-
             if (! app()->make(Environment::class)->debug) {
                 error_log($e);
                 return app()->make(Template::class)->display('errors.error500', 'error');

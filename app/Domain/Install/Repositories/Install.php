@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Install\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\AppSettings;
     use Leantime\Domain\Setting\Repositories\Setting;
     use Leantime\Core\Environment;
     use PDO;

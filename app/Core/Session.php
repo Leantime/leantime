@@ -8,6 +8,8 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Session Class - login procedure
@@ -83,12 +85,17 @@ class Session
         session_id(self::$sid);
         session_start();
 
-        setcookie("sid", self::$sid, [
-            'expires' => time() + $config->sessionExpiration,
-            'path' => '/',
-            'SameSite' => 'Lax',
-            'secure' => true,
-        ]);
+        Events::add_filter_listener(
+            'leantime.core.httpkernel.handle.beforeSendResponse',
+            fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
+                Cookie::create('sid')
+                ->withValue(self::$sid)
+                ->withExpires(time() + $config->sessionExpiration)
+                ->withPath('/')
+                ->withSameSite('Lax')
+                ->withSecure(true)
+            ))
+        );
     }
 
     /**
@@ -132,11 +139,16 @@ class Session
             unset($_COOKIE['sid']);
         }
 
-        setcookie('sid', "", [
-        'expires' => time() - 42000,
-        'path' => '/',
-        'secure' => true,
-        'samesite' => 'Strict',
-        ]);
+        Events::add_filter_listener(
+            'leantime.core.httpkernel.handle.beforeSendResponse',
+            fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
+                Cookie::create('sid')
+                ->withValue('')
+                ->withExpires(time() - 42000)
+                ->withPath('/')
+                ->withSameSite('Strict')
+                ->withSecure(true)
+            ))
+        );
     }
 }

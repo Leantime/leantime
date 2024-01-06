@@ -60,12 +60,11 @@ class Db
         $this->port = $config->dbPort ?? "3306";
 
         try {
-            $driver_options = array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"');
             $this->database = new PDO(
-                "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
-                $this->user,
-                $this->password,
-                $driver_options
+                dsn: "mysql:host={$this->host};port={$this->port};dbname={$this->databaseName}",
+                username: $this->user,
+                password: $this->password,
+                options: [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4,sql_mode="NO_ENGINE_SUBSTITUTION"'],
             );
             $this->database->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->database->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
