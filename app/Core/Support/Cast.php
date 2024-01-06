@@ -36,7 +36,28 @@ class Cast
         }
 
         $sourceObj = $this->object;
-        $properties = (new \ReflectionClass($classDest))->getProperties();
+        $classRef = new \ReflectionClass($classDest);
+        $properties = $classRef->getProperties();
+
+        if (
+            ! empty($reflectedConstructParams = $classRef->getConstructor()?->getParameters() ?? [])
+            && empty($constructParams)
+        ) {
+            foreach ($reflectedConstructParams as $param) {
+                if (isset($sourceObj->{$param->getName()})) {
+                    $constructParams[] = $sourceObj->{$param->getName()};
+                    continue;
+                }
+
+                if ($param->isOptional()) {
+                    $constructParams[] = $param->getDefaultValue();
+                    continue;
+                }
+
+                throw new \InvalidArgumentException(sprintf('Missing construct parameter %s.', $param->getName()));
+            }
+        }
+
         $returnObj = build(new $classDest(...$constructParams));
 
         foreach ($properties as $property) {
