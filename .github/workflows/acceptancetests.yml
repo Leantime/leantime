@@ -27,6 +27,6 @@ jobs:
         run: |
           make unit-test
 
-      - name: Run Functional Tests
+      - name: Run Acceptance Tests
         run: |
-          make functional-test-ci
+          make acceptance-test-ci
