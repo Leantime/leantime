@@ -51,7 +51,7 @@ foreach ($__data as $var => $val) {
 
 
         jQuery(".dateFrom, .dateTo").datepicker({
-            dateFormat:  leantime.i18n.__("language.jsdateformat"),
+            dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery")
             dayNames: leantime.i18n.__("language.dayNames").split(","),
             dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
             dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -112,7 +112,7 @@ foreach ($__data as $var => $val) {
             </td>
             <td>
                 <label for="projects"><?php echo $tpl->__('label.project'); ?></label>
-                <select name="project">
+                <select name="project" style="max-width:120px;">
                     <option value="-1"><?php echo strip_tags($tpl->__("menu.all_projects")) ?></option>
                     <?php foreach ($tpl->get('allProjects') as $project) {?>
                         <option value="<?=$project['id'] ?>"
@@ -124,13 +124,13 @@ foreach ($__data as $var => $val) {
             </td>
             <td><label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?></label>
                 <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
-                value="<?php echo $tpl->getFormattedDateString($tpl->get('dateFrom')); ?>" size="7" style="margin-bottom:10px"/></td>
+                value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px"/></td>
             <td><label for="dateTo"><?php echo $tpl->__('label.date_to'); ?></label>
                 <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-                value="<?php echo $tpl->getFormattedDateString($tpl->get('dateTo')); ?>" size="7" style="margin-bottom:10px" /></td>
+                value="<?php echo format($tpl->get('dateTo'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px" /></td>
             <td>
             <label for="userId"><?php echo $tpl->__("label.employee"); ?></label>
-            <select name="userId" id="userId" onchange="submit();">
+            <select name="userId" id="userId" onchange="submit();" style="max-width:120px;">
                 <option value="all"><?php echo $tpl->__("label.all_employees"); ?></option>
 
                 <?php foreach ($tpl->get('employees') as $row) {
@@ -145,7 +145,7 @@ foreach ($__data as $var => $val) {
             </td>
             <td>
             <label for="kind"><?php echo $tpl->__("label.type")?></label>
-            <select id="kind" name="kind" onchange="submit();">
+            <select id="kind" name="kind" onchange="submit();" style="max-width:120px;">
                 <option value="all"><?php echo $tpl->__("label.all_types"); ?></option>
                 <?php foreach ($tpl->get('kind') as $key => $row) {
                     echo'<option value="' . $key . '"';
@@ -250,7 +250,7 @@ foreach ($__data as $var => $val) {
                     <?php } ?>
             </td>
             <td data-order="<?=$tpl->escape($row['workDate']); ?>">
-                    <?php echo$tpl->getFormattedDateString($row['workDate']); ?>
+                    <?php echo format($row['workDate'])->date(); ?>
             </td>
             <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours']); ?></td>
             <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours']); ?></td>
@@ -265,9 +265,9 @@ foreach ($__data as $var => $val) {
             <td><?php echo $tpl->__($tpl->get('kind')[$row['kind']]); ?></td>
             <td><?php $tpl->e($row['description']); ?></td>
             <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
-                echo $tpl->getFormattedDateString($row['invoicedEmplDate']);
+                echo format($row['invoicedEmplDate'])->date();
                             }?>"><?php if ($row['invoicedEmpl'] == '1') {
-    ?> <?php echo $tpl->getFormattedDateString($row['invoicedEmplDate']); ?>
+    ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
                             <?php } else { ?>
                                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
@@ -275,11 +275,11 @@ foreach ($__data as $var => $val) {
                                 } ?><?php
                             } ?></td>
             <td data-order="<?php if ($row['invoicedComp'] == '1') {
-                echo $tpl->getFormattedDateString($row['invoicedCompDate']);
+                echo format($row['invoicedCompDate'])->date();
                             }?>">
 
                 <?php if ($row['invoicedComp'] == '1') {?>
-                    <?php echo $tpl->getFormattedDateString($row['invoicedCompDate']); ?>
+                    <?php echo format($row['invoicedCompDate'])->date(); ?>
                 <?php } else { ?>
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                     <input type="checkbox" name="invoicedComp[]" class="invoicedComp" value="<?php echo $row['id']; ?>" />
@@ -287,11 +287,11 @@ foreach ($__data as $var => $val) {
                 <?php } ?>
             </td>
             <td data-order="<?php if ($row['paid'] == '1') {
-                echo $tpl->getFormattedDateString($row['paidDate']);
+                echo format($row['paidDate'])->date();
                             }?>">
 
                 <?php if ($row['paid'] == '1') {?>
-                    <?php echo $tpl->getFormattedDateString($row['paidDate']); ?>
+                    <?php echo format($row['paidDate'])->date(); ?>
                 <?php } else { ?>
                     <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                         <input type="checkbox" name="paid[]" class="paid" value="<?php echo $row['id']; ?>" />

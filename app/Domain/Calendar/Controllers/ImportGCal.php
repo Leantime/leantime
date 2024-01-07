@@ -36,30 +36,26 @@ namespace Leantime\Domain\Calendar\Controllers {
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-            $msgKey = '';
-
             $values = array(
                 'url' => '',
                 'name' => '',
                 'colorClass' => '',
             );
 
-            if (isset($_POST['save']) === true) {
+            if (isset($_POST['name']) === true) {
                 $values = array(
                     'url' => ($_POST['url']),
                     'name' => ($_POST['name']),
-                    'colorClass' => ($_POST['color']),
+                    'colorClass' => ($_POST['colorClass']),
                 );
 
                 $this->calendarRepo->addGUrl($values);
-
-                $msgKey = 'Kalender hinzugefügt';
+                $this->tpl->setNotification('notification.gcal_imported_successfully', 'success', 'externalcalendar_created');
             }
 
             $this->tpl->assign('values', $values);
-            $this->tpl->assign('info', $msgKey);
 
-            $this->tpl->display('calendar.importGCal');
+            return $this->tpl->displayPartial('calendar.importGCal');
         }
     }
 }

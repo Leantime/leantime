@@ -8,7 +8,8 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Eventhelpers;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Session Class - login procedure
@@ -36,19 +37,22 @@ class Session
     private mixed $sessionpassword = '';
 
     /**
-     * @var environment
-     */
-    private Environment $config;
-
-    /**
      * __construct - get and test Session or make session
      *
-     * @param environment $config
+     * @param Environment     $config
+     * @param IncomingRequest $request
      * @return void
      */
-    public function __construct(Environment $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        /**
+         * @var Environment
+         */
+        private Environment $config,
+        /**
+         * @var IncomingRequest
+         **/
+        private IncomingRequest $request
+    ) {
         $this->sessionpassword = $config->sessionpassword;
 
         if (session_status() == PHP_SESSION_ACTIVE) {
@@ -81,12 +85,17 @@ class Session
         session_id(self::$sid);
         session_start();
 
-        setcookie("sid", self::$sid, [
-            'expires' => time() + $config->sessionExpiration,
-            'path' => '/',
-            'SameSite' => 'Lax',
-            'secure' => true,
-        ]);
+        Events::add_filter_listener(
+            'leantime.core.httpkernel.handle.beforeSendResponse',
+            fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
+                Cookie::create('sid')
+                ->withValue(self::$sid)
+                ->withExpires(time() + $config->sessionExpiration)
+                ->withPath('/')
+                ->withSameSite('Lax')
+                ->withSecure(true)
+            ))
+        );
     }
 
     /**
@@ -109,7 +118,7 @@ class Session
      */
     private function makeSID(): void
     {
-        $session_string = ! defined('LEAN_CLI') || LEAN_CLI === false
+        $session_string = ! $this->request instanceof CliRequest
             ? $_SERVER['REMOTE_ADDR']
             : 'cli';
 
@@ -130,11 +139,16 @@ class Session
             unset($_COOKIE['sid']);
         }
 
-        setcookie('sid', "", [
-        'expires' => time() - 42000,
-        'path' => '/',
-        'secure' => true,
-        'samesite' => 'Strict',
-        ]);
+        Events::add_filter_listener(
+            'leantime.core.httpkernel.handle.beforeSendResponse',
+            fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
+                Cookie::create('sid')
+                ->withValue('')
+                ->withExpires(time() - 42000)
+                ->withPath('/')
+                ->withSameSite('Strict')
+                ->withSecure(true)
+            ))
+        );
     }
 }

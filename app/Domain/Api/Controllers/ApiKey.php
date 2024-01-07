@@ -4,10 +4,10 @@ namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
-    use Leantime\Domain\Auth\Services\Auth;
 
     /**
      *
@@ -132,9 +132,9 @@ namespace Leantime\Domain\Api\Controllers {
                 $this->tpl->assign('status', $this->userRepo->status);
                 $this->tpl->assign('id', $id);
 
-                $this->tpl->displayPartial('api.apiKey');
+                return $this->tpl->displayPartial('api.apiKey');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

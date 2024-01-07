@@ -14,6 +14,8 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -64,12 +66,13 @@ namespace Leantime\Domain\Tickets\Controllers {
 
 
         /**
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get(): void
+        public function get(): Response
         {
-            $ticket = app()->make(TicketModel::class, [ "values" =>
+            $ticket = app()->make(TicketModel::class, [
+            "values" =>
                 [
                     "userLastname" => $_SESSION['userdata']["name"],
                     "status" => 3,
@@ -78,7 +81,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 ],
             ]);
 
-            $ticket->date =  $this->language->getFormattedDateString(date("Y-m-d H:i:s"));
+            $ticket->date =  format(date("Y-m-d H:i:s"))->date();
 
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('ticketParents', $this->ticketService->getAllPossibleParents($ticket));
@@ -101,22 +104,16 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-            $this->tpl->displayPartial('tickets.newTicketModal');
+            return $this->tpl->displayPartial('tickets.newTicketModal');
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        /**
-         * @param $params
-         * @return void
-         * @throws BindingResolutionException
-         */
-        public function post($params): void
+        public function post($params): Response
         {
-
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
                 $result = $this->ticketService->addTicket($params);
 
@@ -124,9 +121,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
 
                     if (isset($params["saveAndCloseTicket"]) === true && $params["saveAndCloseTicket"] == 1) {
-                        $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $result . "?closeModal=1");
+                        return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $result . "?closeModal=1");
                     } else {
-                        $this->tpl->redirect(BASE_URL . "/tickets/showTicket/" . $result);
+                        return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $result);
                     }
                 } else {
                     $this->tpl->setNotification($this->language->__($result["msg"]), "error");
@@ -152,7 +149,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
                     $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-                    $this->tpl->displayPartial('tickets.newTicketModal');
+                    return $this->tpl->displayPartial('tickets.newTicketModal');
                 }
             }
         }

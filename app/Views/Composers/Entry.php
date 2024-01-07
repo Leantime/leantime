@@ -3,6 +3,7 @@
 namespace Leantime\Views\Composers;
 
 use Leantime\Core\Composer;
+use Leantime\Core\Theme;
 
 /**
  *
@@ -13,16 +14,22 @@ class Entry extends Composer
         'global::layouts.entry',
     ];
 
+    private Theme $themeCore;
+
+    public function init(Theme $themeCore): void {
+        $this->themeCore = $themeCore;
+    }
+
     /**
-     * @return array|string[]
-     */
-    /**
-     * @return array|string[]
+     * @return array
      */
     public function with(): array
     {
+        $this->themeCore->getActive();
+        $logoUrl = $this->themeCore->getLogoUrl();
+
         return [
-            'logoPath' => $_SESSION['companysettings.logoPath'] ?? '',
+            'logoPath' =>  $logoUrl ? $logoUrl : BASE_URL."/dist/images/logo.svg",
         ];
     }
 }

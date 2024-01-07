@@ -57,7 +57,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             if (isset($_POST['search']) === true) {
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
-                        $dateFrom = $this->language->getISODateString($_POST['startDate']);
+                        $dateFrom = format($_POST['startDate'])->isoDate();
                     } catch (\Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
                     }
@@ -67,7 +67,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             if (isset($_POST['saveTimeSheet']) === true) {
                 if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
                     try {
-                        $dateFrom = $this->language->getISODateString($_POST['startDate']);
+                        $dateFrom = format($_POST['startDate'])->isoDate();
                     } catch (\Exception $e) {
                         $dateFrom = date('Y-m-d', time() + (1 - date('w')) * 24 * 3600);
                     }
@@ -80,19 +80,16 @@ namespace Leantime\Domain\Timesheets\Controllers {
 
             $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
 
-            $this->tpl->assign('dateFrom', new DateTime($dateFrom));
+            $dateFromDate = new  DateTime($dateFrom);
+            $this->tpl->assign('dateFrom',$dateFromDate);
             $this->tpl->assign('actKind', $kind);
             $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-            $this->tpl->assign('allProjects', $this->projects->getUserProjects($_SESSION["userdata"]["id"]));
+            $this->tpl->assign('allProjects', $this->projects->getUserProjects(userId: $_SESSION["userdata"]["id"], projectTypes: "project" ));
             $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
             $this->tpl->assign('allTimesheets', $myTimesheets);
-            $this->tpl->display('timesheets.showMy');
+            return $this->tpl->display('timesheets.showMy');
         }
 
-        /**
-         * @param $postData
-         * @return void
-         */
         /**
          * @param $postData
          * @return void

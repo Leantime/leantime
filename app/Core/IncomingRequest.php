@@ -62,7 +62,7 @@ class IncomingRequest extends Request
                 break;
         };
 
-        isset($act) && $this->query->set('act', str_replace('-', '', $act));
+        isset($act) && $this->query->set('act', $act);
         isset($id) && $this->query->set('id', $id);
         isset($request_parts) && $this->query->set('request_parts', $request_parts);
     }

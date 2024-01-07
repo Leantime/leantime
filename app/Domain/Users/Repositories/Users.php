@@ -187,7 +187,8 @@ namespace Leantime\Domain\Users\Repositories {
             $sql .=  " LIMIT 1";
 
             $stmn = $this->db->database->prepare($sql);
-            $stmn->bindValue(':email', $email, PDO::PARAM_STR);$stmn->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
+            $stmn->bindValue(':email', $email, PDO::PARAM_STR);
 
             $stmn->execute();
             $values = $stmn->fetch();
@@ -199,10 +200,23 @@ namespace Leantime\Domain\Users\Repositories {
         /**
          * @return int
          */
-        public function getNumberOfUsers(): int
+        public function getNumberOfUsers($activeOnly = false, $includeApi = true): int
         {
-
             $sql = "SELECT COUNT(id) AS userCount FROM `zp_user`";
+            $conditions = [];
+
+            if ($activeOnly) {
+                $conditions[] = "status = 'a'";
+            }
+
+            if ($includeApi) {
+                $conditions[] = "(source != 'api' OR source IS NULL)";
+            }
+
+            foreach ($conditions as $condition) {
+                $sql .= str_contains($sql, 'WHERE') ? ' AND' : ' WHERE';
+                $sql .= " $condition";
+            }
 
             $stmn = $this->db->database->prepare($sql);
 
@@ -210,11 +224,7 @@ namespace Leantime\Domain\Users\Repositories {
             $values = $stmn->fetch();
             $stmn->closeCursor();
 
-            if (isset($values['userCount']) === true) {
-                return $values['userCount'];
-            } else {
-                return 0;
-            }
+            return $values['userCount'] ?? 0;
         }
 
         /**

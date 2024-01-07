@@ -53,16 +53,11 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
                 <p><?=$tpl->__('text.theme_choice') ?></p>
                 <br />
                 <br />
-                <select name="theme" id="theme" style="width: 220px">
-                    <?php
-                    $themeCore = app()->make(Theme::class);
-                    $themeAll = $themeCore->getAll();
-                    foreach ($themeAll as $key => $name) {
-                        ?>
-                        <option value="<?=$key ?>" <?php if ($key == 'default') {
-                            echo "selected='selected'";
-                                       } ?>><?=$tpl->__($name) ?></option>
-                    <?php } ?>
+                <select name="theme" id="theme" style="width: 220px" onchange="leantime.snippets.toggleTheme(this.options[this.selectedIndex].value)">
+
+                    <option value="light">Light Mode</option>
+                    <option value="dark">Dark Mode</option>
+
                 </select>
                 <br /><br />
                 <input type="submit" value="<?=$tpl->__('buttons.next') ?>"/>

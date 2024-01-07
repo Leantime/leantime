@@ -4,16 +4,41 @@
 ])
 
 <div class="dropdown-menu projectselector" id="mainProjectSelector">
-    <div class="head">
-        <span class="sub">{{ __("menu.current_project") }}</span><br />
-        <span class="title">{{ $_SESSION['currentProjectName'] }}</span>
-    </div>
+
+        @if ($menuType == 'project')
+        <div class="head">
+            <span class="sub">{{ __("menu.current_project") }}</span><br />
+            <span class="title">{{ $_SESSION['currentProjectName'] }}</span>
+        </div>
+        @else
+            <div class="projectSelectorFooter" style="border:none; border-bottom:1px solid var(--main-border-color)">
+            <ul class="selectorList projectList">
+                <li>
+                    <a href="{{ BASE_URL }}/projects/showMy"><strong><i class="fa-solid fa-house-flag"></i> Open Project Hub</strong></a>
+                </li>
+
+                @if ($login::userIsAtLeast("manager"))
+                    @dispatchEvent('beforeProjectCreateLink')
+                    <li><a href="#/projects/createnew">
+                            <span class="fancyLink">
+                                {!! __('menu.create_something_new') !!}
+                            </span>
+                        </a>
+                    </li>
+                    @dispatchEvent('afterProjectCreateLink')
+                @endif
+
+            </ul>
+            </div>
+        @endif
+
+
     <div class="tabbedwidget tab-primary projectSelectorTabs">
         <ul class="tabs">
-            <li><a href="#myProjects">My Projects</a></li>
-            <li><a href="#allProjects">All Projects</a></li>
-            <li><a href="#favorites">Favorites</a></li>
-            <li><a href="#recentProjects">Recent</a></li>
+            <li><a href="#myProjects">{{ __('menu.projectselector.my_projects') }}</a></li>
+            <li><a href="#favorites">{{ __('menu.projectselector.favorites') }}</a></li>
+            <li><a href="#recentProjects">{{ __('menu.projectselector.recent') }}</a></li>
+            <li><a href="#allProjects">{{ __('menu.projectselector.all_projects') }}</a></li>
         </ul>
 
         <div id="myProjects" class="scrollingTab">
@@ -66,15 +91,32 @@
             </ul>
         </div>
     </div>
-    @if ($login::userIsAtLeast("manager"))
+
+            @if ($menuType == 'project')
         <div class="projectSelectorFooter">
             <ul class="selectorList projectList">
-                @dispatchEvent('beforeProjectCreateLink')
-                <li><a href="{{ BASE_URL }}/projects/newProject">{!! __('menu.create_project') !!}</a></li>
-                @dispatchEvent('afterProjectCreateLink')
+
+                @if ($login::userIsAtLeast("manager"))
+                    @dispatchEvent('beforeProjectCreateLink')
+                    <li><a href="#/projects/createnew">
+                            <span class="fancyLink">
+                                {!! __('menu.create_something_new') !!}
+                            </span>
+                        </a>
+                    </li>
+                    @dispatchEvent('afterProjectCreateLink')
+                @endif
+
+
+                    <li>
+                        <a href="{{ BASE_URL }}/projects/showMy"><i class="fa-solid fa-circle-nodes"></i> Project Hub</a>
+                    </li>
+
             </ul>
         </div>
-    @endif
+
+            @endif
+
 </div>
 
 <script>

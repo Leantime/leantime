@@ -38,15 +38,15 @@ leantime.menuController = (function () {
 
         jQuery(".project-select").chosen();
 
-        jQuery(document).on('click', '.project-selector .dropdown-menu', function (e) {
+        jQuery(document).on('click', '.projectselector.dropdown-menu', function (e) {
             e.stopPropagation();
         });
 
         let currentTab = localStorage.getItem("currentMenuTab");
 
-        if(typeof currentTab === 'undefined') {
+        if (typeof currentTab === 'undefined') {
             activeTabIndex = 0;
-        }else{
+        } else {
             activeTabIndex = jQuery('.projectSelectorTabs').find('a[href="#' + currentTab + '"]').parent().index();
         }
 

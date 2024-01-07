@@ -1,4 +1,6 @@
 <?php
+use Leantime\Core\Frontcontroller;
+
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -6,14 +8,33 @@ $allProjects = $tpl->get('allProjects');
 $clients = $tpl->get('clients');
 $currentClient = $tpl->get("currentClient");
 $currentClientName = $tpl->get("currentClientName");
+$currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
 ?>
 
-<?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
 
-<div class="maincontent">
-    <?php $tpl->displaySubmodule('tickets-portfolioTabs') ?>
+<div class="maincontent" style="margin-top:0px">
 
-    <div class="maincontentinner">
+    <div class="">
+
+
+        <div style="padding:10px 0px">
+
+            <div class="center">
+        <span style="font-size:44px; color:var(--main-action-color);">
+            @php
+                $date = new DateTime();
+                if(!empty($_SESSION['usersettings.timezone'])){
+                    $date->setTimezone(new DateTimeZone($_SESSION['usersettings.timezone']));
+                }
+                $date = $date->format(__("language.timeformat"));
+            @endphp
+
+            {{ $date }}
+        </span><br />
+                <span style="font-size:24px; color:var(--main-action-color);">
+                {{ __("welcome_widget.hi") }} {{ $currentUser['firstname'] }}
+            </span><br /><br />
+            </div>
 
         <?php echo $tpl->displayNotification(); ?>
 
@@ -38,11 +59,38 @@ $currentClientName = $tpl->get("currentClientName");
                     }
                     echo"</div></div>";
                 }?>
+
+            <?php if (count($clients) > 0) {?>
+                //
+                <span class="dropdown dropdownWrapper">
+                <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
+                    <?php
+                    if ($currentClientName != '') {
+                        $tpl->e($currentClientName);
+                    } else {
+                        echo $tpl->__("headline.all_clients");
+                    }
+                    ?>
+                    <i class="fa fa-caret-down"></i>
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a href="<?=$currentUrlPath ?>"><?=$tpl->__("headline.all_clients"); ?></a></li>
+                    <?php foreach ($clients as $key => $value) {
+                        echo "<li><a href='" . $currentUrlPath . "?client=" . $key . "'>" . $tpl->escape($value['name']) . "</a></li>";
+                    }
+                    ?>
+                </ul>
+            </span>
+            <?php } ?>
+
+
+
                 <?php foreach ($allProjects as $project) { ?>
                 <div class="col-md-3">
                     <div class="projectBox">
 
-                        <div class="row " id="projectProgressContainer">
+                        <div class="row">
                             <div class="col-md-12">
                                 <div class="row" style="padding-bottom:10px;">
                                     <div class="col-md-9">
@@ -75,8 +123,8 @@ $currentClientName = $tpl->get("currentClientName");
                                             <h4 class="">
                                                 <?php printf(
                                                     $tpl->__('text.report_written_on'),
-                                                    $tpl->getFormattedDateString($project['lastUpdate']['date']),
-                                                    $tpl->getFormattedTimeString($project['lastUpdate']['date'])
+                                                    format($project['lastUpdate']['date'])->date(),
+                                                    format($project['lastUpdate']['date'])->time()
                                                 ); ?>
 
                                             </h4>
@@ -90,6 +138,9 @@ $currentClientName = $tpl->get("currentClientName");
                                     <br />
                                 <?php } ?>
 
+                                <?php
+                                //Removing for now due to performance impact on progress calculation.
+                                /*
                                 <div class="row">
                                     <div class="col-md-7">
                                         <?=$tpl->__("subtitles.project_progress") ?>
@@ -104,6 +155,8 @@ $currentClientName = $tpl->get("currentClientName");
                                     </div>
                                 </div>
                                 <br />
+
+                                */ ?>
 
 
                             </div>

@@ -8,18 +8,25 @@
 namespace Leantime\Domain\Clients\Repositories {
 
     use Leantime\Core\Db as DbCore;
+    use Leantime\Core\Repository;
     use PDO;
 
     /**
      *
      */
-    class Clients
+    class Clients extends Repository
     {
         /**
          * @access public
          * @var    string
          */
         public string $name;
+
+        /**
+         * @access protected
+         * @var    string
+         */
+        protected string $entity = "clients";
 
         /**
          * @access public
@@ -246,7 +253,7 @@ namespace Leantime\Domain\Clients\Repositories {
          * @param  array $values
          * @param  $id
          */
-        public function editClient(array $values, $id): void
+        public function editClient(array $values, $id): bool
         {
 
             $query = "UPDATE zp_clients SET
@@ -273,8 +280,10 @@ namespace Leantime\Domain\Clients\Repositories {
             $stmn->bindValue(':email', $values['email'], PDO::PARAM_STR);
             $stmn->bindValue(':id', $id, PDO::PARAM_INT);
 
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
         /**
@@ -282,16 +291,19 @@ namespace Leantime\Domain\Clients\Repositories {
          *
          * @access public
          * @param  $id
+         * @return bool
          */
-        public function deleteClient($id): void
+        public function deleteClient($id): bool
         {
 
             $query = "DELETE zp_clients, zp_projects FROM zp_clients LEFT JOIN zp_projects ON zp_clients.id = zp_projects.clientId WHERE zp_clients.id = :id";
 
             $stmn = $this->db->database->prepare($query);
             $stmn->bindValue(':id', $id, PDO::PARAM_STR);
-            $stmn->execute();
+            $result = $stmn->execute();
             $stmn->closeCursor();
+
+            return $result;
         }
 
         /**

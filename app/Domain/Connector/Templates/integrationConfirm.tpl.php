@@ -4,8 +4,8 @@ $provider = $tpl->get("provider");
 $leantimeFields = $tpl->get("leantimeFields");
 $numberOfFields = $tpl->get("maxFields");
 $urlAppend = '';
-if(isset($integrationId) && is_numeric($integrationId)) {
-    $urlAppend = "&integrationId=".$integrationId;
+if (isset($integrationId) && is_numeric($integrationId)) {
+    $urlAppend = "&integrationId=" . $integrationId;
 }
 ?>
 
@@ -37,7 +37,7 @@ if(isset($integrationId) && is_numeric($integrationId)) {
         echo "<h3>Integration Success</h3>";
         echo "<p>Your data was synced successfully.</p>";
         echo "<br />";
-        echo "<a class='btn btn-default' href='".BASE_URL."/connector/show'>Go back to integrations</a>";
+        echo "<a class='btn btn-default' href='" . BASE_URL . "/connector/show'>Go back to integrations</a>";
 
 
         echo"</div>";

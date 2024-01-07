@@ -14,6 +14,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Goalcanvas\Services\Goalcanvas as GoalcanvaService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -52,14 +54,10 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
         /**
          * @param $params
-         * @return void
-         */
-        /**
-         * @param $params
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function get($params): void
+        public function get($params): Response
         {
             if (isset($params['id'])) {
                 // Delete comment
@@ -90,8 +88,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         )
                     );
                 } else {
-                    $this->tpl->displayPartial('errors.error404');
-                    exit();
+                    return $this->tpl->displayPartial('errors.error404');
                 }
             } else {
                 $canvasItem = array(
@@ -130,19 +127,18 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
             $this->tpl->assign('dataLabels', $this->canvasRepo->getDataLabels());
-            $this->tpl->displayPartial('goalcanvas.canvasDialog');
+            return $this->tpl->displayPartial('goalcanvas.canvasDialog');
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
 
             if (isset($params['comment'])) {
-
                 $values = array(
                     'text' => $params['text'],
                     'date' => date('Y-m-d H:i:s'),
@@ -177,7 +173,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                     $this->projectService->notifyProjectUsers($notification);
 
-                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
+                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $_GET['id']);
                 }
             }
 
@@ -202,8 +198,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'parent' => $params['parent'] ?? null,
                             "id" => $params['itemId'],
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => $this->language->getISODateString($params['startDate']),
-                            'endDate' => $this->language->getISODateString($params['endDate']),
+                            'startDate' => format($params['startDate'])->isoDate(),
+                            'endDate' => format($params['endDate'])->isoDateEnd(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
@@ -213,8 +209,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                             $params['headline'] = $params['newMilestone'];
                             $params['tags'] = '#ccc';
-                            $params['editFrom'] = date('Y-m-d');
-                            $params['editTo'] = date('Y-m-d', strtotime('+1 week'));
+                            $params['editFrom'] = format(date($this->language->__("language.dateformat")))->isoDate();
+                            $params['editTo'] = format(date($this->language->__("language.dateformat"), strtotime('+1 week')))->isoDate();
                             $params['dependentMilestone'] = '';
                             $id = $this->ticketService->quickAddMilestone($params);
 
@@ -262,7 +258,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
 
-                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
+                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                 } else {
                     if (isset($_POST['title']) && !empty($_POST['title'])) {
                         $canvasItem = array(
@@ -278,8 +274,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'canvasId' => $params['canvasId'],
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => $this->language->getISODateString($params['startDate']),
-                            'endDate' => $this->language->getISODateString($params['endDate']),
+                            'startDate' => format($params['startDate'])->isoDate(),
+                            'endDate' => format($params['endDate'])->isoDateEnd(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
@@ -319,7 +315,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                     }
 
-                    $this->tpl->redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $id);
+                    return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $id);
                 }
             }
 
@@ -356,8 +352,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $this->tpl->assign('canvasItem', $value);
             }
             $this->tpl->assign('comments', $comments);
-            $this->tpl->displayPartial('goalcanvas.editCanvasItem');
+            return $this->tpl->displayPartial('goalcanvas.editCanvasItem');
         }
     }
-
 }

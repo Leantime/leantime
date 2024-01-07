@@ -1,10 +1,18 @@
+
+
+
+
+
 //Lets get this party started.
 var leantime = leantime || {};
 
 var themeColor = jQuery('meta[name=theme-color]').attr("content");
 leantime.companyColor = themeColor;
 
-var theme = jQuery('meta[name=color-scheme]').attr("content");
+var colorScheme = jQuery('meta[name=color-scheme]').attr("content");
+leantime.colorScheme = colorScheme;
+
+var theme = jQuery('meta[name=theme]').attr("content");
 leantime.theme = theme;
 
 var appURL = jQuery('meta[name=identifier-URL]').attr("content");
@@ -55,4 +63,22 @@ jQuery(document).ready(function () {
         jQuery('.login-alert').fadeIn();
     }
 
+    document.addEventListener('scroll', () => {
+        document.documentElement.dataset.scroll = window.scrollY;
+    });
+
 });
+
+
+window.addEventListener("HTMX.ShowNotification", function(evt) {
+    jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
+        console.log(data);
+        let notification = JSON.parse(data);
+        jQuery.growl({
+            message: notification.notification, style: notification.notificationType
+        });
+    })
+});
+
+
+

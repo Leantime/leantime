@@ -96,7 +96,7 @@ class Messengers
 
                 return true;
             } catch (GuzzleException $e) {
-                error_log($e->getMessage());
+                error_log($e);
 
                 return false;
             }
@@ -134,7 +134,7 @@ class Messengers
 
                 return true;
             } catch (Exception $e) {
-                error_log($e->getMessage());
+                error_log($e);
 
                 return false;
             }
@@ -187,7 +187,7 @@ class Messengers
 
                 return true;
             } catch (GuzzleException $e) {
-                error_log($e->getMessage());
+                error_log($e);
 
                 return false;
             }
@@ -259,7 +259,7 @@ class Messengers
                         'headers' => ['Content-Type' => 'application/json'],
                     ]);
                 } catch (GuzzleException $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
 
                     return false;
                 }
@@ -277,8 +277,8 @@ class Messengers
     {
         $ticketService = app()->make(Tickets::class);
         if (is_array($notification->entity)) {
-            $headline = $notification->entity['headline'];
-            $status = $notification->entity['status'];
+            $headline = $notification->entity['headline'] ?? '';
+            $status = $notification->entity['status'] ?? '';
         } else {
             $headline = $notification->entity->headline;
             $status = $notification->entity->status;
@@ -294,7 +294,7 @@ class Messengers
                 'fields'   => array(
                     [
                         'title' => $this->language->__("headlines.project_with_name") . ' ' . $this->projectName,
-                        'value' => $this->language->__("label.todo_status") . ': ' . $statusLabelsArray[$status]['name'],
+                        'value' => $this->language->__("label.todo_status") . ': ' . $statusLabelsArray[$status]['name'] ?? '',
                         'short' => false,
                     ],
                 ),

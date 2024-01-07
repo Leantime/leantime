@@ -23,6 +23,10 @@ jobs:
       - uses: browser-actions/setup-firefox@v1
       - run: firefox --version
 
+      - name: Run Unit Tests
+        run: |
+          make unit-test
+
       - name: Run Acceptance Tests
         run: |
           make acceptance-test-ci

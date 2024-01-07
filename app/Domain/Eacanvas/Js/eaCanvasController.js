@@ -32,7 +32,7 @@ leantime.eaCanvasController = (function () {
 
     var closeModal = false;
 
-    var canvasoptions = function() {
+    var canvasoptions = function () {
         return {
             sizes: {
                 minW:  700,

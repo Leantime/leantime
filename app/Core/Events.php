@@ -3,7 +3,6 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Plugins;
 
 /**
  * Events class - Handles all events and filters
@@ -159,6 +158,13 @@ class Events
      */
     public static function discover_listeners(): void
     {
+        static $discovered;
+        $discovered ??= false;
+
+        if ($discovered) {
+            return;
+        }
+
         if (empty($_SESSION['domainEvents']) || app()->make(Environment::class)->debug) {
             $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
             $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
@@ -172,8 +178,8 @@ class Events
 
         $modules = $_SESSION['domainEvents'];
         foreach ($modules as $module) {
-            if (file_exists($module . "/Events/register.php")) {
-                include $module . "/Events/register.php";
+            if (file_exists($moduleEventsPath = "$module/register.php")) {
+                include_once $moduleEventsPath;
             }
         }
 
@@ -181,29 +187,59 @@ class Events
             isset(app(Environment::class)->plugins)
             && $configplugins = explode(',', app(Environment::class)->plugins)
         ) {
+            //TODO: Do phar plugins get to be system plugins? Right now they dont
             foreach ($configplugins as $plugin) {
-                if (file_exists(APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {
-                    include_once APP_ROOT . "/app/Plugins/" . $plugin . "/register.php";
+                if (file_exists($pluginEventsPath = APP_ROOT . "/app/Plugins/" . $plugin . "/register.php")) {
+                    include_once $pluginEventsPath;
                 }
             }
         }
 
-        Events::add_event_listener('leantime.core.bootloader.boot.after_install', function () {
-            $enabledPlugins = [];
-            $pluginPath = APP_ROOT . "/app/Plugins/";
-            if ($_SESSION['isInstalled'] === true) {
-                $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
-                $enabledPlugins = $pluginService->getEnabledPlugins();
+        Events::add_event_listener('leantime.core.middleware.installed.handle.after_install', function () {
+            if (! $_SESSION['isInstalled']) {
+                return;
             }
 
+            $pluginPath = APP_ROOT . "/app/Plugins/";
+            $pluginService = app()->make(\Leantime\Domain\Plugins\Services\Plugins::class);
+            $enabledPlugins = $pluginService->getEnabledPlugins();
+
             foreach ($enabledPlugins as $plugin) {
-                if ($plugin != null) {
-                    if (file_exists($pluginPath . $plugin->foldername . "/register.php")) {
-                        include_once $pluginPath . $plugin->foldername . "/register.php";
-                    }
+
+                //Catch issue when plugins are cached on load but autoloader is not quite done loading.
+                //Only happens because the plugin objects are stored in session and the unserialize is not keeping up.
+                //Clearing session cache in that case.
+                //@TODO: Check on callstack to make sure autoload loads before sessions
+                if (is_a($plugin, '__PHP_Incomplete_Class')) {
+                    continue;
                 }
+
+                if ($plugin == null) {
+                    continue;
+                }
+
+                if ($plugin->format == "phar") {
+                    $pharPath = "phar://{$pluginPath}{$plugin->foldername}/{$plugin->foldername}.phar";
+
+                    if (! file_exists("$pharPath/register.php")) {
+                        continue;
+                    }
+
+                    include_once $pharPath;
+                    include_once "$pharPath/register.php";
+
+                    continue;
+                }
+
+                if (! file_exists($registerPath = "{$pluginPath}{$plugin->foldername}/register.php")) {
+                    continue;
+                }
+
+                include_once $registerPath;
             }
         });
+
+        $discovered = true;
     }
 
     /**
@@ -293,17 +329,11 @@ class Events
             return;
         }
 
-        $sorter = function ($a, $b) {
-            if ($a['priority'] > $b['priority']) {
-                return 1;
-            } elseif ($a['priority'] == $b['priority']) {
-                return 0;
-            } else {
-                return -1;
-            }
+        $sorter = fn ($a, $b) => match (true) {
+            $a['priority'] > $b['priority'] => 1,
+            $a['priority'] == $b['priority'] => 0,
+            default => -1,
         };
-
-
 
         if ($type == 'filters') {
             usort(self::$filterRegistry[$hookName], $sorter);
@@ -340,7 +370,7 @@ class Events
             return $finalParams;
         }
 
-        if (is_object($paramAttr)) {
+        if (is_object($paramAttr) && get_class($paramAttr) == 'stdClass') {
             $finalParams = (object) array_merge($default_params, (array) $paramAttr);
             return $finalParams;
         }
@@ -376,14 +406,10 @@ class Events
         $filteredPayload = null;
 
         //sort matches by priority
-        usort($registry, function ($a, $b) {
-            if ($a['priority'] > $b['priority']) {
-                return 1;
-            } elseif ($a['priority'] == $b['priority']) {
-                return 0;
-            } else {
-                return -1;
-            }
+        usort($registry, fn ($a, $b) => match (true) {
+            $a['priority'] > $b['priority'] => 1,
+            $a['priority'] == $b['priority'] => 0,
+            default => -1,
         });
 
         foreach ($registry as $index => $listener) {
@@ -441,6 +467,10 @@ class Events
                 );
                 continue;
             }
+
+            if($index == 0) {
+                $filteredPayload = $payload;
+            }
         }
 
         if (!$isEvent) {
@@ -448,5 +478,15 @@ class Events
         }
 
         return null;
+    }
+
+    public static function getEventRegistry(): array
+    {
+        return self::$eventRegistry;
+    }
+
+    public static function getFilterRegistry(): array
+    {
+        return self::$filterRegistry;
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Acceptance;
+namespace Acceptance;
 
-use Tests\Support\AcceptanceTester;
 use Codeception\Attribute\Depends;
+use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Install;
 
 class InstallCest

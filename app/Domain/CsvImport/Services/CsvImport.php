@@ -6,7 +6,7 @@ use Leantime\Core\Frontcontroller;
 use Leantime\Domain\Connector\Models\Entity;
 use Leantime\Domain\Connector\Models\Provider;
 use Leantime\Domain\Connector\Services\ProviderIntegration;
-
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -25,7 +25,7 @@ class CsvImport extends Provider implements ProviderIntegration
         "entity",
         "fields",
         "parse",
-        "import"
+        "import",
     ];
 
     public array $button = array(
@@ -52,20 +52,19 @@ class CsvImport extends Provider implements ProviderIntegration
         );
 
         $this->button["url"] = BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload";
-
     }
 
     //Logic to connect to provider goes here.
     //Needs to manage new connection as well as existing connections.
     //Should return bool so we can drive logic in the frontend.
     /**
-     * @return void
+     * @return Response
      */
-    public function connect(): mixed
+    public function connect(): Response
     {
         //Connection done. Send to next step.
         //May just want to add a nextStep() method to provider model or so.
-        Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload");
+        return Frontcontroller::redirect(BASE_URL . "/connector/integration?provider=" . $this->id . "#/csvImport/upload");
     }
 
     //Sync the entities from the db
@@ -117,21 +116,23 @@ class CsvImport extends Provider implements ProviderIntegration
     {
         $integrationMeta = $_SESSION['csvImporter']['meta'] ?? '';
 
-        if (!empty($integrationMeta)) {
-            $rows = unserialize($integrationMeta);
-
-            // Removing the first row if it contains headers
-            // can be returned or dealt with later on for field matching
-            if (count($rows) > 0) {
-                $headers = array_shift($rows);
-            }
-            return $rows;
+        if (empty($integrationMeta)) {
+            return false;
         }
+
+        $rows = unserialize($integrationMeta);
+
+        // Removing the first row if it contains headers
+        // can be returned or dealt with later on for field matching
+        if (count($rows) > 0) {
+            $headers = array_shift($rows);
+        }
+        return $rows;
     }
 
-    public function geValues(){
+    public function geValues()
+    {
 
         return $_SESSION['csv_records'] ?? [];
-
     }
 }

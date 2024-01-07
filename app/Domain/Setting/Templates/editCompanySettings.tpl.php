@@ -24,17 +24,18 @@ $companySettings = $tpl->get('companySettings');
 
                     <ul>
                         <li><a href="#details"><span class="fa fa-building"></span> <?php echo $tpl->__('tabs.details'); ?></a></li>
-                        <li><a href="#look"><span class="fa fa-group"></span> <?php echo $tpl->__('tabs.look'); ?></a></li>
-
                         <li><a href="#apiKeys"><i class="fa-solid fa-key"></i> <?php echo $tpl->__('tabs.apiKeys'); ?></a></li>
                     </ul>
 
 
                     <div id="details">
-                        <h5 class="subtitle"><?=$tpl->__("headlines.company_settings")?></h5>
 
-                        <form class="" method="post" id="" action="<?=BASE_URL ?>/setting/editCompanySettings#details" >
-                            <br />
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form class="" method="post" id="" action="<?=BASE_URL ?>/setting/editCompanySettings#details" >
+
+                                    <h5 class="subtitle"><?=$tpl->__("headlines.company_settings")?></h5>
                             <p><?=$tpl->__("text.these_are_system_wide_settings")?></p>
                             <br />
                             <input type="hidden" value="1" name="saveSettings" />
@@ -79,13 +80,13 @@ $companySettings = $tpl->get('companySettings');
                                     <label><?=$tpl->__("label.send_telemetry")?></label>
                                 </div>
                                 <div class="col-md-8">
-                                    <input type="checkbox" name="telemetryActive" id="telemetryActive"  <?= $companySettings['telemetryActive'] ? 'checked="checked"' : '';?> />
+                                    <input type="checkbox" class="toggle" name="telemetryActive" id="telemetryActive"  <?= $companySettings['telemetryActive'] ? 'checked="checked"' : '';?> />
 
                                     <i class="fa fa-question-circle" style="vertical-align: bottom;" data-tippy-content="<?=strip_tags($tpl->__("label.telemetry_background")) ?>"></i>
                                     <div class="clearall"></div><br />
                                 </div>
                             </div>
-
+                                    <br />
                             <h4 class="widgettitle title-light"><span
                                     class="fa fa-cog"></span><?php echo $tpl->__('subtitles.defaults'); ?>
                             </h4>
@@ -153,38 +154,6 @@ $companySettings = $tpl->get('companySettings');
                             </div>
                             <input type="submit" value="<?=$tpl->__("buttons.save")?>" id="saveBtn"/>
                         </form>
-
-                </div>
-
-                    <div id="look">
-                            <div class="row">
-                            <div class="col-md-8">
-                                <form class="" method="post" id="" action="<?=BASE_URL ?>/setting/editCompanySettings#look" >
-
-                                    <input type="hidden" value="1" name="saveSettings" />
-                                    <h5 class="subtitle"><?=$tpl->__("headlines.colors")?></h5>
-                                    <br />
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label><?=$tpl->__("label.primary_color")?></label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <input type="color"  name="primarycolor" class="form-control input-sm" value="<?php echo $companySettings['primarycolor']; ?>"/>
-
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label><?=$tpl->__("label.secondary_color")?></label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            <input type="color" name="secondarycolor" class="form-control input-sm" value="<?php echo $companySettings['secondarycolor']; ?>"/>
-
-                                        </div>
-                                    </div>
-
-                                    <input type="submit" value="<?=$tpl->__("buttons.save")?>" id="saveBtn"/>
-                                </form>
                             </div>
                             <div class="col-md-4">
 
@@ -196,7 +165,11 @@ $companySettings = $tpl->get('companySettings');
                                     <div class="row">
 
                                         <div class="col-md-12">
+                                            <?php if ($companySettings['logo'] != "") { ?>
                                             <img src='<?php echo $companySettings['logo'] ?>'  class='logoImg' alt='Logo' id="previousImage" width="260"/>
+                                            <?php } else { ?>
+                                                <?=$tpl->__("text.no_logo") ?>
+                                            <?php } ?>
                                             <div id="logoImg" style="height:auto;">
                                             </div>
                                             <br />
@@ -237,9 +210,7 @@ $companySettings = $tpl->get('companySettings');
                                 <a href="<?=BASE_URL ?>/setting/editCompanySettings?resetLogo=1" class="btn btn-default"><?=$tpl->__("buttons.reset_logo")?></a>
                             </div>
                         </div>
-
-
-                    </div>
+                </div>
 
                     <div id="apiKeys">
                         <a href="#/api/newApiKey" class="btn btn-primary">Generate API Key</a>
@@ -262,7 +233,7 @@ $companySettings = $tpl->get('companySettings');
                                     </div>
                                     <a href="#/api/apiKey/<?=$apiKey["id"] ?>"><strong><?=$apiKey["firstname"] ?></strong></a><br />
                                     lt_<?=$apiKey["username"] ?>***
-                                    | <?=$tpl->__("labels.created_on")?>: <?=$tpl->getFormattedDateString($apiKey["createdOn"]) ?> | <?=$tpl->__("labels.last_used")?>: <?= $tpl->getFormattedDateString($apiKey["lastlogin"]) ?>
+                                    | <?=$tpl->__("labels.created_on")?>: <?=format($apiKey["createdOn"])->date() ?> | <?=$tpl->__("labels.last_used")?>: <?= format($apiKey["lastlogin"])->date() ?>
 
                                 </div>
                             </li>

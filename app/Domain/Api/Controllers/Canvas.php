@@ -6,9 +6,9 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
+    use Illuminate\Support\Str;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Illuminate\Support\Str;
 
     /**
      *
@@ -21,6 +21,7 @@ namespace Leantime\Domain\Api\Controllers {
         protected const CANVAS_NAME = '??';
 
         private ProjectRepository $projects;
+
         /**
          * @var \Closure|mixed|object|null
          */
@@ -69,13 +70,14 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function patch($params)
         {
-            $results = $this->canvasRepo->patchCanvasItem($params['id'], $params);
-
-            if ($results === true) {
-                echo "{status:ok}";
-            } else {
-                echo "{status:failure}";
+            if (
+                ! isset($params['id'])
+                || ! $this->canvasRepo->patchCanvasItem($params['id'], $params)
+            ) {
+                return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
+
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**

@@ -3,28 +3,22 @@
 namespace Leantime\Domain\Setting\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Ramsey\Uuid\Uuid;
 
     /**
      *
      */
     class Setting
     {
-        private TemplateCore $tpl;
-        public SettingRepository $settingsRepo;
-
         /**
-         * @param TemplateCore      $tpl
          * @param SettingRepository $settingsRepo
          */
         public function __construct(
-            TemplateCore $tpl,
-            SettingRepository $settingsRepo
+            public SettingRepository $settingsRepo,
         ) {
-            $this->tpl = $tpl;
-            $this->settingsRepo = $settingsRepo;
+            //
         }
 
         /**
@@ -67,18 +61,11 @@ namespace Leantime\Domain\Setting\Services {
         public function resetLogo(): void
         {
 
-            $url = '/dist/images/logo.svg';
-
-            $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
-
-            $_SESSION["companysettings.logoPath"] = BASE_URL . $url;
+            $this->settingsRepo->deleteSetting("companysettings.logoPath");
+            unset($_SESSION["companysettings.logoPath"]);
+            $_SESSION["companysettings.logoPath"] = "";
         }
 
-        /**
-         * @param $key
-         * @param $value
-         * @return bool
-         */
         /**
          * @param $key
          * @param $value
@@ -117,6 +104,22 @@ namespace Leantime\Domain\Setting\Services {
         {
             $this->settingsRepo = $settingsRepo;
         }
-    }
 
+        /**
+         * Gets the company id (Sets if it's not set)
+         *
+         * @return string
+         **/
+        public function getCompanyId(): string
+        {
+            $companyId = $this->getSetting('companysettings.telemetry.anonymousId');
+
+            if (! $companyId) {
+                $companyId = Uuid::uuid4()->toString();
+                $this->saveSetting('companysettings.telemetry.anonymousId', $companyId);
+            }
+
+            return $companyId;
+        }
+    }
 }

@@ -4,17 +4,16 @@ namespace Leantime\Domain\Oidc\Services;
 
 //This class Handles authentication via OpenID Connect (OIDC)
 
-use GuzzleHttp\Exception\GuzzleException;
-
-use Leantime\Core\Environment;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Leantime\Core\Environment;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\Language;
-use Leantime\Core\Template;
-use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use OpenSSLAsymmetricKey;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -91,11 +90,10 @@ class Oidc
         $this->fieldEmail = $this->config->get('oidcFieldEmail', '');
         $this->fieldFirstName = $this->config->get('oidcFieldFirstName', '');
         $this->fieldLastName = $this->config->get('oidcFieldLastName', '');
-        $this->fieldPhone= $this->config->get('oidcFieldPhone', '');
+        $this->fieldPhone = $this->config->get('oidcFieldPhone', '');
         $this->fieldJobtitle = $this->config->get('oidcFieldJobtitle', '');
         $this->fieldJoblevel = $this->config->get('oidcFieldJoblevel', '');
         $this->fieldDepartment = $this->config->get('oidcFieldDepartment', '');
-
     }
 
     /**
@@ -142,7 +140,7 @@ class Oidc
      * @return void
      * @throws GuzzleException
      */
-    public function callback(string $code, string $state): void
+    public function callback(string $code, string $state): Response
     {
         if (!$this->verifyState($state)) {
             $this->displayError('oidc.error.invalidState');
@@ -161,12 +159,12 @@ class Oidc
             $this->displayError("oidc.error.unsupportedToken");
         }
 
-        if ($userInfo != null) {
-            $this->login($userInfo);
-        } else {
-            $this->displayError('oidc.error.invalidToken');
+        if ($userInfo == null) {
             //TODO: invalid token
+            $this->displayError('oidc.error.invalidToken');
         }
+
+        return $this->login($userInfo);
     }
 
     /**
@@ -183,7 +181,7 @@ class Oidc
      * @param array $userInfo
      * @return void
      */
-    private function login(array $userInfo): void
+    private function login(array $userInfo): Response
     {
 
         $userName = $this->readMultilayerKey($userInfo, $this->fieldEmail);
@@ -195,8 +193,7 @@ class Oidc
         $user = $this->userRepo->getUserByEmail($userName);
 
         if ($user === false) {
-
-            if($this->createUser) {
+            if ($this->createUser) {
                 //create user if it doesn't exist yet
                 $userArray = [
                     'firstname' => $this->readMultilayerKey($userInfo, $this->fieldFirstName),
@@ -217,20 +214,13 @@ class Oidc
 
                 if ($userId !== false) {
                     $user = $this->userRepo->getUserByEmail($userName);
-
                 } else {
-
-                    error_log("OIDC user creation failed.");
-                    return;
+                    throw new \Exception("OIDC user creation failed.");
                 }
-
-            }else{
+            } else {
                 $this->displayError('oidc.error.user_not_found');
-                return;
             }
-
         } else {
-
             //update user if it exists
             $user['user'] = $user['username'];
             $user['firstname'] = $this->readMultilayerKey($userInfo, $this->fieldFirstName) != "" ? $this->readMultilayerKey($userInfo, $this->fieldFirstName) : $user['firstname'];
@@ -250,7 +240,7 @@ class Oidc
 
         $this->authService->setUserSession($user, false);
 
-        Frontcontroller::redirect(BASE_URL . "/dashboard/home");
+        return Frontcontroller::redirect(BASE_URL . "/dashboard/home");
     }
 
     /**
@@ -285,6 +275,7 @@ class Oidc
             $headerArray[strtolower($header)] = $values;
         }
         $contentType = array_pop($headerArray['content-type']);
+
         switch ($contentType) {
             case 'application/x-www-form-urlencoded; charset=utf-8':
             case 'application/x-www-form-urlencoded':
@@ -344,6 +335,7 @@ class Oidc
         if (openssl_verify($data, $this->decodeBase64Url($signature), $key, $this->getAlgorythm($header)) === 1) {
             return $tokenData;
         }
+
         return null;
     }
 
@@ -436,26 +428,28 @@ class Oidc
     }
 
     /**
-     * @return void
+     * @return bool
      * @throws GuzzleException
      */
-    private function loadEndpoints(): void
+    private function loadEndpoints(): bool
     {
-
-
         if ($this->configLoaded) {
-            return;
+            return true;
         }
 
         if ($this->authUrl && $this->tokenUrl && $this->jwksUrl) {
             $this->configLoaded = true;
-            return;
+            return true;
         }
 
         $httpClient = new Client();
-        $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
-        $endpoints = json_decode($response->getBody()->getContents(), true);
-
+        try {
+            $response = $httpClient->get($this->providerUrl . '/.well-known/openid-configuration');
+            $endpoints = json_decode($response->getBody()->getContents(), true);
+        }catch(\Exception $e) {
+            error_log($e);
+            return false;
+        }
         //load all not yet defined endpoints from well-known configuration
 
         if (!$this->authUrl || $this->authUrl == '') {
@@ -473,6 +467,8 @@ class Oidc
         if (!$this->userInfoUrl || $this->userInfoUrl == '') {
             $this->userInfoUrl = $endpoints['userinfo_endpoint'];
         }
+
+        return true;
     }
 
     /**
@@ -554,12 +550,12 @@ class Oidc
     /**
      * @param string $translationKey
      * @param string ...$values
+     * @throws HttpResponseException
      * @return void
      */
     private function displayError(string $translationKey, string ...$values): void
     {
-        $tpl = app()->make(Template::class);
-        $tpl->setNotification(sprintf($this->language->__($translationKey), ...$values), "error");
-        $tpl->redirect(BASE_URL. "/auth/login");
+
+        throw new \Exception(sprintf($this->language->__($translationKey), ...$values));
     }
 }

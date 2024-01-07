@@ -20,7 +20,6 @@ class Login
         $this->installPage = $installPage;
     }
 
-
     public function login($username, $password)
     {
         if ($this->loadSessionShapshot('sid')) {
@@ -41,9 +40,9 @@ class Login
         $this->I->fillField(['name' => 'username'], $username);
         $this->I->fillField(['name' => 'password'], $password);
         $this->I->click('Login');
-        $this->I->waitForElementVisible('.articleHeadline', 30);
+        $this->I->waitForElementVisible('.stickyHeader', 30);
         echo $this->I->grabPageSource();
-        $this->I->see('Welcome John');
+        $this->I->see('Hi John');
 
         $this->saveSessionSnapshot('sid');
     }

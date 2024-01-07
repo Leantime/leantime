@@ -78,10 +78,10 @@ $statusLabels = $tpl->get('statusLabels');
     <input type="text" name="tags" autocomplete="off" value="<?php echo $currentMilestone->tags?>" placeholder="<?=$tpl->__("input.placeholders.pick_a_color"); ?>" class="simpleColorPicker"/><br />
 
     <label><?=$tpl->__("label.planned_start_date"); ?></label>
-    <input type="text" name="editFrom" autocomplete="off" value="<?php echo $tpl->getFormattedDateString($currentMilestone->editFrom) ?>" placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
+    <input type="text" name="editFrom" autocomplete="off" value="<?php echo format($currentMilestone->editFrom)->date() ?>" placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditFrom" /><br />
 
     <label><?=$tpl->__("label.planned_end_date"); ?></label>
-    <input type="text" name="editTo" autocomplete="off" value="<?php echo $tpl->getFormattedDateString($currentMilestone->editTo) ?>"  placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditTo" /><br />
+    <input type="text" name="editTo" autocomplete="off" value="<?php echo format($currentMilestone->editTo)->date() ?>"  placeholder="<?=$tpl->__("language.dateformat"); ?>" id="milestoneEditTo" /><br />
 
     <div class="row">
         <div class="col-md-6">

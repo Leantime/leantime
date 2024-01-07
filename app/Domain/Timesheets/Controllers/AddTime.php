@@ -8,6 +8,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -52,9 +53,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
          * run - display template and edit data
          *
          * @access public
-         * @return void
+         * @return Response
          */
-        public function run(): void
+        public function run(): Response
         {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
@@ -93,7 +94,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                     }
 
                     if (isset($_POST['date']) && $_POST['date'] != '') {
-                        $values['date'] = $this->language->getISODateString($_POST['date']);
+                        $values['date'] = format($_POST['date'])->isoDateStart();
                     }
 
                     if (isset($_POST['hours']) && $_POST['hours'] != '') {
@@ -106,7 +107,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                         }
 
                         if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                            $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate']);
+                            $values['invoicedEmplDate'] = format($_POST['invoicedEmplDate'])->isoDateMid();
                         }
                     }
 
@@ -117,7 +118,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             }
 
                             if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                                $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate']);
+                                $values['invoicedCompDate'] = format($_POST['invoicedCompDate'])->isoDateMid();
                             }
                         }
                     }
@@ -129,7 +130,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             }
 
                             if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                                $values['paidDate'] = $this->language->getISODateString($_POST['paidDate']);
+                                $values['paidDate'] = format($_POST['paidDate'])->isoDateMid();
                             }
                         }
                     }
@@ -160,12 +161,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
                     }
 
                     if (isset($_POST['save']) === true) {
-                        $values['date'] = $this->language->getFormattedDateString($values['date']);
-                        $values['invoicedCompDate'] = $this->language->getFormattedDateString($values['invoicedCompDate']);
-                        $values['invoicedEmplDate'] = $this->language->getFormattedDateString($values['invoicedEmplDate']);
-                        $values['paidDate'] = $this->language->getFormattedDateString($values['paidDate']);
-
-
                         $this->tpl->assign('values', $values);
                     } elseif (isset($_POST['saveNew']) === true) {
                         $values = array(
@@ -192,9 +187,9 @@ namespace Leantime\Domain\Timesheets\Controllers {
                 $this->tpl->assign('allProjects', $this->timesheetsRepo->getAll());
                 $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
                 $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-                $this->tpl->display('timesheets.addTime');
+                return $this->tpl->display('timesheets.addTime');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

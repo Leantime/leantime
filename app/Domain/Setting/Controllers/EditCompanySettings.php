@@ -11,13 +11,13 @@ namespace Leantime\Domain\Setting\Controllers {
     use Leantime\Domain\Setting\Services\Setting as SettingService;
     use Leantime\Domain\Reports\Services\Reports as ReportService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
      */
     class EditCompanySettings extends Controller
     {
-        private EnvironmentCore $config;
         private SettingRepository $settingsRepo;
         private ApiService $APIService;
         private SettingService $settingsSvc;
@@ -29,14 +29,12 @@ namespace Leantime\Domain\Setting\Controllers {
          *
          */
         public function init(
-            EnvironmentCore $config,
             SettingRepository $settingsRepo,
             ApiService $APIService,
             SettingService $settingsSvc
         ) {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-            $this->config = $config;
             $this->settingsRepo = $settingsRepo;
             $this->APIService = $APIService;
             $this->settingsSvc = $settingsSvc;
@@ -51,22 +49,21 @@ namespace Leantime\Domain\Setting\Controllers {
         public function get($params)
         {
             if (! Auth::userIsAtLeast(Roles::$owner)) {
-                $this->tpl->display('error.error403');
-                return;
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
 
             if (isset($_GET['resetLogo'])) {
                 $this->settingsSvc->resetLogo();
-                $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings#look");
+                return Frontcontroller::redirect(BASE_URL . "/setting/editCompanySettings#look");
             }
 
             $companySettings = array(
-                "logo" => $_SESSION["companysettings.logoPath"],
-                "primarycolor" => $_SESSION["companysettings.primarycolor"],
-                "secondarycolor" => $_SESSION["companysettings.secondarycolor"],
+                "logo" => $_SESSION["companysettings.logoPath"] ?? '',
+                "primarycolor" => $_SESSION['companysettings.primarycolor'] ?? '',
+                "secondarycolor" => $_SESSION["companysettings.secondarycolor"] ?? '',
                 "name" => $_SESSION["companysettings.sitename"],
                 "language" => $_SESSION["companysettings.language"],
-                "telemetryActive" => false,
+                "telemetryActive" => true,
                 "messageFrequency" => '',
             );
 
@@ -117,12 +114,11 @@ namespace Leantime\Domain\Setting\Controllers {
 
             $apiKeys = $this->APIService->getAPIKeys();
 
-
             $this->tpl->assign("apiKeys", $apiKeys);
             $this->tpl->assign("languageList", $this->language->getLanguageList());
             $this->tpl->assign("companySettings", $companySettings);
 
-            $this->tpl->display('setting.editCompanySettings');
+            return $this->tpl->display('setting.editCompanySettings');
         }
 
         /**
@@ -133,7 +129,6 @@ namespace Leantime\Domain\Setting\Controllers {
          */
         public function post($params)
         {
-
             //Look & feel updates
             if (isset($params['primarycolor']) && $params['primarycolor'] != "") {
                 $this->settingsRepo->saveSetting("companysettings.primarycolor", htmlentities(addslashes($params['primarycolor'])));
@@ -146,7 +141,6 @@ namespace Leantime\Domain\Setting\Controllers {
                     $this->settingsRepo->deleteSetting("companysettings.mainColor");
                 }
 
-
                 $_SESSION["companysettings.primarycolor"] = htmlentities(addslashes($params['primarycolor']));
                 $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));
 
@@ -157,8 +151,6 @@ namespace Leantime\Domain\Setting\Controllers {
             if (isset($params['name']) && $params['name'] != "" && isset($params['language']) && $params['language'] != "") {
                 $this->settingsRepo->saveSetting("companysettings.sitename", htmlspecialchars(addslashes($params['name'])));
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
-
-
                 $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
 
                 $_SESSION["companysettings.sitename"] = htmlspecialchars(addslashes($params['name']));
@@ -174,7 +166,7 @@ namespace Leantime\Domain\Setting\Controllers {
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
             }
 
-            $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings");
+            return Frontcontroller::redirect(BASE_URL . "/setting/editCompanySettings");
         }
 
         /**
@@ -197,5 +189,4 @@ namespace Leantime\Domain\Setting\Controllers {
         {
         }
     }
-
 }

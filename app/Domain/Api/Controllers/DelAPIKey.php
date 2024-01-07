@@ -3,10 +3,11 @@
 namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Domain\Api\Services\Api;
+    use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
     /**
      *
@@ -50,7 +51,7 @@ namespace Leantime\Domain\Api\Controllers {
 
                         $this->tpl->setNotification($this->language->__("notifications.key_deleted"), "success", "apikey_deleted");
 
-                        $this->tpl->redirect(BASE_URL . "/setting/editCompanySettings/#apiKeys");
+                        return Frontcontroller::redirect(BASE_URL . "/setting/editCompanySettings/#apiKeys");
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.form_token_incorrect"), 'error');
                     }
@@ -64,9 +65,9 @@ namespace Leantime\Domain\Api\Controllers {
                 //Assign variables
                 $this->tpl->assign('user', $user);
 
-                $this->tpl->display('api.delKey');
+                return $this->tpl->display('api.delKey');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

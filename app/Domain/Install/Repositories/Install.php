@@ -2,11 +2,9 @@
 
 namespace Leantime\Domain\Install\Repositories {
 
-    use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
-    use Leantime\Core\AppSettings;
-    use Leantime\Core\Environment;
     use Leantime\Domain\Setting\Repositories\Setting;
+    use Leantime\Core\Environment;
     use PDO;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use PDOException;
@@ -96,6 +94,8 @@ namespace Leantime\Domain\Install\Repositories {
             20120,
             20121,
             20122,
+            20401,
+            20402,
             20405,
             20406,
             20407,
@@ -245,8 +245,6 @@ namespace Leantime\Domain\Install\Repositories {
                 error_log($e);
                 return false;
             }
-
-            return "Could not initialize transaction";
         }
 
         /**
@@ -732,6 +730,8 @@ namespace Leantime\Domain\Install\Repositories {
                   `foldername` VARCHAR(45),
                   `homepage` VARCHAR(255) NULL,
                   `authors` VARCHAR(255) NULL,
+                  `license` TEXT NULL DEFAULT NULL,
+                  `format` VARCHAR(45) NULL DEFAULT NULL,
                   PRIMARY KEY (`id`)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -1734,6 +1734,57 @@ namespace Leantime\Domain\Install\Repositories {
         }
 
         /**
+         * @return bool|array
+         */
+        public function update_sql_20401(): bool|array
+        {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_plugins`
+                ADD COLUMN `license` TEXT NULL DEFAULT NULL,
+                ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, $statement . " Failed:" . $e->getMessage());
+                }
+            }
+
+            if (count($errors) > 0) {
+                return $errors;
+            } else {
+                return true;
+            }
+        }
+
+        public function update_sql_20402(): bool|array
+        {
+            $errors = [];
+
+            $sql = [
+                "ALTER TABLE `zp_plugins`
+                ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                    array_push($errors, "$statement Failed: {$e->getMessage()}");
+                }
+            }
+
+            return count($errors) ? $errors : true;
+        }
+
+        /**
          * Install script did not include medium text updates. Run again
          * @return bool|array
          */
@@ -1775,7 +1826,8 @@ namespace Leantime\Domain\Install\Repositories {
 
             $errors = array();
 
-            $sql = ["ALTER TABLE `zp_canvas_items`
+            $sql = [
+            "ALTER TABLE `zp_canvas_items`
                     CHANGE COLUMN `data1` `data1` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data2` `data2` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data3` `data3` MEDIUMTEXT NULL DEFAULT NULL,
@@ -1799,7 +1851,8 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-        public function update_sql_20407(): bool|array {
+        public function update_sql_20407(): bool|array
+        {
 
             $errors = array();
 
@@ -1818,7 +1871,7 @@ namespace Leantime\Domain\Install\Repositories {
                       `createdBy` INT NULL,
                       PRIMARY KEY (`id`)
                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
-                "  ALTER TABLE `zp_integration`
+                "ALTER TABLE `zp_integration`
                     ADD COLUMN `lastSync` DATETIME NULL DEFAULT NULL",
             ];
 
@@ -1836,8 +1889,7 @@ namespace Leantime\Domain\Install\Repositories {
             } else {
                 return true;
             }
-
         }
-    }
 
+    }
 }

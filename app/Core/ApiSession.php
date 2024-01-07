@@ -2,16 +2,15 @@
 
 namespace Leantime\Core;
 
-use Error;
 use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Subscriber\Oauth\Oauth1;
-use kamermans\OAuth2\OAuth2Middleware;
-use kamermans\OAuth2\GrantType\ClientCredentials;
-use kamermans\OAuth2\GrantType\RefreshToken;
 use kamermans\OAuth2\GrantType\AuthorizationCode;
-use kamermans\OAuth2\GrantType\PasswordCredentials;
+use kamermans\OAuth2\GrantType\ClientCredentials;
 use kamermans\OAuth2\GrantType\GrantTypeInterface;
+use kamermans\OAuth2\GrantType\PasswordCredentials;
+use kamermans\OAuth2\GrantType\RefreshToken;
+use kamermans\OAuth2\OAuth2Middleware;
 
 /**
  * ApiSession - Creates a Guzzle Client with a connection
@@ -66,7 +65,7 @@ class ApiSession
     ): Client {
         return new Client(
             array_merge_recursive(
-                $requestedDefaults,
+                $requestDefaults,
                 [
                     'base_uri' => $baseUri,
                     'handler' => $stack,
@@ -320,7 +319,7 @@ class ApiSession
                 $requestDefaults,
                 [
                     'base_uri' => $baseUri,
-                    'headers' => ['Authorization' => "Bearer $token"],
+                    'headers' => ['Authorization' => "Bearer ".$creds['token'].""],
                 ]
             )
         );

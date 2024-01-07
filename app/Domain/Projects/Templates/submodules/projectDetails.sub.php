@@ -28,7 +28,8 @@ $menuTypes = $tpl->get('menuTypes');
             <div class="row">
                 <div class="col-md-12">
                     <p>
-                        <?php echo $tpl->__('label.accomplish'); ?><br />
+                        <?php echo $tpl->__('label.accomplish'); ?>
+                        <br /><br />
                     </p>
                     <textarea name="details" id="details" class="complexEditor" rows="5" cols="50"><?php echo htmlentities($project['details']) ?></textarea>
                 </div>
@@ -120,13 +121,13 @@ $menuTypes = $tpl->get('menuTypes');
                         <label class="control-label"><?php echo $tpl->__('label.project_start'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
-                                   value="<?php echo $tpl->getFormattedDateString($project['start']); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                   value="<?php echo format($project['start'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                         </div>
                         <label class="control-label"><?php echo $tpl->__('label.project_end'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
-                                   value="<?php echo $tpl->getFormattedDateString($project['end']); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                                   value="<?php echo format($project['end'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                         </div>
                     </div>

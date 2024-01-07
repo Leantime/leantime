@@ -4,6 +4,7 @@ namespace Leantime\Domain\Errors\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -11,14 +12,12 @@ namespace Leantime\Domain\Errors\Controllers {
     class Error404 extends Controller
     {
         /**
-         * @return void
+         * @return Response
          * @throws \Exception
          */
-        public function run(): void
+        public function run(): Response
         {
-
-            FrontcontrollerCore::setResponseCode(404);
-            $this->tpl->display('errors.error404');
+            return $this->tpl->display('errors.error404', layout:"error", responseCode: 404);
         }
     }
 

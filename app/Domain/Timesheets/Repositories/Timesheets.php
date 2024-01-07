@@ -79,7 +79,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
                     LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
                     WHERE
-                        ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateFrom)) AND (TO_DAYS(zp_timesheets.workDate) <= (TO_DAYS(:dateTo))))";
+                        ((TO_SECONDS(zp_timesheets.workDate) >= TO_SECONDS(:dateFrom)) AND (TO_SECONDS(zp_timesheets.workDate) <= (TO_SECONDS(:dateTo))))";
 
             if ($id > 0) {
                 $query .= " AND (zp_tickets.projectId = :projectId)";

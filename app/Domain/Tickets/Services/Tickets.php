@@ -4,9 +4,12 @@ namespace Leantime\Domain\Tickets\Services {
 
     use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Service;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Environment as EnvironmentCore;
+    use Leantime\Domain\Goalcanvas\Services\Goalcanvas;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -16,12 +19,15 @@ namespace Leantime\Domain\Tickets\Services {
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Models\Tickets as TicketModel;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
+    use Leantime\Domain\Tickets\Repositories\TicketHistory as TicketHistory;
 
     /**
      *
      */
     class Tickets
     {
+
+        Use Eventhelpers;
         private TemplateCore $tpl;
         private LanguageCore $language;
         private EnvironmentCore $config;
@@ -32,6 +38,10 @@ namespace Leantime\Domain\Tickets\Services {
         private ProjectService $projectService;
         private TimesheetService $timesheetService;
         private SprintService $sprintService;
+
+        private TicketHistory $ticketHistoryRepo;
+
+        private Goalcanvas $goalcanvasService;
 
         /**
          * @param TemplateCore        $tpl
@@ -55,7 +65,9 @@ namespace Leantime\Domain\Tickets\Services {
             SettingRepository $settingsRepo,
             ProjectService $projectService,
             TimesheetService $timesheetService,
-            SprintService $sprintService
+            SprintService $sprintService,
+            TicketHistory $ticketHistoryRepo,
+            Goalcanvas $goalcanvasService
         ) {
             $this->tpl = $tpl;
             $this->language = $language;
@@ -67,6 +79,8 @@ namespace Leantime\Domain\Tickets\Services {
             $this->projectService = $projectService;
             $this->timesheetService = $timesheetService;
             $this->sprintService = $sprintService;
+            $this->ticketHistoryRepo = $ticketHistoryRepo;
+            $this->goalcanvasService = $goalcanvasService;
         }
 
         /**
@@ -352,15 +366,37 @@ namespace Leantime\Domain\Tickets\Services {
             return $setFilters;
         }
 
-
         /**
          * @param $searchCriteria
          * @return array|bool
          */
-        public function getAll($searchCriteria): bool|array
+        public function getAll(?array $searchCriteria = null): array|false
+        {
+            return $this->ticketRepository->getAllBySearchCriteria(
+                $searchCriteria ?? [],
+                $searchCriteria['orderBy'] ?? 'date'
+            );
+        }
+
+        public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId)
         {
 
-            return $this->ticketRepository->getAllBySearchCriteria($searchCriteria, $searchCriteria['orderBy'] ?? 'date');
+            $totalTasks = $this->ticketRepository->getScheduledTasks($dateFrom, $dateTo, $userId);
+
+            $statusLabels = [];
+            $doneTasks = [];
+
+            foreach ($totalTasks as $ticket) {
+                if (!isset($statusLabels[$ticket['projectId']])) {
+                    $statusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                }
+
+                if (isset($statusLabels[$ticket['projectId']][$ticket['status']]) && $statusLabels[$ticket['projectId']][$ticket['status']]['statusType'] == "DONE") {
+                    $doneTasks[] = $ticket;
+                }
+            }
+
+            return array("totalTasks" => $totalTasks, "doneTasks" => $doneTasks);
         }
 
 
@@ -518,19 +554,6 @@ namespace Leantime\Domain\Tickets\Services {
 
             //Check if user is allowed to see ticket
             if ($ticket && $this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
-                //Fix date conversion
-                $ticket->date = $this->language->getFormattedDateString($ticket->date);
-
-                $ticket->timeToFinish = $this->language->extractTime($ticket->dateToFinish);
-                $ticket->dateToFinish = $this->language->getFormattedDateString($ticket->dateToFinish);
-
-                $ticket->timeFrom = $this->language->extractTime($ticket->editFrom);
-                $ticket->editFrom = $this->language->getFormattedDateString($ticket->editFrom);
-
-                $ticket->timeTo = $this->language->extractTime($ticket->editTo);
-                $ticket->editTo = $this->language->getFormattedDateString($ticket->editTo);
-
-
                 return $ticket;
             }
 
@@ -573,23 +596,37 @@ namespace Leantime\Domain\Tickets\Services {
                             $tickets["later"]["tickets"][] = $row;
                         } else {
                             $tickets['later'] = array(
-                                "labelName" => "subtitles.todos_later",
+                                "labelName" => "subtitles.due_later",
                                 "tickets" => array($row),
+                                "order" => 3,
                             );
                         }
                     } else {
+                        $today = new DateTime();
                         $date = new DateTime($row['dateToFinish']);
 
                         $nextFriday = strtotime('friday this week');
                         $nextFridayDateTime = new DateTime();
                         $nextFridayDateTime->setTimestamp($nextFriday);
-                        if ($date <= $nextFridayDateTime) {
+
+                        if ($date <= $nextFridayDateTime && $date >= $today) {
                             if (isset($tickets["thisWeek"]["tickets"])) {
                                 $tickets["thisWeek"]["tickets"][] = $row;
                             } else {
                                 $tickets['thisWeek'] = array(
-                                    "labelName" => "subtitles.todos_this_week",
+                                    "labelName" => "subtitles.due_this_week",
                                     "tickets" => array($row),
+                                    "order" => 2,
+                                );
+                            }
+                        } else if ($date <= $today) {
+                            if (isset($tickets["overdue"]["tickets"])) {
+                                $tickets["overdue"]["tickets"][] = $row;
+                            } else {
+                                $tickets['overdue'] = array(
+                                    "labelName" => "subtitles.overdue",
+                                    "tickets" => array($row),
+                                    "order" => 1,
                                 );
                             }
                         } else {
@@ -597,14 +634,17 @@ namespace Leantime\Domain\Tickets\Services {
                                 $tickets["later"]["tickets"][] = $row;
                             } else {
                                 $tickets['later'] = array(
-                                    "labelName" => "subtitles.todos_later",
+                                    "labelName" => "subtitles.due_later",
                                     "tickets" => array($row),
+                                    "order" => 3,
                                 );
                             }
                         }
                     }
                 }
             }
+
+            //$ticketsSorted = array_sort($tickets, 'order');
 
             return $tickets;
         }
@@ -639,8 +679,12 @@ namespace Leantime\Domain\Tickets\Services {
             $tickets = array();
 
             foreach ($allTickets as $row) {
+
                 //Only include todos that are not done
-                if ($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE") {
+                if (isset( $statusLabels[$row['projectId']]) &&
+                    isset( $statusLabels[$row['projectId']][$row['status']]) &&
+                    $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE") {
+
                     if (isset($tickets[$row['projectId']])) {
                         $tickets[$row['projectId']]['tickets'][] = $row;
                     } else {
@@ -721,6 +765,89 @@ namespace Leantime\Domain\Tickets\Services {
             return $milestones;
         }
 
+        public function getRecentlyCompletedTicketsByUser(int $userId, ?int $projectId = null): array
+        {
+
+            //Get status labels
+            $statusLabelsByProject = array();
+
+            if ($projectId === null) {
+                $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
+
+                if ($userProjects) {
+                    foreach ($userProjects as $project) {
+                        $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
+                    }
+                }
+            } else {
+                $statusLabelsByProject[$projectId] = $this->ticketRepository->getStateLabels($projectId);
+            }
+
+            //Get tickets recently set to done (history table)
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => '', "users" => $userId, "status" => "done", "sprint" => "", "limit" => null));
+            $myCompletedTasks = $this->getAll($searchCriteria);
+            $dateTime = new DateTime();
+            $dateTime->modify('-1 week');
+
+            $doneTasks = [];
+            foreach ($myCompletedTasks as $ticket) {
+                $history = $this->ticketHistoryRepo->getRecentTicketHistory($dateTime, $ticket['id']);
+
+                foreach ($history as $activity) {
+                    if (
+                        $activity['changeType'] == "status"
+                        && isset($statusLabelsByProject[$ticket['projectId']][$activity['changeValue']])
+                        && $statusLabelsByProject[$ticket['projectId']][$activity['changeValue']]['statusType'] == "DONE"
+                    ) {
+                        $doneTasks[] = $ticket;
+                    }
+                }
+            }
+
+            return $doneTasks;
+        }
+
+        public function goalsRelatedToWork(int $userId, $projectId = null)
+        {
+
+            $statusLabelsByProject = array();
+
+            if ($projectId === null) {
+                $userProjects = $this->projectService->getProjectsAssignedToUser($userId);
+
+                if ($userProjects) {
+                    foreach ($userProjects as $project) {
+                        $statusLabelsByProject[$project['id']] = $this->ticketRepository->getStateLabels($project['id']);
+                    }
+                }
+            } else {
+                $statusLabelsByProject[$projectId] = $this->ticketRepository->getStateLabels($projectId);
+            }
+
+            //Get tickets recently set to done (history table)
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => '', "users" => $userId, "status" => "not_done", "sprint" => "", "limit" => null));
+            $myTask = $this->getAll($searchCriteria);
+
+            $contributedToGoal = [];
+
+            foreach ($myTask as $task) {
+                if ($task['milestoneid'] !== '' && $task['milestoneid'] > 0) {
+                    $goals = $this->goalcanvasService->getGoalsByMilestone($task['milestoneid']);
+                    foreach ($goals as $goal) {
+                        if (!isset($contributedToGoal[$goal['id']])) {
+                            $contributedToGoal[$goal['id']] = $goal;
+                        }
+                    }
+                }
+            }
+
+            return $contributedToGoal;
+        }
+
+
+
         /**
          * @param int $ticketId
          * @return array|false
@@ -759,8 +886,8 @@ namespace Leantime\Domain\Tickets\Services {
                 'acceptanceCriteria' => '',
                 'priority' => '',
                 'tags' => '',
-                'editFrom' => '',
-                'editTo' => '',
+                'editFrom' => $params['editFrom'] ?? '',
+                'editTo' => $params['editTo'] ?? '',
                 'milestoneid' => isset($params['milestone']) ? (int) $params['milestone'] : "",
                 'dependingTicketId' => '',
             );
@@ -769,6 +896,8 @@ namespace Leantime\Domain\Tickets\Services {
                 $error = array("status" => "error", "message" => "Headline Missing");
                 return $error;
             }
+
+            $values = $this->prepareTicketDates($values);
 
             $result = $this->ticketRepository->addTicket($values);
 
@@ -813,7 +942,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $_SESSION['currentProject'],
                 'editorId' =>  $params['editorId'] ?? $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date("Y-m-d H:i:s"),
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => "",
                 'status' => 3,
                 'storypoints' => '',
@@ -825,9 +954,11 @@ namespace Leantime\Domain\Tickets\Services {
                 'milestoneid' => $params['dependentMilestone'] ?? '',
                 'acceptanceCriteria' => '',
                 'tags' => $params['tags'],
-                'editFrom' => $this->language->getISODateString($params['editFrom']),
-                'editTo' => $this->language->getISODateString($params['editTo']),
+                'editFrom' => $params['editFrom'] ?? '',
+                'editTo' => $params['editTo'] ?? ''
             );
+
+            $values = $this->prepareTicketDates($values);
 
             if ($values['headline'] == "") {
                 $error = array("status" => "error", "message" => "Headline Missing");
@@ -853,7 +984,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'] ,
                 'editorId' => $values['editorId'] ?? "",
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date('Y-m-d  H:i:s') ?? "",
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
                 'status' => (int) $values['status'] ?? 3,
@@ -879,30 +1010,8 @@ namespace Leantime\Domain\Tickets\Services {
             if ($values['headline'] === '') {
                 return array("msg" => "notifications.ticket_save_error_no_headline", "type" => "error");
             } else {
-                //Prepare dates for db
-                if ($values['dateToFinish'] != "" && $values['dateToFinish'] != null) {
-                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
 
-                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'] . ":00", $values['dateToFinish']);
-                    }
-                }
-
-                if ($values['editFrom'] != "" && $values['editFrom'] != null) {
-                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
-
-                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
-                    }
-                }
-
-                if ($values['editTo'] != "" && $values['editTo'] != null) {
-                    $values['editTo'] = $this->language->getISODateString($values['editTo']);
-
-                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
-                    }
-                }
+                $values = $this->prepareTicketDates($values);
 
                 //Update Ticket
                 $addTicketResponse = $this->ticketRepository->addTicket($values);
@@ -932,23 +1041,42 @@ namespace Leantime\Domain\Tickets\Services {
         }
 
         //Update
+
         /**
-         * @param $id
-         * @param $values
-         * @return array|bool
-         * @throws BindingResolutionException
-         */
-        public function updateTicket($id, $values): array|bool
+         * Updates a ticket with the given values.
+         *
+         * @param array $values The array containing the ticket values to update.
+         *                      Accepted keys are:
+         *                      - 'id' => The ticket ID.
+         *                      - 'headline' => The ticket headline. (optional)
+         *                      - 'type' => The ticket type. (optional)
+         *                      - 'description' => The ticket description. (optional)
+         *                      - 'projectId' => The project ID. Defaults to $_SESSION['currentProject']. (optional)
+         *                      - 'editorId' => The editor ID. (optional)
+         *                      - 'date' => The ticket date. Defaults to the current date and time. (optional)
+         *                      - 'dateToFinish' => The ticket deadline date. (optional)
+         *                      - 'timeToFinish' => The ticket deadline time. (optional)
+         *                      - 'status' => The ticket status. (optional)
+         *                      - 'planHours' => The planned hours for the ticket. (optional)
+         *                      - 'tags' => The tags for the ticket. (optional)
+         *                      - 'sprint' => The sprint for the ticket. (optional)
+         *                      - 'storypoints' => The story points for the ticket. (optional)
+         *                      - 'hourRemaining' => The remaining hours for the ticket. (optional)
+         *                      - 'priority' => The ticket priority. (optional)
+         *                      - 'acceptanceCriteria' => The ticket acceptance criteria. (optional)
+         *                      - 'editFrom' => The ticket edit 'from' date-time. (optional)
+         *                      - 'time*/
+        public function updateTicket($values): array|bool
         {
 
             $values = array(
-                'id' => $id,
+                'id' => $values['id'],
                 'headline' => $values['headline'] ?? "",
                 'type' => $values['type'] ?? "",
                 'description' => $values['description'] ?? "",
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'] ?? "",
-                'date' => date('Y-m-d  H:i:s'),
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
                 'status' => $values['status'] ?? "",
@@ -974,37 +1102,14 @@ namespace Leantime\Domain\Tickets\Services {
             if ($values['headline'] === '') {
                 return array("msg" => "notifications.ticket_save_error_no_headline", "type" => "error");
             } else {
-                //Prepare dates for db
-                if ($values['dateToFinish'] != "" && $values['dateToFinish'] != null) {
-                    $values['dateToFinish'] = $this->language->getISODateString($values['dateToFinish']);
 
-                    if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                        $values['dateToFinish'] = str_replace("00:00:00", $values['timeToFinish'] . ":00", $values['dateToFinish']);
-                    }
-                }
-
-                if ($values['editFrom'] != "" && $values['editFrom'] != null) {
-                    $values['editFrom'] = $this->language->getISODateString($values['editFrom']);
-
-                    if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                        $values['editFrom'] = str_replace("00:00:00", $values['timeFrom'] . ":00", $values['editFrom']);
-                    }
-                }
-
-                if ($values['editTo'] != "" && $values['editTo'] != null) {
-                    $values['editTo'] = $this->language->getISODateString($values['editTo']);
-
-                    if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                        $values['editTo'] = str_replace("00:00:00", $values['timeTo'] . ":00", $values['editTo']);
-                    }
-                }
+                $values = $this->prepareTicketDates($values);
 
                 //Update Ticket
-                if ($this->ticketRepository->updateTicket($values, $id) === true) {
-                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $values['headline']);
-                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $id;
+                if ($this->ticketRepository->updateTicket($values, $values['id']) === true) {
+                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $values['id'], $values['headline']);
+                    $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $values['id'];
                     $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $values['headline']);
-
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = array(
@@ -1025,6 +1130,8 @@ namespace Leantime\Domain\Tickets\Services {
                 }
             }
 
+
+
             return false;
         }
 
@@ -1033,14 +1140,44 @@ namespace Leantime\Domain\Tickets\Services {
          * @param $params
          * @return bool
          */
-        public function patchTicket($id, $params): bool
+        public function patch($id, $params): bool
         {
 
             //$params is an array of field names. Exclude id
             unset($params["id"]);
 
-            return $this->ticketRepository->patchTicket($id, $params);
+            $params = $this->prepareTicketDates($params);
+
+            $return = $this->ticketRepository->patchTicket($id, $params);
+
+            //Todo: create events and move notification logic to notification module
+            if(isset($params['status']) && $return) {
+
+                $ticket = $this->getTicket($id);
+                $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $ticket->headline);
+                $actual_link = BASE_URL . "/dashboard/home#/tickets/showTicket/" . $id;
+                $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
+
+                $notification = app()->make(NotificationModel::class);
+                $notification->url = array(
+                    "url" => $actual_link,
+                    "text" => $this->language->__("email_notifications.todo_update_cta"),
+                );
+                $notification->entity = $ticket;
+                $notification->module = "tickets";
+                $notification->projectId = $_SESSION['currentProject'];
+                $notification->subject = $subject;
+                $notification->authorId = $_SESSION['userdata']['id'];
+                $notification->message = $message;
+
+                $this->projectService->notifyProjectUsers($notification);
+
+            }
+
+            return $return;
         }
+
+
 
         /**
          * moveTicket - Moves a ticket from one project to another. Milestone children will be moved as well
@@ -1061,21 +1198,18 @@ namespace Leantime\Domain\Tickets\Services {
                     $milestoneTickets = $this->getAll(array("milestone" => $ticket->id));
                     //Update child todos
                     foreach ($milestoneTickets as $childTicket) {
-                        $this->patchTicket($childTicket["id"], ["projectId" => $projectId, "sprint" => ""]);
+                        $this->patch($childTicket["id"], ["projectId" => $projectId, "sprint" => ""]);
                     }
                 }
 
                 //Update ticket
-                return $this->patchTicket($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => "", 'milestoneid' => '']);
+                return $this->patch($ticket->id, ["projectId" => $projectId, "sprint" => "", "dependingTicketId" => "", 'milestoneid' => '']);
             }
 
             return false;
         }
 
-        /**
-         * @param $params
-         * @return bool|string[]
-         */
+
         /**
          * @param $params
          * @return bool|string[]
@@ -1090,7 +1224,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $_SESSION['currentProject'],
                 'editorId' => $params['editorId'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date("Y-m-d H:i:s"),
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
                 'dateToFinish' => "",
                 'status' => $params['status'],
                 'storypoints' => '',
@@ -1102,14 +1236,16 @@ namespace Leantime\Domain\Tickets\Services {
                 'dependingTicketId' => '',
                 'milestoneid' => $params['dependentMilestone'],
                 'tags' => $params['tags'],
-                'editFrom' => $this->language->getISODateString($params['editFrom']),
-                'editTo' => $this->language->getISODateString($params['editTo']),
+                'editFrom' => $params['editFrom'] ?? '',
+                'editTo' => $params['editTo'] ?? ''
             );
 
             if ($values['headline'] == "") {
                 $error = array("status" => "error", "message" => "Headline Missing");
                 return $error;
             }
+
+            $values = $this->prepareTicketDates($values);
 
             //$params is an array of field names. Exclude id
             return $this->ticketRepository->updateTicket($values, $params["id"]);
@@ -1123,7 +1259,7 @@ namespace Leantime\Domain\Tickets\Services {
         public function upsertSubtask($values, $parentTicket): bool
         {
 
-            $subtaskId = $values['subtaskId'];
+            $subtaskId = $values['subtaskId'] ?? 'new';
 
             $values = array(
                 'headline' => $values['headline'],
@@ -1132,21 +1268,23 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => date("Y-m-d H:i:s"),
-                'dateToFinish' => "",
+                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
+                'dateToFinish' => $values['dateToFinish'] ?? '',
                 'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
-                'storypoints' => "",
+                'storypoints' => $values['storypoints'] ?? '',
                 'hourRemaining' => $values['hourRemaining'] ?? 0,
                 'planHours' => $values['planHours'] ?? 0,
                 'sprint' => "",
                 'acceptanceCriteria' => "",
                 'tags' => "",
-                'editFrom' => "",
-                'editTo' => "",
+                'editFrom' => $values['editFrom'] ?? '',
+                'editTo' => $values['editTo'] ?? '',
                 'dependingTicketId' => $parentTicket->id,
                 'milestoneid' => $parentTicket->milestoneid,
             );
+
+            $values = $this->prepareTicketDates($values);
 
             if ($subtaskId == "new" || $subtaskId == "") {
                 //New Ticket
@@ -1178,6 +1316,8 @@ namespace Leantime\Domain\Tickets\Services {
                     return false;
                 }
             }
+
+            return true;
         }
 
         /**
@@ -1247,7 +1387,7 @@ namespace Leantime\Domain\Tickets\Services {
          * @return bool|string[]
          * @throws BindingResolutionException
          */
-        public function deleteTicket($id): array|bool
+        public function delete($id): array|bool
         {
 
             $ticket = $this->getTicket($id);
@@ -1305,11 +1445,27 @@ namespace Leantime\Domain\Tickets\Services {
                     return $_SESSION['lastFilterdTicketListView'];
                 }
 
-                if ($_SESSION['lastTicketView'] == "roadmap" && isset($_SESSION['lastFilterdTicketRoadmapView']) && $_SESSION['lastFilterdTicketRoadmapView'] != "") {
+                return $url;
+            } else {
+                return $url;
+            }
+        }
+
+        public function getLastTimelineViewUrl(): mixed
+        {
+
+            $url = BASE_URL . "/tickets/roadmap";
+
+            if (isset($_SESSION['lastMilestoneView']) && $_SESSION['lastMilestoneView'] != "") {
+                if ($_SESSION['lastMilestoneView'] == "table" && isset($_SESSION['lastFilterdMilestoneTableView']) && $_SESSION['lastFilterdMilestoneTableView'] != "") {
+                    return $_SESSION['lastFilterdMilestoneTableView'];
+                }
+
+                if ($_SESSION['lastMilestoneView'] == "roadmap" && isset($_SESSION['lastFilterdTicketRoadmapView']) && $_SESSION['lastFilterdTicketRoadmapView'] != "") {
                     return $_SESSION['lastFilterdTicketRoadmapView'];
                 }
 
-                if ($_SESSION['lastTicketView'] == "calendar" && isset($_SESSION['lastFilterdTicketCalendarView']) && $_SESSION['lastFilterdTicketCalendarView'] != "") {
+                if ($_SESSION['lastMilestoneView'] == "calendar" && isset($_SESSION['lastFilterdTicketCalendarView']) && $_SESSION['lastFilterdTicketCalendarView'] != "") {
                     return $_SESSION['lastFilterdTicketCalendarView'];
                 }
 
@@ -1547,6 +1703,115 @@ namespace Leantime\Domain\Tickets\Services {
                 'sortOptions' => $sortOptions,
                 'searchParams' => $searchUrlString,
             );
+        }
+
+        public function getToDoWidgetAssignments($params)
+        {
+
+            $projectFilter = "";
+            if (isset($_SESSION['userHomeProjectFilter'])) {
+                $projectFilter = $_SESSION['userHomeProjectFilter'];
+            }
+
+            if (isset($params['projectFilter'])) {
+                $projectFilter = $params['projectFilter'];
+                $_SESSION['userHomeProjectFilter'] = $projectFilter;
+            }
+
+            $groupBy = "";
+            if (isset($_SESSION['userHomeGroupBy'])) {
+                $groupBy = $_SESSION['userHomeGroupBy'];
+            }
+
+            if (isset($params['groupBy'])) {
+                $groupBy = $params['groupBy'];
+                $_SESSION['userHomeGroupBy'] = $groupBy;
+            }
+
+            if ($groupBy == "") {
+                $groupBy = "time";
+            }
+
+            if ($groupBy == "time") {
+                $tickets = $this->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
+            } elseif ($groupBy == "project") {
+                $tickets = $this->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
+            }
+
+            $onTheClock = $this->timesheetService->isClocked($_SESSION["userdata"]["id"]);
+            $effortLabels = $this->getEffortLabels();
+            $priorityLabels = $this->getPriorityLabels();
+            $ticketTypes = $this->getTicketTypes();
+            $statusLabels = $this->getAllStatusLabelsByUserId($_SESSION["userdata"]["id"]);
+
+            $milestoneArray = array();
+            foreach($tickets as $ticketGroup){
+                foreach($ticketGroup["tickets"] as $ticket) {
+                    if(isset($milestoneArray[$ticket["projectId"]])){
+                        continue;
+                    }else{
+                        $milestoneArray[$ticket["projectId"]] = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $ticket["projectId"]]);
+                    }
+                }
+            }
+
+
+
+
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+
+            $tickets = self::dispatch_filter("myTodoWidgetTasks", $tickets);
+
+            return array(
+                'tickets' => $tickets,
+                'onTheClock' => $onTheClock,
+                'efforts' => $effortLabels,
+                'priorities' => $priorityLabels,
+                'ticketTypes' =>  $ticketTypes,
+                'statusLabels' => $statusLabels,
+                'milestones' => $milestoneArray,
+                'allAssignedprojects' => $allAssignedprojects,
+                'projectFilter' => $projectFilter,
+                'groupBy' => $groupBy,
+            );
+        }
+
+        public function prepareTicketDates(&$values) {
+
+            //Prepare dates for db
+
+            if (!empty($values['dateToFinish'])) {
+
+                if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
+                    $values['dateToFinish'] = format($values['dateToFinish']." ".$values['timeToFinish'].":00")->isoDateTime();
+                    unset($values['timeToFinish']);
+                }else{
+                    $values['dateToFinish'] = format($values['dateToFinish'])->isoDateEnd();
+                }
+
+            }
+
+            if (!empty($values['editFrom'])) {
+
+                if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
+                    $values['editFrom'] = format($values['editFrom']." ".$values['timeFrom']."")->isoDateTime();
+                    unset($values['timeFrom']);
+                }else{
+                    $values['editFrom'] = format($values['editFrom'])->isoDateStart();
+                }
+            }
+
+            if (!empty($values['editTo'])) {
+
+                if (isset($values['timeTo']) && $values['timeTo'] != null) {
+                    $values['editTo'] = format($values['editTo']." ".$values['timeTo']."")->isoDateTime();
+                    unset($values['timeTo']);
+                }else{
+                    $values['editTo'] = format($values['editTo'])->isoDateEnd();
+                }
+            }
+
+            return $values;
         }
     }
 

@@ -17,7 +17,7 @@ leantime.projectsController = (function () {
 
         jQuery(".projectDateFrom, .projectDateTo").datepicker(
             {
-                dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -337,26 +337,22 @@ leantime.projectsController = (function () {
                                 let entityId = 0;
                                 let entityType = "";
 
-                                if(idParts.length > 1){
-                                    if(idParts[0] == "ticket") {
+                                if (idParts.length > 1) {
+                                    if (idParts[0] == "ticket") {
                                         entityId = idParts[1];
                                         entityType = "ticket"
-                                    }else  if(idParts[0] == "pgm") {
+                                    } else if (idParts[0] == "pgm") {
                                         entityId = idParts[1];
                                         entityType = "project"
                                     }
-                                }else{
+                                } else {
                                     entityId = idParts;
                                 }
 
 
-                                if(entityType == "ticket") {
-
+                                if (entityType == "ticket") {
                                     leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, task._index);
-
-                                }else{
-
-
+                                } else {
                                     jQuery.ajax(
                                         {
                                             type: 'PATCH',
@@ -588,6 +584,33 @@ leantime.projectsController = (function () {
 
     };
 
+    var favoriteProject = function(id, element) {
+
+        jQuery(element).addClass("go");
+        if (jQuery(element).hasClass("isFavorite")) {
+            leantime.reactionsController.removeReaction(
+                'project',
+                id,
+            'favorite',
+                function() {
+                    jQuery(element).find("i").removeClass("fa-solid").addClass("fa-regular");
+                    jQuery(element).removeClass("isFavorite");
+                }
+        );
+        } else {
+            leantime.reactionsController.addReactions(
+                'project',
+                id,
+            'favorite',
+                function() {
+                    jQuery(element).find("i").removeClass("fa-regular").addClass("fa-solid");
+                    jQuery(element).addClass("isFavorite");
+                }
+            );
+        }
+
+    }
+
     // Make public what you want to have public, everything else is private
     return {
         initDates:initDates,
@@ -604,7 +627,8 @@ leantime.projectsController = (function () {
         readURL:readURL,
         initGanttChart:initGanttChart,
         setUpKanbanColumns:setUpKanbanColumns,
-        initProjectsKanban:initProjectsKanban
+        initProjectsKanban:initProjectsKanban,
+        favoriteProject:favoriteProject
 
     };
 })();

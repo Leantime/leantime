@@ -12,8 +12,8 @@ if ($remainingHours < 0) {
 $currentPay = $tpl->get('userHours') * $userInfo['wage'];
 ?>
 
-        <div class="row-fluid">
-            <div class="span6">
+        <div class="row">
+            <div class="col-md-6">
 
 
                 <h4 class="widgettitle title-light"><span class="fa fa-clock-o"></span><?php echo $tpl->__('headline.add_time_entry', false); ?></h4>
@@ -51,7 +51,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                 </form>
 
             </div>
-            <div class="span6">
+            <div class="col-md-6">
                 <h4 class="widgettitle title-light"><span class="fa fa-bar-chart"></span><?php echo $tpl->__('subtitles.logged_hours_chart'); ?></h4>
 
                 <br />

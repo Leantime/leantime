@@ -45,9 +45,9 @@ if (str_contains($formUrl, '?delComment=')) {
                          style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                     <div class="right"><?php printf(
                         $tpl->__('text.written_on'),
-                        $tpl->getFormattedDateString($row['date']),
-                        $tpl->getFormattedTimeString($row['date'])
-                    ); ?></div>
+                        format($row['date'])->date(),
+                        format($row['date'])->time()
+                                       ); ?></div>
                     <strong>
                     <?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
                     </strong><br/>
@@ -86,8 +86,8 @@ if (str_contains($formUrl, '?delComment=')) {
                                 <div class="right">
                                     <?php printf(
                                         $tpl->__('text.written_on'),
-                                        $tpl->getFormattedDateString($comment['date']),
-                                        $tpl->getFormattedTimeString($comment['date'])
+                                        format($comment['date'])->date(),
+                                        format($comment['date'])->time()
                                     ); ?>
                                 </div>
                                 <strong>

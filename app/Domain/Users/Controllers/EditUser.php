@@ -76,13 +76,13 @@ namespace Leantime\Domain\Users\Controllers {
 
                 );
 
-                if(isset($_GET['resendInvite']) && $row !== false) {
-
-                    if(!isset($_SESSION['lastInvite.'.$values['id']]) || $_SESSION['lastInvite.'.$values['id']] < time() - 240) {
-                        $_SESSION['lastInvite.'.$values['id']] = time();
+                if (isset($_GET['resendInvite']) && $row !== false) {
+                    if (!isset($_SESSION['lastInvite.' . $values['id']]) || $_SESSION['lastInvite.' . $values['id']] < time() - 240) {
+                        $_SESSION['lastInvite.' . $values['id']] = time();
                         $this->userService->sendUserInvite(
                             inviteCode: $values['pwReset'],
-                            user: $values['user']);
+                            user: $values['user']
+                        );
 
                         $this->tpl->setNotification($this->language->__("notification.invitation_sent"), 'success', "userinvitation_sent");
                     } else {
@@ -90,11 +90,9 @@ namespace Leantime\Domain\Users\Controllers {
                     }
 
                     Frontcontroller::redirect(BASE_URL . '/users/editUser/' . $values['id']);
-
                 }
 
                 if (isset($_POST['save'])) {
-
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
                         $values = array(
                             'id' =>  $row['id'],
@@ -189,9 +187,9 @@ namespace Leantime\Domain\Users\Controllers {
                 $this->tpl->assign('id', $id);
 
 
-                $this->tpl->display('users.editUser');
+                return $this->tpl->display('users.editUser');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403');
             }
         }
     }

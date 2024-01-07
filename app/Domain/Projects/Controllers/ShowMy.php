@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
+    use Leantime\Domain\Menu\Services\Menu;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Reports\Services\Reports as ReportService;
@@ -20,6 +21,8 @@ namespace Leantime\Domain\Projects\Controllers {
         private CommentService $commentService;
         private ClientRepository $clientRepo;
 
+        private Menu $menuService;
+
         /**
          * @param ProjectService   $projectService
          * @param TicketService    $ticketService
@@ -33,13 +36,15 @@ namespace Leantime\Domain\Projects\Controllers {
             TicketService $ticketService,
             ReportService $reportService,
             CommentService $commentService,
-            ClientRepository $clientRepo
+            ClientRepository $clientRepo,
+            Menu $menuService
         ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
             $this->reportService = $reportService;
             $this->commentService = $commentService;
             $this->clientRepo = $clientRepo;
+            $this->menuService = $menuService;
         }
 
         /**
@@ -47,7 +52,6 @@ namespace Leantime\Domain\Projects\Controllers {
          *
          * @access public
          */
-
         public function get()
         {
 
@@ -89,21 +93,23 @@ namespace Leantime\Domain\Projects\Controllers {
                             $projectResults[$i]['lastUpdate'] = false;
                         }
 
-                        $fullReport = $this->reportService->getRealtimeReport($project['id'], "");
+                        //$fullReport = $this->reportService->getRealtimeReport($project['id'], "");
 
-                        $projectResults[$i]['report'] = $fullReport;
+                        //$projectResults[$i]['report'] = $fullReport;
 
                         $i++;
                     }
                 }
             }
 
+            $projectTypeAvatars = $this->menuService->getProjectTypeAvatars();
+
+            $this->tpl->assign("projectTypeAvatars", $projectTypeAvatars);
             $this->tpl->assign("currentClientName", $currentClientName);
             $this->tpl->assign("currentClient", $clientId);
             $this->tpl->assign("clients", $clients);
             $this->tpl->assign("allProjects", $projectResults);
-            $this->tpl->display('projects.showMy');
+            return $this->tpl->display('projects.projectHub');
         }
     }
-
 }

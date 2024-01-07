@@ -34,9 +34,9 @@ foreach ($__data as $var => $val) {
                         </span>
                         <br />
 
-                        <?php if(isset($provider->button)) { ?>
+                        <?php if (isset($provider->button)) { ?>
                             <a href="<?=$provider->button["url"] ?>" class="btn btn-primary"><?=$provider->button["text"] ?></a>
-                       <?php }else{ ?>
+                        <?php } else { ?>
                             <a class="btn btn-primary" href="<?=BASE_URL?>/connector/integration?provider=<?=$provider->id ?>">Create New Integration</a>
                         <?php } ?>
 

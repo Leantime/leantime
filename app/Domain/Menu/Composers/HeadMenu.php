@@ -3,13 +3,15 @@
 namespace Leantime\Domain\Menu\Composers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Composer;
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Core\Theme;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Help\Services\Helper;
 use Leantime\Domain\Notifications\Services\Notifications as NotificationService;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Menu\Repositories\Menu as MenuRepo;
 
 /**
  *
@@ -25,6 +27,8 @@ class HeadMenu extends Composer
     private UserService $userService;
     private AuthService $authService;
     private Helper $helperService;
+    private Theme $themeCore;
+    private MenuRepo $menuRepo;
 
     /**
      * @param NotificationService $notificationService
@@ -38,18 +42,19 @@ class HeadMenu extends Composer
         TimesheetService $timesheets,
         UserService $userService,
         AuthService $authService,
-        Helper $helperService
+        Helper $helperService,
+        MenuRepo $menuRepo,
+        Theme $themeCore
     ): void {
         $this->notificationService = $notificationService;
         $this->timesheets = $timesheets;
         $this->userService = $userService;
         $this->authService = $authService;
         $this->helperService = $helperService;
+        $this->menuRepo = $menuRepo;
+        $this->themeCore = $themeCore;
     }
 
-    /**
-     * @return array
-     */
     /**
      * @return array
      * @throws BindingResolutionException
@@ -69,6 +74,8 @@ class HeadMenu extends Composer
         $totalMentionCount =
         $totalNewMentions =
         $totalNewNotifications = 0;
+
+        $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), "project");
 
         foreach ($notifications as $notif) {
             if ($notif['type'] == 'mention') {
@@ -96,12 +103,17 @@ class HeadMenu extends Composer
 
         $modal = $this->helperService->getHelperModalByRoute(FrontcontrollerCore::getCurrentRoute());
 
+        if (!isset($_SESSION['companysettings.logoPath'])) {
+            $_SESSION['companysettings.logoPath'] = $this->themeCore->getLogoUrl();
+        }
+
         return [
             'newNotificationCount' => $nCount,
             'totalNotificationCount' => $totalNotificationCount,
             'totalMentionCount' => $totalMentionCount,
             'totalNewMentions' => $totalNewMentions,
             'totalNewNotifications' => $totalNewNotifications,
+            'menuType' => $menuType,
             'notifications' => $notifications ?? [],
             'onTheClock' => isset($_SESSION['userdata']) ? $this->timesheets->isClocked($_SESSION["userdata"]["id"]) : false,
             'activePath' => FrontcontrollerCore::getCurrentRoute(),

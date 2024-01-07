@@ -68,11 +68,6 @@ if (isset($_GET['canvasId'])) {
                 <label><?=$tpl->__("label.what_is_your_goal") ?></label>
                 <input type="text" name="title" value="<?php $tpl->e($canvasItem['title']) ?>"  style="width:100%" /><br />
 
-
-
-
-
-
                 <?php if (!empty($relatesLabels)) { ?>
                     <label><?=$tpl->__("label.relates") ?></label>
                     <select name="relates"  style="width: 50%" id="relatesCanvas">
@@ -80,7 +75,7 @@ if (isset($_GET['canvasId'])) {
                 <?php } else { ?>
                     <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
                         $hiddenRelatesLabels
-                                                               ) ?>" />
+                    ) ?>" />
                 <?php } ?>
                 <br />
                 <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-ranking-star"></i> <?=$tpl->__("Metrics") ?></h4>
@@ -156,7 +151,7 @@ if (isset($_GET['canvasId'])) {
                 <?php } else { ?>
                     <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?? array_key_first(
                         $hiddenStatusLabels
-                                                              ) ?>" />
+                    ) ?>" />
                 <?php } ?>
 
 
@@ -169,10 +164,10 @@ if (isset($_GET['canvasId'])) {
                 <h4 class="widgettitle title-light" style="margin-bottom:0px;"><i class="fa-solid fa-calendar"></i> Dates</h4>
 
                 <label>Start Date</label>
-                <input type="text" autocomplete="off" value="<?=$tpl->getFormattedDateString($canvasItem['startDate']); ?>" name="startDate" class="dates"/>
+                <input type="text" autocomplete="off" value="<?=format($canvasItem['startDate'])->date(); ?>" name="startDate" class="startDate"/>
 
                 <label>End Date</label>
-                <input type="text" autocomplete="off" value="<?=$tpl->getFormattedDateString($canvasItem['endDate']); ?>" name="endDate" class="dates"/>
+                <input type="text" autocomplete="off" value="<?=format($canvasItem['endDate'])->date(); ?>" name="endDate" class="endDate"/>
 
 
                 <?php if ($id !== '') { ?>
@@ -289,7 +284,8 @@ if (isset($_GET['canvasId'])) {
 <script type="text/javascript">
     jQuery(document).ready(function(){
 
-        leantime.ticketsController.initDates();
+        leantime.dateController.initDateRangePicker(".startDate", ".endDate");
+
 
         <?php if (!empty($statusLabels)) { ?>
         new SlimSelect({

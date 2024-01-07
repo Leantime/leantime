@@ -18,6 +18,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Files\Services\Files as FileService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -90,7 +91,18 @@ namespace Leantime\Domain\Projects\Controllers {
             if (isset($_GET['id']) === true) {
                 $projectTypes = $this->projectService->getProjectTypes();
 
+
                 $id = (int)($_GET['id']);
+
+                $project = $this->projectRepo->getProject($id);
+
+                if (isset($project['id']) === false) {
+                    return FrontcontrollerCore::redirect(BASE_URL . "/error/error404");
+                }
+
+                if($_SESSION['currentProject'] != $project['id'] ){
+                    $this->projectService->changeCurrentSessionProject($project['id']);
+                }
 
                 //Mattermost integration
                 if (isset($_POST['mattermostSave'])) {
@@ -170,11 +182,9 @@ namespace Leantime\Domain\Projects\Controllers {
 
                 $_SESSION['lastPage'] = BASE_URL . "/projects/showProject/" . $id;
 
-                $project = $this->projectRepo->getProject($id);
 
-                if (isset($project['id']) === false) {
-                    FrontcontrollerCore::redirect(BASE_URL . "/error/error404");
-                }
+
+
 
                 $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
@@ -205,7 +215,6 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     $this->projectRepo->editProjectRelations($values, $id);
 
-                    $project = $this->projectRepo->getProject($id);
                     $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                     $this->tpl->setNotification($this->language->__("notifications.user_was_added_to_project"), "success");
@@ -225,8 +234,8 @@ namespace Leantime\Domain\Projects\Controllers {
                         'menuType' => $_POST['menuType'],
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
-                        'start' => $this->language->getISODateString($_POST['start']),
-                        'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
+                        'start' => format($_POST['start'])->isoDate(),
+                        'end' => $_POST['end'] ? format($_POST['end'])->isoDateEnd() : '',
                     );
 
                     if ($values['name'] !== '') {
@@ -235,7 +244,6 @@ namespace Leantime\Domain\Projects\Controllers {
                         } else {
                             $this->projectRepo->editProject($values, $id);
 
-                            $project = $this->projectRepo->getProject($id);
                             $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                             $this->tpl->setNotification($this->language->__("notification.project_saved"), 'success');
@@ -295,7 +303,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
+                        return Frontcontroller::redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
                     } else {
                         $this->tpl->setNotification('notifications.file_deleted_error', "success");
                     }
@@ -360,9 +368,9 @@ namespace Leantime\Domain\Projects\Controllers {
                 $this->tpl->assign('state', $this->projectRepo->state);
                 $this->tpl->assign('role', $_SESSION['userdata']['role']);
 
-                $this->tpl->display('projects.showProject');
+                return $this->tpl->display('projects.showProject');
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

@@ -43,14 +43,23 @@ namespace Leantime\Domain\Api\Controllers {
         public function post($params)
         {
             if ($params["action"] == "add") {
-                return $this->reactionsService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
+
+                if (! $this->reactionsService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
+                }
+
+                return $this->tpl->displayJson(['status' => 'ok']);
             }
 
             if ($params["action"] == "remove") {
-                return $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction']);
+                if (! $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
+                }
+
+                return $this->tpl->displayJson(['status' => 'ok']);
             }
 
-            return null;
+            return $this->tpl->displayJson(['error' => 'Bad Request'], 400);
         }
 
         /**
@@ -73,5 +82,4 @@ namespace Leantime\Domain\Api\Controllers {
         {
         }
     }
-
 }

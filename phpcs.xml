@@ -8,6 +8,8 @@
         <exclude name="Squiz.Commenting.FunctionComment.InvalidReturn" />
     </rule>
 
+    <arg name="bootstrap" value="vendor/zebra-north/phpcs-short-types/short-types.php"/>
+
     <rule ref="Modernize" />
     <rule ref="NormalizedArrays" />
 

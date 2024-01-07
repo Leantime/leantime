@@ -2,19 +2,19 @@
 
 namespace Leantime\Domain\Auth\Services {
 
-    use Exception;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Http\Exceptions\HttpResponseException;
+    use Leantime\Core\Environment as EnvironmentCore;
+    use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+    use Leantime\Core\Language as LanguageCore;
+    use Leantime\Core\Mailer as MailerCore;
+    use Leantime\Core\Session as SessionCore;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
     use Leantime\Domain\Ldap\Services\Ldap;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
-    use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Core\Environment as EnvironmentCore;
-    use Leantime\Core\Language as LanguageCore;
-    use Leantime\Core\Session as SessionCore;
-    use Leantime\Core\Mailer as MailerCore;
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Core\Eventhelpers;
     use RobThree\Auth\TwoFactorAuth;
 
     /**
@@ -221,7 +221,6 @@ namespace Leantime\Domain\Auth\Services {
             ////C: update users from the identity provider
             //Try Ldap
             if ($this->config->useLdap === true && extension_loaded('ldap')) {
-
                 $ldap = app()->make(Ldap::class);
 
                 if ($ldap->connect() && $ldap->bind($username, $password)) {
@@ -533,17 +532,15 @@ namespace Leantime\Domain\Auth\Services {
          * @param $role
          * @param bool $forceGlobalRoleCheck
          * @return bool
+         * @throws HttpResponseException
          */
         public static function authOrRedirect($role, bool $forceGlobalRoleCheck = false): bool
         {
-
             if (self::userHasRole($role, $forceGlobalRoleCheck)) {
                 return true;
-            } else {
-                FrontcontrollerCore::redirect(BASE_URL . "/errors/error403");
             }
 
-            return false;
+            throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL . "/errors/error403"));
         }
 
         /**
@@ -625,16 +622,16 @@ namespace Leantime\Domain\Auth\Services {
             $_SESSION['userdata']['twoFAVerified'] = true;
         }
 
-        private function logFailedLogin($user) {
+        private function logFailedLogin($user)
+        {
 
             $user = $user == "" ? "unknown" : $user;
             $date = new \DateTime();
             $date = $date->format("y:m:d h:i:s");
 
             $ip = $_SERVER['REMOTE_ADDR'];
-            $msg = "[".$date."][".$ip."] Login failed for user: ".$user."";
+            $msg = "[" . $date . "][" . $ip . "] Login failed for user: " . $user . "";
             error_log($msg);
-
         }
     }
 

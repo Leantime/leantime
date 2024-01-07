@@ -7,8 +7,9 @@ RUN apt update && apt install -f -y  libonig-dev libcurl4-openssl-dev libxml2-de
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev apt-utils vim curl sqlite3\
     openssl
 RUN pecl install xdebug
-RUN docker-php-ext-install mysqli pdo_mysql mbstring exif pcntl pdo bcmath opcache ldap
+RUN docker-php-ext-install mysqli pdo_mysql mbstring exif pcntl pdo bcmath opcache ldap zip
 
+RUN docker-php-ext-enable zip
 RUN docker-php-ext-configure gd --enable-gd --with-jpeg=/usr/include/ --with-freetype --with-jpeg
 RUN docker-php-ext-install gd
 RUN docker-php-ext-enable xdebug

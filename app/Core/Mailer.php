@@ -3,9 +3,8 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-use Leantime\Core\Eventhelpers;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Mail class - mails with php mail()
@@ -222,9 +221,9 @@ class Mailer
      * @param  $hookname
      * @param  $payload
      * @param array    $additional_params
-     * @return void
+     * @return mixed
      */
-    private function dispatchMailerFilter($hookname, $payload, array $additional_params = [])
+    private function dispatchMailerFilter($hookname, $payload, array $additional_params = []): mixed
     {
         return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
     }
@@ -236,10 +235,10 @@ class Mailer
      * @param  $hookname
      * @param  $payload
      * @param array    $additional_params
-     * @return void|mixed
+     * @return mixed
      * @throws BindingResolutionException
      */
-    private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = [])
+    private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = []): mixed
     {
         if ($type !== 'filter' && $type !== 'event') {
             return false;
@@ -263,6 +262,8 @@ class Mailer
         if ($type == 'filter') {
             return $filteredValue;
         }
+
+        return;
     }
 
     /**
@@ -289,7 +290,7 @@ class Mailer
         $this->mailAgent->Subject = $this->subject;
 
         if (str_contains($this->logo, 'images/logo.svg')) {
-            $this->logo = "/dist/images/logo.png";
+            $this->logo = "/dist/images/logo_blue.png";
         }
 
         $logoParts = parse_url($this->logo);
@@ -298,8 +299,13 @@ class Mailer
             //Logo is URL
             $inlineLogoContent = $this->logo;
         } else {
-            //Logo comes from local file system
-            $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
+            if(file_exists(ROOT . "" . $this->logo) && $this->logo != '' && is_file(ROOT . "" . $this->logo)) {
+                //Logo comes from local file system
+                $this->mailAgent->addEmbeddedImage(ROOT . "" . $this->logo, 'companylogo');
+            }else{
+                $this->mailAgent->addEmbeddedImage(ROOT . "/dist/images/logo_blue.png", 'companylogo');
+            }
+
             $inlineLogoContent = "cid:companylogo";
         }
 

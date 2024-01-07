@@ -37,7 +37,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                     <div class="col-md-12">
 
                             <h5 class="subtitle"><?=$tpl->__("subtitles.summary")?> <?php if ($fullReportLatest) {
-                                ?>(<?=$tpl->getFormattedDateString($fullReportLatest['date']) ?>)<?php
+                                ?>(<?=format($fullReportLatest['date'])->date() ?>)<?php
                                                  } ?> </h5>
                             <div class="row">
                                 <div class="col-md-3">
@@ -109,7 +109,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                                                 if ($tpl->get("currentSprint") !== false && $sprintRow->id == $tpl->get("currentSprint")) {
                                                     echo " selected='selected' ";
 
-                                                    $dates = sprintf($tpl->__("label.date_from_date_to"), $tpl->getFormattedDateString($sprintRow->startDate), $tpl->getFormattedDateString($sprintRow->endDate));
+                                                    $dates = sprintf($tpl->__("label.date_from_date_to"), format($sprintRow->startDate)->date(), format($sprintRow->endDate)->date());
                                                 }
                                                 echo ">";
                                                 $tpl->e($sprintRow->name);

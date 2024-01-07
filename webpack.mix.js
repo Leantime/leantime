@@ -21,6 +21,8 @@ mix
         "./public/assets/js/app/core/snippets.js",
         "./public/assets/js/app/core/modals.js",
         "./public/assets/js/app/core/tableHandling.js",
+        "./public/assets/js/app/core/datePickers.js",
+        "./public/assets/js/app/core/dateHelper.js",
         ...[
             ...glob.sync("./app/Domain/**/*.js"),
             ...glob.sync("./custom/Domain/**/*.js"),
@@ -58,6 +60,7 @@ mix
         "./node_modules/tether-shepherd/dist/js/tether.js",
         "./node_modules/tether-shepherd/dist/js/shepherd.js",
         "./node_modules/isotope-layout/dist/isotope.pkgd.js",
+        "./node_modules/gridstack/dist/gridstack-all.js",
         "./node_modules/jstree/dist/jstree.js",
         "./node_modules/@assuradeurengilde/fontawesome-iconpicker/dist/js/fontawesome-iconpicker.js",
         "./node_modules/leader-line/leader-line.min.js",
@@ -65,7 +68,12 @@ mix
         "./public/assets/js/libs/emojipicker/vanillaEmojiPicker.js",
     ], `public/dist/js/compiled-global-component.${version}.min.js`)
     .combine([
+        "./node_modules/ical.js/build/ical.min.js",
         "./node_modules/fullcalendar/index.global.min.js",
+        "./node_modules/@fullcalendar/icalendar/index.global.min.js",
+        "./node_modules/@fullcalendar/google-calendar/index.global.min.js",
+        "./node_modules/@fullcalendar/luxon3/index.global.min.js",
+
     ], `public/dist/js/compiled-calendar-component.${version}.min.js`)
     .combine([
         "./node_modules/datatables.net/js/jquery.dataTables.js",
@@ -119,7 +127,7 @@ mix
     ], `public/dist/js/compiled-gantt-component.${version}.min.js`)
     .combine([
         "./node_modules/chart.js/dist/chart.js",
-        "./node_modules/chartjs-adapter-moment/dist/chartjs-adapter-moment.js",
+        "./node_modules/chartjs-adapter-luxon/dist/chartjs-adapter-luxon.umd.js",
     ], `public/dist/js/compiled-chart-component.${version}.min.js`)
     .less('./public/assets/less/main.less', `public/dist/css/main.${version}.min.css`, {
         sourceMap: true,

@@ -14,6 +14,7 @@ namespace Leantime\Domain\Canvas\Controllers {
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Notifications\Models\Notification as NotificationModel;
     use Illuminate\Support\Str;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -105,7 +106,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             $this->tpl->assign('canvasTypes', $canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
-            $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');
+            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');
         }
 
         /**
@@ -168,7 +169,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->projectService->notifyProjectUsers($notification);
 
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $params['itemId']);
+                        return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $params['itemId']);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
                     }
@@ -194,7 +195,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $canvasTypes = $this->canvasRepo->getCanvasTypes();
 
-                        $this->tpl->setNotification($canvasTypes[$params['box']] . ' successfully created', 'success',  strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
+                        $this->tpl->setNotification($canvasTypes[$params['box']] . ' successfully created', 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
 
 
                         $notification = app()->make(NotificationModel::class);
@@ -217,7 +218,7 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                         $this->tpl->setNotification($this->language->__('notification.element_created'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitem_created');
 
-                        $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $id);
+                        return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $id);
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.please_enter_element_title'), 'error');
                     }
@@ -235,9 +236,6 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                 $message = $this->commentsRepo->addComment($values, static::CANVAS_NAME . 'canvasitem');
                 $this->tpl->setNotification($this->language->__('notifications.comment_create_success'), 'success', strtoupper(static::CANVAS_NAME) . 'canvasitemcomment_created');
-
-
-
 
                 $notification = app()->make(NotificationModel::class);
                 $notification->url = array(
@@ -257,12 +255,12 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $this->projectService->notifyProjectUsers($notification);
 
 
-                $this->tpl->redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $_GET['id']);
+                return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasComment/' . $_GET['id']);
             }
 
             $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
             $this->tpl->assign('canvasItem', $this->canvasRepo->getSingleCanvasItem($_GET['id']));
-            $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');
+            return $this->tpl->displayPartial(static::CANVAS_NAME . 'canvas.canvasComment');
         }
 
         /**
@@ -285,5 +283,4 @@ namespace Leantime\Domain\Canvas\Controllers {
         {
         }
     }
-
 }

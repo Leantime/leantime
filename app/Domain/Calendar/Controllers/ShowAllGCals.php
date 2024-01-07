@@ -39,7 +39,7 @@ namespace Leantime\Domain\Calendar\Controllers {
             //Assign vars
             $this->tpl->assign('allCalendars', $this->calendarRepo->getMyGoogleCalendars());
 
-            $this->tpl->display('calendar.showAllGCals');
+            return $this->tpl->display('calendar.showAllGCals');
         }
     }
 }

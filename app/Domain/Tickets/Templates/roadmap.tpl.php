@@ -10,11 +10,11 @@ echo $tpl->displayNotification();
 
 $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
 ?>
-<?php $tpl->displaySubmodule('tickets-ticketHeader') ?>
+<?php $tpl->displaySubmodule('tickets-timelineHeader') ?>
 
 <div class="maincontent">
 
-    <?php $tpl->displaySubmodule('tickets-ticketBoardTabs') ?>
+    <?php $tpl->displaySubmodule('tickets-timelineTabs') ?>
 
     <div class="maincontentinner">
 
@@ -65,8 +65,10 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
         </div>
 
         <?php
-        if ((is_array($timelineTasks) && count($timelineTasks) == 0) ||
-            $timelineTasks == false) {
+        if (
+            (is_array($timelineTasks) && count($timelineTasks) == 0) ||
+            $timelineTasks == false
+        ) {
             echo"<div class='empty' id='emptySprint' style='text-align:center;'>";
             echo"<div style='width:30%' class='svgContainer'>";
             echo file_get_contents(ROOT . "/dist/images/svg/undraw_adjustments_p22m.svg");
@@ -156,7 +158,7 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
                 //Avvoid double arrow
                 if ($mlst->dependingTicketId != 0) {
                     $dependencyList[] = $mlst->dependingTicketId;
-                }else if ($mlst->milestoneid != 0) {
+                } else if ($mlst->milestoneid != 0) {
                     $dependencyList[] = $mlst->milestoneid;
                 }
 

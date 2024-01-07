@@ -75,11 +75,23 @@ namespace Leantime\Domain\Users\Services {
         }
 
         /**
+         * @param bool $activeOnly
+         * @param bool $includeApi
          * @return int
          */
-        public function getNumberOfUsers(): int
+        public function getNumberOfUsers(bool $activeOnly = false, bool $includeApi = true): int
         {
-            return $this->userRepo->getNumberOfUsers();
+            $filters = [];
+
+            if ($activeOnly) {
+                $filters[] = ['status', '=', 'a'];
+            }
+
+            if (! $includeApi) {
+                $filters[] = ['source', '!=', 'api'];
+            }
+
+            return $this->userRepo->getNumberOfUsers($filters);
         }
 
         /**
@@ -189,9 +201,7 @@ namespace Leantime\Domain\Users\Services {
         }
 
         /**
-         * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email
-         *
-         * TODO: Should accept userModel
+         * createUserInvite - generates a new invite token, creates the user in the db and sends the invitation email TODO: Should accept userModel
          *
          * @access public
          * @param array $values basic user values
@@ -220,7 +230,8 @@ namespace Leantime\Domain\Users\Services {
             return $result;
         }
 
-        public function sendUserInvite(string $inviteCode, string $user) {
+        public function sendUserInvite(string $inviteCode, string $user)
+        {
 
 
             $mailer = app()->make(MailerCore::class);
@@ -231,7 +242,7 @@ namespace Leantime\Domain\Users\Services {
 
             $message = sprintf(
                 $this->language->__("email_notifications.user_invite_message"),
-                $_SESSION["userdata"]["name"] ?? "Leantime" ,
+                $_SESSION["userdata"]["name"] ?? "Leantime",
                 $actual_link,
                 $user
             );
@@ -271,7 +282,7 @@ namespace Leantime\Domain\Users\Services {
                 "createdOn" => $values["createdOn"] ?? '',
                 "jobTitle" => $values["jobTitle"] ?? '',
                 "jobLevel" => $values["jobLevel"] ?? '',
-                "department" => $values["department"] ?? ''
+                "department" => $values["department"] ?? '',
             );
 
             return $this->userRepo->addUser($values);

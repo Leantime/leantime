@@ -325,8 +325,8 @@ abstract class Repository
      * getFieldAttribute - gets the field attribute for a given property
      *
      * @param object|string $class     - the class to get the attribute from
-     * @param string $property  - the property to get the attribute from
-     * @param bool   $includeId - whether or not to include the id attribute
+     * @param string        $property  - the property to get the attribute from
+     * @param bool          $includeId - whether or not to include the id attribute
      * @return array|false
      * @throws \ReflectionException
      */

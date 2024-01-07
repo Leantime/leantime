@@ -25,6 +25,16 @@ namespace Leantime\Domain\Calendar\Services {
             $this->language = $language;
         }
 
+        /**
+         * Deletes a Google Calendar.
+         *
+         * @param int $id The ID of the Google Calendar to delete.
+         * @return bool Returns true if the Google Calendar was successfully deleted, false otherwise.
+         */
+        public function deleteGCal(int $id): bool
+        {
+            return $this->calendarRepo->deleteGCal($id);
+        }
 
         /**
          * Patches calendar event
@@ -87,13 +97,13 @@ namespace Leantime\Domain\Calendar\Services {
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                $dateFrom = $this->language->getISODateTimeString($values['dateFrom'], $values['timeFrom']);
+                $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTimeFrom24h();
             }
             $values['dateFrom'] = $dateFrom;
 
             $dateTo = null;
             if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                $dateTo =  $this->language->getISODateTimeString($values['dateTo'], $values['timeTo']);
+                $dateTo =  format($values['dateTo'], $values['timeTo'])->isoDateTimeFrom24h();
             }
             $values['dateTo'] = $dateTo;
 
@@ -150,13 +160,13 @@ namespace Leantime\Domain\Calendar\Services {
 
                 $dateFrom = null;
                 if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                    $dateFrom = $this->language->getISODateTimeString($values['dateFrom'], $values['timeFrom']);
+                    $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTime();
                 }
                 $values['dateFrom'] = $dateFrom;
 
                 $dateTo = null;
                 if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                    $dateTo = $this->language->getISODateTimeString($values['dateTo'], $values['timeTo']);
+                    $dateTo = format($values['dateTo'], $values['timeTo'])->isoDateTime();
                 }
                 $values['dateTo'] = $dateTo;
 
@@ -181,6 +191,14 @@ namespace Leantime\Domain\Calendar\Services {
         {
             $result = $this->calendarRepo->delPersonalEvent($id);
             return $result;
+        }
+
+        public function getExternalCalendar($id, $userId) {
+            return $this->calendarRepo->getExternalCalendar($id, $userId);
+        }
+
+        public function editExternalCalendar($values, $id) {
+            return $this->calendarRepo->editGUrl($values, $id);
         }
     }
 }

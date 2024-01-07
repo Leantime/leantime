@@ -106,6 +106,9 @@ run-dev: build-dev
 acceptance-test: build-dev
 	php vendor/bin/codecept run Acceptance --steps
 
+unit-test: build-dev
+	php vendor/bin/codecept run Unit --steps
+
 acceptance-test-ci: build-dev
 	php vendor/bin/codecept build
 ifeq ($(strip $(RUNNING_DOCKER_CONTAINERS)),)
@@ -127,7 +130,10 @@ codesniffer-fix:
 	./vendor/squizlabs/php_codesniffer/bin/phpcbf app
 
 get-version:
-	@echo $(VERSION) 
+	@echo $(VERSION)
+
+phpstan:
+	./vendor/bin/phpstan analyse --memory-limit 512M
 
 .PHONY: install-deps build package clean run-dev
 

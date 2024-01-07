@@ -3,8 +3,10 @@
 namespace Leantime\Domain\Files\Controllers;
 
 use Leantime\Core\Controller;
+use Leantime\Core\Frontcontroller;
 use Leantime\Domain\Files\Repositories\Files as FileRepository;
 use Leantime\Domain\Files\Services\Files as FileService;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -28,10 +30,10 @@ class Browse extends Controller
     }
 
     /**
-     * @return void
+     * @return Response
      * @throws \Exception
      */
-    public function run(): void
+    public function run(): Response
     {
         $currentModule = $_SESSION['currentProject'];
 
@@ -50,7 +52,7 @@ class Browse extends Controller
 
             if ($result === true) {
                 $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success", "file_deleted");
-                $this->tpl->redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp'] ?? '') ? "?modalPopUp=true" : "");
+                return Frontcontroller::redirect(BASE_URL . "/files/showAll" . ($_GET['modalPopUp'] ?? '') ? "?modalPopUp=true" : "");
             } else {
                 $this->tpl->setNotification($result["msg"], "success");
             }
@@ -60,6 +62,6 @@ class Browse extends Controller
         $this->tpl->assign('modules', $this->filesRepo->getModules($_SESSION['userdata']['id']));
         $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv', 'webpe'));
         $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", $_SESSION['currentProject']));
-        $this->tpl->display('files.browse');
+        return $this->tpl->display('files.browse');
     }
 }

@@ -6,6 +6,7 @@ namespace Leantime\Domain\Tickets\Controllers {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -30,6 +31,10 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->projectsRepo = $projectsRepo;
             $this->sprintService = $sprintService;
             $this->ticketService = $ticketService;
+
+            $_SESSION['lastPage'] = CURRENT_URL;
+            $_SESSION['lastTicketView'] = "timeline";
+            $_SESSION['lastFilterdTicketRoadmapView'] = CURRENT_URL;
         }
 
         /**
@@ -47,7 +52,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
             $this->tpl->assign('timelineTasks', $allProjectMilestones);
 
-            $this->tpl->display('tickets.roadmap');
+            return $this->tpl->display('tickets.roadmap');
         }
 
         /**
@@ -66,7 +71,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign('timelineTasks', $allProjectMilestones);
 
-            $this->tpl->display('tickets.roadmap');
+            return $this->tpl->display('tickets.roadmap');
         }
 
         /**

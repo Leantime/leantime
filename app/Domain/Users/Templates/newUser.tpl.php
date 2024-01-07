@@ -88,7 +88,7 @@ $projects = $tpl->get('relations');
             <select name="role" id="role">
 
                 <?php foreach ($tpl->get('roles') as $key => $role) { ?>
-                    <?php if($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30) {
+                    <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $key > 30) {
                         continue;
                     }?>
                         <option value="<?php  echo $key; ?>"
@@ -107,8 +107,8 @@ $projects = $tpl->get('relations');
                     <option value="0" selected="selected"><?php echo $tpl->__('label.no_clients') ?></option>
                 <?php } ?>
                 <?php foreach ($tpl->get('clients') as $client) : ?>
-                    <?php if($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client["id"] !== $_SESSION['userdata']['clientId']) {
-                    continue;
+                    <?php if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $client["id"] !== $_SESSION['userdata']['clientId']) {
+                        continue;
                     }
                     ?>
                     <option value="<?php echo $client['id'] ?>"
@@ -157,8 +157,7 @@ $projects = $tpl->get('relations');
                     $currentClient = '';
                     $i = 0;
                     foreach ($tpl->get('allProjects') as $row) {
-
-                        if($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row["clientId"] !== $_SESSION['userdata']['clientId']) {
+                        if ($login::userHasRole(\Leantime\Domain\Auth\Models\Roles::$manager) && $row["clientId"] !== $_SESSION['userdata']['clientId']) {
                             continue;
                         }
 

@@ -2,11 +2,11 @@
 
 namespace Leantime\Views\Composers;
 
-use Leantime\Core\Composer;
-use Leantime\Domain\Setting\Repositories\Setting;
-use Leantime\Core\Environment;
 use Leantime\Core\AppSettings;
+use Leantime\Core\Composer;
+use Leantime\Core\Environment;
 use Leantime\Core\Theme;
+use Leantime\Domain\Setting\Repositories\Setting;
 
 /**
  *
@@ -17,10 +17,7 @@ class Header extends Composer
         'global::sections.header',
     ];
 
-    private Setting $SettingsRepo;
     private Environment $config;
-    private AppSettings $AppSettings;
-    private Theme $ThemeCore;
     private Theme $themeCore;
     private AppSettings $appSettings;
     private Setting $settingsRepo;
@@ -47,29 +44,35 @@ class Header extends Composer
     /**
      * @return array
      */
-    /**
-     * @return array
-     */
     public function with(): array
     {
+        $theme = $this->themeCore->getActive();
+        $colorMode = $this->themeCore->getColorMode();
+        $colorScheme = $this->themeCore->getColorScheme();
+        $themeFont = $this->themeCore->getFont();
 
-        if (isset($_SESSION['userdata']) && isset($_SESSION['userdata']['id'])) {
-            $userId = $_SESSION['userdata']['id'];
-
-            if (isset($_SESSION['usersettings.' . $userId . '.timezone'])) {
-                date_default_timezone_set($_SESSION['usersettings.' . $userId . '.timezone']);
+        // Set colors to use
+        if (! isset($_SESSION["companysettings.sitename"])) {
+            $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
+            if ($sitename !== false) {
+                $_SESSION["companysettings.sitename"] = $sitename;
+            } else {
+                $_SESSION["companysettings.sitename"] = $this->config->sitename;
             }
         }
 
         return [
             'sitename' => $_SESSION['companysettings.sitename'] ?? '',
-            'primaryColor' => $_SESSION['companysettings.primarycolor'] ?? '',
-            'theme' => $this->themeCore->getActive() ?? 'default',
+            'primaryColor' => $this->themeCore->getPrimaryColor(),
+            'theme' => $theme,
             'version' => $this->appSettings->appVersion ?? '',
             'themeScripts' => [
                 $this->themeCore->getJsUrl() ?? '',
                 $this->themeCore->getCustomJsUrl() ?? '',
             ],
+            'themeColorMode' => $colorMode,
+            'themeColorScheme' => $colorScheme,
+            'themeFont' => $themeFont,
             'themeStyles' => [
                 [
                     'id' => 'themeStyleSheet',
@@ -80,8 +83,8 @@ class Header extends Composer
                 ],
             ],
             'accents' => [
-                $_SESSION['companysettings.primarycolor'] ?? '',
-                $_SESSION['companysettings.secondarycolor'] ?? '',
+                $this->themeCore->getPrimaryColor(),
+                $this->themeCore->getSecondaryColor(),
             ],
         ];
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\Acceptance;
+namespace Acceptance;
 
+use Codeception\Attribute\Depends;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
-use Codeception\Attribute\Depends;
 
 class TicketsCest
 {

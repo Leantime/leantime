@@ -3,7 +3,6 @@
 namespace Leantime\Domain\Reports\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-
     use Leantime\Core\Controller;
     use Leantime\Domain\Dashboard\Repositories\Dashboard as DashboardRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -14,6 +13,8 @@ namespace Leantime\Domain\Reports\Controllers {
     use Leantime\Domain\Reports\Services\Reports as ReportService;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Auth\Models\Roles;
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -65,10 +66,10 @@ namespace Leantime\Domain\Reports\Controllers {
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get(): void
+        public function get(): Response
         {
 
             //Project Progress
@@ -122,21 +123,16 @@ namespace Leantime\Domain\Reports\Controllers {
             $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
-            $this->tpl->display('reports.show');
+            return $this->tpl->display('reports.show');
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          */
-        /**
-         * @param $params
-         * @return void
-         */
-        public function post($params): void
+        public function post($params): Response
         {
-
-            $this->tpl->redirect(BASE_URL . "/dashboard/show");
+            return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
         }
     }
 }

@@ -13,8 +13,8 @@ $values = $tpl->get("values");
 $flags = $tpl->get("flags");
 $fields = $tpl->get("fields");
 $urlAppend = '';
-if(isset($integrationId) && is_numeric($integrationId)) {
-    $urlAppend = "&integrationId=".$integrationId;
+if (isset($integrationId) && is_numeric($integrationId)) {
+    $urlAppend = "&integrationId=" . $integrationId;
 }
 ?>
 
@@ -45,15 +45,15 @@ if(isset($integrationId) && is_numeric($integrationId)) {
         <table width="100%">
             <thead>
             <tr>
-                <?php foreach ($fields as $sourceField => $leantimeField): ?>
+                <?php foreach ($fields as $sourceField => $leantimeField) : ?>
                     <th><?= $leantimeField['leantimeField'] ?></th>
                 <?php endforeach; ?>
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($values as $record): ?>
+            <?php foreach ($values as $record) : ?>
                 <tr>
-                    <?php foreach ($record as $value): ?>
+                    <?php foreach ($record as $value) : ?>
                         <td><?= $value ?></td>
                     <?php endforeach; ?>
                 </tr>

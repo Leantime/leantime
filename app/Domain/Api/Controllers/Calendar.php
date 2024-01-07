@@ -3,9 +3,9 @@
 namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
-    use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
-    use Leantime\Domain\Auth\Services\Auth as AuthService;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
 
     /**
      *
@@ -33,7 +33,7 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function get($params)
         {
-            echo "{status:'Not implemented'}";
+            return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
         }
 
         /**
@@ -44,7 +44,7 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function post($params)
         {
-            echo "{status:'Not implemented'}";
+            return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
         }
 
         /**
@@ -55,23 +55,19 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function patch($params)
         {
-            if (AuthService::userIsAtLeast(Roles::$editor)) {
-                $results = false;
-
-                if (isset($params['id'])) {
-                    $results = $this->calendarSvc->patch($params['id'], $params);
-                } else {
-                    echo "{status:failure, message: 'ID not set'}";
-                }
-
-                if ($results === true) {
-                    echo "{status:ok}";
-                } else {
-                    echo "{status:failure}";
-                }
-            } else {
-                echo "{status:failure}";
+            if (! AuthService::userIsAtLeast(Roles::$editor)) {
+                return $this->tpl->displayJson(['status' => 'failure', 'message' => 'Not authorized'], 401);
             }
+
+            if (! isset($params['id'])) {
+                return $this->tpl->displayJson(['status' => 'failure', 'message' => 'ID not set'], 400);
+            }
+
+            if (! $this->calendarSvc->patch($params['id'], $params)) {
+                return $this->tpl->displayJson(['status' => 'failure'], 500);
+            }
+
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**
@@ -82,7 +78,7 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function delete($params)
         {
-            echo "{status:'Not implemented'}";
+            return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
         }
     }
 

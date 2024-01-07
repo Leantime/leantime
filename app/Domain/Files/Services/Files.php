@@ -4,8 +4,8 @@ namespace Leantime\Domain\Files\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Language as LanguageCore;
-    use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
+    use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
 
     /**

@@ -7,8 +7,7 @@ foreach ($__data as $var => $val) {
 } // necessary for blade refactor
 $calendars = $tpl->get('calendar');
 $eol = "\r\n";
-$env = app()->make(Environment::class);
-$timezone = $env->defaultTimezone;
+$timezone = $_SESSION['usersettings.timezone'] ?? "UTC";
 $timezoneObject = new DateTimeZone($timezone);
 $tpl->dispatchTplEvent('beforeOutput', $calendars, ['eol' => $eol]);
 echo "BEGIN:VCALENDAR" . $eol;

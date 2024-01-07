@@ -13,8 +13,6 @@ foreach ($__data as $var => $val) {
 
 ?>
     <?php if (count($tpl->get('allCanvas')) > 0) { ?>
-
-
     <?php } else {
         echo "<br /><br /><div class='center'>";
 

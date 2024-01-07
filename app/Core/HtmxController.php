@@ -4,37 +4,41 @@ namespace Leantime\Core;
 
 use Error;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Leantime\Core\Template;
-use Leantime\Core\Events;
-use Leantime\Core\Language;
 use Illuminate\Support\Str;
 use LogicException;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * HtmxController Class - Base class For all htmx controllers
  *
- * @package    leantime
- * @subpackage core
+ * @method string|null run() The fallback method to be initialized.
  */
 abstract class HtmxController
 {
     use Eventhelpers;
 
-    protected IncomingRequest $incomingRequest;
-    protected Template $tpl;
+    /** @var Response $response */
+    protected Response $response;
+
+    /** @var string $view */
+    protected static string $view;
+
+    /** @var array $headers */
+    protected array $headers = [];
 
     /**
      * constructor - initialize private variables
      *
-     * @access public
-     *
      * @param IncomingRequest $incomingRequest The request to be initialized.
-     * @param template        $tpl             The template to be initialized.
+     * @param Template        $tpl             The template to be initialized.
      * @throws BindingResolutionException
      */
     public function __construct(
-        IncomingRequest $incomingRequest,
-        template $tpl
+        /** @var IncomingRequest $incomingRequest */
+        protected IncomingRequest $incomingRequest,
+
+        /** @var Template $tpl */
+        protected Template $tpl,
     ) {
         self::dispatch_event('begin');
 
@@ -50,10 +54,10 @@ abstract class HtmxController
     /**
      * Allows hooking into all controllers with events
      *
-     * @access private
-     *
      * @return void
      * @throws BindingResolutionException
+     * @throws Error
+     * @throws LogicException
      */
     private function executeActions(): void
     {
@@ -70,12 +74,42 @@ abstract class HtmxController
 
         $action = Str::camel($this->incomingRequest->query->get('id', 'run'));
 
-        if (! method_exists($this, $action)) {
-            throw new Error("Method $action doesn't exist.");
+        if (! method_exists($this, $action) && ! method_exists($this, 'run')) {
+            throw new Error("Method $action doesn't exist and no fallback method.");
         }
 
-        $fragment = $this->$action();
+        $fragment = method_exists($this, $action) ? $this->$action() : $this->run();
 
-        $this->tpl->displayFragment($this::$view, $fragment ?? '');
+        $this->response = tap(
+            $this->tpl->displayFragment($this::$view, $fragment ?? ''),
+            function (Response $response): void {
+                foreach ($this->headers as $key => $value) {
+                    $response->headers->set($key, is_array($value) ? implode(',', $value) : $value);
+                }
+            },
+        );
+    }
+
+    /**
+     * Sets the response header to trigger an htmx event
+     *
+     * @param string $eventName
+     * @return void
+     **/
+    public function setHTMXEvent(string $eventName): void
+    {
+        $this->headers['HX-Trigger'] ??= [];
+        $this->headers['HX-Trigger'][] = $eventName;
+    }
+
+    /**
+     * Gets the response
+     *
+     * @return Response
+     **/
+    public function getResponse(): Response
+    {
+        return $this->response;
     }
 }
+

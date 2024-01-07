@@ -44,30 +44,24 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function post($params)
         {
-
             if (isset($params["action"]) === true && $params["action"] == "start") {
                 $ticketId = filter_var($params["ticketId"], FILTER_SANITIZE_NUMBER_INT);
                 $this->timesheetService->punchIn($ticketId);
-                echo "{status:ok}";
-                return;
+                return $this->tpl->displayJson(['status' => 'ok']);
             }
 
             if (isset($params["action"]) === true && $params["action"] == "stop") {
                 $ticketId = filter_var($params["ticketId"], FILTER_SANITIZE_NUMBER_INT);
                 $hoursBooked = $this->timesheetService->punchOut($ticketId);
 
-                if ($hoursBooked) {
-                    echo $hoursBooked;
-                    return;
-                } else {
-                    return "{status:failure}";
+                if (! $hoursBooked) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
                 }
-                return;
+
+                return $this->tpl->displayJson($hoursBooked, 200);
             }
 
-            echo "{status:failure}";
-            return;
+            return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
     }
-
 }

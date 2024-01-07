@@ -11,16 +11,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Leantime\Domain\Install\Repositories\Install;
 use Exception;
 use Leantime\Domain\Users\Repositories\Users;
+use Symfony\Component\Console\Attribute\AsCommand;
 
-/**
- *
- */
+#[AsCommand(
+    name: 'db:migrate',
+    description: 'Runs and pending Database Migrations',
+)]
 class MigrateCommand extends Command
 {
-    protected static $defaultName = 'db:migrate';
-
-    protected static $defaultDescription = 'Runs any Pending Database Migrations';
-
     /**
      * @return void
      */
@@ -48,8 +46,8 @@ class MigrateCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        define('BASE_URL', "");
-        define('CURRENT_URL', "");
+        ! defined('BASE_URL') && define('BASE_URL', "");
+        ! defined('CURRENT_URL') && define('CURRENT_URL', "");
 
         $install = app()->make(Install::class);
         $io = new SymfonyStyle($input, $output);
@@ -57,6 +55,7 @@ class MigrateCommand extends Command
         try {
             if (!$install->checkIfInstalled()) {
                 if ($silent) {
+                    $adminEmail = "admin@leantime.io";
                     $setupConfig = array(
                         "email" => "admin@leantime.io",
                         "password" => "",
@@ -101,8 +100,8 @@ class MigrateCommand extends Command
                 $io->text("Successfully Installed DB");
             }
             $success = $install->updateDB();
-            if (!$success) {
-                throw new Exception("Migration Failed; Please Check Logs");
+            if ($success !== true) {
+                throw new Exception("Migration Failed; See below" . PHP_EOL . implode(PHP_EOL, $success));
             }
         } catch (Exception $ex) {
             $io->error($ex);

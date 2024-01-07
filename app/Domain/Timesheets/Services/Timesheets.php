@@ -100,7 +100,7 @@ namespace Leantime\Domain\Timesheets\Services {
                 $values['kind'] = $params['kind'];
             }
             if (isset($params['date']) && $params['date'] != '') {
-                $values['date'] = $this->language->getISODateString($params['date']);
+                $values['date'] = format($params['date'])->isoDateMid();
             }
 
             if (isset($params['hours']) && $params['hours'] != '') {
@@ -241,7 +241,8 @@ namespace Leantime\Domain\Timesheets\Services {
                 invComp: $invComp,
                 ticketFilter: $ticketFilter,
                 paid: $paid,
-                clientId: $clientId);
+                clientId: $clientId
+            );
         }
 
         /**
@@ -259,8 +260,8 @@ namespace Leantime\Domain\Timesheets\Services {
 
         /**
          * @param array $invEmpl
-         * @param array  $invComp
-         * @param array  $paid
+         * @param array $invComp
+         * @param array $paid
          * @return bool
          */
         public function updateInvoices($invEmpl, array $invComp = [], array $paid = []): bool

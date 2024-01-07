@@ -86,10 +86,6 @@ namespace Leantime\Domain\Notifications\Repositories {
          * @param array $notifications
          * @return bool|void
          */
-        /**
-         * @param array $notifications
-         * @return bool|void
-         */
         public function addNotifications(array $notifications)
         {
 

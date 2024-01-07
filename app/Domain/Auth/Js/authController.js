@@ -20,7 +20,7 @@ leantime.authController = (function () {
 
         if (jQuery(container).find(".complexEditor").length) {
             jQuery(container).find(".complexEditor").each(function (element) {
-                if(jQuery(this).tinymce()) {
+                if (jQuery(this).tinymce()) {
                     jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
                 }
             });
@@ -29,7 +29,7 @@ leantime.authController = (function () {
         if (jQuery(container).find(".tinymceSimple").length) {
             jQuery(container).find(".tinymceSimple").each(function (element) {
 
-                if(jQuery(this).tinymce()) {
+                if (jQuery(this).tinymce()) {
                     jQuery(this).tinymce().getBody().setAttribute('contenteditable', "false");
                 }
             });

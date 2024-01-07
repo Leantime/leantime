@@ -92,10 +92,8 @@ leantime.ticketsController = (function () {
                                 // the task object will contain the updated
                                 // dates and progress value
                                 var end_date = task._end;
-
-                                var dateTime = moment(new Date(end_date)).format(leantime.i18n.__("language.momentJSDate"));
-
-
+                                var dateObject = new Date(end_date);
+                                var dateTime = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),  new Date(end_date));
 
                                 var popUpHTML = '<div class="details-container" style="min-width:600px;"> ';
 
@@ -123,6 +121,7 @@ leantime.ticketsController = (function () {
 
                             },
                             on_date_change: function (task, start, end) {
+
 
                                 leantime.ticketsRepository.updateMilestoneDates(task.id, start, end, task._index);
 
@@ -224,29 +223,6 @@ leantime.ticketsController = (function () {
 
     };
 
-    var _initDates = function () {
-
-        jQuery(".dates").datepicker(
-            {
-                dateFormat:  leantime.i18n.__("language.jsdateformat"),
-                dayNames: leantime.i18n.__("language.dayNames").split(","),
-                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-                monthNames: leantime.i18n.__("language.monthNames").split(","),
-                currentText: leantime.i18n.__("language.currentText"),
-                closeText: leantime.i18n.__("language.closeText"),
-                buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-                nextText: leantime.i18n.__("language.nextText"),
-                prevText: leantime.i18n.__("language.prevText"),
-                weekHeader: leantime.i18n.__("language.weekHeader"),
-                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
-            }
-        );
-    };
-
-
-
     var initSprintDates = function () {
 
         Date.prototype.addDays = function (days) {
@@ -259,13 +235,13 @@ leantime.ticketsController = (function () {
                     return false; } } }
         );
 
-        var dateFormat = leantime.i18n.__("language.jsdateformat"),
+        var dateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
 
             from = jQuery("#sprintStart")
                 .datepicker(
                     {
                         numberOfMonths: 1,
-                        dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                        dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                         dayNames: leantime.i18n.__("language.dayNames").split(","),
                         dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                         dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -294,7 +270,7 @@ leantime.ticketsController = (function () {
                 {
                     defaultDate: "+1w",
                     numberOfMonths: 1,
-                    dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                    dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                     dayNames: leantime.i18n.__("language.dayNames").split(","),
                     dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                     dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -331,12 +307,12 @@ leantime.ticketsController = (function () {
     };
 
     var _initMilestoneDates = function () {
-        var dateFormat = leantime.i18n.__("language.jsdateformat"),
+        var dateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
             from = jQuery("#milestoneEditFrom")
                 .datepicker(
                     {
                         numberOfMonths: 1,
-                        dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                        dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                         dayNames: leantime.i18n.__("language.dayNames").split(","),
                         dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                         dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -361,7 +337,7 @@ leantime.ticketsController = (function () {
                 {
                     defaultDate: "+1w",
                     numberOfMonths: 1,
-                    dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                    dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                     dayNames: leantime.i18n.__("language.dayNames").split(","),
                     dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                     dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -399,12 +375,12 @@ leantime.ticketsController = (function () {
 
     var initMilestoneDatesAsyncUpdate = function () {
 
-        var dateFormat = leantime.i18n.__("language.jsdateformat"),
+        var dateFormat = leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
             from = jQuery(".milestoneEditFromAsync")
                 .datepicker(
                     {
                         numberOfMonths: 1,
-                        dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                        dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                         dayNames: leantime.i18n.__("language.dayNames").split(","),
                         dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                         dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -450,7 +426,7 @@ leantime.ticketsController = (function () {
                 {
                     defaultDate: "+1w",
                     numberOfMonths: 1,
-                    dateFormat:  leantime.i18n.__("language.jsdateformat"),
+                    dateFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                     dayNames: leantime.i18n.__("language.dayNames").split(","),
                     dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                     dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -810,41 +786,24 @@ leantime.ticketsController = (function () {
 
     var initDueDateTimePickers = function () {
 
-        jQuery(".quickDueDates, .duedates").datepicker(
-            {
-                dateFormat:  leantime.i18n.__("language.jsdateformat"),
-                dayNames: leantime.i18n.__("language.dayNames").split(","),
-                dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-                dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-                monthNames: leantime.i18n.__("language.monthNames").split(","),
-                currentText: leantime.i18n.__("language.currentText"),
-                closeText: leantime.i18n.__("language.closeText"),
-                buttonText: leantime.i18n.__("language.buttonText"),
-                isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-                nextText: leantime.i18n.__("language.nextText"),
-                prevText: leantime.i18n.__("language.prevText"),
-                weekHeader: leantime.i18n.__("language.weekHeader"),
-                firstDay: leantime.i18n.__("language.firstDayOfWeek"),
-                onClose: function (date) {
+        leantime.dateController.initDatePicker(".quickDueDates, .duedates", function(date, instance) {
 
-                    var newDate = "";
+            //TODO: Update to use htmx, this is awful
+            var day = instance.currentDay;
+            var month = instance.currentMonth;
+            var year = instance.currentYear;
 
-                    if (date == "") {
-                        jQuery(this).val(leantime.i18n.__("text.anytime"));
-                    }
+            var dateObject = new Date(year, month, day);
+            var parsed = jQuery.datepicker.formatDate(leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"), dateObject);
 
-                    var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
+            var id = jQuery(this).attr("data-id");
 
-                    var id = jQuery(this).attr("data-id");
-                    newDate = dateTime;
+            leantime.ticketsRepository.updateDueDates(id, parsed, function () {
+                jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
+            });
 
-                    leantime.ticketsRepository.updateDueDates(id, newDate, function () {
-                        jQuery.growl({message: leantime.i18n.__("short_notifications.duedate_updated"), style: "success"});
-                    });
+        });
 
-                }
-            }
-        );
     };
 
     var initTimeSheetChart = function (labels, d2, d3, canvasId) {
@@ -1069,7 +1028,6 @@ leantime.ticketsController = (function () {
             var height = 250;
 
             jQuery(".sortableTicketList .column .contentInner").each(function () {
-                console.log(jQuery(this).height());
                 if (jQuery(this).height() > height) {
                     height = jQuery(this).height();
                 }
@@ -1151,13 +1109,13 @@ leantime.ticketsController = (function () {
             var left_pos = item.position().left,
                 move_handler = function (e) {
 
-                    if ((e.pageX +5) > left_pos) {
+                    if ((e.pageX + 5) > left_pos) {
                         item.addClass("right");
                         item.removeClass("left");
-                    } else if (e.pageX < (left_pos +5)) {
+                    } else if (e.pageX < (left_pos + 5)) {
                         item.addClass("left");
                         item.removeClass("right");
-                    }else{
+                    } else {
                         item.removeClass("left");
                         item.removeClass("right");
                     }
@@ -1429,11 +1387,20 @@ leantime.ticketsController = (function () {
 
     var initMilestoneTable = function (groupBy) {
 
+        function isNumeric(n)
+        {
+            return !isNaN(parseFloat(n)) && isFinite(n);
+        }
+
         jQuery(document).ready(function () {
+
+            var size = 100;
+            var columnIndex = false;
+
 
             var defaultOrder = [];
 
-            var allTickets = jQuery(".ticketsTable").DataTable({
+            var allTickets = jQuery(".ticketTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
                     "emptyTable":     leantime.i18n.__("datatables.emptyTable"),
@@ -1456,15 +1423,18 @@ leantime.ticketsController = (function () {
                     "aria": {
                         "sortAscending":  leantime.i18n.__("datatables.sortAscending"),
                         "sortDescending":leantime.i18n.__("datatables.sortDescending"),
+                    },
+                    "buttons": {
+                        colvis: leantime.i18n.__("datatables.buttons.colvis"),
+                        csv: leantime.i18n.__("datatables.buttons.download")
                     }
 
                 },
-                "dom": '<"top">rt<"bottom"ilp><"clear">',
+                "dom": '<"top">rt<"bottom"><"clear">',
                 "searching": false,
                 "stateSave": true,
                 "displayLength":100,
                 "order": defaultOrder,
-
                 "columnDefs": [
                     { "visible": false, "targets": 7 },
                     { "visible": false, "targets": 8 },
@@ -1473,11 +1443,48 @@ leantime.ticketsController = (function () {
 
             });
 
-            jQuery('.ticketsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
-                allTickets.draw(false);
-            });
+            var buttons = new jQuery.fn.dataTable.Buttons(allTickets.table(0), {
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        title: leantime.i18n.__("label.filename_fileexport"),
+                        charset: 'utf-8',
+                        bom: true,
+                        exportOptions: {
+                            format: {
+                                body: function ( data, row, column, node ) {
 
-            jQuery('.ticketsTable input').on('change', function ( e, settings, column, state ) {
+                                    if ( typeof jQuery(node).data('order') !== 'undefined') {
+                                        data = jQuery(node).data('order');
+                                    }
+                                    return data;
+                                }
+                            }
+                        }
+                },
+                    {
+                        extend: 'colvis',
+                        columns: ':not(.noVis)'
+                }
+                ]
+            }).container().appendTo(jQuery('#tableButtons'));
+
+            // When the column visibility changes on the firs table, also change it on // the others tables.
+            allTickets.table(0).on(
+                'column-visibility',
+                function ( e, settings, colIdx, visibility ) {
+
+                    // Toggle the visibility
+                    for (var i = 1; i < allTickets.tables().context.length; i++) {
+                        allTickets.tables(i).column(colIdx).visible(visibility);
+                    }
+
+                    allTickets.draw();
+
+                }
+            );
+
+            jQuery('.ticketTable input').on('change', function ( e, settings, column, state ) {
 
                 jQuery(this).parent().attr('data-order',jQuery(this).val());
                 allTickets.draw();
@@ -1596,7 +1603,6 @@ leantime.ticketsController = (function () {
         initMilestoneDatesAsyncUpdate:initMilestoneDatesAsyncUpdate,
         initAsyncInputChange:initAsyncInputChange,
         initDueDateTimePickers:initDueDateTimePickers,
-        initDates:_initDates,
         setUpKanbanColumns:setUpKanbanColumns,
         addCommentTimesheetContent:addCommentTimesheetContent,
         initMilestoneTable:initMilestoneTable,

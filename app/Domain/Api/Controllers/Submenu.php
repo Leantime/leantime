@@ -6,8 +6,8 @@
 
 namespace Leantime\Domain\Api\Controllers {
 
-    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
     use Leantime\Core\Controller;
+    use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
 
     /**
      *
@@ -55,13 +55,12 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function patch($params)
         {
-
-            if (isset($params['submenu']) && isset($params['state'])) {
-                $this->menu->setSubmenuState($params['submenu'], $params['state']);
-                echo "{status:ok}";
-            } else {
-                echo "{'status':false}";
+            if (! isset($params['submenu'], $params['state'])) {
+                return $this->tpl->displayJson(['status' => false], 500);
             }
+
+            $this->menu->setSubmenuState($params['submenu'], $params['state']);
+            return $this->tpl->displayJson(['status' => 'ok']);
         }
 
         /**

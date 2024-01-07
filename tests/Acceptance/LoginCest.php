@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Acceptance;
+namespace Acceptance;
 
-use Tests\Support\AcceptanceTester;
 use Codeception\Attribute\Depends;
+use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
 class LoginCest
@@ -41,7 +41,7 @@ class LoginCest
     public function loginFormIsHidden(AcceptanceTester $I)
     {
         $_ENV['LEAN_DISABLE_LOGIN_FORM'] = true;
-        
+
         $I->amOnPage('/auth/login');
         $I->dontSeeElementInDOM('div#login');
     }

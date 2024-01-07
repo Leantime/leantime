@@ -8,6 +8,7 @@ namespace Leantime\Domain\Install\Controllers {
     use Leantime\Core\Controller;
     use Leantime\Domain\Install\Repositories\Install as InstallRepository;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -43,22 +44,20 @@ namespace Leantime\Domain\Install\Controllers {
         {
             $dbVersion = $this->settingsRepo->getSetting("db-version");
             if ($this->appSettings->dbVersion == $dbVersion) {
-                FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
             }
 
             $updatePage = self::dispatch_filter('customUpdatePage', 'install.update');
-            $this->tpl->display($updatePage, "entry");
+            return $this->tpl->display($updatePage, "entry");
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
-
-
             if (isset($_POST['updateDB'])) {
                 $success = $this->installRepo->updateDB();
 
@@ -68,14 +67,16 @@ namespace Leantime\Domain\Install\Controllers {
                         error_log($errorMessage);
                     }
                     $this->tpl->setNotification("There was a problem updating your database. Please check your error logs to verify your database is up to date.", "error");
-                    FrontcontrollerCore::redirect(BASE_URL . "/install/update");
+                    return FrontcontrollerCore::redirect(BASE_URL . "/install/update");
                 }
 
                 if ($success === true) {
-                    FrontcontrollerCore::redirect(BASE_URL);
+                    return FrontcontrollerCore::redirect(BASE_URL);
                 }
             }
+
+            $this->tpl->setNotification("There was a problem. Please reach out to support@leantime.io for assistance.", "error");
+            return FrontcontrollerCore::redirect(BASE_URL . "/install/update");
         }
     }
-
 }

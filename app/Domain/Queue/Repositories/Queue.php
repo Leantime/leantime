@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Queue\Repositories {
 
     use Leantime\Core\Db as DbCore;
+    use Leantime\Domain\Queue\Workers\Workers;
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
 
@@ -66,7 +67,7 @@ namespace Leantime\Domain\Queue\Repositories {
 
                 try {
                     $stmn->execute();
-                }catch(\PDOException  $e){
+                } catch (\PDOException  $e) {
                     error_log($e);
                 }
 
@@ -82,13 +83,13 @@ namespace Leantime\Domain\Queue\Repositories {
          * @param int        $projectId
          * @return array|false
          */
-        public function listMessageInQueue(string $channel = 'email', $recipients = null, int $projectId = 0): false|array
+        public function listMessageInQueue(Workers $channel, $recipients = null, int $projectId = 0): false|array
         {
             $sql = 'SELECT * from zp_queue WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
 
             $stmn = $this->db->database->prepare($sql);
 
-            $stmn->bindValue(':channel', $channel, PDO::PARAM_STR);
+            $stmn->bindValue(':channel', $channel->value, PDO::PARAM_STR);
             $stmn->execute();
             $values = $stmn->fetchAll();
             $stmn->closeCursor();
@@ -120,5 +121,44 @@ namespace Leantime\Domain\Queue\Repositories {
 
             return $result;
         }
+
+
+        /**
+         * @param $recipients
+         * @param $message
+         * @param string     $subject
+         * @param int        $projectId
+         * @return void
+         */
+        public function addMessageToQueue($channel, $subject, $message, $userId, int $projectId = 0): void
+        {
+
+            $sql = 'INSERT INTO zp_queue
+                        (msghash,channel,userId,subject,message,thedate,projectId)
+                    VALUES
+                        (:msghash,:channel,:userId,:subject,:message,:thedate,:projectId)';
+
+            $thedate = date('Y-m-d H:i:s');
+            $msghash = md5($thedate . $subject . $message . $projectId);
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
+            $stmn->bindValue(':channel', $channel->value, PDO::PARAM_STR);
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            $stmn->bindValue(':subject', $subject, PDO::PARAM_STR);
+            $stmn->bindValue(':message', $message, PDO::PARAM_STR);
+            $stmn->bindValue(':thedate', $thedate, PDO::PARAM_STR);
+            $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+
+            try {
+                $stmn->execute();
+            } catch (\PDOException  $e) {
+                error_log($e);
+            }
+
+            $stmn->closeCursor();
+
+        }
+
     }
 }

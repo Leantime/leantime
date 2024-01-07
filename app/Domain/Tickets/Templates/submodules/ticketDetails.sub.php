@@ -48,8 +48,20 @@ $ticketTypes = $tpl->get('ticketTypes');
         <?php if ($ticket->id) {?>
             <br />
             <hr />
+            <?php $tpl->dispatchTplEvent("beforeSubtasks", ["ticketId" => $ticket->id]); ?>
+            <h4 class="widgettitle title-light"><i class="fa-solid fa-sitemap"></i> <?php echo $tpl->__('subtitles.subtasks'); ?></h4>
 
-            <h4 class="widgettitle title-light"><span
+            <div
+                id="ticketSubtasks"
+                hx-get="<?=BASE_URL ?>/tickets/subtasks/get?ticketId=<?=$ticket->id ?>"
+                hx-trigger="load"
+                hx-indicator=".subtaskIndicator"
+            ></div>
+            <div class="htmx-indicator subtaskIndicator">
+                Loading Subtasks ...<br /><br />
+            </div>
+
+        <h4 class="widgettitle title-light"><span
                     class="fa-solid fa-comments"></span><?php echo $tpl->__('subtitles.discussion'); ?></h4>
 
         <div class="row-fluid">
@@ -74,7 +86,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                             <select  name="dependingTicketId"  class="span11" >
                                 <option value=""><?php echo $tpl->__('label.not_related'); ?></option>
                                 <?php
-                                if(is_array($tpl->get('ticketParents'))){
+                                if (is_array($tpl->get('ticketParents'))) {
                                     foreach ($tpl->get('ticketParents') as $ticketRow) {
                                         ?>
                                         <?php echo"<option value='" . $ticketRow->id . "'";
@@ -172,7 +184,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                             <?php echo $tpl->__('subtitles.organization'); ?>
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_tickets-organization" style="padding-left:0">
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-organization" style="padding-left:0">
 
                     <div class="form-group">
                         <label class="control-label"><?php echo $tpl->__('label.milestone'); ?></label>
@@ -231,7 +243,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <?php echo $tpl->__('subtitle.people'); ?>
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_tickets-people" style="padding-left:0">
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-people" style="padding-left:0">
 
                     <div class="form-group">
                         <label class="control-label"><?php echo $tpl->__('label.author'); ?></label>
@@ -289,7 +301,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <div class="">
 
                             <input type="text" class="dates" style="width:200px;" id="submittedDate" disabled="disabled"
-                                   value="<?php echo $ticket->date; ?>" name="date"/>
+                                   value="<?=format($ticket->date)->date(); ?>" name="date"/>
                         </div>
                     </div>
 
@@ -297,11 +309,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <label class=" control-label"><?php echo $tpl->__('label.due_date'); ?></label>
                         <div class="">
                             <input type="text" class="dates" style="width:90px;" id="deadline" autocomplete="off"
-                                   value="<?php echo $ticket->dateToFinish; ?>"
+                                   value="<?=format($ticket->dateToFinish)->date(); ?>"
                                    name="dateToFinish" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                             <input type="time" class="timepicker" style="width:120px;" id="dueTime" autocomplete="off"
-                                   value="<?php echo $ticket->timeToFinish; ?>"
+                                   value="<?=format($ticket->dateToFinish)->time24(); ?>"
                                    name="timeToFinish"/>
                         </div>
                     </div>
@@ -309,10 +321,10 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_from'); ?></label>
                         <div class="">
-                            <input type="text" class="dates" style="width:90px;" name="editFrom" autocomplete="off"
-                                   value="<?php echo $ticket->editFrom; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                            <input type="text" class="editFrom" style="width:90px;" name="editFrom" autocomplete="off"
+                                   value="<?=format($ticket->editFrom)->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
-                                   value="<?php echo $ticket->timeFrom; ?>"
+                                   value="<?=format($ticket->editFrom)->time24(); ?>"
                                    name="timeFrom"/>
                         </div>
                     </div>
@@ -320,10 +332,10 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_to'); ?></label>
                         <div class="">
-                            <input type="text" class="dates" style="width:90px;" name="editTo" autocomplete="off"
-                                   value="<?php echo $ticket->editTo; ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
+                            <input type="text" class="editTo" style="width:90px;" name="editTo" autocomplete="off"
+                                   value="<?=format($ticket->editTo)->date() ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
-                                   value="<?php echo $ticket->timeTo; ?>"
+                                   value="<?=format($ticket->editTo)->time24() ?>"
                                    name="timeTo"/>
                         </div>
                     </div>
@@ -345,7 +357,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <?php echo $tpl->__('subtitle.time_tracking'); ?>
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_tickets-timetracking" style="padding-left:0">
+                <div class="simpleAccordionContainer" id="accordion_content-tickets-timetracking" style="padding-left:0">
 
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.planned_hours'); ?></label>
@@ -358,8 +370,9 @@ $ticketTypes = $tpl->get('ticketTypes');
                         <label class=" control-label"><?php echo $tpl->__('label.estimated_hours_remaining'); ?></label>
                         <div class="">
                             <input type="text" value="<?php $tpl->e($ticket->hourRemaining); ?>" name="hourRemaining" style="width:90px;"/>
-                            <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-original-title="<?php echo $tpl->__('tooltip.how_many_hours_remaining'); ?>">
-                                &nbsp;<i class="fa fa-question-circle"></i>&nbsp;</a>
+                            <a href="javascript:void(0)" class="infoToolTip" data-placement="left" data-toggle="tooltip" data-tippy-content="<?php echo $tpl->__('tooltip.how_many_hours_remaining'); ?>">
+                                &nbsp;<i class="fa fa-question-circle"></i>&nbsp;
+                            </a>
                         </div>
                     </div>
 
@@ -381,14 +394,14 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
             </div>
         </div>
+
+        <?php $tpl->dispatchTplEvent('beforeEndRightColumn', ['ticket' => $ticket]); ?>
     </div>
 </div>
 
 <script>
 
     jQuery(document).ready(function(){
-
-
         //Set accordion states
         //All accordions start open
     });
@@ -403,8 +416,8 @@ $ticketTypes = $tpl->get('ticketTypes');
                 function() {
                     leantime.editorController.initComplexEditor();
 
-                });
-
+                }
+            );
         }
     });
 

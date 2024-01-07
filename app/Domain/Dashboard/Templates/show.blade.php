@@ -22,7 +22,7 @@
 
         <div class="col-md-8">
 
-            <div class="maincontentinner">
+            <div class="maincontentinner tw-z-10">
                 <div class="pull-right dropdownWrapper">
                     <a
                         class="dropdown-toggle btn"
@@ -102,12 +102,12 @@
 
                                 <div class="row">
                                     <div class="col-md-4 tw-px-[15px] tw-py-0">
-                                        {{ __('label.due') }}<input
+
+                                        <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
+                                             <input
                                             type="text"
                                             title="{{ __('label.due') }}"
-                                            value="{{ $row['dateToFinish'] == '0000-00-00 00:00:00' || $row['dateToFinish'] == '1969-12-31 00:00:00'
-                                                ? __('text.anytime') : (new \DateTime($row['dateToFinish']))->format(__('language.dateformat'))
-                                            }}"
+                                            value="{{ format($row['dateToFinish'])->date(__('text.anytime')) }}"
                                             class="duedates secretInput"
                                             data-id="{{ $row['id'] }}"
                                             name="date"
@@ -326,11 +326,11 @@
                                 <div class="clearall">
                                     <div>
                                         <div class="commentContent statusUpdate commentStatus-{{ $row['status'] }}">
-                                            <h3>
+                                            <strong class="fancyLink">
                                                 {{ sprintf(
                                                     __('text.report_written_on'),
-                                                    $tpl->getFormattedDateString($row['date']),
-                                                    $tpl->getFormattedTimeString($row['date'])
+                                                    format($row['date'])->date(),
+                                                    format($row['date'])->time()
                                                 ) }}
 
                                                 @if ($login::userIsAtLeast($roles::$editor))
@@ -359,7 +359,7 @@
                                                         </ul>
                                                     </div>
                                                 @endif
-                                            </h3>
+                                            </strong>
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                                         </div>
@@ -368,8 +368,8 @@
                                             <small class="right">
                                                 {!! sprintf(
                                                     __('text.written_on_by'),
-                                                    $tpl->getFormattedDateString($row['date']),
-                                                    $tpl->getFormattedTimeString($row['date']),
+                                                    format($row['date'])->date(),
+                                                    format($row['date'])->time(),
                                                     $tpl->escape($row['firstname']),
                                                     $tpl->escape($row['lastname'])
                                                 ) !!}
@@ -458,10 +458,7 @@
                                         <div class="row">
                                             <div class="col-md-7">
                                                 {{ __('label.due') }}
-                                                {{ $row->editTo == "0000-00-00 00:00:00"
-                                                    ? __('text.no_date_defined')
-                                                    : (new \DateTime($row->editTo))->format(__('language.dateformat'))
-                                                }}
+                                                {{ format($row->editTo)->date(__('text.no_date_defined')) }}
                                             </div>
 
                                             <div class="col-md-5 tw-text-right">
@@ -543,7 +540,6 @@
             leantime.ticketsController.initEffortDropdown();
             leantime.ticketsController.initMilestoneDropdown();
             leantime.ticketsController.initStatusDropdown();
-            leantime.ticketsController.initDueDateTimePickers();
             leantime.usersController.initUserEditModal();
         @else
             leantime.authController.makeInputReadonly(".maincontentinner");
@@ -578,6 +574,9 @@
                 );
             }
         });
+
+        leantime.ticketsController.initDueDateTimePickers();
+        leantime.ticketsController.initDueDateTimePickers();
     });
 
     @dispatchEvent('scripts.beforeClose')

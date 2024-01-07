@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Wiki\Repositories {
 
-    use Leantime\Core\Db as DbCore;
     use Leantime\Domain\Canvas\Repositories\Canvas;
     use Leantime\Domain\Wiki\Models\Article;
     use PDO;
@@ -95,7 +94,7 @@ namespace Leantime\Domain\Wiki\Repositories {
          * @param $projectId
          * @return array|false
          */
-        public function getAllProjectWikis($projectId): false|array
+        public function getAllProjectWikis($projectId): array|false
         {
             $query = "SELECT
 

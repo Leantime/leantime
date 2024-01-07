@@ -83,13 +83,13 @@ foreach ($__data as $var => $val) {
                         <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer" id="accordion_<?=$group['id'] ?>">
+                <div class="simpleAccordionContainer" id="accordion_content-<?=$group['id'] ?>">
             <?php } ?>
 
                 <?php $allTickets = $group['items']; ?>
 
                 <?php $tpl->dispatchTplEvent('allTicketsTable.before', ['tickets' => $allTicketGroups]); ?>
-                <table class="table table-bordered display ticketTable" style="width:100%">
+                <table class="table table-bordered display ticketTable " style="width:100%">
                 <colgroup>
                     <col class="con1">
                     <col class="con0" style="max-width:200px;">

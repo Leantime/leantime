@@ -42,7 +42,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
     }
 </script>
 
-<div class="showDialogOnLoad" style="display:none;">
+<div class="" style="width:900px;">
 
   <h4 class="widgettitle title-light" style="padding-bottom: 0"><i class="fas <?=$canvasTypes[$canvasItem['box']]['icon']; ?>"></i> <?=$canvasTypes[$canvasItem['box']]['title']; ?></h4>
   <hr style="margin-top: 5px; margin-bottom: 15px;">
@@ -64,7 +64,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } else { ?>
             <input type="hidden" name="status" value="<?php echo $canvasItem['status'] ?? array_key_first(
                 $hiddenStatusLabels
-                                                      ) ?>" />
+            ) ?>" />
         <?php } ?>
 
         <?php if (!empty($relatesLabels)) { ?>
@@ -74,7 +74,7 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
         <?php } else { ?>
             <input type="hidden" name="relates" value="<?php echo $canvasItem['relates'] ?? array_key_first(
                 $hiddenRelatesLabels
-                                                       ) ?>" />
+            ) ?>" />
         <?php } ?>
 
         <?php if ($dataLabels[1]['active']) { ?>

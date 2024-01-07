@@ -3,9 +3,10 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Wiki\Repositories\Wiki as WikiRepository;
 
     /**
      *
@@ -43,10 +44,10 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 unset($_SESSION['currentIdeaCanvas']);
                 $this->tpl->setNotification($this->language->__("notification.wiki_deleted"), "success", "wiki_deleted");
-                $this->tpl->redirect(BASE_URL . "/wiki/show");
+                return Frontcontroller::redirect(BASE_URL . "/wiki/show");
             }
 
-            $this->tpl->displayPartial('wiki.delWiki');
+            return $this->tpl->displayPartial('wiki.delWiki');
         }
     }
 }

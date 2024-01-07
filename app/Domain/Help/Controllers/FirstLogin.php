@@ -4,6 +4,7 @@ namespace Leantime\Domain\Help\Controllers {
 
     use Exception;
     use Leantime\Core\Controller;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Core\Theme;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
@@ -24,7 +25,6 @@ namespace Leantime\Domain\Help\Controllers {
          */
         public function get($params)
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
             $step = 1;
@@ -33,7 +33,7 @@ namespace Leantime\Domain\Help\Controllers {
             }
 
             $this->tpl->assign('currentStep', $step);
-            $this->tpl->displayPartial("help.firstLoginDialog");
+            return $this->tpl->displayPartial("help.firstLoginDialog");
         }
 
         /**
@@ -55,7 +55,7 @@ namespace Leantime\Domain\Help\Controllers {
 
                 $settingsRepo->saveSetting("companysettings.completedOnboarding", true);
 
-                $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=2");
+                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=2");
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 2) {
@@ -67,16 +67,13 @@ namespace Leantime\Domain\Help\Controllers {
                     //Only save if it is actually available.
                     //Should not be an issue unless some shenanigans is happening
                     try {
-                        $themeCore->setActive($postTheme);
-                        $settingsRepo->saveSetting(
-                            "usersettings." . $_SESSION['userdata']['id'] . ".theme",
-                            $postTheme
-                        );
+                        $themeCore->setColorMode($postTheme);
+
                     } catch (Exception $e) {
                         error_log($e);
                     }
                 }
-                $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=3");
+                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=3");
             }
 
             if (isset($_POST['step']) && $_POST['step'] == 3) {
@@ -108,7 +105,7 @@ namespace Leantime\Domain\Help\Controllers {
                     }
                 }
 
-                $this->tpl->redirect(BASE_URL . "/help/firstLogin?step=complete");
+                return Frontcontroller::redirect(BASE_URL . "/help/firstLogin?step=complete");
             }
         }
 

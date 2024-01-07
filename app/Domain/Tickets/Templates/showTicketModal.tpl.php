@@ -79,7 +79,6 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 
         <ul>
             <li><a href="#ticketdetails"><span class="fa fa-star"></span> <?php echo $tpl->__("tabs.ticketDetails") ?></a></li>
-            <li><a href="#subtasks"><span class="fa fa-tasks"></span> <?php echo $tpl->__('tabs.subtasks') ?> (<?php echo $tpl->get('numSubTasks'); ?>)</a></li>
             <li><a href="#files"><span class="fa fa-file"></span> <?php echo $tpl->__("tabs.files") ?> (<?php echo $tpl->get('numFiles'); ?>)</a></li>
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
                 <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__("tabs.time_tracking") ?></a></li>
@@ -90,13 +89,6 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
             <form class="formModal" action="<?=BASE_URL ?>/tickets/showTicket/<?php echo $ticket->id ?>" method="post">
                 <?php $tpl->displaySubmodule('tickets-ticketDetails') ?>
             </form>
-
-        </div>
-
-
-
-        <div id="subtasks">
-            <?php $tpl->displaySubmodule('tickets-subTasks') ?>
         </div>
 
         <div id="files">
@@ -114,7 +106,7 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
 </div>
 <script type="text/javascript">
 
-    jQuery(function(){
+    jQuery(document).ready(function(){
 
         <?php if (isset($_GET['closeModal'])) { ?>
             jQuery.nmTop().close();
@@ -125,7 +117,9 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
-            leantime.ticketsController.initDates();
+
+            leantime.dateController.initDatePicker(".dates");
+            leantime.dateController.initDateRangePicker(".editFrom", ".editTo");
 
             leantime.ticketsController.initTagsInput();
 

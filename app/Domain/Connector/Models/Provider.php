@@ -57,33 +57,33 @@ namespace Leantime\Domain\Connector\Models {
             "fields",
             "sync",
             "parse",
-            "import"
+            "import",
         ];
 
         public array $stepDetails = [
             "connect" => array(
                 "title" => "Connect",
-                "position"=>1,
+                "position" => 1,
             ),
             "entity" => array(
                 "title" => "Entity Mapping",
-                "position"=>2,
+                "position" => 2,
             ),
             "fields" => array(
                 "title" => "Field Matching",
-                "position"=>3,
+                "position" => 3,
             ),
             "sync" => array(
                 "title" => "Synchonize",
-                "position"=>4,
+                "position" => 4,
             ),
             "parse" => array(
                 "title" => "Validate",
-                "position"=>5,
+                "position" => 5,
             ),
             "import" => array(
                 "title" => "Import",
-                "position"=>6,
+                "position" => 6,
             ),
         ];
 

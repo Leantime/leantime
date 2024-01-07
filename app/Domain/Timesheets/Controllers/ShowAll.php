@@ -42,7 +42,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
          */
         public function run()
         {
-
             //Only admins and employees
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
@@ -68,8 +67,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
                 $this->timesheetsService->updateInvoices($invEmpl, $invComp, $paid);
             }
 
-
-
             $invEmplCheck = '0';
             $invCompCheck = '0';
 
@@ -91,11 +88,11 @@ namespace Leantime\Domain\Timesheets\Controllers {
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-                $dateFrom = $this->language->getISODateString($_POST['dateFrom']);
+                $dateFrom = format($_POST['dateFrom'])->isoDate();
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-                $dateTo = $this->language->getISODateString($_POST['dateTo']);
+                $dateTo = format($_POST['dateTo'])->isoDateEnd();
             }
 
             if (isset($_POST['invEmpl']) === true) {
@@ -132,7 +129,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                 $paidCheck = '0';
             }
 
-            $projectFilter = $_SESSION['currentProject'];
+            $projectFilter = "";
             if (isset($_POST['project']) && $_POST['project'] != '') {
                 $projectFilter = strip_tags($_POST['project']);
             }
@@ -175,8 +172,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $this->tpl->assign('allClients', $this->clientService->getAll());
             $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll((int)$projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck, $clientId));
 
-            $this->tpl->display('timesheets.showAll');
+            return $this->tpl->display('timesheets.showAll');
         }
     }
-
 }

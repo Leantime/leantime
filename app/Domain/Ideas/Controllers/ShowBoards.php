@@ -9,6 +9,7 @@ namespace Leantime\Domain\Ideas\Controllers {
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -98,7 +99,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
 
                     $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
-                    $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
+                    return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -111,7 +112,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
                     $this->tpl->setNotification($this->language->__("notification.board_edited"), "success", "idea_board_edited");
-                    $this->tpl->redirect(BASE_URL . "/ideas/showBoards/");
+                    return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }
@@ -123,9 +124,8 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-
             if (isset($_GET["raw"]) === false) {
-                $this->tpl->display('ideas.showBoards');
+                return $this->tpl->display('ideas.showBoards');
             }
         }
     }

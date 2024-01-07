@@ -163,14 +163,6 @@ namespace Leantime\Domain\Projects\Repositories {
             return $values;
         }
 
-
-        /**
-         * @param int $userId
-         * @param string $projectStatus
-         * @param int|null $clientId
-         * @param $accessStatus
-         * @return array|false
-         */
         /**
          * @param int      $userId
          * @param string   $projectStatus
@@ -178,7 +170,7 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param string   $accessStatus
          * @return array|false
          */
-        public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, string $accessStatus = "assigned"): false|array
+        public function getUserProjects(int $userId, string $projectStatus = "all", int $clientId = null, string $accessStatus = "assigned", string $projectTypes = "all"): false|array
         {
 
             $query = "SELECT
@@ -254,6 +246,11 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
+            if($projectTypes  != "all") {
+                $projectTypeIn = DbCore::arrayToPdoBindingString("projectType", count(explode(",", $projectTypes)));
+                $query .= " AND project.type IN(" . $projectTypeIn . ")";
+            }
+
             $query .= " GROUP BY
 					project.id
 				    ORDER BY clientName, project.name";
@@ -268,6 +265,12 @@ namespace Leantime\Domain\Projects\Repositories {
 
             if ($clientId != "" && $clientId != null && $clientId > 0) {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
+            }
+
+            if($projectTypes != "all"){
+                foreach (explode(",", $projectTypes) as $key => $type) {
+                    $stmn->bindValue(":projectType" . $key, $type, PDO::PARAM_STR);
+                }
             }
 
 
@@ -733,7 +736,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
 
             //Add author to project
-            if(isset($_SESSION["userdata"]["id"])) {
+            if (isset($_SESSION["userdata"]["id"])) {
                 $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
             }
 

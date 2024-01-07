@@ -8,6 +8,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -55,23 +56,23 @@ namespace Leantime\Domain\Projects\Controllers {
                         $this->projectService->setCurrentProject();
 
                         $this->tpl->setNotification($this->language->__("notification.project_deleted"), "success");
-                        $this->tpl->redirect(BASE_URL . "/projects/showAll");
+                        return Frontcontroller::redirect(BASE_URL . "/projects/showAll");
                     }
 
                     //Assign vars
                     $project = $this->projectRepo->getProject($id);
                     if ($project === false) {
-                        FrontcontrollerCore::redirect(BASE_URL . "/errors/error404");
+                        return FrontcontrollerCore::redirect(BASE_URL . "/errors/error404");
                     }
 
                     $this->tpl->assign('project', $project);
 
-                    $this->tpl->display('projects.delProject');
+                    return $this->tpl->display('projects.delProject');
                 } else {
-                    $this->tpl->display('errors.error403');
+                    return $this->tpl->display('errors.error403', responseCode: 403);
                 }
             } else {
-                $this->tpl->display('errors.error403');
+                return $this->tpl->display('errors.error403', responseCode: 403);
             }
         }
     }

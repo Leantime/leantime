@@ -67,11 +67,6 @@ class DefaultConfig
     public bool $enableMenuType = false;
 
     /**
-     * @var bool Keep theme and language from previous user for login screen
-     */
-    public bool $keepTheme = true;
-
-    /**
      * @var bool|int Debug flag
      */
     public int|bool $debug = 0;
@@ -80,6 +75,11 @@ class DefaultConfig
      * @var string Log Path
      */
     public string $logPath = APP_ROOT . '/logs/error.log';
+
+    /**
+     * @var bool Whether or not to enable the Poor Man's Cron fallback
+     */
+    public bool $poorMansCron = true;
 
     /**
      * @var bool Don't show user/pass form on login?
@@ -126,7 +126,7 @@ class DefaultConfig
     public string $dbBackupPath = 'userfiles/';
 
 
-    # S3 configuration ==============================================================================
+    # S3 configuration ============================================================================
     /**
      * @var bool Set to true if you want to use S3 instead of local files
      */
@@ -250,7 +250,7 @@ class DefaultConfig
     public string $ldapHost = '';
 
     /**
-     * @var integer LDAP port
+     * @var int LDAP port
      */
     public int $ldapPort = 389;
 
@@ -342,11 +342,16 @@ class DefaultConfig
      */
     public int $ldapDefaultRoleKey = 20;
 
-    # Plugin Settings ================================================================================
+    # Plugin Settings ==============================================================================
     /**
      * @var string Comma separated list of plugins that will always be loaded
      */
     public string $plugins = '';
+
+    /**
+     * @var string The Url of the Marketplace
+     **/
+    public string $marketplaceUrl = 'https://marketplace.leantime.io/';
 
     # OIDC Settings ================================================================================
     /**
@@ -438,7 +443,7 @@ class DefaultConfig
     /**
      * @var string OIDC Field Phone
      */
-    public string $oidcFieldPhone= '';
+    public string $oidcFieldPhone = '';
 
     /**
      * @var string OIDC Field Job Title

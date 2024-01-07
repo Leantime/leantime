@@ -10,19 +10,18 @@ namespace Leantime\Core;
  */
 class AppSettings
 {
-    public string $appVersion = "2.4.8";
+    public string $appVersion = "3.0.0-beta";
 
     public string $dbVersion = "2.4.7";
-
-    protected Environment $config;
 
     /**
      * __construct
      *
      */
-    public function __construct(Environment $config)
-    {
-        $this->config = $config;
+    public function __construct(
+        protected Environment $config,
+    ) {
+        //
     }
 
     /**
@@ -33,12 +32,6 @@ class AppSettings
     {
         $config = $config ?? $this->config;
 
-        if ($config->defaultTimezone != '') {
-            date_default_timezone_set($config->defaultTimezone);
-        } else {
-            date_default_timezone_set('America/Los_Angeles');
-        }
-
         if ($config->debug === 1 || $config->debug === true) {
             error_reporting(E_ALL);
             ini_set('display_errors', 1);
@@ -48,8 +41,7 @@ class AppSettings
         }
 
         if (session_status() !== PHP_SESSION_ACTIVE) {
-
-            if ($config->useRedis == "true" || $config->useRedis === true) {
+            if (filter_var($config->useRedis, FILTER_VALIDATE_BOOL) && (!defined("LEAN_CLI") || !LEAN_CLI)) {
                 ini_set('session.save_handler', 'redis');
                 ini_set('session.save_path', $config->redisUrl);
             }

@@ -206,7 +206,7 @@ namespace Leantime\Domain\Reactions\Repositories {
                     FROM zp_reactions
                     WHERE module=:module";
 
-            if($moduleId != null) {
+            if ($moduleId != null) {
                 $sql .= " AND moduleId=:moduleId";
             }
 
@@ -215,7 +215,7 @@ namespace Leantime\Domain\Reactions\Repositories {
             $stmn = $this->db->database->prepare($sql);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
 
-            if($moduleId != null) {
+            if ($moduleId != null) {
                 $stmn->bindValue(':moduleId', $moduleId, PDO::PARAM_INT);
             }
 
@@ -224,8 +224,6 @@ namespace Leantime\Domain\Reactions\Repositories {
             $stmn->closeCursor();
 
             return $values;
-
         }
-
     }
 }

@@ -6,6 +6,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -31,7 +32,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
             $msgKey = '';
@@ -46,16 +46,16 @@ namespace Leantime\Domain\Timesheets\Controllers {
                     $this->tpl->setNotification("notifications.time_deleted_successfully", "success");
 
                     if (isset($_SESSION['lastPage'])) {
-                        $this->tpl->redirect($_SESSION['lastPage']);
+                        return Frontcontroller::redirect($_SESSION['lastPage']);
                     } else {
-                        $this->tpl->redirect(BASE_URL . "/timsheets/showMyList");
+                        return Frontcontroller::redirect(BASE_URL . "/timsheets/showMyList");
                     }
                 }
 
                 $this->tpl->assign("id", $id);
-                $this->tpl->displayPartial('timesheets.delTime');
+                return $this->tpl->displayPartial('timesheets.delTime');
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayPartial('errors.error403');
             }
         }
     }

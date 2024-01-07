@@ -32,7 +32,7 @@ namespace Leantime\Domain\Api\Controllers {
         public function get($params)
         {
             $tags = $this->tagService->getTags($_SESSION["currentProject"], $params['term']);
-            echo json_encode($tags);
+            return $this->tpl->displayJson($tags);
         }
 
         /**

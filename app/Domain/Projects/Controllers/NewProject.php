@@ -12,6 +12,7 @@ namespace Leantime\Domain\Projects\Controllers {
     use Leantime\Domain\Queue\Repositories\Queue as QueueRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -53,7 +54,6 @@ namespace Leantime\Domain\Projects\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             if (!isset($_SESSION['lastPage'])) {
@@ -107,8 +107,8 @@ namespace Leantime\Domain\Projects\Controllers {
                     'menuType' => $_POST['menuType'] ?? 'default',
                     'type' => $_POST['type']  ?? 'project',
                     'parent' => $_POST['parent'] ?? '',
-                    'start' => $this->language->getISODateString($_POST['start']),
-                    'end' => $_POST['end'] ? $this->language->getISODateString($_POST['end']) : '',
+                    'start' => format($_POST['start'])->isoDate(),
+                    'end' => $_POST['end'] ? format($_POST['end'])->isoDateEnd() : '',
                 );
 
                 if ($values['name'] === '') {
@@ -144,9 +144,10 @@ namespace Leantime\Domain\Projects\Controllers {
                     //Take the old value to avoid nl character
                     $values['details'] = $_POST['details'];
 
+                    $this->tpl->sendConfetti();
                     $this->tpl->setNotification(sprintf($this->language->__('notifications.project_created_successfully'), BASE_URL . '/leancanvas/simpleCanvas/'), 'success', "project_created");
 
-                    $this->tpl->redirect(BASE_URL . "/projects/showProject/" . $id);
+                    return Frontcontroller::redirect(BASE_URL . "/projects/showProject/" . $id);
                 }
 
 
@@ -161,7 +162,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
             $this->tpl->assign('info', $msgKey);
 
-            $this->tpl->display('projects.newProject');
+            return $this->tpl->display('projects.newProject');
         }
     }
 

@@ -53,18 +53,12 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $id
          * @return array|false
          */
-        /**
-         * @param $id
-         * @return array|false
-         */
         public function getSprint($id): false|Models\Sprints
         {
 
             $sprint = $this->sprintRepository->getSprint($id);
 
             if ($sprint) {
-                $sprint->startDate = $this->language->getFormattedDateString($sprint->startDate);
-                $sprint->endDate = $this->language->getFormattedDateString($sprint->endDate);
                 return $sprint;
             }
 
@@ -99,10 +93,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getUpcomingSprint($projectId): false|array
         {
 
@@ -115,10 +105,6 @@ namespace Leantime\Domain\Sprints\Services {
             return false;
         }
 
-        /**
-         * @param $projectId
-         * @return array
-         */
         /**
          * @param $projectId
          * @return array
@@ -140,10 +126,6 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $projectId
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @return array|false
-         */
         public function getAllFutureSprints($projectId): false|array
         {
 
@@ -160,16 +142,12 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $params
          * @return false|object
          */
-        /**
-         * @param $params
-         * @return false|object
-         */
         public function addSprint($params): object|false
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = $this->language->getISODateString($sprint->startDate);
-            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
+            $sprint->startDate = format($sprint->startDate)->isoDateStart();
+            $sprint->endDate = format($sprint->endDate)->isoDateEnd();
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];
@@ -187,16 +165,12 @@ namespace Leantime\Domain\Sprints\Services {
          * @param $params
          * @return false|object
          */
-        /**
-         * @param $params
-         * @return false|object
-         */
         public function editSprint($params): object|false
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = $this->language->getISODateString($sprint->startDate);
-            $sprint->endDate = $this->language->getISODateString($sprint->endDate);
+            $sprint->startDate = format($sprint->startDate)->isoDate();
+            $sprint->endDate = format($sprint->endDate)->isoDateEnd();
 
             //TODO: Refactor when project selector is available
             $sprint->projectId = $_SESSION['currentProject'];
@@ -210,11 +184,6 @@ namespace Leantime\Domain\Sprints\Services {
             return false;
         }
 
-        /**
-         * @param $sprint
-         * @return array|false
-         * @throws \Exception
-         */
         /**
          * @param $sprint
          * @return array|false
@@ -263,12 +232,12 @@ namespace Leantime\Domain\Sprints\Services {
                 );
             } else {
                 //language formatted
-                $dateStart = new DateTime($this->language->getISODateString($sprint->startDate));
-                $dateEnd = new DateTime($this->language->getISODateString($sprint->endDate));
+                $dateStart = new DateTime(format($sprint->startDate)->isoDate());
+                $dateEnd = new DateTime(format($sprint->endDate)->isoDateEnd());
                 $period = new DatePeriod(
-                    new DateTime($this->language->getISODateString($sprint->startDate)),
+                    new DateTime(format($sprint->startDate)->isoDate()),
                     new DateInterval('P1D'),
-                    new DateTime($this->language->getISODateString($sprint->endDate))
+                    new DateTime(format($sprint->endDate)->isoDateEnd())
                 );
             }
 

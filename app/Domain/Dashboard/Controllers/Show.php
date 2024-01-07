@@ -17,6 +17,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
+    use Symfony\Component\HttpFoundation\Response;
+    use Leantime\Core\Frontcontroller;
 
     /**
      *
@@ -57,30 +59,28 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->reactionsService = $reactionsService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
-
-
         }
 
         /**
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get(): void
+        public function get(): Response
         {
 
             if (!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
-                FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
+                return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
             }
 
             $project = $this->projectService->getProject($_SESSION['currentProject']);
 
             if (isset($project['id']) === false) {
-                FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
+                return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
             }
 
             $projectRedirectFilter = static::dispatch_filter("dashboardRedirect", "/dashboard/show", array("type" => $project["type"]));
             if ($projectRedirectFilter != "/dashboard/show") {
-                FrontcontrollerCore::redirect(BASE_URL . $projectRedirectFilter);
+                return FrontcontrollerCore::redirect(BASE_URL . $projectRedirectFilter);
             }
 
             [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
@@ -141,16 +141,16 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->assign("types", $this->ticketService->getTicketTypes());
             $this->tpl->assign("statusLabels", $this->ticketService->getStatusLabels());
 
-            $this->tpl->display('dashboard.show');
+            return $this->tpl->display('dashboard.show');
         }
 
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
 
             if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
@@ -163,7 +163,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                         $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success", "quickticket_created");
                     }
 
-                    $this->tpl->redirect(BASE_URL . "/dashboard/show");
+                    return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
                 }
             }
 
@@ -179,7 +179,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 }
             }
 
-            $this->tpl->redirect(BASE_URL . "/dashboard/show");
+            return Frontcontroller::redirect(BASE_URL . "/dashboard/show");
         }
     }
 }

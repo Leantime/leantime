@@ -10,15 +10,14 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Leantime\Core\Mailer;
+use Symfony\Component\Console\Attribute\AsCommand;
 
-/**
- *
- */
+#[AsCommand(
+    name: 'email:test',
+    description: 'Sends an email to test system configuration',
+)]
 class TestEmailCommand extends Command
 {
-    protected static $defaultName = 'email:test';
-    protected static $defaultDescription = 'Sends an email to test system configuration';
-
     /**
      * @return void
      */

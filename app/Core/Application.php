@@ -59,4 +59,34 @@ class Application extends Container
 
         return ! $includeSuffix ? rtrim($namespace, '\\') : $namespace;
     }
+
+    /**
+     * Checks whether the application is down for maintenance
+     * @return bool
+     * @todo should return true if application is updating to a new version
+     **/
+    public function isDownForMaintenance()
+    {
+        return false;
+    }
+
+    /**
+     * Gets the current environment
+     * @return string
+     * @todo implement, should be set in env
+     **/
+    public function environment()
+    {
+        return 'production';
+    }
+
+    /**
+     * Gets the base path of the application
+     *
+     * @return string
+     **/
+    public function basePath()
+    {
+        return APP_ROOT;
+    }
 }

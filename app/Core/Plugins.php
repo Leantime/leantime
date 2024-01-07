@@ -2,9 +2,6 @@
 
 namespace Leantime\Core;
 
-use Leantime\Core\Environment;
-use Leantime\Core\Eventhelpers;
-
 /**
  * Plugins class
  *

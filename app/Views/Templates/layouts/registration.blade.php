@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html dir="{{ __('language.direction') }}" lang="{{ __('language.code') }}">
+<head>
+    @include('global::sections.header')
+
+    @stack('styles')
+    <style>
+        .leantimeLogo { position: fixed; bottom: 10px; right: 10px; }
+        .row .regLeft:after {
+
+            content: "";
+            height: 326px;
+            right: 0px;
+            opacity: .2;
+            position: absolute;
+            bottom: -50px;
+            width: 250px;
+            left: auto;
+            top: auto;
+        }
+
+        .regcontent {
+            width: auto;
+        }
+    </style>
+</head>
+
+<body class="loginpage" style="height:100%; ">
+<div class="" style="background:url({{BASE_URL}}/assets/images/spotlightBg.png); background-size: cover; height:100%; background-attachment: fixed;">
+    <div style="    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.2);
+    backdrop-filter: blur(3px);
+    padding-top: 150px;
+    overflow: hidden;">
+        <div class="regpanel" style="
+         margin: auto;
+        background: #fff;
+        max-width: 50%;
+        box-shadow: 0px 0px 50px rgba(0,0,0,0.4);
+        border-radius: 10px;
+        overflow:hidden;">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="regpanelinner" style="padding:30px;">
+
+                        <a href=""><img src="{{ BASE_URL }}/dist/images/logo_blue.svg" style="width:50%;"/></a><br /><br />
+
+                        @isset($action, $module)
+                            @include("$module::$action")
+                        @else
+                            @yield('content')
+                        @endisset
+                    </div>
+                </div>
+                <div class="col-md-5 regLeft" style="background:var(--element-gradient); padding:20px; height:auto;">
+
+                    <h1 style="position: relative; z-index: 5; width:100%; font-size:16px;">
+                        <span style="font-size:26px">Sign Up</span><br /><br />
+                        No set up required!<br />Enjoy the extra time. 🎉<br />
+                    </h1>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@include('global::sections.pageBottom')
+@stack('scripts')
+</body>
+
+</html>

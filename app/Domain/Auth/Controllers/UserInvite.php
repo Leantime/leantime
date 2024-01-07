@@ -2,12 +2,10 @@
 
 namespace Leantime\Domain\Auth\Controllers {
 
-    use Leantime\Core\Eventhelpers;
-
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
-    use Leantime\Domain\Files\Repositories\Files as FileRepository;
+    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Domain\Auth\Services\Auth as AuthService;
+    use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
 
     /**
@@ -50,9 +48,9 @@ namespace Leantime\Domain\Auth\Controllers {
 
                 if ($user) {
                     $this->tpl->assign("user", $user);
-                    $this->tpl->display('auth.userInvite', 'entry');
+                    return $this->tpl->display('auth.userInvite', 'entry');
                 } else {
-                    FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
                 }
             }
         }
@@ -73,13 +71,13 @@ namespace Leantime\Domain\Auth\Controllers {
                     if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
                         $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), "error");
 
-                        FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
+                        return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
                     } else {
                         if ($this->usersService->checkPasswordStrength($_POST['password'])) {
                             if (isset($userInvite['id'])) {
                                 $user = $this->usersService->getUser($userInvite['id']);
                             } else {
-                                FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                                return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
                             }
 
                             $user["firstname"] = $_POST["firstname"];
@@ -101,9 +99,9 @@ namespace Leantime\Domain\Auth\Controllers {
                                 self::dispatch_event("userSignUpSuccess", ['user' => $user]);
 
                                 if ($loggedIn) {
-                                    FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
+                                    return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
                                 } else {
-                                    FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+                                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
                                 }
                             } else {
                                 $this->tpl->setNotification(
@@ -111,7 +109,7 @@ namespace Leantime\Domain\Auth\Controllers {
                                     "error"
                                 );
 
-                                FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
+                                return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
                             }
                         } else {
                             $this->tpl->setNotification(
@@ -119,14 +117,13 @@ namespace Leantime\Domain\Auth\Controllers {
                                 'error'
                             );
 
-                            FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
+                            return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $_GET['id']);
                         }
                     }
                 }
             }
 
-            FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/");
+            return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/");
         }
     }
-
 }

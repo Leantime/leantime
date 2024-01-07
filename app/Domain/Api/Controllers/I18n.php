@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *
@@ -15,33 +16,40 @@ class I18n extends Controller
      * @param array $params or body of the request.
      * @throws \Exception
      * @access public
+     * @todo refactor to remove user timezone and timeformat and move to user settings
      */
     public function get(array $params)
     {
+
         $languageIni = $this->language->readIni();
 
         $dateTimeIniSettings = [
-            'language.jsdateformat',
-            'language.jstimeformat',
-            'language.momentJSDate',
+            'language.dateformat',
+            'language.timeformat',
         ];
 
         foreach ($dateTimeIniSettings as $index) {
             $languageIni[$index] = $this->language->__($index, true);
         }
 
-        header('Content-Type: application/javascript');
-
         $decodedString = json_encode($languageIni);
 
         $result = $decodedString ? $decodedString : '{}';
-
-        echo "var leantime = leantime || {};
+        $response = new Response(
+            <<<JS
+            var leantime = leantime || {};
             var leantime = {
                 i18n: {
-                    dictionary: " . $result . ",
+                    dictionary: $result,
                     __: function(index){ return leantime.i18n.dictionary[index];  }
                 }
-            };";
+            };
+            JS,
+            200
+        );
+
+        $response->headers->set('Content-Type', 'application/javascript');
+
+        return $response;
     }
 }

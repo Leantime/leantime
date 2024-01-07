@@ -3,14 +3,12 @@
 namespace Leantime\Domain\Wiki\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
-
     use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Wiki\Models\Article;
-    use Leantime\Domain\Wiki\Models\Wiki;
-    use Leantime\Domain\Wiki\Services\Wiki as WikiService;
+    use Leantime\Core\Frontcontroller;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
-    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Wiki\Models\Article;
+    use Leantime\Domain\Wiki\Services\Wiki as WikiService;
+    use Symfony\Component\HttpFoundation\Response;
 
     /**
      *
@@ -33,10 +31,10 @@ namespace Leantime\Domain\Wiki\Controllers {
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function get($params): void
+        public function get($params): Response
         {
 
             $article = app()->make(Article::class);
@@ -53,7 +51,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
                 if ($results) {
                     $this->tpl->setNotification($this->language->__('notifications.milestone_detached'), "success", "articlemilestone_unlinked");
-                    $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
+                    return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $article->id);
                 }
             }
 
@@ -67,15 +65,15 @@ namespace Leantime\Domain\Wiki\Controllers {
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign("wikiHeadlines", $wikiHeadlines);
             $this->tpl->assign("article", $article);
-            $this->tpl->displayPartial("wiki.articleDialog");
+            return $this->tpl->displayPartial("wiki.articleDialog");
         }
 
         /**
          * @param $params
-         * @return void
+         * @return Response
          * @throws BindingResolutionException
          */
-        public function post($params): void
+        public function post($params): Response
         {
 
             $article = app()->make(Article::class);
@@ -131,11 +129,10 @@ namespace Leantime\Domain\Wiki\Controllers {
                 }
             }
             if (isset($params["saveAndCloseArticle"]) === true && $params["saveAndCloseArticle"] == 1) {
-                $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
+                return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $id . "?closeModal=1");
             } else {
-                $this->tpl->redirect(BASE_URL . "/wiki/articleDialog/" . $id);
+                return Frontcontroller::redirect(BASE_URL . "/wiki/articleDialog/" . $id);
             }
         }
     }
-
 }

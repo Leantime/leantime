@@ -34,8 +34,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
          */
         public function run()
         {
-
-
             $projectFilter =  $_SESSION['currentProject'];
             $dateFrom = mktime(0, 0, 0, date("m"), '1', date("Y"));
             $dateTo = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
@@ -48,11 +46,11 @@ namespace Leantime\Domain\Timesheets\Controllers {
             }
 
             if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-                $dateFrom =  $this->language->getISODateString($_POST['dateFrom']);
+                $dateFrom =  format($_POST['dateFrom'])->isoDate();
             }
 
             if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-                $dateTo =  $this->language->getISODateString($_POST['dateTo']);
+                $dateTo =  format($_POST['dateTo'])->isoDateEnd();
             }
 
             $this->tpl->assign('dateFrom', $dateFrom);
@@ -61,8 +59,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
             $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
             $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(-1, $kind, $dateFrom, $dateTo, $_SESSION['userdata']['id'], 0, 0, "-1", 0));
 
-            $this->tpl->display('timesheets.showMyList');
+            return $this->tpl->display('timesheets.showMyList');
         }
     }
-
 }

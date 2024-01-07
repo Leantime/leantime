@@ -122,8 +122,8 @@ namespace Leantime\Domain\Canvas\Repositories {
         public function __construct(
             DbCore $db,
             LanguageCore $language,
-            Tickets $ticketRepo)
-        {
+            Tickets $ticketRepo
+        ) {
             $this->db = $db;
             $this->language = $language;
             $this->ticketRepo = $ticketRepo;
@@ -239,11 +239,6 @@ namespace Leantime\Domain\Canvas\Repositories {
          * @param $type
          * @return array|false
          */
-        /**
-         * @param $projectId
-         * @param $type
-         * @return array|false
-         */
         public function getAllCanvas($projectId, $type = null): false|array
         {
 
@@ -282,10 +277,7 @@ namespace Leantime\Domain\Canvas\Repositories {
             return $values;
         }
 
-        /**
-         * @param $canvasId
-         * @return array|false
-         */
+
         /**
          * @param $canvasId
          * @return array|false

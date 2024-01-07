@@ -40,7 +40,6 @@ namespace Leantime\Domain\Timesheets\Controllers {
          */
         public function run()
         {
-
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
             $info = '';
@@ -82,7 +81,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                             if (isset($_POST['date']) && $_POST['date'] != '') {
                                 $timestamp = date_create_from_format($this->language->__("language.dateformat"), $_POST['date']);
 
-                                $values['date'] = $this->language->getISODateString($_POST['date']);
+                                $values['date'] = format($_POST['date'])->isoDateMid();
                             }
 
                             if (isset($_POST['hours']) && $_POST['hours'] != '') {
@@ -100,7 +99,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                                     }
 
                                     if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                                        $values['invoicedEmplDate'] = $this->language->getISODateString($_POST['invoicedEmplDate']);
+                                        $values['invoicedEmplDate'] = format($_POST['invoicedEmplDate'])->isoDateMid();
                                     } else {
                                         $values['invoicedEmplDate'] = date("Y-m-d");
                                     }
@@ -115,7 +114,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                                     }
 
                                     if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                                        $values['invoicedCompDate'] = $this->language->getISODateString($_POST['invoicedCompDate']);
+                                        $values['invoicedCompDate'] = format($_POST['invoicedCompDate'])->isoDateMid();
                                     } else {
                                         $values['invoicedCompDate'] = date("Y-m-d");
                                     }
@@ -130,7 +129,7 @@ namespace Leantime\Domain\Timesheets\Controllers {
                                     }
 
                                     if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                                        $values['paidDate'] = $this->language->getISODateString($_POST['paidDate']);
+                                        $values['paidDate'] = format($_POST['paidDate'])->isoDateMid();
                                     } else {
                                         $values['paidDate'] = date("Y-m-d");
                                     }
@@ -187,15 +186,15 @@ namespace Leantime\Domain\Timesheets\Controllers {
                         $this->tpl->assign('allProjects', $this->projects->getAll());
                         $this->tpl->assign('allTickets', $this->tickets->getAll());
                         $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-                        $this->tpl->displayPartial('timesheets.editTime');
+                        return $this->tpl->displayPartial('timesheets.editTime');
                     } else {
-                        $this->tpl->displayPartial('errors.error403');
+                        return $this->tpl->displayPartial('errors.error403');
                     }
                 } else {
-                    $this->tpl->displayPartial('errors.error403');
+                    return $this->tpl->displayPartial('errors.error403');
                 }
             } else {
-                $this->tpl->displayPartial('errors.error403');
+                return $this->tpl->displayPartial('errors.error403');
             }
         }
     }

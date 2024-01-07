@@ -7,7 +7,7 @@
     $settingsLink = $tpl->dispatchTplFilter(
         'settingsLink',
         $settingsLink,
-        ['type' => $currentProjectType]
+        ['type' => $menuType]
     );
 @endphp
 
@@ -20,22 +20,6 @@
         @dispatchEvent('afterMenuOpen')
 
         @if ($allAvailableProjects || !empty($_SESSION['currentProject']))
-
-            <li class="project-selector">
-                <a href="javascript:void(0);"
-                   class="dropdown-toggle bigProjectSelector"
-                   data-toggle="dropdown">
-                    <span class="projectAvatar {{ $currentProjectType }}">
-                        @if(isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != "avatar")
-                            <span class="{{ $projectTypeAvatars[$currentProjectType] }}"></span>
-                        @else
-                            <img src="{{ BASE_URL }}/api/projects?projectAvatar={{ $currentProject['id'] ?? -1 }}&v={{ strtotime($currentProject['modified'] ?? '0') }}"/>
-                        @endif
-                    </span>
-                    {{ $currentProject['name'] ?? "" }}&nbsp;<i class="fa fa-angle-right"></i>
-                </a>
-                @include('menu::partials.projectSelector', [])
-            </li>
 
             <li class="dropdown scrollableMenu">
 
@@ -103,7 +87,7 @@
                                                     @endif
                                                 >
                                                     <a href="{{ BASE_URL . $submenuItem['href'] }}"
-                                                       data-tippy-content="{{ __($submenuItem['tooltip']) }}"
+                                                       data-tippy-content="{{ strip_tags(__($submenuItem['tooltip'])) }}"
                                                        data-tippy-placement="right">
                                                         {!! __($submenuItem['title']) !!}
                                                     </a>
@@ -115,13 +99,22 @@
                         @endswitch
                     @endforeach
 
-                    @if ($login::userIsAtLeast(Roles::$manager))
+                    @if ($login::userIsAtLeast(Roles::$manager) && $menuType != 'company' && $menuType != 'personal' && $menuType != 'projecthub')
                         <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
                             <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ $_SESSION['currentProject'] }}">
                                 {!! $settingsLink['label']  !!}
                             </a>
                         </li>
                     @endif
+
+                    @if ($menuType == 'personal')
+                        <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
+                            <a href="@if(isset($settingsLink['url'])) {{ $settingsLink['url']  }} @else {{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }} @endif">
+                                {!! __($settingsLink['label'])  !!}
+                            </a>
+                        </li>
+                    @endif
+
 
                 </ul>
 

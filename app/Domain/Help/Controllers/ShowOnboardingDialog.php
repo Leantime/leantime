@@ -24,16 +24,14 @@ namespace Leantime\Domain\Help\Controllers {
             }
 
             if (isset($params['module']) && $params['module'] != "") {
-
                 $filteredInput = htmlspecialchars($params['module']);
 
                 if (!isset($_SESSION['userdata']['settings']["modals"][$filteredInput])) {
                     $_SESSION['userdata']['settings']["modals"][$filteredInput] = 1;
                 }
 
-                $this->tpl->displayPartial('help.' . $filteredInput);
+                return $this->tpl->displayPartial('help.' . $filteredInput);
             }
         }
     }
-
 }

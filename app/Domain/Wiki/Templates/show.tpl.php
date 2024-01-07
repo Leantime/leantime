@@ -105,6 +105,10 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
 </div>
 
+
+
+
+
 <div class="maincontent">
 
 
@@ -158,7 +162,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                        */?>
                                         </div>
-                                            <?php if ($wikis && count($wikis) > 0 && $login::userIsAtLeast($roles::$editor)) {?>
+                                            <?php if ($wikis && count($wikis) >= 1 && $login::userIsAtLeast($roles::$editor)) {?>
                                             <div class="creationLinks">
                                                 <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
                                             </div>
@@ -194,14 +198,14 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                 </h1>
                                 <div class="articleMeta">
                                     <div class="metaContent">
-                                    <?=sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), $tpl->getFormattedDateString($currentArticle->created), $tpl->getFormattedDateString($currentArticle->modified)); ?>
+                                    <?=sprintf($tpl->__('labels.createdBy_on'), $tpl->escape($currentArticle->firstname), $tpl->escape($currentArticle->lastname), format($currentArticle->created)->date(), format($currentArticle->modified)->date()); ?>
                                     <br />
                                     </div>
                                     <div class="tagsinput readonly">
 
                                         <?php
                                         $tagsArray = explode(",", $currentArticle->tags);
-                                        if (count($tagsArray) > 0) {
+                                        if (count($tagsArray) >= 1) {
                                             echo "<i class='fa fa-tag pull-left' style='line-height:21px; margin-right:5px;'></i>&nbsp;";
                                         }
 
@@ -293,11 +297,8 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
             </div>
 
-
-
-        </div>
-
 </div>
+
 
 
 <script type="text/javascript">

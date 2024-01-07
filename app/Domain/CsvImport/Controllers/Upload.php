@@ -15,6 +15,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\CsvImport\Controllers\models;
 use Leantime\Domain\CsvImport\Controllers\services;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * upload controller for csvImport plugin
@@ -44,13 +45,13 @@ class Upload extends Controller
      * get - display upload form
      *
      * @access public
-     * @return void
+     * @return Response
      * @throws \Exception
      * @throws \Exception
      */
-    public function get(): void
+    public function get(): Response
     {
-        $this->tpl->displayPartial("csvImport.upload");
+        return $this->tpl->displayPartial("csvImport.upload");
     }
 
     /**
@@ -58,11 +59,11 @@ class Upload extends Controller
      *
      * @access public
      * @param array $params
-     * @return void
+     * @return Response
      * @throws BindingResolutionException
      * @throws Exception
      */
-    public function post(array $params): void
+    public function post(array $params): Response
     {
         $csv = Reader::createFromPath($_FILES['file']['tmp_name'], 'r');
 
@@ -70,10 +71,8 @@ class Upload extends Controller
 
         try {
             $records = Statement::create()->process($csv);
-        }catch(Exception $e){
-            Frontcontroller::setResponseCode("500");
-            $this->tpl->displayJson(json_encode(array("error"=>$e->getMessage())));
-            return;
+        } catch (Exception $e) {
+            return $this->tpl->displayJson(json_encode(array("error" => $e->getMessage())), 500);
         }
 
         $header = $records->getHeader();  //returns the CSV header record
@@ -94,7 +93,6 @@ class Upload extends Controller
         $integrationService = app()->make(Integrations::class);
         $id = $integrationService->create($integration);
 
-        $this->tpl->displayJson(json_encode(array("id"=>$id)));
-
+        return $this->tpl->displayJson(json_encode(array("id" => $id)));
     }
 }
