@@ -239,7 +239,7 @@ class ConsoleKernel implements ConsoleKernelContract
      * @return \Illuminate\Foundation\Bus\PendingDispatch
      * @todo Implement
      */
-    public function queue($command, array $parameters = [])
+    public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
     {
         //
     }

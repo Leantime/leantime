@@ -55,6 +55,7 @@ class MigrateCommand extends Command
         try {
             if (!$install->checkIfInstalled()) {
                 if ($silent) {
+                    $adminEmail = "admin@leantime.io";
                     $setupConfig = array(
                         "email" => "admin@leantime.io",
                         "password" => "",
