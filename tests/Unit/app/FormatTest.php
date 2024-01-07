@@ -22,10 +22,10 @@ class FormatTest extends \Codeception\Test\Unit
 
     protected function setUp(): void
     {
-        $this->dateTimeHelperMock = $this->createMock(DateTimeHelper::class);
-        $this->languageMock = $this->createMock(Language::class);
-        app()->instance(DateTimeHelper::class, $this->dateTimeHelperMock);
-        app()->instance(Language::class, $this->languageMock);
+        $this->dateTimeHelperMock = $this->createMock(\Leantime\Core\Support\DateTimeHelper::class);
+        $this->languageMock = $this->createMock(\Leantime\Core\Language::class);
+        app()->instance(\Leantime\Core\Support\DateTimeHelper::class, $this->dateTimeHelperMock);
+        app()->instance(\Leantime\Core\Language::class, $this->languageMock);
         $this->format = new Format('2022-01-01T00:00:00Z');
     }
 
