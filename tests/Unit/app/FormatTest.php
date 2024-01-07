@@ -1,8 +1,11 @@
 <?php
 
-namespace Tests;
+namespace Unit\app;
 
 use Leantime\Core\Support\Format;
+use Tests\DateTimeHelper;
+use Tests\Language;
+use Tests\MockObject;
 
 class FormatTest extends \Codeception\Test\Unit
 {

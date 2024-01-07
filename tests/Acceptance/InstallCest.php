@@ -1,18 +1,18 @@
 <?php
 
-namespace Functional;
+namespace Acceptance;
 
 use Codeception\Attribute\Depends;
-use Tests\Support\FunctionalTester;
-use Tests\Support\Page\Functional\Install;
+use Tests\Support\AcceptanceTester;
+use Tests\Support\Page\Acceptance\Install;
 
 class InstallCest
 {
-    public function _before(FunctionalTester $I)
+    public function _before(AcceptanceTester $I)
     {
     }
 
-    public function installPageWorks(FunctionalTester $I)
+    public function installPageWorks(AcceptanceTester $I)
     {
         $I->amOnPage('/install');
         echo $I->grabPageSource();
@@ -22,7 +22,7 @@ class InstallCest
     }
 
     #[Depends('installPageWorks')]
-    public function createDBSuccessfully(FunctionalTester $I, Install $installPage)
+    public function createDBSuccessfully(AcceptanceTester $I, Install $installPage)
     {
         $installPage->install(
             'test@leantime.io',
