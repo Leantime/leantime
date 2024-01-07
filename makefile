@@ -40,7 +40,6 @@ package: clean build
 	cp  ./LICENSE $(TARGET_DIR)
 	cp  ./nginx*.conf $(TARGET_DIR)
 	cp  ./web.config.sample $(TARGET_DIR)
-	cp  ./updateLeantime.sh $(TARGET_DIR)
 
 	rm -f $(TARGET_DIR)/config/configuration.php
 	#Remove font for QR code generator (not needed if no label is used)
