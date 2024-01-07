@@ -96,7 +96,7 @@ class Theme
     /**
      * @var language
      */
-    private Language $Language;
+    private Language $language;
 
     /**
      * @var array|false
@@ -133,11 +133,13 @@ class Theme
     public function __construct(
         environment $config,
         appSettings $settings,
+        Language $language,
         array $iniData = []
     ) {
         $this->config = $config;
         $this->settings = $settings;
         $this->iniData = [];
+        $this->language = $language;
     }
 
     public function getAvailableColorSchemes(): array
@@ -457,7 +459,6 @@ class Theme
      */
     public function getAll(): array
     {
-        $language = app()->make(Language::class);
         $theme = $this->getActive();
 
         $themes = [];
@@ -627,7 +628,7 @@ class Theme
                 $this->readIniData();
             } catch (Exception $e) {
                 error_log($e);
-                return $language->__("theme." . $this->getActive() . "name");
+                return $this->language->__("theme." . $this->getActive() . "name");
             }
         }
 
@@ -635,7 +636,7 @@ class Theme
             return $this->iniData['name'];
         }
 
-        return $language->__("theme." . $this->getActive() . "name");
+        return $this->language->__("theme." . $this->getActive() . "name");
     }
 
     /**

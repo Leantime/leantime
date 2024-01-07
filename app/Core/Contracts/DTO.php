@@ -64,22 +64,6 @@ abstract class DTO
     }
 
     /**
-     * Typecasts values.
-     *
-     * @param string $caster caster class name, must implement Caster
-     * @param mixed  $value
-     * @return mixed
-     **/
-    private function castWith(string $caster, mixed $value): mixed
-    {
-        if (! is_a($caster, Caster::class)) {
-            throw new \Exception('Casters must implement ' . Caster::class);
-        }
-
-        return $caster::cast($value);
-    }
-
-    /**
      * Gets the DTO data as multidimensional an array
      * @return array
      **/

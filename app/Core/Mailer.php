@@ -221,9 +221,9 @@ class Mailer
      * @param  $hookname
      * @param  $payload
      * @param array    $additional_params
-     * @return void
+     * @return mixed
      */
-    private function dispatchMailerFilter($hookname, $payload, array $additional_params = [])
+    private function dispatchMailerFilter($hookname, $payload, array $additional_params = []): mixed
     {
         return $this->dispatchMailerHook('filter', $hookname, $payload, $additional_params);
     }
@@ -235,10 +235,10 @@ class Mailer
      * @param  $hookname
      * @param  $payload
      * @param array    $additional_params
-     * @return void|mixed
+     * @return mixed
      * @throws BindingResolutionException
      */
-    private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = [])
+    private function dispatchMailerHook($type, $hookname, $payload, array $additional_params = []): mixed
     {
         if ($type !== 'filter' && $type !== 'event') {
             return false;
@@ -262,6 +262,8 @@ class Mailer
         if ($type == 'filter') {
             return $filteredValue;
         }
+
+        return;
     }
 
     /**
