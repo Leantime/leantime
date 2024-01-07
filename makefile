@@ -103,13 +103,13 @@ clean:
 run-dev: build-dev
 	cd .dev && docker-compose up --build --remove-orphans
 
-functional-test: build-dev
-	php vendor/bin/codecept run Functional --steps
+acceptance-test: build-dev
+	php vendor/bin/codecept run Acceptance --steps
 
 unit-test: build-dev
 	php vendor/bin/codecept run Unit --steps
 
-functional-test-ci: build-dev
+acceptance-test-ci: build-dev
 	php vendor/bin/codecept build
 ifeq ($(strip $(RUNNING_DOCKER_CONTAINERS)),)
 	@echo "No running docker containers found"
@@ -121,7 +121,7 @@ ifeq ($(strip $(RUNNING_DOCKER_VOLUMES)),)
 else
 	docker volume rm $(RUNNING_DOCKER_VOLUMES)
 endif
-	php vendor/bin/codecept run Functional --steps
+	php vendor/bin/codecept run Acceptance --steps
 
 codesniffer:
 	./vendor/squizlabs/php_codesniffer/bin/phpcs app

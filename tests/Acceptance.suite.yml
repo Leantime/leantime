@@ -1,11 +1,9 @@
 # Codeception Test Suite Configuration
 #
-# Suite for functional tests.
+# Suite for acceptance tests.
 # Perform tests in browser using the WebDriver or PhpBrowser.
 # If you need both WebDriver and PHPBrowser tests - create a separate suite.
-
-actor: FunctionalTester
-bootstrap: bootstrap.php
+actor: AcceptanceTester
 modules:
   enabled:
     - WebDriver:
@@ -22,7 +20,6 @@ modules:
         dsn: "mysql:host=127.0.0.1;port=3307;dbname=leantime_test"
         user: leantime
         password: leantime
-# add Codeception\Step\Retry trait to FunctionalTester to enable retries
 step_decorators:
   - Codeception\Step\ConditionalAssertion
   - Codeception\Step\TryTo

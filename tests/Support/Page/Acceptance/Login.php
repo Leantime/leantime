@@ -2,24 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Tests\Support\Page\Functional;
+namespace Tests\Support\Page\Acceptance;
 
-use Tests\Support\Page\Functional\Install;
+use Tests\Support\Page\Acceptance\Install;
 use Codeception\Util\Fixtures;
 
 class Login
 {
     /**
-     * @var \Tests\Support\FunctionalTester;
+     * @var \Tests\Support\AcceptanceTester;
      */
     protected $I;
 
-    public function __construct(\Tests\Support\FunctionalTester $I, Install $installPage)
+    public function __construct(\Tests\Support\AcceptanceTester $I, Install $installPage)
     {
         $this->I = $I;
         $this->installPage = $installPage;
     }
-
 
     public function login($username, $password)
     {
@@ -41,9 +40,9 @@ class Login
         $this->I->fillField(['name' => 'username'], $username);
         $this->I->fillField(['name' => 'password'], $password);
         $this->I->click('Login');
-        $this->I->waitForElementVisible('.articleHeadline', 30);
+        $this->I->waitForElementVisible('.stickyHeader', 30);
         echo $this->I->grabPageSource();
-        $this->I->see('Welcome John');
+        $this->I->see('Hi John');
 
         $this->saveSessionSnapshot('sid');
     }

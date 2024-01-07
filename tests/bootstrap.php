@@ -59,6 +59,7 @@ $bootstrapper = get_class(new class {
      */
     public function start(): void
     {
+
         $this->startDevEnvironment();
         $this->setFolderPermissions();
         $this->createDatabase();

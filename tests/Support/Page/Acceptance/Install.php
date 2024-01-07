@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Tests\Support\Page\Functional;
+namespace Tests\Support\Page\Acceptance;
 
 use Codeception\Util\Fixtures;
 
 class Install
 {
     /**
-     * @var \Tests\Support\FunctionalTester;
+     * @var \Tests\Support\AcceptanceTester;
      */
     protected $I;
 
-    public function __construct(\Tests\Support\FunctionalTester $I)
+    public function __construct(\Tests\Support\AcceptanceTester $I)
     {
         $this->I = $I;
     }
