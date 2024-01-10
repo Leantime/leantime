@@ -8,6 +8,7 @@ use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Facade;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
@@ -134,6 +135,8 @@ class Bootloader
 
         $app->make(AppSettings::class)->loadSettings();
 
+        $this->clearCache();
+
         Events::discover_listeners();
 
         self::dispatch_event('config_initialized');
@@ -234,6 +237,18 @@ class Bootloader
         $this->app->alias(HttpKernel::class, HttpKernelContract::class);
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
         $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
+    }
+
+    private function clearCache(): void
+    {
+        $currentVersion = app()->make(AppSettings::class)->appVersion;
+        $cachedVersion = Cache::rememberForever('version', fn () => $currentVersion);
+
+        if ($currentVersion == $cachedVersion) {
+            return;
+        }
+
+        Cache::flush();
     }
 
     /**

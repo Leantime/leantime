@@ -20,9 +20,7 @@ class AppSettings
      */
     public function __construct(
         protected Environment $config,
-    ) {
-        //
-    }
+    ) {}
 
     /**
      * loadSettings - load all appSettings and set ini
