@@ -277,7 +277,6 @@ class Mailer
      */
     public function sendMail(array $to, $from): void
     {
-
         $this->dispatchMailerEvent('beforeSendMail', []);
 
         $to = $this->dispatchMailerFilter('sendMailTo', $to, []);
