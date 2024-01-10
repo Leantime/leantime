@@ -263,7 +263,7 @@ class Mailer
             return $filteredValue;
         }
 
-        return;
+        return null;
     }
 
     /**
