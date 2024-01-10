@@ -50,6 +50,8 @@ class Installed
 
         self::dispatch_event('after_install');
 
+        \Illuminate\Support\Facades\Cache::set('installed', true);
+
         return $next($request);
     }
 

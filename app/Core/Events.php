@@ -166,7 +166,7 @@ class Events
             return;
         }
 
-        $modules = Cache::rememberForever('domainEvents', function () {
+        $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
             $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
             $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
 
