@@ -79,28 +79,9 @@ namespace Leantime\Domain\Notifications\Services {
 
         }
 
-        public function getFeed() {
-
-
-            if(isset($_SESSION['newsFeed']) && $_SESSION['newsFeed']["lastUpdate"] < time()){
-                return $_SESSION['newsFeed']["feed"];
-            }else{
-
-                $rss = simplexml_load_file('https://leantime.io/category/leantime-updates/feature-updates/feed/');
-
-                $_SESSION['newsFeed'] = array(
-                    "lastUpdate" => time() + 60*60*12,
-                    "feed" => $rss
-                );
-                return $_SESSION['newsFeed']["feed"];
-
-            }
-
-
-
+        public function getFeed()
+        {
+            return simplexml_load_file('https://leantime.io/category/leantime-updates/feature-updates/feed/');
         }
-
-
     }
-
 }
