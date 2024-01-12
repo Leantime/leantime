@@ -8,6 +8,7 @@ use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Facade;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
@@ -128,11 +129,9 @@ class Bootloader
 
         $app = $this->getApplication();
 
-        if ($app::hasBeenBootstrapped()) {
-            return;
-        }
-
         $app->make(AppSettings::class)->loadSettings();
+
+        $this->clearCache();
 
         Events::discover_listeners();
 
@@ -163,6 +162,10 @@ class Bootloader
         }
 
         self::dispatch_event("beginning", ['bootloader' => $this]);
+
+        if ($app::hasBeenBootstrapped()) {
+            return;
+        }
 
         $this->handleRequest();
 
@@ -205,15 +208,48 @@ class Bootloader
         $this->app->singleton(OidcService::class, OidcService::class);
         $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
         $this->app->singleton(\Illuminate\Filesystem\Filesystem::class, fn () => new \Illuminate\Filesystem\Filesystem());
+
+        /**
+         * @todo the following should eventually automatically turn caches into redis if available,
+         *  then memcached if available,
+         *  then fileStore
+         **/
         $this->app->singleton(\Illuminate\Cache\CacheManager::class, function ($app) {
-            $cacheManager = new \Illuminate\Cache\CacheManager($app);
-            $companyId = $app->make(SettingsService::class)->getCompanyId();
-            if (! is_dir($companyCacheDir = APP_ROOT . "/cache/$companyId")) {
-                mkdir($companyCacheDir);
+            $app['config']['cache.stores.installation'] = [
+                'driver' => 'file',
+                'path' => APP_ROOT . '/cache/installation',
+            ];
+
+            $instanceStore = fn () =>
+                $app['config']['cache.stores.instance'] = [
+                    'driver' => 'file',
+                    'path' => APP_ROOT . "/cache/" . $app->make(SettingsService::class)->getCompanyId(),
+                ];
+
+            if ($app->make(IncomingRequest::class) instanceof CliRequest) {
+                if (empty($app->make(SettingsService::class)->getCompanyId())) {
+                    throw new \RuntimeException('You can\'t run this CLI command until you have installed Leantime.');
+                }
+
+                $instanceStore();
+            } else {
+                Events::add_event_listener(
+                    'leantime.core.middleware.installed.handle.after_install',
+                    function () use ($instanceStore) {
+                        if (! $_SESSION['isInstalled']) {
+                            return;
+                        }
+
+                        $instanceStore();
+                    }
+                );
+
             }
-            $cacheManager->extend('default', fn ($app) => $cacheManager->repository(
-                $app->make(\Illuminate\Cache\FileStore::class, ['directory' => $companyCacheDir])
-            ));
+
+            $cacheManager = new \Illuminate\Cache\CacheManager($app);
+
+            $cacheManager->setDefaultDriver('instance');
+
             return $cacheManager;
         });
         $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
@@ -234,6 +270,18 @@ class Bootloader
         $this->app->alias(HttpKernel::class, HttpKernelContract::class);
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
         $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
+    }
+
+    private function clearCache(): void
+    {
+        $currentVersion = app()->make(AppSettings::class)->appVersion;
+        $cachedVersion = Cache::store('installation')->rememberForever('version', fn () => $currentVersion);
+
+        if ($currentVersion == $cachedVersion) {
+            return;
+        }
+
+        Cache::store('installation')->flush();
     }
 
     /**
@@ -297,12 +345,12 @@ class Bootloader
     {
         $headers = collect(getallheaders())
             ->mapWithKeys(fn ($val, $key) => [
-strtolower($key) => match (true) {
-                in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
-                preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
-                default => $val,
-},
-])
+                strtolower($key) => match (true) {
+                    in_array($val, ['false', 'true']) => filter_var($val, FILTER_VALIDATE_BOOLEAN),
+                    preg_match('/^[0-9]+$/', $val) => filter_var($val, FILTER_VALIDATE_INT),
+                    default => $val,
+                },
+            ])
             ->all();
 
         $this->app->singleton(IncomingRequest::class, function () use ($headers) {

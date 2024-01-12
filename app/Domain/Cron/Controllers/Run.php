@@ -43,12 +43,6 @@ namespace Leantime\Domain\Cron\Controllers {
                 // Removes script execution limit
                 set_time_limit(0);
 
-                if (function_exists('fastcgi_finish_request')) {
-                    fastcgi_finish_request();
-                } else {
-                    flush();
-                }
-
                 $output = new \Symfony\Component\Console\Output\BufferedOutput();
 
                 if ($this->config->debug) {

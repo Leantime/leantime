@@ -9,7 +9,7 @@ namespace Leantime\Domain\Connector\Services {
     /**
      *
      */
-    class Integrations implements Service
+    class Integrations
     {
         private IntegrationsRepo $integrationRepo;
 

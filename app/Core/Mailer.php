@@ -263,7 +263,7 @@ class Mailer
             return $filteredValue;
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -277,7 +277,6 @@ class Mailer
      */
     public function sendMail(array $to, $from): void
     {
-
         $this->dispatchMailerEvent('beforeSendMail', []);
 
         $to = $this->dispatchMailerFilter('sendMailTo', $to, []);

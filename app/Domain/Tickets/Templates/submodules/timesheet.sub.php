@@ -73,10 +73,11 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
         var labels = [];
         <?php
         $sum = 0;
-        foreach ($tpl->get('ticketHours') as $hours) {
+        $ticketHours = $tpl->get('ticketHours');
+        foreach ($ticketHours as $hours) {
             $sum = $sum + $hours['summe'];
 
-            echo"labels.push('" . date("Y-m-d", strtotime($hours['utc'])) . "');
+            echo"labels.push('" . date("Y-m-d", strtotime($hours['utc']??'')) . "');
                     ";
             echo"d2.push(" . $sum . ");
                     ";

@@ -591,7 +591,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                 //There is a chance that the status was removed after it was assigned to a ticket
                 if (isset($statusLabels[$row['projectId']][$row['status']]) && ($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" || $includeDoneTickets === true)) {
-                    if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
+                    if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00" || $row['dateToFinish'] == null) {
                         if (isset($tickets["later"]["tickets"])) {
                             $tickets["later"]["tickets"][] = $row;
                         } else {

@@ -3,6 +3,7 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * Events class - Handles all events and filters
@@ -165,7 +166,7 @@ class Events
             return;
         }
 
-        if (empty($_SESSION['domainEvents']) || app()->make(Environment::class)->debug) {
+        $modules = Cache::store('installation')->rememberForever('domainEvents', function () {
             $customModules = collect(glob(APP_ROOT . '/custom/Domain' . '/*', GLOB_ONLYDIR));
             $domainModules = collect(glob(APP_ROOT . "/app/Domain" . '/*', GLOB_ONLYDIR));
 
@@ -173,10 +174,9 @@ class Events
 
             $filteredModules = $domainModules->filter(fn ($path) => ! $testers->contains($path));
 
-            $_SESSION['domainEvents'] = $customModules->concat($filteredModules)->all();
-        }
+            return $customModules->concat($filteredModules)->all();
+        });
 
-        $modules = $_SESSION['domainEvents'];
         foreach ($modules as $module) {
             if (file_exists($moduleEventsPath = "$module/register.php")) {
                 include_once $moduleEventsPath;

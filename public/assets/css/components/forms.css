@@ -23,6 +23,7 @@ textarea:focus,
 
 form label{
     padding-top:5px;
+    margin-bottom: 5px;
 }
 
 form .switchery {
@@ -35,9 +36,9 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     background-color: var(--secondary-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
     -webkit-transition: border linear .2s, box-shadow linear .2s;
     -moz-transition: border linear .2s, box-shadow linear .2s;
     -o-transition: border linear .2s, box-shadow linear .2s;
@@ -294,9 +295,9 @@ body input[type='submit'].btn-primary .caret,
     background-color: var(--secondary-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
+    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
     -webkit-transition: border linear .2s, box-shadow linear .2s;
     -moz-transition: border linear .2s, box-shadow linear .2s;
     -o-transition: border linear .2s, box-shadow linear .2s;
@@ -323,8 +324,8 @@ body input[type='submit'].btn-primary .caret,
 
 .chosen-container-active .chosen-single {
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow:var(--input-shadow);
+    box-shadow: var(--input-shadow);
 }
 
 .chosen-container-active.chosen-with-drop .chosen-single {
@@ -333,14 +334,14 @@ body input[type='submit'].btn-primary .caret,
     border-bottom-left-radius: 0;
     background-image: none;
     background-image: none;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
 }
 
 .chosen-container-active .chosen-choices {
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
 }
 
 .chosen-container-active .chosen-choices li.search-field input[type="text"] {
@@ -355,8 +356,8 @@ body input[type='submit'].btn-primary .caret,
     border: 1px solid var(--main-border-color);
     border-top: 0;
     background: var(--secondary-background);
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
     clip: rect(0, 0, 0, 0);
     -webkit-clip-path: inset(100% 100%);
     clip-path: inset(100% 100%);
@@ -634,9 +635,9 @@ input[type=color] {
 
 .assign-container {
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: var(--input-shadow);
+    -moz-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
 }
 
 .userBox {
@@ -734,7 +735,7 @@ body div.tagsinput:hover,
 body div.tagsinput:focus,
 body input[type=text].main-title-input.main-title-input:hover,
 body input[type=text].main-title-input.main-title-input:focus{
-    border: 1px solid var(--main-border-color);
+    border: 1px solid var(--main-border-color-hover);
 }
 
 body div.tagsinput.readonly {
@@ -782,7 +783,7 @@ input.secretInput:hover,
 input.secretInput:focus,
 input.secretInput:active {
 
-    border: 1px solid #cccccc;
+    border: 1px solid var(--main-border-color-hover);
     text-decoration:none;
 }
 
@@ -1138,9 +1139,9 @@ input[type=range]:focus::-ms-fill-upper {
     background-color: var(--secondary-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: var(--input-shadow);
+    -moz-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
     border-radius: 4px;
 
     outline: 0;
@@ -1157,7 +1158,7 @@ input[type=range]:focus::-ms-fill-upper {
     background-color: var(--secondary-background);
     line-height: 21px;
     border: 1px solid var(--main-border-color);
-    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: var(--input-shadow);
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
 }

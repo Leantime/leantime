@@ -368,6 +368,7 @@ class Fileupload
             'jpeg' => 'image/jpg',
             'gif' => 'image/gif',
             'png' => 'image/png',
+            'svg' => 'image/svg+xml',
         );
 
         $responseFailure = new Response(file_get_contents(ROOT . '/dist/images/doc.png'));
@@ -415,7 +416,7 @@ class Fileupload
         $path_parts = pathinfo($fullPath);
         $ext = $path_parts["extension"];
 
-        if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png'])) {
+        if (! in_array($ext, ['jpg', 'jpeg', 'gif', 'png', 'svg'])) {
             throw new HttpResponseException($responseFailure);
         }
 
@@ -425,18 +426,19 @@ class Fileupload
         $sEtag = md5_file($fullPath);
 
         $sFileSize = filesize($fullPath);
-        $aInfo = getimagesize($fullPath);
 
 
-        $oStreamResponse = new StreamedResponse();
-        $oStreamResponse->headers->set("Content-Type", $aInfo['mime']);
+
+        $oStreamResponse = new Response(readfile($fullPath));
+        $oStreamResponse->headers->set("Content-Type", $mimes[$ext] );
         $oStreamResponse->headers->set("Content-Length", $sFileSize);
         $oStreamResponse->headers->set("ETag", $sEtag);
-        $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified)." GMT");
+        $oStreamResponse->headers->remove("Cache-Control");
+        $oStreamResponse->headers->remove("Pragma");
 
-        $oStreamResponse->setCallback(function() use ($fullPath) {
-            readfile($fullPath);
-        });
+        $oStreamResponse->headers->set("Pragma", 'public');
+        $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
+        $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified)." GMT");
 
         return $oStreamResponse;
     }

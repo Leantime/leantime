@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
+    use LasseRafn\Initials\Initials;
     use Leantime\Core\Environment;
     use Leantime\Core\Eventhelpers as EventhelperCore;
     use Leantime\Core\Db as DbCore;
@@ -1367,59 +1368,51 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->closeCursor();
             }
 
-            if ($value !== false && $value['avatar'] != '') {
-                $files = app()->make(Files::class);
-                $file = $files->getFile($value['avatar']);
-
-                if ($file) {
-                    $filePath = $file['encName'] . "." . $file['extension'];
-                    $type = $file['extension'];
-
-                    return array("filename" => $filePath, "type" => "uploaded");
-                } else {
-                    $avatar = new InitialAvatar();
-                    $image = $avatar
-                        ->name("🦄")
+            $avatar = (new InitialAvatar())
                         ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
                         ->fontName("Verdana")
-                        ->background('#555555')->color("#fff")
-                        ->generateSvg();
+                        ->background('#555555')
+                        ->color("#fff");
 
-                    return $image;
-                }
-            } elseif ($value !== false && ($value['avatar'] === '' || $value['avatar'] == null)) {
-                $imagename = md5($value['name']);
-
-                if (file_exists(APP_ROOT . "/cache/avatars/" . $imagename . ".png")) {
-                    return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
-                } else {
-                    $avatar = new InitialAvatar();
-                    $image = $avatar
-                        ->name($value['name'])
-                        ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
-                        ->fontSize(0.5)
-                        ->size(96)
-                        ->background('#555555')->color("#fff");
-
-                    if (is_writable(APP_ROOT . "/cache/avatars/")) {
-                        $image->generate()->save(APP_ROOT . "/cache/avatars/" . $imagename . ".png", 100, "png");
-                        return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
-                    } else {
-                        return $image->generateSVG();
-                        ;
-                    }
-                }
-            } else {
-                $avatar = new InitialAvatar();
-                $image = $avatar
-                    ->name("🦄")
-                    ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')
-                    ->fontName("Verdana")
-                    ->background('#555555')->color("#fff")
-                    ->generateSvg();
-
-                return $image;
+            if(empty($value)){
+                return $avatar->name("🦄")->generateSvg();
             }
+
+            if(empty($value['avatar'])) {
+
+                /** @var Initials $initialsClass */
+                $initialsClass = app()->make(Initials::class);
+                $initialsClass->name($value['name']);
+                $imagename = $initialsClass->getInitials();
+
+                if(!file_exists($filename = APP_ROOT . "/cache/avatars/".$imagename .".svg")){
+
+                    $image = $avatar->name($value['name'])->generateSvg();
+
+                    if(!is_writable(APP_ROOT . "/cache/avatars/")) {
+                        return $image;
+                    }
+
+                    file_put_contents($filename, $image);
+
+                }
+
+                return array("filename" => $filename, "type" => "generated");
+
+            }
+
+            $files = app()->make(Files::class);
+            $file = $files->getFile($value['avatar']);
+
+            if ($file) {
+                $filePath = $file['encName'] . "." . $file['extension'];
+                $type = $file['extension'];
+
+                return array("filename" => $filePath, "type" => "uploaded");
+            }
+
+            return $avatar->name("🦄")->generateSvg();
+
         }
     }
 

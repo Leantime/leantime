@@ -50,6 +50,8 @@ class Installed
 
         self::dispatch_event('after_install');
 
+        \Illuminate\Support\Facades\Cache::set('installed', true);
+
         return $next($request);
     }
 
@@ -87,10 +89,14 @@ class Installed
     {
         $frontController = app()->make(Frontcontroller::class);
 
-        if (in_array($frontController::getCurrentRoute(), ['install', 'install.update', 'api.i18n'])) {
+        $allowedRoutes = ['install', 'install.update', 'api.i18n'];
+        $allowedRoutes = self::dispatch_filter("allowedRoutes", $allowedRoutes);
+        if (in_array($frontController::getCurrentRoute(), $allowedRoutes)) {
             return false;
         }
 
-        return $frontController::redirect(BASE_URL . '/install');
+        $route = BASE_URL . "/install";
+        $route = self::dispatch_filter("redirectroute", $route);
+        return $frontController::redirect($route);
     }
 }
