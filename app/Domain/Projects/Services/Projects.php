@@ -694,6 +694,11 @@ namespace Leantime\Domain\Projects\Services {
                 $project = $this->getProject($projectId);
 
                 if ($project) {
+
+                    if($_SESSION["currentProject"] == $project['id']) {
+                        return true;
+                    }
+
                     $projectRole = $this->getProjectRole($_SESSION['userdata']['id'], $projectId);
 
                     $_SESSION["currentProject"] = $projectId;
