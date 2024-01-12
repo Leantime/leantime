@@ -233,6 +233,7 @@ class Bootloader
 
                 $instanceStore();
             } else {
+
                 Events::add_event_listener(
                     'leantime.core.middleware.installed.handle.after_install',
                     function () use ($instanceStore) {
