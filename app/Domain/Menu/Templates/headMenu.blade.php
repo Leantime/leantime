@@ -2,6 +2,7 @@
 @dispatchEvent('beforeHeadMenu')
 
 <ul class="headmenu pull-right">
+    @dispatchEvent('insideHeadMenu')
 
     @include('timesheets::partials.stopwatch', [
                'progressSteps' => $onTheClock

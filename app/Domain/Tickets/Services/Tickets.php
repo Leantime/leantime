@@ -378,6 +378,41 @@ namespace Leantime\Domain\Tickets\Services {
             );
         }
 
+        public function simpleTicketCounter(?int $userId = null, ?int $project = null, string $status = ""): int {
+
+            $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+
+
+            if($status != '' && is_array($tickets)) {
+
+                $ticketCounter = 0;
+                $projectStatusLabels = [];
+                foreach($tickets as $ticket) {
+
+                    if(!isset($projectStatusLabels[$ticket['projectId']])) {
+                        $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                    }
+
+                    if($status == "not_done" && $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE"){
+                            $ticketCounter++;
+                            continue;
+                    }
+
+                    if(isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"])
+                        && $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] == $status){
+                        $ticketCounter++;
+                    }
+                }
+
+                return $ticketCounter;
+            }
+
+            if(is_array($tickets)) return count($tickets);
+
+            return 0;
+
+        }
+
         public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId)
         {
 
@@ -591,7 +626,7 @@ namespace Leantime\Domain\Tickets\Services {
 
                 //There is a chance that the status was removed after it was assigned to a ticket
                 if (isset($statusLabels[$row['projectId']][$row['status']]) && ($statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE" || $includeDoneTickets === true)) {
-                    if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00") {
+                    if ($row['dateToFinish'] == "0000-00-00 00:00:00" || $row['dateToFinish'] == "1969-12-31 00:00:00" || $row['dateToFinish'] == null) {
                         if (isset($tickets["later"]["tickets"])) {
                             $tickets["later"]["tickets"][] = $row;
                         } else {

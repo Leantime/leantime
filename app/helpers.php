@@ -205,7 +205,7 @@ if (! function_exists('cast')) {
      * @throws \InvalidArgumentException If the class does not exist.
      * @throws \RuntimeException On serialization errors.
      */
-    function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): object {
+    function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): mixed {
         if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean', 'object', 'stdClass', 'array'])) {
             return Cast::castSimple($source, $classOrType);
         }

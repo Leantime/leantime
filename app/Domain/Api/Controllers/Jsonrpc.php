@@ -295,7 +295,7 @@ class Jsonrpc extends Controller
 
             // check if type is correct or can be correct
             if ($methodparam->hasType()) {
-                if ($type == gettype($params[$name])) {
+                if (in_array($type, [gettype($params[$name]), 'mixed'])) {
                     $filtered_parameters[$position] = $params[$name];
                     continue;
                 }

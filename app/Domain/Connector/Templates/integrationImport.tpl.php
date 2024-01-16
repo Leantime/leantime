@@ -39,6 +39,25 @@ if (isset($integrationId) && is_numeric($integrationId)) {
 
         <h5 class="subtitle">Review</h5>
 
+        <?php if (!empty($flags)) { ?>
+            <p style="font-style: oblique">Please resolve the following errors and reconnect your integration:</p>
+            <ul style="padding-left: 20px; margin-bottom: 20px;">
+                <?php
+                $messages = [];
+                foreach ($flags as $flag) { ?>
+                    <?php if(in_array($flag, $messages) === false){ ?>
+                        <li style="margin-right: 10px; color: red; font-style: oblique;"><?= $flag ?></li>
+                    <?php
+                        $messages[] = $flag;
+                    } ?>
+                <?php } ?>
+            </ul>
+            <a class="btn btn-primary pull-left" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=fields<?=$urlAppend?>">Go Back</a>
+        <?php } else { ?>
+            <a class="btn btn-primary right" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=import">Confirm</a>
+        <?php } ?>
+        <div class="clearall"></div>
+
         <p>All set, we are importing the data you see below.</p>
         <br />
 
@@ -61,17 +80,7 @@ if (isset($integrationId) && is_numeric($integrationId)) {
             </tbody>
         </table>
         <br />
-        <?php if (!empty($flags)) { ?>
-            <p style="font-style: oblique">Please resolve the following errors and reconnect your integration:</p>
-            <ul style="padding-left: 20px; margin-bottom: 20px;">
-                <?php foreach ($flags as $flag) { ?>
-                    <li style="margin-right: 10px; color: red; font-style: oblique;"><?= $flag ?></li>
-                <?php } ?>
-            </ul>
-            <a class="btn btn-primary pull-left" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=fields<?=$urlAppend?>">Go Back</a>
-        <?php } else { ?>
-            <a class="btn btn-primary right" href="<?= BASE_URL ?>/connector/integration?provider=<?= $provider->id ?>&step=import">Confirm</a>
-        <?php } ?>
+
         <div class="clearall"></div>
 
     </div>

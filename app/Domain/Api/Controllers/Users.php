@@ -70,6 +70,9 @@ namespace Leantime\Domain\Api\Controllers {
 
                 $response = new Response($svg->toXMLString());
                 $response->headers->set('Content-type', 'image/svg+xml');
+                $response->headers->set("Pragma", 'public');
+                $response->headers->set("Cache-Control", 'max-age=86400');
+
                 return $response;
             }
 

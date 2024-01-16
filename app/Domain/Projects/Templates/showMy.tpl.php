@@ -95,7 +95,7 @@ $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCur
                                 <div class="row" style="padding-bottom:10px;">
                                     <div class="col-md-9">
                                         <div class="projectAvatar">
-                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>&v=<?=strtotime($project['modified'] ?? '0') ?>"/>
+                                            <img src="<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id'] ?>&v=<?=format($project['modified'])->timestamp() ?>"/>
                                         </div>
                                         <small><?php $tpl->e($project['clientName'])?></small>
                                         <h4>
@@ -171,7 +171,7 @@ $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCur
                                         <div class="commentImage" style="margin-right:-10px;">
                                             <img
                                                 style=""
-                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=strtotime($member['modified'] ?? 0)?>" data-tippy-content="<?=$member['firstname'] . ' ' . $member['lastname'] ?>" />
+                                                src="<?=BASE_URL ?>/api/users?profileImage=<?=$member['id']?>&v=<?=format($member['modified'])->timestamp()?>" data-tippy-content="<?=$member['firstname'] . ' ' . $member['lastname'] ?>" />
                                         </div>
                                     <?php } ?>
                                 </div>

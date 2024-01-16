@@ -6,6 +6,9 @@
 </head>
 
 <body>
+
+    @include('global::sections.appAnnouncement')
+
     <div class="mainwrapper menu{{ $_SESSION['menuState'] ?? "closed" }}">
 
         <div class="header">

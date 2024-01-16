@@ -1526,7 +1526,7 @@ input[type="search"], input[type="tel"], input[type="color"], .uneditable-input,
 }
 
 .modal.fade {
-    top:-500%;
+
 }
 
 .modal-title {
@@ -2956,6 +2956,7 @@ body .fancyLink {
 
 body a.btn.btn-fancy {
     background-image: var(--element-gradient);
+    color:var(--main-action-color);
 }
 
 body a.btn-link.btn-fancy {

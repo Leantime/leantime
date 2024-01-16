@@ -74,7 +74,7 @@ $menuTypes = $tpl->get('menuTypes');
                     <h4 class="widgettitle title-light"><span
                             class="fa fa-picture-o"></span><?php echo $tpl->__('label.project_avatar'); ?></h4>
 
-                    <img src='<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']; ?>&v=<?=strtotime($project['modified'] ?? '0') ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                    <img src='<?=BASE_URL?>/api/projects?projectAvatar=<?=$project['id']; ?>&v=<?=format($project['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
                     <div id="projectAvatar">
                     </div>
 

@@ -28,9 +28,11 @@
                         <span class="innerCircle"></span>
                         <span class="title">
                             @if ($step['status'] == 'done')
-                                <i class="fa fa-check"></i>
+                                <i class="fa fa-circle-check"></i>
+                            @else
+                                <i class="fa-regular fa-circle"></i>
                             @endif
-                            {{ __($step['title']) }}
+                                {{ __("text.step_".$loop->index + 1) }}: {{ __($step['title']) }}
                             <i class="fa fa-caret-down" aria-hidden="true"></i>
                         </span>
                     </a>

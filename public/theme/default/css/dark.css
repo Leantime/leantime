@@ -11,7 +11,7 @@
     --primary-background: rgba(0, 0, 0, 0.6);
     --secondary-background: rgba(30, 30, 30, 1);
 
-    --layered-background: rgba(0, 0, 0, 0.4);
+    --layered-background: rgba(0, 0, 0, 0.9);
     --light-layered-background: rgba(0, 0, 0, 0.2);
 
     --primary-font-color: #bbbbbb;
@@ -95,7 +95,8 @@
     --box-radius: 5px;
     --box-radius-small: 3px;
     --element-radius: 5px;
-    --input-radius: 8px;
+    --input-radius: 15px;
+    --input-shadow: 0px 2px 2px rgba(0, 0, 0, 0.075);
 
     --kanban-col-bg: transparent;
     --kanban-col-title-bg: var(--col-title-bg);

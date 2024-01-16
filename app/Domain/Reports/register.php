@@ -6,23 +6,29 @@ use Leantime\Core\Events;
 use Illuminate\Console\Scheduling\Schedule;
 
 Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function ($params) {
-    if (get_class($params['schedule']) !== Schedule::class) {
+
+    /** @var Schedule $scheduler */
+    if (get_class($scheduler = $params['schedule']) !== Schedule::class) {
         return;
     }
 
+    /** @var Services\Reports $reportService */
     $reportService = app()->make(Services\Reports::class);
 
-    $params['schedule']->call(function () use ($reportService) {
+    $scheduler->call(function () use ($reportService) {
+        error_log("Telemetry Initialized");
         $telemetry = $reportService->sendAnonymousTelemetry();
 
-        Events::add_event_listener('leantime.core.consolekernel.terminate.command', function () use ($telemetry) {
-            try {
-                $telemetry->wait();
-            } catch (\Throwable $e) {
-                error_log($e);
-            }
-        });
-    })->daily();
+        if($telemetry === false) return;
 
-    $params['schedule']->call(fn () => $reportService->dailyIngestion())->daily();
+        try {
+            $telemetry->wait();
+
+        } catch (\Throwable $e) {
+            error_log($e);
+        }
+
+    })->everyMinute();
+
+    $scheduler->call(fn () => $reportService->dailyIngestion())->everyMinute();
 });

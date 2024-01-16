@@ -33,8 +33,6 @@ class Updated
 
         $_SESSION['isUpdated'] = $dbVersion == $settingsDbVersion;
 
-        self::dispatch_event('system_update', ['dbVersion' => $dbVersion, 'settingsDbVersion' => $settingsDbVersion]);
-
         if ($_SESSION['isUpdated']) {
             return $next($request);
         }
@@ -56,10 +54,14 @@ class Updated
     {
         $frontController = app()->make(Frontcontroller::class);
 
-        if (in_array($frontController::getCurrentRoute(), ['install.update', 'install', 'api.i18n'])) {
+        $allowedRoutes = ['install', 'install.update', 'api.i18n'];
+        $allowedRoutes = self::dispatch_filter("allowedRoutes", $allowedRoutes);
+        if (in_array($frontController::getCurrentRoute(), $allowedRoutes)) {
             return false;
         }
 
-        return $frontController::redirect(BASE_URL . '/install/update');
+        $route = BASE_URL . "/install/update";
+        $route = self::dispatch_filter("redirectroute", $route);
+        return $frontController::redirect($route);
     }
 }

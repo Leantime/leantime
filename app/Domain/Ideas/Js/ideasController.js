@@ -185,25 +185,6 @@ leantime.ideasController = (function () {
 
     var initBoardControlModal = function () {
 
-        jQuery(".addItem").click(function () {
-            jQuery("#box").val(jQuery(this).attr("id"));
-            jQuery('#addItem').modal('show');
-
-        });
-
-
-
-        jQuery(".addCanvasLink").click(function () {
-
-            jQuery('#addCanvas').modal('show');
-
-        });
-
-        jQuery(".editCanvasLink").click(function () {
-
-            jQuery('#editCanvas').modal('show');
-
-        });
 
     };
 
