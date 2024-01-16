@@ -178,7 +178,7 @@
                                                         <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                         <span class="text">
                                                             @if ($row['storypoints'] != '' && $row['storypoints'] > 0)
-                                                                {{ $efforts["" . $row['storypoints']] }}
+                                                                {{ $efforts["" . $row['storypoints']] ?? $row['storypoints'] }}
                                                             @else
                                                                 {{ __("label.story_points_unkown") }}
                                                             @endif

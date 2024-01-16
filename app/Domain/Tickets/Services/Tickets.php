@@ -378,6 +378,41 @@ namespace Leantime\Domain\Tickets\Services {
             );
         }
 
+        public function simpleTicketCounter(?int $userId = null, ?int $project = null, string $status = ""): int {
+
+            $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+
+
+            if($status != '' && is_array($tickets)) {
+
+                $ticketCounter = 0;
+                $projectStatusLabels = [];
+                foreach($tickets as $ticket) {
+
+                    if(!isset($projectStatusLabels[$ticket['projectId']])) {
+                        $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                    }
+
+                    if($status == "not_done" && $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE"){
+                            $ticketCounter++;
+                            continue;
+                    }
+
+                    if(isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"])
+                        && $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] == $status){
+                        $ticketCounter++;
+                    }
+                }
+
+                return $ticketCounter;
+            }
+
+            if(is_array($tickets)) return count($tickets);
+
+            return 0;
+
+        }
+
         public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId)
         {
 

@@ -357,7 +357,7 @@ $user = $tpl->get('user');
         </div>
         <div class="col-md-4">
             <div class="maincontentinner center">
-                <img src='<?=BASE_URL?>/api/users?profileImage=<?=$user['id']; ?>?v=<?=strtotime($user['modified'] ?? "0") ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
+                <img src='<?=BASE_URL?>/api/users?profileImage=<?=$user['id']; ?>?v=<?=format($user['modified'])->timestamp() ?>'  class='profileImg' alt='Profile Picture' id="previousImage"/>
                 <div id="profileImg">
                 </div>
 

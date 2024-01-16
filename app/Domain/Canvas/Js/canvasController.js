@@ -19,11 +19,7 @@ leantime.canvasController = (function () {
 
     var initCanvasLinks = function () {
 
-        jQuery(".addCanvasLink").click(function () {
-
-            jQuery('#addCanvas').modal('show');
-
-        });
+        jQuery(".addCanvasLink").nyroModal();
 
         jQuery(".editCanvasLink").click(function () {
 
