@@ -4,10 +4,10 @@
   "description": "Open source innovation management system",
   "dependencies": {
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
+    "@fortawesome/fontawesome-free": "^6.5.0",
     "@fullcalendar/google-calendar": "^6.1.9",
     "@fullcalendar/icalendar": "^6.1.9",
     "@fullcalendar/luxon3": "^6.1.10",
-    "@fortawesome/fontawesome-free": "^6.5.0",
     "@popperjs/core": "^2.11.8",
     "chart.js": "^3.6.0",
     "chartjs-adapter-luxon": "^1.3.1",
@@ -54,7 +54,7 @@
     "less-loader": "^11.1.3",
     "mix-tailwindcss": "^1.3.0",
     "selenium-standalone": "^9.1.2",
-    "tailwindcss": "^3.3.3",
+    "tailwindcss": "^3.4.1",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
   },
