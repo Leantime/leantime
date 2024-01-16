@@ -56,11 +56,7 @@ class Welcome extends HtmxController
 
 
         //Todo: Write queries.
-        $tickets = $this->ticketsService->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], '');
-        $totalTickets = 0;
-        foreach ($tickets as $ticketGroup) {
-            $totalTickets = $totalTickets + count($ticketGroup["tickets"]);
-        }
+        $totalTickets = $this->ticketsService->simpleTicketCounter(userId: $_SESSION["userdata"]["id"], status: "not_done");
 
         $closedTicketsCount = 0;
         $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser($_SESSION["userdata"]["id"], null);
@@ -93,7 +89,7 @@ class Welcome extends HtmxController
         $totalToday = count($todaysTasks['totalTasks'] ?? []);
         $doneToday = count($todaysTasks['doneTasks'] ?? []);
 
-        $this->tpl->assign('tickets', $tickets);
+
         $this->tpl->assign('totalTickets', $totalTickets);
         $this->tpl->assign('closedTicketsCount', $closedTicketsCount);
         $this->tpl->assign('ticketsInGoals', $ticketsInGoals);

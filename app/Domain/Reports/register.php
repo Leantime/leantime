@@ -16,7 +16,7 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
     $reportService = app()->make(Services\Reports::class);
 
     $scheduler->call(function () use ($reportService) {
-
+        error_log("Telemetry Initialized");
         $telemetry = $reportService->sendAnonymousTelemetry();
 
         if($telemetry === false) return;
@@ -28,7 +28,7 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
             error_log($e);
         }
 
-    })->everyFourHours();
+    })->everyMinute();
 
-    $scheduler->call(fn () => $reportService->dailyIngestion())->everyFourHours();
+    $scheduler->call(fn () => $reportService->dailyIngestion())->everyMinute();
 });

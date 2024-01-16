@@ -201,6 +201,15 @@ class Format
         return $this->dateTimeHelper->getISOTimeString($this->value);
     }
 
+    public function timestamp(): string
+    {
+        if ($this->value == null) {
+            return "";
+        }
+
+        return $this->dateTimeHelper->getTimestamp($this->value);
+    }
+
     /**
      * Generates a string representation of currency.
      *

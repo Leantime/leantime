@@ -161,10 +161,9 @@ $allTicketGroups = $tpl->get("allTickets");
 
                                                     </div>
                                                     <?php if ($row['dateToFinish'] != "0000-00-00 00:00:00" && $row['dateToFinish'] != "1969-12-31 00:00:00") {
-                                                        $date = new DateTime($row['dateToFinish']);
-                                                        $date = $date->format($tpl->__("language.dateformat"));
+
                                                         echo $tpl->__("label.due_icon"); ?>
-                                                        <input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo $date ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
+                                                        <input type="text" title="<?php echo $tpl->__("label.due"); ?>" value="<?php echo format($row['dateToFinish'])->date() ?>" class="duedates secretInput" style="margin-left:0px;" data-id="<?php echo $row['id'];?>" name="date" />
 
                                                     <?php } ?>
                                                 </div>

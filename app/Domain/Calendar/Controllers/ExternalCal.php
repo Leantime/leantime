@@ -7,6 +7,8 @@
 
 namespace Leantime\Domain\Calendar\Controllers {
 
+    use GuzzleHttp\Client;
+    use Leantime\Core\AppSettings;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
@@ -49,7 +51,7 @@ namespace Leantime\Domain\Calendar\Controllers {
                 $cal = $this->calendarRepo->getExternalCalendar($calId, $_SESSION['userdata']['id']);
 
                 if (isset($cal["url"])) {
-                    $content = file_get_contents($cal["url"]);
+                    $content = $this->loadIcalUrl($cal["url"]);
                     $_SESSION['calendarCache'][$calId]["lastUpdate"] = time();
                     $_SESSION['calendarCache'][$calId]["content"] = $content;
                 }
@@ -62,6 +64,31 @@ namespace Leantime\Domain\Calendar\Controllers {
 
             exit();
         }
+
+        private function loadIcalUrl($url) {
+
+            $guzzle = app()->make(Client::class);
+
+            $appSettings = app()->make(AppSettings::class);
+            try {
+                $response = $guzzle->request('GET', $url, [
+                    'headers' => [
+                        'Accept' => 'text/calendar',
+                        'User-Agent' => 'Leantime Calendar Integration v'.$appSettings->appVersion, //<-- Github wants a user agent.
+                    ]
+                ]);
+            } catch (ClientException $e) {
+                throw new \Exception('Guzzle problem: ', Psr7\Message::toString($e->getRequest()), Psr7\Message::toString($e->getResponse()));
+            }
+
+
+            if ($response->getStatusCode() == '200') {
+                return (string) $response->getBody();
+            } else {
+                throw new \Exception('Guzzle bad response code');
+            }
+        }
+
     }
 
 }

@@ -23,7 +23,35 @@
         <div class="col-md-8">
 
             <div class="maincontentinner tw-z-10">
-                <div class="pull-right dropdownWrapper">
+
+                @if ($login::userIsAtLeast($roles::$admin))
+                    <div class="pull-right dropdownWrapper">
+                        <a
+                            class="dropdown-toggle btn"
+                            data-toggle="dropdown"
+                            data-tippy-content="{{ __('label.edit_project') }}"
+                            href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
+                        ><i class="fa fa-ellipsis"></i></a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item">
+                                <a
+                                    href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
+
+                                >Edit Project</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a
+                                    href="{{ BASE_URL }}/projects/delProject/{{ $project['id'] }}"
+                                    class="delete"
+
+                                ><i class="fa fa-trash"></i> Delete Project</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                @endif
+
+                <div class="pull-right dropdownWrapper tw-mr-[5px]">
                     <a
                         class="dropdown-toggle btn"
                         data-toggle="dropdown"
@@ -42,6 +70,8 @@
                     class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px]"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
                 ><i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
+
+
 
                 <h3>{{ $_SESSION['currentProjectClient'] }}</h3>
 
@@ -72,7 +102,7 @@
 
             </div>
 
-            <div class="maincontentinner">
+            <div class="maincontentinner tw-z-10">
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">

@@ -112,7 +112,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $currentCanvasId = $this->ideaRepo->updateCanvas($values);
 
                     $this->tpl->setNotification($this->language->__("notification.board_edited"), "success", "idea_board_edited");
-                    return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards/");
+                    return $this->tpl->display('canvas.boardDialog');
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
                 }

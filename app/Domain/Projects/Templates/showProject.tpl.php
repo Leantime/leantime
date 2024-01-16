@@ -22,10 +22,10 @@ $state = $tpl->get('state');
 
         <?php echo $tpl->displayNotification() ?>
 
-        <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:4px;">
+        <div class="inlineDropDownContainer" style="float:right; z-index:9; padding-top:2px;">
 
-            <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="btn btn-default duplicateProjectModal" data-tippy-content="<?=$tpl->__("link.duplicate_project") ?>"><i class="fa-regular fa-copy"></i></a>
-            <a href="<?=BASE_URL?>/projects/delProject/<?=$project['id']?>" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i></a>
+            <a href="<?=BASE_URL?>/projects/duplicateProject/<?=$project['id']?>" class="btn btn-default duplicateProjectModal" data-tippy-content="<?=$tpl->__("link.duplicate_project") ?>"><i class="fa-regular fa-copy"></i> Copy</a>
+            <a href="<?=BASE_URL?>/projects/delProject/<?=$project['id']?>" data-tippy-content="<?=$tpl->__("link.delete_project") ?>" class="btn btn-danger-outline delete"><i class="fa fa-trash"></i> Delete</a>
 
 
         </div>
@@ -74,7 +74,7 @@ $state = $tpl->get('state');
                                                 checked="checked"
                                                 />
                                             <div class="commentImage">
-                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>&v=<?=strtotime($assignedUser['modified']) ?>"/>
+                                                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$userId ?>&v=<?=format($assignedUser['modified'])->timestamp() ?>"/>
                                             </div>
                                             <label for="user-<?php echo $userId ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($assignedUser['firstname']), $tpl->escape($assignedUser['lastname'])); ?>
                                                 <?php if ($assignedUser['jobTitle'] != '') { ?>
@@ -140,7 +140,7 @@ $state = $tpl->get('state');
                                                 <input type='checkbox' name='editorId[]' id="user-<?php echo $row['id'] ?>" value='<?php echo $row['id'] ?>' />
 
                                                 <div class="commentImage">
-                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>&v=<?=strtotime($row['modified'] ?? 0)?>"/>
+                                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$row['id'] ?>&v=<?=format($row['modified'])->timestamp()?>"/>
                                                 </div>
                                                 <label for="user-<?php echo $row['id'] ?>" ><?php printf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></label>
                                                 <?php if ($roles::getRoles()[$row['role']] == $roles::$admin || $roles::getRoles()[$row['role']] == $roles::$owner) { ?>

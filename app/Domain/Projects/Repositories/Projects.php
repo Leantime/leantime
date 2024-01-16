@@ -1369,7 +1369,6 @@ namespace Leantime\Domain\Projects\Repositories {
             }
 
             $avatar = (new InitialAvatar())
-                        ->font(ROOT . '/fonts/roboto/Roboto-Medium-webfont.woff')
                         ->fontName("Verdana")
                         ->background('#555555')
                         ->color("#fff");

@@ -41,7 +41,7 @@ if (str_contains($formUrl, '?delComment=')) {
         <div>
             <?php foreach ($tpl->get('comments') as $row) : ?>
                 <div style="display:block; padding:10px; margin-top:10px; border-bottom:1px solid #f0f0f0;">
-                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?=strtotime($row['userModified']) ?>"
+                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?=format($row['userModified'])->timestamp() ?>"
                          style="float:left; width:50px; margin-right:10px; padding:2px;"/>
                     <div class="right"><?php printf(
                         $tpl->__('text.written_on'),

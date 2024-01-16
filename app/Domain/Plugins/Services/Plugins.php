@@ -149,6 +149,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getEnabledPlugins(): mixed
         {
+            unset($_SESSION['enabledPlugins']);
             if (isset($_SESSION['enabledPlugins'])) {
                 $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
                 return $enabledPlugins;

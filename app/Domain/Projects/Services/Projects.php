@@ -695,7 +695,8 @@ namespace Leantime\Domain\Projects\Services {
 
                 if ($project) {
 
-                    if($_SESSION["currentProject"] == $project['id']) {
+                    if(isset($_SESSION["currentProject"]) &&
+                        $_SESSION["currentProject"] == $project['id']) {
                         return true;
                     }
 

@@ -53,10 +53,7 @@ $tpl->assign('canvasTitle', $canvasTitle);
         <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
         <ul class="dropdown-menu editCanvasDropdown">
             <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                <li><a href="javascript:void(0)" class="editCanvasLink "><?=$tpl->__("links.icon.edit") ?></a></li>
-                <li><a href="javascript:void(0)" class="cloneCanvasLink "><?=$tpl->__("links.icon.clone") ?></a></li>
-                <li><a href="javascript:void(0)" class="mergeCanvasLink "><?=$tpl->__("links.icon.merge") ?></a></li>
-                <li><a href="javascript:void(0)" class="importCanvasLink "><?=$tpl->__("links.icon.import") ?></a></li>
+                <li><a href="#/<?=$canvasName?>canvas/boardDialog/<?php echo $tpl->get('currentCanvas');?>" class="editCanvasLink "><?=$tpl->__("links.icon.edit") ?></a></li>
             <?php } ?>
             <li><a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/export/<?php echo $tpl->get('currentCanvas');?>"><?=$tpl->__("links.icon.export") ?></a></li>
             <li><a href="javascript:window.print();"><?=$tpl->__("links.icon.print") ?></a></li>
@@ -75,7 +72,7 @@ $tpl->assign('canvasTitle', $canvasTitle);
 
                 <ul class="dropdown-menu canvasSelector">
                      <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                         <li><a href="javascript:void(0)" class="addCanvasLink"><?=$tpl->__("links.icon.create_new_board") ?></a></li>
+                         <li><a href="#/<?=$canvasName?>canvas/boardDialog"><?=$tpl->__("links.icon.create_new_board") ?></a></li>
 
                      <?php } ?>
                     <li class="border"></li>

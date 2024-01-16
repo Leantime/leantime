@@ -398,7 +398,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     zp_tickets.dateToFinish,
                     zp_tickets.projectId,
                     zp_tickets.priority,
-                    zp_tickets.type,
+                    IF(zp_tickets.type <> "", zp_tickets.type, "task") AS type,
                     zp_tickets.status,
                     zp_tickets.tags,
                     zp_tickets.editorId,
@@ -617,6 +617,87 @@ namespace Leantime\Domain\Tickets\Repositories {
             return $values;
         }
 
+
+        public function simpleTicketQuery(?int $userId, ?int $projectId): array|false
+        {
+
+            $query = <<<SQL
+                SELECT
+                    zp_tickets.id,
+                    zp_tickets.headline,
+                    zp_tickets.description,
+                    zp_tickets.date,
+                    zp_tickets.sprint,
+                    zp_tickets.storypoints,
+                    zp_tickets.sortindex,
+                    zp_tickets.dateToFinish,
+                    zp_tickets.projectId,
+                    zp_tickets.priority,
+                    IF(zp_tickets.type <> "", zp_tickets.type, "task") AS type,
+                    zp_tickets.status,
+                    zp_tickets.tags,
+                    zp_tickets.editorId,
+                    zp_tickets.dependingTicketId,
+                    zp_tickets.milestoneid,
+                    zp_tickets.planHours,
+                    zp_tickets.editFrom,
+                    zp_tickets.editTo,
+                    zp_tickets.hourRemaining
+                FROM
+                    zp_tickets
+                LEFT JOIN zp_relationuserproject USING (projectId)
+                LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
+                LEFT JOIN zp_user AS requestor ON requestor.id = :requestorId
+                  WHERE (
+                    zp_relationuserproject.userId = :userId
+                    OR zp_projects.psettings = 'all'
+                    OR (requestor.role >= 40)
+                )
+            SQL;
+
+            //Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
+            if (isset($projectId) && $projectId  != "") {
+                $query .= " AND zp_tickets.projectId = :projectId";
+            }
+
+            if (isset($userId) && $userId  != "") {
+                $query .= " AND zp_tickets.editorId = :userId";
+            }
+
+            $query .= " GROUP BY zp_tickets.id ";
+            $query .= " ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC";
+
+
+            $stmn = $this->db->database->prepare($query);
+
+            if (isset($projectId) && $projectId  != "") {
+                $stmn->bindValue(':projectId', $projectId, PDO::PARAM_INT);
+            }
+
+            // NOTE: This should not be removed as it is used for authorization
+            if (isset($userId) && $userId  != "") {
+                $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
+            }
+
+            //Current client is only used for authorization as it represents the current client Id assigned to a user.
+            // Do not attempt to filter tickets using this value.
+            if (isset($_SESSION['userdata'])) {
+                $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            } else {
+                $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
+            }
+
+            $stmn->execute();
+
+            $values = $stmn->fetchAll();
+            $stmn->closeCursor();
+
+            return $values;
+
+        }
+
         public function getScheduledTasks(\DateTime $dateFrom, \DateTime $dateTo, ?int $userId = null)
         {
             $query = "SELECT
@@ -631,7 +712,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 							zp_tickets.dateToFinish,
 							zp_tickets.projectId,
 							zp_tickets.priority,
-							zp_tickets.type,
+							IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
 							zp_tickets.status,
 							zp_tickets.tags,
 							zp_tickets.editorId,
@@ -737,7 +818,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             $query = "SELECT
 						zp_tickets.id,
 						zp_tickets.headline,
-						zp_tickets.type,
+						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
 						zp_tickets.description,
 						zp_tickets.date,
 						zp_tickets.dateToFinish,
@@ -822,7 +903,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             $query = "SELECT
 						zp_tickets.id,
 						zp_tickets.headline,
-						zp_tickets.type,
+						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
 						zp_tickets.description,
 						zp_tickets.date,
 						zp_tickets.dateToFinish,
@@ -894,7 +975,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             $query = "SELECT
 						zp_tickets.id,
 						zp_tickets.headline,
-						zp_tickets.type,
+						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
 						zp_tickets.description,
 						zp_tickets.date,
 						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
@@ -953,7 +1034,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             $query = "SELECT
 						zp_tickets.id,
 						zp_tickets.headline,
-						zp_tickets.type,
+						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
 						zp_tickets.description,
 						zp_tickets.date,
 						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
@@ -1031,7 +1112,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             $query = "SELECT
 						zp_tickets.id,
 						zp_tickets.headline,
-						zp_tickets.type,
+						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
 						zp_tickets.description,
 						zp_tickets.date,
 						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,
@@ -1294,7 +1375,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             $query = "SELECT
 						zp_tickets.id,
 						zp_tickets.headline,
-						zp_tickets.type,
+						IF(zp_tickets.type <> '', zp_tickets.type, 'task') AS type,
 						zp_tickets.description,
 						zp_tickets.date,
 						DATE_FORMAT(zp_tickets.date, '%Y,%m,%e') AS timelineDate,

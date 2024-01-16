@@ -4,6 +4,7 @@ namespace Leantime\Views\Composers;
 
 use Leantime\Core\Composer;
 use Leantime\Core\Environment;
+use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Theme;
 use Leantime\Domain\Menu\Repositories\Menu;
@@ -14,6 +15,8 @@ use Leantime\Domain\Setting\Repositories\Setting;
  */
 class App extends Composer
 {
+    Use Eventhelpers;
+
     public static array $views = [
         'global::layouts.app',
         'global::layouts.entry',
@@ -41,8 +44,12 @@ class App extends Composer
 
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), "project");
 
+        $announcement = null;
+        $announcement = self::dispatch_filter("appAnnouncement", $announcement);
+
         return [
             "section" => $menuType,
+            "appAnnouncement" => $announcement,
         ];
     }
 }

@@ -74,7 +74,7 @@
         padding: 0px;
         position: absolute;
         background-color: var(--secondary-background);
-        border: 1px solid var(--main-border-color);
+        border: 0px solid var(--secondary-background);
     }
     .snake-game-container {
         margin: 0px;
@@ -120,21 +120,13 @@
     }
 </style>
 
-<select id="selectMode">
-    <option value="100">Easy</option>
-    <option value="75" selected="">Medium</option>
-    <option value="50">Hard</option>
-    <option value="25">Impossible</option>
-    <option value="110">Rush</option>
-</select>
-
 <div id="game-area" tabindex="0" ></div>
 
 
 <script>
     var mySnakeBoard = new SNAKE.Board({
-        boardContainer: "game-area",
-        fullScreen: false,
-        premoveOnPause: false
+            boardContainer: "game-area",
+            fullScreen: false,
+            premoveOnPause: false
     });
 </script>

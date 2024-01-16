@@ -15,7 +15,7 @@
                             @if(isset($projectTypeAvatars[$project["type"]]) && $projectTypeAvatars[$project["type"]] != "avatar")
                                 <span class="{{ $projectTypeAvatars[$project["type"]] }}"></span>
                             @else
-                                <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  strtotime($project['modified'] ?? '0') }}' />
+                                <img src='{{ BASE_URL }}/api/projects?projectAvatar={{ $project["id"] }}&v={{  format($project['modified'])->timestamp() }}' />
                             @endif
                         </span>
                         @if($project["clientName"] != '')
@@ -81,7 +81,7 @@
                                 <div class="commentImage" style="margin-right:-10px;">
                                     <img
                                         style=""
-                                        src="{{  BASE_URL }}/api/users?profileImage={{ $member['id'] }}&v={{ strtotime($member['modified'] ?? 0) }}" data-tippy-content="{{ $member['firstname'] . ' ' . $member['lastname'] }}" />
+                                        src="{{  BASE_URL }}/api/users?profileImage={{ $member['id'] }}&v={{ format($member['modified'])->timestamp() }}" data-tippy-content="{{ $member['firstname'] . ' ' . $member['lastname'] }}" />
                                 </div>
                             @endforeach
                         </div>
