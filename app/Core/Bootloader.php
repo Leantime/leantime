@@ -129,10 +129,6 @@ class Bootloader
 
         $app = $this->getApplication();
 
-        if ($app::hasBeenBootstrapped()) {
-            return;
-        }
-
         $app->make(AppSettings::class)->loadSettings();
 
         $this->clearCache();
@@ -166,6 +162,10 @@ class Bootloader
         }
 
         self::dispatch_event("beginning", ['bootloader' => $this]);
+
+        if ($app::hasBeenBootstrapped()) {
+            return;
+        }
 
         $this->handleRequest();
 
@@ -233,7 +233,18 @@ class Bootloader
 
                 $instanceStore();
             } else {
-                Events::add_event_listener('leantime.core.middleware.installed.handle.after_install', $instanceStore);
+
+                Events::add_event_listener(
+                    'leantime.core.middleware.installed.handle.after_install',
+                    function () use ($instanceStore) {
+                        if (! $_SESSION['isInstalled']) {
+                            return;
+                        }
+
+                        $instanceStore();
+                    }
+                );
+
             }
 
             $cacheManager = new \Illuminate\Cache\CacheManager($app);

@@ -49,6 +49,8 @@ class I18n extends Controller
         );
 
         $response->headers->set('Content-Type', 'application/javascript');
+        $response->headers->set("Pragma", 'public');
+        $response->headers->set("Cache-Control", 'max-age=86400');
 
         return $response;
     }

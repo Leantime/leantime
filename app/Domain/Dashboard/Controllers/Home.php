@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Dashboard\Controllers {
 
+    use GuzzleHttp\Promise\Promise;
     use Illuminate\Contracts\Container\BindingResolutionException;
 
     use Leantime\Domain\Auth\Models\Roles;
@@ -17,6 +18,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Core\Controller;
     use Leantime\Domain\Widgets\Services\Widgets;
+    use SimplePie\Exception;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Core\Frontcontroller;
 

@@ -27,6 +27,8 @@ class InitialHeaders
             'X-XSS-Protection' => '1; mode=block',
             'X-Content-Type-Options' => 'nosniff',
             'Access-Control-Allow-Origin' => BASE_URL,
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache'
             ]) as $key => $value
         ) {
             if ($response->headers->has($key)) {

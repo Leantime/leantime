@@ -146,7 +146,6 @@
     jQuery(document).ready(function(){
         <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
 
-
             leantime.ticketsController.initAsyncInputChange();
             leantime.ticketsController.initDueDateTimePickers();
 

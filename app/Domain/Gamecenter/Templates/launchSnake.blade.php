@@ -1,9 +1,9 @@
 <style>
     /*
-JavaScript Snake
-By Patrick Gillespie
-http://patorjk.com/games/snake
-*/
+        JavaScript Snake
+        By Patrick Gillespie
+        http://patorjk.com/games/snake
+    */
 
     #game-area {
         margin: 10px;
@@ -65,7 +65,7 @@ http://patorjk.com/games/snake
     .snake-food-block {
         margin: 0px;
         padding: 0px;
-        background-color: #6cfd6a;
+        background-color: var(--accent2);
         border: 0px solid #000080;
         position: absolute;
     }
@@ -73,8 +73,8 @@ http://patorjk.com/games/snake
         margin: 0px;
         padding: 0px;
         position: absolute;
-        background-color: #ab003c;
-        border: 0px solid #ab003c;
+        background-color: var(--secondary-background);
+        border: 1px solid var(--main-border-color);
     }
     .snake-game-container {
         margin: 0px;
@@ -119,6 +119,14 @@ http://patorjk.com/games/snake
         display: none;
     }
 </style>
+
+<select id="selectMode">
+    <option value="100">Easy</option>
+    <option value="75" selected="">Medium</option>
+    <option value="50">Hard</option>
+    <option value="25">Impossible</option>
+    <option value="110">Rush</option>
+</select>
 
 <div id="game-area" tabindex="0" ></div>
 
