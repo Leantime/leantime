@@ -128,7 +128,6 @@ class Template
         $this->attachComposers();
         $this->setupDirectives();
         $this->setupGlobalVars();
-
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Api\Services;
 
 use Exception;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Leantime\Core\Eventhelpers;
 use Leantime\Domain\Api\Repositories\Api as ApiRepository;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -166,10 +168,11 @@ class Api
      * @param int        $id
      * @param array|null $result
      * @return void
+     * @todo Remove this.
+     * @see ../Controllers/Tickets.php
      */
     public function jsonResponse(int $id, ?array $result): void
     {
-
         $jsonRPCArray = array(
             "jsonrpc" => "2.0",
         );
@@ -183,5 +186,29 @@ class Api
         }
 
         echo json_encode($jsonRPCArray);
+    }
+
+    /**
+     * Check the manifest for the asset and serve if found.
+     *
+     * @param string $filepath
+     * @return string|false
+     **/
+    public function getCaseCorrectPathFromManifest(string $filepath): string|false
+    {
+        $manifest = mix()->getManifest();
+        $clone = array_change_key_case(collect(Arr::dot(mix()->getManifest()))
+            ->mapWithKeys(fn ($value, $key) => [Str::of($key)->replaceFirst('./', '/')->lower()->toString() => $value])
+            ->all());
+
+        if (is_null($referenceValue = $clone[strtolower($filepath)] ?? null)) {
+            return false;
+        }
+
+        $correctManifest = array_filter($manifest, fn ($arr) => in_array($referenceValue, $arr));
+        $basePath = array_keys($correctManifest)[0];
+        $correctManifest = array_values($correctManifest)[0];
+
+        return $basePath . array_search($referenceValue, $correctManifest);
     }
 }

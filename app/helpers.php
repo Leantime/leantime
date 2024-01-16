@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Str;
 use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
@@ -8,6 +9,7 @@ use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Format;
 use Leantime\Core\Support\Cast;
+use Leantime\Core\Support\Mix;
 
 if (! function_exists('app')) {
     /**
@@ -213,5 +215,29 @@ if (! function_exists('cast')) {
         }
 
         return (new Cast($source))->castTo($classOrType, $constructParams, $mappings);
+    }
+}
+
+if (! function_exists('mix')) {
+    /**
+     * Get the path to a versioned Mix file. Customized for Leantime.
+     *
+     * @param string $path
+     * @param string $manifestDirectory
+     * @return Mix|string
+     **/
+    function mix(string $path = '', string $manifestDirectory = ''): Mix|string
+    {
+        if (! ($app = app())->bound(Mix::class)) {
+            $app->instance(Mix::class, new Mix());
+        }
+
+        $mix = $app->make(Mix::class);
+
+        if (empty($path)) {
+            return $mix;
+        }
+
+        return $mix($path, $manifestDirectory);
     }
 }

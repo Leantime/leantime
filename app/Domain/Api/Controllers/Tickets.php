@@ -47,6 +47,10 @@ namespace Leantime\Domain\Api\Controllers {
 
                 $results = $this->ticketsApiService->getAll($searchCriteria);
 
+                /**
+                 * @todo remove this jsonResponse call and instead use Response class.
+                 * @see ../Services/Api.php
+                 **/
                 $this->apiService->jsonResponse(1, $results);
             }
         }
