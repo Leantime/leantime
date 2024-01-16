@@ -21,7 +21,7 @@
 
 @dispatchEvent('afterLinkTags')
 
-<script src="{!! BASE_URL !!}/api/i18n"></script>
+<script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 <script src="{!! BASE_URL !!}/dist/js/compiled-htmx.{!! $version !!}.min.js"></script>
 

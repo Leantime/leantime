@@ -10,7 +10,9 @@ namespace Leantime\Core;
  */
 class AppSettings
 {
+
     public string $appVersion = "3.0.0-beta";
+
 
     public string $dbVersion = "2.4.7";
 
@@ -48,7 +50,10 @@ class AppSettings
             ini_set('session.use_only_cookies', 1);
             ini_set('session.cookie_httponly', 1);
             ini_set('session.use_trans_sid', 0);
+
         }
+
+        ini_set('session.cache_limiter', '');
 
         ini_set("log_errors", 1);
 

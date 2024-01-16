@@ -137,7 +137,13 @@ namespace Leantime\Domain\Connector\Services {
             if ($matchingSourceField) {
                 foreach ($values as &$row) {
                     if (strpos($row[$matchingSourceField], '@') !== false) {
-                        $id = $this->userService->getUserByEmail(trim($row[$matchingSourceField]))['id'];
+                        $id = false;
+                        if(isset($row[$matchingSourceField])){
+                            $id = $this->userService->getUserByEmail(trim($row[$matchingSourceField]))["id"] ?? false;
+
+
+
+                        }
                         if ($id) {
                             $row['editorId'] = $id;
                         } else {
@@ -599,8 +605,9 @@ namespace Leantime\Domain\Connector\Services {
                 $ticket['editorId'] = $row['editorId'];
                 $ticket['projectId'] = $row['projectId'];
                 $ticket['status'] = $row['status'];
+                $ticket['type'] = $row['type'] ?? 'task' != '' ? $row['type'] : 'task';
 
-                if (isset($ticket["id"])) {
+                if (isset($ticket["id"]) && is_numeric($ticket["id"])) {
                     $this->ticketService->updateTicket($ticket);
                 } else {
                     $this->ticketService->addTicket($ticket);

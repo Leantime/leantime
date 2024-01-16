@@ -1,9 +1,9 @@
 <style>
     /*
-JavaScript Snake
-By Patrick Gillespie
-http://patorjk.com/games/snake
-*/
+        JavaScript Snake
+        By Patrick Gillespie
+        http://patorjk.com/games/snake
+    */
 
     #game-area {
         margin: 10px;
@@ -65,7 +65,7 @@ http://patorjk.com/games/snake
     .snake-food-block {
         margin: 0px;
         padding: 0px;
-        background-color: #6cfd6a;
+        background-color: var(--accent2);
         border: 0px solid #000080;
         position: absolute;
     }
@@ -73,8 +73,8 @@ http://patorjk.com/games/snake
         margin: 0px;
         padding: 0px;
         position: absolute;
-        background-color: #ab003c;
-        border: 0px solid #ab003c;
+        background-color: var(--secondary-background);
+        border: 0px solid var(--secondary-background);
     }
     .snake-game-container {
         margin: 0px;
@@ -125,8 +125,8 @@ http://patorjk.com/games/snake
 
 <script>
     var mySnakeBoard = new SNAKE.Board({
-        boardContainer: "game-area",
-        fullScreen: false,
-        premoveOnPause: false
+            boardContainer: "game-area",
+            fullScreen: false,
+            premoveOnPause: false
     });
 </script>

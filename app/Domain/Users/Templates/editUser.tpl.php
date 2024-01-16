@@ -159,7 +159,7 @@ $projects = $tpl->get('relations');
                                     } ?>
                                 />
                                 <span class="projectAvatar" style="width:30px; float:left; margin-right:10px;">
-                                    <img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=strtotime($row['modified'] ?? '0') ?>' />
+                                    <img src='<?=BASE_URL ?>/api/projects?projectAvatar=<?=$row["id"] ?>&v=<?=format($row['modified'])->timestamp() ?>' />
                                 </span>
 
                                 <label for="project_<?php echo $row['id'] ?>" style="margin-top:-11px">

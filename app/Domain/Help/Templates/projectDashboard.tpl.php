@@ -27,7 +27,7 @@ foreach ($__data as $var => $val) {
                 </div>
 
                 <span class="userName">
-                    <a href="javascript:void(0)" target="_blank">
+                    <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('projectDashboard');" target="_blank">
                         <strong>Project Checklist</strong>
                     </a>
                 </span>
@@ -47,7 +47,7 @@ foreach ($__data as $var => $val) {
                 </div>
 
                 <span class="userName">
-                    <a href="javascript:void(0)" target="_blank">
+                    <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('projectDashboard')" target="_blank">
                         <strong>Latest To-Dos</strong>
                     </a>
                 </span>
@@ -67,7 +67,7 @@ foreach ($__data as $var => $val) {
                 </div>
 
                 <span class="userName">
-                    <a href="javascript:void(0)" target="_blank">
+                    <a href="javascript:void(0);" onclick="leantime.helperController.hideAndKeepHidden('projectDashboard')" target="_blank">
                         <strong>Status Updates</strong>
                     </a>
                 </span>

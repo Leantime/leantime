@@ -7,12 +7,16 @@ use Illuminate\Console\Scheduling\Schedule;
 use Leantime\Domain\Queue\Workers\Workers;
 
 Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function ($params) {
-    if (get_class($params['schedule']) !== Schedule::class) {
+    /** @var Schedule $scheduler */
+    if (get_class($scheduler = $params['schedule']) !== Schedule::class) {
         return;
     }
 
+    $scheduler
+        ->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::EMAILS))
+        ->everyMinute();
 
-
-    $params['schedule']->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::EMAILS))->everyMinute();
-    $params['schedule']->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::HTTPREQUESTS))->everyFiveMinutes();
+    $scheduler
+        ->call(fn () => app()->make(Services\Queue::class)->processQueue(Workers::HTTPREQUESTS))
+        ->everyFiveMinutes();
 });

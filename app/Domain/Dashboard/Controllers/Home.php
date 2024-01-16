@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Dashboard\Controllers {
 
+    use GuzzleHttp\Promise\Promise;
     use Illuminate\Contracts\Container\BindingResolutionException;
 
     use Leantime\Domain\Auth\Models\Roles;
@@ -17,6 +18,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
     use Leantime\Core\Controller;
     use Leantime\Domain\Widgets\Services\Widgets;
+    use SimplePie\Exception;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Core\Frontcontroller;
 
@@ -86,6 +88,21 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
             $this->tpl->assign("completedOnboarding", $completedOnboarding);
+
+
+            //Fallback in case telemetry does not get executed as part of the cron job
+/*            try {
+
+
+               $reportService = app()->make(Reports::class);
+               $promise = $reportService->sendAnonymousTelemetry();
+                if($promise !== false){
+                    $promise->wait();
+                }
+
+            }catch(\Exception $e){
+                error_log($e);
+            }*/
 
             return $this->tpl->display('dashboard.home');
         }

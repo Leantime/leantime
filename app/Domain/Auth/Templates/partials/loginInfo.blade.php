@@ -4,13 +4,13 @@
     @dispatchEvent('afterUserinfoMenuOpen')
     @if(isset($_SESSION["companysettings.logoPath"]) && $_SESSION["companysettings.logoPath"] !== false)
         <a href='{{ BASE_URL }}/users/editOwn/' class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">
-            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}&v={{ strtotime($user['modified'] ?? '0') }}" class="profilePicture"/>
+            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}&v={{ format($user['modified'])->timestamp() }}" class="profilePicture"/>
             <img src="{{ $_SESSION["companysettings.logoPath"] }}" class="logo"/>
             <i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
     @else
         <a href='{{ BASE_URL }}/users/editOwn/' class="dropdown-toggle profileHandler" data-toggle="dropdown">
-            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}&v={{ strtotime($user['modified'] ?? '0') }}" class="profilePicture"/>
+            <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] }}&v={{ format($user['modified'])->timestamp() }}" class="profilePicture"/>
             <i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
     @endif

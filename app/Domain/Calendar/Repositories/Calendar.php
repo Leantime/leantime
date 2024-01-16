@@ -49,6 +49,7 @@ namespace Leantime\Domain\Calendar\Repositories {
          * @param Environment $config The Environment object.
          * @return void
          */
+
         public function __construct(
             private DbCore $db,
             private LanguageCore $language,

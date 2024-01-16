@@ -20,7 +20,7 @@ if (str_contains($formUrl, '?delComment=')) {
     <?php if ($login::userIsAtLeast($roles::$commenter)) { ?>
         <div class="mainToggler-<?=$formHash ?>" id="">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified'] ?? '0') ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?=format($_SESSION['userdata']['modified'])->timestamp() ?>" />
             </div>
             <div class="commentReply" style="border:1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius); margin-bottom:10px;">
                 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, '<?=$formHash?>')">
@@ -31,7 +31,7 @@ if (str_contains($formUrl, '?delComment=')) {
 
         <div id="comment-<?=$formHash ?>-0" class="commentBox-<?=$formHash ?> commenterFields" style="display:none;">
             <div class="commentImage">
-                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?= strtotime($_SESSION['userdata']['modified'] ?? '0') ?>" />
+                <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id']?>&v=<?=format($_SESSION['userdata']['modified'])->timestamp() ?>" />
             </div>
             <div class="commentReply">
                 <textarea rows="5" cols="50" class="tinymceSimple" name="text"></textarea>
@@ -48,7 +48,7 @@ if (str_contains($formUrl, '?delComment=')) {
             <?php foreach ($tpl->get('comments') as $row) : ?>
                 <div class="clearall">
                     <div class="commentImage">
-                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?= strtotime($row['userModified'] ?? '0') ?>"/>
+                        <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $row['userId'] ?>&v=<?= format($row['userModified'])->timestamp() ?>"/>
                     </div>
                     <div class="commentMain">
                         <div class="commentContent">
@@ -100,7 +100,7 @@ if (str_contains($formUrl, '?delComment=')) {
                                 <?php foreach ($comments->getReplies($row['id']) as $comment) : ?>
                                     <div>
                                         <div class="commentImage">
-                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>&v=<?=strtotime($comment['userModified'] ?? '0') ?>"/>
+                                            <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $comment['userId'] ?>&v=<?=format($comment['userModified'])->timestamp() ?>"/>
                                         </div>
                                         <div class="commentMain">
                                             <div class="commentContent">
@@ -136,7 +136,7 @@ if (str_contains($formUrl, '?delComment=')) {
                             <?php endif; ?>
                             <div style="display:none;" id="comment-<?=$formHash?>-<?php echo $row['id']; ?>" class="commentBox">
                                 <div class="commentImage">
-                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>&v=<?= strtotime($_SESSION['userdata']['modified'] ?? '0') ?>"/>
+                                    <img src="<?= BASE_URL ?>/api/users?profileImage=<?= $_SESSION['userdata']['id'] ?>&v=<?= format($_SESSION['userdata']['modified'])->timestamp() ?>"/>
                                 </div>
                                 <div class="commentReply">
                                     <input type="submit" value="<?php echo $tpl->__('links.reply') ?>" name="comment" class="btn btn-primary"/>

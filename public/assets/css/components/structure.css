@@ -348,7 +348,6 @@ body {
 .rightpanel {
     background-size: contain;
     background-position: bottom;
-    padding-top:50px;
     min-height: 100vh;
 }
 
@@ -412,12 +411,13 @@ body {
     clear: both;
     min-height: 800px;
 
-    position:fixed;
+    position:sticky;
     height:100%;
     z-index: 9;
     display: flex;
     flex-direction: column;
     top:70px;
+    margin-top:20px;
     left:10px;
 
     overflow:hidden;
@@ -426,7 +426,8 @@ body {
 .header {
     clear: both;
     height: 50px;
-    position: fixed;
+    position: sticky;
+    top:0px;
     z-index: 15;
     width: 100%;
     box-shadow: var(--large-shadow);
@@ -509,4 +510,19 @@ body {
 
 .footer .footer-right {
     float: right;
+}
+
+.announcementBanner{
+    background:linear-gradient(170deg, var(--accent1) 20%,var(--accent2) 90%);
+    height:40px;
+    width:100%;
+    text-align:center;
+    line-height:40px;
+    color:var(--main-action-color);
+    position: relative;
+    z-index: 100;
+}
+
+.announcementBanner:before {
+
 }

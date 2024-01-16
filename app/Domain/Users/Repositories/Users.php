@@ -4,6 +4,7 @@ namespace Leantime\Domain\Users\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use LasseRafn\InitialAvatarGenerator\InitialAvatar;
+    use LasseRafn\Initials\Initials;
     use Leantime\Core\Environment;
     use Leantime\Domain\Files\Repositories\Files;
     use Leantime\Core\Db as DbCore;
@@ -704,7 +705,6 @@ namespace Leantime\Domain\Users\Repositories {
          */
         public function getProfilePicture($id): array|SVG
         {
-
             $value = false;
             if ($id !== false) {
                 $sql = "SELECT profileId, firstname, lastname FROM `zp_user` WHERE id = :id LIMIT 1";
@@ -717,58 +717,49 @@ namespace Leantime\Domain\Users\Repositories {
                 $stmn->closeCursor();
             }
 
-            if ($value !== false && $value['profileId'] != '') {
-                $files = app()->make(files::class);
-                $file = $files->getFile($value['profileId']);
+            $avatar = (new InitialAvatar())
+                ->fontName("Verdana")
+                ->background('#00a887')
+                ->color("#fff");
 
-                if ($file) {
-                    $return = $file['encName'] . "." . $file['extension'];
+            if (empty($value)) {
+                return $avatar->name("👻")->generateSvg();
+            }
+
+            $name = $value['firstname'] . " " . $value['lastname'];
+
+            if (empty($value['profileId'])) {
+                /** @var Initials $initialsClass */
+                $initialsClass = app()->make(Initials::class);
+                $initialsClass->name($name);
+                $imagename = $initialsClass->getInitials();
+
+                if (!file_exists($filename = APP_ROOT . "/cache/avatars/user-" . $imagename . ".svg")) {
+                    $image = $avatar->name($name)->generateSvg();
+
+                    if (!is_writable(APP_ROOT . "/cache/avatars/")) {
+                        return $image;
+                    }
+
+                    file_put_contents($filename, $image);
                 }
 
-                $filePath = ROOT . "/../userfiles/" . $file['encName'] . "." . $file['extension'];
+                return array("filename" => $filename, "type" => "generated");
+            }
+
+            $files = app()->make(Files::class);
+            $file = $files->getFile($value['profileId']);
+
+            if ($file) {
+                $filePath = $file['encName'] . "." . $file['extension'];
                 $type = $file['extension'];
 
-                return array("filename" => $return, "type" => "uploaded");
-            } elseif (isset($value['profileId']) && $value['profileId'] == '') {
-                $imagename = md5($value['firstname'] . " " . $value['lastname']);
-
-                if (file_exists(APP_ROOT . "/cache/avatars/" . $imagename . ".png")) {
-                    return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
-                } else {
-                    $avatar = new InitialAvatar();
-                    $image = $avatar
-                        ->name($value['firstname'] . " " . $value['lastname'])
-                        ->font(ROOT . '/dist/fonts/roboto/Roboto-Regular.woff2')
-                        ->fontSize(0.5)
-                        ->size(96)
-                        ->background('#81B1A8')->color("#fff");
-
-                    if (is_writable(APP_ROOT . "/cache/avatars/")) {
-                        $image->generate()->save(APP_ROOT . "/cache/avatars/" . $imagename . ".png", 100, "png");
-                        return array("filename" => APP_ROOT . "/cache/avatars/" . $imagename . ".png", "type" => "generated");
-                    } else {
-                        return $image->generateSVG();
-                    }
-                }
-            } else {
-                //USer doesn't exist for whatever reason. Return ghost. Boo
-                $avatar = new InitialAvatar();
-                $image = $avatar
-                    ->name("👻")
-                    ->font(ROOT . '/dist/fonts/roboto/Roboto-Medium-webfont.woff')
-                    ->fontName("Verdana")
-                    ->background('#81B1A8')->color("#fff")
-                    ->generateSvg();
-
-                return $image;
+                return array("filename" => $filePath, "type" => "uploaded");
             }
+
+            return $avatar->name("👻")->generateSvg();
         }
 
-        /**
-         * @param $id
-         * @param $params
-         * @return bool
-         */
         /**
          * @param $id
          * @param $params

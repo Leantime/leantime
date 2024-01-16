@@ -73,7 +73,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
             }
 
             $project = $this->projectService->getProject($_SESSION['currentProject']);
-
             if (isset($project['id']) === false) {
                 return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
             }

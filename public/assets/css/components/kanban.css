@@ -177,7 +177,7 @@
 }
 
 
-.sortableTicketList .ticketBox {
+.ticketBox {
     background: var(--kanban-card-bg);
     border:none;
     border-left:3px solid transparent;
@@ -194,10 +194,10 @@
     cursor:auto;
 }
 
-.sortableTicketList .ticketBox textarea {
+.ticketBox textarea {
     max-width:100%;
 }
-.sortableTicketList .ticketBox.fixed {
+.ticketBox.fixed {
     cursor:default;
 }
 
@@ -213,33 +213,33 @@
     background: var(--kanban-card-bg);
 }
 
-.sortableTicketList .ticketBox p.description {
+.ticketBox p.description {
     padding-bottom:10px;
     overflow:hidden;
 }
 
-.sortableTicketList li .ticketBox h6,
-.sortableTicketList li .ticketBox h6 a {
+.ticketBox h6,
+.ticketBox h6 a {
     line-height:16px;
 }
 
-.sortableTicketList li .ticketBox h3,
-.sortableTicketList li .ticketBox h3 a{
+.ticketBox h3,
+.ticketBox h3 a{
     font-size:var(--font-size-l);
 }
 
-.sortableTicketList li .ticketBox .label-important,
-.sortableTicketList li .ticketBox .label-warning,
-.sortableTicketList li .ticketBox .label-success,
-.sortableTicketList li .ticketBox .label-info,
-.sortableTicketList li .ticketBox .label-inverse,
-.sortableTicketList li .ticketBox .label-default,
-.sortableTicketList li .ticketBox .label-primary{
+.ticketBox .label-important,
+.ticketBox .label-warning,
+.ticketBox .label-success,
+.ticketBox .label-info,
+.ticketBox .label-inverse,
+.ticketBox .label-default,
+.ticketBox .label-primary{
     padding-top:0px;
     padding-bottom:0px;
 }
 
-.sortableTicketList li .ticketBox .timerContainer .btn{
+ .ticketBox .timerContainer .btn{
     padding-top:1px;
     padding-bottom:1px;
 }
