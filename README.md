@@ -22,15 +22,15 @@ Leantime is an open source project management system for non-project manager.<br
 <br /><br />
 
 ## 🚀 Features* ##
-| Task Management                                                      | Project Planning                             | Information/Knowledge Management        | Administration                                                           |
-| -------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------ |
-| Task management via<br>kanban boards, gantt, table, list and calendar views | Project Dashboards, reports & status updates | Wikis / Docs                            | Easy installation                                                        |
-| Unlimited subtasks and dependencies                                  | Goal & metrics tracking                      | Idea Boards                             | Multiple user roles and per project permissions                          |
-| Milestone management                                                 | Lean & Business Model Canvas                 | Retrospectives                          | Two factor authentication                                                |
-| Sprint Management                                                    | SWOT Analysis canvas                         | File Storage via S3 or local filesystem | LDAP, OIDC integration                                                   |
-| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Integration with Mattermost, Slack, Discord and Zulip (more coming soon) |
-|                                                                      | ... and more                                 | Comments/discussions on everything      | Available in 19 languages                                                |
-
+| Task Management                                                      | Project Planning                             | Information/Knowledge Management        | Administration                                  |
+| -------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------- |-------------------------------------------------|
+| Task management via<br>kanban boards, gantt, table, list and calendar views | Project Dashboards, reports & status updates | Wikis / Docs                     | Easy installation                               |
+| Unlimited subtasks and dependencies                                  | Goal & metrics tracking                      | Idea Boards                             | Multiple user roles and per project permissions |
+| Milestone management                                                 | Lean & Business Model Canvas                 | Retrospectives                          | Two factor authentication                       |
+| Sprint Management                                                    | SWOT Analysis canvas                         | File Storage via S3 or local filesystem | LDAP, OIDC integration                          |
+| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Extendable via plugins and API                  |
+|                                                                      | ... and more                                 | Comments/discussions on everything      | Integrates with Slack, Mattermost, Discord      |
+|                                                                      | ... and more                                 |     | Available in over 20 languages                  |     
 *yes, all of these features are included in the OSS version
 <br /><br />
 ### 📸 Screenshots ###
