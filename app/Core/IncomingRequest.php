@@ -42,7 +42,7 @@ class IncomingRequest extends Request
         $this->query->remove('request_parts');
 
         $requestUri ??= $this->getPathInfo();
-        preg_match_all('#\/([^\/.]+)#', $requestUri, $uriParts);
+        preg_match_all('#\/([^\/]+)#', $requestUri, $uriParts);
         $uriParts = $uriParts[1] ?? array_map('ltrim', $uriParts[0] ?? [], '/');
 
         switch (count($uriParts)) {

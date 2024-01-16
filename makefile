@@ -15,9 +15,11 @@ install-deps:
 
 build: install-deps
 	npx mix --production
+	node generateBlocklist.mjs
 
 build-dev: install-deps-dev
 	npx mix --production
+	node generateBlocklist.mjs
 
 package: clean build
 	mkdir -p $(TARGET_DIR)
