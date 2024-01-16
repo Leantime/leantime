@@ -35,12 +35,10 @@ Leantime is an open source project management system for non-project manager.<br
 <br /><br />
 ### 📸 Screenshots ###
 
-| ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Project Dashboard") |       ![alt text](public/assets/images/Screenshots/Kanban2.png "Kanban Board")       |   ![alt text](public/assets/images/Screenshots/Tasks-table.png "Grouped To-Dos")    |
-|----------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
-| ![alt text](public/assets/images/Screenshots/Tasks-list.png "Task Lists")              | ![alt text](public/assets/images/Screenshots/Tasks-timeline.png "Tasks on timeline") | ![alt text](public/assets/images/Screenshots/Tasks-calendar.png "Project Calendar") |
-| ![alt text](public/assets/images/Screenshots/Goals.png "Goals")                        |      ![alt text](public/assets/images/Screenshots/Leancanvas.png "Lean Canvas")      |     ![alt text](public/assets/images/Screenshots/Reports.png "Report Screens")      |
-| ![alt text](public/assets/images/Screenshots/Docs.png "Documents & Wikis")             |      ![alt text](public/assets/images/Screenshots/Blueprints.png "Blueprints")       |        ![alt text](public/assets/images/Screenshots/Confetti.png "Confetti")        |
-| ![alt text](public/assets/images/Screenshots/Files.png "Files & Screenrecording")      |       ![alt text](public/assets/images/Screenshots/Timesheets.png "Timsheets")       |        ![alt text](public/assets/images/Screenshots/Task.png "Task details")        |
+| ![alt text](public/assets/images/Screenshots/mywork.png "My Work")    |  ![alt text](public/assets/images/Screenshots/projectDashboard.png "Project Dashboard")     |      ![alt text](public/assets/images/Screenshots/table.png "Grouped To-Dos")      |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|
+| ![alt text](public/assets/images/Screenshots/kanban.png "Kanban Board")                                                                                                                                                        | ![alt text](public/assets/images/Screenshots/timeline.png "Tasks on timeline") |   ![alt text](public/assets/images/Screenshots/calendar.png "Project Calendar")    |
+| ![alt text](public/assets/images/Screenshots/goals.png "Goals")                                                                                             |    ![alt text](public/assets/images/Screenshots/docs.png "Documents & Wikis")     |      ![alt text](public/assets/images/Screenshots/timesheet.png "Timsheets")       |
 
 <br /><br />
 ### ❗System Requirements ###
