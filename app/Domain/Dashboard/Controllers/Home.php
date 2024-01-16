@@ -89,21 +89,6 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
             $this->tpl->assign("completedOnboarding", $completedOnboarding);
 
-
-            //Fallback in case telemetry does not get executed as part of the cron job
-/*            try {
-
-
-               $reportService = app()->make(Reports::class);
-               $promise = $reportService->sendAnonymousTelemetry();
-                if($promise !== false){
-                    $promise->wait();
-                }
-
-            }catch(\Exception $e){
-                error_log($e);
-            }*/
-
             return $this->tpl->display('dashboard.home');
         }
 

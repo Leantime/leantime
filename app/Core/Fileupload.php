@@ -427,14 +427,10 @@ class Fileupload
 
         $sFileSize = filesize($fullPath);
 
-
-
-        $oStreamResponse = new Response(readfile($fullPath));
+        $oStreamResponse = new StreamedResponse(readfile($fullPath));
         $oStreamResponse->headers->set("Content-Type", $mimes[$ext] );
         $oStreamResponse->headers->set("Content-Length", $sFileSize);
         $oStreamResponse->headers->set("ETag", $sEtag);
-        $oStreamResponse->headers->remove("Cache-Control");
-        $oStreamResponse->headers->remove("Pragma");
 
         $oStreamResponse->headers->set("Pragma", 'public');
         $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
