@@ -115,7 +115,7 @@ class Frontcontroller
                 $pluginEnabled = true;
 
                 if ($obj->format == "phar") {
-                    include APP_ROOT . "/app/Plugins/" . $obj->foldername . "/" . $obj->foldername . ".phar";
+                    include_once APP_ROOT . "/app/Plugins/" . $obj->foldername . "/" . $obj->foldername . ".phar";
                 }
 
                 break;

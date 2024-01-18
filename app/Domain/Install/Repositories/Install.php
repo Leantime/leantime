@@ -735,27 +735,6 @@ namespace Leantime\Domain\Install\Repositories {
                   PRIMARY KEY (`id`)
                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-                  INSERT INTO `zp_plugins`
-                    (
-                    `name`,
-                    `enabled`,
-                    `description`,
-                    `version`,
-                    `installdate`,
-                    `foldername`,
-                    `homepage`,
-                    `authors`)
-                    VALUES
-                    (
-                    'leantime/MotivationalQuotes',
-                    1,
-                    'Displays a random quote on the welcome page',
-                    '0.1',
-                    '2023-07-20 00:00:00',
-                    'MotivationalQuotes',
-                    'https://leantime.io',
-                    '[{\"name\":\"Leantime\",\"email\":\"support@leantime.io\"}]');
-
                 CREATE TABLE `zp_notifications` (
                   `id` INT NOT NULL AUTO_INCREMENT,
                   `userId` INT NOT NULL,

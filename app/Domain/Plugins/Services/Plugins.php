@@ -337,17 +337,21 @@ namespace Leantime\Domain\Plugins\Services {
                 return false;
             }
 
-            //Any installation calls should happen right here.
-            $pluginClassName = $this->getPluginClassName($plugin);
-            $newPluginSvc = app()->make($pluginClassName);
+            try {
+                //Any installation calls should happen right here.
+                $pluginClassName = $this->getPluginClassName($plugin);
+                $newPluginSvc = app()->make($pluginClassName);
 
-            if (method_exists($newPluginSvc, "uninstall")) {
-                try {
-                    $newPluginSvc->uninstall();
-                } catch (\Exception $e) {
-                    error_log($e);
-                    return false;
+                if (method_exists($newPluginSvc, "uninstall")) {
+                    try {
+                        $newPluginSvc->uninstall();
+                    } catch (\Exception $e) {
+                        error_log($e);
+                        return false;
+                    }
                 }
+            }catch(\Exception $e){
+                //Silence is golden
             }
 
             return $this->pluginRepository->removePlugin($id);
