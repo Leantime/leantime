@@ -99,6 +99,7 @@ namespace Leantime\Domain\Install\Repositories {
             20405,
             20406,
             20407,
+            30002,
         );
 
         /**
@@ -289,6 +290,10 @@ namespace Leantime\Domain\Install\Repositories {
             }
 
             if ($currentDBVersion == $newDBVersion) {
+
+                unset($_SESSION['isUpdated']);
+                unset($_SESSION['dbVersion']);
+
                 return true;
             }
 
@@ -320,6 +325,9 @@ namespace Leantime\Domain\Install\Repositories {
                     }
                 }
             }
+
+            unset($_SESSION['isUpdated']);
+            unset($_SESSION['dbVersion']);
 
             return true;
         }
@@ -1868,6 +1876,30 @@ namespace Leantime\Domain\Install\Repositories {
             } else {
                 return true;
             }
+        }
+
+        public function update_sql_30002(): bool|array {
+
+            $errors = array();
+
+            $sql = [
+                "ALTER TABLE `zp_plugins` ADD COLUMN `license` TEXT NULL DEFAULT NULL",
+                "ALTER TABLE `zp_plugins` ADD COLUMN `format` VARCHAR(45) NULL DEFAULT NULL",
+            ];
+
+            foreach ($sql as $statement) {
+                try {
+                    $stmn = $this->database->prepare($statement);
+                    $stmn->execute();
+                } catch (PDOException $e) {
+                   //Just swallow your pride
+                    //One day we'll get ALTER IF EXISTS
+                }
+            }
+
+
+            return true;
+
         }
 
     }
