@@ -2,7 +2,10 @@ parameters:
     level: 0
     paths:
         - public/
-        - app/
+        - app/Command
+        - app/Core
+        - app/Domain
+        - app/Views
         - bin/
     scanDirectories:
         - vendor

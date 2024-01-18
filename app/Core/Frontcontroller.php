@@ -111,13 +111,7 @@ class Frontcontroller
                 if (strtolower($obj->foldername) !== strtolower($moduleName)) {
                     continue;
                 }
-
                 $pluginEnabled = true;
-
-                if ($obj->format == "phar") {
-                    include APP_ROOT . "/app/Plugins/" . $obj->foldername . "/" . $obj->foldername . ".phar";
-                }
-
                 break;
             }
 

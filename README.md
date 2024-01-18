@@ -16,31 +16,29 @@ Leantime is an open source project management system for non-project manager.<br
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/leantime)
 <br />
 
-  ![alt text](public/assets/images/Screenshots/Home.png "Home Screen")
+  ![alt text](public/assets/images/Screenshots/mywork.png "Home Screen")
 
 </div>
 <br /><br />
 
 ## 🚀 Features* ##
-| Task Management                                                      | Project Planning                             | Information/Knowledge Management        | Administration                                                           |
-| -------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------ |
-| Task management via<br>kanban boards, gantt, table, list and calendar views | Project Dashboards, reports & status updates | Wikis / Docs                            | Easy installation                                                        |
-| Unlimited subtasks and dependencies                                  | Goal & metrics tracking                      | Idea Boards                             | Multiple user roles and per project permissions                          |
-| Milestone management                                                 | Lean & Business Model Canvas                 | Retrospectives                          | Two factor authentication                                                |
-| Sprint Management                                                    | SWOT Analysis canvas                         | File Storage via S3 or local filesystem | LDAP, OIDC integration                                                   |
-| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Integration with Mattermost, Slack, Discord and Zulip (more coming soon) |
-|                                                                      | ... and more                                 | Comments/discussions on everything      | Available in 19 languages                                                |
-
+| Task Management                                                      | Project Planning                             | Information/Knowledge Management        | Administration                                  |
+| -------------------------------------------------------------------- | -------------------------------------------- | --------------------------------------- |-------------------------------------------------|
+| Task management via<br>kanban boards, gantt, table, list and calendar views | Project Dashboards, reports & status updates | Wikis / Docs                     | Easy installation                               |
+| Unlimited subtasks and dependencies                                  | Goal & metrics tracking                      | Idea Boards                             | Multiple user roles and per project permissions |
+| Milestone management                                                 | Lean & Business Model Canvas                 | Retrospectives                          | Two factor authentication                       |
+| Sprint Management                                                    | SWOT Analysis canvas                         | File Storage via S3 or local filesystem | LDAP, OIDC integration                          |
+| Timetracking & timesheets                                            | Risk Analysis                                | Screen & webcam recording               | Extendable via plugins and API                  |
+|                                                                      | ... and more                                 | Comments/discussions on everything      | Integrates with Slack, Mattermost, Discord      |
+|                                                                      | ... and more                                 |     | Available in over 20 languages                  |     
 *yes, all of these features are included in the OSS version
 <br /><br />
 ### 📸 Screenshots ###
 
-| ![alt text](public/assets/images/Screenshots/ProjectDashboard.png "Project Dashboard") |       ![alt text](public/assets/images/Screenshots/Kanban2.png "Kanban Board")       |   ![alt text](public/assets/images/Screenshots/Tasks-table.png "Grouped To-Dos")    |
-|----------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------:|
-| ![alt text](public/assets/images/Screenshots/Tasks-list.png "Task Lists")              | ![alt text](public/assets/images/Screenshots/Tasks-timeline.png "Tasks on timeline") | ![alt text](public/assets/images/Screenshots/Tasks-calendar.png "Project Calendar") |
-| ![alt text](public/assets/images/Screenshots/Goals.png "Goals")                        |      ![alt text](public/assets/images/Screenshots/Leancanvas.png "Lean Canvas")      |     ![alt text](public/assets/images/Screenshots/Reports.png "Report Screens")      |
-| ![alt text](public/assets/images/Screenshots/Docs.png "Documents & Wikis")             |      ![alt text](public/assets/images/Screenshots/Blueprints.png "Blueprints")       |        ![alt text](public/assets/images/Screenshots/Confetti.png "Confetti")        |
-| ![alt text](public/assets/images/Screenshots/Files.png "Files & Screenrecording")      |       ![alt text](public/assets/images/Screenshots/Timesheets.png "Timsheets")       |        ![alt text](public/assets/images/Screenshots/Task.png "Task details")        |
+| ![alt text](public/assets/images/Screenshots/dark.png "My Work")        |  ![alt text](public/assets/images/Screenshots/projectDashboard.png "Project Dashboard")     |      ![alt text](public/assets/images/Screenshots/table.png "Grouped To-Dos")      |
+|-------------------------------------------------------------------------|:------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------:|
+| ![alt text](public/assets/images/Screenshots/kanban.png "Kanban Board") | ![alt text](public/assets/images/Screenshots/timeline.png "Tasks on timeline") |   ![alt text](public/assets/images/Screenshots/calendar.png "Project Calendar")    |
+| ![alt text](public/assets/images/Screenshots/goals.png "Goals")         |    ![alt text](public/assets/images/Screenshots/docs.png "Documents & Wikis")     |      ![alt text](public/assets/images/Screenshots/timesheet.png "Timsheets")       |
 
 <br /><br />
 ### ❗System Requirements ###

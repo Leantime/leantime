@@ -22,7 +22,7 @@
 
         <div class="col-md-8">
 
-            <div class="maincontentinner tw-z-10">
+            <div class="maincontentinner tw-z-20">
 
                 @if ($login::userIsAtLeast($roles::$admin))
                     <div class="pull-right dropdownWrapper">

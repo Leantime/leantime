@@ -7,6 +7,7 @@ use Aws\S3\S3Client;
 use Exception;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -427,18 +428,17 @@ class Fileupload
 
         $sFileSize = filesize($fullPath);
 
-        $oStreamResponse = new StreamedResponse();
+        $oStreamResponse = new BinaryFileResponse($fullPath);
         $oStreamResponse->headers->set("Content-Type", $mimes[$ext] );
-        $oStreamResponse->headers->set("Content-Length", $sFileSize);
-        $oStreamResponse->headers->set("ETag", $sEtag);
+        //$oStreamResponse->headers->set("Content-Length", $sFileSize);
+        //$oStreamResponse->headers->set("ETag", $sEtag);
 
-        $oStreamResponse->headers->set("Pragma", 'public');
-        $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
-        $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified)." GMT");
-
-        $oStreamResponse->setCallback(function() use ($fullPath) {
-            readfile($fullPath);
-        });
+        if(app()->make(Environment::class)->debug == false) {
+            $oStreamResponse->headers->set("Pragma", 'public');
+            $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
+            $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified)." GMT");
+        }
+        //$oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
 
         return $oStreamResponse;
     }
