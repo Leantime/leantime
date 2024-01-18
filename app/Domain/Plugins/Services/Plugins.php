@@ -149,7 +149,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function getEnabledPlugins(): mixed
         {
-            unset($_SESSION['enabledPlugins']);
+
             if (isset($_SESSION['enabledPlugins'])) {
                 $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
                 return $enabledPlugins;
@@ -171,6 +171,9 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function discoverNewPlugins(): array
         {
+
+            $this->clearCache();
+
             $installedPluginNames = array_map(fn ($plugin) => $plugin->foldername, $this->getAllPlugins());
             $scanned_directory = array_diff(scandir($this->pluginDirectory), ['..', '.']);
 
@@ -226,6 +229,9 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function installPlugin($pluginFolder): false|string
         {
+
+            $this->clearCache();
+
             $pluginFolder = Str::studly($pluginFolder);
 
             try {
@@ -256,7 +262,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function enablePlugin(int $id): bool
         {
-            unset($_SESSION['enabledPlugins']);
+            $this->clearCache();
 
             $pluginModel = $this->pluginRepository->getPlugin($id);
 
@@ -292,7 +298,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function disablePlugin(int $id): bool
         {
-            unset($_SESSION['enabledPlugins']);
+            $this->clearCache();
 
             $pluginModel = $this->pluginRepository->getPlugin($id);
 
@@ -329,7 +335,7 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function removePlugin(int $id): bool
         {
-            unset($_SESSION['enabledPlugins']);
+            $this->clearCache();
             /** @var PluginModel|false $plugin */
             $plugin = $this->pluginRepository->getPlugin($id);
 
@@ -450,6 +456,9 @@ namespace Leantime\Domain\Plugins\Services {
          */
         public function installMarketplacePlugin(MarketplacePlugin $plugin, string $version): void
         {
+
+            $this->clearCache();
+
             $response = Http::withoutVerifying()->withHeaders([
                     'X-License-Key' => $plugin->license,
                     'X-Instance-Id' => $this->settingsService->getCompanyId(),
@@ -514,7 +523,6 @@ namespace Leantime\Domain\Plugins\Services {
                 throw new \Exception(__('notification_cant_add_to_db'));
             }
 
-            unset($_SESSION['enabledPlugins']);
         }
 
         public function canActivate(InstalledPlugin $plugin): bool
@@ -540,6 +548,12 @@ namespace Leantime\Domain\Plugins\Services {
             }
 
             return true;
+        }
+
+        public function clearCache() {
+
+            unset($_SESSION['commands']['plugins'], $_SESSION['enabledPlugins'], $_SESSION['template_paths'], $_SESSION['composers']);
+
         }
     }
 }
