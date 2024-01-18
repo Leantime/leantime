@@ -4,6 +4,9 @@ namespace Leantime\Core\Support;
 
 use Illuminate\Support\Str;
 
+/**
+ * @todo the cast to method needs to be refactored to have better support of constructor params
+ **/
 class Cast
 {
     protected array $mappings;
@@ -153,7 +156,7 @@ class Cast
      * @param array $mappings
      * @return array|object
      **/
-    protected function handleIterator(array|object $iterator, array $mappings = []): array|object {
+    protected function handleIterator(iterable $iterator, array $mappings = []): array|object {
         $result = is_object($iterator) ? new \stdClass : [];
 
         foreach ($iterator as $key => $value) {
@@ -195,8 +198,8 @@ class Cast
     protected function getMatchingMappings(array $mappings, string $propName): array
     {
         return collect($mappings)
-            ->filter(fn ($mapping) => Str::startsWith($mapping, "$propName.") || Str::startsWith($mapping, "*."))
-            ->map(fn ($mapping) => Str::after('.', $mapping))
+            ->filter(fn ($mapping, $key) => Str::startsWith($key, "$propName.") || Str::startsWith($key, '*.'))
+            ->mapWithKeys(fn ($mapping, $key) => [Str::after($key, '.') => $mapping])
             ->all();
     }
 }
