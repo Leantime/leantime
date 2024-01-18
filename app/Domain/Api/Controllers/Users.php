@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Api\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Environment;
     use Leantime\Core\Fileupload as FileuploadCore;
     use Leantime\Domain\Files\Repositories\Files as FileRepository;
     use Leantime\Domain\Users\Services\Users as UserService;
@@ -70,8 +71,11 @@ namespace Leantime\Domain\Api\Controllers {
 
                 $response = new Response($svg->toXMLString());
                 $response->headers->set('Content-type', 'image/svg+xml');
-                $response->headers->set("Pragma", 'public');
-                $response->headers->set("Cache-Control", 'max-age=86400');
+
+                if(app()->make(Environment::class)->debug == false) {
+                    $response->headers->set("Pragma", 'public');
+                    $response->headers->set("Cache-Control", 'max-age=86400');
+                }
 
                 return $response;
             }
