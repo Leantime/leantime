@@ -7,7 +7,11 @@
     @include('timesheets::partials.stopwatch', [
                'progressSteps' => $onTheClock
            ])
-
+    @if ($login::userIsAtLeast("admin"))
+        <li>
+            <a href="{{ BASE_URL }}/plugins/marketplace" data-tippy-content="{{ __('menu.leantime_apps_tooltip') }}"><span class="fa fa-puzzle-piece"></span></a>
+        </li>
+    @endif
     <li class="notificationDropdown">
         <a
             class="dropdown-toggle profileHandler newsDropDownHandler"
