@@ -87,7 +87,9 @@ class Stopwatch extends HtmxController
 
         if (isset($params["action"]) === true && $params["action"] == "start") {
             $ticketId = filter_var($params["ticketId"], FILTER_SANITIZE_NUMBER_INT);
-            $this->timesheetService->punchIn($ticketId);
+            if($ticketId > 0){
+                $this->timesheetService->punchIn($ticketId);
+            }
         }
 
         $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
