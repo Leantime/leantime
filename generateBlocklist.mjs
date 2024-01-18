@@ -1,9 +1,9 @@
 import fs from 'fs';
 import postcss from 'postcss';
 import selectorParser from 'postcss-selector-parser';
-import pjson from '../../../package.json' assert { type: 'json' };
+import pjson from './package.json' assert { type: 'json' };
 
-const css = fs.readFileSync(`../../../public/dist/css/app.${pjson.version}.min.css`, 'utf-8');
+const css = fs.readFileSync(`./public/dist/css/app.${pjson.version}.min.css`, 'utf-8');
 const classNames = new Set();
 
 const addClassIfMatches = (classNode) => {
