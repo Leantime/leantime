@@ -1,3 +1,6 @@
+// default config:
+import defaultConfig from 'tailwindcss/defaultConfig'
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
@@ -17,6 +20,7 @@ module.exports = {
                 },
             },
             fontSize: {
+                ...defaultConfig.theme.fontSize,
                 'sm': 'var(--font-size-sm)',
                 'base': 'var(--base-font-size)',
                 'l': 'var(--font-size-l)',
@@ -31,6 +35,7 @@ module.exports = {
                 '9xl': 'calc(var(--font-size-xxxl) * 4.266)',
             },
             padding: {
+                ...defaultConfig.theme.padding,
                 'none': '0',
                 'xs': '5px',
                 'sm': '10px',
@@ -40,6 +45,7 @@ module.exports = {
                 'xl': '30px',
             },
             margin: {
+                ...defaultConfig.theme.margin,
                 'none': '0',
                 'xs': '5px',
                 'sm': '10px',
@@ -48,7 +54,8 @@ module.exports = {
                 'l': '20px',
                 'xl': '30px',
 	    },
-	    gap: {
+            gap: {
+                ...defaultConfig.theme.gap,
                 'none': '0',
                 'xs': '5px',
                 'sm': '10px',
