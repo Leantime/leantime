@@ -5,6 +5,8 @@ use Illuminate\Support\Str;
 use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
+use Leantime\Core\HtmxRequest;
+use Leantime\Core\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Format;
@@ -27,19 +29,35 @@ if (! function_exists('app')) {
     }
 }
 
-if (! function_exists('dd')) {
-    /**
-     * Dump the passed variables and end the script.
-     *
-     * @param mixed $args
-     * @return never
-     */
-    function dd(...$args): never
-    {
-        echo sprintf('<pre>%s</pre>', var_export($args, true));
-        exit;
-    }
-}
+// if (! function_exists('dd')) {
+//     /**
+//      * Dump the passed variables and end the script.
+//      *
+//      * @param mixed $args
+//      * @return never
+//      */
+//     function dd(...$args): never
+//     {
+//         echo sprintf('<pre>%s</pre>', var_export($args, true));
+//
+//         if (
+//             app()->bound(IncomingRequest::class)
+//             && (
+//                 /** @var IncomingRequest $request */
+//                 ($request = app()->make(IncomingRequest::class)) instanceof HtmxRequest
+//                 || $request->isXmlHttpRequest()
+//             )
+//         ) {
+//             error_log('this fires');
+//
+//             exit(0);
+//         }
+//
+//         error_log(var_export([app()->bound(IncomingRequest::class), $request = app()->make(IncomingRequest::class), $request->isXmlHttpRequest()], true));
+//
+//         exit();
+//     }
+// }
 
 if (! function_exists('bootstrap_minimal_app')) {
     /**

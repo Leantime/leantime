@@ -83,6 +83,7 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
                 <li><a href="#timesheet"><span class="fa fa-clock"></span> <?php echo $tpl->__("tabs.time_tracking") ?></a></li>
             <?php } ?>
+            <?php $tpl->dispatchTplEvent('ticketTabs', ['ticket' => $ticket]); ?>
         </ul>
 
         <div id="ticketdetails">
@@ -100,6 +101,8 @@ $todoTypeIcons  = $tpl->get("ticketTypeIcons");
                 <?php $tpl->displaySubmodule('tickets-timesheet') ?>
             </div>
         <?php } ?>
+
+        <?php $tpl->dispatchTplEvent('ticketTabsContent', ['ticket' => $ticket]); ?>
 
     </div>
 

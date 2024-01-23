@@ -91,7 +91,7 @@ class Cast
                     $sourceObj->$name,
                     $this->getMatchingMappings($mappings, $name)
                 ),
-                is_null($type) => $sourceObj->$name,
+                is_null($type) || $type == 'mixed' => $sourceObj->$name,
                 default => self::castSimple($sourceObj->$name, $type),
             });
         }

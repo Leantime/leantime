@@ -18,7 +18,7 @@ build: install-deps
 	node generateBlocklist.mjs
 
 build-dev: install-deps-dev
-	npx mix --production
+	npx mix
 	node generateBlocklist.mjs
 
 package: clean build
