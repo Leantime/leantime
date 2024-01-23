@@ -100,6 +100,14 @@ docker run -d --restart unless-stopped -p 80:80 --network leantime-net \
 Unless you have a database defined somewhere else you should use our [docker-compose file](https://github.com/Leantime/docker-leantime/blob/master/docker-compose.yml). 
 
 Once started you can go to `<yourdomain.com>/install` and run the installation script.
+
+##### Docker Installation Notes #####
+
+If you intend to place Leantime behind a reverse proxy (nginx, etc.) to handle custom domain name resolution and SSL offloading, you will need to set the following environment variable in docker
+```
+-e LEAN_APP_URL=https://yourdomain.com \
+```
+* Update yourdomain.com to your custom domain name.
 <br /><br />
 ### 🤓 Installation (Development) ###
 
