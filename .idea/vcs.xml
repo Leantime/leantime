@@ -3,18 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Accounts" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Billing" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/ClientConfigLoader" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/GoogleAnalytics" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Llamadorian" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Mixpanel" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/PgmPro" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Sentry" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/StrategyPro" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Subscriptions" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins/Whiteboardscanvas" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/Wootric" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/WorkspaceManager" vcs="Git" />
   </component>
 </project>
