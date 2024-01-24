@@ -23,12 +23,7 @@ mix
         "./public/assets/js/app/core/tableHandling.js",
         "./public/assets/js/app/core/datePickers.js",
         "./public/assets/js/app/core/dateHelper.js",
-        ...[
-            ...glob.sync("./app/Domain/**/*.js"),
-            ...glob.sync("./custom/Domain/**/*.js"),
-            ...glob.sync("./app/Plugins/**/*.js"),
-            ...glob.sync("./custom/Plugins/**/*.js"),
-        ].map(f => `./${f}`)
+        ...glob.sync("./app/Domain/**/*.js").map(f => `./${f}`)
     ], `public/dist/js/compiled-app.${version}.min.js`)
     .combine([
         "./node_modules/jquery/dist/jquery.js",

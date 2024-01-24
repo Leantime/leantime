@@ -185,20 +185,22 @@ class Language
 
         $mainLanguageArray = parse_ini_file(static::DEFAULT_LANG_FOLDER . 'en-US.ini', false, INI_SCANNER_RAW);
 
-        // Complement english with english customization
-        $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::CUSTOM_LANG_FOLDER . 'en-US.ini');
+        foreach ($languageFiles = self::dispatch_filter('language_files', [
+            // Complement english with english customization
+            static::CUSTOM_LANG_FOLDER . 'en-US.ini' => false,
 
-        // Overwrite english language by non-english language
-        $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::DEFAULT_LANG_FOLDER . $this->language . '.ini', true);
+            // Overwrite english language by non-english language
+            static::DEFAULT_LANG_FOLDER . $this->language . '.ini' => true,
 
-        // Overwrite with non-engish customizations
-        $mainLanguageArray = $this->includeOverrides($mainLanguageArray, static::CUSTOM_LANG_FOLDER . $this->language . '.ini', true);
-
-        $this->ini_array = $mainLanguageArray;
+            // Overwrite with non-engish customizations
+            static::CUSTOM_LANG_FOLDER . $this->language . '.ini' => true,
+        ], ['language' => $this->language]) as $language_file => $isForeign) {
+            $mainLanguageArray = $this->includeOverrides($mainLanguageArray, $language_file, $isForeign);
+        }
 
         $this->ini_array = self::dispatch_filter(
             'language_resources',
-            $this->ini_array,
+            $mainLanguageArray,
             [
                 'language' => $this->language,
             ]

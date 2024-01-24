@@ -221,6 +221,10 @@ class Events
                 if ($plugin->format == "phar") {
                     $pharPath = "phar://{$pluginPath}{$plugin->foldername}/{$plugin->foldername}.phar";
 
+                    if (! file_exists($pharPath)) {
+                        continue;
+                    }
+
                     include_once $pharPath;
 
                     if (! file_exists("$pharPath/register.php")) {
