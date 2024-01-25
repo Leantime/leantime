@@ -400,7 +400,7 @@ $state = $tpl->get('state');
                                         </div>
                                         <div class="col-md-1">
                                             <label><?=$tpl->__("label.sortindex") ?></label>
-                                            <input type="text" name="labelSort-<?=$key?>" class="sorter" id="labelSort-<?=$key ?>" value="<?=$tpl->escape($ticketStatus['sortKey']);?>" style="width:30px;"/>
+                                            <input type="text" name="labelSort-<?=$key?>" class="sorter" id="labelSort-<?=$key ?>" value="<?=$tpl->escape($ticketStatus['sortKey']);?>" style="width:40px;"/>
                                         </div>
                                         <div class="col-md-2">
                                             <label><?=$tpl->__("label.label") ?></label>
@@ -474,7 +474,7 @@ $state = $tpl->get('state');
         </div>
         <div class="col-md-1">
             <label><?=$tpl->__("label.sortindex") ?></label>
-            <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:30px;"/>
+            <input type="text" name="labelSort-XXNEWKEYXX" class="sorter" id="labelSort-XXNEWKEYXX" value="" style="width:40px;"/>
         </div>
         <div class="col-md-2">
             <label><?=$tpl->__("label.label") ?></label>
