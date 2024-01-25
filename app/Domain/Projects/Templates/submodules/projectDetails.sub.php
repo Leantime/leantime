@@ -120,13 +120,13 @@ $menuTypes = $tpl->get('menuTypes');
 
                         <label class="control-label"><?php echo $tpl->__('label.project_start'); ?></label>
                         <div class="">
-                            <input type="text" class="dates" style="width:90px;" name="start" autocomplete="off"
+                            <input type="text" class="dates" style="width:100px;" name="start" autocomplete="off"
                                    value="<?php echo format($project['start'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                         </div>
                         <label class="control-label"><?php echo $tpl->__('label.project_end'); ?></label>
                         <div class="">
-                            <input type="text" class="dates" style="width:90px;" name="end" autocomplete="off"
+                            <input type="text" class="dates" style="width:100px;" name="end" autocomplete="off"
                                    value="<?php echo format($project['end'])->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
                         </div>
