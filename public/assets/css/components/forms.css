@@ -452,20 +452,23 @@ a:link.btn{
 }
 
 
-.btn-danger, .btn-danger:link {
+.btn.btn-danger,
+.btn.btn-danger:link {
     background: var(--red);
     border-color: var(--dark-red);
     color: #fff;
     font-weight: bold;
-    text-transform: uppercase;
 }
 
-.btn-danger:hover, .btn-danger:active, .btn-danger:focus,
-.btn-group.open .btn-danger.dropdown-toggle {
+.btn.btn-danger:hover,
+.btn.btn-danger:active,
+.btn.btn-danger:focus,
+.btn.btn-group.open
+.btn.btn-danger.dropdown-toggle {
     background: var(--dark-red);
 }
 
-.btn-warning, .btn-warning:link {
+.btn.btn-warning, .btn.btn-warning:link {
     background: var(--yellow);
     border-color: var(--yellow);
 }

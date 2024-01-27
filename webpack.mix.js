@@ -42,7 +42,6 @@ mix
         "./node_modules/luxon/build/global/luxon.js",
         "./node_modules/moment/moment.js",
         "./public/assets/js/libs/jquery.form.js",
-        "./node_modules/js-cookie/dist/js.cookie.js",
         "./node_modules/@popperjs/core/dist/umd/popper.js",
         "./node_modules/tippy.js/dist/tippy-bundle.umd.js",
         "./public/assets/js/libs/slimselect.min.js",

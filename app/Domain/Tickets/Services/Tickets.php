@@ -790,7 +790,7 @@ namespace Leantime\Domain\Tickets\Services {
             foreach ($allTickets as $row) {
 
                 $sprint = $row['sprint'] ?? "backlog";
-                $sprintName =  empty($row['sprintName']) ? "label.not_assigned_to_list" : $row['sprintName'];
+                $sprintName =  empty($row['sprintName']) ? $this->language->__("label.not_assigned_to_list") : $row['sprintName'];
 
                 //Only include todos that are not done
                 if (isset($statusLabels[$row['projectId'] ?? '']) &&
