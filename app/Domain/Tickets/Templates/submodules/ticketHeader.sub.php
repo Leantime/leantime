@@ -56,8 +56,8 @@ if (is_array($tpl->get('sprints'))) {
                 <a href="javascript:void(0)" class="dropdown-toggle btn btn-transparent" data-toggle="dropdown"><i class="fa-solid fa-ellipsis-v"></i></a>
                 <ul class="dropdown-menu editCanvasDropdown">
                     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                        <li><a href="#/sprints/editSprint/<?=$tpl->get("currentSprint")?>"><?=$tpl->__("link.edit_sprint") ?></a></li>
-                        <li><a href="#/sprints/delSprint/<?=$tpl->get("currentSprint")?>" class="delete"><?=$tpl->__("links.delete_sprint") ?></a></li>
+                        <li><a href="#/sprints/editSprint/<?=$tpl->get("currentSprint")?>"><?=$tpl->__("link.edit_list") ?></a></li>
+                        <li><a href="#/sprints/delSprint/<?=$tpl->get("currentSprint")?>" class="delete"><?=$tpl->__("links.delete_list") ?></a></li>
                     <?php } ?>
                 </ul>
             </span>
@@ -65,7 +65,6 @@ if (is_array($tpl->get('sprints'))) {
 
         <h1>
             <?=$tpl->__("headlines.todos"); ?>
-            <?php  if (($tpl->get('sprints') !== false) && ($tpl->get('sprints') !== null) && count($tpl->get('sprints'))  > 0) {?>
             //
             <span class="dropdown dropdownWrapper">
                 <a href="javascript:void(0)" class="dropdown-toggle header-title-dropdown" data-toggle="dropdown">
@@ -73,19 +72,19 @@ if (is_array($tpl->get('sprints'))) {
                     if ($sprint !== false) {
                         $tpl->e($sprint->name);
                     } else {
-                        $tpl->__('label.select_board');
+                        $tpl->__('label.select_list');
                     } ?>
                     <i class="fa fa-caret-down"></i>
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> <?=$tpl->__("links.create_sprint_no_icon") ?></a></li>
+                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> <?=$tpl->__("links.create_list_no_icon") ?></a></li>
                     <li class='nav-header border'></li>
                     <li>
                         <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("links.all_todos") ?></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("links.backlog") ?></a>
+                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("links.no_list_todos") ?></a>
                     </li>
                     <?php foreach ($tpl->get('sprints') as $sprintRow) {   ?>
                         <li>
@@ -94,7 +93,7 @@ if (is_array($tpl->get('sprints'))) {
                     <?php } ?>
                 </ul>
             </span>
-            <?php } ?>
+
         </h1>
         <input type="hidden" name="sprintSelect" id="sprintSelect" value="<?=$currentSprintId?>" />
     </div>

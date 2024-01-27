@@ -60,10 +60,10 @@ $size = floor(100 / $numberofColumns);
             <div class="col-md-3">
                 <div class="quickAddForm" style="margin-top:15px;">
                     <form action="" method="post">
-                        <input type="text" name="headline" autofocus placeholder="<?php echo $tpl->__("input.placeholders.create_task"); ?>" style="margin-bottom: 15px; margin-top: 3px; width: 100%;"/>
+                        <input type="text" name="headline" autofocus placeholder="<?php echo $tpl->__("input.placeholders.create_task"); ?>" style="width: 100%;"/>
                         <input type="hidden" name="sprint" value="<?=$currentSprint?>" />
                         <input type="hidden" name="quickadd" value="1"/>
-                        <input type="submit" class="btn btn-default tw-mb-m" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; margin-top:3px;  width:100px;"/>
+                        <input type="submit" class="btn btn-primary tw-mb-m" value="<?php echo $tpl->__('buttons.save'); ?>" name="saveTicket" style="vertical-align: top; "/>
                     </form>
 
 
@@ -100,7 +100,7 @@ $size = floor(100 / $numberofColumns);
                             <?php foreach ($allTickets as $rowNum => $row) {?>
                                 <tr onclick="leantime.ticketsController.loadTicketToContainer('<?=$row['id']?>', '#ticketContent')" id="row-<?=$row['id']?>" class="ticketRows">
                                     <?php $tpl->dispatchTplEvent('allTicketsTable.afterRowStart', ['rowNum' => $rowNum, 'tickets' => $allTickets]); ?>
-                                    <td data-order="<?=$statusLabels[$row['status']]["sortKey"]; ?>" data-search="<?=$statusLabels[$row['status']]["name"]; ?>" class="roundStatusBtn" style="width:20px">
+                                    <td data-order="<?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["sortKey"] : '' ?>" data-search="<?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["name"] : '' ?>" class="roundStatusBtn" style="width:20px">
                                         <div class="dropdown ticketDropdown statusDropdown colorized show">
                                             <a class="dropdown-toggle status <?=isset($statusLabels[$row['status']]) ? $statusLabels[$row['status']]["class"] : '' ?>" href="javascript:void(0);" role="button" id="statusDropdownMenuLink<?=$row['id']?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-caret-down" aria-hidden="true"></i>
                                             </a>

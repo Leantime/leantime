@@ -248,7 +248,9 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".themeFont", $themeFont);
                     $this->themeCore->clearCache();
                     $this->themeCore->setActive($postTheme);
+                    $this->themeCore->clearCache();
                     $this->themeCore->setColorMode($postColorMode);
+                    $this->themeCore->clearCache();
                     $this->themeCore->setColorScheme($postColorScheme);
                     $this->themeCore->setFont($themeFont);
 

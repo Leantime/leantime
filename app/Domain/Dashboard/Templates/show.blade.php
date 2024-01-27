@@ -103,6 +103,7 @@
             </div>
 
             <div class="maincontentinner tw-z-10">
+                <a href="#/tickets/newTicket" class="btn btn-link action-link pull-right" style="margin-top:-7px;"><i class="fa fa-plus"></i> Create To-Do</a>
                 <h5 class="subtitle">{{ __('headlines.latest_todos') }}</h5>
                 <br/>
                 <ul class="sortableTicketList">
@@ -308,7 +309,9 @@
                             href="javascript:void(0);"
                             onclick="leantime.commentsController.toggleCommentBoxes(0);jQuery('.noCommentsMessage').toggle();"
                             id="mainToggler"
-                        ><span class="fa fa-plus-square"></span> {{ __('links.add_new_report') }}</a>
+                            class="btn btn-link action-link"
+                            style="margin-top:-7px;"
+                        ><span class="fa fa-plus"></span> {{ __('links.add_new_report') }}</a>
                     @endif
                 </div>
 

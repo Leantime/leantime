@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
 use Leantime\Core\HtmxController;
+use Leantime\Core\Language;
+use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -27,6 +29,8 @@ class MyToDos extends HtmxController
 
     private TicketService $ticketsService;
 
+    private Language $language;
+
 
     /**
      * Controller constructor
@@ -36,8 +40,10 @@ class MyToDos extends HtmxController
      */
     public function init(
         TicketService $ticketsService,
+        Language $language
     ) {
         $this->ticketsService = $ticketsService;
+        $this->language = $language;
         $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
     }
 
@@ -59,7 +65,9 @@ class MyToDos extends HtmxController
     public function addTodo()
     {
 
-        if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor, Roles::$commenter])) {
+        $params =  $_POST;
+
+        if (AuthService::userHasRole([Roles::$owner, Roles::$manager, Roles::$editor])) {
             if (isset($params['quickadd']) == true) {
                 $result = $this->ticketsService->quickAddTicket($params);
 
@@ -69,8 +77,12 @@ class MyToDos extends HtmxController
                     $this->tpl->setNotification($this->language->__("notifications.ticket_saved"), "success");
                 }
 
-                Frontcontroller::redirect(BASE_URL . "/dashboard/home");
+                $this->setHTMXEvent("HTMX.ShowNotification");
+
             }
         }
+
+        $tplVars = $this->ticketsService->getToDoWidgetAssignments($params);
+        array_map([$this->tpl, 'assign'], array_keys($tplVars), array_values($tplVars));
     }
 }

@@ -160,7 +160,8 @@ body .tox .tox-mbtn--active {
 }
 
 body.mce-content-body {
-    padding:14px !important;
+    padding: 14px !important;
+    margin: 0px;
 }
 
 .mce-content-body {

@@ -94,6 +94,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $comments = [];
             }
 
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
+
+
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('comments', $comments);
 
@@ -217,6 +221,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                     return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/");
                 }
             }
+
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('milestone', (object) $params);

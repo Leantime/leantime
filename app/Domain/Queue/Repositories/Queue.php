@@ -58,7 +58,7 @@ namespace Leantime\Domain\Queue\Repositories {
 
                 $stmn = $this->db->database->prepare($sql);
                 $stmn->bindValue(':msghash', $msghash, PDO::PARAM_STR);
-                $stmn->bindValue(':channel', 'email', PDO::PARAM_STR);
+                $stmn->bindValue(':channel', Workers::EMAILS->value, PDO::PARAM_STR);
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
                 $stmn->bindValue(':subject', $subject, PDO::PARAM_STR);
                 $stmn->bindValue(':message', $message, PDO::PARAM_STR);
@@ -85,7 +85,10 @@ namespace Leantime\Domain\Queue\Repositories {
          */
         public function listMessageInQueue(Workers $channel, $recipients = null, int $projectId = 0): false|array
         {
-            $sql = 'SELECT * from zp_queue WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
+            $sql = 'SELECT
+                    *
+                FROM zp_queue
+                WHERE channel = :channel ORDER BY userId, projectId ASC, thedate ASC';
 
             $stmn = $this->db->database->prepare($sql);
 

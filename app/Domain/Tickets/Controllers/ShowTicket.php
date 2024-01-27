@@ -159,6 +159,9 @@ namespace Leantime\Domain\Tickets\Controllers {
             //TODO: Refactor thumbnail generation in file manager
             $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
 
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
+
             $response = $this->tpl->displayPartial('tickets.showTicketModal');
             $response->headers->set('HX-Trigger', 'ticketUpdate');
             return $response;

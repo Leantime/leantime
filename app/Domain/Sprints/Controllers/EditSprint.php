@@ -4,6 +4,7 @@ namespace Leantime\Domain\Sprints\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
     use Leantime\Domain\Sprints\Models\Sprints as SprintModel;
     use DateTime;
@@ -17,17 +18,23 @@ namespace Leantime\Domain\Sprints\Controllers {
     {
         private SprintService $sprintService;
 
+        private Projects $projectService;
+
         /**
          * constructor - initialize private variables
          *
          * @access public
          *
          */
-        public function init(SprintService $sprintService)
+        public function init(
+            SprintService $sprintService,
+            Projects $projectService,
+    )
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
             $this->sprintService = $sprintService;
+            $this->projectService = $projectService;
         }
 
         /**
@@ -49,6 +56,9 @@ namespace Leantime\Domain\Sprints\Controllers {
                 $sprint->endDate = $endDate->format($this->language->__("language.dateformat"));
             }
 
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+
+            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
             $this->tpl->assign('sprint', $sprint);
             return $this->tpl->displayPartial('sprints.sprintdialog');
         }
@@ -85,6 +95,11 @@ namespace Leantime\Domain\Sprints\Controllers {
                     $this->tpl->setNotification("There was a problem saving the sprint", "error");
                 }
             }
+
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+
+            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
+
             $this->tpl->assign('sprint', (object) $params);
             return $this->tpl->displayPartial('sprints.sprintdialog');
         }

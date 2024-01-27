@@ -16,13 +16,13 @@ Events::add_event_listener('leantime.core.consolekernel.schedule.cron', function
     $reportService = app()->make(Services\Reports::class);
 
     $scheduler->call(function () use ($reportService) {
-        error_log("Telemetry Initialized");
+
         $telemetry = $reportService->sendAnonymousTelemetry();
 
         if($telemetry === false) return;
 
         try {
-            $telemetry->wait();
+            $response = $telemetry->wait();
 
         } catch (\Throwable $e) {
             error_log($e);

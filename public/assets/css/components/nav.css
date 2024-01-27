@@ -10,7 +10,7 @@
     text-shadow: none;
     border-bottom: 1px solid #222;
     margin-top: 0;
-    color: #fff;
+    color: var(--nav-link-color);
     line-height: 16px;
 }
 
@@ -55,7 +55,7 @@
 }
 
 .headmenu .project-selector .chzn-container .chzn-results li.highlighted {
-    color: #fff;
+    color: var(--nav-link-color);
 }
 
 .headmenu .project-selector .chzn-container .chzn-drop {
@@ -115,7 +115,7 @@ a.barmenu {
     margin-top:1px;
     margin-left:20px;
     font-size:20px;
-    color:#fff !important;
+    color: var(--header-nav-link-color) !important;
     cursor:pointer;
     width:30px;
     height:50px;
@@ -258,13 +258,13 @@ a.barmenu:hover {
 
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    color: #fff;
+    color: var(--nav-link-color);
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li a:hover {
     text-decoration: none;
     background-color: #555;
-    color: #fff;
+    color: var(--nav-link-color);
 }
 
 .headmenu .project-selector .chzn-container a {
@@ -292,7 +292,7 @@ a.barmenu:hover {
 
 .headmenu .projectselector .projectAvatar .fa {
     font-weight:900;
-    color:#fff;
+    color: var(--header-nav-link-color);
     margin-right:0;
 }
 
@@ -366,12 +366,12 @@ a.barmenu:hover {
     display: block;
     font-size: var(--base-font-size);
     padding: 10px 15px 10px 15px;
-    color: #fff;
+    color: var(--nav-link-color);
     border-radius:15px;
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--main-menu-link-hover-bg);
 
 }
 
@@ -386,6 +386,7 @@ a.barmenu:hover {
     bottom:0;
     padding-bottom: 10px;
     list-style: none;
+    left: 10px;
 }
 
 
@@ -408,7 +409,7 @@ a.barmenu:hover {
 .nav-tabs > li > a:hover, .nav-tabs > li > a:focus {
     border-color: var(--primary-color);
     background: var(--primary-color);
-    color: #fff;
+    color: var(--nav-link-color);
 }
 
 .nav-tabs li.separator {
@@ -491,7 +492,7 @@ a.barmenu:hover {
     min-width: 40px;
     position: relative;
     display: block;
-    color: #fff;
+    color: var(--header-nav-link-color);
     line-height: 50px;
     cursor: pointer;
     padding: 0 15px;
@@ -500,7 +501,7 @@ a.barmenu:hover {
 .headmenu > li > a.active,
 .headmenu > li > a:hover {
     text-decoration: none;
-    color: #fff;
+    color: var(--header-nav-link-color);
     background: rgba(255, 255, 255, 0.2);
 }
 
@@ -867,7 +868,7 @@ a.barmenu:hover {
 
 
 .userloggedinfo {
-    color: #fff;
+    color: var(--nav-link-color);
     float: right;
     position:relative;
 }
@@ -882,7 +883,7 @@ a.barmenu:hover {
 }
 
 .userloggedinfo .userinfo a.profileHandler {
-    color: #fff;
+    color: var(--header-nav-link-color);
     padding:0 5px 0 5px;
     height:50px;
     line-height:50px;
@@ -893,7 +894,7 @@ a.barmenu:hover {
 .userloggedinfo .userinfo small {
     font-size: var(--base-font-size);
     opacity: 0.6;
-    color: #fff;
+    color: var(--nav-link-color);
     font-style: italic;
 }
 
@@ -1052,7 +1053,7 @@ a.barmenu:hover {
 
 .userloggedinfo a:hover {
     background: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    color: var(--nav-link-color);
     text-decoration: none;
 }
 

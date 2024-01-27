@@ -117,7 +117,7 @@ foreach ($__data as $var => $val) {
                         <th class="effort-col"><?= $tpl->__("label.effort"); ?></th>
                         <th class="priority-col"><?= $tpl->__("label.priority"); ?></th>
                         <th class="user-col"><?= $tpl->__("label.editor"); ?>.</th>
-                        <th class="sprint-col"><?= $tpl->__("label.sprint"); ?></th>
+                        <th class="sprint-col"><?= $tpl->__("label.list"); ?></th>
                         <th class="tags-col"><?= $tpl->__("label.tags"); ?></th>
                         <th class="duedate-col"><?= $tpl->__("label.due_date"); ?></th>
                         <th class="planned-hours-col"><?= $tpl->__("label.planned_hours"); ?></th>
@@ -289,7 +289,7 @@ foreach ($__data as $var => $val) {
                             if ($row['sprint'] != "" && $row['sprint'] != 0  && $row['sprint'] != -1) {
                                 $sprintHeadline = $tpl->escape($row['sprintName']);
                             } else {
-                                $sprintHeadline = $tpl->__("label.backlog");
+                                $sprintHeadline = $tpl->__("links.no_list");
                             }?>
 
                             <td  data-order="<?=$sprintHeadline?>">
@@ -300,8 +300,8 @@ foreach ($__data as $var => $val) {
                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="sprintDropdownMenuLink<?=$row['id']?>">
-                                        <li class="nav-header border"><?=$tpl->__("dropdown.choose_sprint")?></li>
-                                        <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$tpl->__("label.backlog")?>" data-value='<?=$row['id'] . "_0"?>'> <?=$tpl->__("label.backlog")?> </a></li>
+                                        <li class="nav-header border"><?=$tpl->__("dropdown.choose_list")?></li>
+                                        <li class='dropdown-item'><a href='javascript:void(0);' data-label="<?=$tpl->__("label.not_assigned_to_list")?>" data-value='<?=$row['id'] . "_0"?>'> <?=$tpl->__("label.not_assigned_to_list")?> </a></li>
                                         <?php if ($tpl->get('sprints')) {
                                             foreach ($tpl->get('sprints') as $sprint) {
                                                 echo "<li class='dropdown-item'>

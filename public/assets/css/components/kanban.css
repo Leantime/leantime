@@ -42,7 +42,7 @@
 }
 
 .ticketBox:hover {
-    background:var(--main-menu-link-hover-bg);
+    background:var(--kanban-card-hover);
 }
 
 
@@ -169,7 +169,7 @@
 }
 
 .sortableTicketList li:hover {
-    background:var(--main-menu-link-hover-bg);
+    background:var(--kanban-card-hover);
 }
 
 .sortableTicketList li.no-hover:hover {
@@ -202,11 +202,11 @@
 }
 
 .sortableTicketList li:hover .ticketBox {
-    background:var(--main-menu-link-hover-bg);
+    background:var(--kanban-card-hover);
 }
 
 .sortableTicketList li:hover .ticketBox.fixed {
-    background:var(--main-menu-link-hover-bg);
+    background:var(--kanban-card-hover);
 }
 
 .sortableTicketList li.no-hover:hover .ticketBox.fixed {

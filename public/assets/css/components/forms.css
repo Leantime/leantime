@@ -44,7 +44,7 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
-    padding: 6px 12px;
+    padding: 4px 14px;
     color:var(--primary-font-color);
 }
 
@@ -61,13 +61,14 @@ body input:focus {
 }
 
 body div.tagsinput {
-    background-color: var(--secondary-background);
+    background-color: var(--input-background);
     color:var(--primary-font-color);
     font-family: var(--primary-font-family);
     width:100% !important;
     height:31px !important;
-    border-radius:var(--element-radius);
+    border-radius:var(--input-radius);
     box-shadow: none;
+    padding:4px;
     border:0px;
 }
 
@@ -114,21 +115,26 @@ select {
 input:-moz-placeholder,
 textarea:-moz-placeholder{
     color: var(--primary-font-color);
+    opacity: 0.5;
 }
 
 input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder{
     color: var(--primary-font-color);
+    opacity: 0.5;
+    margin-left: -1px;
 }
 
 input::-moz-placeholder,
 textarea::-moz-placeholder { /* Firefox 19+ */
     color: var(--primary-font-color);
+    opacity: 0.5;
 }
 
 input:-ms-input-placeholder,
 textarea:-ms-input-placeholder{
     color: var(--primary-font-color);
+    opacity: 0.5;
 }
 
 
@@ -180,7 +186,7 @@ a.btn-default,
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 6px 12px;
+    padding: 4px 14px;
     line-height:21px;
     background: var(--secondary-action-bg);
     text-shadow: none;
@@ -251,7 +257,7 @@ input[type='submit'],
     outline:0;
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 6px 14px;
+    padding: 4px 14px;
     line-height:21px;
     box-shadow:none;
     text-shadow: none;
@@ -303,7 +309,7 @@ body input[type='submit'].btn-primary .caret,
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
-    padding: 6px 12px;
+    padding: 4px 14px;
     color:var(--primary-font-color);
 }
 
@@ -610,16 +616,16 @@ select,
 
 .chosen-container-multi .chosen-choices .search-field input {
     height: auto;
-    padding: 6px 12px;
+    padding: 4px 14px;
 }
 
 .chosen-container-single .chosen-search input {
-    background:var(--secondary-background);
+    background:var(--input-background);
     border-color:var(--main-border-color);
 }
 
 .chosen-container .chosen-results .no-results {
-    background:var(--secondary-background);
+    background:var(--input-background);
 }
 
 input[type=checkbox] {
@@ -681,7 +687,7 @@ input[type=color] {
     display:block;
 
     height: auto;
-    background-color: var(--secondary-background);
+    background-color: var(--input-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
 
@@ -719,14 +725,14 @@ input[type=color] {
 
 
 body input[type=text].main-title-input.main-title-input {
-    border: 1px solid var(--secondary-background);
+    border: 1px solid transparent;
     box-shadow:none;
     font-size:var(--font-size-xxl);
     margin-bottom:5px;
 }
 
 body div.tagsinput {
-    border:1px solid var(--secondary-background);
+    border:1px solid transparent;
     margin-bottom:5px;
     overflow:hidden;
 }
@@ -840,7 +846,7 @@ input.secretInput:active {
     border:1px solid var(--main-action-bg);
     font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
-    padding: 6px 12px;
+    padding: 4px 14px;
     line-height: 21px;
     border-radius: var(--element-radius);
     vertical-align: top;
@@ -890,7 +896,7 @@ input.secretInput:active {
 .uppy-is-drag-over:after {
     background-color: var(--primary-color);
     opacity:0.6;
-    border: 4px dashed var(--secondary-background);
+    border: 4px dashed var(--input-background);
     bottom: 7px;
     border-radius:var(--box-radius);
     content: "";
@@ -957,7 +963,7 @@ body .btn.btn-danger-outline:hover {
     border-radius: var(--box-radius);
     border:0px;
     box-shadow: var(--regular-shadow);
-    background:var(--secondary-background);
+    background:var(--input-background);
     max-width:200px;
 }
 
@@ -996,7 +1002,7 @@ body .btn.btn-danger-outline:hover {
 }
 
 .viewDescription:hover {
-    border:1px solid var(--main-border-color);
+    border:1px solid var(--main-border-color-hover);
 }
 
 
@@ -1025,7 +1031,7 @@ input[type=range]::-webkit-slider-runnable-track {
 }
 input[type=range]::-webkit-slider-thumb {
     box-shadow: 0px 0px 0px #000000;
-    border: 2px solid var(--secondary-background);
+    border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
     border-radius: 10px;
@@ -1049,7 +1055,7 @@ input[type=range]::-moz-range-track {
 }
 input[type=range]::-moz-range-thumb {
     box-shadow: 0px 0px 0px #000000;
-    border: 2px solid var(--secondary-background);
+    border: 2px solid var(--input-background);
     height: 20px;
     width: 20px;
     border-radius: 10px;
@@ -1134,9 +1140,9 @@ input[type=range]:focus::-ms-fill-upper {
     cursor: pointer;
     width: 100%;
     height: 37px;
-    padding: 6px;
+    padding: 4px 14px;
     border: 1px solid var(--main-border-color);
-    background-color: var(--secondary-background);
+    background-color: var(--input-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
     -webkit-box-shadow: var(--input-shadow);
@@ -1155,7 +1161,7 @@ input[type=range]:focus::-ms-fill-upper {
 
 .ss-main .ss-multi-selected {
     min-height: 37px;
-    background-color: var(--secondary-background);
+    background-color: var(--input-background);
     line-height: 21px;
     border: 1px solid var(--main-border-color);
     box-shadow: var(--input-shadow);
@@ -1194,6 +1200,14 @@ body .btn.btn-link:hover {
 body .btn.btn-link.active {
     color: var(--main-action-color);
     background: var(--main-action-bg);
+}
+
+body .btn.btn-link.action-link {
+    color:var(--accent1);
+}
+
+body .btn.btn-link.action-link:hover {
+    color:var(--main-action-hover-color);
 }
 
 .btn .badge {
@@ -1396,7 +1410,8 @@ body .croppie-container {
     border: 1px solid var(--layered-background);
     padding:5px;
     border-radius: var(--element-radius);
-    background:var(--layered-background);
+    background: var(--tab-background);
+    color: var(--tab-color);
     margin:auto;
 }
 
@@ -1414,8 +1429,8 @@ body .croppie-container {
 }
 
 .selectable.active .selectableContent{
-    background: var(--header-gradient);
-    color: var(--main-action-color);
+    background: var(--tab-active-background);
+    color: var(--tab-active-color);
 }
 
 .selectable.active .selectable-label {
@@ -1450,7 +1465,7 @@ input[type="checkbox"].toggle {
     position: relative;
     margin: 0;
     border: 0px solid var(--primary-font-color);
-    background: var(--secondary-background);
+    background: var(--input-background);
     box-shadow: var(--min-shadow);
     transition: all .2s ease;
     margin-top: 7px;
@@ -1473,7 +1488,7 @@ input[type="checkbox"].toggle:after {
 
 input[type="checkbox"].toggle:checked {
     border-color: var(--accent1);
-    background: var(--header-gradient);
+    background: var(--element-gradient);
 }
 input[type="checkbox"].toggle:checked:after {
     transform: translatex(20px);
@@ -1515,7 +1530,7 @@ body a.textInputSwitch {
 
 
 .notesEditor {
-    background:var(--secondary-background);
+    background:var(--input-background);
     border-radius:var(--box-radius);
 }
 
@@ -1527,10 +1542,10 @@ body a.textInputSwitch {
     margin:0px auto;
     padding:10px;
     border-radius:0 0 0 30px/45px;
-    box-shadow:
+   /* box-shadow:
             inset 0 -40px 40px rgba(100,100,100,0.1),
             inset 0 25px 10px rgba(100,100,100,0.1),
-            0 5px 6px 5px rgba(100,100,100,0.1);
+            0 5px 6px 5px rgba(100,100,100,0.1);*/
     color:var(--secondary-font-color);
     border: 1px solid var(--main-border-color);
 }
@@ -1578,6 +1593,7 @@ body a.textInputSwitch {
 .noteContainer input::-moz-placeholder,
 .noteContainer textarea::-moz-placeholder {
     color: var(--secondary-font-color);
+
 }
 
 body .noteContainer div.tagsinput,

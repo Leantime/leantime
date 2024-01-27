@@ -21,7 +21,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="clearall"></div>
+            <span class="clearall"></span>
             <div class="widgetContent {{ ($background == "default") ? 'tw-px-m' : '' }}">
                 {{ $slot }}
             </div>

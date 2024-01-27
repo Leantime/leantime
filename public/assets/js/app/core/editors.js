@@ -297,7 +297,7 @@ leantime.editorController = (function () {
                 skin_url: leantime.appUrl + '/dist/css/libs/tinymceSkin/oxide',
                 content_css: leantime.appUrl + '/theme/' + leantime.theme + '/css/'+ leantime.colorScheme +'.css,'
                     + leantime.appUrl + '/dist/css/editor.' + leantime.version + '.min.css',
-                content_style: "html {text-align:center;} body.mce-content-body{ padding:5px !important; font-size:14px; color:var(--secondary-font-color); max-width:none;} img { max-width: 100%; }",
+                content_style: "html {text-align:center;} body.mce-content-body{ font-size:14px; color:var(--secondary-font-color); max-width:none;} img { max-width: 100%; }",
                 plugins : "autosave,imagetools,embed,autoresize,shortlink,checklist,bettertable,table,emoticons,autolink,image,lists,save,media,searchreplace,paste,directionality,fullscreen,noneditable,visualchars,advancedTemplate,advlist,codesample,mention,slashcommands,textpattern",
                 toolbar : "link image table emoticons | checklist bullist | advancedTemplate | restoredraft",
                 toolbar_location: 'bottom',

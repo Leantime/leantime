@@ -1192,8 +1192,6 @@ leantime.ticketsController = (function () {
                 "displayLength":100,
                 "order": defaultOrder,
                 "columnDefs": [
-                        { "visible": false, "targets": 6 },
-                        { "visible": false, "targets": 7 },
                         { "visible": false, "targets": 10 },
                         { "visible": false, "targets": 11 },
                         { "target": "no-sort", "orderable": false},

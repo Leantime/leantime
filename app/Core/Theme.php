@@ -162,14 +162,14 @@ class Theme
             "secondaryColor" => $secondaryColor ?? $parsedColorSchemes["themeDefault"]["secondaryColor"],
         );
 
-        $colorschemes = Events::dispatch_filter("colorschemes", $parsedColorSchemes);
+        $colorschemes = self::dispatch_filter("colorschemes", $parsedColorSchemes);
 
-        return $parsedColorSchemes;
+        return $colorschemes;
     }
 
     public function getAvailableFonts()
     {
-        return Events::dispatch_filter("fonts", $this->fonts);
+        return self::dispatch_filter("fonts", $this->fonts);
     }
 
     /**
@@ -760,13 +760,15 @@ class Theme
      */
     public function setSchemeColors($colorscheme)
     {
-        if (isset($this->colorSchemes[$colorscheme]["primaryColor"])) {
-            $primary = $this->colorSchemes[$colorscheme]["primaryColor"];
+
+        $colorSchemes = $this->getAvailableColorSchemes();
+        if (isset($colorSchemes[$colorscheme]["primaryColor"])) {
+            $primary = $colorSchemes[$colorscheme]["primaryColor"];
             $_SESSION["usersettings.colorScheme.primaryColor"] = $primary;
         }
 
-        if (isset($this->colorSchemes[$colorscheme]["secondaryColor"])) {
-            $secondary = $this->colorSchemes[$colorscheme]["secondaryColor"];
+        if (isset($colorSchemes[$colorscheme]["secondaryColor"])) {
+            $secondary = $colorSchemes[$colorscheme]["secondaryColor"];
             $_SESSION["usersettings.colorScheme.secondaryColor"] = $secondary;
         }
 
@@ -808,7 +810,10 @@ class Theme
     private function readIniData(): void
     {
         if (! file_exists(ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini')) {
-            throw new Exception("Configuration file for theme " . $this->getActive() . " not found");
+            error_log("Configuration file for theme " . $this->getActive() . " not found");
+            $this->clearCache();
+            $this->setActive("default");
+
         }
         $this->iniData = parse_ini_file(
             ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini',

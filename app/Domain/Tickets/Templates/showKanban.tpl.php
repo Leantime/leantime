@@ -84,11 +84,14 @@ $allTicketGroups = $tpl->get("allTickets");
 
                     <strong class="count">0</strong>
                     <?php $tpl->e($statusRow['name']); ?>
-                    <a href="javascript:void(0);" class="" id="ticket_new_link_<?=$key?>" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast', function() {jQuery(this).find('input[name=headline]').focus();});"><i class="fas fa-plus-circle"></i></a>
 
                 </h4>
 
                 <div class="">
+                    <a href="javascript:void(0);"
+                       style="padding:10px; display:block; width:100%;" id="ticket_new_link_<?=$key?>"
+                       onclick="jQuery('#ticket_new_link_<?=$key?>').toggle('fast'); jQuery('#ticket_new_<?=$key?>').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
+                        <i class="fas fa-plus-circle"></i> Add To-Do</a>
 
                      <div class="hideOnLoad " id="ticket_new_<?=$key?>" style="padding-top:5px;">
 
@@ -98,7 +101,7 @@ $allTicketGroups = $tpl->get("allTickets");
                             <input type="hidden" name="status" value="<?php echo $key; ?> " />
                             <input type="hidden" name="sprint" value="<?php echo $_SESSION["currentSprint"]; ?> " />
                             <input type="submit" value="Save" name="quickadd" />
-                            <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new_<?=$key?>').toggle('fast');">
+                            <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new_<?=$key?>, #ticket_new_link_<?=$key?>').toggle('fast');">
                                 <?=$tpl->__("links.cancel") ?>
                             </a>
                         </form>
@@ -122,7 +125,7 @@ $allTicketGroups = $tpl->get("allTickets");
                         <i class="fa fa-angle-down"></i><?=$group['label'] ?> (<?=count($group['items']) ?>)
                     </a>
                 </h5>
-                <div class="simpleAccordionContainer kanban" id="accordion_<?=$group['id'] ?>">
+                <div class="simpleAccordionContainer kanban" id="accordion_content-<?=$group['id'] ?>">
             <?php } ?>
 
                     <div class="sortableTicketList kanbanBoard">

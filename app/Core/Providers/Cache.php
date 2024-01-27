@@ -4,7 +4,7 @@ namespace Leantime\Core\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
-class Cache implements ServiceProvider
+class Cache extends ServiceProvider
 {
     /**
      * Register any application services.

@@ -50,7 +50,10 @@ class I18n extends Controller
 
         $response->headers->set('Content-Type', 'application/javascript');
         $response->headers->set("Pragma", 'public');
-        $response->headers->set("Cache-Control", 'max-age=86400');
+
+        //Disable cache for this file since datetimeformat settings are stored in here as well.
+        //Need to find a better cache busting option for this.
+        //$response->headers->set("Cache-Control", 'max-age=86400');
 
         return $response;
     }

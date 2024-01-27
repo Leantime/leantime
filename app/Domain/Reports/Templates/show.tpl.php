@@ -94,13 +94,13 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                             </div>
 
                             <?php if ($tpl->get('allSprints') !== false) { ?>
-                                <h5 class="subtitle"><?=$tpl->__("subtitles.sprint_burndown")?></h5>
+                                <h5 class="subtitle"><?=$tpl->__("subtitles.list_burndown")?></h5>
                                 <br />
                                 <span class="pull-left">
                                 <?php  if ($tpl->get('allSprints') !== false && count($tpl->get('allSprints'))  > 0) {?>
-                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_sprint") ?>" title="<?=$tpl->__("input.placeholders.filter_by_sprint") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='<?=BASE_URL ?>/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
+                                    <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_list") ?>" title="<?=$tpl->__("input.placeholders.filter_by_list") ?>" name="sprint" class="mainSprintSelector" onchange="location.href='<?=BASE_URL ?>/reports/show?sprint='+jQuery(this).val()" id="sprintSelect">
 
-                                        <option value="" ><?=$tpl->__("input.placeholders.filter_by_sprint") ?></option>
+                                        <option value="" ><?=$tpl->__("input.placeholders.filter_by_list") ?></option>
                                         <?php
                                         $dates = "";
                                         foreach ($tpl->get('allSprints') as $sprintRow) {    ?>

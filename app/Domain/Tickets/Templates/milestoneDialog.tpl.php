@@ -27,6 +27,21 @@ $statusLabels = $tpl->get('statusLabels');
     <label><?=$tpl->__("label.milestone_title"); ?></label>
     <input type="text" name="headline" value="<?php $tpl->e($currentMilestone->headline) ?>" placeholder="<?=$tpl->__("label.milestone_title"); ?>"/><br />
 
+    <label class="control-label"><?=$tpl->__('label.project') ?></label>
+    <select name="projectId" class="tw-w-full">
+        <?php foreach($allAssignedprojects as $project) { ?>
+            <option value="<?=$project['id'] ?>"
+                <?php
+                    if($currentMilestone->projectId == $project['id']) {
+                        echo "selected";
+                    }else if( $_SESSION['currentProject'] == $project['id']){
+                        echo "selected";
+                    }
+                ?>
+            ><?=$tpl->escape($project["name"]); ?></option>
+        <?php } ?>
+    </select>
+
     <label><?php echo $tpl->__('label.todo_status'); ?></label>
     <select id="status-select" name="status" class="span11"
             data-placeholder="<?php echo isset($statusLabels[$currentMilestone->status]) ? $statusLabels[$currentMilestone->status]["name"] : ''; ?>">

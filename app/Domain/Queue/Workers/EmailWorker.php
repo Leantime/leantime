@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Queue\Workers;
 
+use Leantime\Core\Environment;
+use Leantime\Core\Language;
 use Leantime\Core\Mailer;
 use Leantime\Domain\Queue\Repositories\Queue;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -14,7 +16,8 @@ class EmailWorker {
         private Users $userRepo,
         private Setting $settingsRepo,
         private Mailer $mailer,
-        private Queue $queue
+        private Queue $queue,
+        private Language $language
     ) {
     }
 
@@ -27,14 +30,25 @@ class EmailWorker {
             $n++;
             $currentUserId = $message['userId'];
 
-            $allMessagesToSend[$currentUserId][$message['msghash']] = array(
-                'thedate' => $message['thedate'],
-                'subject' => $message['subject'],
-                'message' => $message['message'],
-                'projectId' => $message['projectId'],
-            );
+            //Don't send messages older than 2 weeks.
+            $fromTz = new \DateTimeZone("UTC");
+            $messageDate = \DateTime::createFromFormat("Y-m-d H:i:s", $message['thedate'], $fromTz);
+
+            $today = new \DateTime(datetime:'now', timezone: $fromTz);
+
+            if($messageDate->diff($today)->days <= 14) {
+
+                $allMessagesToSend[$currentUserId][$message['msghash']] = array(
+                    'thedate' => $message['thedate'],
+                    'subject' => $message['subject'],
+                    'message' => $message['message'],
+                    'projectId' => $message['projectId'],
+                );
+
+            }
             // DONE here : here we need a message id to allow deleting messages of the queue when they are sent
             // and here we need to group the messages in an array to know which messages are grouped to group-delete them
+            //Discard all messages
             $allMessagesToDelete[$currentUserId][] = $message['msghash'];
         }
 
@@ -48,26 +62,24 @@ class EmailWorker {
             $recipient = $theuser['username'];
 
             // DONE : Deal with users parameters to allow them define a maximum (and minimum ?) frequency to receive mails
-            // TODO : Update profile form to allow each user to edit his own messageFrequency option
             $lastMessageDate = strtotime($this->settingsRepo->getSetting("usersettings." . $theuser['id'] . ".lastMessageDate"));
             $nowDate = time();
 
             // echo for DEBUG PURPOSE
             //debug_print("Last message to " . $recipient . " was on " . date('Y-m-d H:i:s', $lastMessageDate));
             $timeSince = abs($nowDate - $lastMessageDate);
-            // echo for DEBUG PURPOSE
-            //debug_print("Time elapsed since : " . $timeSince);
 
-            $messageFrequency = $this->settingsRepo->getSetting("usersettings." . $theuser['id'] . ".messageFrequency");
+            //Get company message frequency default
+            $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
 
-            // Check if there is a default value in DB
-            if ($messageFrequency == "") {
-                $messageFrequency = $this->settingsRepo->getSetting("companysettings.messageFrequency");
+            //Check if user has frequency set
+            if (empty($messageFrequency)) {
+                $messageFrequency = $this->settingsRepo->getSetting("usersettings." . $theuser['id'] . ".messageFrequency");
             }
 
             // Last security to avoid flooding people.
-            if ($messageFrequency == "") {
-                $messageFrequency = 3600;
+            if (empty($messageFrequency)) {
+                $messageFrequency = 900;
             }
             // echo for DEBUG PURPOSE
             //debug_print("The message frequency for " . $recipient . " : " . $messageFrequency);
@@ -93,6 +105,7 @@ class EmailWorker {
             }
             $this->mailer->setHtml($formattedHTML);
             $to = array($recipient);
+
             $this->mailer->sendMail($to, "Leantime System");
 
             // Delete the corresponding messages from the queue when the mail is sent

@@ -8,6 +8,19 @@
     --accent2-hover: #555;
     --accent2-color:#fff;
 
+    --nav-link-color: #fff;
+    --header-nav-link-color: #fff;
+
+    --tab-background: transparent;
+    --tab-color: var(--accent1);
+
+    --tab-active-background: #f5f6f7;
+    --tab-active-color: #555;
+
+    --primary-content-bg-opacity: 0.2;
+
+    --main-titles-color: #fff;
+
     --primary-background: rgba(255, 255, 255, 0.8);
     --secondary-background: rgba(255, 255, 255, 1);
 
@@ -30,7 +43,7 @@
     --secondary-color: var(--accent2);
 
     --main-bg: var(--primary-background);
-    --left-panel-bg: var(--secondary-background);
+    --left-panel-bg: transparent;
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 4px );
@@ -69,6 +82,8 @@
     --dropdown-link-color: var(--primary-font-color);
     --dropdown-link-hover-bg: var(--primary-font-color);
     --dropdown-link-hover-color: var(--primary-background);
+
+    --input-background: #fff;
 
     --header-action-hover-color:var(--neutral);
     --header-bg-color:var(--accent1);

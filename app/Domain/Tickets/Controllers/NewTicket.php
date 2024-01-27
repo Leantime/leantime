@@ -78,6 +78,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     "status" => 3,
                     "projectId" => $_SESSION['currentProject'],
                     "sprint" => $_SESSION['currentSprint'] ?? '',
+                    "editorId" => $_SESSION['userdata']['id']
                 ],
             ]);
 
@@ -103,6 +104,9 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             return $this->tpl->displayPartial('tickets.newTicketModal');
         }

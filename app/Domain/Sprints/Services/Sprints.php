@@ -78,14 +78,15 @@ namespace Leantime\Domain\Sprints\Services {
                 return $_SESSION["currentSprint"];
             }
 
-            $sprint = $this->sprintRepository->getCurrentSprint($projectId);
+            //$sprint = $this->sprintRepository->getCurrentSprint($projectId);
 
-            if ($sprint) {
-                $_SESSION["currentSprint"] = $sprint->id;
-                return $sprint->id;
-            }
+            //if ($sprint) {
+            //    $_SESSION["currentSprint"] = $sprint->id;
+            //    return $sprint->id;
+            //}
 
             $_SESSION["currentSprint"] = "";
+
             return false;
         }
 
@@ -149,8 +150,7 @@ namespace Leantime\Domain\Sprints\Services {
             $sprint->startDate = format($sprint->startDate)->isoDateStart();
             $sprint->endDate = format($sprint->endDate)->isoDateEnd();
 
-            //TODO: Refactor when project selector is available
-            $sprint->projectId = $_SESSION['currentProject'];
+            $sprint->projectId = $params['projectId'] ?? $_SESSION['currentProject'];
 
             $result = $this->sprintRepository->addSprint($sprint);
 
@@ -172,8 +172,7 @@ namespace Leantime\Domain\Sprints\Services {
             $sprint->startDate = format($sprint->startDate)->isoDate();
             $sprint->endDate = format($sprint->endDate)->isoDateEnd();
 
-            //TODO: Refactor when project selector is available
-            $sprint->projectId = $_SESSION['currentProject'];
+            $sprint->projectId = $params['projectId'] ?? $_SESSION['currentProject'];
 
             $result = $this->sprintRepository->editSprint($sprint);
 

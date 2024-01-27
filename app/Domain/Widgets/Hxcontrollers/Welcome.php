@@ -50,6 +50,15 @@ class Welcome extends HtmxController
     public function get()
     {
 
+        try {
+            $reportService = app()->make(ReportService::class);
+            $promise = $reportService->sendAnonymousTelemetry();
+            if ($promise !== false) {
+                $promise->wait();
+            }
+        }catch(\Exception $e) {
+            error_log($e);
+        }
 
         $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
         $this->tpl->assign('currentUser', $currentUser);

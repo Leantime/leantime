@@ -21,6 +21,16 @@
                 {!! __("menu.my_profile") !!}
             </a>
         </li>
+        <li>
+            <a href='{{ BASE_URL }}/users/editOwn#theme'>
+                {!! __("menu.theme") !!}
+            </a>
+        </li>
+        <li>
+            <a href='{{ BASE_URL }}/users/editOwn#settings'>
+                {!! __("menu.settings") !!}
+            </a>
+        </li>
 
         <li class="nav-header border">{!! __("menu.help_support") !!}</li>
         <li>

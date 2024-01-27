@@ -270,6 +270,12 @@ namespace Leantime\Domain\Reports\Services {
                 "numTaskSentimentLove" => $taskSentiment["😍"] ?? 0,
                 "numTaskSentimenUnicorn" => $taskSentiment["🦄"] ?? 0,
 
+                "serverSoftware"    => $_SERVER['SERVER_SOFTWARE'] ?? 'unknown',
+                "phpUname"          => php_uname(),
+                "isDocker"          => is_file("/.dockerenv"),
+                "phpSapiName"       => php_sapi_name(),
+                "phpOs"             => PHP_OS ?? "unknown"
+
             );
 
             $telemetry = self::dispatch_filter("beforeReturnTelemetry", $telemetry);
@@ -284,19 +290,13 @@ namespace Leantime\Domain\Reports\Services {
         public function sendAnonymousTelemetry(): bool|PromiseInterface
         {
 
-            //unset($_SESSION['skipTelemetry']);
-            //if (isset($_SESSION['skipTelemetry']) && $_SESSION['skipTelemetry'] === true) {
-            //    return false;
-            //}
-
             //Only send once a day
             $allowTelemetry = (bool) $this->settings->getSetting("companysettings.telemetry.active");
-            error_log("telemetry active: ".$allowTelemetry);
+
             if ($allowTelemetry === true) {
                 $date_utc = new DateTime("now", new DateTimeZone("UTC"));
                 $today = $date_utc->format("Y-m-d");
                 $lastUpdate = $this->settings->getSetting("companysettings.telemetry.lastUpdate");
-                error_log("last update ".$lastUpdate);
 
                 if ($lastUpdate != $today) {
                     $telemetry = app()->call([$this, 'getAnonymousTelemetry']);
@@ -312,12 +312,11 @@ namespace Leantime\Domain\Reports\Services {
                             'form_params' => [
                                 'telemetry' => $data_string,
                             ],
-                            'timeout' => 120,
+                            'timeout' => 480,
                         ])->then(function ($response) use ($today) {
                             $this->settings->saveSetting("companysettings.telemetry.lastUpdate", $today);
-                            $_SESSION['skipTelemetry'] = true;
                         });
-                        error_log("sent request");
+
                         return $promise;
                     } catch (\Exception $e) {
                         error_log($e);

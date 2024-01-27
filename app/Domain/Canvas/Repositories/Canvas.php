@@ -573,28 +573,11 @@ namespace Leantime\Domain\Canvas\Repositories {
                         milestone.headline as milestoneHeadline,
                         milestone.editTo as milestoneEditTo,
                         COUNT(DISTINCT zp_comment.id) AS commentCount,
-
-                        COUNT(progressTickets.id) AS allTickets,
-
-                       (SELECT (
-                            CASE WHEN
-                              COUNT(DISTINCT progressSub.id) > 0
-                            THEN
-                              ROUND(
-                                (
-                                  SUM(CASE WHEN progressSub.status " . $statusGroups["DONE"] . " THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
-                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
-                                ) *100)
-                            ELSE
-                              0
-                            END) AS percentDone
-                        FROM zp_tickets AS progressSub WHERE progressSub.milestoneid = zp_canvas_items.milestoneId AND progressSub.type <> 'milestone') AS percentDone
-
+                        0 AS percentDone
                 FROM
                 zp_canvas_items
 
                 LEFT JOIN zp_user AS t1 ON zp_canvas_items.author = t1.id
-                LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
                 LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
                 LEFT JOIN zp_comment ON zp_canvas_items.id = zp_comment.moduleId and zp_comment.module = '" . static::CANVAS_NAME . "canvasitem'
                 WHERE zp_canvas_items.canvasId = :id

@@ -267,7 +267,7 @@
 .maincontentinner table.fc-scrollgrid td,
 .maincontentinner table.fc-scrollgrid th{
     padding:0px;
-    background: var(--layered-background);
+    background: var(--kanban-card-bg);
 }
 
 .maincontentinner table.fc-scrollgrid th.fc-col-header-cell {
@@ -411,7 +411,7 @@
     border-color: var(--neutral);
     border: 1px solid var(--secondary-action-bg);
     margin: 0 0 9px;
-    padding: 6px 12px;
+    padding: 4px 14px;
     line-height: 21px;
     text-align: center;
     vertical-align: baseline;

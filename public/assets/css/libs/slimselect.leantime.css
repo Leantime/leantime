@@ -14,5 +14,3 @@ span.arrow-up::before {
 span.arrow-down::before {
 	content: "\f0d7";
 }
-
-input:focus { box-shadow: 0 0 0 white !important; }

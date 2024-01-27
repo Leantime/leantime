@@ -21,12 +21,8 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
             text: 'Heading 2',
             icon: 'h2',
             action: function () {
-
                 editor.execCommand('mceInsertContent', false, '<h2>Heading 2</h2>');
                 editor.selection.select(editor.selection.getNode());
-
-
-
             }
         },
         {
@@ -69,7 +65,6 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
             icon: 'template',
             action: function () {
                 editor.execCommand('mceTemplate');
-
             }
         },
         {
@@ -80,7 +75,6 @@ tinymce.PluginManager.add('slashcommands', function (editor) {
                 confetti.start();
             }
         }
-
     ];
 
     // Register the slash commands autocompleter

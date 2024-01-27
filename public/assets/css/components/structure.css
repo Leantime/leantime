@@ -343,6 +343,8 @@ body {
 
 .mainwrapper {
     background:var(--header-gradient);
+    background-size: 100vw 100vh;
+    background-attachment: fixed;
 }
 
 .rightpanel {
@@ -393,7 +395,7 @@ body {
     content: "";
     height: 100%;
     left: 0;
-    opacity: .2;
+    opacity: var(--primary-content-bg-opacity);
     position: fixed;
     top: 0px;
     width: 100%;
@@ -409,16 +411,16 @@ body {
     color: #fff;
     float: left;
     clear: both;
-    min-height: 800px;
-
+    background:var(--left-panel-bg);
     position:sticky;
-    height:100%;
+    height:calc(100vh - 70px);
     z-index: 9;
     display: flex;
     flex-direction: column;
     top:70px;
     margin-top:20px;
     left:10px;
+    border-radius: var(--box-radius-large);
 
     overflow:hidden;
 }
@@ -432,6 +434,7 @@ body {
     width: 100%;
     box-shadow: var(--large-shadow);
     backdrop-filter: var(--glass-blur);
+    background:var(--header-bg-color);
 
 }
 

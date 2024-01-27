@@ -1,8 +1,3 @@
-
-
-
-
-
 //Lets get this party started.
 var leantime = leantime || {};
 
@@ -69,7 +64,6 @@ jQuery(document).ready(function () {
 
 });
 
-
 window.addEventListener("HTMX.ShowNotification", function(evt) {
     jQuery.get(leantime.appUrl+"/notifications/getLatestGrowl", function(data){
         console.log(data);
@@ -79,6 +73,3 @@ window.addEventListener("HTMX.ShowNotification", function(evt) {
         });
     })
 });
-
-
-

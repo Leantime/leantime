@@ -63,8 +63,6 @@
     margin-bottom:50px;
 }
 .nyroModalCont iframe {
-    width: 600px;
-    height: 400px;
 }
 .nyroModalError {
     border: 4px solid var(--red);
@@ -137,7 +135,6 @@
 
 .nyroModalCont select {
     max-width:100%;
-    height: 41px;
 }
 
 .nyroModalLink, .nyroModalDom, .nyroModalForm, .nyroModalFormFile {

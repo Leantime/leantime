@@ -14,7 +14,7 @@
     <div style="padding:10px 0px">
 
         <div class="center">
-            <span style="font-size:44px; color:var(--main-action-color);">
+            <span style="font-size:44px; color:var(--main-titles-color);">
                 @php
                     $date = new DateTime();
                     if(!empty($_SESSION['usersettings.timezone'])){
@@ -25,7 +25,7 @@
 
                 {{ $date }}
             </span><br />
-            <span style="font-size:24px; color:var(--main-action-color);">
+            <span style="font-size:24px; color:var(--main-titles-color);">
                 {{ __("welcome_widget.hi") }} {{ $currentUser['firstname'] }}
             </span><br />
             @dispatchEvent('afterGreeting')

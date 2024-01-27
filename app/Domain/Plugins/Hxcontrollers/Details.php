@@ -62,8 +62,14 @@ class Details extends HtmxController
         try {
             $this->pluginService->installMarketplacePlugin($pluginModel, $version);
         } catch (\Throwable $e) {
-             $this->tpl->assign('formError', $e->getMessage());
-             return 'plugin-installation';
+
+            //Parse and clean up error message
+            $errorJson = str_replace("HTTP request returned status code 500:", "", $e->getMessage());
+            $errors = json_decode(trim($errorJson));
+
+            $this->tpl->assign('formError', $errors->error ?? "There was an error installing the plugin");
+            return 'plugin-installation';
+
         }
 
         if ($this->pluginService->isPluginEnabled($pluginModel->identifier)) {
@@ -75,3 +81,6 @@ class Details extends HtmxController
         return 'plugin-installation';
     }
 }
+
+
+

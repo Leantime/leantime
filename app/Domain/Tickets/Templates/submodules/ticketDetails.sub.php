@@ -23,8 +23,11 @@ $ticketTypes = $tpl->get('ticketTypes');
                 </div>
 
                 <div class="viewDescription mce-content-body">
-                    <?=$tpl->__("label.description") ?><br /><br />
-                    <?php echo $tpl->escapeMinimal($ticket->description); ?>
+                    <div class="tw-pl-[9px]">
+                        <p><?=$tpl->__("label.description") ?></p>
+                        <br /><br />
+                        <?php echo $tpl->escapeMinimal($ticket->description); ?>
+                    </div>
                 </div>
                 <div class="form-group" id="descriptionEditor" style="display:none;">
                     <textarea name="description" id="ticketDescription"
@@ -77,8 +80,27 @@ $ticketTypes = $tpl->get('ticketTypes');
         <?php } ?>
     </div>
     <div class="col-md-3">
+
         <div class="row marginBottom">
             <div class="col-md-12">
+
+                <div class="form-group">
+                    <label class="control-label"><?=$tpl->__('label.project') ?></label>
+                    <select name="projectId" class="tw-w-full">
+                        <?php foreach($allAssignedprojects as $project) { ?>
+                            <option value="<?=$project['id'] ?>"
+                                <?php
+                                if($ticket->projectId == $project['id']) {
+                                    echo "selected";
+                                }else if( $_SESSION['currentProject'] == $project['id']){
+                                    echo "selected";
+                                }
+                                ?>
+                            ><?=$tpl->escape($project["name"]); ?></option>
+                        <?php } ?>
+                    </select>
+                </div>
+
                 <div class="form-group">
                     <label class="control-label"><?php echo $tpl->__('label.related_to'); ?></label>
                     <div class="">
@@ -208,12 +230,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label"><?php echo $tpl->__('label.sprint'); ?></label>
+                        <label class="control-label"><?php echo $tpl->__('label.list'); ?></label>
                         <div class="">
 
                             <select id="sprint-select" class="span11" name="sprint"
                                     data-placeholder="<?php echo $ticket->sprint ?>">
-                                <option value=""><?php echo $tpl->__('label.not_assigned_to_sprint'); ?></option>
+                                <option value=""><?php echo $tpl->__('label.not_assigned_to_list'); ?></option>
                                 <?php
                                 if ($tpl->get('sprints')) {
                                     foreach ($tpl->get('sprints') as $sprintRow) { ?>
@@ -308,7 +330,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.due_date'); ?></label>
                         <div class="">
-                            <input type="text" class="dates" style="width:90px;" id="deadline" autocomplete="off"
+                            <input type="text" class="dates" style="width:100px;" id="deadline" autocomplete="off"
                                    value="<?=format($ticket->dateToFinish)->date(); ?>"
                                    name="dateToFinish" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
 
@@ -321,7 +343,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_from'); ?></label>
                         <div class="">
-                            <input type="text" class="editFrom" style="width:90px;" name="editFrom" autocomplete="off"
+                            <input type="text" class="editFrom" style="width:100px;" name="editFrom" autocomplete="off"
                                    value="<?=format($ticket->editFrom)->date(); ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeFrom" autocomplete="off"
                                    value="<?=format($ticket->editFrom)->time24(); ?>"
@@ -332,7 +354,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                     <div class="form-group">
                         <label class=" control-label"><?php echo $tpl->__('label.working_date_to'); ?></label>
                         <div class="">
-                            <input type="text" class="editTo" style="width:90px;" name="editTo" autocomplete="off"
+                            <input type="text" class="editTo" style="width:100px;" name="editTo" autocomplete="off"
                                    value="<?=format($ticket->editTo)->date() ?>" placeholder="<?=$tpl->__('language.dateformat') ?>"/>
                             <input type="time" class="timepicker" style="width:120px;" id="timeTo" autocomplete="off"
                                    value="<?=format($ticket->editTo)->time24() ?>"

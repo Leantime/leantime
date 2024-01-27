@@ -9,6 +9,8 @@ foreach ($__data as $var => $val) {
 }
 $allCanvas = $tpl->get('allCanvas');
 $canvasTitle = $tpl->get('canvasTitle');
+
+/*
 ?>
 <!-- Modals -->
 <div class="modal fade bs-example-modal-lg" id="addCanvas">
@@ -133,3 +135,5 @@ $canvasTitle = $tpl->get('canvasTitle');
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+*/ ?>

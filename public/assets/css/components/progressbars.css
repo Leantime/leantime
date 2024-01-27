@@ -9,19 +9,19 @@
 }
 
 .progress-primary .bar {
-    background: var(--header-gradient);
+    background: var(--element-gradient);
 }
 
 .progress-info .bar {
-    background: var(--header-gradient);
+    background: var(--element-gradient);
 }
 
 .progress-success .bar {
-    background: var(--header-gradient);
+    background: var(--element-gradient);
 }
 
 .progress-warnng .bar {
-    background: var(--header-gradient);
+    background: var(--element-gradient);
 }
 
 .progress {
@@ -65,7 +65,7 @@
 }
 
 .progress-bar-success {
-    background: var(--header-gradient);
+    background: var(--element-gradient);
 }
 
 .progress-striped .progress-bar-success {

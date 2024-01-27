@@ -4,6 +4,13 @@
 ])
 
 <div {{ $attributes->merge([ 'class' => 'accordionWrapper' ]) }}>
+
+    @if(isset($actionlink) && $actionlink != '')
+        <div class="pull-right tw-pt-xs">
+            {!! $actionlink !!}
+        </div>
+    @endif
+
     <a
         href="javascript:void(0)"
         class="accordion-toggle {{ $state }}"
@@ -14,7 +21,7 @@
             'class' => 'accordionTitle tw-pb-15 tw-text-l',
             'id' => "accordion_link_$id"
         ]) }}>
-            <i class="fa fa-angle-{{ $tpl->getToggleState("accordion_content.$id") == 'closed' ? 'right' : 'down' }}"></i>
+            <i class="fa fa-angle-{{ $state == 'closed' ? 'right' : 'down' }}"></i>
             {!! $title !!}
         </h5>
     </a>
@@ -23,6 +30,8 @@
         'id' => "accordion_content-$id",
         'style' => $state =='closed' ? 'display:none;' : ''
     ]) }}>
+
+
         {!! $content !!}
     </div>
 </div>

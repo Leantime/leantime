@@ -602,10 +602,10 @@ body.loginpage {
     height:30px;
     font-size:16px;
     padding: 0px;
-    color: var(--main-action-color);
+    color: var(--main-titles-color);
     border-width: 2px;
     border-style: solid;
-    border-color:var(--main-action-color);
+    border-color:var(--main-titles-color);
     display: inline-block;
     -moz-border-radius: 30px;
     -webkit-border-radius: 30px;
@@ -684,13 +684,13 @@ body.loginpage {
 
 body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
     border-bottom:2px solid var(--main-action-bg);
-    color:var(--main-menu-link-hover-color);
-    background: var(--layered-background);
+    color:var(--tab-active-color);
+    background: var(--tab-active-background);
     border-radius: 5px 5px 0px 0px;
 }
 
 .tab-primary.ui-tabs .ui-tabs-nav > li a:hover {
-    background:var(--main-menu-link-active-bg);
+    background:var(--tab-active-background);
 }
 
 
@@ -2253,7 +2253,7 @@ body .widgettitle .editHeadline:hover {
     margin-bottom: 20px;
     padding:10px;
     margin-top:20px;
-    background: var(--layered-background);
+    background: var(--kanban-card-bg);
 }
 
 
@@ -2387,7 +2387,7 @@ a.titleInsertLink:hover {
     box-shadow:var(--regular-shadow);
     padding:10px;
     margin-bottom:15px;
-    background:var(--layered-background);
+    background:var(--kanban-card-bg);
 }
 
 .projectBox small {
@@ -2406,7 +2406,7 @@ a.titleInsertLink:hover {
     margin-right:10px;
     text-align:center;
     border-radius:var(--box-radius-small);
-    background:var(--header-gradient);
+    background:var(--element-gradient);
 }
 
 .projectBox .projectAvatar img,
@@ -2488,7 +2488,7 @@ h3.todaysDate {
     box-shadow: var(--large-shadow);
     border-radius:var(--box-radius);
     padding:15px;
-    color:var(--main-action-color);
+    color:var(--main-titles-color);
     background:var(--secondary-background);
 }
 
@@ -2813,8 +2813,15 @@ h3.todaysDate {
     display:inline-block;
 }
 
-.htmx-request .htmx-loaded-content {
+/* Hide or show the actual/previous content based on htmx indicator visibility */
+.htmx-indicator.htmx-loaded-content {
+    display:block;
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator.htmx-loaded-content {
     display: none;
+    opacity:0;
 }
 
 h4 .helperTooltip,
@@ -2845,7 +2852,7 @@ h4 .helperTooltip,
     backdrop-filter: var(--glass-blur);
     -webkit-backdrop-filter: var(--glass-blur);
     box-shadow: var(--large-shadow);
-    border: 1px solid var(--light-layered-background);
+    border: 1px solid var( --glass-border);
 }
 
 .bigNumberBox .icon {
@@ -2855,20 +2862,20 @@ h4 .helperTooltip,
 
 .bigNumberBox .icon .fa {
     font-size: 40px;
-    color: var(--main-action-color);
+    color: var(--main-titles-color);
 }
 
 
 .bigNumberBoxNumber {
     font-size: 36px;
-    color: var(--main-action-color);
+    color: var(--main-titles-color);
     font-weight: normal;
     text-shadow: var(--min-shadow);
     line-height: 1;
 }
 
 .bigNumberBoxText {
-    color: var(--main-action-color);
+    color: var(--main-titles-color);
     font-weight:bold;
 }
 
@@ -3055,4 +3062,8 @@ body a.btn-link.btn-fancy:hover {
 
 .projectBox {
     color:var(--primary-font-color);
+}
+
+.widgetContent {
+    padding:0px 2px;
 }

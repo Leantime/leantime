@@ -81,7 +81,16 @@ namespace Leantime\Domain\Notifications\Services {
 
         public function getFeed()
         {
-            return simplexml_load_file('https://leantime.io/category/leantime-updates/feature-updates/feed/');
+
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('GET', 'https://leantime.io/category/leantime-updates/feature-updates/feed/', [
+                'headers' => ['Accept' => 'application/xml'],
+                'timeout' => 20
+            ])->getBody()->getContents();
+
+            $responseXml = simplexml_load_string($response);
+
+            return $responseXml;
         }
     }
 }

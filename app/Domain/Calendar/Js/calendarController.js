@@ -329,7 +329,7 @@ leantime.calendarController = (function () {
                 var currentTicket = jQuery(this);
                 jQuery(this).data('event', {
                     id: currentTicket.attr("data-val"),
-                    title: currentTicket.find(".timerContainer strong").text(),
+                    title: currentTicket.find(".titleContainer strong").text(),
                     color: 'var(--accent2)',
                     enitityType: "ticket",
                     url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
@@ -356,7 +356,7 @@ leantime.calendarController = (function () {
                     eventData: function (eventEl) {
                         return {
                             id: jQuery(eventEl).attr("data-val"),
-                            title: jQuery(eventEl).find(".timerContainer strong").text(),
+                            title: jQuery(eventEl).find(".titleContainer strong").text(),
                             borderColor: 'var(--accent2)',
                             enitityType: "ticket",
                             duration: '01:00',
@@ -390,7 +390,7 @@ leantime.calendarController = (function () {
                     var currentTicket = jQuery(this);
                     jQuery(this).data('event', {
                         id: currentTicket.attr("data-val"),
-                        title: currentTicket.find(".timerContainer strong").text(),
+                        title: currentTicket.find(".titleContainer strong").text(),
                         borderColor: 'var(--accent2)',
                         enitityType: "ticket",
                         url: '#/tickets/showTicket/' + currentTicket.attr("data-val"),
@@ -414,7 +414,7 @@ leantime.calendarController = (function () {
                     eventData: function(eventEl) {
                         return {
                             id: jQuery(eventEl).attr("data-val"),
-                            title: jQuery(eventEl).find(".timerContainer strong").text(),
+                            title: jQuery(eventEl).find(".titleContainer strong").text(),
                             color: 'var(--accent2)',
                             enitityType: "ticket",
                             duration: '01:00',

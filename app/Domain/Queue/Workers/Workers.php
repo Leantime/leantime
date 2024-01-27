@@ -3,6 +3,6 @@
 namespace Leantime\Domain\Queue\Workers;
 enum Workers: string
 {
-    case EMAILS = "emails";
+    case EMAILS = "email";
     case HTTPREQUESTS = "httprequests";
 }

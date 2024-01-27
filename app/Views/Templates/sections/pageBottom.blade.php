@@ -1,5 +1,6 @@
 @if ($poorMansCron)
     <script>
+        jQuery.get('{!! BASE_URL !!}/cron/run');
         //1 min time to run cron
         setInterval(function(){
             jQuery.get('{!! BASE_URL !!}/cron/run');

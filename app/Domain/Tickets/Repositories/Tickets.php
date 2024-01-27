@@ -665,7 +665,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             }
 
             $query .= " GROUP BY zp_tickets.id ";
-            $query .= " ORDER BY zp_tickets.sortindex ASC, zp_tickets.id DESC";
+            $query .= " ORDER BY zp_tickets.dateToFinish DESC, zp_tickets.sortindex ASC, zp_tickets.id DESC";
 
 
             $stmn = $this->db->database->prepare($query);

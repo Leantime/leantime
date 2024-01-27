@@ -413,6 +413,35 @@ namespace Leantime\Domain\Tickets\Services {
 
         }
 
+        public function getAllOpenUserTickets(?int $userId = null, ?int $project = null): array {
+
+            $tickets = $this->ticketRepository->simpleTicketQuery($userId, $project);
+
+            $ticketArray = [];
+
+            if(is_array($tickets)) {
+
+                $ticketCounter = 0;
+                $projectStatusLabels = [];
+                foreach($tickets as $ticket) {
+
+                    if(!isset($projectStatusLabels[$ticket['projectId']])) {
+                        $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
+                    }
+
+                    if($projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE"){
+                        $ticketArray[] = $ticket;
+
+                    }
+
+                }
+
+            }
+
+            return $ticketArray;
+
+        }
+
         public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId)
         {
 
@@ -632,6 +661,7 @@ namespace Leantime\Domain\Tickets\Services {
                         } else {
                             $tickets['later'] = array(
                                 "labelName" => "subtitles.due_later",
+                                "groupValue" => "",
                                 "tickets" => array($row),
                                 "order" => 3,
                             );
@@ -643,6 +673,7 @@ namespace Leantime\Domain\Tickets\Services {
                         $nextFriday = strtotime('friday this week');
                         $nextFridayDateTime = new DateTime();
                         $nextFridayDateTime->setTimestamp($nextFriday);
+                        $formattedDate = $nextFridayDateTime->format("Y-m-d");
 
                         if ($date <= $nextFridayDateTime && $date >= $today) {
                             if (isset($tickets["thisWeek"]["tickets"])) {
@@ -651,6 +682,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 $tickets['thisWeek'] = array(
                                     "labelName" => "subtitles.due_this_week",
                                     "tickets" => array($row),
+                                    "groupValue" => $formattedDate,
                                     "order" => 2,
                                 );
                             }
@@ -658,9 +690,12 @@ namespace Leantime\Domain\Tickets\Services {
                             if (isset($tickets["overdue"]["tickets"])) {
                                 $tickets["overdue"]["tickets"][] = $row;
                             } else {
+
+
                                 $tickets['overdue'] = array(
                                     "labelName" => "subtitles.overdue",
                                     "tickets" => array($row),
+                                    "groupValue" => $formattedDate,
                                     "order" => 1,
                                 );
                             }
@@ -671,6 +706,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 $tickets['later'] = array(
                                     "labelName" => "subtitles.due_later",
                                     "tickets" => array($row),
+                                    "groupValue" => "",
                                     "order" => 3,
                                 );
                             }
@@ -724,8 +760,50 @@ namespace Leantime\Domain\Tickets\Services {
                         $tickets[$row['projectId']]['tickets'][] = $row;
                     } else {
                         $tickets[$row['projectId']] = array(
-                            "labelName" => $row['clientName'] . "//" . $row['projectName'],
+                            "labelName" => $row['clientName'] . " / " . $row['projectName'],
                             "tickets" => array($row),
+                            "groupValue" => $row['projectId']
+                        );
+                    }
+                }
+            }
+
+            return $tickets;
+        }
+
+
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return array
+         */
+        public function getOpenUserTicketsBySprint($userId, $projectId): array
+        {
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("currentProject" => $projectId, "users" => $userId, "status" => "", "sprint" => ""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "duedate");
+
+            $statusLabels = $this->getAllStatusLabelsByUserId($userId);
+
+            $tickets = array();
+
+            foreach ($allTickets as $row) {
+
+                $sprint = $row['sprint'] ?? "backlog";
+                $sprintName =  empty($row['sprintName']) ? "label.not_assigned_to_list" : $row['sprintName'];
+
+                //Only include todos that are not done
+                if (isset($statusLabels[$row['projectId'] ?? '']) &&
+                    isset( $statusLabels[$row['projectId']][$row['status']]) &&
+                    $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE") {
+
+                    if (isset($tickets[$sprint])) {
+                        $tickets[$sprint]['tickets'][] = $row;
+                    } else {
+                        $tickets[$sprint] = array(
+                            "labelName" => $row['projectName'] . " / " . $sprintName,
+                            "tickets" => array($row),
+                            "groupValue" => $row['sprint'] ."-".$row['projectId']
                         );
                     }
                 }
@@ -974,7 +1052,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'headline' => $params['headline'],
                 'type' => 'milestone',
                 'description' => '',
-                'projectId' => $_SESSION['currentProject'],
+                'projectId' => $params['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' =>  $params['editorId'] ?? $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
                 'date' => format(date("Y-m-d H:i:s"))->isoDate(),
@@ -1569,7 +1647,7 @@ namespace Leantime\Domain\Tickets\Services {
                     'id' => 'sprint',
                     'field' => 'sprint',
                     'class' => '',
-                    'label' => 'sprint',
+                    'label' => 'list',
                 ],
 
                 /*
@@ -1771,6 +1849,8 @@ namespace Leantime\Domain\Tickets\Services {
                 $tickets = $this->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
             } elseif ($groupBy == "project") {
                 $tickets = $this->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
+            } elseif ($groupBy == "sprint") {
+                $tickets = $this->getOpenUserTicketsBySprint($_SESSION["userdata"]["id"], $projectFilter);
             }
 
             $onTheClock = $this->timesheetService->isClocked($_SESSION["userdata"]["id"]);
@@ -1789,8 +1869,6 @@ namespace Leantime\Domain\Tickets\Services {
                     }
                 }
             }
-
-
 
 
             $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');

@@ -372,9 +372,16 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .accordionTitle i {
     display:inline-block;
-    width:10px;
+    width:15px;
     text-align:center;
-    margin-right:10px;
+    margin-right:5px;
+    border-radius:5px;
+}
+
+.maincontent .accordionTitle:hover i,
+.maincontent .accordionTitle i:hover {
+    background:var(--col-hover-bg);
+    color:var(--interactive-icon-color);
 }
 
 .maincontent .accordionTitle[class*="label-"] {
@@ -575,7 +582,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .pagetitle .btn-transparent {
     background:transparent;
-    color:var(--main-action-color);
+    color:var(--main-titles-color);
     border:1px solid var(--main-action-color);
     font-size:var(--font-size-l);
 }
