@@ -19,7 +19,7 @@ $redirectUrl = $tpl->get("redirectUrl");
         <div class="">
             <input type="text" name="twoFA_code" id="twoFA_code" class="form-control"
                    placeholder="<?php echo $tpl->language->__("label.twoFACode"); ?>"
-                   value=""/>
+                   value="" autofocus/>
         </div>
         <div class="">
             <div class="forgotPwContainer">
