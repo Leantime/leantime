@@ -18,6 +18,8 @@ leantime.widgetController = (function () {
             },
         });
 
+
+
         grid.on('dragstop', function(event, item) {
             saveGrid();
         });
@@ -34,7 +36,11 @@ leantime.widgetController = (function () {
             jQuery(this).find(".fitContent").click(function(){
                 resizeWidget(jQuery(this).closest(".grid-stack-item")[0]);
             });
-        })
+        });
+
+        jQuery(document).ready(function(){
+            jQuery("#gridBoard").css("opacity", 1);
+        });
 
     };
 

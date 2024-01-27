@@ -119,6 +119,11 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function post($params): Response
         {
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
+
+                $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeFrom'] = format($params['timeFrom'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeTo'] = format($params['timeTo'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+
                 $result = $this->ticketService->addTicket($params);
 
                 if (is_array($result) === false) {

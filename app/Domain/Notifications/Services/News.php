@@ -88,7 +88,11 @@ namespace Leantime\Domain\Notifications\Services {
                 'timeout' => 20
             ])->getBody()->getContents();
 
-            $responseXml = simplexml_load_string($response);
+            if(function_exists("simplexml_load_string")){
+                $responseXml = simplexml_load_string($response);
+            }else{
+                error_log("SimpleXML Extension is not available.");
+            }
 
             return $responseXml;
         }

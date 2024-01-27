@@ -93,7 +93,7 @@ $allTicketGroups = $tpl->get("allTickets");
                        onclick="jQuery('#ticket_new_link_<?=$key?>').toggle('fast'); jQuery('#ticket_new_<?=$key?>').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
                         <i class="fas fa-plus-circle"></i> Add To-Do</a>
 
-                     <div class="hideOnLoad " id="ticket_new_<?=$key?>" style="padding-top:5px;">
+                     <div class="hideOnLoad " id="ticket_new_<?=$key?>" style="padding-top:5px; padding-bottom:5px;">
 
                         <form method="post">
                             <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
@@ -128,7 +128,7 @@ $allTicketGroups = $tpl->get("allTickets");
                 <div class="simpleAccordionContainer kanban" id="accordion_content-<?=$group['id'] ?>">
             <?php } ?>
 
-                    <div class="sortableTicketList kanbanBoard">
+                    <div class="sortableTicketList kanbanBoard" id="kanboard-<?=$group['id'] ?>" style="margin-top:-5px;">
 
                         <div class="row-fluid">
 
@@ -353,6 +353,7 @@ $allTicketGroups = $tpl->get("allTickets");
     <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
         leantime.ticketsController.initUserDropdown();
         leantime.ticketsController.initMilestoneDropdown();
+        leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initEffortDropdown();
         leantime.ticketsController.initPriorityDropdown();
 

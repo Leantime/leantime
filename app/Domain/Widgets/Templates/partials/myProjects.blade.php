@@ -21,6 +21,7 @@
                 </div>
             </div>
     @endif
+    <div class="clearall"></div>
 
     <x-global::accordion id="myProjectWidget-favorites" class="{{ $background }}">
         <x-slot name="title">

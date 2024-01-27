@@ -365,7 +365,7 @@
                                                     format($row['date'])->date(),
                                                     format($row['date'])->time()
                                                 ) }}
-
+                                            </strong>
                                                 @if ($login::userIsAtLeast($roles::$editor))
                                                     <div class="inlineDropDownContainer tw-float-right tw-ml-[10px]">
                                                         <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
@@ -392,7 +392,7 @@
                                                         </ul>
                                                     </div>
                                                 @endif
-                                            </strong>
+
 
                                             <div class="text" id="commentText-{{ $row['id'] }}">{!! $tpl->escapeMinimal($row['text']) !!}</div>
                                         </div>

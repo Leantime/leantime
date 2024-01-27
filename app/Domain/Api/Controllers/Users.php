@@ -114,8 +114,8 @@ namespace Leantime\Domain\Api\Controllers {
          */
         public function patch($params)
         {
-            if (
-                ! in_array(array_keys($params), ['patchModalSettings', 'patchViewSettings', 'patchMenuStateSettings'])
+
+            if (count(array_intersect(array_keys($params), ['patchModalSettings', 'patchViewSettings', 'patchMenuStateSettings'])) == 0
                 || (! empty($params['patchModalSettings']) && empty($params['settings']))
                 || (! empty($params['patchViewSettings']) && empty($params['value']))
                 || (! empty($params['patchMenuStateSettings']) && empty($params['value']))

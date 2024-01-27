@@ -226,7 +226,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $params['id'] = $id;
 
                 //Prepare values, time comes in as 24hours from time input. Service expects time to be in local user format
-                $params['dueTime'] = format($params['dueTime'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->time24toLocalTime(ignoreTimezone: true);
                 $params['timeFrom'] = format($params['timeFrom'] ?? '')->time24toLocalTime(ignoreTimezone: true);
                 $params['timeTo'] = format($params['timeTo'] ?? '')->time24toLocalTime(ignoreTimezone: true);
 

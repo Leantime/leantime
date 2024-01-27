@@ -108,11 +108,17 @@ namespace Leantime\Domain\Plugins\Services {
                 collect($configplugins)
                 ->filter(fn ($plugin) => ! empty($plugin))
                 ->each(function ($plugin) use (&$installedPluginsById) {
-                    $pluginModel = $this->createPluginFromComposer($plugin);
 
-                    $installedPluginsById[$plugin] ??= $pluginModel;
-                    $installedPluginsById[$plugin]->enabled = true;
-                    $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
+                    try {
+                        $pluginModel = $this->createPluginFromComposer($plugin);
+
+                        $installedPluginsById[$plugin] ??= $pluginModel;
+                        $installedPluginsById[$plugin]->enabled = true;
+                        $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
+                    }catch(Exception $e){
+                        error_log($e);
+                    }
+
                 });
             }
 
