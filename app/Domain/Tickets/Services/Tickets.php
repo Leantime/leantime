@@ -1896,7 +1896,7 @@ namespace Leantime\Domain\Tickets\Services {
             if (!empty($values['dateToFinish'])) {
 
                 if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                    $values['dateToFinish'] = format($values['dateToFinish']." ".$values['timeToFinish'].":00")->isoDateTime();
+                    $values['dateToFinish'] = format($values['dateToFinish']." ".$values['timeToFinish']."")->isoDateTime();
                     unset($values['timeToFinish']);
                 }else{
                     $values['dateToFinish'] = format($values['dateToFinish'])->isoDateEnd();
