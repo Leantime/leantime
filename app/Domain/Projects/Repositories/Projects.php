@@ -859,6 +859,16 @@ namespace Leantime\Domain\Projects\Repositories {
 
             $stmn->execute();
             $stmn->closeCursor();
+
+
+            $query = "DELETE FROM zp_tickets WHERE projectId = :id";
+
+            $stmn = $this->db->database->prepare($query);
+            $stmn->bindValue(':id', $id, PDO::PARAM_INT);
+
+            $stmn->execute();
+            $stmn->closeCursor();
+
         }
 
         /**
