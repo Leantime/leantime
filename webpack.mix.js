@@ -136,6 +136,7 @@ mix
     .tailwind()
     .copy('./public/assets/images', 'public/dist/images')
     .copy('./public/assets/fonts', 'public/dist/fonts')
+    .copy('./public/assets/lottie', 'public/dist/lottie')
     .copy('./public/assets/css/libs/tinymceSkin/oxide', 'public/dist/css/libs/tinymceSkin/oxide')
     .eslint({
         fix: true,
