@@ -1023,18 +1023,23 @@ leantime.ticketsController = (function () {
         jQuery(document).ready(function () {
 
             countTickets();
+
             jQuery(".filterBar .row-fluid").css("opacity", "1");
 
-            var height = 250;
+            jQuery(".sortableTicketList").each(function(){
 
-            jQuery(".sortableTicketList .column .contentInner").each(function () {
-                if (jQuery(this).height() > height) {
-                    height = jQuery(this).height();
-                }
+                let height = 250;
+                let kanbanLaneId = jQuery(this).attr("id");
+
+                jQuery(this).find(".column .contentInner").each(function () {
+                    if (jQuery(this).height() > height) {
+                        height = jQuery(this).height();
+                    }
+                });
+
+                jQuery("#"+kanbanLaneId+" .column .contentInner").css("height", height);
+
             });
-
-            height = height + 50;
-            jQuery(".sortableTicketList .column .contentInner").css("height", height);
 
         });
 
