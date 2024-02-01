@@ -71,13 +71,16 @@ namespace Leantime\Domain\Timesheets\Repositories {
                         zp_user.lastname,
                         zp_tickets.id as ticketId,
                         zp_tickets.headline,
-                        zp_tickets.planHours
+                        zp_tickets.planHours,
+                        zp_tickets.tags,
+                        milestone.headline as milestone
                     FROM
                         zp_timesheets
                     LEFT JOIN zp_user ON zp_timesheets.userId = zp_user.id
                     LEFT JOIN zp_tickets ON zp_timesheets.ticketId = zp_tickets.id
                     LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
                     LEFT JOIN zp_clients ON zp_projects.clientId = zp_clients.id
+                    LEFT JOIN zp_tickets milestone ON zp_tickets.milestoneid = milestone.id
                     WHERE
                         ((TO_SECONDS(zp_timesheets.workDate) >= TO_SECONDS(:dateFrom)) AND (TO_SECONDS(zp_timesheets.workDate) <= (TO_SECONDS(:dateTo))))";
 

@@ -212,6 +212,8 @@ foreach ($__data as $var => $val) {
           <col class="con1"/>
           <col class="con0"/>
           <col class="con1"/>
+          <col class="con0"/>
+          <col class="con1"/>
     </colgroup>
     <thead>
         <tr>
@@ -225,6 +227,8 @@ foreach ($__data as $var => $val) {
             <th><?php echo $tpl->__('label.client'); ?></th>
             <th><?php echo $tpl->__('label.employee'); ?></th>
             <th><?php echo $tpl->__("label.type")?></th>
+            <th><?php echo $tpl->__("label.milestone") ?></th>
+            <th><?php echo $tpl->__("label.tags") ?></th>
             <th><?php echo $tpl->__('label.description'); ?></th>
             <th><?php echo $tpl->__('label.invoiced'); ?></th>
             <th><?php echo $tpl->__('label.invoiced_comp'); ?></th>
@@ -263,6 +267,10 @@ foreach ($__data as $var => $val) {
 
             <td><?php printf($tpl->__("text.full_name"), $tpl->escape($row["firstname"]), $tpl->escape($row['lastname'])); ?></td>
             <td><?php echo $tpl->__($tpl->get('kind')[$row['kind']]); ?></td>
+
+            <td><?php echo $tpl->escape($row["milestone"]); ?></td>
+            <td><?php echo $tpl->escape($row["tags"]); ?></td>
+
             <td><?php $tpl->e($row['description']); ?></td>
             <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
                 echo format($row['invoicedEmplDate'])->date();
