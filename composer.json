@@ -61,7 +61,7 @@
         "illuminate/pipeline": "^9.52",
         "illuminate/cache": "^9.52",
         "symfony/cache": "^6.3",
-        "nikic/php-parser": "^4.17",
+        "nikic/php-parser": "^4.17"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
