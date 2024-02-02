@@ -366,7 +366,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     padding: 5px 0px;
 }
 
-.maincontent .noBackground .accordionTitle a {
+.maincontent .noBackground .accordionTitle {
     color: var(--main-action-color);
 }
 

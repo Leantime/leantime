@@ -8,7 +8,7 @@
     --accent2-hover: #555;
     --accent2-color:#fff;
 
-    --nav-link-color: #fff;
+    --nav-link-color: #555;
     --header-nav-link-color: #fff;
 
     --tab-background: transparent;
@@ -17,24 +17,24 @@
     --tab-active-background: #f5f6f7;
     --tab-active-color: #555;
 
-    --primary-content-bg-opacity: 0.2;
+    --primary-content-bg-opacity: 0.6;
 
-    --main-titles-color: #fff;
+    --main-titles-color: #555;
 
-    --primary-background: rgba(255, 255, 255, 0.8);
-    --secondary-background: rgba(255, 255, 255, 1);
+    --primary-background: rgba(255, 255, 255, 1);
+    --secondary-background: #fff;
 
-    --layered-background: rgba(255, 255, 255, 0.9);
-    --light-layered-background: rgba(255, 255, 255, 0.4);
+    --layered-background: rgba(240, 240, 240, 0.6);
+    --light-layered-background: #ccc;
 
     --primary-font-color: #555;
     --secondary-font-color: #000;
 
-    --neutral:rgba(240, 240, 240, 0.8);
+    --neutral:#f5f6f7;
     --solid-neutral:rgba(200, 200, 200, 1);
-    --neutral-background: rgba(240, 240, 240, 0.5);
+    --neutral-background: #f5f6f7;
 
-    --col-title-bg: rgb(255, 255, 255, 1);
+    --col-title-bg: #f5f6f7;
     --col-content-bg:  rgba(255,255,255, 0.8);
     --col-hover-bg: rgba(199, 199, 209, 0.5);
     --col-row-striped:rgba(255,255,255,0.3);
@@ -42,12 +42,12 @@
     --primary-color: var(--accent1);
     --secondary-color: var(--accent2);
 
-    --main-bg: var(--primary-background);
-    --left-panel-bg: transparent;
+    --main-bg: #f5f6f7;
+    --left-panel-bg: #f5f6f7;
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 4px );
-    --glass-background: rgba(255,255,255,0.9);
+    --glass-background: rgba(255,255,255,1);
     --glass-border: 1px solid rgba(255,255,255,1);
 
     --main-action-bg: var(--accent1);
@@ -55,7 +55,7 @@
     --main-action-hover-bg: var(--accent1-hover);
     --main-action-hover-color: var(--accent1-color);
 
-    --secondary-action-bg: var(--primary-background);
+    --secondary-action-bg: #f5f6f7;
     --secondary-action-color: var(--primary-font-color);
     --secondary-action-hover-bg: var(--accent2-hover);
     --secondary-action-hover-color: var(--accent2-color);
@@ -63,12 +63,12 @@
     --main-menu-link-bg: var(--secondary-background);
     --main-menu-link-color: var(--primary-font-color);
 
-    --main-menu-link-hover-bg: rgba(255, 255, 255, 0.2);
+    --main-menu-link-hover-bg: rgba(220, 220, 220, 0.8);
     --main-menu-link-hover-color: var(--accent1);
 
     --main-menu-overlayed-link-hover-bg: rgba(255, 255, 255, 0.4);
 
-    --main-menu-link-active-bg: var(--primary-background);
+    --main-menu-link-active-bg: rgba(220, 220, 220, 0.8);
     --main-menu-link-active-color: var(--accent1);
 
     --main-menu-border-color:var(--neutral);
@@ -87,7 +87,7 @@
 
     --header-action-hover-color:var(--neutral);
     --header-bg-color:var(--accent1);
-    --header-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 90%);
+    --header-gradient:#fff;
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
     --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
@@ -101,11 +101,11 @@
     --font-size-xxl: 20px;
     --font-size-xxxl: 24px;
 
-    --main-border-color:rgba(220,220,220, 1);
+    --main-border-color:rgba(240,240,240, 0.9);
     --main-border-color-hover:rgba(200,200,200, 0.9);
     --min-shadow: 0px 1px 3px rgba(0 0 0 / 10%), 0px 0px 1px rgba(0 0 0 / 5%);
-    --regular-shadow: 0px 1px 3px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 10%);
-    --large-shadow: 0px 0px 8px 0 rgba(0 0 0 / 15%);
+    --regular-shadow: 0px 0px 3px 0px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 10%);
+    --large-shadow: 0px 0px 2px 1px rgba(220,220,220, 0.9);
     --box-radius-large:10px;
     --box-radius: 5px;
     --box-radius-small:3px;
@@ -116,8 +116,8 @@
     --kanban-col-bg: transparent;
     --kanban-col-title-bg: var(--col-title-bg);
     --kanban-col-title-color:var(--primary-font-color);
-    --kanban-card-bg: var(--layered-background);
-    --kanban-card-hover: rgba(240, 240, 240, 0.8);
+    --kanban-card-bg: #fff;
+    --kanban-card-hover: rgba(240, 240, 240, 0.6);
 
 
     --accordion-header-bg: var(--secondary-action-bg);

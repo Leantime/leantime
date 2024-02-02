@@ -168,7 +168,10 @@ class Template
                 //@TODO: Check on callstack to make sure autoload loads before sessions
                 if (!is_a($plugin, '__PHP_Incomplete_Class')) {
                     if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
-                        throw new Exception("Plugin $basename conflicts with domain");
+                        error_log("Plugin $basename conflicts with domain");
+                        //Clear cache, something is up
+                        unset($_SESSION['enabledPlugins']);
+                        return [];
                     }
 
                     if ($plugin->format == "phar") {
@@ -944,14 +947,14 @@ class Template
 
         // Replace links
         $text = preg_replace(
-            '/<a([^>]*) href="([^http|ftp|https|mailto|#][^"]*)"/',
+            '/<a([^>]*) href="((?!(http|ftp|https|mailto|#))[^"]*)"/',
             "<a\${1} href=\"$base\${2}\"",
             $text
         );
 
         // Replace images
         $text = preg_replace(
-            '/<img([^>]*) src="([^http|ftp|https][^"]*)"/',
+            '/<img([^>]*) src="((?!(http|ftp|https))[^"]*)"/',
             "<img\${1} src=\"$base\${2}\"",
             $text
         );
@@ -980,22 +983,22 @@ class Template
     }
 
     /**
-     * patchDownloadUrlToFilenameOrAwsUrl - Replace all local download.php references in <img src=""> tags
+     * patchDownloadUrlToFilenameOrAwsUrl - Replace all local files/get references in <img src=""> tags
      * by either local filenames or AWS URLs that can be accesse without being authenticated
      *
      * Note: This patch is required by the PDF generating engine as it retrieves URL data without being
      * authenticated
      *
      * @access public
-     * @param  string $textHtml HTML text, potentially containing <img srv="https://local.domain/download.php?xxxx"> tags
-     * @return string  HTML text with the https://local.domain/download.php?xxxx replaced by either full qualified
+     * @param  string $textHtml HTML text, potentially containing <img srv="https://local.domain/files/get?xxxx"> tags
+     * @return string  HTML text with the https://local.domain/files/get?xxxx replaced by either full qualified
      *                 local filenames or AWS URLs
      */
     public function patchDownloadUrlToFilenameOrAwsUrl(string $textHtml): string
     {
         $patchedTextHtml = $this->convertRelativePaths($textHtml);
 
-        // TO DO: Replace local download.php
+        // TO DO: Replace local files/get
         $patchedTextHtml = $patchedTextHtml;
 
         return $patchedTextHtml;

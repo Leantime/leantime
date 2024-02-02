@@ -1369,7 +1369,7 @@ jQuery(function($, undefined) {
 
                 if(  ((new RegExp(nm.imageRegex, 'i')).test(nm.opener.attr('href')))
                     ||
-                    ( nm.opener.attr('href') != undefined && nm.opener.attr('href').indexOf("download.php") > 0)   ){
+                    ( nm.opener.attr('href') != undefined && nm.opener.attr('href').indexOf("files/get") > 0)   ){
 
                     return true;
                 }else{
@@ -1522,9 +1522,10 @@ jQuery(function($, undefined) {
                     nm.store.formFileIframe = undefined;
                     delete(nm.store.formFileIframe);
                 }
+                console.log("here");
+                console.log(nm.store);
                 nm.store.formFileIframe = $('<iframe name="nyroModalFormFile" src="javascript:\'\';" id="nyromodal-iframe-'+(new Date().getTime())+'"></iframe>')
-                    .hide()
-                    .load(function() {
+                    .on( "load", function() {
                         if (nm.store.formFileLoading) {
                             nm.store.formFileLoading = false;
                             var content = nm.store.formFileIframe
@@ -1554,11 +1555,13 @@ jQuery(function($, undefined) {
                                 setTimeout(fct, 25);
                             }
                         }
-                    })
+                    });
+
+                    /*
                     .error(function() {
                         rmFormFileElts();
                         nm._error();
-                    });
+                    }).hide();*/
                 nm.elts.all.append(nm.store.formFileIframe);
                 nm.opener
                     .attr('target', 'nyroModalFormFile')

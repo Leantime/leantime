@@ -103,6 +103,7 @@ namespace Leantime\Domain\Files\Services {
         {
             return $this->fileRepository->deleteFile($fileId);
         }
+
     }
 
 }

@@ -19,7 +19,7 @@ foreach ($__data as $var => $val) {
                 <div class="mediamgr_category">
 
                     <form action='<?=BASE_URL ?>/files/showAll<?php if (isset($_GET['modalPopUp'])) {
-                        echo"&modalPopUp=true";
+                        echo"?modalPopUp=true";
                                   }?>' method='post' enctype="multipart/form-data" class="fileModal" >
                         <div class="par f-left" style="margin-right: 15px;">
 
@@ -58,7 +58,7 @@ foreach ($__data as $var => $val) {
                                     </a>
                                     <ul class="dropdown-menu">
                                         <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                                        <li><a target="_blank" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
+                                        <li><a target="_blank" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
 
                                         <?php
 
@@ -68,9 +68,9 @@ foreach ($__data as $var => $val) {
 
                                     </ul>
                                 </div>
-                                <a class="imageLink" href="<?=BASE_URL?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
+                                <a class="imageLink" href="<?=BASE_URL?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
                                     <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                                        <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                                        <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                                     <?php else : ?>
                                         <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
                                     <?php endif; ?>
@@ -94,18 +94,6 @@ foreach ($__data as $var => $val) {
     </div>
 </div>
 
-
-<script type='text/javascript'>
-    jQuery(document).ready(function(){
-
-        jQuery('#widgetAction').click(function(){
-            jQuery('.widgetList').toggle();
-        });
-        jQuery('#widgetAction2').click(function(){
-            jQuery('.widgetList2').toggle();
-        });
-    });
-</script>
 
 
 <script type="text/javascript">
