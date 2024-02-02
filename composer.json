@@ -29,6 +29,7 @@
         "php": "^8.1",
         "ext-ldap": "*",
         "ext-pdo": "*",
+        "ext-zip": "*",
         "guzzlehttp/guzzle": "7.4.5",
         "aws/aws-sdk-php": "3.219.0",
         "phpmailer/phpmailer": "6.6.0",

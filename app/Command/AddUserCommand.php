@@ -13,6 +13,11 @@ use Leantime\Domain\Auth\Models\Roles;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
 
+/**
+ * Class AddUserCommand
+ *
+ * This command adds a new user.
+ */
 #[AsCommand(
     name: 'user:add',
     description: 'Add a new user',
@@ -46,17 +51,19 @@ class AddUserCommand extends Command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return int 0 if everything went fine, or an exit code.
+     *
      * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        ! defined('BASE_URL') && define('BASE_URL', "");
-        ! defined('CURRENT_URL') && define('CURRENT_URL', "");
+        !defined('BASE_URL') && define('BASE_URL', "");
+        !defined('CURRENT_URL') && define('CURRENT_URL', "");
+
         $io = new SymfonyStyle($input, $output);
 
         $email = $input->getOption('email');
-
         if ($email === null) {
             $io->error("Email is Required \"--email\"");
             return Command::INVALID;
@@ -68,14 +75,12 @@ class AddUserCommand extends Command
         }
 
         $password = $input->getOption('password');
-
         if ($password === null) {
             $io->error("Password is Required \"--password\"");
             return Command::INVALID;
         }
 
         $role = $input->getOption('role');
-
         if ($role === null) {
             $io->error("Role is Required \"--role\"");
             return Command::INVALID;
@@ -87,7 +92,6 @@ class AddUserCommand extends Command
         }
 
         $clientId = $input->getOption('client-id');
-
         if ($clientId === null) {
             $clientsRepository = app()->make(Clients::class);
             $clients = $clientsRepository->getAll();
@@ -121,13 +125,13 @@ class AddUserCommand extends Command
             }
 
             $userId = $usersRepo->addUser($user);
-
             if (!$userId) {
                 $io->error("Failed to Add User");
                 return Command::FAILURE;
             }
         } catch (\Exception $ex) {
             $io->error($ex);
+
             return Command::FAILURE;
         }
 
