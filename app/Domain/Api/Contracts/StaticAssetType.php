@@ -76,18 +76,27 @@ enum StaticAssetType: string
     case YML = 'text/yaml';
     case ZIP = 'application/zip';
 
-    public static function getMimeTypeByExtension(self $extension): string
+    /**
+     * Retrieves the MIME type by extension.
+     *
+     * @param StaticAssetType $extension The file extension to get the MIME type for.
+     *
+     * @return string The MIME type associated with the given extension.
+     */
+    public static function getMimeTypeByExtension(StaticAssetType $extension): string
     {
-        if (in_array(
-            $value = $extension->value,
-            self::getFileExtensions()
-        )) {
+        if (in_array($value = $extension->value, self::getFileExtensions())) {
             $value = constant("self::$value")->value;
         }
 
         return $value;
     }
 
+    /**
+     * Retrieves the file extensions.
+     *
+     * @return array Array of file extensions.
+     */
     public static function getFileExtensions(): array
     {
         return array_map(fn ($case) => $case->name, self::cases());

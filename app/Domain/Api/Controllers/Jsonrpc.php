@@ -41,7 +41,8 @@ class Jsonrpc extends Controller
      *
      * @param array $params - value of $_POST
      *
-     * @return void
+     * @return Response
+     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
@@ -51,7 +52,7 @@ class Jsonrpc extends Controller
             $params = $this->json_data;
         }
 
-        //params['params'] could be array (single value) or json object
+        // params['params'] could be array (single value) or json object
         if (isset($params['params'])) {
             if (!is_array($params['params'])) {
                 $params['params'] = json_decode($params['params'], JSON_OBJECT_AS_ARRAY);
@@ -66,7 +67,8 @@ class Jsonrpc extends Controller
      *
      * @param array $params - value of $_GET
      *
-     * @return void
+     * @return Response
+     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
@@ -121,7 +123,7 @@ class Jsonrpc extends Controller
      */
     public function delete(): Response
     {
-        $this->returnInvalidRequest('The JSON-RPC API only supports POST/GET requests');
+        return $this->returnInvalidRequest('The JSON-RPC API only supports POST/GET requests');
     }
 
     /**
@@ -130,20 +132,17 @@ class Jsonrpc extends Controller
      * @param array $params - request body
      *
      * @return Response
+     *
      * @throws BindingResolutionException
      * @throws \ReflectionException
      */
     private function executeApiRequest(array $params): Response
     {
-
-        //$requestParameters = IncomingRequest::g
         /**
          * checks to see if array keys are incremented, if so, assume it's a batch request
          *
          * @see https://jsonrpc.org/specification#batch
          */
-        $array_keys = array_keys($params);
-        $range = range(0, count($params) - 1);
         if (array_keys($params) == range(0, count($params) - 1)) {
             return $this->tpl->displayJson(array_map(
                 fn ($requestParams) => json_decode($this->executeApiRequest($requestParams)->getContent()),
@@ -222,7 +221,9 @@ class Jsonrpc extends Controller
      * Parses the method string
      *
      * @param string $methodstring - leantime.rpc.service.method
+     *
      * @return array
+     *
      * @throws Exception
      */
     private function parseMethodString(string $methodstring): array
@@ -253,15 +254,14 @@ class Jsonrpc extends Controller
      * @param string $methodname
      *
      * @return array
+     *
      * @throws \ReflectionException
      */
     private function getMethodParameters(string $servicename, string $methodname): array
     {
-        $reflectionParameters = (new ReflectionClass($servicename))
+        return (new ReflectionClass($servicename))
             ->getMethod($methodname)
             ->getParameters();
-
-        return $reflectionParameters;
     }
 
     /**
@@ -269,7 +269,9 @@ class Jsonrpc extends Controller
      *
      * @param array $params
      * @param array $methodParams
+     *
      * @return array
+     *
      * @throws Exception
      */
     private function prepareParameters(array $params, array $methodParams): array
@@ -305,6 +307,7 @@ class Jsonrpc extends Controller
                 }
 
                 try {
+                    // @TODO: this is override in linge 318 before the casted value here is used?
                     $filtered_parameters[$position] = cast($params[$name], $type->getName());
                 } catch (\Throwable $e) {
                     error_log($e);
@@ -315,7 +318,7 @@ class Jsonrpc extends Controller
             $filtered_parameters[$position] = $params[$name];
         }
 
-        // make sure its in the right order
+        // make sure it is in the right order
         ksort($filtered_parameters);
 
         return $filtered_parameters;
@@ -328,6 +331,7 @@ class Jsonrpc extends Controller
      *
      * @param array|null  $returnValue
      * @param string|null $id
+     *
      * @return Response
      */
     private function returnResponse(array|null $returnValue, string $id = null): Response
@@ -353,13 +357,14 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param string      $errorMessage
-     * @param int         $errorcode
-     * @param mixed|null  $additional_info
-     * @param string|null $id
+     * @param string          $errorMessage
+     * @param int             $errorcode
+     * @param mixed|null      $additional_info
+     * @param int|string|null $id
+     *
      * @return Response
      */
-    private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, $id): Response
+    private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, int|string|null $id = 0): Response
     {
         return $this->tpl->displayJson([
             'jsonrpc' => '2.0',
@@ -377,12 +382,12 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null  $additional_info
-     * @param string|null $id
+     * @param mixed|null      $additional_info
+     * @param int|string|null $id
      *
      * @return Response
      */
-    private function returnParseError(mixed $additional_info = null, $id): Response
+    private function returnParseError(mixed $additional_info = null, int|string|null $id = 0): Response
     {
         return $this->returnError('Parse error', -32700, $additional_info, $id);
     }
@@ -392,12 +397,12 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null  $additional_info
-     * @param string|null $id
+     * @param mixed|null      $additional_info
+     * @param int|string|null $id
      *
      * @return Response
      */
-    private function returnInvalidRequest(mixed $additional_info = null, $id): Response
+    private function returnInvalidRequest(mixed $additional_info = null, int|string|null $id = 0): Response
     {
         return $this->returnError('Invalid Request', -32600, $additional_info, $id);
     }
@@ -407,12 +412,12 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null  $additional_info
-     * @param string|null $id
+     * @param mixed|null      $additional_info
+     * @param int|string|null $id
      *
      * @return Response
      */
-    private function returnMethodNotFound(mixed $additional_info = null, $id): Response
+    private function returnMethodNotFound(mixed $additional_info = null, int|string|null $id = 0): Response
     {
         return $this->returnError('Method not found', -32601, $additional_info, $id);
     }
@@ -422,12 +427,12 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null  $additional_info
-     * @param string|null $id
+     * @param mixed|null      $additional_info
+     * @param int|string|null $id
      *
      * @return Response
      */
-    private function returnInvalidParams(mixed $additional_info = null, $id): Response
+    private function returnInvalidParams(mixed $additional_info = null, int|string|null $id = 0): Response
     {
         return $this->returnError('Invalid params', -32602, $additional_info, $id);
     }
@@ -437,12 +442,12 @@ class Jsonrpc extends Controller
      *
      * @see https://jsonrpc.org/specification#error_object
      *
-     * @param mixed|null  $additional_info
-     * @param string|null $id
+     * @param mixed|null      $additional_info
+     * @param int|string|null $id
      *
-     * @return void
+     * @return Response
      */
-    private function returnServerError(mixed $additional_info, $id): Response
+    private function returnServerError(mixed $additional_info, int|string|null $id = 0): Response
     {
         return $this->returnError('Server error', -32000, $additional_info, $id);
     }
