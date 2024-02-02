@@ -72,7 +72,7 @@ class Get extends Controller
         );
 
         //TODO: Replace with ROOT
-        $path = realpath(__DIR__ . "/../" . $this->config->userFilePath . "/");
+        $path = realpath(APP_ROOT . "/" . $this->config->userFilePath . "/");
 
         $fullPath = $path . "/" . $encName . '.' . $ext;
 
