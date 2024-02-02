@@ -12,6 +12,11 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Leantime\Core\Mailer;
 use Symfony\Component\Console\Attribute\AsCommand;
 
+/**
+ * Class TestEmailCommand
+ *
+ * This class represents a command that sends an email to test the system configuration.
+ */
 #[AsCommand(
     name: 'email:test',
     description: 'Sends an email to test system configuration',
@@ -24,6 +29,7 @@ class TestEmailCommand extends Command
     protected function configure(): void
     {
         parent::configure();
+
         $this->addOption('address', null, InputOption::VALUE_REQUIRED, "Recipient email address");
     }
 
@@ -37,19 +43,13 @@ class TestEmailCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        //Depending on the entry point, the constants may not be defined
-        if (!defined('BASE_URL')) {
-            define('BASE_URL', "");
-        }
-
-        if (!defined('CURRENT_URL')) {
-            define('CURRENT_URL', "");
-        }
+        // Depending on the entry point, the constants may not be defined
+        !defined('BASE_URL') && define('BASE_URL', "");
+        !defined('CURRENT_URL') && define('CURRENT_URL', "");
 
         $io = new SymfonyStyle($input, $output);
 
         $address = $input->getOption('address');
-
         if ($address == '') {
             $io->error("address parameter needs to be set");
             return Command::INVALID;
@@ -57,7 +57,7 @@ class TestEmailCommand extends Command
 
         $config = app()->make(Environment::class);
 
-        // force debug output from mailer subsystem
+        // Force debug output from the mailer subsystem
         $config->debug = 1;
 
         $io = new SymfonyStyle($input, $output);

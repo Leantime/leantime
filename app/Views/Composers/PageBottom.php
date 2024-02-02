@@ -6,9 +6,6 @@ use Leantime\Core\AppSettings;
 use Leantime\Core\Composer;
 use Leantime\Core\Environment;
 
-/**
- *
- */
 class PageBottom extends Composer
 {
     /**
@@ -24,6 +21,8 @@ class PageBottom extends Composer
 
     /**
      * @param AppSettings $settings
+     * @param Environment $environment
+     *
      * @return void
      */
     public function init(AppSettings $settings, Environment $environment): void

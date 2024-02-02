@@ -13,6 +13,9 @@ use Exception;
 use Leantime\Domain\Users\Repositories\Users;
 use Symfony\Component\Console\Attribute\AsCommand;
 
+/**
+ * Represents the MigrateCommand class.
+ */
 #[AsCommand(
     name: 'db:migrate',
     description: 'Runs and pending Database Migrations',
@@ -28,8 +31,8 @@ class MigrateCommand extends Command
 
         $this->setAliases(["db:install", "db:update"]);
 
-        $this->addOption('silent', null, InputOption::VALUE_OPTIONAL, "Silently Handle Migrations. DOES NOT CREATE ADMIN ACCOUNT IF NEEDED", "false");
-        $this->addOption('email', null, InputOption::VALUE_OPTIONAL, "User's Email", null)
+        $this->addOption('silent', null, InputOption::VALUE_OPTIONAL, "Silently Handle Migrations. DOES NOT CREATE ADMIN ACCOUNT IF NEEDED", "false")
+             ->addOption('email', null, InputOption::VALUE_OPTIONAL, "User's Email", null)
             ->addOption('password', null, InputOption::VALUE_OPTIONAL, "User's Password", null)
             ->addOption('company-name', null, InputOption::VALUE_OPTIONAL, "Company Name", null)
             ->addOption('first-name', null, InputOption::VALUE_OPTIONAL, "User's First name", null)
@@ -41,13 +44,15 @@ class MigrateCommand extends Command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return int 0 if everything went fine, or an exit code.
+     *
      * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        ! defined('BASE_URL') && define('BASE_URL', "");
-        ! defined('CURRENT_URL') && define('CURRENT_URL', "");
+        !defined('BASE_URL') && define('BASE_URL', "");
+        !defined('CURRENT_URL') && define('CURRENT_URL', "");
 
         $install = app()->make(Install::class);
         $io = new SymfonyStyle($input, $output);

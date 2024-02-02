@@ -8,9 +8,6 @@ use Leantime\Core\Environment;
 use Leantime\Core\Theme;
 use Leantime\Domain\Setting\Repositories\Setting;
 
-/**
- *
- */
 class Header extends Composer
 {
     public static array $views = [
@@ -27,6 +24,7 @@ class Header extends Composer
      * @param Environment $config
      * @param AppSettings $appSettings
      * @param Theme       $themeCore
+     *
      * @return void
      */
     public function init(
