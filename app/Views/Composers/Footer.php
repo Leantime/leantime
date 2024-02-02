@@ -5,9 +5,6 @@ namespace Leantime\Views\Composers;
 use Leantime\Core\AppSettings;
 use Leantime\Core\Composer;
 
-/**
- *
- */
 class Footer extends Composer
 {
     public static array $views = [
@@ -18,6 +15,7 @@ class Footer extends Composer
 
     /**
      * @param AppSettings $settings
+     *
      * @return void
      */
     public function init(AppSettings $settings): void
