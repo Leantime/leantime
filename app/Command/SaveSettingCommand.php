@@ -11,9 +11,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Attribute\AsCommand;
 
+/**
+ * Class SaveSettingCommand
+ *
+ * Command for saving a setting, will create it if it doesn't exist.
+ */
 #[AsCommand(
     name: 'setting:save',
-    description: 'Saves a setting, will create it if it doesn\'t exist',
+    description: 'Saves a setting, will create it if it does not exist',
 )]
 class SaveSettingCommand extends Command
 {
@@ -24,7 +29,7 @@ class SaveSettingCommand extends Command
     {
         parent::configure();
         $this->addOption('key', null, InputOption::VALUE_REQUIRED, "Setting Key")
-                ->addOption('value', null, InputOption::VALUE_REQUIRED, "Setting Value");
+             ->addOption('value', null, InputOption::VALUE_REQUIRED, "Setting Value");
     }
 
     /**
@@ -32,24 +37,29 @@ class SaveSettingCommand extends Command
      *
      * @param InputInterface  $input
      * @param OutputInterface $output
+     *
      * @return int 0 if everything went fine, or an exit code.
+     *
      * @throws BindingResolutionException
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        define('BASE_URL', "");
-        define('CURRENT_URL', "");
+        !defined('BASE_URL') && define('BASE_URL', "");
+        !defined('CURRENT_URL') && define('CURRENT_URL', "");
+
         $io = new SymfonyStyle($input, $output);
         $key = $input->getOption('key');
         $value = $input->getOption('value');
 
         if ($key == '') {
             $io->error("key parameter needs to be set");
+
             return Command::INVALID;
         }
 
         if ($value == '') {
             $io->error("value parameter needs to be set");
+
             return Command::INVALID;
         }
 
@@ -59,14 +69,17 @@ class SaveSettingCommand extends Command
 
             if (!$result) {
                 $io->error("Failed to save setting");
+
                 return Command::FAILURE;
             }
         } catch (\Exception $ex) {
             $io->error($ex);
+
             return Command::FAILURE;
         }
 
         $io->success("Saved Successfully");
+
         return Command::SUCCESS;
     }
 }
