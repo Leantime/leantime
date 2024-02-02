@@ -4,13 +4,12 @@
  * - insightscanvas class - Controller API
  */
 
-namespace Leantime\Domain\Api\Controllers {
+namespace Leantime\Domain\Api\Controllers;
 
-    /**
-     *
-     */
-    class Insightscanvas extends Canvas
-    {
-        protected const CANVAS_NAME = 'insights';
-    }
+/**
+ *
+ */
+class Insightscanvas extends Canvas
+{
+    protected const CANVAS_NAME = 'insights';
 }
