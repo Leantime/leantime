@@ -5,11 +5,11 @@
 
 <div class="dropdown-menu projectselector" id="mainProjectSelector">
 
-        @if ($menuType == 'project')
-        <div class="head">
-            <span class="sub">{{ __("menu.current_project") }}</span><br />
-            <span class="title">{{ $_SESSION['currentProjectName'] }}</span>
-        </div>
+        @if ($menuType == 'project' || $menuType == 'default')
+            <div class="head">
+                <span class="sub">{{ __("menu.current_project") }}</span><br />
+                <span class="title">{{ $_SESSION['currentProjectName'] }}</span>
+            </div>
         @else
             <div class="projectSelectorFooter" style="border:none; border-bottom:1px solid var(--main-border-color)">
             <ul class="selectorList projectList">
@@ -92,7 +92,7 @@
         </div>
     </div>
 
-            @if ($menuType == 'project')
+            @if ($menuType == 'project' || $menuType == 'default')
         <div class="projectSelectorFooter">
             <ul class="selectorList projectList">
 

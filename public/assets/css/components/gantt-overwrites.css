@@ -81,7 +81,7 @@ body .gantt #details .details-container {
 }
 
 .gantt .grid-row:nth-child(even) {
-    fill:var(--col-title-bg);
+    fill:var(--col-row-striped);
 }
 
 .gantt .handle {
@@ -107,4 +107,8 @@ body .gantt #details .details-container {
     fill:var(--main-action-color);
     font-size:var(--font-size-s);
     text-anchor: middle;
+}
+
+.gantt .grid-row {
+    fill: transparent;
 }

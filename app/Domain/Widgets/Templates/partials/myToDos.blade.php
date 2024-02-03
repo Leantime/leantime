@@ -13,11 +13,18 @@
     <div class="row" id="yourToDoContainer">
         <div class="col-md-12">
             <div class="tw-mb-l">
-                @include("dashboard::partials.createEntityButton")
+
                 <form method="get">
                     @dispatchEvent("beforeTodoWidgetGroupByDropdown")
-                    <div class="btn-group viewDropDown right">
-                        <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">{!! __("links.group_by") !!}: {{ __('groupByLabel.'.$groupBy) }}</button>
+
+                    <a href="javascript:void(0);"
+                       id="ticket_new_link"
+                        class="btn btn-primary"
+                       onclick="jQuery('#ticket_new').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
+                        <i class="fa fa-plus"></i> Add To-Do
+                    </a>
+                    <div class="btn-group left">
+                        <button class="btn btn-link dropdown-toggle f-right" type="button" data-toggle="dropdown">{!! __("links.group_by") !!}: {{ __('groupByLabel.'.$groupBy) }}</button>
                         <ul class="dropdown-menu">
                             <li><span class="radio">
                                     <input type="radio" name="groupBy"
@@ -47,30 +54,15 @@
                                     <label for="groupByProject">{!! __("label.project") !!}</label>
                                 </span>
                             </li>
-                            <li>
-                                <span class="radio">
-                                    <input type="radio"
-                                           name="groupBy"
-                                           @if($groupBy == "sprint") checked='checked' @endif
-                                           value="sprint" id="groupBySprint"
-                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                                           hx-trigger="click"
-                                           hx-target="#yourToDoContainer"
-                                           hx-swap="outerHTML"
-                                           hx-indicator="#todos .htmx-indicator"
-                                           hx-vals='{"projectFilter": {{ $projectFilter }}, "groupBy": "sprint" }'
-                                    />
-                                    <label for="groupBySprint">{!! __("label.list") !!}</label>
-                                </span>
-                            </li>
+
                         </ul>
                     </div>
-                    <div class="btn-group viewDropDown right">
-                        <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown">
+                    <div class="btn-group left ">
+                        <button class="btn btn-link dropdown-toggle f-right" type="button" data-toggle="dropdown">
                             {!! __("links.filter") !!}
                             @if($projectFilter != '')
                                 <span class='badge badge-primary'>1</span>
-                                @endif
+                            @endif
                         </button>
                         <ul class="dropdown-menu">
                             <li
@@ -78,36 +70,37 @@
                                     class='active'
                                 @endif
                             ><a href=""
-                                   hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                                   hx-trigger="click"
-                                   hx-target="#yourToDoContainer"
-                                   hx-swap="outerHTML"
-                                   hx-indicator="#todos .htmx-indicator"
-                                   hx-vals='{"projectFilter": "", "groupBy": "{{ $groupBy }}" }'
+                                hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                hx-trigger="click"
+                                hx-target="#yourToDoContainer"
+                                hx-swap="outerHTML"
+                                hx-indicator="#todos .htmx-indicator"
+                                hx-vals='{"projectFilter": "", "groupBy": "{{ $groupBy }}" }'
 
                                 >{{ __('labels.all_projects') }}
 
                                 </a></li>
 
-                                @if($allAssignedprojects)
-                                    @foreach($allAssignedprojects as $project)
-                                        <li
-                                                @if($projectFilter == $project['id'])
-                                                    class='active'
-                                            @endif
-                                        ><a href=""
-                                            hx-get="{{BASE_URL}}/widgets/myToDos/get"
-                                            hx-trigger="click"
-                                            hx-target="#yourToDoContainer"
-                                            hx-swap="outerHTML"
-                                            hx-indicator="#todos .htmx-indicator"
-                                            hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
-                                            >{{ $project['name'] }}</a></li>
-                                    @endforeach
-                               @endif
+                            @if($allAssignedprojects)
+                                @foreach($allAssignedprojects as $project)
+                                    <li
+                                        @if($projectFilter == $project['id'])
+                                            class='active'
+                                        @endif
+                                    ><a href=""
+                                        hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                        hx-trigger="click"
+                                        hx-target="#yourToDoContainer"
+                                        hx-swap="outerHTML"
+                                        hx-indicator="#todos .htmx-indicator"
+                                        hx-vals='{"projectFilter": "{{ $project['id'] }}", "groupBy": "{{ $groupBy }}" }'
+                                        >{{ $project['name'] }}</a></li>
+                                @endforeach
+                            @endif
 
                         </ul>
                     </div>
+
                     @dispatchEvent("afterTodoWidgetGroupByDropdown")
                     <div class="clearall"></div>
                 </form>
@@ -147,6 +140,47 @@
 
                     <a class="anchor" id="accordion_anchor_{{ $loop->index }}"></a>
 
+
+
+                        <div class="hideOnLoad " id="ticket_new" style="padding-top:5px; padding-bottom:15px;">
+
+                            <form method="post"
+                                  hx-post="{{ BASE_URL }}//widgets/myToDos/addTodo"
+                                  hx-target="#yourToDoContainer"
+                                  hx-swap="outerHTML"
+                                  hx-indicator="#ticket_new .htmx-indicator-small"
+                            >
+                                <input type="hidden" name="quickadd" value="1"/>
+                                <div class="flex" style="display:flex; column-gap: 10px;">
+                                    <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
+
+                                    <label style="padding-top: 8px;">Project</label>
+                                    <select name="projectId">
+                                        @foreach($allAssignedprojects as $project)
+                                            <option value="{{ $project['id']  }}"
+                                            @if($groupBy == 'sprint')
+                                                {{ explode("-", $ticketGroup["groupValue"])[1] == $project['id'] ? 'selected' : '' }}
+                                                @else
+                                                {{ $_SESSION['currentProject'] == $project['id'] ? 'selected' : '' }}
+                                                @endif
+                                            >{{ $project["name"]  }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <input type="submit" value="Save" name="quickadd" />
+                                <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new').toggle('fast');">
+                                        <?=$tpl->__("links.cancel") ?>
+                                </a>
+                                <div class="htmx-indicator-small">
+                                    <x-global::loader id="loadingthis" size="25px" />
+                                </div>
+                            </form>
+
+                            <div class="clearfix"></div>
+                        </div>
+
+
+
                     <x-global::accordion id="ticketBox1-{{ $loop->index }}">
                         <x-slot name="title">
 
@@ -154,62 +188,8 @@
                             {{ __($ticketGroup["labelName"]) }} ({{ count($ticketGroup["tickets"]) }})
 
                         </x-slot>
-                        <x-slot name="actionlink">
-                            <a href="javascript:void(0);"
-                              id="ticket_new_link_<?=$loop->index?>"
-                               onclick="jQuery('#ticket_new_link_<?=$loop->index?>').toggle('fast'); jQuery('#ticket_new_<?=$loop->index?>').toggle('fast', function() { jQuery(this).find('input[name=headline]').focus(); });">
-                              <i class="fa fa-plus-circle"></i> Add To-Do
-                            </a>
-                        </x-slot>
                         <x-slot name="content">
-                            <div class="hideOnLoad " id="ticket_new_<?=$loop->index?>" style="padding-top:5px; padding-bottom:15px;">
 
-                                <form method="post"
-                                    hx-post="{{ BASE_URL }}//widgets/myToDos/addTodo"
-                                      hx-target="#yourToDoContainer"
-                                      hx-swap="outerHTML"
-                                      hx-indicator="#ticket_new_<?=$loop->index?> .htmx-indicator-small"
-                                >
-                                    <input type="hidden" name="quickadd" value="1"/>
-                                    <div class="flex" style="display:flex; column-gap: 10px;">
-                                    <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
-
-                                        @if($groupBy == 'project')
-                                            <input type="hidden" name="projectId" value="{{ $ticketGroup["groupValue"] }}" />
-                                        @else
-                                            <label style="padding-top: 8px;">Project</label>
-                                            <select name="projectId">
-                                                @foreach($allAssignedprojects as $project)
-                                                    <option value="{{ $project['id']  }}"
-                                                    @if($groupBy == 'sprint')
-                                                        {{ explode("-", $ticketGroup["groupValue"])[1] == $project['id'] ? 'selected' : '' }}
-                                                    @else
-                                                        {{ $_SESSION['currentProject'] == $project['id'] ? 'selected' : '' }}
-                                                    @endif
-                                                    >{{ $project["name"]  }}</option>
-                                                @endforeach
-                                            </select>
-                                        @endif
-
-                                        @if($groupBy == 'sprint')
-                                            <input type="hidden" name="sprint" value="{{ explode("-", $ticketGroup["groupValue"])[0] }}" />
-                                        @endif
-
-                                        @if($groupBy == 'time')
-                                            <input type="hidden" name="dateToFinish" value="{{ format($ticketGroup["groupValue"])->date() }}" />
-                                        @endif
-                                    </div>
-                                    <input type="submit" value="Save" name="quickadd" />
-                                    <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new_<?=$loop->index?>, #ticket_new_link_<?=$loop->index?>').toggle('fast');">
-                                            <?=$tpl->__("links.cancel") ?>
-                                    </a>
-                                    <div class="htmx-indicator-small">
-                                        <x-global::loader id="loadingthis" size="25px" />
-                                    </div>
-                                </form>
-
-                                <div class="clearfix"></div>
-                            </div>
                             <ul class="sortableTicketList {{ $ticketGroup["extraClass"] ?? '' }}">
 
                                 @if (count($ticketGroup['tickets']) == 0)
@@ -245,12 +225,39 @@
                                                 <div class="col-md-4" style="padding:0 15px;">
 
                                                    <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
-                                                   <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" data-id="{{ $row['id'] }}" name="date" />
+                                                   <input type="text" title="{{ __("label.due") }}" value="{{ format($row['dateToFinish'])->date(__("text.anytime")) }}" class="duedates secretInput" style="margin-left:0px;" data-id="{{ $row['id'] }}" name="date" />
                                                 </div>
                                                 <div class="col-md-8 dropdownContainer" style="padding-top:5px;">
-                                                    <div class="right">
+                                                    <div class="dropdown ticketDropdown statusDropdown colorized show right ">
+                                                        <a class="dropdown-toggle f-left status {{ $statusLabels[$row['projectId']][$row['status']]["class"] }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            <span class="text">
+                                                                @if(isset($statusLabels[$row['projectId']][$row['status']]))
+                                                                    {{ $statusLabels[$row['projectId']][$row['status']]["name"] }}
+                                                                @else
+                                                                    unknown
+                                                                @endif
+                                                            </span>
+                                                            &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                        </a>
+                                                        <ul class="dropdown-menu pull-right" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
+                                                            <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
 
-                                                        <div class="dropdown ticketDropdown effortDropdown show">
+                                                            @foreach ($statusLabels[$row['projectId']] as $key => $label)
+                                                                <li class='dropdown-item'>
+                                                                    <a href='javascript:void(0);'
+                                                                       class='{{ $label["class"] }}'
+                                                                       data-label='{{ $label["name"] }}'
+                                                                       data-value='{{ $row['id'] }}_{{ $key }}_{{ $label["class"] }}'
+                                                                       id='ticketStatusChange{{$row['id'] . $key }}'>
+                                                                        {{  $label["name"] }}
+                                                                    </a>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    </div>
+
+                                                    <?php /*
+                                                        <div class="dropdown ticketDropdown effortDropdown show right">
                                                             <a class="dropdown-toggle f-left  label-default effort" href="javascript:void(0);" role="button" id="effortDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                             <span class="text">
                                                                 @if ($row['storypoints'] != '' && $row['storypoints'] > 0)
@@ -274,9 +281,9 @@
                                                                 @endforeach
                                                             </ul>
                                                         </div>
+                                                    */ ?>
 
-
-                                                        <div class="dropdown ticketDropdown milestoneDropdown colorized show">
+                                                    <div class="dropdown ticketDropdown milestoneDropdown colorized show right tw-mr-sm">
                                                             <a style="background-color:{{ $row['milestoneColor'] }}"
                                                                class="dropdown-toggle f-left  label-default milestone"
                                                                href="javascript:void(0);"
@@ -321,34 +328,6 @@
                                                             </ul>
                                                         </div>
 
-                                                        <div class="dropdown ticketDropdown statusDropdown colorized show">
-                                                            <a class="dropdown-toggle f-left status {{ $statusLabels[$row['projectId']][$row['status']]["class"] }}" href="javascript:void(0);" role="button" id="statusDropdownMenuLink{{ $row['id'] }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                            <span class="text">
-                                                                @if(isset($statusLabels[$row['projectId']][$row['status']]))
-                                                                    {{ $statusLabels[$row['projectId']][$row['status']]["name"] }}
-                                                                @else
-                                                                    unknown
-                                                                @endif
-                                                            </span>
-                                                                &nbsp;<i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                            </a>
-                                                            <ul class="dropdown-menu pull-right" aria-labelledby="statusDropdownMenuLink{{ $row['id'] }}">
-                                                                <li class="nav-header border">{{ __("dropdown.choose_status") }}</li>
-
-                                                                @foreach ($statusLabels[$row['projectId']] as $key => $label)
-                                                                    <li class='dropdown-item'>
-                                                                        <a href='javascript:void(0);'
-                                                                           class='{{ $label["class"] }}'
-                                                                           data-label='{{ $label["name"] }}'
-                                                                           data-value='{{ $row['id'] }}_{{ $key }}_{{ $label["class"] }}'
-                                                                           id='ticketStatusChange{{$row['id'] . $key }}'>
-                                                                            {{  $label["name"] }}
-                                                                        </a>
-                                                                    </li>
-                                                                @endforeach
-                                                            </ul>
-                                                        </div>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

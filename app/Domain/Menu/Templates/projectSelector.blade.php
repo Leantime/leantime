@@ -3,7 +3,7 @@
    class="dropdown-toggle bigProjectSelector {{ $menuType == "project" ? "active" : "" }}"
    data-toggle="dropdown">
 
-    @if ($menuType == 'project')
+    @if ($menuType == 'project' || $menuType == 'default')
         <span class="projectAvatar {{ $currentProjectType }}">
         @if(isset($projectTypeAvatars[$currentProjectType]) && $projectTypeAvatars[$currentProjectType] != "avatar")
                 <span class="{{ $projectTypeAvatars[$currentProjectType] }}"></span>

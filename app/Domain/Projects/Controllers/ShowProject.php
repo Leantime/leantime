@@ -183,9 +183,6 @@ namespace Leantime\Domain\Projects\Controllers {
                 $_SESSION['lastPage'] = BASE_URL . "/projects/showProject/" . $id;
 
 
-
-
-
                 $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
 
                 if (isset($_POST['submitSettings'])) {
@@ -272,6 +269,9 @@ namespace Leantime\Domain\Projects\Controllers {
                             $notification->message = $message;
 
                             $this->projectService->notifyProjectUsers($notification);
+
+                            //Get updated project
+                            return Frontcontroller::redirect(BASE_URL."/projects/showProject/".$id);
                         }
                     } else {
                         $this->tpl->setNotification($this->language->__("notification.no_project_name"), 'error');

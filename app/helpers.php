@@ -1,17 +1,17 @@
 <?php
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Str;
 use Illuminate\View\Factory;
-use Illuminate\Support\Collection;
 use Leantime\Core\Application;
 use Leantime\Core\Bootloader;
+use Leantime\Core\HtmxRequest;
+use Leantime\Core\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Format;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\Mix;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 if (! function_exists('app')) {
     /**
@@ -19,9 +19,7 @@ if (! function_exists('app')) {
      *
      * @param string $abstract
      * @param array  $parameters
-     *
      * @return mixed|Application
-     *
      * @throws BindingResolutionException
      */
     function app(string $abstract = '', array $parameters = []): mixed
@@ -31,7 +29,7 @@ if (! function_exists('app')) {
     }
 }
 
-// if (!function_exists('dd')) {
+// if (! function_exists('dd')) {
 //     /**
 //      * Dump the passed variables and end the script.
 //      *
@@ -61,12 +59,11 @@ if (! function_exists('app')) {
 //     }
 // }
 
-if (!function_exists('bootstrap_minimal_app')) {
+if (! function_exists('bootstrap_minimal_app')) {
     /**
      * Bootstrap a new IoC container instance.
      *
      * @return Application
-     *
      * @throws BindingResolutionException
      */
     function bootstrap_minimal_app(): Application
@@ -76,29 +73,26 @@ if (!function_exists('bootstrap_minimal_app')) {
     }
 }
 
-if (!function_exists('__')) {
+if (! function_exists('__')) {
     /**
      * Translate a string.
      *
      * @param string $index
      * @param string $default
-     *
      * @return string
-     *
      * @throws BindingResolutionException
      */
-    function __(string $index, string $default = ''): string
+    function __(string $index, $default = ''): string
     {
         return app()->make(Language::class)->__(index: $index, default: $default);
     }
 }
 
-if (!function_exists('view')) {
+if (! function_exists('view')) {
     /**
      * Get the view factory instance.
      *
      * @return Factory
-     *
      * @throws BindingResolutionException
      */
     function view(): Factory
@@ -107,38 +101,36 @@ if (!function_exists('view')) {
     }
 }
 
-if (!function_exists('array_sort')) {
+if (! function_exists('array_sort')) {
     /**
      * sort array of arrqays by value
      *
-     * @param array $array
-     * @param mixed $sortBy
-     *
+     * @param array  $array
+     * @param string $sortyBy
      * @return array
      */
-    function array_sort(array $array, mixed $sortBy): array
+    function array_sort(array $array, mixed $sortyBy): array
     {
 
-        if (is_string($sortBy)) {
+        if (is_string($sortyBy)) {
             $collection = collect($array);
 
-            $sorted = $collection->sortBy($sortBy, SORT_NATURAL);
+            $sorted = $collection->sortBy($sortyBy, SORT_NATURAL);
 
             return $sorted->values()->all();
         } else {
-            return Collection::make($array)->sortBy($sortBy)->all();
+            return \Illuminate\Support\Collection::make($array)->sortBy($sortyBy)->all();
         }
     }
 }
 
-if (!function_exists('do_once')) {
+if (! function_exists('do_once')) {
     /**
      * Execute a callback only once.
      *
-     * @param string  $key
      * @param Closure $callback
      * @param bool    $across_requests
-     *
+     * @param string  $key
      * @return void
      **/
     function do_once(string $key, Closure $callback, bool $across_requests = false): void
@@ -168,21 +160,15 @@ if (!function_exists('do_once')) {
     }
 }
 
-if (!function_exists('config')) {
+if (! function_exists('config')) {
     /**
      * Get / set the specified configuration value.
-     *
      * If an array is passed as the key, we will assume you want to set an array of values.
-     *
      * @param array|string|null $key
      * @param mixed             $default
-     *
      * @return mixed|Application
-     *
      * @throws BindingResolutionException
-     * @throws ContainerExceptionInterface
-     * @throws NotFoundExceptionInterface
-     */
+     **/
     function config(array|string|null $key = null, mixed $default = null): mixed
     {
         if (is_null($key)) {
@@ -197,12 +183,10 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('build')) {
+if (! function_exists('build')) {
     /**
      * Turns any object into a builder object
-     *
      * @param object $object
-     *
      * @return Build
      **/
     function build(object $object): Build
@@ -211,16 +195,13 @@ if (!function_exists('build')) {
     }
 }
 
-if (!function_exists('format')) {
+if (! function_exists('format')) {
     /**
      * Returns a format object to format string values
-     *
-     * @param string|int|float|DateTime|null $value
-     * @param string|int|float|DateTime|null $value2
-     *
+     * @param string|int|float $value
      * @return Format
-     */
-    function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 = null): Format
+     **/
+    function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format
     {
         if ($value instanceof \DateTime) {
             $value = $value->format("Y-m-d H:i:s");
@@ -230,22 +211,19 @@ if (!function_exists('format')) {
     }
 }
 
-if (!function_exists('cast')) {
+if (! function_exists('cast')) {
     /**
      * Casts a variable to a different type if possible.
      *
-     * @param mixed  $source          The object to be cast.
-     * @param string $classOrType     The class to which the object should be cast.
-     * @param array  $constructParams Optional parameters to pass to the constructor.
-     * @param array  $mappings        Make sure certain sub properties are casted to specific types.
-     *
+     * @param mixed $obj The object to be cast.
+     * @param string $to_class The class to which the object should be cast.
+     * @param array $construct_params Optional parameters to pass to the constructor.
+     * @param array $mappings Make sure certain sub properties are casted to specific types.
      * @return mixed The casted object, or throws an exception on failure.
-     *
      * @throws \InvalidArgumentException If the class does not exist.
-     * @throws \RuntimeException|ReflectionException On serialization errors.
+     * @throws \RuntimeException On serialization errors.
      */
-    function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): mixed
-    {
+    function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): mixed {
         if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean', 'object', 'stdClass', 'array'])) {
             return Cast::castSimple($source, $classOrType);
         }
@@ -258,16 +236,14 @@ if (!function_exists('cast')) {
     }
 }
 
-if (!function_exists('mix')) {
+if (! function_exists('mix')) {
     /**
      * Get the path to a versioned Mix file. Customized for Leantime.
      *
      * @param string $path
      * @param string $manifestDirectory
      * @return Mix|string
-     *
-     * @throws BindingResolutionException
-     */
+     **/
     function mix(string $path = '', string $manifestDirectory = ''): Mix|string
     {
         if (! ($app = app())->bound(Mix::class)) {

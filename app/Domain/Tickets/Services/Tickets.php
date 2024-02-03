@@ -393,13 +393,18 @@ namespace Leantime\Domain\Tickets\Services {
                         $projectStatusLabels[$ticket['projectId']] = $this->ticketRepository->getStateLabels($ticket['projectId']);
                     }
 
-                    if($status == "not_done" && $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE"){
+                    if($status == "not_done" &&
+                        (
+                            !isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]) ||
+                            $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] !== "DONE"
+                        )
+                    ){
                             $ticketCounter++;
                             continue;
                     }
 
-                    if(isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"])
-                        && $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] == $status){
+                    if(
+                        isset($projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"]) && $projectStatusLabels[$ticket['projectId']][$ticket['status']]["statusType"] == $status){
                         $ticketCounter++;
                     }
                 }
@@ -508,8 +513,13 @@ namespace Leantime\Domain\Tickets\Services {
                         switch ($searchCriteria['groupBy']) {
                             case "status":
                                 $status = $this->getStatusLabels();
-                                $label = $status[$groupedFieldValue]["name"];
-                                $class = $status[$groupedFieldValue]["class"];
+
+                                if(isset($status[$groupedFieldValue])) {
+                                    $label = $status[$groupedFieldValue]["name"];
+                                    $class = $status[$groupedFieldValue]["class"];
+                                }else{
+                                    $label = "New";
+                                }
 
                                 break;
                             case "priority":
@@ -1097,7 +1107,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'] ,
                 'editorId' => $values['editorId'] ?? "",
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
+                'date' => gmdate("Y-m-d H:i:s"),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
                 'status' => (int) $values['status'] ?? 3,
@@ -1505,7 +1515,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             $ticket = $this->getTicket($id);
 
-            if (!$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
+            if (!$ticket || !$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $ticket->projectId)) {
                 return array("msg" => "notifications.ticket_delete_error", "type" => "error");
             }
 

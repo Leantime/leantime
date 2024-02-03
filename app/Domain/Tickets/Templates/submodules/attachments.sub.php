@@ -44,7 +44,7 @@ $ticket = $tpl->get('ticket');
                 </a>
                 <ul class="dropdown-menu">
                     <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                    <li><a href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank"><?php echo $tpl->__("links.download"); ?></a></li>
+                    <li><a href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank"><?php echo $tpl->__("links.download"); ?></a></li>
 
                     <?php
                     if ($login::userIsAtLeast($roles::$editor)) { ?>
@@ -55,9 +55,9 @@ $ticket = $tpl->get('ticket');
             </div>
 
 
-              <a class="cboxElement" href="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank">
+              <a class="cboxElement" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" target="_blank">
                   <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                      <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/download.php?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
+                      <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                   <?php else : ?>
                       <div style="font-size:50px; margin-bottom:10px;">
                         <span class="fa fa-file"></span>

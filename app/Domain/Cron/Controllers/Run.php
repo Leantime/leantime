@@ -34,9 +34,11 @@ namespace Leantime\Domain\Cron\Controllers {
         public function run(): Response
         {
             if (! $this->config->poorMansCron) {
+                error_log("Poor mans cron off");
                 return new Response();
             }
 
+            error_log("Adding Event Listener to request_terminated");
             Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
@@ -45,17 +47,22 @@ namespace Leantime\Domain\Cron\Controllers {
 
                 $output = new \Symfony\Component\Console\Output\BufferedOutput();
 
-                if ($this->config->debug) {
+
                     register_shutdown_function(function () use ($output) {
-                        error_log("Command Output: " . $output->fetch());
-                        error_log("Cron run finished");
+                        if ($this->config->debug) {
+                            error_log("Command Output: " . $output->fetch());
+                            error_log("Cron run finished");
+                        }
                     });
 
                     error_log("Cron run started");
-                }
 
+
+                error_log("Before calling schedule:run");
                 /** @return never **/
                 (new \Leantime\Core\ConsoleKernel())->call('schedule:run', [], $output);
+                error_log("After calling schedule:run");
+
             });
 
             return tap(new Response(), function ($response) {

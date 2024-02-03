@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Projects\Hxcontrollers;
 
+use Leantime\Core\Frontcontroller;
 use Leantime\Core\HtmxController;
 use Leantime\Domain\Clients\Repositories\Clients;
 use Leantime\Domain\Comments\Services\Comments;
