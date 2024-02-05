@@ -50,21 +50,8 @@ foreach ($__data as $var => $val) {
         <?php } ?>
 
 
-        jQuery(".dateFrom, .dateTo").datepicker({
-            dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery")
-            dayNames: leantime.i18n.__("language.dayNames").split(","),
-            dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
-            dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
-            monthNames: leantime.i18n.__("language.monthNames").split(","),
-            currentText: leantime.i18n.__("language.currentText"),
-            closeText: leantime.i18n.__("language.closeText"),
-            buttonText: leantime.i18n.__("language.buttonText"),
-            isRTL: leantime.i18n.__("language.isRTL") === "true" ? 1 : 0,
-            nextText: leantime.i18n.__("language.nextText"),
-            prevText: leantime.i18n.__("language.prevText"),
-            weekHeader: leantime.i18n.__("language.weekHeader"),
-            firstDay: leantime.i18n.__("language.firstDayOfWeek"),
-        });
+        leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1)
+
     });
 
 
@@ -312,7 +299,7 @@ foreach ($__data as $var => $val) {
     <tfoot>
         <tr>
             <td colspan="2"><strong><?php echo $tpl->__("label.total_hours")?></strong></td>
-            <td colspan="7"><strong><?php echo $sum; ?></strong></td>
+            <td colspan="10"><strong><?php echo $sum; ?></strong></td>
 
             <td>
                 <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
