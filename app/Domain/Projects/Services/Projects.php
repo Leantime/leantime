@@ -392,9 +392,9 @@ namespace Leantime\Domain\Projects\Services {
          * @param $userId
          * @param string   $projectStatus
          * @param $clientId
-         * @return array|false
+         * @return array
          */
-        public function getProjectsAssignedToUser($userId, string $projectStatus = "open", $clientId = null): false|array
+        public function getProjectsAssignedToUser($userId, string $projectStatus = "open", $clientId = null): array
         {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
@@ -405,7 +405,7 @@ namespace Leantime\Domain\Projects\Services {
 
                 return $projects;
             } else {
-                return false;
+                return [];
             }
         }
 

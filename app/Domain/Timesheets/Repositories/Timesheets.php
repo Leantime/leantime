@@ -391,7 +391,11 @@ namespace Leantime\Domain\Timesheets\Repositories {
                 :rate,
                 :paid,
                 :paidDate)
-			 ON DUPLICATE KEY UPDATE hours = hours + :hours";
+			 ON DUPLICATE KEY
+			     UPDATE
+			         hours = hours + :hours,
+			         description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
+
 
             $query = self::dispatch_filter('sql', $query);
 
