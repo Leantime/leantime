@@ -48,7 +48,8 @@ namespace Leantime\Domain\Canvas\Controllers {
 
             $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
             $currentCanvasId = '';
-
+            $canvasTitle = '';
+            
             if (isset($_GET['id']) === true) {
                 $currentCanvasId = (int)$_GET['id'];
                 $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
