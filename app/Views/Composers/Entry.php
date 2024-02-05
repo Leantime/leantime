@@ -5,9 +5,6 @@ namespace Leantime\Views\Composers;
 use Leantime\Core\Composer;
 use Leantime\Core\Theme;
 
-/**
- *
- */
 class Entry extends Composer
 {
     public static array $views = [
@@ -16,7 +13,13 @@ class Entry extends Composer
 
     private Theme $themeCore;
 
-    public function init(Theme $themeCore): void {
+    /**
+     * @param Theme $themeCore
+     *
+     * @return void
+     */
+    public function init(Theme $themeCore): void
+    {
         $this->themeCore = $themeCore;
     }
 
@@ -29,7 +32,7 @@ class Entry extends Composer
         $logoUrl = $this->themeCore->getLogoUrl();
 
         return [
-            'logoPath' =>  $logoUrl ? $logoUrl : BASE_URL."/dist/images/logo.svg",
+            'logoPath' =>  $logoUrl ?: BASE_URL . "/dist/images/logo.svg",
         ];
     }
 }

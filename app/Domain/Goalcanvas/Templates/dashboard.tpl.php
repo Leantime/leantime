@@ -416,13 +416,7 @@ $goalStats = $tpl->get("goalStats");
 
 <?php } ?>
 
-        <?php if($canvasTitle == ''){ ?>
-            <script>
-                jQuery(document).ready(function(){
-                   window.location = "#/goalcanvas/bigRock/<?=$canvasId ?>"
-                });
-            </script>
-        <?php } ?>
+
 
 <?php /*
 

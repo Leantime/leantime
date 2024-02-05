@@ -322,6 +322,7 @@ class Bootloader
     private function setErrorHandler(int $debug): void
     {
         $incomingRequest = app(IncomingRequest::class);
+        app()->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, \Leantime\Core\ExceptionHandler::class);
 
         if (
             $debug == 0
@@ -333,7 +334,6 @@ class Bootloader
 
         Debug::enable();
 
-        app()->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, \Leantime\Core\ExceptionHandler::class);
     }
 
     /**
