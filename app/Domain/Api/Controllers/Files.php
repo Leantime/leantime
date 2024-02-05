@@ -70,7 +70,7 @@ class Files extends Controller
             $_FILES['file']['name'] = "pastedImage.png";
             $file = $this->fileRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
 
-            return new Response(BASE_URL . '/download.php'
+            return new Response(BASE_URL . '/files/get?'
                 . http_build_query([
                     'encName' => $file['encName'],
                     'ext' => $file['extension'],
