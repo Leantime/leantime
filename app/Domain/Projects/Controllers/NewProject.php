@@ -96,9 +96,9 @@ namespace Leantime\Domain\Projects\Controllers {
                 $mailer = app()->make(MailerCore::class);
 
                 $values = array(
-                    'name' => $_POST['name'],
-                    'details' => $_POST['details'],
-                    'clientId' => $_POST['clientId'],
+                    'name' => $_POST['name'] ?? "",
+                    'details' => $_POST['details'] ?? "",
+                    'clientId' => $_POST['clientId'] ?? 0,
                     'hourBudget' => $hourBudget,
                     'assignedUsers' => $assignedUsers,
                     'dollarBudget' => $_POST['dollarBudget'] ?? 0,
