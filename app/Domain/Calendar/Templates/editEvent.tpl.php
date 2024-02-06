@@ -15,7 +15,7 @@ $values = $tpl->get('values');
     <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
     <label for="description"><?php echo $tpl->__('label.title') ?></label>
-    <input type="text" id="description" name="description" value="<?php echo $values['description']; ?>" /><br />
+    <input type="text" id="description" name="description" value="<?php $tpl->e($values['description']); ?>" /><br />
 
     <label for="dateFrom"><?php echo $tpl->__('label.start_date') ?></label>
     <input type="text" id="event_date_from" autocomplete="off" name="dateFrom" value="<?php echo format($values['dateFrom'])->date(); ?>" />
