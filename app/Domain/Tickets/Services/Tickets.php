@@ -1749,12 +1749,7 @@ namespace Leantime\Domain\Tickets\Services {
                     'url' => "#/tickets/editMilestone",
                     'text' => 'links.add_milestone',
                     'class' => 'milestoneModal',
-                ],
-                [
-                    'url' => "#/sprints/editSprint",
-                    'text' => 'links.create_sprint',
-                    'class' => 'sprintModal',
-                ],
+                ]
             ];
         }
 

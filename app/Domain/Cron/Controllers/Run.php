@@ -55,13 +55,8 @@ namespace Leantime\Domain\Cron\Controllers {
                         }
                     });
 
-                    error_log("Cron run started");
-
-
-                error_log("Before calling schedule:run");
                 /** @return never **/
                 (new \Leantime\Core\ConsoleKernel())->call('schedule:run', [], $output);
-                error_log("After calling schedule:run");
 
             });
 

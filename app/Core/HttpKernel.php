@@ -62,10 +62,14 @@ class HttpKernel implements HttpKernelContract
                     ->then(fn () => Frontcontroller::dispatch())
                 );
         } catch (HttpResponseException $e) {
+            error_log($e);
             return $e->getResponse();
         } catch (\Throwable $e) {
+
+            error_log($e);
+
             if (! app()->make(Environment::class)->debug) {
-                error_log($e);
+
                 return app()->make(Template::class)->display('errors.error500', 'error');
             }
 
