@@ -15,7 +15,12 @@ class Cache extends ServiceProvider
     {
     }
 
-    private function instanceCacheManager(): \Illuminate\Contracts\Cache\Store
+    /**
+     * Manages the instance cache.
+     *
+     * @return void
+     */
+    private function instanceCacheManager()
     {
     }
 }

@@ -239,7 +239,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                     $postTheme = htmlentities($_POST['theme']);
                     $postColorMode = htmlentities($_POST['colormode']);
-                    $postColorScheme = htmlentities($_POST['colorscheme']);
+                    $postColorScheme = htmlentities($_POST['colorscheme'] ?? "themeDefault");
                     $themeFont = htmlentities($_POST['themeFont']);
 
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".theme", $postTheme);

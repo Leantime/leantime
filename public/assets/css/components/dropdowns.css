@@ -553,7 +553,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     display:inline-block;
     background:transparent;
     width:auto;
-    color:var(--main-action-color);
+    color: var(--main-titles-color);
     text-decoration:underline;
     padding:0px 3px ;
     border-radius: var(--box-radius-small);

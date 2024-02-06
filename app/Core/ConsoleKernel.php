@@ -236,12 +236,10 @@ class ConsoleKernel implements ConsoleKernelContract
      *
      * @param  string $command
      * @param  array  $parameters
-     * @return \Illuminate\Foundation\Bus\PendingDispatch
      * @todo Implement
      */
-    public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
+    public function queue(string $command, array $parameters = [])
     {
-        return new \Illuminate\Foundation\Bus\PendingDispatch();
     }
 
     /**
@@ -290,6 +288,11 @@ class ConsoleKernel implements ConsoleKernelContract
         $this->commandStartedAt = null;
     }
 
+    /**
+     * Get the application instance.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application
+     */
     public function getApplication()
     {
         return app();

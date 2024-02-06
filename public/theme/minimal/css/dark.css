@@ -104,7 +104,7 @@
     --main-border-color: rgba(40,40,40, 0.9);
     --min-shadow: 0px 1px 1px rgba(0 0 0 / 20%), 0px 0px 1px rgba(0 0 0 / 5%);
     --regular-shadow: 0px 0px 3px 0px #333, 0px 0px 0px rgba(0 0 0 / 10%);
-    --large-shadow: 0px 0px 2px 1px #333;
+    --large-shadow: 0px 0px 8px 0px #333;
     --box-radius-large: 10px;
     --box-radius: 5px;
     --box-radius-small: 3px;
