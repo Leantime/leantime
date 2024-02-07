@@ -230,12 +230,12 @@ $ticketTypes = $tpl->get('ticketTypes');
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label"><?php echo $tpl->__('label.list'); ?></label>
+                        <label class="control-label"><?php echo $tpl->__('label.sprint'); ?></label>
                         <div class="">
 
                             <select id="sprint-select" class="span11" name="sprint"
                                     data-placeholder="<?php echo $ticket->sprint ?>">
-                                <option value=""><?php echo $tpl->__('label.not_assigned_to_list'); ?></option>
+                                <option value=""><?php echo $tpl->__('label.backlog'); ?></option>
                                 <?php
                                 if ($tpl->get('sprints')) {
                                     foreach ($tpl->get('sprints') as $sprintRow) { ?>

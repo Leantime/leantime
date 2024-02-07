@@ -117,7 +117,7 @@ foreach ($__data as $var => $val) {
                         <th class="effort-col"><?= $tpl->__("label.effort"); ?></th>
                         <th class="priority-col"><?= $tpl->__("label.priority"); ?></th>
                         <th class="user-col"><?= $tpl->__("label.editor"); ?>.</th>
-                        <th class="sprint-col"><?= $tpl->__("label.list"); ?></th>
+                        <th class="sprint-col"><?= $tpl->__("label.sprint"); ?></th>
                         <th class="tags-col"><?= $tpl->__("label.tags"); ?></th>
                         <th class="duedate-col"><?= $tpl->__("label.due_date"); ?></th>
                         <th class="planned-hours-col"><?= $tpl->__("label.planned_hours"); ?></th>
