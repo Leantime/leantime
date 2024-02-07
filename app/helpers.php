@@ -4,6 +4,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use Illuminate\View\Factory;
 use Leantime\Core\Application;
+use Leantime\Core\AppSettings;
 use Leantime\Core\Bootloader;
 use Leantime\Core\HtmxRequest;
 use Leantime\Core\IncomingRequest;
@@ -69,7 +70,9 @@ if (! function_exists('bootstrap_minimal_app')) {
     function bootstrap_minimal_app(): Application
     {
         $app = app()::setInstance(new Application())::setHasBeenBootstrapped();
-        return Bootloader::getInstance($app)->getApplication();
+        $app_inst = Bootloader::getInstance($app)->getApplication();
+        $app_inst->make(AppSettings::class)->loadSettings();
+        return $app_inst;
     }
 }
 
