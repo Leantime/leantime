@@ -79,13 +79,13 @@ if (is_array($tpl->get('sprints'))) {
                 </a>
 
                 <ul class="dropdown-menu">
-                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> <?=$tpl->__("links.create_list_no_icon") ?></a></li>
+                    <li><a class="wikiModal inlineEdit" href="#/sprints/editSprint/"><i class="fa-solid fa-plus"></i> <?=$tpl->__("links.create_sprint_no_icon") ?></a></li>
                     <li class='nav-header border'></li>
                     <li>
                         <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('all'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("links.all_todos") ?></a>
                     </li>
                     <li>
-                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("label.not_assigned_to_list") ?></a>
+                        <a href="javascript:void(0);" onclick="jQuery('#sprintSelect').val('backlog'); leantime.ticketsController.initTicketSearchUrlBuilder('<?=$currentUrlPath; ?>')"><?=$tpl->__("label.backlog") ?></a>
                     </li>
                     <?php foreach ($tpl->get('sprints') as $sprintRow) {   ?>
                         <li>

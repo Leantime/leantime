@@ -42,8 +42,8 @@
     --primary-color: var(--accent1);
     --secondary-color: var(--accent2);
 
-    --main-bg: #f5f6f7;
-    --left-panel-bg: #f5f6f7;
+    --main-bg: #f9fafb;
+    --left-panel-bg: #f9fafb;
     --content-bg: var(--secondary-background);
 
     --glass-blur: blur( 4px );
@@ -87,7 +87,7 @@
 
     --header-action-hover-color:var(--neutral);
     --header-bg-color:var(--accent1);
-    --header-gradient:#fff;
+    --header-gradient:#f9fafb;
     --element-gradient:linear-gradient(135deg, var(--accent1) 20%,var(--accent2) 100%);
 
     --primary-font-family: 'Roboto', 'Helvetica Neue', Helvetica, sans-serif;
@@ -105,7 +105,7 @@
     --main-border-color-hover:rgba(200,200,200, 0.9);
     --min-shadow: 0px 1px 3px rgba(0 0 0 / 10%), 0px 0px 1px rgba(0 0 0 / 5%);
     --regular-shadow: 0px 0px 3px 0px rgba(0 0 0 / 20%), 0px 0px 0px rgba(0 0 0 / 10%);
-    --large-shadow: 0px 0px 8px 0px rgba(220,220,220, 0.9);
+    --large-shadow: 0px 0px 2px 1px rgba(220,220,220, 0.9);
     --box-radius-large:10px;
     --box-radius: 5px;
     --box-radius-small:3px;
