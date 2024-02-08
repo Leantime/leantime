@@ -48,11 +48,12 @@ class HttpKernel implements HttpKernelContract
         $this->requestStartedAt = microtime(true);
 
         try {
-            return (new Pipeline($this->getApplication()))
+
+            $response = (new Pipeline($this->getApplication()))
                 ->send($request)
                 ->through($this->getMiddleware())
                 ->then(fn ($request) =>
-                    (new Pipeline($this->getApplication()))
+                (new Pipeline($this->getApplication()))
                     ->send($request)
                     ->through(self::dispatch_filter(
                         hook: 'plugins_middleware',
@@ -61,6 +62,9 @@ class HttpKernel implements HttpKernelContract
                     ))
                     ->then(fn () => Frontcontroller::dispatch())
                 );
+
+            return self::dispatch_filter('beforeSendResponse', $response);
+
         } catch (HttpResponseException $e) {
             error_log($e);
             return $e->getResponse();
