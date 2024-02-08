@@ -238,8 +238,9 @@ class ConsoleKernel implements ConsoleKernelContract
      * @param  array  $parameters
      * @todo Implement
      */
-    public function queue(string $command, array $parameters = [])
+    public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
     {
+        return new \Illuminate\Foundation\Bus\PendingDispatch();
     }
 
     /**

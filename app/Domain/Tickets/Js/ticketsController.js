@@ -405,21 +405,18 @@ leantime.ticketsController = (function () {
                         var toDatePicker = jQuery(".toDateTicket-" + id);
                         toDatePicker.datepicker("option", "minDate", getDate(this));
 
-                        var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
+                        var dateTo = jQuery(".toDateTicket-" + id).val();
 
-                        var newDate = dateTime;
-                        leantime.ticketsRepository.updateEditFromDates(id, newDate, function () {
+                        console.log(date);
+                        console.log(dateTo);
+                        leantime.ticketsRepository.updateEditFromDates(id, date, function() {
                             jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
 
-                        var dateTo = jQuery(".toDateTicket-" + id).val();
 
-                        var dateTimeTo = moment(dateTo, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
-                        var newDateTo = dateTimeTo;
 
-                        leantime.ticketsRepository.updateEditToDates(id, newDateTo, function () {
 
-                        });
+
                     }
                 ),
             to = jQuery(".milestoneEditToAsync").datepicker(
@@ -451,21 +448,13 @@ leantime.ticketsController = (function () {
 
                         var date = jQuery(this).val();
 
-                        var dateTime = moment(date, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
-
-                        var newDate = dateTime;
-                        leantime.ticketsRepository.updateEditToDates(id, newDate, function () {
-                            jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
-                        });
-
                         var dateFrom = jQuery(".fromDateTicket-" + id).val();
 
-                        var dateTimeFrom = moment(dateFrom, leantime.i18n.__("language.momentJSDate")).format("YYYY-MM-DD HH:mm:ss");
-                        var newDateFrom = dateTimeFrom;
-                        leantime.ticketsRepository.updateEditFromDates(id, newDateFrom, function () {
-
+                        console.log(dateFrom);
+                        console.log(date);
+                        leantime.ticketsRepository.updateEditToDates(id, date, function() {
+                            jQuery.growl({message: leantime.i18n.__("short_notifications.date_updated"), style: "success"});
                         });
-
 
                     }
                 );
