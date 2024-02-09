@@ -381,13 +381,6 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-
-        /**
-         * @param $userId
-         * @param $projectStatus
-         * @param $clientId
-         * @return array|false
-         */
         /**
          * @param $userId
          * @param string   $projectStatus
@@ -399,21 +392,13 @@ namespace Leantime\Domain\Projects\Services {
             $projects = $this->projectRepository->getUserProjects($userId, $projectStatus, $clientId);
 
             if ($projects) {
-                foreach ($projects as &$project) {
-                    $project['team'] = $this->projectRepository->getUsersAssignedToProject($project['id']);
-                }
-
                 return $projects;
             } else {
                 return [];
             }
         }
 
-        /**
-         * @param $currentParentId
-         * @param array $projects
-         * @return array
-         */
+
         /**
          * @param $currentParentId
          * @param array           $projects
