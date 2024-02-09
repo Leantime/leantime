@@ -190,7 +190,6 @@ namespace Leantime\Domain\Projects\Repositories {
 					client.id AS clientId,
 					parent.id AS parentId,
 					parent.name as parentName,
-					comments.status as status,
 					IF(favorite.id IS NULL, false, true) as isFavorite
 				FROM zp_projects as project
 				LEFT JOIN zp_relationuserproject AS relation ON project.id = relation.projectId
@@ -201,14 +200,6 @@ namespace Leantime\Domain\Projects\Repositories {
 				                                          AND favorite.module = 'project'
 				                                          AND favorite.reaction = 'favorite'
 				                                          AND favorite.userId = :id
-
-				LEFT JOIN zp_comment as comments ON comments.id = (
-                      SELECT
-						id
-                      FROM zp_comment
-                      WHERE module = 'project' AND moduleId = project.id
-                      ORDER BY date DESC LIMIT 1
-                    )
                 LEFT JOIN zp_user as requestingUser ON requestingUser.id = :id
 				WHERE (project.active > '-1' OR project.active IS NULL)";
 

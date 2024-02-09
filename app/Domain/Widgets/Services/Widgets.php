@@ -111,8 +111,7 @@ class Widgets
         $this->defaultWidgets = [
             "welcome"     => $this->availableWidgets["welcome"],
             "calendar"    => $this->availableWidgets["calendar"],
-            "todos"       => $this->availableWidgets["todos"],
-            "myprojects"  => $this->availableWidgets["myprojects"]
+            "todos"       => $this->availableWidgets["todos"]
         ];
 
         $this->availableWidgets = self::dispatch_filter("availableWidgets", $this->availableWidgets);
