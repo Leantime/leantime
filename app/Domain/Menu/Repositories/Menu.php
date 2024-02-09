@@ -32,6 +32,8 @@ namespace Leantime\Domain\Menu\Repositories {
                         15 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.todos', 'icon' => 'fa fa-fw fa-thumb-tack', 'tooltip' => 'menu.todos_tooltip', 'href' => '', 'hrefFunction' => 'getTicketMenu', 'active' => ['showKanban', 'showAll', 'showTicket', 'showList']],
                         25 => ['type' => 'item', 'module' => 'tickets', 'title' => 'menu.milestones', 'icon' => 'fa fa-fw fa-chart-gantt', 'tooltip' => 'menu.milestones_tooltip', 'href' => '', 'hrefFunction' => 'getTimelineMenu', 'active' => ['roadmap', 'showAllMilestones', 'showProjectCalendar']],
                         40 => ['type' => 'item', 'module' => 'goalcanvas', 'title' => 'menu.goals', 'icon' => 'fa fa-fw fa-bullseye', 'tooltip' => 'menu.goals_tooltip', 'href' => '/goalcanvas/dashboard', 'active' => ['showCanvas', 'dashboard']],
+                        60 => ['type' => 'item', 'module' => 'whiteboards', 'title' => 'menu.whiteboards_premium', 'icon' => 'fa fa-solid fa-draw-polygon', 'tooltip' => 'Whiteboards', 'href' => '/plugins/marketplace#/plugins/details/leantime_whiteboardscanvas', 'role' => 'editor'],
+
                     ],
                 ],
                 30 => [
@@ -96,6 +98,8 @@ namespace Leantime\Domain\Menu\Repositories {
             ],
             'personal' => [
                 5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
+                10 => ['type' => 'item', 'module' => 'notes', 'title' => 'menu.notes_premium', 'icon' => 'fa fa-solid fa-notes-sticky', 'tooltip' => 'Notes', 'href' => '/plugins/marketplace#/plugins/details/leantime_notes', 'role' => 'editor'],
+
                 15 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
                 20 => ['type' => 'item', 'module' => 'calendar', 'title' => 'menu.sidemenu_my_calendar', 'icon' => 'fa fa-calendar', 'tooltip' => 'menu.my_calendar_tooltip', 'href' => '/calendar/showMyCalendar', 'active' => ['showMyCalendar']],
             ],
@@ -118,6 +122,9 @@ namespace Leantime\Domain\Menu\Repositories {
                         5 => ['type' => 'item', 'module' => 'plugins', 'title' => 'menu.leantime_apps', 'icon' => 'fa fa-fw fa-puzzle-piece', 'tooltip' => 'menu.leantime_apps_tooltip', 'href' => '/plugins/marketplace', 'active' => ['marketplace', 'myapps']],
                         10 => ['type' => 'item', 'module' => 'connector', 'title' => 'menu.integrations', 'icon' => 'fa fa-fw fa-circle-nodes', 'tooltip' => 'menu.connector_tooltip', 'href' => '/connector/show', 'active' => ['show']],
                         15 => ['type' => 'item', 'module' => 'setting', 'title' => 'menu.company_settings', 'icon' => 'fa fa-fw fa-cogs', 'tooltip' => 'menu.company_settings_tooltip', 'href' => '/setting/editCompanySettings', 'active' => ['editCompanySettings']],
+
+                        20 => ['type' => 'item', 'module' => 'notes', 'title' => 'menu.customfields_premium', 'icon' => 'fa fa-solid fa-list', 'tooltip' => 'Custom Fields', 'href' => '/plugins/marketplace#/plugins/details/leantime_customfields', 'role' => 'editor'],
+
                     ],
                 ],
             ],
