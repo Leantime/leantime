@@ -70,7 +70,9 @@ a .label.feature-label {
     background: var(--element-gradient);
     margin-top: 4px;
     display: block;
-    float: right;
+    position:absolute;
+    top:5px;
+    right:0px;
     border-radius: 6px;
     padding: 1px 5px;
     color:var(--main-action-color);
@@ -82,7 +84,6 @@ a .label.feature-label:after {
 }
 
 .nav .label.feature-label {
-    margin-top:-4px;
 }
 
 .pagetitle {
