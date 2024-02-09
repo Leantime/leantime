@@ -10,6 +10,7 @@ namespace Leantime\Domain\Users\Controllers {
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Users\Services\Users;
+    use Ramsey\Uuid\Uuid;
 
     /**
      *
@@ -79,6 +80,15 @@ namespace Leantime\Domain\Users\Controllers {
                 if (isset($_GET['resendInvite']) && $row !== false) {
                     if (!isset($_SESSION['lastInvite.' . $values['id']]) || $_SESSION['lastInvite.' . $values['id']] < time() - 240) {
                         $_SESSION['lastInvite.' . $values['id']] = time();
+
+                        //If pw reset is empty for whatever reason, create new invite code
+                        if(empty($values['pwReset'])){
+                            $inviteCode = Uuid::uuid4()->toString();
+                            $this->userRepo->patchUser($values['id'], array("pwReset" => $inviteCode));
+                            $values['pwReset'] = $inviteCode;
+                        }
+
+
                         $this->userService->sendUserInvite(
                             inviteCode: $values['pwReset'],
                             user: $values['user']
