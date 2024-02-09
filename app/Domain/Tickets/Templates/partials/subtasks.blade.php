@@ -66,7 +66,7 @@
                         </div>
                    @endif
 
-                    <a href="{{ BASE_URL }}#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
+                    <a href="#/tickets/showTicket/{{ $subticket['id'] }}">{{ $subticket['headline'] }}</a>
 
                 </div>
             </div>

@@ -291,7 +291,7 @@ $allTicketGroups = $tpl->get("allTickets");
                                                     <?php } ?>
 
                                                     <?php if ($row["subtaskCount"] > 0) {?>
-                                                        <a id="subtaskLink_<?php echo $row["id"];?>" href="<?=CURRENT_URL ?>?tab=subtasks#/tickets/showTicket/<?php echo $row["id"];?>" class="subtaskLineLink"> <span class="fa fa-diagram-successor"></span> <?php echo $row["subtaskCount"] ?></a>&nbsp;
+                                                        <a id="subtaskLink_<?php echo $row["id"];?>" href="#/tickets/showTicket/<?php echo $row["id"];?>" class="subtaskLineLink"> <span class="fa fa-diagram-successor"></span> <?php echo $row["subtaskCount"] ?></a>&nbsp;
                                                     <?php } ?>
                                                     <?php if ($row['tags'] != '') {?>
                                                         <?php  $tagsArray = explode(",", $row['tags']); ?>
