@@ -2891,7 +2891,7 @@ h4 .helperTooltip,
 }
 
 .favoriteStar.go {
-    animation: spin .6s ease-in-out alternate infinite;;
+    animation: spin .6s ease-in-out infinite;;
 
 }
 
@@ -2901,7 +2901,7 @@ h4 .helperTooltip,
         opacity:1
     }
     to {
-        transform: rotate(360deg) scale(5);
+        transform: rotate(360deg) scale(1);
         opacity:0.5;
 
     }
