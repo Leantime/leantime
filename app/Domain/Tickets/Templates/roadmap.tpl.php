@@ -142,13 +142,13 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
 
                 //Item is milestone itself, set first index + .0
                 if ($mlst->type == "milestone") {
-                    $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".0";
+                    $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".000";
                 } else {
                     //If it has a milestone dependency, add milestone index
                     if ($mlst->milestoneid > 0) {
-                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ) . "." . ($mlst->sortIndex ?? 999);
+                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ) . "." . str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
                     } else {
-                        $sortIndex = "999" . "." . ($mlst->sortIndex ?? 999);
+                        $sortIndex = "999" . "." . str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
                     }
                 }
 
