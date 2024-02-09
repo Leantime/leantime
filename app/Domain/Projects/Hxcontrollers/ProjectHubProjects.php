@@ -95,6 +95,11 @@ class ProjectHubProjects extends HtmxController
                 if (!array_key_exists($project["clientId"], $clients)) {
                     $clients[$project["clientId"]] = array("name" => $project['clientName'], "id" => $project["clientId"]);
                 }
+
+                if ($clientId == "" || $project["clientId"] == $clientId) {
+                    $projectResults[$i] = $project;
+                    $i++;
+                }
             }
         }
 
@@ -107,6 +112,6 @@ class ProjectHubProjects extends HtmxController
         $this->tpl->assign("currentClientName", $currentClientName);
         $this->tpl->assign("currentClient", $clientId);
         $this->tpl->assign("clients", $clients);
-        $this->tpl->assign("allProjects", $allprojects);
+        $this->tpl->assign("allProjects", $projectResults);
     }
 }

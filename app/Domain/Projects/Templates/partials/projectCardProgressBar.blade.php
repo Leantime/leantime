@@ -34,7 +34,7 @@
         <div class="col-md-12">
             <div class="team">
                 @foreach ($project['team'] as $member)
-                    <div class="commentImage" style="margin-right:-10px;" data-tippy-content="{{ $member['firsntame'] }} {{ $member['lastname'] }}">
+                    <div class="commentImage" style="margin-right:-10px;" data-tippy-content="{{ $member['firstname'] }} {{ $member['lastname'] }}">
                         <img
                             style=""
                             src="{{  BASE_URL }}/api/users?profileImage={{ $member['id'] }}&v={{ format($member['modified'])->timestamp() }}" data-tippy-content="{{ $member['firstname'] . ' ' . $member['lastname'] }}" />
