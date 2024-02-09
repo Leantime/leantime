@@ -81,19 +81,17 @@ class ProjectCardProgress extends HtmxController
 
         $project = array("id" => $projectId);
 
-        $project= $this->projectsService->getProject($projectId);
         $project['progress'] = $this->projectsService->getProjectProgress($project['id']);
         $projectComment = $this->commentsService->getComments("project", $project['id']);
         $project['team'] = $this->projectsService->getUsersAssignedToProject($project['id']);
-
 
         if (is_array($projectComment) && count($projectComment) > 0) {
             $project['lastUpdate'] = $projectComment[0];
             $project['status'] = $projectComment[0]['status'];
         } else {
             $project['lastUpdate'] = false;
+            $project['status'] = '';
         }
-
 
         $projectTypeAvatars  = $this->menuService->getProjectTypeAvatars();
 
