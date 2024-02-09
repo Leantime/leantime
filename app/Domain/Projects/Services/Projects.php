@@ -75,9 +75,6 @@ namespace Leantime\Domain\Projects\Services {
         /**
          * @return mixed
          */
-        /**
-         * @return mixed
-         */
         public function getProjectTypes(): mixed
         {
 
@@ -98,25 +95,16 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
-         * @param $id
+         * @param int $id
          * @return array|bool
          */
-        /**
-         * @param $id
-         * @return array|bool
-         */
-        public function getProject($id): bool|array
+        public function getProject(int $id): bool|array
         {
             return $this->projectRepository->getProject($id);
         }
 
         //Gets project progress
 
-        /**
-         * @param $projectId
-         * @return array
-         * @throws \Exception
-         */
         /**
          * @param $projectId
          * @return array
@@ -204,10 +192,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param $projectId
          * @return array
          */
-        /**
-         * @param $projectId
-         * @return array
-         */
         public function getUsersToNotify($projectId): array
         {
 
@@ -225,10 +209,6 @@ namespace Leantime\Domain\Projects\Services {
             return $to;
         }
 
-        /**
-         * @param $projectId
-         * @return array
-         */
         /**
          * @param $projectId
          * @return array
@@ -348,10 +328,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param $projectId
          * @return mixed|void
          */
-        /**
-         * @param $projectId
-         * @return mixed|void
-         */
         public function getProjectName($projectId)
         {
 
@@ -361,10 +337,6 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        /**
-         * @param $userId
-         * @return array|false
-         */
         /**
          * @param $userId
          * @return array|false
@@ -449,13 +421,6 @@ namespace Leantime\Domain\Projects\Services {
             return $cleanList;
         }
 
-
-        /**
-         * @param $userId
-         * @param $projectStatus
-         * @param $clientId
-         * @return array
-         */
         /**
          * @param $userId
          * @param string   $projectStatus
@@ -530,7 +495,15 @@ namespace Leantime\Domain\Projects\Services {
         }
 
 
-
+        /**
+         * Gets all the clients available to a user.
+         * Clients are determined by the projects
+         * the user is assigned to.
+         *
+         * @param int    $userId        The ID of the user.
+         * @param string $projectStatus (optional) The status of the projects to consider. Defaults to "open".
+         * @return array An array of client objects.
+         */
         public function getAllClientsAvailableToUser($userId, string $projectStatus = "open"): array
         {
 
@@ -574,11 +547,6 @@ namespace Leantime\Domain\Projects\Services {
          * @param $projectId
          * @return mixed|string
          */
-        /**
-         * @param $userId
-         * @param $projectId
-         * @return mixed|string
-         */
         public function getProjectRole($userId, $projectId): mixed
         {
 
@@ -595,10 +563,6 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
-        /**
-         * @param $userId
-         * @return array|false
-         */
         /**
          * @param $userId
          * @return array|false
@@ -629,7 +593,8 @@ namespace Leantime\Domain\Projects\Services {
                 }
             }
 
-            if (! empty($_SESSION['currentProject'])
+            if (
+                ! empty($_SESSION['currentProject'])
                 && $this->changeCurrentSessionProject($_SESSION['currentProject'])
             ) {
                 return;
@@ -639,7 +604,8 @@ namespace Leantime\Domain\Projects\Services {
 
             //If last project setting is set use that
             $lastProject = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject");
-            if (! empty($lastProject)
+            if (
+                ! empty($lastProject)
                 && $this->changeCurrentSessionProject($lastProject)
             ) {
                 return;
@@ -655,7 +621,6 @@ namespace Leantime\Domain\Projects\Services {
             }
 
             throw new Exception("Error trying to set a project");
-
         }
 
         /**
@@ -679,9 +644,10 @@ namespace Leantime\Domain\Projects\Services {
                 $project = $this->getProject($projectId);
 
                 if ($project) {
-
-                    if(isset($_SESSION["currentProject"]) &&
-                        $_SESSION["currentProject"] == $project['id']) {
+                    if (
+                        isset($_SESSION["currentProject"]) &&
+                        $_SESSION["currentProject"] == $project['id']
+                    ) {
                         return true;
                     }
 
@@ -840,6 +806,22 @@ namespace Leantime\Domain\Projects\Services {
         }
 
 
+        /**
+         * Adds a new project to the system.
+         *
+         * @param array $values The project details
+         *                      - name: string, required, the name of the project
+         *                      - details: string, optional, additional details about the project
+         *                      - clientId: int, required, the client ID associated with the project
+         *                      - hourBudget: int, optional, the hour budget for the project (default: 0)
+         *                      - assignedUsers: string, optional, the assigned users for the project (default: '')
+         *                      - dollarBudget: int, optional, the dollar budget for the project (default: 0)
+         *                      - psettings: string, optional, the project settings (default: 'restricted')
+         *                      - type: string, required, the type of the project (always set to 'project')
+         *                      - start: string|null, the start date of the project in "Y-m-d" format or null
+         *                      - end: string|null, the end date of the project in "Y-m-d" format or null
+         * @return void
+         */
         public function addProject($values)
         {
             $values = array(
@@ -1227,11 +1209,6 @@ namespace Leantime\Domain\Projects\Services {
          * @return array
          * @throws BindingResolutionException
          */
-        /**
-         * @param $projectId
-         * @return array
-         * @throws BindingResolutionException
-         */
         public function getProjectSetupChecklist($projectId): array
         {
             $progressSteps = array(
@@ -1414,11 +1391,7 @@ namespace Leantime\Domain\Projects\Services {
             ];
         }
 
-        /**
-         * @param $stepsComplete
-         * @param $projectId
-         * @return void
-         */
+
         /**
          * @param $stepsComplete
          * @param $projectId
@@ -1443,6 +1416,13 @@ namespace Leantime\Domain\Projects\Services {
             );
         }
 
+        /**
+         * Returns the project ID by its name from the given array of projects.
+         *
+         * @param array  $allProjects An array of projects.
+         * @param string $projectName The name of the project to search for.
+         * @return int|bool The ID of the project if found, or false if not found.
+         */
         public function getProjectIdbyName($allProjects, $projectName)
         {
             foreach ($allProjects as $project) {
@@ -1467,6 +1447,14 @@ namespace Leantime\Domain\Projects\Services {
             }
         }
 
+        /**
+         * Edits a project with the given values.
+         *
+         * @param mixed $values The values to update the project with.
+         * @param int   $id     The ID of the project to edit.
+         *
+         * @return void
+         */
         public function editProject($values, $id)
         {
             $this->projectRepository->editProject($values, $id);
@@ -1497,36 +1485,6 @@ namespace Leantime\Domain\Projects\Services {
                     }
                 }
             }
-
-            /*
-            if ($handler) {
-                //Assumes format ticket_ID
-                $id = substr($handler, 7);
-
-                $ticket = $this->getTicket($id);
-
-                if ($ticket) {
-                    $subject = sprintf($this->language->__("email_notifications.todo_update_subject"), $id, $ticket->headline);
-                    $actual_link = BASE_URL . "/tickets/showTicket/" . $id;
-                    $message = sprintf($this->language->__("email_notifications.todo_update_message"), $_SESSION['userdata']['name'], $ticket->headline);
-
-                    $notification = app()->make(\Leantime\Domain\Notifications\Models\Notification::class);
-                    $notification->url = array(
-                        "url" => $actual_link,
-                        "text" => $this->language->__("email_notifications.todo_update_cta")
-                    );
-                    $notification->entity = $ticket;
-                    $notification->module = "tickets";
-                    $notification->projectId = $_SESSION['currentProject'];
-                    $notification->subject = $subject;
-                    $notification->authorId = $_SESSION['userdata']['id'];
-                    $notification->message = $message;
-
-                    $this->projectService->notifyProjectUsers($notification);
-                }a
-            }*/
-
-
 
             return true;
         }
