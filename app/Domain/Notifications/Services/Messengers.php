@@ -294,7 +294,7 @@ class Messengers
                 'fields'   => array(
                     [
                         'title' => $this->language->__("headlines.project_with_name") . ' ' . $this->projectName,
-                        'value' => $this->language->__("label.todo_status") . ': ' . $statusLabelsArray[$status]['name'] ?? '',
+                        'value' => $this->language->__("label.todo_status") . ': ' . empty($statusLabelsArray[$status]) ? '' : $statusLabelsArray[$status]['name'],
                         'short' => false,
                     ],
                 ),
