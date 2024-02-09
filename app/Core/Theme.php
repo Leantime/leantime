@@ -349,7 +349,7 @@ class Theme
 
         $_SESSION['usersettings.theme'] = $id;
 
-        Events::add_event_listener(
+        Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('theme')
@@ -406,7 +406,7 @@ class Theme
 
         $_SESSION['usersettings.themeFont'] = $font;
 
-        Events::add_event_listener(
+        Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('themeFont')

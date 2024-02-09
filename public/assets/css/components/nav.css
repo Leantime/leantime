@@ -319,6 +319,7 @@ a.barmenu:hover {
     margin-left:15px;
     padding-left:14px;
     border-left:0px dotted var(--main-border-color);
+    position:relative;
 }
 
 .leftmenu .nav-tabs.nav-stacked > li.dropdown li.submenuToggle {
@@ -368,6 +369,7 @@ a.barmenu:hover {
     padding: 10px 15px 10px 15px;
     color: var(--nav-link-color);
     border-radius:15px;
+    position:relative;
 }
 
 .leftmenu .nav-tabs.nav-stacked .dropdown ul li.active a {
