@@ -293,19 +293,16 @@ class DateTimeHelper
         $dateTime = trim($dateTime);
 
         if ($this->isValidDateString($dateTime)) {
-            $fromDateTimeZone = new \DateTimeZone($fromTz);
+            $fromDateTimeZone = new DateTimeZone($fromTz);
 
             //If it is an API Request, don't do any formatting, return ATOM in target tz
             if ($this->apiRequest->isApiRequest()) {
                 $utcDate = new DateTime($dateTime, $fromDateTimeZone);
                 return is_object($utcDate) ? $utcDate->format(DateTime::ATOM) : false;
             }
+            $timestamp = DateTime::createFromFormat($fromFormat, $dateTime, new DateTimeZone($toTz));
 
-            $timestamp = DateTime::createFromFormat($fromFormat, $dateTime, $fromDateTimeZone);
-
-            if (is_object($timestamp)) {
-                $toTimezone = new \DateTimeZone($toTz);
-                $timestamp->setTimezone($toTimezone);
+            if ($timestamp instanceof DateTime) {
                 return $timestamp->format($toFormat);
             }
         }
