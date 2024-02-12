@@ -240,6 +240,9 @@ namespace Leantime\Domain\Projects\Services {
         public function notifyProjectUsers(Notification $notification): void
         {
 
+            //Filter notifications
+            $notification = EventCore::dispatch_filter("notificationFilter", $notification);
+
             //Email
             $users = $this->getUsersToNotify($notification->projectId);
             $projectName = $this->getProjectName($notification->projectId);
