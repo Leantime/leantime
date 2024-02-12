@@ -99,7 +99,7 @@ namespace Leantime\Domain\Auth\Controllers {
                                 self::dispatch_event("userSignUpSuccess", ['user' => $user]);
 
                                 if ($loggedIn) {
-                                    return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
+                                    return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/show");
                                 } else {
                                     return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
                                 }
