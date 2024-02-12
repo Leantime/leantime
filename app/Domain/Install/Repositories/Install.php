@@ -341,6 +341,31 @@ namespace Leantime\Domain\Install\Repositories {
         private function sqlPrep(): string
         {
 
+
+            $gettingStartedDescription = '<h2>Essentials</h2>
+                             <ul class="tox-checklist" style="list-style-type: none;">
+                             <li>Explore your <a href="dashboard/home" target="_blank" rel="noopener">personal dashboard&nbsp;</a></li>
+                             <li>Create your first To-do under "My Todos"</li>
+                             <li>Drag and Drop your To-Do to the Calendar</li>
+                             </ul>
+                             <p>&nbsp;</p>
+                             <h2>Your first Project</h2>
+                             <ul class="tox-checklist" style="list-style-type: none;">
+                             <li>Go to your "<a href="projects/showMy" target="_blank" rel="noopener">Project Hub</a>" and open a project</li>
+                             <li>Check the Project Checklist and learn what is needed to run a project</li>
+                             <li>Head to "<a href="strategy/showBoards" target="_blank" rel="noopener">Blueprints</a>" and create a project value canvas</li>
+                             <li>Next create a <a href="goalcanvas/dashboard" target="_blank" rel="noopener">Goal</a> for your project</li>
+                             <li>Now create a&nbsp;<a href="tickets/roadmap" target="_blank" rel="noopener"> milestone </a>&nbsp;representing a large part of your project</li>
+                             <li>Create <a href="tickets/showKanban" target="_blank" rel="noopener">to-dos</a> and assign them to milestones</li>
+                             </ul>
+                             <p>&nbsp;</p>
+                             <h2>Working with your Team</h2>
+                             <ul class="tox-checklist" style="list-style-type: none;">
+                             <li>Go to your <a href="dashboard/show" target="_blank" rel="noopener">project dashboard</a> and invite a team member</li>
+                             <li>Open a To-Do, create a new comment and mention a team member using the "@" sign</li>
+                             </ul>
+                             ';
+
             $sql = "
                 CREATE TABLE `zp_calendar` (
                   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -588,7 +613,7 @@ namespace Leantime\Domain\Install\Repositories {
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
                 insert  into `zp_tickets`(`id`,`projectId`,`headline`,`description`,`acceptanceCriteria`,`date`,`dateToFinish`,`priority`,`status`,`userId`,`os`,`browser`,`resolution`,`component`,`version`,`url`,`milestoneid`,`editFrom`,`editTo`,`editorId`,`planHours`,`hourRemaining`,`type`,`production`,`staging`,`storypoints`,`sprint`,`sortindex`,`kanbanSortIndex`) values
-                (9,3,'Getting Started with Leantime','Look around and make yourself familiar with the system. ','','2015-11-30 00:00:00','1969-12-31 00:00:00',NULL,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
+                (9,3,'Getting Started with Leantime', '".$gettingStartedDescription."','','".date("Y-m-d")."','".date("Y-m-d")."',2,3,1,NULL,NULL,NULL,NULL,'',NULL,NULL,'1969-12-31 00:00:00','1969-12-31 00:00:00',1,0,0,'Story',0,0,0,0,NULL,NULL);
 
                 CREATE TABLE `zp_timesheets` (
                   `id` int(255) NOT NULL AUTO_INCREMENT,
@@ -991,7 +1016,7 @@ namespace Leantime\Domain\Install\Repositories {
             }
         }
 
-          /**
+        /**
          * @return bool|array
          */
         private function update_sql_20103(): bool|array
@@ -1187,7 +1212,7 @@ namespace Leantime\Domain\Install\Repositories {
             $errors = array();
 
             $sql = array(
-            "CREATE TABLE IF NOT EXISTS `zp_queue` (
+                "CREATE TABLE IF NOT EXISTS `zp_queue` (
                                `msghash` varchar(50) NOT NULL,
                                 `channel` varchar(255),
                                `userId` int(11) NOT NULL,
@@ -1229,7 +1254,7 @@ namespace Leantime\Domain\Install\Repositories {
             $errors = array();
 
             $sql = array(
-            "alter table zp_canvas_items add tags text null",
+                "alter table zp_canvas_items add tags text null",
                 "alter table zp_canvas_items add title varchar(255) null",
                 "alter table zp_canvas_items add parent int null",
                 "alter table zp_canvas_items add featured int null",
@@ -1814,7 +1839,7 @@ namespace Leantime\Domain\Install\Repositories {
             $errors = array();
 
             $sql = [
-            "ALTER TABLE `zp_canvas_items`
+                "ALTER TABLE `zp_canvas_items`
                     CHANGE COLUMN `data1` `data1` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data2` `data2` MEDIUMTEXT NULL DEFAULT NULL,
                     CHANGE COLUMN `data3` `data3` MEDIUMTEXT NULL DEFAULT NULL,
@@ -1892,7 +1917,7 @@ namespace Leantime\Domain\Install\Repositories {
                     $stmn = $this->database->prepare($statement);
                     $stmn->execute();
                 } catch (PDOException $e) {
-                   //Just swallow your pride
+                    //Just swallow your pride
                     //One day we'll get ALTER IF EXISTS
                 }
             }

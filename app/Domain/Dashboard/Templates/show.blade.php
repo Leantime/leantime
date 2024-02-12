@@ -610,6 +610,20 @@
 
         leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initDueDateTimePickers();
+
+        @if($completedOnboarding === false)
+            leantime.helperController.firstLoginModal();
+        @endif
+
+        @if(!isset($_SESSION['userdata']['settings']["modals"]))
+            @php($_SESSION['userdata']['settings']["modals"] = array())
+        @endif
+
+        @if($completedOnboarding == "1"
+                && (isset($_SESSION['userdata']['settings']["modals"]["projectDashboardTour"]) === false || $_SESSION['userdata']['settings']["modals"]["projectDashboardTour"] == 0))
+            leantime.helperController.startProjectDashboardTour();
+            @php($_SESSION['userdata']['settings']["modals"]['projectDashboardTour'] = 1)
+        @endif
     });
 
     @dispatchEvent('scripts.beforeClose')
