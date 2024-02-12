@@ -82,6 +82,7 @@ namespace Leantime\Domain\Auth\Controllers {
 
                             $user["firstname"] = $_POST["firstname"];
                             $user["lastname"] = $_POST["lastname"];
+                            $user["jobTitle"] = $_POST["jobTitle"] ?? "";
                             $user["status"] = "A";
                             $user["user"] =  $user["username"];
                             $user["password"] = $_POST['password'];

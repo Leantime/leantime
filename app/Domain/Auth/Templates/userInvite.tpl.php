@@ -29,7 +29,9 @@ $user = $tpl->get("user");
         </div>
         <div class="">
             <input type="text" name="lastname" id="lastname" placeholder="<?php echo $tpl->language->__("input.placeholders.lastname"); ?>" value="<?=$tpl->escape($user['lastname']); ?>" />
-
+        </div>
+        <div class="">
+            <input type="text" name="jobTitle" id="jobTitle" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
         </div>
         <div class="">
             <input type="password" name="password" id="password" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
