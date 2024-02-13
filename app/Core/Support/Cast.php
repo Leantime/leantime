@@ -114,7 +114,7 @@ class Cast
             'string', 'str' => is_array($value) || (is_object($value) && ! method_exists($value, '__toString')) ? null : (string) $value,
             'bool', 'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
             'object', 'stdClass' => is_array($value) ? (object) $value : null,
-            'array' => is_object($value) ? (array) $value : null,
+            'array' => is_object($value) || is_array($value) ? (array) $value : null,
             default => throw new \InvalidArgumentException(sprintf('%s is not a simple type.', $simpleType)),
         })) {
             throw new \RuntimeException(sprintf('Could not cast value to type %s.', $simpleType));
