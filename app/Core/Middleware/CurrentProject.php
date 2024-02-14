@@ -18,7 +18,7 @@ class CurrentProject
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        if (app()->make(AuthService::class)->logged_in()) {
+        if (app()->make(AuthService::class)->loggedIn()) {
             app()->make(ProjectService::class)->setCurrentProject();
         }
 
