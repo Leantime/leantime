@@ -1,45 +1,48 @@
 <?php
 
-namespace Leantime\Domain\Calendar\Controllers {
+namespace Leantime\Domain\Calendar\Controllers;
+
+use Leantime\Core\Controller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+use Leantime\Domain\Auth\Services\Auth;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ *
+ */
+class ShowAllGCals extends Controller
+{
+    private CalendarRepository $calendarRepo;
 
     /**
-     * newUser Class - show all User
+     * init - initialize private variables
      *
-     */
-
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-    use Leantime\Domain\Auth\Services\Auth;
-
-    /**
+     * @param CalendarRepository $calendarRepo
      *
+     * @return void
      */
-    class ShowAllGCals extends Controller
+    public function init(CalendarRepository $calendarRepo): void
     {
-        private CalendarRepository $calendarRepo;
+        $this->calendarRepo = $calendarRepo;
+    }
 
-        /**
-         * init - initialize private variables
-         */
-        public function init(CalendarRepository $calendarRepo)
-        {
-            $this->calendarRepo = $calendarRepo;
-        }
+    /**
+     * run - display template and edit data
+     *
+     * @access public
+     *
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function run(): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        // Assign vars
+        $this->tpl->assign('allCalendars', $this->calendarRepo->getMyGoogleCalendars());
 
-            //Assign vars
-            $this->tpl->assign('allCalendars', $this->calendarRepo->getMyGoogleCalendars());
-
-            return $this->tpl->display('calendar.showAllGCals');
-        }
+        return $this->tpl->display('calendar.showAllGCals');
     }
 }
