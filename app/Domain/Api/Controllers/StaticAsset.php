@@ -27,11 +27,14 @@ class StaticAsset extends Controller
      * init - initialize private variables
      *
      * @access public
+     *
+     * @param Environment $config
+     * @param ApiService  $apiService
+     *
+     * @return void
      */
-    public function init(
-        Environment $config,
-        ApiService $apiService,
-    ) {
+    public function init(Environment $config, ApiService $apiService): void
+    {
         $this->config = $config;
         $this->apiService = $apiService;
     }
@@ -40,8 +43,12 @@ class StaticAsset extends Controller
      * Displays the static asset by path.
      *
      * @access public
+     *
+     * @param array $params parameters or body of the request
+     *
+     * @return Response
      */
-    public function get()
+    public function get(array $params): Response
     {
         $fullpath = Str::of($this->incomingRequest->getPathInfo())
             ->replaceFirst('/api/static-asset/', APP_ROOT . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR)
@@ -76,10 +83,7 @@ class StaticAsset extends Controller
                     ($filepath = $response->getFile()) instanceof \SplFileInfo ? $filepath->getPathname() : $filepath
                 ));
 
-                if (in_array(true, [
-                    ! $this->incomingRequest->query->has('id'),
-                    $this->config->get('debug', false),
-                ])) {
+                if (in_array(true, [!$this->incomingRequest->query->has('id'), $this->config->get('debug', false)])) {
                     return;
                 }
 
