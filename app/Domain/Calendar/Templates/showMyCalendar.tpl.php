@@ -36,7 +36,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
                     <li><span class="indicatorCircle" style="background:var(--accent2)"></span>Projects & Tasks</li>
 
 
-                <?php foreach($tpl->get('externalCalendars') as $calendars) { ?>
+                <?php foreach ($tpl->get('externalCalendars') as $calendars) { ?>
                     <li>
                         <div class="inlineDropDownContainer" style="float:right;">
                             <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown editHeadline" data-toggle="dropdown">
