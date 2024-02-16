@@ -26,8 +26,8 @@ class ApiKey extends Controller
      * @access public
      *
      * @param ProjectRepository $projectsRepo
-     * @param UserRepository $userRepo
-     * @param ClientRepository $clientsRepo
+     * @param UserRepository    $userRepo
+     * @param ClientRepository  $clientsRepo
      *
      * @return void
      *

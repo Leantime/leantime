@@ -1,79 +1,99 @@
 <?php
 
-namespace Leantime\Domain\Api\Controllers {
+namespace Leantime\Domain\Api\Controllers;
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Controller;
+use Leantime\Domain\Setting\Services\Setting as SettingService;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ *
+ */
+class Setting extends Controller
+{
+    private SettingService $settingService;
 
     /**
+     * init - initialize private variables
      *
+     * @access public
+     *
+     * @param SettingService $settingService
+     *
+     * @return void
      */
-    class Setting extends Controller
+    public function init(SettingService $settingService): void
     {
-        private SettingService $settingService;
+        $this->settingService = $settingService;
+    }
 
-        /**
-         * init - initialize private variables
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function init(SettingService $settingService)
-        {
-            $this->settingService = $settingService;
+    /**
+     * get - handle get requests
+     *
+     * @access public
+     *
+     * @param array $params parameters or body of the request
+     *
+     * @return Response
+     */
+    public function get(array $params): Response
+    {
+        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
+    }
+
+    /**
+     * post - Updatind User Image
+     *
+     * @access public
+     *
+     * @param array $params parameters or body of the request
+     *
+     * @return Response
+     *
+     * @throws BindingResolutionException
+     */
+    public function post(array $params): Response
+    {
+        if (! isset($_FILES['file'])) {
+            return $this->tpl->displayJson(['status' => 'failure'], 500);
         }
 
-        /**
-         * get - handle get requests
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function get($params)
-        {
-        }
+        $_FILES['file']['name'] = "logo.png";
 
-        /**
-         * post - Updatind User Image
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function post($params)
-        {
-            if (! isset($_FILES['file'])) {
-                return $this->tpl->displayJson(['status' => 'failure'], 500);
-            }
+        $this->settingService->setLogo($_FILES);
 
+        $_SESSION['msg'] = "PICTURE_CHANGED";
+        $_SESSION['msgT'] = "success";
 
-            $_FILES['file']['name'] = "logo.png";
+        return $this->tpl->displayJson(['status' => 'ok']);
+    }
 
-            $this->settingService->setLogo($_FILES);
+    /**
+     * put - handle put requests
+     *
+     * @access public
+     *
+     * @param array $params parameters or body of the request
+     *
+     * @return Response
+     */
+    public function patch(array $params): Response
+    {
+        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
+    }
 
-            $_SESSION['msg'] = "PICTURE_CHANGED";
-            $_SESSION['msgT'] = "success";
-
-            return $this->tpl->displayJson(['status' => 'ok']);
-        }
-
-        /**
-         * put - handle put requests
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function patch($params)
-        {
-        }
-
-        /**
-         * delete - handle delete requests
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function delete($params)
-        {
-        }
+    /**
+     * delete - handle delete requests
+     *
+     * @access public
+     *
+     * @param array $params parameters or body of the request
+     *
+     * @return Response
+     */
+    public function delete(array $params): Response
+    {
+        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
     }
 }
