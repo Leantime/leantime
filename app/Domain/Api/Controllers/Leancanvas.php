@@ -4,13 +4,12 @@
  * - leancanvas class - Controller API
  */
 
-namespace Leantime\Domain\Api\Controllers {
+namespace Leantime\Domain\Api\Controllers;
 
-    /**
-     *
-     */
-    class Leancanvas extends Canvas
-    {
-        protected const CANVAS_NAME = 'lean';
-    }
+/**
+ *
+ */
+class Leancanvas extends Canvas
+{
+    protected const CANVAS_NAME = 'lean';
 }
