@@ -1,41 +1,45 @@
 <?php
 
-namespace Leantime\Domain\Api\Repositories;
+namespace Leantime\Domain\Api\Repositories {
 
-use Leantime\Core\Db as DbCore;
-use PDO;
-
-/**
- *
- */
-class Api
-{
-    private DbCore $db;
+    use Leantime\Core\Db as DbCore;
+    use PDO;
 
     /**
-     * @param DbCore $db
-     */
-    public function __construct(DbCore $db)
-    {
-        $this->db = $db;
-    }
-
-    /**
-     * @param string $apiKeyUser
      *
-     * @return mixed
      */
-    public function getAPIKeyUser(string $apiKeyUser): mixed
+    class Api
     {
-        $sql = "SELECT * FROM `zp_user` WHERE username = :apiKeyUsername AND source <=> 'api' LIMIT 1";
+        private DbCore $db;
 
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':apiKeyUsername', $apiKeyUser);
+        /**
+         * @param DbCore $db
+         */
+        public function __construct(DbCore $db)
+        {
+            $this->db = $db;
+        }
 
-        $stmn->execute();
-        $values = $stmn->fetch();
-        $stmn->closeCursor();
+        /**
+         * @param $apiKeyUser
+         * @return mixed
+         */
+        public function getAPIKeyUser($apiKeyUser): mixed
+        {
 
-        return $values;
+            $sql = "SELECT * FROM `zp_user` WHERE username = :apiKeyUsername AND source <=> 'api' LIMIT 1";
+
+            $stmn = $this->db->database->prepare($sql);
+            $stmn->bindValue(':apiKeyUsername', $apiKeyUser, PDO::PARAM_STR);
+
+            $stmn->execute();
+            $values = $stmn->fetch();
+            $stmn->closeCursor();
+
+            return $values;
+        }
     }
+
+
+
 }

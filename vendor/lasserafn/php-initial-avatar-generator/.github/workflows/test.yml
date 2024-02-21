@@ -1,0 +1,53 @@
+name: Test Suite
+
+on: 
+  - pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  run-tests:
+    concurrency:
+      group: tests-${{ github.ref }}-${{ matrix.php-versions }}
+      cancel-in-progress: true
+      
+    strategy:
+      matrix:
+        php-versions: ['7.3', '7.4', '8.0', '8.1', '8.2']
+        
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, mysql, intl, gd, exif, iconv, imagick
+        coverage: pcov
+
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run tests
+      run: php -d pcov.enabled=1 -d memory_limit=4G vendor/bin/phpunit --coverage-clover=build/logs/clover.xml tests
+      
+    - name: Upload Coverage
+      env:
+        OTTERWISE_TOKEN: ${{ secrets.OTTERWISE_TOKEN }}
+      run: bash <(curl -s https://raw.githubusercontent.com/getOtterWise/bash-uploader/main/uploader.sh)

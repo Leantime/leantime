@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+TOOL_DIR="infection"
+TOOL_BIN="psalm-plugin"
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+
+TOOLS_DIR="$( dirname "$DIR" )"
+PROJECT_ROOT_DIR="$( dirname "$TOOLS_DIR" )"
+
+if [[ ! -x "$PROJECT_ROOT_DIR/vendor/bin/$TOOL_BIN" ]]; then
+    if [[ ! -x "$TOOLS_DIR/composer/vendor/bin/composer" ]]; then
+        >2 echo "No composer present to install dependencies for tool."
+        exit 2
+    fi
+
+    cd "$PROJECT_ROOT_DIR" && "$TOOLS_DIR/composer/vendor/bin/composer" bin $TOOL_DIR install --no-interaction
+fi
+
+php -d memory_limit=2G "$PROJECT_ROOT_DIR/vendor/bin/$TOOL_BIN" "$@"

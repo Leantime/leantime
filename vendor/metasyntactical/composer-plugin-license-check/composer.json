@@ -1,0 +1,36 @@
+{
+  "name": "metasyntactical/composer-plugin-license-check",
+  "description": "Plugin for Composer to restrict installation of packages to valid licenses.",
+  "license": "MIT",
+  "type": "composer-plugin",
+  "require": {
+    "php": "8.0.*|8.1.*|8.2.*",
+    "composer-plugin-api": "^2.0"
+  },
+  "require-dev": {
+    "composer/composer": "^2.5",
+    "phpunit/phpunit": "^9.6",
+    "bamarni/composer-bin-plugin": "^1.8"
+  },
+  "autoload": {
+    "psr-4": {
+      "Metasyntactical\\Composer\\LicenseCheck\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Metasyntactical\\Composer\\LicenseCheck\\": "tests/"
+    }
+  },
+  "extra": {
+    "class": "Metasyntactical\\Composer\\LicenseCheck\\LicenseCheckPlugin",
+    "bamarni-bin":  {
+      "target-directory": ".tools"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "bamarni/composer-bin-plugin": true
+    }
+  }
+}

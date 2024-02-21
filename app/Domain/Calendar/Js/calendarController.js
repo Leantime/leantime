@@ -223,7 +223,8 @@ leantime.calendarController = (function () {
             },
             eventDrop: function (event) {
 
-                if (event.event.extendedProps.enitityType == "ticket") {
+                if(event.event.extendedProps.enitityType == "ticket") {
+
                     jQuery.ajax({
                         type : 'PATCH',
                         url  : leantime.appUrl + '/api/tickets',
@@ -235,7 +236,9 @@ leantime.calendarController = (function () {
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
                     });
-                } else if (event.event.extendedProps.enitityType == "event") {
+
+                }else if(event.event.extendedProps.enitityType == "event") {
+
                     jQuery.ajax({
                         type : 'PATCH',
                         url  : leantime.appUrl + '/api/calendar',
@@ -249,7 +252,7 @@ leantime.calendarController = (function () {
             },
             eventResize: function (event) {
 
-                if (event.event.extendedProps.enitityType == "ticket") {
+                if(event.event.extendedProps.enitityType == "ticket") {
                     jQuery.ajax({
                         type : 'PATCH',
                         url  : leantime.appUrl + '/api/tickets',
@@ -261,7 +264,8 @@ leantime.calendarController = (function () {
                             timeTo: luxon.DateTime.fromJSDate(event.event.end).toFormat(userTimeFormat),
                         }
                     })
-                } else if (event.event.extendedProps.enitityType == "event") {
+                }else if(event.event.extendedProps.enitityType == "event") {
+
                     jQuery.ajax({
                         type : 'PATCH',
                         url  : leantime.appUrl + '/api/calendar',
@@ -274,13 +278,14 @@ leantime.calendarController = (function () {
                 }
 
             },
-            eventMouseEnter: function () {
+            eventMouseEnter: function() {
             },
-            dateClick: function (info) {
-                if (info.view.type == "timeGridDay") {
+            dateClick: function(info) {
+                if(info.view.type == "timeGridDay") {
+
                 }
             },
-            eventReceive: function (event) {
+            eventReceive: function(event) {
 
                 jQuery.ajax({
                     type : 'PATCH',
@@ -296,12 +301,12 @@ leantime.calendarController = (function () {
                 })
 
             },
-            eventDragStart: function (event) {
+            eventDragStart: function(event) {
 
             },
             eventDidMount: function (info) {
 
-                if (info.isDraggable === false) {
+                if(info.isDraggable === false) {
                     jQuery(info.el).addClass("locked");
                 }
 
@@ -316,10 +321,10 @@ leantime.calendarController = (function () {
             }
         });
 
-        jQuery(document).ready(function () {
+        jQuery(document).ready(function() {
             //let tickets = jQuery("#yourToDoContainer")[0];
 
-            jQuery("#yourToDoContainer").find(".ticketBox").each(function () {
+            jQuery("#yourToDoContainer").find(".ticketBox").each(function(){
 
                 var currentTicket = jQuery(this);
                 jQuery(this).data('event', {
@@ -344,7 +349,7 @@ leantime.calendarController = (function () {
             });
 
             var tickets =  jQuery("#yourToDoContainer")[0];
-            if (tickets) {
+            if(tickets) {
                 new FullCalendar.ThirdPartyDraggable(tickets, {
                     itemSelector: '.ticketBox',
                     eventDragMinDistance: 10,
@@ -361,11 +366,11 @@ leantime.calendarController = (function () {
                 });
             }
 
-            calendar.scrollToTime(Date.now());
+            calendar.scrollToTime( Date.now() );
         });
 
 
-        htmx.onLoad(function (content) {
+        htmx.onLoad(function(content) {
 
             // look up all elements with the tomselect class on it within the element
             var allSelects = htmx.findAll(content, "#yourToDoContainer")
@@ -380,7 +385,7 @@ leantime.calendarController = (function () {
                 });*/
 
                 // make the event draggable using jQuery UI
-                jQuery(tickets).find(".ticketBox").each(function () {
+                jQuery(tickets).find(".ticketBox").each(function() {
 
                     var currentTicket = jQuery(this);
                     jQuery(this).data('event', {
@@ -406,7 +411,7 @@ leantime.calendarController = (function () {
                 new FullCalendar.ThirdPartyDraggable(tickets, {
                     eventDragMinDistance: 10,
                     itemSelector: '.ticketBox',
-                    eventData: function (eventEl) {
+                    eventData: function(eventEl) {
                         return {
                             id: jQuery(eventEl).attr("data-val"),
                             title: jQuery(eventEl).find(".titleContainer strong").text(),
@@ -418,7 +423,7 @@ leantime.calendarController = (function () {
                     }
                 });
 
-                calendar.scrollToTime(Date.now());
+                calendar.scrollToTime( Date.now() );
             }
 
         });
@@ -428,20 +433,20 @@ leantime.calendarController = (function () {
 
         jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
 
-        jQuery('.minCalendar .fc-prev-button').click(function () {
+        jQuery('.minCalendar .fc-prev-button').click(function() {
             calendar.prev();
             calendar.getCurrentData()
             jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
         });
-        jQuery('.minCalendar .fc-next-button').click(function () {
+        jQuery('.minCalendar .fc-next-button').click(function() {
             calendar.next();
             jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
         });
-        jQuery('.minCalendar .fc-today-button').click(function () {
+        jQuery('.minCalendar .fc-today-button').click(function() {
             calendar.today();
             jQuery(".minCalendar .calendarTitle h2").text(calendar.getCurrentData().viewTitle);
         });
-        jQuery(".minCalendar .calendarViewSelect").on("change", function (e) {
+        jQuery(".minCalendar .calendarViewSelect").on("change", function(e){
 
             calendar.changeView(jQuery(".minCalendar .calendarViewSelect option:selected").val());
 

@@ -117,3 +117,4 @@ class Ideation extends Controller
         return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
     }
 }
+

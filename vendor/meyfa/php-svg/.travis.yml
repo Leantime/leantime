@@ -1,0 +1,17 @@
+language: php
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+  - 7.2
+matrix:
+  include:
+    - php: 5.3
+      dist: precise
+    - php: 5.4
+      dist: trusty
+    - php: 5.5
+      dist: trusty
+install:
+  - composer install --no-interaction
+script: vendor/bin/phpunit --configuration .phpunit.xml

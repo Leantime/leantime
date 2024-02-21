@@ -22,8 +22,8 @@ class Api
     private ?array $error = null;
 
     /**
-     * @param ApiRepository  $apiRepository
-     * @param UserRepository $userRepo
+     * __construct
+     *
      */
     public function __construct(ApiRepository $apiRepository, UserRepository $userRepo)
     {
@@ -32,19 +32,17 @@ class Api
     }
 
     /**
-     * @param string $apiKey
-     *
+     * @param $apiKey
      * @return bool|array
      */
-    public function getAPIKeyUser(string $apiKey): bool|array
+    public function getAPIKeyUser($apiKey): bool|array
     {
 
-        // Split apiKey into parts
+        //Split apiKey into parts
         $apiKeyParts = explode("_", $apiKey);
 
         if (!is_array($apiKeyParts) || count($apiKeyParts) != 3) {
             error_log("Not a valid API Key format");
-
             return false;
         }
 
@@ -54,7 +52,6 @@ class Api
 
         if ($namespace != "lt") {
             error_log("Unknown namespace for API request");
-
             return false;
         }
 
@@ -75,17 +72,15 @@ class Api
      * TODO: Should accept userModel
      *
      * @access public
-
      * @param array $values basic user values
-
      * @return bool|array returns new user id on success, false on failure
-
      * @throws Exception
      */
     public function createAPIKey(array $values): bool|array
     {
-        $user = $this->randomStr(32);
-        $password = $this->randomStr(32);
+
+        $user = $this->random_str(32);
+        $password = $this->random_str(32);
 
         $values["user"] = $user;
         $values["lastname"] = '';
@@ -96,14 +91,18 @@ class Api
         $values["phone"] = '';
         $values["id"] = $this->userRepo->addUser($values);
 
-        return $values["id"] ? $values : false;
+        if ($values["id"]) {
+            return $values;
+        } else {
+            return false;
+        }
     }
 
     /**
      * getAPIKeys - gets api keys (users) from user table
      *
-     * @access public
      *
+     * @access public
      * @return array|false
      */
     public function getAPIKeys(): false|array
@@ -129,36 +128,47 @@ class Api
      * For PHP 5.x, depends on https://github.com/paragonie/random_compat
      *
      * @param int    $length   How many characters do we want?
-     * @param string $keyspace A string of all possible characters to select from
+     * @param string $keyspace A string of all possible characters
+     *                          to select from
      * @return string
-     *
      * @throws Exception
      */
-    public function randomStr(
+    public function random_str(
         int $length = 64,
         string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     ): string {
         if ($length < 1) {
             throw new RangeException("Length must be a positive integer");
         }
-
         $pieces = [];
         $max = mb_strlen($keyspace, '8bit') - 1;
         for ($i = 0; $i < $length; ++$i) {
             $pieces [] = $keyspace[random_int(0, $max)];
         }
-
         return implode('', $pieces);
+    }
+
+
+    /**
+     * @param $code
+     * @param $message
+     * @param $data
+     * @return void
+     */
+    public function setError($code, $message, $data): void
+    {
+        $this->error = array(
+            "code" => $code,
+            "message" => $message,
+            "data" => $data,
+        );
     }
 
     /**
      * @param int        $id
      * @param array|null $result
-     *
      * @return void
-     *
      * @todo Remove this.
-     *
      * @see ../Controllers/Tickets.php
      */
     public function jsonResponse(int $id, ?array $result): void
@@ -182,9 +192,8 @@ class Api
      * Check the manifest for the asset and serve if found.
      *
      * @param string $filepath
-     *
      * @return string|false
-     */
+     **/
     public function getCaseCorrectPathFromManifest(string $filepath): string|false
     {
         $manifest = mix()->getManifest();

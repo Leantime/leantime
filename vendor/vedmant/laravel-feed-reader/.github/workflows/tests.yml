@@ -1,0 +1,46 @@
+name: Tests
+on: [push]
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [ 7.4, 8.0, 8.1 ]
+        laravel: [ 6.*, 8.*, 9.* ]
+        exclude:
+          - php: 8.0
+            laravel: 6.*
+          - php: 8.1
+            laravel: 6.*
+          - php: 7.4
+            laravel: 9.*
+        include:
+          - aravel: 6.*
+            testbench: 4.*
+            phpunit: 8.*
+          - laravel: 8.*
+            testbench: 6.*
+            phpunit: 9.*
+          - laravel: 9.*
+            testbench: 7.*
+            phpunit: 9.*
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+      - name: Install dependencies
+        run: |
+          composer require "illuminate/support:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "phpunit/phpunit:${{ matrix.phpunit }}" --no-interaction --no-update
+          composer update --prefer-stable --prefer-dist --no-interaction --no-suggest
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-${{ matrix.dependency-version }}-laravel-${{ matrix.laravel }}-php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}
+      - name: Execute tests
+        run: vendor/bin/phpunit

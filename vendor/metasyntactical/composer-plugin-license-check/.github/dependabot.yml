@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "updates": [
+    {
+      "allow": [
+        {
+          "dependency-type": "all"
+        }
+      ],
+      "directory": "/",
+      "package-ecosystem": "composer",
+      "schedule": {
+        "interval": "daily"
+      },
+      "versioning-strategy": "increase"
+    },
+    {
+      "directory": "/",
+      "package-ecosystem": "github-actions",
+      "schedule": {
+        "interval": "daily"
+      }
+    }
+  ]
+}

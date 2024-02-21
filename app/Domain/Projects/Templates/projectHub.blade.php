@@ -47,7 +47,7 @@
 
         <div id="myProjectsHub"
              hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
-             hx-trigger="HTMX.updateProjectList from:body"
+             hx-trigger="click from:.favoriteClick"
              hx-target="#myProjectsHub"
              hx-swap="outerHTML transition:true">
 
@@ -110,9 +110,7 @@
                             @endif
                         @endforeach
                         @if($hasFavorites === false)
-                            <div style="color:var(--main-action-color)">
-                                You don't have any favorites. 😿
-                            </div>
+                            You don't have any favorites. 😿
                         @endif
                     </div>
                 </x-slot>

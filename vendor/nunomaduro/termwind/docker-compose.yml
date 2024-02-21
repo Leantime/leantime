@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  app:
+    image: termwind-docker
+    container_name: termwind-docker
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/usr/src/app

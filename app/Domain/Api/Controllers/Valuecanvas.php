@@ -4,12 +4,13 @@
  * - sqcanvas class - Controller API
  */
 
-namespace Leantime\Domain\Api\Controllers;
+namespace Leantime\Domain\Api\Controllers {
 
-/**
- *
- */
-class Valuecanvas extends Canvas
-{
-    protected const CANVAS_NAME = 'value';
+    /**
+     *
+     */
+    class Valuecanvas extends Canvas
+    {
+        protected const CANVAS_NAME = 'value';
+    }
 }

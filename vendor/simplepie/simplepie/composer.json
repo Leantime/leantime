@@ -1,0 +1,65 @@
+{
+    "name": "simplepie/simplepie",
+    "description": "A simple Atom/RSS parsing library for PHP",
+    "type": "library",
+    "keywords": ["rss", "atom", "feeds"],
+    "homepage": "http://simplepie.org/",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Ryan Parman",
+            "homepage": "http://ryanparman.com/",
+            "role": "Creator, alumnus developer"
+        },
+        {
+            "name": "Sam Sneddon",
+            "homepage": "https://gsnedders.com/",
+            "role": "Alumnus developer"
+        },
+        {
+            "name": "Ryan McCue",
+            "email": "me@ryanmccue.info",
+            "homepage": "http://ryanmccue.info/",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "ext-pcre": "*",
+        "ext-xml": "*",
+        "ext-xmlreader": "*"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.19 || ^3.8",
+        "psr/simple-cache": "^1 || ^2 || ^3",
+        "yoast/phpunit-polyfills": "^1.0.1"
+    },
+    "suggest": {
+        "ext-curl": "",
+        "ext-iconv": "",
+        "ext-intl": "",
+        "ext-mbstring": "",
+        "mf2/mf2": "Microformat module that allows for parsing HTML for microformats"
+    },
+    "autoload": {
+        "psr-4": {
+            "SimplePie\\": "src"
+        },
+        "psr-0": {
+            "SimplePie": "library"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimplePie\\Tests\\Fixtures\\": "tests/Fixtures",
+            "SimplePie\\Tests\\Unit\\": "tests/Unit"
+        }
+    },
+    "config": {
+        "bin-dir": "bin",
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+CURRENT_PATH="$(pwd)"
+PHP_IMAGE="juitde/php:${PHP_VERSION:-8.0}"
+
+ESCAPED_PROJECT_ROOT="${PROJECT_ROOT//\//\\/}"
+ESCAPED_DOCKER_WEBROOT="${DOCKER_WEBROOT//\//\\/}"
+
+DOCKER_CURRENT_PATH="${CURRENT_PATH/${ESCAPED_PROJECT_ROOT}/${ESCAPED_DOCKER_WEBROOT}}"
+DOCKER_CURRENT_PATH="${DOCKER_CURRENT_PATH//\\/}"
+
+echo "running_in_docker:"
+
+docker \
+    run \
+    --rm \
+    -it \
+    -v "${CURRENT_PATH}:${DOCKER_CURRENT_PATH}" \
+    -w "${DOCKER_CURRENT_PATH}" \
+    "${PHP_IMAGE}" \
+    "${DOCKER_WEBROOT}/.tools/.bin/phpcbf" \
+        "${@}"

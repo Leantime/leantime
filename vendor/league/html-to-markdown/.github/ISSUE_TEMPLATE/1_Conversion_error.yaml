@@ -1,0 +1,25 @@
+name: "📃 Bug Report (Incorrect Markdown)"
+description: I'm not getting the Markdown I expect
+body:
+    - type: input
+      id: affected-versions
+      attributes:
+          label: Version(s) affected
+          placeholder: x.y.z
+      validations:
+          required: true
+    - type: textarea
+      id: description
+      attributes:
+          label: Description
+          description: A clear and concise description of the problem.
+      validations:
+          required: true
+    - type: textarea
+      id: how-to-reproduce
+      attributes:
+          label: How to reproduce
+          description: |
+              Provide the HTML input and any other information that would help us reproduce the problem.
+      validations:
+          required: true

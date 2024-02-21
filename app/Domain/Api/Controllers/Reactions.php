@@ -1,102 +1,85 @@
 <?php
 
-namespace Leantime\Domain\Api\Controllers;
+namespace Leantime\Domain\Api\Controllers {
 
-use Leantime\Core\Controller;
-use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
-use Symfony\Component\HttpFoundation\Response;
-
-/**
- *
- */
-class Reactions extends Controller
-{
-    private ReactionService $reactionService;
+    use Leantime\Core\Controller;
+    use Leantime\Domain\Reactions\Services\Reactions as ReactionService;
 
     /**
-     * init - initialize private variables
      *
-     * @access public
-     *
-     * @param ReactionService $reactionService
-     *
-     * @return void
      */
-    public function init(ReactionService $reactionService): void
+    class Reactions extends Controller
     {
-        $this->reactionService = $reactionService;
-    }
+        private ReactionService $reactionsService;
 
-
-    /**
-     * get - handle get requests
-     *
-     * @access public
-     *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
-     */
-    public function get(array $params): Response
-    {
-        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
-    }
-
-    /**
-     * post - handle post requests
-     *
-     * @access public
-     *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
-     */
-    public function post(array $params): Response
-    {
-        if ($params["action"] == "add") {
-            if (! $this->reactionService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
-                return $this->tpl->displayJson(['status' => 'failure'], 500);
-            }
-
-            return $this->tpl->displayJson(['status' => 'ok']);
+        /**
+         * init - initialize private variables
+         *
+         * @access public
+         * @params parameters or body of the request
+         */
+        public function init(ReactionService $reactionsService)
+        {
+            $this->reactionsService = $reactionsService;
         }
 
-        if ($params["action"] == "remove") {
-            if (! $this->reactionService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
-                return $this->tpl->displayJson(['status' => 'failure'], 500);
-            }
 
-            return $this->tpl->displayJson(['status' => 'ok']);
+        /**
+         * get - handle get requests
+         *
+         * @access public
+         * @params parameters or body of the request
+         */
+        public function get($params)
+        {
         }
 
-        return $this->tpl->displayJson(['error' => 'Bad Request'], 400);
-    }
+        /**
+         * post - handle post requests
+         *
+         * @access public
+         * @params parameters or body of the request
+         */
+        public function post($params)
+        {
+            if ($params["action"] == "add") {
 
-    /**
-     * put - handle put requests
-     *
-     * @access public
-     *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
-     */
-    public function patch(array $params): Response
-    {
-        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
-    }
+                if (! $this->reactionsService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
+                }
 
-    /**
-     * delete - handle delete requests
-     *
-     * @access public
-     *
-     * @param array $params parameters or body of the request
-     *
-     * @return Response
-     */
-    public function delete(array $params): Response
-    {
-        return $this->tpl->displayJson(['status' => 'Not implemented'], 501);
+                return $this->tpl->displayJson(['status' => 'ok']);
+            }
+
+            if ($params["action"] == "remove") {
+                if (! $this->reactionsService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
+                    return $this->tpl->displayJson(['status' => 'failure'], 500);
+                }
+
+                return $this->tpl->displayJson(['status' => 'ok']);
+            }
+
+            return $this->tpl->displayJson(['error' => 'Bad Request'], 400);
+        }
+
+        /**
+         * put - handle put requests
+         *
+         * @access public
+         * @params parameters or body of the request
+         */
+        public function patch($params)
+        {
+        }
+
+        /**
+         * delete - handle delete requests
+         *
+         * @access public
+         * @params parameters or body of the request
+         */
+        public function delete($params)
+        {
+        }
     }
 }

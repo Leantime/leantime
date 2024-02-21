@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<psalm
+    errorLevel="1"
+    resolveFromConfigFile="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config .tools/psalm/vendor/vimeo/psalm/config.xsd"
+>
+    <projectFiles>
+        <directory name="src"/>
+        <directory name="tests"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+    </plugins>
+    <issueHandlers>
+        <PossiblyInvalidArgument>
+            <errorLevel type="suppress">
+                <referencedFunction name="Symfony\Component\Process\Process::__construct"/>
+                <file name="tests/LicenseCheckPluginTest.php"/>
+            </errorLevel>
+        </PossiblyInvalidArgument>
+        <TooManyArguments>
+            <errorLevel type="suppress">
+                <referencedFunction name="Composer\Util\Silencer::call"/>
+            </errorLevel>
+        </TooManyArguments>
+    </issueHandlers>
+</psalm>

@@ -1,0 +1,36 @@
+{
+    "name": "myclabs/php-enum",
+    "type": "library",
+    "description": "PHP Enum implementation",
+    "keywords": ["enum"],
+    "homepage": "http://github.com/myclabs/php-enum",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "PHP Enum contributors",
+            "homepage": "https://github.com/myclabs/php-enum/graphs/contributors"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "MyCLabs\\Enum\\": "src/"
+        },
+        "classmap": [
+            "stubs/Stringable.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MyCLabs\\Tests\\Enum\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.3 || ^8.0",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "squizlabs/php_codesniffer": "1.*",
+        "vimeo/psalm": "^4.6.2"
+    }
+}

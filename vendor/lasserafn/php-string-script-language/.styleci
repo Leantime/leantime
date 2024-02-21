@@ -1,0 +1,21 @@
+preset: recommended
+
+risky: false
+
+enabled:
+  - align_equals
+  - linebreak_after_opening_tag
+  - mb_str_functions
+  - phpdoc_align
+
+disabled:
+  - unalign_equals
+  - no_spaces_after_function_name
+  - no_spaces_inside_offset
+  - no_spaces_inside_parenthesis
+  - no_spaces_outside_offset
+  - no_tab_indentation
+
+finder:
+  exclude:
+    - "vendor"

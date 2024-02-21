@@ -1,0 +1,68 @@
+{
+    "name": "overtrue/pinyin",
+    "description": "Chinese to pinyin translator.",
+    "keywords": [
+        "chinese",
+        "pinyin",
+        "cn2pinyin"
+    ],
+    "homepage": "https://github.com/overtrue/pinyin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "overtrue",
+            "homepage": "http://github.com/overtrue",
+            "email": "anzhengchao@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Overtrue\\Pinyin\\": "src/"
+        },
+        "files": ["src/const.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Overtrue\\Pinyin\\Test\\": "tests/"
+        }
+    },
+    "require": {
+        "php":">=7.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~8.0",
+        "brainmaestro/composer-git-hooks": "^2.7",
+        "friendsofphp/php-cs-fixer": "^2.16"
+    },
+    "extra": {
+        "hooks": {
+            "pre-commit": [
+                "composer test",
+                "composer fix-style"
+            ],
+            "pre-push": [
+                "composer test",
+                "composer check-style"
+            ]
+        }
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "cghooks update"
+        ],
+        "post-merge": "composer install",
+        "post-install-cmd": [
+            "cghooks add --ignore-lock",
+            "cghooks update"
+        ],
+        "cghooks": "vendor/bin/cghooks",
+        "check-style": "php-cs-fixer fix --using-cache=no --diff --config=.php_cs --dry-run --ansi",
+        "fix-style": "php-cs-fixer fix --using-cache=no --config=.php_cs --ansi",
+        "test": "vendor/bin/phpunit --colors=always"
+    },
+    "scripts-descriptions": {
+        "test": "Run all tests.",
+        "check-style": "Run style checks (only dry run - no fixing!).",
+        "fix-style": "Run style checks and fix violations."
+    }
+}

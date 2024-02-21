@@ -1,0 +1,71 @@
+# Alternate workflow example.
+# This one is identical to the one in release-on-milestone.yml, with one change:
+# the Release step uses the ORGANIZATION_ADMIN_TOKEN instead, to allow it to
+# trigger a release workflow event. This is useful if you have other actions
+# that intercept that event.
+
+name: "Automatic Releases"
+
+on:
+  milestone:
+    types:
+      - "closed"
+
+jobs:
+  release:
+    name: "GIT tag, release & create merge-up PR"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "Release"
+        uses: "laminas/automatic-releases@v1"
+        with:
+          command-name: "laminas:automatic-releases:release"
+        env:
+          "GITHUB_TOKEN": ${{ secrets.ORGANIZATION_ADMIN_TOKEN }}
+          "SIGNING_SECRET_KEY": ${{ secrets.SIGNING_SECRET_KEY }}
+          "GIT_AUTHOR_NAME": ${{ secrets.GIT_AUTHOR_NAME }}
+          "GIT_AUTHOR_EMAIL": ${{ secrets.GIT_AUTHOR_EMAIL }}
+
+      - name: "Create Merge-Up Pull Request"
+        uses: "laminas/automatic-releases@v1"
+        with:
+          command-name: "laminas:automatic-releases:create-merge-up-pull-request"
+        env:
+          "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
+          "SIGNING_SECRET_KEY": ${{ secrets.SIGNING_SECRET_KEY }}
+          "GIT_AUTHOR_NAME": ${{ secrets.GIT_AUTHOR_NAME }}
+          "GIT_AUTHOR_EMAIL": ${{ secrets.GIT_AUTHOR_EMAIL }}
+
+      - name: "Create and/or Switch to new Release Branch"
+        uses: "laminas/automatic-releases@v1"
+        with:
+          command-name: "laminas:automatic-releases:switch-default-branch-to-next-minor"
+        env:
+          "GITHUB_TOKEN": ${{ secrets.ORGANIZATION_ADMIN_TOKEN }}
+          "SIGNING_SECRET_KEY": ${{ secrets.SIGNING_SECRET_KEY }}
+          "GIT_AUTHOR_NAME": ${{ secrets.GIT_AUTHOR_NAME }}
+          "GIT_AUTHOR_EMAIL": ${{ secrets.GIT_AUTHOR_EMAIL }}
+
+      - name: "Bump Changelog Version On Originating Release Branch"
+        uses: "laminas/automatic-releases@v1"
+        with:
+          command-name: "laminas:automatic-releases:bump-changelog"
+        env:
+          "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
+          "SIGNING_SECRET_KEY": ${{ secrets.SIGNING_SECRET_KEY }}
+          "GIT_AUTHOR_NAME": ${{ secrets.GIT_AUTHOR_NAME }}
+          "GIT_AUTHOR_EMAIL": ${{ secrets.GIT_AUTHOR_EMAIL }}
+
+      - name: "Create new milestones"
+        uses: "laminas/automatic-releases@v1"
+        with:
+          command-name: "laminas:automatic-releases:create-milestones"
+        env:
+          "GITHUB_TOKEN": ${{ secrets.GITHUB_TOKEN }}
+          "SIGNING_SECRET_KEY": ${{ secrets.SIGNING_SECRET_KEY }}
+          "GIT_AUTHOR_NAME": ${{ secrets.GIT_AUTHOR_NAME }}
+          "GIT_AUTHOR_EMAIL": ${{ secrets.GIT_AUTHOR_EMAIL }}

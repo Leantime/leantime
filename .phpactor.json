@@ -1,5 +1,0 @@
-{
-    "$schema": "/Users/josephroberts/.local/share/nvim/mason/packages/phpactor/phpactor.schema.json",
-    "php_code_sniffer.enabled": false,
-    "language_server_phpstan.enabled": true
-}

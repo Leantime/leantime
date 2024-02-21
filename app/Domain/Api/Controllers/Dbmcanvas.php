@@ -13,3 +13,4 @@ class Dbmcanvas extends Canvas
 {
     protected const CANVAS_NAME = 'dbm';
 }
+

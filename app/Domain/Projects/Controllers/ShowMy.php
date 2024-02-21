@@ -74,13 +74,29 @@ namespace Leantime\Domain\Projects\Controllers {
 
             if (is_array($allprojects)) {
                 foreach ($allprojects as $project) {
-
                     if (!array_key_exists($project["clientId"], $clients)) {
                         $clients[$project["clientId"]] = array("name" => $project['clientName'], "id" => $project["clientId"]);
                     }
 
                     if ($clientId == "" || $project["clientId"] == $clientId) {
                         $projectResults[$i] = $project;
+                        $projectResults[$i]['progress'] = $this->projectService->getProjectProgress($project['id']);
+
+                        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+
+                        $projectResults[$i]['milestones'] = $allProjectMilestones;
+                        $projectComment = $this->commentService->getComments("project", $project['id']);
+
+                        if (is_array($projectComment) && count($projectComment) > 0) {
+                            $projectResults[$i]['lastUpdate'] = $projectComment[0];
+                        } else {
+                            $projectResults[$i]['lastUpdate'] = false;
+                        }
+
+                        //$fullReport = $this->reportService->getRealtimeReport($project['id'], "");
+
+                        //$projectResults[$i]['report'] = $fullReport;
+
                         $i++;
                     }
                 }

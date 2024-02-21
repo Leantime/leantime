@@ -1,0 +1,33 @@
+{
+    "name": "meyfa/php-svg",
+    "homepage": "https://github.com/meyfa/php-svg",
+    "type": "library",
+    "description": "Read, edit, write, and render SVG files with PHP",
+    "keywords": ["svg"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fabian Meyer",
+            "homepage": "http://meyfa.net"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "ext-gd": "*",
+        "ext-simplexml": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "meyfa/phpunit-assert-gd": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "SVG\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SVG\\": "tests/"
+        }
+    }
+}

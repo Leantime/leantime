@@ -6,33 +6,21 @@ use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Calendar\Services\Calendar;
 use Leantime\Domain\Auth\Services\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
-/**
- *
- */
 class EditExternal extends Controller
 {
     private Calendar $calendarService;
 
-    /**
-     * @param Calendar $calendarService
-     *
-     * @return void
-     */
-    public function init(Calendar $calendarService): void
+    public function init(Calendar $calendarService)
     {
         $this->calendarService = $calendarService;
     }
 
-    /**
-     * @return Response
-     *
-     * @throws \Exception
-     */
-    public function run(): Response
+    public function run()
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+
+        $msgKey = '';
 
         if (isset($_GET['id']) === true) {
             $id = ($_GET['id']);
@@ -57,6 +45,7 @@ class EditExternal extends Controller
             $this->tpl->assign('values', $values);
 
             return $this->tpl->displayPartial('calendar.editExternalCalendar');
+
         } else {
             return $this->tpl->display('errors.error403');
         }

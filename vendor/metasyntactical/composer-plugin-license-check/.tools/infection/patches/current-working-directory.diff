@@ -1,0 +1,11 @@
+--- bin/roave-infection-static-analysis-plugin      2021-11-30 02:18:25.000000000 +0100
++++ bin/roave-infection-static-analysis-plugin      2021-12-15 10:49:36.000000000 +0100
+@@ -30,7 +30,7 @@
+ (static function (): void {
+     $projectPath = (static function () : string {
+         $projectDirectoryCandidates = [
+-            'current-working-directory'        => getcwd(),
++            'current-working-directory'        => getcwd() . '/.tools/infection',
+             'installed-as-composer-dependency' => __DIR__ . '/../../..',
+             'installed-as-project'             => __DIR__ . '/..',
+         ];

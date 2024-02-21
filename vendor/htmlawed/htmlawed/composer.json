@@ -1,0 +1,23 @@
+{
+    "name":"htmlawed/htmlawed",
+    "description":"htmLawed - Process text with HTML markup to make it more compliant with HTML standards and administrative policies",
+    "keywords":[ "html", "strip", "HTMLtidy", "tags", "sanitize" ],
+    "homepage":"http://www.bioinformatics.org/phplabware/internal_utilities/htmLawed/",
+    "license":[
+        "GPL-2.0+",
+        "LGPL-3.0"
+    ],
+    "authors":[
+      {
+        "name": "Santosh Patnaik",
+        "homepage": "http://www.bioinformatics.org/people/index.php?user_hash=558b661f92d0ff7b",
+        "role": "Developer"
+      }
+    ],
+    "require":{
+        "php":">4.4.0"
+    },
+     "autoload": {
+        "files": ["htmLawed.php"]
+    }
+}

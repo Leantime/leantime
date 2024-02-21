@@ -1,2 +1,0 @@
-RewriteEngine On
-RewriteRule ^(.*)$ public/$1 [L]

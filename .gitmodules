@@ -1,3 +1,0 @@
-[submodule "app/Plugins"]
-	path = app/Plugins
-	url = git@github.com:Leantime/plugins.git

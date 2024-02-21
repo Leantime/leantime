@@ -1,0 +1,21 @@
+{
+    "require": {
+        "roave/infection-static-analysis-plugin": "^1.23.0",
+        "vimeo/psalm": "^4.15",
+        "psalm/plugin-phpunit": "^0.16.1",
+        "cweagans/composer-patches": "^1.7"
+    },
+    "extra": {
+        "patches": {
+            "roave/infection-static-analysis-plugin": {
+                "Overwrite current-working-directory for autoloading tool": "patches/current-working-directory.diff"
+            }
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "infection/extension-installer": true
+        }
+    }
+}

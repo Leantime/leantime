@@ -1,0 +1,42 @@
+{
+    "name": "symfony/yaml",
+    "type": "library",
+    "description": "Loads and dumps YAML files",
+    "keywords": [],
+    "homepage": "https://symfony.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Fabien Potencier",
+            "email": "fabien@symfony.com"
+        },
+        {
+            "name": "Symfony Community",
+            "homepage": "https://symfony.com/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.5",
+        "symfony/deprecation-contracts": "^2.1|^3",
+        "symfony/polyfill-ctype": "^1.8"
+    },
+    "require-dev": {
+        "symfony/console": "^5.3|^6.0"
+    },
+    "conflict": {
+        "symfony/console": "<5.3"
+    },
+    "suggest": {
+        "symfony/console": "For validating YAML files using the lint command"
+    },
+    "autoload": {
+        "psr-4": { "Symfony\\Component\\Yaml\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "bin": [
+        "Resources/bin/yaml-lint"
+    ],
+    "minimum-stability": "dev"
+}

@@ -98,8 +98,6 @@ namespace Leantime\Domain\Menu\Repositories {
             ],
             'personal' => [
                 5 => ['type' => 'item', 'module' => 'dashboard', 'title' => 'menu.sidemenu_home', 'icon' => 'fa fa-house', 'tooltip' => 'menu.overview_tooltip', 'href' => '/dashboard/home', 'active' => ['home']],
-                7 => ['type' => 'item', 'module' => 'projects', 'title' => 'menu.sidemenu_my_project_hub', 'icon' => 'fa fa-solid fa-house-flag', 'tooltip' => 'menu.projecthub_tooltip', 'href' => '/projects/showMy', 'active' => ['showMy'], 'role' => 'editor'],
-
                 10 => ['type' => 'item', 'module' => 'notes', 'title' => 'menu.notes_premium', 'icon' => 'fa fa-solid fa-notes-sticky', 'tooltip' => 'Notes', 'href' => '/plugins/marketplace#/plugins/details/leantime_notes', 'role' => 'editor'],
 
                 15 => ['type' => 'item', 'module' => 'timesheets', 'title' => 'menu.sidemenu_my_timesheets', 'icon' => 'fa-clock', 'tooltip' => 'menu.my_timesheets_tooltip', 'href' => '/timesheets/showMy', 'active' => ['showMy']],
@@ -413,7 +411,7 @@ namespace Leantime\Domain\Menu\Repositories {
         {
             $sections = [
                 "dashboard.home" => "personal",
-                "projects.showMy" => "personal",
+                "projects.showMy" => "projecthub",
                 "timesheets.showMy" => "personal",
                 "calendar.showMyCalendar" => "personal",
                 "calendar.showMyList" => "personal",

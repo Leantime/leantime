@@ -1,6 +1,6 @@
 <div id="myProjectsHub"
      hx-get="{{BASE_URL}}/projects/projectHubProjects/get"
-     hx-trigger="HTMX.updateProjectList from:body"
+     hx-trigger="click from:.favoriteClick"
      hx-target="#myProjectsHub"
      hx-swap="outerHTML transition:true">
 
@@ -17,16 +17,14 @@
             </a>
 
             <ul class="dropdown-menu">
-                <li><a href="{{ BASE_URL }}/projects/showMy">{{ __("headline.all_clients") }}</a></li>
+                <li><a href="{{ $currentUrlPath }}">{{ __("headline.all_clients") }}</a></li>
                 @foreach ($clients as $key => $value)
-                    @if(! empty($key))
-                        <li>
-                            <a href="javascript:void(0);"
-                               hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
-                               hx-target="#myProjectsHub"
-                               hx-swap="outerHTML transition:true">{{ $value['name'] }}</a>
-                        </li>
-                    @endif
+                    <li>
+                        <a href="javascript:void(0);"
+                           hx-get="{{BASE_URL}}/projects/projectHubProjects/get?client={{ $key }}"
+                           hx-target="#myProjectsHub"
+                           hx-swap="outerHTML transition:true">{{ $value['name'] }}</a>
+                    </li>
                 @endforeach
             </ul>
         </div>
@@ -35,7 +33,7 @@
     @if (count($allProjects) == 0)
         <br /><br />
         <div class='center'>
-            <div style='width:70%; color:var(--main-action-color)' class='svgContainer'>
+            <div style='width:70%' class='svgContainer'>
                 {{ __('notifications.not_assigned_to_any_project') }}
                 @if($login::userIsAtLeast($roles::$manager))
                     <br />
@@ -65,9 +63,7 @@
                     @endif
                 @endforeach
                 @if($hasFavorites === false)
-                    <div style="color:var(--main-action-color)">
-                        You don't have any favorites. 😿
-                    </div>
+                    You don't have any favorites. 😿
                 @endif
             </div>
         </x-slot>

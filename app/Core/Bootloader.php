@@ -10,7 +10,6 @@ use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Modulemanager\Services\Modulemanager as ModulemanagerService;
 use Leantime\Domain\Oidc\Services\Oidc as OidcService;

@@ -1,0 +1,82 @@
+{
+    "name": "league/csv",
+    "type": "library",
+    "description" : "CSV data manipulation made easy in PHP",
+    "keywords": ["csv", "import", "export", "read", "write", "filter", "convert", "transform"],
+    "license": "MIT",
+    "homepage" : "https://csv.thephpleague.com",
+    "authors": [
+        {
+            "name" : "Ignace Nyamagana Butera",
+            "email" : "nyamsprod@gmail.com",
+            "homepage" : "https://github.com/nyamsprod/",
+            "role" : "Developer"
+        }
+    ],
+    "support": {
+        "docs": "https://csv.thephpleague.com",
+        "issues": "https://github.com/thephpleague/csv/issues",
+        "rss": "https://github.com/thephpleague/csv/releases.atom",
+        "source": "https://github.com/thephpleague/csv"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/nyamsprod"
+        }
+    ],
+    "require": {
+        "php" : "^7.4 || ^8.0",
+        "ext-json" : "*",
+        "ext-mbstring" : "*"
+    },
+    "require-dev": {
+        "ext-curl" : "*",
+        "ext-dom": "*",
+        "friendsofphp/php-cs-fixer": "^v3.4.0",
+        "phpunit/phpunit" : "^9.5.11",
+        "phpstan/phpstan": "^1.3.0",
+        "phpstan/phpstan-strict-rules": "^1.1.0",
+        "phpstan/phpstan-phpunit": "^1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "League\\Csv\\": "src"
+        },
+        "files": ["src/functions_include.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LeagueTest\\Csv\\": "tests"
+        }
+    },
+    "scripts": {
+        "phpcs": "php-cs-fixer fix -vvv --diff --dry-run --allow-risky=yes --ansi",
+        "phpcs:fix": "php-cs-fixer fix -vvv --allow-risky=yes --ansi",
+        "phpstan": "phpstan analyse -l max -c phpstan.neon src --ansi --memory-limit=192M",
+        "phpunit": "phpunit --coverage-text",
+        "test": [
+            "@phpunit",
+            "@phpstan",
+            "@phpcs"
+        ]
+    },
+    "scripts-descriptions": {
+        "phpcs": "Runs coding style test suite",
+        "phpstan": "Runs complete codebase static analysis",
+        "phpunit": "Runs unit and functional testing",
+        "test": "Runs full test suite"
+    },
+    "suggest": {
+        "ext-iconv" : "Needed to ease transcoding CSV using iconv stream filters",
+        "ext-dom" : "Required to use the XMLConverter and or the HTMLConverter classes"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "9.x-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

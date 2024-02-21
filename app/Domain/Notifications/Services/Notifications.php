@@ -64,6 +64,10 @@ namespace Leantime\Domain\Notifications\Services {
          * @param array $notifications
          * @return bool|null
          */
+        /**
+         * @param array $notifications
+         * @return bool|null
+         */
         public function addNotifications(array $notifications): ?bool
         {
 

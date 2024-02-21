@@ -1,0 +1,6 @@
+script/ export-ignore
+/htmLawedTest.php export-ignore
+
+# preserve borked eol lf/crlf usage from original packaging
+htmLawed_README.htm -text
+htmLawed_README.txt -text

@@ -13,3 +13,4 @@ class Eacanvas extends Canvas
 {
     protected const CANVAS_NAME = 'ea';
 }
+

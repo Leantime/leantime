@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/infection/infection/0.25.4/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "logs": {
+        "text": "php://stderr"
+    },
+    "mutators": {
+        "@default": true
+    },
+    "bootstrap": "vendor/autoload.php"
+}

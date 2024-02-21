@@ -5,76 +5,66 @@
  *
  */
 
-namespace Leantime\Domain\Calendar\Controllers;
+namespace Leantime\Domain\Calendar\Controllers {
 
-use Leantime\Core\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
-use Leantime\Domain\Auth\Services\Auth;
-use Leantime\Core\Frontcontroller;
-use Symfony\Component\HttpFoundation\Response;
-
-/**
- *
- */
-class DelEvent extends Controller
-{
-    private CalendarService $calendarService;
+    use Leantime\Core\Controller;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Calendar\Services\Calendar as CalendarService;
+    use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Core\Frontcontroller;
 
     /**
-     * init - initialize private variables
      *
-     * @param CalendarService $calendarService
-     *
-     * @return void
      */
-    public function init(CalendarService $calendarService): void
+    class DelEvent extends Controller
     {
-        $this->calendarService = $calendarService;
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
-    }
+        private CalendarService $calendarService;
 
-    /**
-     * retrieves delete calendar event page data
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
-     */
-    public function get(array $params): Response
-    {
-        return $this->tpl->displayPartial('calendar.delEvent');
-    }
-
-    /**
-     * sets, creates, and updates edit calendar event page data
-     *
-     * @access public
-     *
-     * @param array $params
-     *
-     * @return Response
-     */
-    public function post(array $params): Response
-    {
-
-        if (isset($_GET['id']) === false) {
-            return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
+        /**
+         * init - initialize private variables
+         */
+        public function init(CalendarService $calendarService)
+        {
+            $this->calendarService = $calendarService;
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
         }
 
-        $id = (int) $_GET['id'];
-        $result = $this->calendarService->delEvent($id);
-
-        if (is_numeric($result) === true) {
-            $this->tpl->setNotification('notification.event_removed_successfully', 'success');
-
-            return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
-        } else {
-            $this->tpl->setNotification('notification.could_not_delete_event', 'error');
-
+        /**
+         * retrieves delete calendar event page data
+         *
+         * @access public
+         *
+         */
+        public function get()
+        {
             return $this->tpl->displayPartial('calendar.delEvent');
         }
+
+        /**
+         * sets, creates, and updates edit calendar event page data
+         *
+         * @access public
+         *
+         */
+        public function post($params)
+        {
+
+            if (isset($_GET['id']) === false) {
+                return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
+            }
+
+            $id = (int)$_GET['id'];
+
+            $result = $this->calendarService->delEvent($id);
+
+            if (is_numeric($result) === true) {
+                $this->tpl->setNotification('notification.event_removed_successfully', 'success');
+                return Frontcontroller::redirect(BASE_URL . "/calendar/showMyCalendar/");
+            } else {
+                $this->tpl->setNotification('notification.could_not_delete_event', 'error');
+                return $this->tpl->displayPartial('calendar.delEvent');
+            }
+        }
     }
+
 }

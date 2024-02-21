@@ -1,0 +1,24 @@
+language: php
+
+php:
+   - 7.4
+   - 8.0
+
+env:
+   - ILLUMINATE_VERSION=^6.0 PHPUNIT_VERSION=~8.0 TESTBENCH_VERSION=^4.0
+   - ILLUMINATE_VERSION=^8.0 PHPUNIT_VERSION=~9.0 TESTBENCH_VERSION=^6.0
+   - ILLUMINATE_VERSION=^9.0 PHPUNIT_VERSION=~9.0 TESTBENCH_VERSION=^7.0
+
+matrix:
+   fast_finish: true
+
+before_install:
+   - composer require "illuminate/support:${ILLUMINATE_VERSION}" --no-update --prefer-dist
+   - composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --no-update --prefer-dist
+   - composer require "orchestra/testbench:${TESTBENCH_VERSION}" --no-update --prefer-dist
+
+install: travis_retry composer install --no-interaction --prefer-dist
+
+script:
+   - vendor/bin/phpunit
+

@@ -6,7 +6,7 @@
 
 <div id="myProjectsWidget"
      hx-get="{{BASE_URL}}/widgets/myProjects/get"
-     hx-trigger="HTMX.updateProjectList from:body"
+     hx-trigger="click from:.favoriteClick"
      hx-target="#myProjectsWidget"
      hx-swap="outerHTML transition:true">
     @if (count($allProjects) == 0)

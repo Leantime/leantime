@@ -1,0 +1,56 @@
+{
+    "name": "league/html-to-markdown",
+    "type": "library",
+    "description": "An HTML-to-markdown conversion helper for PHP",
+    "keywords": ["markdown", "html"],
+    "homepage": "https://github.com/thephpleague/html-to-markdown",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Colin O'Dell",
+            "email": "colinodell@gmail.com",
+            "homepage": "https://www.colinodell.com",
+            "role": "Lead Developer"
+        },
+        {
+            "name": "Nick Cernis",
+            "email": "nick@cern.is",
+            "homepage": "http://modernnerd.net",
+            "role": "Original Author"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "League\\HTMLToMarkdown\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "League\\HTMLToMarkdown\\Test\\": "tests"
+        }
+    },
+    "require": {
+        "php": "^7.2.5 || ^8.0",
+        "ext-dom": "*",
+        "ext-xml": "*"
+    },
+    "require-dev": {
+        "mikehaertl/php-shellcommand": "^1.1.0",
+        "phpstan/phpstan": "^0.12.99",
+        "phpunit/phpunit": "^8.5 || ^9.2",
+        "scrutinizer/ocular": "^1.6",
+        "unleashedtech/php-coding-standard": "^2.7",
+        "vimeo/psalm": "^4.22"
+    },
+    "bin": ["bin/html-to-markdown"],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "5.2-dev"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

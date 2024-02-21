@@ -1,0 +1,27 @@
+# Select image from https://hub.docker.com/_/php/
+image: php:7.4-alpine3.10
+
+# Select what we should cache between builds
+cache:
+  paths:
+  - vendor/
+
+before_script:
+# Install additional php extensions
+- docker-php-source extract
+- apk add --no-cache build-base autoconf
+- pecl install xdebug-2.9.0
+- docker-php-ext-enable xdebug
+# Install and run composer
+- curl -sS https://getcomposer.org/installer | php
+- php composer.phar install --no-ansi --no-interaction --profile --no-progress --no-suggest --prefer-dist
+- alias phpunit="vendor/bin/phpunit"
+
+# Run our tests
+# If Xdebug was installed you can generate a coverage report and see code coverage metrics.
+test:
+  script:
+  - phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
+  only:
+  - branches
+  - merge_requests

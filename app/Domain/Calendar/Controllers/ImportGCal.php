@@ -1,62 +1,61 @@
 <?php
 
-namespace Leantime\Domain\Calendar\Controllers;
-
-use Leantime\Core\Controller;
-use Leantime\Domain\Auth\Models\Roles;
-use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
-use Leantime\Domain\Auth\Services\Auth;
-use Symfony\Component\HttpFoundation\Response;
-
-/**
- * importGCal Class - Add a new client
- */
-class ImportGCal extends Controller
-{
-    private CalendarRepository $calendarRepo;
+namespace Leantime\Domain\Calendar\Controllers {
 
     /**
-     * init - initialize private variables
+     * importGCal Class - Add a new client
      *
-     * @param CalendarRepository $calendarRepo
-     *
-     * @return void
      */
-    public function init(CalendarRepository $calendarRepo): void
-    {
-        $this->calendarRepo = $calendarRepo;
-    }
+
+    use Leantime\Core\Controller;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
+    use Leantime\Domain\Auth\Services\Auth;
 
     /**
-     * run - display template and edit data
      *
-     * @access public
-     *
-     * @return Response
      */
-    public function run(): Response
+    class ImportGCal extends Controller
     {
-        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
+        private CalendarRepository $calendarRepo;
 
-        $values = array(
-            'url' => '',
-            'name' => '',
-            'colorClass' => '',
-        );
-
-        if (isset($_POST['name']) === true) {
-            $values = array(
-                'url' => ($_POST['url']),
-                'name' => ($_POST['name']),
-                'colorClass' => ($_POST['colorClass']),
-            );
-
-            $this->calendarRepo->addGUrl($values);
-            $this->tpl->setNotification('notification.gcal_imported_successfully', 'success', 'externalcalendar_created');
+        /**
+         * init - initialize private variables
+         */
+        public function init(CalendarRepository $calendarRepo)
+        {
+            $this->calendarRepo = $calendarRepo;
         }
 
-        $this->tpl->assign('values', $values);
+        /**
+         * run - display template and edit data
+         *
+         * @access public
+         */
+        public function run()
+        {
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor]);
 
-        return $this->tpl->displayPartial('calendar.importGCal');
+            $values = array(
+                'url' => '',
+                'name' => '',
+                'colorClass' => '',
+            );
+
+            if (isset($_POST['name']) === true) {
+                $values = array(
+                    'url' => ($_POST['url']),
+                    'name' => ($_POST['name']),
+                    'colorClass' => ($_POST['colorClass']),
+                );
+
+                $this->calendarRepo->addGUrl($values);
+                $this->tpl->setNotification('notification.gcal_imported_successfully', 'success', 'externalcalendar_created');
+            }
+
+            $this->tpl->assign('values', $values);
+
+            return $this->tpl->displayPartial('calendar.importGCal');
+        }
     }
 }
