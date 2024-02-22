@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Eventhelpers;
+use ProjectIntroStep;
 
 /**
  *
@@ -12,9 +13,7 @@ class Helper
     use Eventhelpers;
 
     private $availableModals = [
-        "tickets.showAll" => "backlog",
-        "dashboard.show" => "projectDashboard",
-        "dashboard.home" => "dashboard",
+        "dashboard.show" => "dashboard",
         "leancanvas.showCanvas" => "fullLeanCanvas",
         "leancanvas.simpleCanvas" => "simpleLeanCanvas",
         "ideas.showBoards" => "ideaBoard",
@@ -31,19 +30,63 @@ class Helper
         "wiki.show" => "wiki",
     ];
 
+    /**
+     * Constructor for the class.
+     * Initializes the availableModals property by dispatching the "addHelperModal" event.
+     *
+     * @return void
+     */
     public function __construct()
     {
 
         $this->availableModals = self::dispatch_filter("addHelperModal", $this->availableModals);
     }
 
+    /**
+     * Returns an array of all available helper modals.
+     *
+     * @return array The array of available helper modals.
+     */
     public function getAllHelperModals(): array
     {
         return $this->availableModals;
     }
 
+    /**
+     * Retrieves the corresponding helper modal for a given route.
+     *
+     * @param string $route The route for which to retrieve the helper modal.
+     * @return string The helper modal associated with the given route. If not found, 'notfound' is returned.
+     */
     public function getHelperModalByRoute(string $route): string
     {
         return $this->availableModals[$route] ?? 'notfound';
     }
+
+    /**
+     * Retrieves the first login steps.
+     *
+     * This method returns an array of steps that a user needs to follow during the first login.
+     *
+     * Each step consists of a template and a button label.
+     *
+     * @return array The first login steps.
+     */
+    public function getFirstLoginSteps(): array
+    {
+
+        $steps = array(
+            "step10" => ProjectIntroStep::class,
+            "step20" => ProjectIntroStep::class,
+            "step30" => ProjectIntroStep::class,
+            "step40" => ProjectIntroStep::class,
+        );
+
+        //make array of onboarding steps.
+        $steps = self::dispatch_filter("filterSteps", $steps);
+
+        return $steps;
+    }
+
+
 }

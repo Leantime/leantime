@@ -44,11 +44,8 @@ jQuery(document).ready(function() {
         leantime.helperController.firstLoginModal();
     @endif
 
-    @if($completedOnboarding == "1"
-               && (isset($_SESSION['userdata']['settings']["modals"]["homeDashboardTour"]) === false || $_SESSION['userdata']['settings']["modals"]["homeDashboardTour"] == 0))
-    leantime.helperController.startHomeDashboardTour();
     @php($_SESSION['userdata']['settings']["modals"]['homeDashboardTour'] = 1)
-    @endif
+
 });
 </script>
 

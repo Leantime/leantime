@@ -24,6 +24,7 @@
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 <script src="{!! BASE_URL !!}/dist/js/compiled-htmx.{!! $version !!}.min.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-htmx-headSupport.{!! $version !!}.min.js"></script>
 
 <!-- libs -->
 <script src="{!! BASE_URL !!}/dist/js/compiled-frameworks.{!! $version !!}.min.js"></script>

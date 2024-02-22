@@ -1,4 +1,3 @@
-
 @extends($layout)
 
 @section('content')
@@ -8,27 +7,14 @@
         'allProjects' => []
     ])
 
-    @php
-
-    Use Leantime\Core\Frontcontroller;
-    $currentUrlPath = BASE_URL . "/" . str_replace(".", "/", Frontcontroller::getCurrentRoute());
-
-    @endphp
-
-
     <div class="maincontent" style="margin-top:0px">
-
         <div style="padding:10px 0px">
-
             <div class="center">
-                <span style="font-size:38px; color:var(--main-action-color);">
-
+                <span style="font-size:38px; color:var(--main-titles-color););">
                     {{ __("headline.project_hub") }}
-
                 </span><br />
-                <span style="font-size:18px; color:var(--main-action-color);">
-                   This is your project hub. All the projects you are currently assigned to or have favorited are here.
-
+                <span style="font-size:18px; color:var(--main-titles-color););">
+                   {{ __("text.project_hub_intro") }}
                     @if ($login::userIsAtLeast("manager"))
                         <br /><br /><a class="btn btn-default" href="#/projects/createnew">{!! __("menu.create_something_new") !!}</a>
                     @endif
@@ -37,8 +23,6 @@
                 <br />
             </div>
         </div>
-
-        {!! $tpl->displayNotification() !!}
 
         @if(is_array($allProjects) && count($allProjects) == 0)
             <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" headline="{{  __('notifications.not_assigned_to_any_project')  }}" maxWidth="30%">
@@ -64,7 +48,7 @@
                     </a>
 
                     <ul class="dropdown-menu">
-                        <li><a href="{{ $currentUrlPath }}">{{ __("headline.all_clients") }}</a></li>
+                        <li><a href="{{ CURRENT_URL }}">{{ __("headline.all_clients") }}</a></li>
                         @foreach ($clients as $key => $value)
                             <li>
                                 <a  href="javascript:void(0);"
@@ -110,8 +94,8 @@
                             @endif
                         @endforeach
                         @if($hasFavorites === false)
-                            <div style="color:var(--main-action-color)">
-                                You don't have any favorites. 😿
+                            <div style="color:var(--main-titles-color)">
+                                {{ __("text.no_favorites") }}
                             </div>
                         @endif
                     </div>
@@ -121,7 +105,7 @@
 
             <x-global::accordion id="myProjectsHub-otherProjects" class="noBackground">
                 <x-slot name="title">
-                    🗂️ All Assigned Projects
+                    {{ __("text.all_assigned_projects")  }}
                 </x-slot>
                 <x-slot name="content">
 
@@ -134,13 +118,11 @@
                                 </div>
 
                             @endif
-
                         @endforeach
                     </div>
                 </x-slot>
             </x-global::accordion>
         </div>
-
     </div>
 @endsection
 

@@ -368,7 +368,7 @@ a.barmenu:hover {
     font-size: var(--base-font-size);
     padding: 10px 15px 10px 15px;
     color: var(--nav-link-color);
-    border-radius:15px;
+    border-radius:var(--box-radius-large);
     position:relative;
 }
 

@@ -8,6 +8,7 @@ namespace Leantime\Domain\Help\Controllers {
     use Leantime\Core\Theme;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Auth\Services\Auth;
+    use Leantime\Domain\Help\Services\Helper;
     use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Setting\Repositories\Setting;
     use Leantime\Domain\Users\Services\Users;
@@ -17,6 +18,14 @@ namespace Leantime\Domain\Help\Controllers {
      */
     class FirstLogin extends Controller
     {
+
+        private Helper $helperService;
+
+        public function init(Helper $helperService)
+        {
+            $this->$helperService = $helperService;
+        }
+
         /**
          * get - handle get requests
          *
@@ -27,10 +36,14 @@ namespace Leantime\Domain\Help\Controllers {
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager]);
 
-            $step = 1;
+            $allSteps = $this->helperService->getFirstLoginSteps();
+
+            $step = key($allSteps[0]);
             if (isset($_GET['step']) && is_numeric($_GET['step'])) {
                 $step = $_GET['step'];
             }
+
+
 
             $this->tpl->assign('currentStep', $step);
             return $this->tpl->displayPartial("help.firstLoginDialog");
