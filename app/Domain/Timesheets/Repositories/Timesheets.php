@@ -286,7 +286,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
 			zp_timesheets.id,
 			zp_timesheets.userId,
 			zp_timesheets.ticketId,
-			DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') as workDate,
+			zp_timesheets.workDate as workDate,
 			zp_timesheets.hours,
 			zp_timesheets.description,
 			zp_timesheets.kind,
@@ -303,7 +303,7 @@ namespace Leantime\Domain\Timesheets\Repositories {
 			zp_projects.id AS projectId,
 			zp_projects.clientId AS clientId,
 			zp_clients.name AS clientName,
-			GROUP_CONCAT(DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') SEPARATOR ',') as workDates
+			GROUP_CONCAT(zp_timesheets.workDate SEPARATOR ',') as workDates
 			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 2 then zp_timesheets.hours else 0 end),2) as hoursMonday
 			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 3 then zp_timesheets.hours else 0 end),2) as hoursTuesday
 			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 4 then zp_timesheets.hours else 0 end),2) as hoursWednesday
