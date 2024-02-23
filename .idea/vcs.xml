@@ -3,7 +3,6 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/app/Plugins" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/MotivationalQuotes" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app/Plugins/PluginTemplate" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app/Plugins/Whiteboardscanvas" vcs="Git" />
   </component>
 </project>

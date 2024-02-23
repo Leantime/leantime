@@ -56,6 +56,9 @@ services:
   selenium:
     image: selenium/standalone-firefox
     shm_size: 2gb
+    ports:
+      - "4444"
+      - "7900"
     networks:
       - leantime
 
