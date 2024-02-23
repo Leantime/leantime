@@ -1,6 +1,6 @@
 require('htmx.org/dist/ext/head-support');
 
-window.htmx.onLoad(function () {
+window.htmx.onLoad(() => {
     const
     links = [...document.getElementsByTagName('a')]
         .filter(el => el.getAttributeNames().includes('href') && ! el.getAttribute('href').includes('#/')),

@@ -266,12 +266,14 @@ $bootstrapper = get_class(new class {
                 'npx',
                 'selenium-standalone',
                 'install',
+                '--onlyDriver=gecko',
             ]
         );
         $this->seleniumProcess = $this->executeCommand([
             'npx',
             'selenium-standalone',
             'start',
+            '--onlyDriver=gecko',
         ], ['background' => true]);
         $this->seleniumProcess->waitUntil(function ($type, $buffer) {
             $this->commandOutputHandler($type, $buffer);
