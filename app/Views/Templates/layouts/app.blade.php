@@ -5,7 +5,7 @@
     @stack('styles')
 </head>
 
-<body hx-ext="head-support">
+<body>
 
     @include('global::sections.appAnnouncement')
 
