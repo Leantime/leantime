@@ -99,7 +99,8 @@ class Frontcontroller
         self::dispatch_event("execute_action_start", ["action"=>$actionName, "module"=>$moduleName ]);
 
         $controllerNs = "Domain";
-        $controllerType = self::$incomingRequest instanceof HtmxRequest ? 'Hxcontrollers' : 'Controllers';
+        $controllerType = self::$incomingRequest instanceof HtmxRequest && ! self::$incomingRequest->headers->get('hx-boosted', false)
+            ? 'Hxcontrollers' : 'Controllers';
         $classname = "$namespace\\$controllerNs\\$moduleName\\$controllerType\\$actionName";
 
         if (! class_exists($classname)) {
