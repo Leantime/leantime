@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",
+    "dotenv": "^16.4.5",
     "eslint": "^8.50.0",
     "eslint-plugin-vue": "^9.17.0",
     "eslint-webpack-plugin": "^4.0.1",
