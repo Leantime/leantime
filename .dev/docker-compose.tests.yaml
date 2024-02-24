@@ -6,15 +6,14 @@ services:
       - "../:/var/www/html"
       - "./xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini"
       - "./error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini"
-      - ${PWD}/test.env:/var/www/html/config/.env
+      - "./test.env:/var/www/html/config/.env"
     environment:
       LEAN_DB_HOST: 'db'
       LEAN_DB_USER: 'leantime'
       LEAN_DB_PASSWORD: 'leantime'
       LEAN_DB_DATABASE: 'leantime_test'
       LEAN_DB_PORT: '3306'
+
   db:
     environment:
       MYSQL_DATABASE: leantime_test
-    ports:
-      - 3307:3306

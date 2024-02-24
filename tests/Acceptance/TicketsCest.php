@@ -47,6 +47,8 @@ class TicketsCest
         $I->wantTo('Edit a ticket');
 
         $I->amOnPage('/tickets/showKanban#/tickets/showTicket/10');
+        // Currently (and only in tests) the editor is not loaded when clicked on less the page is reloaded first.
+        $I->reloadPage();
         $I->waitForElementVisible(".main-title-input", 120);
         $I->click('.mce-content-body');
         $I->waitForElementClickable('#ticketDescription_ifr', 120);
