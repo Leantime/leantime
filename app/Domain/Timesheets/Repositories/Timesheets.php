@@ -304,13 +304,13 @@ namespace Leantime\Domain\Timesheets\Repositories {
 			zp_projects.clientId AS clientId,
 			zp_clients.name AS clientName,
 			GROUP_CONCAT(zp_timesheets.workDate SEPARATOR ',') as workDates
-			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 2 then zp_timesheets.hours else 0 end),2) as hoursMonday
-			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 3 then zp_timesheets.hours else 0 end),2) as hoursTuesday
-			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 4 then zp_timesheets.hours else 0 end),2) as hoursWednesday
-			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 5 then zp_timesheets.hours else 0 end),2) as hoursThursday
-			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 6 then zp_timesheets.hours else 0 end),2) as hoursFriday
-			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 7 then zp_timesheets.hours else 0 end),2) as hoursSaturday
-			, ROUND(sum(case when DAYOFWEEK(zp_timesheets.workDate) = 1 then zp_timesheets.hours else 0 end),2) as hoursSunday
+			, ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = TO_DAYS(:dateStart1) then zp_timesheets.hours else 0 end),2) as hoursMonday
+			, ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 1) then zp_timesheets.hours else 0 end),2) as hoursTuesday
+			, ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 2) then zp_timesheets.hours else 0 end),2) as hoursWednesday
+			, ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 3) then zp_timesheets.hours else 0 end),2) as hoursThursday
+			, ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 4) then zp_timesheets.hours else 0 end),2) as hoursFriday
+			, ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 5) then zp_timesheets.hours else 0 end),2) as hoursSaturday
+			, ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 6) then zp_timesheets.hours else 0 end),2) as hoursSunday
 		FROM
 			zp_timesheets
 		LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
