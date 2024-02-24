@@ -25,7 +25,11 @@ jQuery(document).ready(function(){
         var date = $input.datepicker('getDate');
 
         if (date !== null) {
-            var firstDay = $input.datepicker( "option", "firstDay" );
+
+            //Timesheet table currently does not handle first day of week. We are setting it to Monday no matter what
+            //var firstDay = $input.datepicker( "option", "firstDay" );
+            var firstDay = 1
+
             var dayAdjustment = date.getDay() - firstDay;
             if (dayAdjustment < 0) {
                 dayAdjustment += 7;
@@ -54,7 +58,7 @@ jQuery(document).ready(function(){
         nextText: leantime.i18n.__("language.nextText"),
         prevText: leantime.i18n.__("language.prevText"),
         weekHeader: leantime.i18n.__("language.weekHeader"),
-        firstDay: leantime.i18n.__("language.firstDayOfWeek"),
+        firstDay: 1, //Hard coding to monday for this specific instance.
 
         beforeShow: function () {
             jQuery('#ui-datepicker-div').addClass('ui-weekpicker');
