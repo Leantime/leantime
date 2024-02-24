@@ -1,7 +1,7 @@
 name: Create Release
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   push:
     tags:
       - '*'
@@ -12,16 +12,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: version
         run: echo "version=$(make get-version)" >> $GITHUB_OUTPUT
         id: version
+
       - name: Get Hash
         id: hash
         run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_OUTPUT
       - name: build artifacts
+
         run: make package
       - name: release
         uses: ncipollo/release-action@v1
