@@ -91,6 +91,11 @@ class ExternalCal extends Controller
         $guzzle = app()->make(Client::class);
 
         $appSettings = app()->make(AppSettings::class);
+
+        if(str_contains($url, "webcal://")) {
+            $url = str_replace("webcal://", "https://", $url);
+        }
+
         try {
             $response = $guzzle->request('GET', $url, [
                 'headers' => [

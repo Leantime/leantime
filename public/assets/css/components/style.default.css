@@ -1886,7 +1886,6 @@ body .ui-tabs-panel {
 }
 
 .emptyChartContainer {
-    background: url('../../images/emptyChartBg.png') no-repeat center center;
     min-height: 290px;
     text-align: center;
     padding-top: 75px;
