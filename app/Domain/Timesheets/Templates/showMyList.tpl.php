@@ -123,8 +123,8 @@ foreach ($__data as $var => $val) {
                     $sum = $sum + $row['hours'];?>
                     <tr>
                         <td data-order="<?=$tpl->e($row['id']); ?>"> <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format($row['workDate'])->dateUtc(); ?>">
-                                            <?php echo format($row['workDate'])->dateUtc(); ?>
+                        <td data-order="<?php echo format($row['workDate'])->date(); ?>">
+                                            <?php echo format($row['workDate'])->date(); ?>
                         </td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours'] ?: 0); ?></td>
                         <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours'] ?: 0); ?></td>
