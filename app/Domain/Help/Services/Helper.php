@@ -4,6 +4,7 @@ namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Eventhelpers;
 use ProjectIntroStep;
+use InviteTeamStep;
 
 /**
  *
@@ -76,10 +77,8 @@ class Helper
     {
 
         $steps = array(
-            "step10" => ProjectIntroStep::class,
-            "step20" => ProjectIntroStep::class,
-            "step30" => ProjectIntroStep::class,
-            "step40" => ProjectIntroStep::class,
+            0 => array("class" => ProjectIntroStep::class, "next" => 10),
+            10 => array("class" => InviteTeamStep::class, "next" => "end"),
         );
 
         //make array of onboarding steps.

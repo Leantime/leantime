@@ -13,6 +13,6 @@ interface OnboardingSteps
 
     public function getTemplate(): string;
 
-    public function handle(): bool;
+    public function handle($params): bool;
 
 }

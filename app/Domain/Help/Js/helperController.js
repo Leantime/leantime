@@ -430,7 +430,7 @@ leantime.helperController = (function () {
             jQuery(".onboardingModal").nyroModal(onboardingModal);
 
             jQuery.nmManual(
-                leantime.appUrl + "/help/firstLogin?step=project",
+                leantime.appUrl + "/help/firstLogin",
                 onboardingModal
             );
         });

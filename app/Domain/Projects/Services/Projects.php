@@ -1420,6 +1420,17 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
+         * Edits the project relations of a user.
+         *
+         * @param int $id The ID of the user.
+         * @param array $projects An array of project IDs to be assigned to the user.
+         * @return bool Returns true if the project relations were successfully edited, false otherwise.
+         */
+        public function editUserProjectRelations($id, $projects): bool {
+            return $this->projectRepository->editUserProjectRelations($id, $projects);
+        }
+
+        /**
          * Returns the project ID by its name from the given array of projects.
          *
          * @param array  $allProjects An array of projects.

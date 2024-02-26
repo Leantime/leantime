@@ -19,29 +19,7 @@ if (isset($_GET['step']) && $_GET['step'] == "complete") {?>
 
 
 <?php if ($step == 1) { ?>
-    <form class="onboardingModal step1" method="post" action="<?=BASE_URL ?>/help/firstLogin?step=2">
 
-        <input type="hidden" name="step" value="1" />
-        <div class="row">
-            <div class="col-md-6">
-                <h1><?=$tpl->__('headlines.hi_there'); ?></h1>
-                <p><?=$tpl->__('text.first_login_intro') ?></p>
-                <br />
-                <label><?=$tpl->__('label.name_your_first_project') ?></label>
-                <input type="text" id="projectName" name="projectname" value="" placeholder=""/><br />
-
-                <input type="submit" value="<?=$tpl->__('buttons.next') ?>"/>
-                <a href="javascript:void(0);"  onclick="skipOnboarding();"><?=$tpl->__('links.skip_for_now') ?></a>
-            </div>
-            <div class="col-md-6">
-                <div class='svgContainer' style="width:300px">
-                    <?= file_get_contents(ROOT . "/dist/images/svg/undraw_game_day_ucx9.svg"); ?>
-                </div>
-            </div>
-
-        </div>
-
-    </form>
 <?php } ?>
 
 <?php if ($step == 2) { ?>
