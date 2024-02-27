@@ -43,7 +43,13 @@ class News extends HtmxController
     public function get()
     {
 
-        $news = $this->newsService->getLatest($_SESSION['userdata']['id']);
+        try {
+            $news = $this->newsService->getLatest($_SESSION['userdata']['id']);
+
+        }catch(\Exception $e) {
+            error_log($e);
+            $news = "Could not connect to news server";
+        }
 
         $this->tpl->assign('rss', $news);
     }

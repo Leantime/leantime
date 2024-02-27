@@ -4,6 +4,7 @@ namespace Leantime\Domain\Help\Services;
 
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller;
+use Leantime\Core\Template;
 use Leantime\Domain\Help\Contracts\OnboardingSteps;
 use Leantime\Domain\Projects\Services\Projects;
 use Leantime\Domain\Setting\Repositories\Setting;
@@ -19,7 +20,8 @@ class InviteTeamStep implements OnboardingSteps
     public function __construct(
         private Setting $settingsRepo,
         private Projects $projectService,
-        private Users $userService
+        private Users $userService,
+        private Template $tplService
     ) {
     }
 
@@ -62,8 +64,11 @@ class InviteTeamStep implements OnboardingSteps
                         $this->projectService->editUserProjectRelations($userId, array($_SESSION['currentProject']));
                     }
                 }
+
+                $this->tplService->setNotification(__("notification.invitation_sent"), "success", "user_invited");
             }
         }
+
 
         return true;
     }

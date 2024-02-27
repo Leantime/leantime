@@ -68,6 +68,8 @@ $user = $tpl->get("user");
 
         <p><?php echo $tpl->language->__("text.welcome_to_leantime_2"); ?><br /><br /></p>
 
+        <input type="hidden" name="step" value="1"/>
+
         <div class="">
             <input type="text" name="firstname" id="firstname" placeholder="<?php echo $tpl->language->__("input.placeholders.firstname"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
 

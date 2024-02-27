@@ -77,8 +77,9 @@ class Helper
     {
 
         $steps = array(
-            0 => array("class" => ProjectIntroStep::class, "next" => 10),
-            10 => array("class" => InviteTeamStep::class, "next" => "end"),
+            0 => array("class" => "Leantime\Domain\Help\Services\ProjectIntroStep", "next" => 10),
+            10 => array("class" => "Leantime\Domain\Help\Services\ProjectDefinitionStep", "next" => 20),
+            20 => array("class" => "Leantime\Domain\Help\Services\InviteTeamStep", "next" => "end"),
         );
 
         //make array of onboarding steps.

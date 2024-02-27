@@ -56,7 +56,7 @@ namespace Leantime\Domain\Help\Controllers {
             $currentStep = $allSteps[$currentStepKey];
 
             /** @var OnboardingSteps $stepObject */
-            $nextStepObject = app()->make("Leantime\\Domain\\Help\\Services\\" . $currentStep["class"]);
+            $nextStepObject = app()->make($currentStep["class"]);
 
 
             $this->tpl->assign('currentStep', $currentStepKey);
@@ -86,7 +86,7 @@ namespace Leantime\Domain\Help\Controllers {
             }
 
             /** @var OnboardingSteps $stepObject */
-            $currentStepObject = app()->make("Leantime\\Domain\\Help\\Services\\" . $currentStep["class"]);
+            $currentStepObject = app()->make($currentStep["class"]);
 
             $result = $currentStepObject->handle($params);
 

@@ -11,6 +11,8 @@ namespace Leantime\Domain\Notifications\Services {
     use Leantime\Domain\Setting\Services\Setting;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
 
+    use function PHPUnit\Framework\throwException;
+
     /**
      *
      */
@@ -79,6 +81,13 @@ namespace Leantime\Domain\Notifications\Services {
 
         }
 
+        /**
+         * getFeed - Fetches the feed from a remote URL and returns the contents as a SimpleXMLElement object
+         *
+         * @access public
+         * @return \SimpleXMLElement - The parsed XML content as a SimpleXMLElement object
+         * @throws \Exception - If the simplexml_load_string function doesn't exist
+         */
         public function getFeed()
         {
 
@@ -91,7 +100,7 @@ namespace Leantime\Domain\Notifications\Services {
             if(function_exists("simplexml_load_string")){
                 $responseXml = simplexml_load_string($response);
             }else{
-                error_log("SimpleXML Extension is not available.");
+                throwException("Simple XML load string function doesn't exists");
             }
 
             return $responseXml;

@@ -4,6 +4,11 @@
     padding: 0px;
 }
 
+.shepherd-element,
+.shepherd-content {
+    border-radius:var(--box-radius);
+}
+
 .shepherd-element.shepherd-has-title[data-popper-placement^=bottom]>.shepherd-arrow:before,
 .shepherd-element.shepherd-has-title[data-popper-placement^=top]>.shepherd-arrow:before,
 .shepherd-element.shepherd-has-title[data-popper-placement^=left]>.shepherd-arrow:before,
@@ -31,10 +36,16 @@
 .shepherd-button {
     background:var(--main-action-bg);
     color:var(--main-action-color);
+    border-radius: var(--input-radius);
+    padding: 4px 14px;
+    font-weight:bold;
+    line-height:21px;
+    border: 1px solid var(--main-action-bg);
 }
 
 .shepherd-button.shepherd-button-secondary {
-
+    border-radius: var(--input-radius);
+    border:1px solid var(--secondary-action-bg);
 }
 
 .shepherd-enabled.shepherd-element {
