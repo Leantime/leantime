@@ -169,11 +169,12 @@ namespace Leantime\Domain\Users\Repositories {
         /**
          * getUserByEmail - get on user from db
          *
-         * @access public
-         * @param $email
+         * @param string $email
+         * @param string $status
+         *
          * @return array|false
          */
-        public function getUserByEmail($email, $status = "a"): array | false
+        public function getUserByEmail(string $email, string $status = "a"): array | false
         {
             $sql = "SELECT * FROM `zp_user` WHERE username = :email ";
 

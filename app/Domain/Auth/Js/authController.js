@@ -1,7 +1,6 @@
 leantime.authController = (function () {
 
     var makeInputReadonly = function (container) {
-
         if (typeof container === undefined) {
             container = "body";
         }
@@ -45,8 +44,6 @@ leantime.authController = (function () {
         jQuery(".deleteComment, .replyButton").hide();
 
         jQuery(container).find(".dropdown i").removeClass('fa-caret-down');
-
-
     };
 
     // Make public what you want to have public, everything else is private

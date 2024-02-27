@@ -1,77 +1,91 @@
 <?php
 
-namespace Leantime\Domain\Auth\Controllers {
+namespace Leantime\Domain\Auth\Controllers;
 
-    use Leantime\Core\Controller;
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Domain\Auth\Services\Auth as AuthService;
-    use Leantime\Domain\Files\Repositories\Files as FileRepository;
-    use Leantime\Domain\Setting\Repositories\Setting;
-    use Leantime\Domain\Users\Services\Users as UserService;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Controller;
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Domain\Files\Repositories\Files as FileRepository;
+use Leantime\Domain\Users\Services\Users as UserService;
+use Leantime\Domain\Setting\Repositories\Setting;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ *
+ */
+class UserInvite extends Controller
+{
+    private FileRepository $fileRepo;
+    private AuthService $authService;
+    private UserService $userService;
+    private Setting $settingsRepo;
 
     /**
+     * init - initialize private variables
      *
+     * @access public
+     *
+     * @param FileRepository $fileRepo
+     * @param AuthService    $authService
+     * @param UserService    $userService
+     *
+     * @return void
      */
-    class UserInvite extends Controller
+    public function init(
+        FileRepository $fileRepo,
+        AuthService $authService,
+        UserService $userService,
+        Setting $settingsRepo
+    ): void {
+        $this->fileRepo = $fileRepo;
+        $this->authService = $authService;
+        $this->userService = $userService;
+    }
+
+    /**
+     * get - handle get requests
+     *
+     * @access public
+     *
+     * @param array $params
+     *
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function get(array $params): Response
     {
-        private $fileRepo;
-        private AuthService $authService;
-        private $usersService;
-        private Setting $settingsRepo;
+        if (isset($_GET["id"]) === true) {
+            $user = $this->authService->getUserByInviteLink($_GET["id"]);
 
-        /**
-         * init - initialize private variables
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function init(
-            FileRepository $fileRepo,
-            AuthService $authService,
-            UserService $usersService,
-            Setting $settingsRepo
-        ) {
-            $this->fileRepo = $fileRepo;
-            $this->authService = $authService;
-            $this->usersService = $usersService;
-            $this->settingsRepo = $settingsRepo;
-        }
-
-        /**
-         * get - handle get requests
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function get($params)
-        {
-
-
-            if (isset($_GET["id"]) === true) {
-                $user = $this->authService->getUserByInviteLink($_GET["id"]);
-
-                if (!$user) {
-                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
-                }
-
-                $this->tpl->assign("user", $user);
-
-                if (isset($_GET['step']) && is_numeric($_GET['step'])) {
-                    return $this->tpl->display('auth.userInvite' . $_GET['step'], 'entry');
-                }
-
-                return $this->tpl->display('auth.userInvite', 'entry');
+            if (!$user) {
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
             }
-        }
 
-        /**
-         * post - handle post requests
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function post($params)
-        {
+            $this->tpl->assign("user", $user);
+
+            if (isset($_GET['step']) && is_numeric($_GET['step'])) {
+                return $this->tpl->display('auth.userInvite' . $_GET['step'], 'entry');
+            }
+
+            return $this->tpl->display('auth.userInvite', 'entry');
+        }
+    }
+
+    /**
+     * post - handle post requests
+     *
+     * @access public
+     *
+     * @param array $params
+     *
+     * @return Response
+     *
+     * @throws BindingResolutionException
+     */
+    public function post(array $params): Response
+    {
 
             $invitationId = $_GET["id"] ?? "";
 
@@ -88,7 +102,7 @@ namespace Leantime\Domain\Auth\Controllers {
                     return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId);
                 }
 
-                if (!$this->usersService->checkPasswordStrength($_POST['password'])) {
+                if (!$this->userService->checkPasswordStrength($_POST['password'])) {
                     $this->tpl->setNotification(
                         $this->language->__("notification.password_not_strong_enough"),
                         'error'
@@ -106,7 +120,7 @@ namespace Leantime\Domain\Auth\Controllers {
                 $userInvite["password"] = $_POST['password'];
                 $_SESSION['tempPassword'] = $_POST['password'];
 
-                $editUser = $this->usersService->editUser($userInvite, $userInvite["id"]);
+                $editUser = $this->userService->editUser($userInvite, $userInvite["id"]);
 
                 if ($editUser) {
                     return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=2");
@@ -137,14 +151,13 @@ namespace Leantime\Domain\Auth\Controllers {
 
                 $function = $_POST["function"];
 
-                $this->settingsRepo->saveSetting("usersettings.".$userInvite['id'].".function", $function);
+                $this->settingsRepo->saveSetting("usersettings." . $userInvite['id'] . ".function", $function);
 
                 $userInvite["status"] = "A";
                 $userInvite["password"] = "";
                 $userInvite["user"] =  $userInvite["username"];
 
-                 $result = $this->usersService->editUser($userInvite, $userInvite["id"]);
-
+                $result = $this->userService->editUser($userInvite, $userInvite["id"]);
 
                 $this->tpl->setNotification(
                     $this->language->__('notifications.you_are_active'),
@@ -174,3 +187,4 @@ namespace Leantime\Domain\Auth\Controllers {
         }
     }
 }
+
