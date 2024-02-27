@@ -203,6 +203,9 @@ leantime.calendarController = (function () {
                     multiMonthTitleFormat: { month: 'long', year: 'numeric' },
                     dayHeaderFormat: { weekday: 'short' },
                 },
+                timeGridWeek: {
+
+                },
                 listWeek: {
                     listDayFormat: { weekday: 'long' },
                     listDaySideFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),

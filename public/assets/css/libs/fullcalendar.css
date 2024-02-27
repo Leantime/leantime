@@ -8,7 +8,10 @@
 .maincontentinner .fc .fc-scrollgrid,
 .maincontentinner .fc-theme-standard td td {
     border: 1px solid var(--fc-border-color);
+}
 
+.fc-view {
+    background:var(--kanban-card-bg);
 }
 
 .maincontentinner .fc-theme-standard th th{
