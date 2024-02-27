@@ -24,8 +24,6 @@ $redirectUrl = $tpl->get('redirectUrl');
             <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
         <input type="hidden" name="redirectUrl" value="<?php echo $redirectUrl; ?>" />
 
-
-
         <div class="">
             <label for="username">Email</label>
             <input type="text" name="username" id="username" class="form-control" placeholder="<?php echo $tpl->language->__($tpl->get("inputPlaceholder")); ?>" value=""/>
@@ -48,7 +46,7 @@ $redirectUrl = $tpl->get('redirectUrl');
     </form>
     <?php } else {
         echo ($tpl->language->__("text.no_login_form"));
-    ?><br /><br />
+        ?><br /><br />
     <?php }// if disableLoginForm ?>
     <?php if ($tpl->get('oidcEnabled')) { ?>
         <?php $tpl->dispatchTplEvent('beforeOidcButton'); ?>

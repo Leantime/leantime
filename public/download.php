@@ -24,7 +24,7 @@ $config = $app->make(Environment::class);
 
 $login = $app->make(Auth::class);
 
-if ($login->logged_in() !== true) {
+if ($login->loggedIn() !== true) {
     header('Pragma: public');
     header('Cache-Control: max-age=86400');
     header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 86400));
