@@ -100,7 +100,7 @@ namespace Leantime\Domain\Timesheets\Services {
                 $values['kind'] = $params['kind'];
             }
             if (isset($params['date']) && $params['date'] != '') {
-                $values['date'] = format($params['date'])->isoDateMid();
+                $values['date'] = format($params['date'])->isoDate();
             }
 
             if (isset($params['hours']) && $params['hours'] != '') {

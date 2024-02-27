@@ -6,9 +6,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
-use Leantime\Domain\Files\Repositories\Files as FileRepository;
+use Leantime\Domain\Setting\Services\Setting;
 use Leantime\Domain\Users\Services\Users as UserService;
-use Leantime\Domain\Setting\Repositories\Setting;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -16,31 +15,31 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class UserInvite extends Controller
 {
-    private FileRepository $fileRepo;
     private AuthService $authService;
     private UserService $userService;
-    private Setting $settingsRepo;
+    private Setting $settingService;
 
     /**
-     * init - initialize private variables
+     * init - initializes the objects for the class
      *
      * @access public
      *
-     * @param FileRepository $fileRepo
-     * @param AuthService    $authService
-     * @param UserService    $userService
+     * @param AuthService $authService    The AuthService object
+     * @param UserService $userService    The UserService object
+     * @param Setting     $settingService The Setting object
      *
      * @return void
+     *
+     * @throws \Exception
      */
     public function init(
-        FileRepository $fileRepo,
         AuthService $authService,
         UserService $userService,
-        Setting $settingsRepo
+        Setting $settingService
     ): void {
-        $this->fileRepo = $fileRepo;
         $this->authService = $authService;
         $this->userService = $userService;
+        $this->settingService = $settingService;
     }
 
     /**
@@ -138,7 +137,7 @@ class UserInvite extends Controller
 
             $challenge = $_POST["challenge"];
 
-            $this->settingsRepo->saveSetting("usersettings." . $userInvite['id'] . ".challenge", $challenge);
+            $this->settingService->saveSetting("usersettings." . $userInvite['id'] . ".challenge", $challenge);
 
             return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=3");
         }
@@ -148,7 +147,7 @@ class UserInvite extends Controller
 
             $function = $_POST["function"];
 
-            $this->settingsRepo->saveSetting("usersettings." . $userInvite['id'] . ".function", $function);
+            $this->settingService->saveSetting("usersettings." . $userInvite['id'] . ".function", $function);
 
             $userInvite["status"] = "A";
             $userInvite["password"] = "";

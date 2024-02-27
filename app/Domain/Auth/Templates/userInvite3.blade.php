@@ -13,9 +13,8 @@
                 aria-valuemin="0"
                 aria-valuemax="100"
                 style="width: 85%"
-            ><span class="sr-only">800%</span></div>
+            ><span class="sr-only">80%</span></div>
         </div>
-
 
         <div class="step complete" style="left: 15%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
@@ -60,7 +59,7 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <p>Tell us about your main challenge rightnow<br /><br /></p>
+        <p>Describe the work you are managing.<br /><br /></p>
 
 
         <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'ic'" :label="''" class="tw-w-full tw-text-left">
