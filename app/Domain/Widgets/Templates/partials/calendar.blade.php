@@ -29,6 +29,8 @@
                 <select class="calendarViewSelect">
                     <option class="fc-agendaDay-button fc-button fc-state-default fc-
            corner-right" value="multiMonthOneMonth" @if($tpl->getToggleState("dashboardCalendarView") == 'multiMonthOneMonth') selected='selected' @endif>Month</option>
+                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-
+           corner-right" value="timeGridWeek" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridWeek') selected='selected' @endif>Week</option>
                     <option class="fc-agendaWeek-button fc-button fc-state-
           default" value="timeGridDay" @if($tpl->getToggleState("dashboardCalendarView") == 'timeGridDay' || empty($tpl->getToggleState("dashboardCalendarView")) ) selected='selected' @endif>Day</option>
                     <option class="fc-agendaWeek-button fc-button fc-state-

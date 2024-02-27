@@ -267,11 +267,11 @@
 .maincontentinner table.fc-scrollgrid td,
 .maincontentinner table.fc-scrollgrid th{
     padding:0px;
-    background: var(--kanban-card-bg);
 }
 
 .maincontentinner table.fc-scrollgrid th.fc-col-header-cell {
     background: var(--col-title-bg);
+    overflow:hidden;
 }
 
 .maincontentinner table.fc-scrollgrid th.fc-col-header-cell:first-child {

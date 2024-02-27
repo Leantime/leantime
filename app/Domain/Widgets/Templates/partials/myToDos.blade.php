@@ -105,6 +105,42 @@
                     <div class="clearall"></div>
                 </form>
             </div>
+            <div class="hideOnLoad " id="ticket_new" style="padding-top:5px; padding-bottom:15px;">
+
+                <form method="post"
+                      hx-post="{{ BASE_URL }}//widgets/myToDos/addTodo"
+                      hx-target="#yourToDoContainer"
+                      hx-swap="outerHTML"
+                      hx-indicator="#ticket_new .htmx-indicator-small"
+                >
+                    <input type="hidden" name="quickadd" value="1"/>
+                    <div class="flex" style="display:flex; column-gap: 10px;">
+                        <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
+
+                        <label style="padding-top: 8px;">Project</label>
+                        <select name="projectId">
+                            @foreach($allAssignedprojects as $project)
+                                <option value="{{ $project['id']  }}"
+                                @if($groupBy == 'sprint')
+                                    {{ explode("-", $ticketGroup["groupValue"])[1] == $project['id'] ? 'selected' : '' }}
+                                    @else
+                                    {{ $_SESSION['currentProject'] == $project['id'] ? 'selected' : '' }}
+                                    @endif
+                                >{{ $project["name"]  }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <input type="submit" value="Save" name="quickadd" />
+                    <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new').toggle('fast');">
+                        <?=$tpl->__("links.cancel") ?>
+                    </a>
+                    <div class="htmx-indicator-small">
+                        <x-global::loader id="loadingthis" size="25px" />
+                    </div>
+                </form>
+
+                <div class="clearfix"></div>
+            </div>
             <div class="htmx-indicator">
                 <x-global::loadingText type="card" count="5" />
             </div>
@@ -120,6 +156,8 @@
                     <a href='{{ BASE_URL }}/tickets/showAll'>{{ __("links.goto_backlog") }}</a><br/><br/>
                 </div>
                 @endif
+
+
                 @foreach ($tickets as $ticketGroup)
 
                     @php
@@ -137,49 +175,6 @@
                         }
 
                     @endphp
-
-                    <a class="anchor" id="accordion_anchor_{{ $loop->index }}"></a>
-
-
-
-                        <div class="hideOnLoad " id="ticket_new" style="padding-top:5px; padding-bottom:15px;">
-
-                            <form method="post"
-                                  hx-post="{{ BASE_URL }}//widgets/myToDos/addTodo"
-                                  hx-target="#yourToDoContainer"
-                                  hx-swap="outerHTML"
-                                  hx-indicator="#ticket_new .htmx-indicator-small"
-                            >
-                                <input type="hidden" name="quickadd" value="1"/>
-                                <div class="flex" style="display:flex; column-gap: 10px;">
-                                    <input type="text" name="headline" style="width:100%;" placeholder="Enter To-Do Title" title="<?=$tpl->__("label.headline") ?>"/><br />
-
-                                    <label style="padding-top: 8px;">Project</label>
-                                    <select name="projectId">
-                                        @foreach($allAssignedprojects as $project)
-                                            <option value="{{ $project['id']  }}"
-                                            @if($groupBy == 'sprint')
-                                                {{ explode("-", $ticketGroup["groupValue"])[1] == $project['id'] ? 'selected' : '' }}
-                                                @else
-                                                {{ $_SESSION['currentProject'] == $project['id'] ? 'selected' : '' }}
-                                                @endif
-                                            >{{ $project["name"]  }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <input type="submit" value="Save" name="quickadd" />
-                                <a href="javascript:void(0);" class="btn btn-default" onclick="jQuery('#ticket_new').toggle('fast');">
-                                        <?=$tpl->__("links.cancel") ?>
-                                </a>
-                                <div class="htmx-indicator-small">
-                                    <x-global::loader id="loadingthis" size="25px" />
-                                </div>
-                            </form>
-
-                            <div class="clearfix"></div>
-                        </div>
-
-
 
                     <x-global::accordion id="ticketBox1-{{ $loop->index }}">
                         <x-slot name="title">
