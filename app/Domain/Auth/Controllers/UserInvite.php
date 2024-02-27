@@ -71,6 +71,8 @@ class UserInvite extends Controller
 
             return $this->tpl->display('auth.userInvite', 'entry');
         }
+
+        return FrontcontrollerCore::redirect(BASE_URL . "/errors/error404");
     }
 
     /**
@@ -87,104 +89,91 @@ class UserInvite extends Controller
     public function post(array $params): Response
     {
 
-            $invitationId = $_GET["id"] ?? "";
+        $invitationId = $_GET["id"] ?? "";
 
             //Step 1
-            if (isset($_POST["saveAccount"]) && isset($_POST["step"])) {
-                $userInvite = $this->authService->getUserByInviteLink($invitationId);
+        if (isset($_POST["saveAccount"]) && isset($_POST["step"])) {
+            $userInvite = $this->authService->getUserByInviteLink($invitationId);
 
-                if (!isset($userInvite['id'])) {
-                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
-                }
-
-                if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
-                    $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), "error");
-                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId);
-                }
-
-                if (!$this->userService->checkPasswordStrength($_POST['password'])) {
-                    $this->tpl->setNotification(
-                        $this->language->__("notification.password_not_strong_enough"),
-                        'error'
-                    );
-
-                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId);
-                }
-
-
-                $userInvite["firstname"] = $_POST["firstname"];
-                $userInvite["lastname"] = $_POST["lastname"];
-                $userInvite["jobTitle"] = $_POST["jobTitle"] ?? "";
-                $userInvite["status"] = "I";
-                $userInvite["user"] =  $userInvite["username"];
-                $userInvite["password"] = $_POST['password'];
-                $_SESSION['tempPassword'] = $_POST['password'];
-
-                $editUser = $this->userService->editUser($userInvite, $userInvite["id"]);
-
-                if ($editUser) {
-                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=2");
-                } else {
-                    $this->tpl->setNotification(
-                        $this->language->__('notifications.problem_updating_user'),
-                        "error"
-                    );
-                }
+            if (!isset($userInvite['id'])) {
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
             }
 
-
-            if (isset($_POST["challenge"]) && isset($_POST["step"]) && $_POST["step"] == 2) {
-
-                $userInvite = $this->authService->getUserByInviteLink($invitationId);
-
-                $challenge = $_POST["challenge"];
-
-                $this->settingsRepo->saveSetting("usersettings.".$userInvite['id'].".challenge", $challenge);
-
-                return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=3");
-
+            if (strlen($_POST['password']) == 0 || $_POST['password'] != $_POST['password2']) {
+                $this->tpl->setNotification($this->language->__('notification.passwords_dont_match'), "error");
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId);
             }
 
-            if (isset($_POST["function"]) && isset($_POST["step"]) && $_POST["step"] == 3) {
-
-                $userInvite = $this->authService->getUserByInviteLink($invitationId);
-
-                $function = $_POST["function"];
-
-                $this->settingsRepo->saveSetting("usersettings." . $userInvite['id'] . ".function", $function);
-
-                $userInvite["status"] = "A";
-                $userInvite["password"] = "";
-                $userInvite["user"] =  $userInvite["username"];
-
-                $result = $this->userService->editUser($userInvite, $userInvite["id"]);
-
+            if (!$this->userService->checkPasswordStrength($_POST['password'])) {
                 $this->tpl->setNotification(
-                    $this->language->__('notifications.you_are_active'),
-                    "success",
-                    "user_activated"
+                    $this->language->__("notification.password_not_strong_enough"),
+                    'error'
                 );
-                $loggedIn = $this->authService->login($userInvite["username"],  $_SESSION['tempPassword']);
 
-                unset($_SESSION['tempPassword']);
-
-                self::dispatch_event("userSignUpSuccess", ['user' => $userInvite]);
-
-                if ($loggedIn) {
-                    return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/show");
-                } else {
-                    return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
-                }
-
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId);
             }
 
+            $userInvite["firstname"] = $_POST["firstname"];
+            $userInvite["lastname"] = $_POST["lastname"];
+            $userInvite["jobTitle"] = $_POST["jobTitle"] ?? "";
+            $userInvite["status"] = "I";
+            $userInvite["user"] =  $userInvite["username"];
+            $userInvite["password"] = $_POST['password'];
+            $_SESSION['tempPassword'] = $_POST['password'];
 
-            /*
-             * Login when we're ready
-             *
-             */
-            return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId);
+            $editUser = $this->userService->editUser($userInvite, $userInvite["id"]);
+
+            if ($editUser) {
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=2");
+            } else {
+                $this->tpl->setNotification(
+                    $this->language->__('notifications.problem_updating_user'),
+                    "error"
+                );
+            }
         }
+
+        if (isset($_POST["challenge"]) && isset($_POST["step"]) && $_POST["step"] == 2) {
+            $userInvite = $this->authService->getUserByInviteLink($invitationId);
+
+            $challenge = $_POST["challenge"];
+
+            $this->settingsRepo->saveSetting("usersettings." . $userInvite['id'] . ".challenge", $challenge);
+
+            return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=3");
+        }
+
+        if (isset($_POST["function"]) && isset($_POST["step"]) && $_POST["step"] == 3) {
+            $userInvite = $this->authService->getUserByInviteLink($invitationId);
+
+            $function = $_POST["function"];
+
+            $this->settingsRepo->saveSetting("usersettings." . $userInvite['id'] . ".function", $function);
+
+            $userInvite["status"] = "A";
+            $userInvite["password"] = "";
+            $userInvite["user"] =  $userInvite["username"];
+
+            $result = $this->userService->editUser($userInvite, $userInvite["id"]);
+
+            $this->tpl->setNotification(
+                $this->language->__('notifications.you_are_active'),
+                "success",
+                "user_activated"
+            );
+            $loggedIn = $this->authService->login($userInvite["username"], $_SESSION['tempPassword']);
+
+            unset($_SESSION['tempPassword']);
+
+            self::dispatch_event("userSignUpSuccess", ['user' => $userInvite]);
+
+            if ($loggedIn) {
+                return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/show");
+            } else {
+                return FrontcontrollerCore::redirect(BASE_URL . "/auth/login");
+            }
+        }
+
+        return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId);
     }
 }
-
