@@ -44,9 +44,8 @@ if ($calendars) {
         if ($trans['isdst']) {
             $t_dst = $trans['ts'];
             echo "BEGIN:DAYLIGHT" . $eol;
-        }
-        // standard time definition
-        else {
+        } else {
+            // standard time definition
             $t_std = $trans['ts'];
             echo "BEGIN:STANDARD" . $eol;
         }
@@ -73,9 +72,8 @@ if ($calendars) {
         if ($trans['isdst']) {
             $t_dst = $trans['ts'];
             echo "END:DAYLIGHT" . $eol;
-        }
-        // standard time definition
-        else {
+        } else {
+            // standard time definition
             $t_std = $trans['ts'];
             echo "END:STANDARD" . $eol;
         }

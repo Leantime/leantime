@@ -140,10 +140,6 @@ min-width: 1200px
     }
 
     /* buttons */
-    .glyphicons li {
-        width: 50%;
-    }
-
     .iconsweetslist li {
         width: 50%;
     }
@@ -512,11 +508,6 @@ min-width: 1200px
 
     .tabbable > .nav-tabs > li a {
         padding: 10px 5px;
-    }
-
-    .glyphicons li {
-        width: auto;
-        float: none;
     }
 
     .fontawesomeicons .span3 {

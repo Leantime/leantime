@@ -27,8 +27,6 @@ leantime.helperRepository = (function () {
 
     var startingTour = function () {
 
-        gtag("event", "tutorial_begin");
-
         jQuery.ajax(
             {
                 type: 'PATCH',

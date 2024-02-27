@@ -1,8 +1,8 @@
 
 
-<div
-    class="ticketBox fixed priority-border-{{ $row['priority'] }}" data-val="{{ $row['id'] }}"
-    id="ticketbox-{{ $row['id'] }}"
+<div class="ticketBox fixed priority-border-{{ $row['priority'] }}"
+     data-val="{{ $row['id'] }}"
+     id="ticketbox-{{ $row['id'] }}"
 >
 
     <form
@@ -10,7 +10,6 @@
         hx-target="#ticketbox-{{ $row['id'] }}"
         id="ticketboxForm{{ $row['id'] }}"
         hx-ext="debug"
-
     >
         <input type="submit" style="display:none;"/>
         <input type="hidden" name="id" value="{{ $row['id'] }}" />
@@ -46,7 +45,6 @@
                         :parentId="$row['id']"
                         :options="$efforts"
                         :submit="'#ticketboxForm'.$row['id']"
-
                     />
 
                     <x-global::dropdownPill
@@ -58,7 +56,6 @@
                         :options="$milestones[$row['projectId']] ?? []"
                         :extraClass="'colorized'"
                         :submit="'#ticketboxForm'.$row['id']"
-
                     />
 
                     <x-global::dropdownPill
@@ -69,7 +66,6 @@
                         :options="$statusLabels[$row['projectId']] ?? []"
                         :extraClass="'colorized'"
                         :submit="'#ticketboxForm'.$row['id']"
-
                     />
 
                 </div>

@@ -86,8 +86,6 @@ a,a:hover,a:link,a:active,a:focus,
 
 input[type='submit'],
 button,
-.shepherd-element.shepherd-theme-arrows .shepherd-content footer .shepherd-buttons li .shepherd-button,
-.shepherd-element.shepherd-theme-arrows.shepherd-has-title .shepherd-content header,
 .paginate_button.current
 { background-color:  var(--main-action-bg);  }
 

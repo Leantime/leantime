@@ -238,9 +238,13 @@ namespace Leantime\Domain\Projects\Repositories {
                 $query .= " AND project.clientId = :clientId";
             }
 
-            if($projectTypes  != "all") {
+            if($projectTypes  != "all" && $projectTypes  != "project") {
                 $projectTypeIn = DbCore::arrayToPdoBindingString("projectType", count(explode(",", $projectTypes)));
                 $query .= " AND project.type IN(" . $projectTypeIn . ")";
+            }
+
+            if($projectTypes  == "project") {
+                $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
 
             $query .= " GROUP BY
@@ -259,10 +263,14 @@ namespace Leantime\Domain\Projects\Repositories {
                 $stmn->bindValue(':clientId', $clientId, PDO::PARAM_STR);
             }
 
-            if($projectTypes != "all"){
+            if($projectTypes  != "all" && $projectTypes  != "project") {
                 foreach (explode(",", $projectTypes) as $key => $type) {
                     $stmn->bindValue(":projectType" . $key, $type, PDO::PARAM_STR);
                 }
+            }
+
+            if($projectTypes  == "project") {
+                $query .= " AND (project.type = 'project' OR project.type IS NULL)";
             }
 
 

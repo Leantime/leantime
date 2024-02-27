@@ -240,6 +240,9 @@ namespace Leantime\Domain\Projects\Services {
         public function notifyProjectUsers(Notification $notification): void
         {
 
+            //Filter notifications
+            $notification = EventCore::dispatch_filter("notificationFilter", $notification);
+
             //Email
             $users = $this->getUsersToNotify($notification->projectId);
             $projectName = $this->getProjectName($notification->projectId);
@@ -1414,6 +1417,17 @@ namespace Leantime\Domain\Projects\Services {
                 "projectsettings.$projectId.stepsComplete",
                 serialize($stepsDoneArray)
             );
+        }
+
+        /**
+         * Edits the project relations of a user.
+         *
+         * @param int $id The ID of the user.
+         * @param array $projects An array of project IDs to be assigned to the user.
+         * @return bool Returns true if the project relations were successfully edited, false otherwise.
+         */
+        public function editUserProjectRelations($id, $projects): bool {
+            return $this->projectRepository->editUserProjectRelations($id, $projects);
         }
 
         /**

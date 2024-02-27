@@ -44,32 +44,32 @@ package: clean build
 	cp  ./web.config.sample $(TARGET_DIR)
 
 	rm -f $(TARGET_DIR)/config/configuration.php
-	#Remove font for QR code generator (not needed if no label is used)
+	# Remove font for QR code generator (not needed if no label is used)
 	rm -f $(TARGET_DIR)/vendor/endroid/qr-code/assets/fonts/noto_sans.otf
 
-	#Remove DeepL.com and mltranslate engine (not needed in production)
+	# Remove DeepL.com and mltranslate engine (not needed in production)
 	rm -rf $(TARGET_DIR)/vendor/mpdf/mpdf/ttfonts
 	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/src/fonts
 	rm -rf $(TARGET_DIR)/vendor/lasserafn/php-initial-avatar-generator/tests/fonts
 
-	#Remove local configuration, if any
+	# Remove local configuration, if any
 	rm -rf $(TARGET_DIR)/custom/*/*
 	rm -rf $(TARGET_DIR)/public/theme/*/css/custom.css
 
-	#Remove userfiles
+	# Remove user files
 	rm -rf $(TARGET_DIR)/userfiles/*
 	rm -rf $(TARGET_DIR)/public/userfiles/*
 
-	#Removing unneeded items for release
+	# Removing unneeded items for release
 	rm -rf $(TARGET_DIR)/public/dist/images/Screenshots
 
-	#removing js directories
+	# Removing js directories
 	find  $(TARGET_DIR)/app/Domain/ -depth -maxdepth 2 -name "js" -exec rm -rf {} \;
 
-	#removing uncompiled js files
+	# Removing un-compiled js files
 	find $(TARGET_DIR)/public/dist/js/ -depth -mindepth 1 ! -name "*compiled*" -exec rm -rf {} \;
 
-	#create zip files
+	# Create zip files
 	cd target && zip -r -X "Leantime-v$(VERSION)$$1.zip" leantime
 	cd target && tar -zcvf "Leantime-v$(VERSION)$$1.tar.gz" leantime
 
@@ -97,32 +97,24 @@ gendocs: # Requires github CLI (brew install gh)
 	# Delete the temporary docs directory
 	rm -rf $(DOCS_DIR)
 
-
 clean:
 	rm -rf $(TARGET_DIR)
 
 run-dev: build-dev
-	cd .dev && docker-compose up --build --remove-orphans
+	docker compose --file .dev/docker-compose.yaml up --detach --build --remove-orphans
 
 acceptance-test: build-dev
-	php vendor/bin/codecept run Acceptance --steps
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml up --detach --build --remove-orphans
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
 unit-test: build-dev
-	php vendor/bin/codecept run Unit --steps
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml up --detach --build --remove-orphans
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Unit --steps
 
 acceptance-test-ci: build-dev
-	php vendor/bin/codecept build
-ifeq ($(strip $(RUNNING_DOCKER_CONTAINERS)),)
-	@echo "No running docker containers found"
-else
-	docker rm -f $(RUNNING_DOCKER_CONTAINERS)
-endif
-ifeq ($(strip $(RUNNING_DOCKER_VOLUMES)),)
-	@echo "No running docker volumes found"
-else
-	docker volume rm $(RUNNING_DOCKER_VOLUMES)
-endif
-	php vendor/bin/codecept run Acceptance --steps
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml up --detach --build --remove-orphans
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept build
+	docker compose --file .dev/docker-compose.yaml --file .dev/docker-compose.tests.yaml exec leantime-dev php vendor/bin/codecept run Acceptance --steps
 
 codesniffer:
 	./vendor/squizlabs/php_codesniffer/bin/phpcs app

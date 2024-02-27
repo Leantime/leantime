@@ -9,7 +9,7 @@ body.mce-content-body{
 
 .mce-content-body  {
     font-size:var(--base-font-size);
-    max-width:760px;
+    max-width:980px;
     text-align:left;
 }
 

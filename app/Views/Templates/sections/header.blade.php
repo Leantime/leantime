@@ -10,6 +10,7 @@
 <meta name="theme" content="{{ $theme }}">
 <meta name="identifier-URL" content="{!! BASE_URL !!}">
 <meta name="leantime-version" content="{{ $version }}">
+<meta name="view-transition" content="same-origin" />
 
 @dispatchEvent('afterMetaTags')
 
@@ -24,6 +25,7 @@
 <script src="{!! BASE_URL !!}/api/i18n?v={!! $version !!}"></script>
 
 <script src="{!! BASE_URL !!}/dist/js/compiled-htmx.{!! $version !!}.min.js"></script>
+<script src="{!! BASE_URL !!}/dist/js/compiled-htmx-headSupport.{!! $version !!}.min.js"></script>
 
 <!-- libs -->
 <script src="{!! BASE_URL !!}/dist/js/compiled-frameworks.{!! $version !!}.min.js"></script>

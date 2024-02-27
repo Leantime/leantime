@@ -279,11 +279,11 @@ class Jsonrpc extends Controller
         $filtered_parameters = [];
 
         // matches params, params that don't match are ignored
-        foreach ($methodParams as $methodparam) {
-            $required = !$methodparam->isDefaultValueAvailable();
-            $position = $methodparam->getPosition();
-            $name = $methodparam->name;
-            $type = $methodparam->getType();
+        foreach ($methodParams as $methodParam) {
+            $required = !$methodParam->isDefaultValueAvailable();
+            $position = $methodParam->getPosition();
+            $name = $methodParam->name;
+            $type = $methodParam->getType();
 
             // check if param is there
             if (!in_array($name, array_keys($params))) {
@@ -291,12 +291,12 @@ class Jsonrpc extends Controller
                     throw new Exception("Required Parameter Missing: $name");
                 }
 
-                $filtered_parameters[$position] = $methodparam->getDefaultValue();
+                $filtered_parameters[$position] = $methodParam->getDefaultValue();
                 continue;
             }
 
             // check if type is correct or can be correct
-            if ($methodparam->hasType()) {
+            if ($methodParam->hasType()) {
                 if (in_array($type, [gettype($params[$name]), 'mixed'])) {
                     $filtered_parameters[$position] = $params[$name];
                     continue;

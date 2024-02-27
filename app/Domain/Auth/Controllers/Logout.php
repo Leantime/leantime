@@ -1,42 +1,46 @@
 <?php
 
-namespace Leantime\Domain\Auth\Controllers {
+namespace Leantime\Domain\Auth\Controllers;
 
-    use Leantime\Core\Controller;
-    use Leantime\Core\Frontcontroller as FrontcontrollerCore;
-    use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Core\Controller;
+use Leantime\Core\Frontcontroller as FrontcontrollerCore;
+use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ *
+ */
+class Logout extends Controller
+{
+    private AuthService $authService;
 
     /**
+     * init - initialize private variables
      *
+     * @access public
+     *
+     * @param AuthService $authService
+     *
+     * @return void
      */
-    class Logout extends Controller
+    public function init(AuthService $authService): void
     {
-        private $authService;
-
-        /**
-         * init - initialize private variables
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function init(AuthService $authService)
-        {
-            $this->authService = $authService;
-        }
-
-
-        /**
-         * get - handle get requests
-         *
-         * @access public
-         * @params parameters or body of the request
-         */
-        public function get($params)
-        {
-            $this->authService->logout();
-
-            return FrontcontrollerCore::redirect(BASE_URL . "/");
-        }
+        $this->authService = $authService;
     }
 
+    /**
+     * get - handle get requests
+     *
+     * @access public
+     *
+     * @param array $params
+     *
+     * @return Response
+     */
+    public function get(array $params): Response
+    {
+        $this->authService->logout();
+
+        return FrontcontrollerCore::redirect(BASE_URL . "/");
+    }
 }
