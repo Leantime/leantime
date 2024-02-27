@@ -32,15 +32,18 @@ leantime.helperController = (function () {
 
     };
 
-    var startDashboardTour = function () {
+    var startProjectDashboardTour = function () {
 
-        leantime.helperRepository.startingTour();
+        if(jQuery.nmTop()) {
+            jQuery.nmTop().close();
+        }
 
-        jQuery.nmTop().close();
+        leantime.helperRepository.updateUserModalSettings("projectDashboard")
 
         var tour = new Shepherd.Tour(
             {
                 useModalOverlay: true,
+
                 defaults: {
                     classes: 'shepherd-theme-arrows',
                     showCancelLink: true,
@@ -49,14 +52,15 @@ leantime.helperController = (function () {
             }
         );
 
-        tour.addStep(
-            'Left Nav',
-            {
-                title: leantime.i18n.__("tour.left_navigation"),
-                text: leantime.i18n.__("tour.left_nav_text"),
-                attachTo: { element: '.leftmenu ul', on: 'left' },
-                advanceOn: '.headmenu click',
-                buttons: [
+        tour.addStep({
+            id: "left-nav",
+            title: "🍷 Like a Fine Dining Menu",
+            text: "Did you know that projects are more than just task management? Find everything related to the current project in this beautiful list of menu items.",
+            attachTo: { element: '.leftmenu ul', on: 'left' },
+            modalOverlayOpeningRadius: 10,
+            modalOverlayOpeningPadding: 10,
+            scrollTo:true,
+            buttons: [
                 {
                     text: leantime.i18n.__("tour.cancel"),
                     classes: 'shepherd-button-secondary',
@@ -66,16 +70,19 @@ leantime.helperController = (function () {
                     text: leantime.i18n.__("tour.next"),
                     action: tour.next
                 }
-                ]
-            }
-        );
+            ]
+        });
+
 
         tour.addStep(
-            'Project Selection',
             {
-                title: leantime.i18n.__("tour.project_selection"),
-                text: leantime.i18n.__("tour.project_selection_text"),
-                attachTo: { element: '.project-selector', on: 'bottom' },
+                id: 'project-selector',
+                title: "🎸 All. The. (Small). Things.",
+                text: "Use the project selector to jump between projects. 'My Work' to see everything you own and the 'Company' menu for the boring stuff. ",
+                attachTo: { element: '.bigProjectSelector', on: 'bottom' },
+                modalOverlayOpeningRadius: 10,
+                modalOverlayOpeningPadding: 10,
+                scrollTo:true,
                 buttons: [
                 {
                     text: leantime.i18n.__("tour.back"),
@@ -90,12 +97,16 @@ leantime.helperController = (function () {
             }
         );
 
+
         tour.addStep(
-            'Header Navigation',
             {
-                title: leantime.i18n.__("tour.top_navigation"),
-                text: leantime.i18n.__("tour.top_navigation_text"),
+                id: 'header-navigation',
+                title: '🪞 Mirror, mirror on the wall',
+                text: "You can add your favorite profile pic here. Also settings, notifications and themes. Don't do this on your lunch break.",
                 attachTo: { element: '.headmenu', on: 'bottom' },
+                modalOverlayOpeningRadius: 10,
+                modalOverlayOpeningPadding: 10,
+                scrollTo:true,
                 buttons: [
                     {
                         text: leantime.i18n.__("tour.back"),
@@ -110,6 +121,96 @@ leantime.helperController = (function () {
             }
         );
 
+        tour.addStep(
+            {
+                id: 'project-checklist',
+                title: "🌳 A walk in the park",
+                text: "Not sure how to manage a project? Well here it is, this is how you manage a project. Follow this 12 (4 step) program to become a better person.",
+                attachTo: { element: '#progressForm', on: 'bottom' },
+                modalOverlayOpeningRadius: 10,
+                modalOverlayOpeningPadding: 10,
+                scrollTo:true,
+                buttons: [
+                    {
+                        text: leantime.i18n.__("tour.back"),
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: leantime.i18n.__("tour.next"),
+                        action: tour.next
+                    }
+                ]
+            }
+        );
+
+        tour.addStep(
+            {
+                id: 'project-status-updates',
+                title: "🎢 A rollercoaster of emotions",
+                text: "Keep the folks who need the extra hand holding up to date using the status updates. No more late night pings.",
+                attachTo: { element: '#comments', on: 'left' },
+                modalOverlayOpeningRadius: 10,
+                modalOverlayOpeningPadding: 10,
+                scrollTo:true,
+                buttons: [
+                    {
+                        text: leantime.i18n.__("tour.back"),
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: leantime.i18n.__("tour.next"),
+                        action: tour.next
+                    }
+                ]
+            }
+        );
+
+        tour.addStep(
+            {
+                id: 'team-box',
+                title: "🌞 It's a beautiful day in the neighborhood",
+                text: "Bring all your friends rock out to Blink 182 and work on this project together.",
+                attachTo: { element: '.teamBox', on: 'top' },
+                modalOverlayOpeningRadius: 10,
+                modalOverlayOpeningPadding: 10,
+                scrollTo:true,
+                buttons: [
+                    {
+                        text: leantime.i18n.__("tour.back"),
+                        classes: 'shepherd-button-secondary',
+                        action: tour.back
+                    },
+                    {
+                        text: leantime.i18n.__("tour.next"),
+                        action: tour.next
+                    }
+                ]
+            }
+        );
+
+        tour.addStep(
+            {
+                title: "🎉 Congratulations",
+                text: "Follow the steps in the project checklist to fill in the rest of the project. If you want to go through this process again you can click on 'What's on this page' under your profile menu.",
+                buttons:[
+                    {
+                        text:leantime.i18n.__("tour.close"),
+                        action: tour.cancel
+                    }
+                ],
+                scrollTo:true,
+                when: {
+                    show: function() {
+                        confetti.start();
+                    }
+                },
+                advanceOn: '.headmenu click'
+            }
+        );
+
+        /*
         tour.addStep(
             'Your projects',
             {
@@ -165,7 +266,6 @@ leantime.helperController = (function () {
                     text: "Go to the welcome content",
                     events: {
                         'click': function () {
-                            gtag("event", "tutorial_complete");
                             leantime.helperController.showHelperModal('dashboard', 300, 500);
                         }
                     }
@@ -173,14 +273,18 @@ leantime.helperController = (function () {
                 ],
                 advanceOn: '.headmenu click'
             }
-        );
+        );*/
 
         tour.start();
 
     };
 
     var startKanbanTour = function () {
-        jQuery.nmTop().close();
+
+        if(jQuery.nmTop()) {
+            jQuery.nmTop().close();
+        }
+
         var tour = new Shepherd.Tour(
             {
                 defaults: {
@@ -326,7 +430,7 @@ leantime.helperController = (function () {
             jQuery(".onboardingModal").nyroModal(onboardingModal);
 
             jQuery.nmManual(
-                leantime.appUrl + "/help/firstLogin?step=project",
+                leantime.appUrl + "/help/firstLogin",
                 onboardingModal
             );
         });
@@ -336,7 +440,7 @@ leantime.helperController = (function () {
     return {
         showHelperModal: showHelperModal,
         hideAndKeepHidden: hideAndKeepHidden,
-        startDashboardTour:startDashboardTour,
+        startProjectDashboardTour:startProjectDashboardTour,
         startKanbanTour: startKanbanTour,
         firstLoginModal:firstLoginModal
     };

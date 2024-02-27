@@ -610,6 +610,12 @@
 
         leantime.ticketsController.initDueDateTimePickers();
         leantime.ticketsController.initDueDateTimePickers();
+
+        @if($completedOnboarding === false)
+            leantime.helperController.firstLoginModal();
+        @endif
+
+        @php($_SESSION['userdata']['settings']["modals"]['projectDashboardTour'] = 1)
     });
 
     @dispatchEvent('scripts.beforeClose')

@@ -269,7 +269,7 @@ class Auth
     public function getUserByInviteLink(string $hash): bool|array
     {
 
-        $query = "SELECT firstname, lastname, id FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'i' LIMIT 1";
+        $query = "SELECT * FROM zp_user WHERE pwReset = :resetLink AND status LIKE 'i' LIMIT 1";
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':resetLink', $hash, PDO::PARAM_STR);

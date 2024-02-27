@@ -988,16 +988,6 @@ body .tab-primary.ui-tabs .ui-tabs-nav li.ui-state-active a {
 
 /*** BUTTONS & ICONS ***/
 
-.glyphicons {
-    list-style: none;
-}
-
-.glyphicons li {
-    float: left;
-    line-height: 25px;
-    width: 25%;
-}
-
 .fontawesomeicons ul {
     list-style: none;
 }
@@ -2197,7 +2187,7 @@ body .widgettitle .editHeadline:hover {
 }
 
 .articleWrapper {
-    max-width:760px;
+    max-width:980px;
     margin:auto;
     text-align:left;
 }

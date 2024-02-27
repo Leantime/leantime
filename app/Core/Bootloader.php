@@ -168,6 +168,8 @@ class Bootloader
             return;
         }
 
+        $time = microtime(true) - LEANTIME_START;
+
         $this->handleRequest();
 
         $app::setHasBeenBootstrapped();

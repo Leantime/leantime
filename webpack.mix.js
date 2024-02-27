@@ -15,6 +15,7 @@ mix
     .setResourceRoot(`../`) // this is what to prefix the URL with
     .combine('./public/assets/js/libs/prism/prism.js', `public/dist/js/compiled-footer.${version}.min.js`)
     .js('./public/assets/js/app/htmx.js', `public/dist/js/compiled-htmx.${version}.min.js`)
+    .js('./public/assets/js/app/htmx-headSupport.js', `public/dist/js/compiled-htmx-headSupport.${version}.min.js`)
     .combine([
         "./public/assets/js/app/app.js",
         "./public/assets/js/app/core/editors.js",
@@ -51,8 +52,7 @@ mix
         "./node_modules/croppie/croppie.js",
         "./node_modules/packery/dist/packery.pkgd.js",
         "./node_modules/imagesloaded/imagesloaded.pkgd.js",
-        "./node_modules/tether-shepherd/dist/js/tether.js",
-        "./node_modules/tether-shepherd/dist/js/shepherd.js",
+        "./node_modules/shepherd.js/dist/js/shepherd.js",
         "./node_modules/isotope-layout/dist/isotope.pkgd.js",
         "./node_modules/gridstack/dist/gridstack-all.js",
         "./node_modules/jstree/dist/jstree.js",

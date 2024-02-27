@@ -18,6 +18,7 @@
     color:var(--primary-font-color);
     margin: 0 5px;
     padding: 5px 10px;
+    border-radius: var(--element-radius);
 }
 .pagetitle .dropdown-menu > li > a {
     color:var(--primary-font-color);
@@ -195,7 +196,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .nyroModalCont .ticketDropdown ul li a[class*="label-"] {
     padding: 5px 10px;
     display:block;
-    border-radius: 0px;
+    border-radius: var(--element-radius);
 }
 
 .chosen-results li[class*=" label-"] {
@@ -343,9 +344,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .nyroModalCont .ticketDropdown a.label-default.effort{
     background:var(--secondary-background);
     color:var(--primary-font-color);
-
 }
-
 
 .maincontent .ticketDropdown ul li {
     margin-bottom:1px;
@@ -367,7 +366,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .maincontent .noBackground .accordionTitle {
-    color: var(--main-action-color);
+    color: var(--main-titles-color);
 }
 
 .maincontent .accordionTitle i {
@@ -564,7 +563,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 }
 
 .pagetitle .header-title-dropdown:hover {
-    border: 1px solid var(--main-action-color);
+    border: 1px solid var(--main-titles-color);
 }
 
 .dropdownWrapper {

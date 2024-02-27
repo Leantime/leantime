@@ -7,6 +7,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Reactions\Models\Reactions;
+    use Leantime\Domain\Setting\Repositories\Setting;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Users\Services\Users as UserService;
     use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
@@ -31,6 +32,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
         private TimesheetService $timesheetService;
         private CommentService $commentService;
         private ReactionService $reactionsService;
+        private Setting $settingRepo;
 
         /**
          * @param ProjectService   $projectService
@@ -49,7 +51,8 @@ namespace Leantime\Domain\Dashboard\Controllers {
             UserService $userService,
             TimesheetService $timesheetService,
             CommentService $commentService,
-            ReactionService $reactionsService
+            ReactionService $reactionsService,
+            Setting $settingRepo
         ): void {
             $this->projectService = $projectService;
             $this->ticketService = $ticketService;
@@ -57,6 +60,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->timesheetService = $timesheetService;
             $this->commentService = $commentService;
             $this->reactionsService = $reactionsService;
+            $this->settingRepo = $settingRepo;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
         }
@@ -131,6 +135,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             $this->tpl->assign('comments', $comment);
             $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
+
+            $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
+            $this->tpl->assign("completedOnboarding", $completedOnboarding);
 
             // TICKETS
             $this->tpl->assign('tickets', $this->ticketService->getLastTickets($_SESSION['currentProject']));
