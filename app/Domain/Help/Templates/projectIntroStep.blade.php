@@ -1,5 +1,5 @@
 <div style="max-width:700px;">
-    <form class="onboardingModal" method="post" action="{{ BASE_URL }}/help/firstLogin?step={{ $nextStep }}">
+    <form class="onboardingModal" method="post" id="projectTitleOnboarding" action="{{ BASE_URL }}/help/firstLogin?step={{ $nextStep }}">
         <input type="hidden" name="currentStep" value="{{ $currentStep }}" />
         <div class="row">
             <div class="col-md-8">
@@ -18,7 +18,6 @@
         </div>
         <div class="row">
             <div class="col-md-12 tw-text-right">
-                <a href="javascript:void(0);" class="btn btn-secondary" onclick="skipOnboarding();">{{ __('links.skip_for_now') }}</a>
                 <input type="submit" value="{{ __('buttons.next') }}" />
             </div>
         </div>

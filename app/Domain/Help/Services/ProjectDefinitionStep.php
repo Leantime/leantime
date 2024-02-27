@@ -39,18 +39,18 @@ class ProjectDefinitionStep implements OnboardingSteps
         $description = "";
 
         if (isset($params['accomplish'])) {
-            $description .= __('label.what_are_you_trying_to_accomplish');
-            $description .= "<br />".$params['accomplish'];
+            $description .= "<h3>" . __('label.what_are_you_trying_to_accomplish') . "</h3>";
+            $description .= "" . $params['accomplish'];
         }
 
         if (isset($params['worldview'])) {
-            $description .= __('label.how_does_the_world_look_like');
-            $description .= "<br />".$params['worldview'];
+            $description .= "<br /><h3>" . __('label.how_does_the_world_look_like') . "</h3>";
+            $description .= "" . $params['worldview'];
         }
 
         if (isset($params['whyImportant'])) {
-            $description .= __('label.why_is_this_important');
-            $description .= "<br />".$params['whyImportant'];
+            $description .= "<br /><h3>" . __('label.why_is_this_important') . "</h3>";
+            $description .= "" . $params['whyImportant'];
         }
 
         $this->projectService->patch($_SESSION['currentProject'], array("details" => $description));
