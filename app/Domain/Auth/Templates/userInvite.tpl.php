@@ -71,22 +71,21 @@ $user = $tpl->get("user");
         <input type="hidden" name="step" value="1"/>
 
         <div class="">
-            <input type="text" name="firstname" id="firstname" placeholder="<?php echo $tpl->language->__("input.placeholders.firstname"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
+            <input type="text" name="firstname" style="margin-bottom:15px" id="firstname" placeholder="<?php echo $tpl->language->__("input.placeholders.firstname"); ?>" value="<?=$tpl->escape($user['firstname']); ?>" />
 
         </div>
         <div class="">
-            <input type="text" name="lastname" id="lastname" placeholder="<?php echo $tpl->language->__("input.placeholders.lastname"); ?>" value="<?=$tpl->escape($user['lastname']); ?>" />
+            <input type="text" name="lastname" id="lastname" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.lastname"); ?>" value="<?=$tpl->escape($user['lastname']); ?>" />
         </div>
         <div class="">
-            <input type="text" name="jobTitle" id="jobTitle" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
+            <input type="text" name="jobTitle" id="jobTitle" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.jobtitle"); ?>" value="<?=$tpl->escape($user['jobTitle']); ?>" />
         </div>
-        <hr />
         <div class="">
-            <input type="password" name="password" id="password" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
+            <input type="password" name="password" id="password" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.enter_new_password"); ?>" />
             <span id="pwStrength" style="width:100%;"></span>
         </div>
         <div class=" ">
-            <input type="password" name="password2" id="password2" placeholder="<?php echo $tpl->language->__("input.placeholders.confirm_password"); ?>" />
+            <input type="password" name="password2" id="password2" style="margin-bottom:15px" placeholder="<?php echo $tpl->language->__("input.placeholders.confirm_password"); ?>" />
         </div>
         <small><?=$tpl->__('label.passwordRequirements') ?></small><br /><br />
         <div class="">
