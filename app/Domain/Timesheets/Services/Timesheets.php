@@ -12,16 +12,13 @@ use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 class Timesheets
 {
     private TimesheetRepository $timesheetsRepo;
-    private LanguageCore $language;
 
     /**
      * @param TimesheetRepository $timesheetsRepo
-     * @param LanguageCore        $language
      */
-    public function __construct(TimesheetRepository $timesheetsRepo, LanguageCore $language)
+    public function __construct(TimesheetRepository $timesheetsRepo)
     {
         $this->timesheetsRepo = $timesheetsRepo;
-        $this->language = $language;
     }
 
     /**
@@ -66,6 +63,7 @@ class Timesheets
      */
     public function logTime(int $ticketId, array $params): array|bool
     {
+        // @TODO: Change to use value objects for more type safeness.
         $values = array(
             'userId' => $_SESSION['userdata']['id'],
             'ticket' => $ticketId,
@@ -82,25 +80,25 @@ class Timesheets
             'paidDate' => '',
         );
 
-        if (isset($params['kind']) && $params['kind'] != '') {
+        if (!empty($params['kind'])) {
             $values['kind'] = $params['kind'];
         }
 
-        if (isset($params['date']) && $params['date'] != '') {
+        if (!empty($params['date'])) {
             $values['date'] = format($params['date'])->isoDate();
         }
 
-        if (isset($params['hours']) && $params['hours'] != '') {
+        if (!empty($params['hours'])) {
             $values['hours'] = $params['hours'];
         }
 
-        if (isset($params['description']) && $params['description'] != '') {
+        if (!empty($params['description'])) {
             $values['description'] = $params['description'];
         }
 
-        if ($values['kind'] != '') {
-            if ($values['date'] != '') {
-                if ($values['hours'] != '' && $values['hours'] > 0) {
+        if (!empty($values['kind'])) {
+            if (!empty($values['date'])) {
+                if (!empty($values['hours']) && $values['hours'] > 0) {
                     $this->timesheetsRepo->addTime($values);
 
                     return true;

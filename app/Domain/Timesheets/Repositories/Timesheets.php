@@ -370,34 +370,43 @@ class Timesheets extends Repository
      */
     public function addTime(array $values): void
     {
-        $query = "INSERT INTO zp_timesheets
-          (userId, ticketId, workDate, hours, kind, description, invoicedEmpl, invoicedComp, invoicedEmplDate, invoicedCompDate, rate, paid, paidDate)
-        VALUES
-            (:userId,
-            :ticket,
-            :date,
-            :hours,
-            :kind,
-            :description,
-            :invoicedEmpl,
-            :invoicedComp,
-            :invoicedEmplDate,
-            :invoicedCompDate,
-            :rate,
-            :paid,
-            :paidDate)
-         ON DUPLICATE KEY
-             UPDATE
+        $query = "INSERT INTO zp_timesheets (
+                userId,
+                ticketId,
+                workDate,
+                hours,
+                kind,
+                description,
+                invoicedEmpl,
+                invoicedComp,
+                invoicedEmplDate,
+                invoicedCompDate,
+                rate,
+                paid,
+                paidDate
+            ) VALUES (
+                :userId,
+                :ticket,
+                :date,
+                :hours,
+                :kind,
+                :description,
+                :invoicedEmpl,
+                :invoicedComp,
+                :invoicedEmplDate,
+                :invoicedCompDate,
+                :rate,
+                :paid,
+                :paidDate
+            ) ON DUPLICATE KEY UPDATE
                  hours = hours + :hours,
                  description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
-
 
         $query = self::dispatch_filter('sql', $query);
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticket', $values['ticket']);
         $call->bindValue(':date', $values['date']);
@@ -423,26 +432,25 @@ class Timesheets extends Repository
      */
     public function simpleInsert(array $values): void
     {
-        $query = "INSERT INTO zp_timesheets
-        (userId,
-        ticketId,
-        workDate,
-        hours,
-        kind,
-        rate)
-        VALUES
-        (:userId,
-         :ticket,
-         :date,
-         :hours,
-         :kind,
-         :rate)
-         ON DUPLICATE KEY UPDATE hours = hours + :hoursB";
+        $query = "INSERT INTO zp_timesheets(
+            userId,
+            ticketId,
+            workDate,
+            hours,
+            kind,
+            rate
+            ) VALUES (
+            :userId,
+            :ticket,
+            :date,
+            :hours,
+            :kind,
+            :rate)
+            ON DUPLICATE KEY UPDATE hours = hours + :hoursB";
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticket', $values['ticket']);
         $call->bindValue(':date', $values['date']);
@@ -454,7 +462,6 @@ class Timesheets extends Repository
         $call->execute();
     }
 
-
     /**
      * getTime - get a specific time entry
      *
@@ -462,7 +469,7 @@ class Timesheets extends Repository
      *
      * @return mixed
      */
-    public function getTimesheet(int $id)
+    public function getTimesheet(int $id): mixed
     {
         $query = "SELECT
             zp_timesheets.id,
@@ -523,7 +530,6 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-
         $call->bindValue(':ticket', $values['ticket']);
         $call->bindValue(':date', $values['date']);
         $call->bindValue(':hours', $values['hours']);
@@ -567,7 +573,6 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-
         $call->bindValue(':date', $values['date']);
         $call->bindValue(':hours', $values['hours']);
         $call->bindValue(':userId', $values['userId']);
@@ -601,7 +606,6 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-
         $call->bindValue(':projectId', $projectId);
 
         return $call->fetchAll();
@@ -635,16 +639,13 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-
         $call->bindValue(':ticketId', $ticketId);
 
         $values = $call->fetchAll();
-
         $returnValues = array();
-
         if (count($values) > 0) {
             $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
-            $endDate = "" . $values[(count($values) - 1)]['utc'] . "";
+            $endDate = "" . $values[(count($values) - 1)]['utc'];
 
             $returnValues = $this->dateRange($startDate, $endDate);
 
@@ -662,11 +663,11 @@ class Timesheets extends Repository
     /**
      * dateRange - returns every single day between two dates
      *
-     * @access private
      * @param string $first  date
      * @param string $last   date
      * @param string $step   default 1 day, can be changed to get every other day, week etc.
      * @param string $format date format
+     *
      * @return array
      */
     private function dateRange(string $first, string $last, string $step = '+1 day', string $format = 'Y-m-d'): array
@@ -696,7 +697,6 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
-
         $call->bindValue(':id', $id);
 
         $call->execute();
@@ -713,55 +713,39 @@ class Timesheets extends Repository
      */
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
-        if ($invEmpl != '' && is_array($invEmpl) === true) {
-            foreach ($invEmpl as $row1) {
-                $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
-                WHERE id = :id ";
+        foreach ($invEmpl as $row1) {
+            $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
+            WHERE id = :id ";
 
-                $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
+            $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
+            $invEmplCall->prepare($query);
+            $invEmplCall->bindValue(':id', $row1);
+            $invEmplCall->execute();
 
-                $invEmplCall->prepare($query);
-
-                $invEmplCall->bindValue(':id', $row1);
-
-                $invEmplCall->execute();
-
-                unset($invEmplCall);
-            }
+            unset($invEmplCall);
         }
 
-        if ($invComp != '' && is_array($invComp) === true) {
-            foreach ($invComp as $row2) {
-                $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW())
-                WHERE id = :id ";
+        foreach ($invComp as $row2) {
+            $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW()) WHERE id = :id ";
 
-                $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
+            $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
+            $invCompCall->prepare($query2);
+            $invCompCall->bindValue(':id', $row2);
+            $invCompCall->execute();
 
-                $invCompCall->prepare($query2);
-
-                $invCompCall->bindValue(':id', $row2);
-
-                $invCompCall->execute();
-
-                unset($invCompCall);
-            }
+            unset($invCompCall);
         }
 
-        if ($paid != '' && is_array($paid) === true) {
-            foreach ($paid as $row3) {
-                $query3 = "UPDATE zp_timesheets SET paid = 1, paidDate = DATE(NOW())
-                WHERE id = :id ";
+        foreach ($paid as $row3) {
+            $query3 = "UPDATE zp_timesheets SET paid = 1, paidDate = DATE(NOW()) WHERE id = :id ";
 
-                $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
+            $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
+            $paidCol->prepare($query3);
+            $paidCol->bindValue(':id', $row3);
 
-                $paidCol->prepare($query3);
+            $paidCol->execute();
 
-                $paidCol->bindValue(':id', $row3);
-
-                $paidCol->execute();
-
-                unset($paidCol);
-            }
+            unset($paidCol);
         }
 
         return true;
@@ -810,7 +794,6 @@ class Timesheets extends Repository
         $call->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
         $result = $call->fetch();
-
         unset($call);
 
         if (!$result) {
@@ -844,18 +827,12 @@ class Timesheets extends Repository
             return 0;
         }
 
-        $date = date("Y-m-d", $inTimestamp) . " 00:00:00";
-
-        $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind)
-        VALUES
-        (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
-
-            ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
+        $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind) VALUES
+                  (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
+                  ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
-
         $call->prepare($query);
-
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
         $call->bindValue(':hoursWorked', $hoursWorked);
@@ -893,9 +870,7 @@ class Timesheets extends Repository
         $onTheClock = false;
 
         $call = $this->dbcall(func_get_args());
-
         $call->prepare($query);
-
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
 
         $results = $call->fetchAll();
@@ -940,19 +915,15 @@ class Timesheets extends Repository
         ";
 
         $call = $this->dbcall(func_get_args());
-
         $call->prepare($query);
-
         $call->bindValue(':ticketId', $ticketId);
 
         $values = $call->fetchAll();
-
         $returnValues = array();
 
         if (count($values) > 0) {
             $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
-            $endDate = "" . $values[(count($values) - 1)]['utc'] . "";
-
+            $endDate = "" . $values[(count($values) - 1)]['utc'];
 
             $returnValues = $this->dateRange($startDate, $endDate);
 

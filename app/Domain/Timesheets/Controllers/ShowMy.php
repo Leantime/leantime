@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use DateTime;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -55,9 +56,6 @@ class ShowMy extends Controller
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        $invEmplCheck = '0';
-        $invCompCheck = '0';
-
         // Start with user monday 00:00 of this week in user timezone.
         $dateStart = new \DateTime('Monday this week', new \DateTimeZone($_SESSION['usersettings.timezone']));
 
@@ -82,9 +80,8 @@ class ShowMy extends Controller
 
         $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
 
-
-        //Ensure we assume this is UTC
-        $dateFromDate = new  DateTime($dateFrom, new \DateTimeZone("UTC"));
+        // Ensure we assume this is UTC
+        $dateFromDate = new \DateTime($dateFrom, new \DateTimeZone("UTC"));
         $this->tpl->assign('dateFrom', $dateFromDate);
         $this->tpl->assign('actKind', $kind);
         $this->tpl->assign('kind', $this->timesheetsRepo->kind);
@@ -99,6 +96,7 @@ class ShowMy extends Controller
      * @param array $postData
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public function saveTimeSheet(array $postData): void
     {
@@ -132,7 +130,6 @@ class ShowMy extends Controller
                     "hours" => $hours,
                     "kind" => $kind,
                     "rate" => $userinfo["wage"],
-
                 );
 
                 if ($isCurrentTimesheetEntry == "new") {

@@ -201,7 +201,12 @@ class Format
         return $this->dateTimeHelper->getISOTimeString($this->value);
     }
 
-    public function timestamp(): string
+    /**
+     * Generate unix timestamp from date.
+     *
+     * @return int|bool
+     */
+    public function timestamp(): int|bool
     {
         if ($this->value == null) {
             return "";
@@ -248,7 +253,8 @@ class Format
         return number_format($percent, 2) . "%";
     }
 
-    public function decimal() {
+    public function decimal(): string
+    {
         return number_format($this->value, 2);
     }
 }
