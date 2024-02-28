@@ -2,13 +2,9 @@ leantime.timesheetsController = (function () {
     var closeModal = false;
 
     var initTimesheetsTable = function (groupBy) {
-
         jQuery(document).ready(function () {
-
             var size = 100;
             var columnIndex = false;
-
-
 
             var allTimesheets = jQuery("#allTimesheetsTable").DataTable({
                 "language": {
@@ -47,7 +43,6 @@ leantime.timesheetsController = (function () {
 
             });
 
-
             var buttons = new jQuery.fn.dataTable.Buttons(allTimesheets, {
                 buttons: [
                     {
@@ -76,15 +71,10 @@ leantime.timesheetsController = (function () {
             jQuery('#allTimesheetsTable').on('column-visibility.dt', function ( e, settings, column, state ) {
                 allTimesheets.draw(false);
             });
-
-
-
-
         });
     };
 
     var initEditTimeModal = function () {
-
         var canvasoptions = {
             sizes: {
                 minW:  700,
@@ -95,7 +85,7 @@ leantime.timesheetsController = (function () {
             callbacks: {
                 beforeShowCont: function () {
                     jQuery(".showDialogOnLoad").show();
-                    if (closeModal == true) {
+                    if (closeModal === true) {
                         closeModal = false;
                         location.reload();
                     }
@@ -112,12 +102,8 @@ leantime.timesheetsController = (function () {
 
         };
 
-
         jQuery(".editTimeModal").nyroModal(canvasoptions);
-
-
     };
-
 
     // Make public what you want to have public, everything else is private
     return {
