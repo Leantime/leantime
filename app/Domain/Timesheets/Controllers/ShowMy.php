@@ -9,6 +9,7 @@ use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Auth\Services\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ShowMy extends Controller
 {
-    private TimesheetRepository $timesheetsRepo;
+    private timesheetService $timesheetService;
+    private TimesheetRepository $timesheetRepo;
     private ProjectRepository $projects;
     private TicketRepository $tickets;
     private UserRepository $userRepo;
@@ -26,7 +28,8 @@ class ShowMy extends Controller
     /**
      * init - initialze private variables
      *
-     * @param TimesheetRepository $timesheetsRepo
+     * @param TimesheetService    $timesheetService
+     * @param TimesheetRepository $timesheetRepo
      * @param ProjectRepository   $projects
      * @param TicketRepository    $tickets
      * @param UserRepository      $userRepo
@@ -34,12 +37,14 @@ class ShowMy extends Controller
      * @return void
      */
     public function init(
-        TimesheetRepository $timesheetsRepo,
+        TimesheetService $timesheetService,
+        TimesheetRepository $timesheetRepo,
         ProjectRepository $projects,
         TicketRepository $tickets,
         UserRepository $userRepo
     ): void {
-        $this->timesheetsRepo = $timesheetsRepo;
+        $this->timesheetService = $timesheetService;
+        $this->timesheetRepo = $timesheetRepo;
         $this->projects = $projects;
         $this->tickets = $tickets;
         $this->userRepo = $userRepo;
@@ -63,7 +68,7 @@ class ShowMy extends Controller
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (!empty($_POST['startDate'])) {
-                $fromData = new Carbon($_POST['startDate'], 'UTC');
+                $fromData = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], 'UTC');
             }
         }
 
@@ -72,13 +77,19 @@ class ShowMy extends Controller
             $this->tpl->setNotification('Timesheet successfully updated', 'success');
         }
 
-        $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $fromData, $_SESSION['userdata']['id']);
+        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromData, $_SESSION['userdata']['id']);
 
         $this->tpl->assign('dateFrom', $fromData);
         $this->tpl->assign('actKind', $kind);
-        $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-        $this->tpl->assign('allProjects', $this->projects->getUserProjects(userId: $_SESSION["userdata"]["id"], projectTypes: "project"));
-        $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
+        $this->tpl->assign('kind', $this->timesheetRepo->kind);
+        $this->tpl->assign('allProjects', $this->projects->getUserProjects(
+            userId: $_SESSION["userdata"]["id"],
+            projectTypes: "project"
+        ));
+        $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
+            id: $_SESSION["userdata"]["id"],
+            limit: -1
+        ));
         $this->tpl->assign('allTimesheets', $myTimesheets);
 
         return $this->tpl->display('timesheets.showMy');

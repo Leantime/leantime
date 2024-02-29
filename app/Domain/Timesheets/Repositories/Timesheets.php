@@ -39,8 +39,8 @@ class Timesheets extends Repository
      *
      * @param int         $id
      * @param string|null $kind
-     * @param string|null $dateFrom
-     * @param string|null $dateTo
+     * @param Carbon|null $dateFrom
+     * @param Carbon|null $dateTo
      * @param int|null    $userId
      * @param string|null $invEmpl
      * @param string|null $invComp
@@ -50,9 +50,8 @@ class Timesheets extends Repository
      *
      * @return array|false
      */
-    public function getAll(int $id, ?string $kind, ?string $dateFrom, ?string $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
+    public function getAll(int $id, ?string $kind, ?Carbon $dateFrom, ?Carbon $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
-
         $query = "SELECT
                     zp_timesheets.id,
                     zp_timesheets.userId,

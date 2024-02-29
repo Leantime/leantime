@@ -7,38 +7,44 @@ foreach ($__data as $var => $val) {
 }
 ?>
 
-
+<!-- page header -->
 <div class="pageheader">
-
-
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
         <h5><?php echo $tpl->__('headline.overview'); ?></h5>
         <h1><?php echo $tpl->__("headline.my_timesheets") ?></h1>
     </div>
-</div><!--pageheader-->
+</div>
+<!-- page header -->
+
 
 <div class="maincontent">
     <div class="maincontentinner">
-
         <?php
         echo $tpl->displayNotification();
         ?>
 
-
-        <form action="<?=BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
-
+        <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
             <div class="filterWrapper tw-relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?=$tpl->__("links.filter") ?> (1)</a>
+                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__("links.filter") ?> (1)</a>
                 <div class="filterBar" style="display:none; top:30px;">
 
                     <div class="filterBoxLeft">
                         <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?> <?php echo $tpl->__('label.date_to'); ?></label>
-                        <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
-                               value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
-                        <input type="text" id="dateTo" class="dateTo" name="dateTo"
-                               value="<?php echo format($tpl->get('dateTo'))->date(); ?>" style="margin-bottom:10px; width:90px" />
+                        <input type="text"
+                               id="dateFrom"
+                               class="dateFrom"
+                               name="dateFrom"
+                               value="<?php echo format($tpl->get('dateFrom'), 'short'); ?>"
+                               style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
+                        <input type="text"
+                               id="dateTo"
+                               class="dateTo"
+                               name="dateTo"
+                               value="<?php echo format($tpl->get('dateTo'), 'short'); ?>"
+                               style="margin-bottom:10px; width:90px" />
                     </div>
+
                     <div class="filterBoxLeft">
                         <label for="kind"><?php echo $tpl->__("label.type")?></label>
                         <select id="kind" name="kind" onchange="submit();">
@@ -77,8 +83,6 @@ foreach ($__data as $var => $val) {
 
             <div class="clearfix"></div>
 
-
-
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
                 <colgroup>
                       <col class="con0" width="100px"/>
@@ -92,7 +96,7 @@ foreach ($__data as $var => $val) {
                       <col class="con0"/>
                       <col class="con1" />
                       <col class="con0"/>
-                        <col class="con1"/>
+                      <col class="con1"/>
                 </colgroup>
                 <thead>
                     <tr>

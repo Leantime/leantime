@@ -184,7 +184,7 @@ jQuery(document).ready(function(){
  });
 </script>
 
-<!--pageheader-->
+<!-- page header -->
 <div class="pageheader">
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
@@ -192,7 +192,7 @@ jQuery(document).ready(function(){
         <h1><?php echo $tpl->__('headline.my_timesheets'); ?></h1>
     </div>
 </div>
-<!--pageheader-->
+<!-- page header -->
 
 <div class="maincontent">
     <div class="maincontentinner">
