@@ -2,7 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use DateTime;
+use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
@@ -56,33 +56,25 @@ class ShowMy extends Controller
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        // Start with user monday 00:00 of this week in user timezone.
-        $dateStart = new \DateTime('Monday this week', new \DateTimeZone($_SESSION['usersettings.timezone']));
-
-        // Change to UTC for processing
-        $dateStart->setTimezone(new \DateTimeZone("UTC"));
-        $dateFrom = $dateStart->format("Y-m-d H:i:s");
+        // Use UTC here as all data stored in the database should be UTC.
+        $fromData = Carbon::now('UTC')->startOfWeek();
 
         $kind = 'all';
-
-        if (isset($_POST['search']) === true) {
-            // User date comes is in user date format and user timezone. change to utc and iso
-            if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
-                $dateFrom = format($_POST['startDate'])->isoDate();
+        if (isset($_POST['search'])) {
+            // User date comes is in user date format and user timezone. Change it to utc.
+            if (!empty($_POST['startDate'])) {
+                $fromData = new Carbon($_POST['startDate'], 'UTC');
             }
         }
 
-        if (isset($_POST['saveTimeSheet']) === true) {
+        if (isset($_POST['saveTimeSheet'])) {
             $this->saveTimeSheet($_POST);
-
             $this->tpl->setNotification('Timesheet successfully updated', 'success');
         }
 
-        $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
+        $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $fromData, $_SESSION['userdata']['id']);
 
-        // Ensure we assume this is UTC
-        $dateFromDate = new \DateTime($dateFrom, new \DateTimeZone("UTC"));
-        $this->tpl->assign('dateFrom', $dateFromDate);
+        $this->tpl->assign('dateFrom', $fromData);
         $this->tpl->assign('actKind', $kind);
         $this->tpl->assign('kind', $this->timesheetsRepo->kind);
         $this->tpl->assign('allProjects', $this->projects->getUserProjects(userId: $_SESSION["userdata"]["id"], projectTypes: "project"));
@@ -96,6 +88,7 @@ class ShowMy extends Controller
      * @param array $postData
      *
      * @return void
+     *
      * @throws BindingResolutionException
      */
     public function saveTimeSheet(array $postData): void

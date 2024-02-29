@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Repositories;
 
+use Carbon\Carbon;
 use DateTime;
 use Leantime\Core\Db as DbCore;
 use Leantime\Core\Repository;
@@ -265,12 +266,12 @@ class Timesheets extends Repository
 
     /**
      * @param int    $projectId
-     * @param string $dateStart
+     * @param Carbon $fromDate
      * @param int    $userId
      *
      * @return mixed
      */
-    public function getWeeklyTimesheets(int $projectId = -1, string $dateStart = '0000-01-01 00:00:00', int $userId = 0): mixed
+    public function getWeeklyTimesheets(int $projectId, Carbon $fromDate, int $userId = 0): mixed
     {
         $query = "SELECT
             zp_timesheets.id,
@@ -314,15 +315,14 @@ class Timesheets extends Repository
         if ($projectId > 0) {
             $query .= " AND zp_tickets.projectId = :projectId";
         }
-
         $query .= "GROUP BY ticketId, kind";
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
 
-        $call->bindValue(':dateStart1', $dateStart);
-        $call->bindValue(':dateStart2', $dateStart);
+        $call->bindValue(':dateStart1', $fromDate);
+        $call->bindValue(':dateStart2', $fromDate);
         $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 
         if ($projectId > 0) {
