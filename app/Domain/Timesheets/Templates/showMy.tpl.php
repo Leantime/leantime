@@ -7,29 +7,22 @@ foreach ($__data as $var => $val) {
 <script type="text/javascript">
 
 jQuery(document).ready(function(){
-
     var startDate;
     var endDate;
-
     var selectCurrentWeek = function () {
-
         window.setTimeout(function () {
             jQuery('.ui-weekpicker').find('.ui-datepicker-current-day a').addClass('ui-state-active').removeClass('ui-state-default');
         }, 1);
-
     };
 
     var setDates = function (input) {
-
         var $input = jQuery(input);
         var date = $input.datepicker('getDate');
 
         if (date !== null) {
-
-            //Timesheet table currently does not handle first day of week. We are setting it to Monday no matter what
-            //var firstDay = $input.datepicker( "option", "firstDay" );
+            // Timesheet table currently does not handle first day of week. We are setting it to Monday no matter what
+            // var firstDay = $input.datepicker( "option", "firstDay" );
             var firstDay = 1
-
             var dayAdjustment = date.getDay() - firstDay;
             if (dayAdjustment < 0) {
                 dayAdjustment += 7;
@@ -85,7 +78,6 @@ jQuery(document).ready(function(){
         onChangeMonthYear: function (year, month, inst) {
             selectCurrentWeek();
         },
-
     });
 
 
@@ -99,9 +91,7 @@ jQuery(document).ready(function(){
 
     jQuery(".project-select").chosen();
     jQuery(".ticket-select").chosen();
-
     jQuery(".project-select").change(function(){
-
             jQuery(".ticket-select").removeAttr("selected");
             jQuery(".ticket-select").val("");
             jQuery(".ticket-select").trigger("liszt:updated");
@@ -112,11 +102,9 @@ jQuery(document).ready(function(){
             jQuery(".ticket-select option").not(".project_"+selectedValue).hide();
             jQuery("#ticketSelect .chosen-results li").not(".project_"+selectedValue).hide();
             jQuery(".ticket-select").chosen("destroy").chosen();
-
     });
 
     jQuery(".ticket-select").change(function() {
-
         var selectedValue = jQuery(this).find("option:selected").attr("data-value");
         jQuery(".project-select option[value="+selectedValue+"]").attr("selected", "selected");
         jQuery(".project-select").trigger("liszt:updated");
@@ -124,18 +112,15 @@ jQuery(document).ready(function(){
     });
 
     jQuery("#nextWeek").click(function() {
-
         var date = jQuery("#endDate").datepicker('getDate');
         var endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 7);
-        var startDate =
-            new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+        var startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
         var inst = jQuery("#endDate").data('datepicker');
         var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
         jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
         jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
         jQuery("#timesheetList").submit();
-
     });
 
     jQuery("#prevWeek").click(function() {
@@ -153,7 +138,6 @@ jQuery(document).ready(function(){
     });
 
     jQuery(".timesheetTable input").change(function(){
-
         //Row Sum
         colSumMo = 0;
         colSumTu = 0;
@@ -163,9 +147,7 @@ jQuery(document).ready(function(){
         colSumSa = 0;
         colSumSu = 0;
 
-
         jQuery(".timesheetRow").each(function(i){
-
             var rowSum = 0;
 
             jQuery(this).find("input.hourCell").each(function(){
@@ -181,8 +163,6 @@ jQuery(document).ready(function(){
                 if(currentClass.indexOf("rowFr") > -1){ colSumFr = colSumFr + currentValue;  }
                 if(currentClass.indexOf("rowSa") > -1){ colSumSa = colSumSa + currentValue;  }
                 if(currentClass.indexOf("rowSu") > -1){ colSumSu = colSumSu + currentValue;  }
-
-
             });
 
             jQuery(this).find(".rowSum strong").text(rowSum);
@@ -197,17 +177,12 @@ jQuery(document).ready(function(){
         jQuery("#sumSu").text(colSumSu.toFixed(2));
 
         var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
-
         var roundedSum = Math.round((finalSum)*100)/100;
 
         jQuery("#finalSum").text(roundedSum);
-
     });
-
  });
-
 </script>
-
 
 <div class="pageheader">
 

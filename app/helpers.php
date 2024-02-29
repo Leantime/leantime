@@ -201,9 +201,12 @@ if (! function_exists('build')) {
 if (! function_exists('format')) {
     /**
      * Returns a format object to format string values
-     * @param string|int|float $value
+     *
+     * @param string|int|float|DateTime|null $value
+     * @param string|int|float|DateTime|null $value2
+     *
      * @return Format
-     **/
+     */
     function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format
     {
         if ($value instanceof \DateTime) {
