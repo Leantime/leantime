@@ -138,7 +138,7 @@ class ConsoleKernel implements ConsoleKernelContract
             // filter by active plugins
             ->filter(fn ($command) => in_array(
                 Str::of($command)->after('Plugins/')->before('/Command')->toString(),
-                array_map(fn ($plugin) => $plugin->foldername, $this->getApplication()->make(PluginsService::class)->getAllPlugins(enabled: true)),
+                array_map(fn ($plugin) => $plugin->foldername, $this->getApplication()->make(PluginsService::class)->getAllPlugins(enabledOnly: true)),
             ));
 
         $commands = collect(Arr::flatten($_SESSION['commands']))
