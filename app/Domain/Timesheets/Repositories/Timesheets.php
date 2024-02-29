@@ -654,31 +654,6 @@ class Timesheets extends Repository
     }
 
     /**
-     * dateRange - returns every single day between two dates
-     *
-     * @param string $first  date
-     * @param string $last   date
-     * @param string $step   default 1 day, can be changed to get every other day, week etc.
-     * @param string $format date format
-     *
-     * @return array
-     */
-    private function dateRange(string $first, string $last, string $step = '+1 day', string $format = 'Y-m-d'): array
-    {
-        $dates = array();
-        $current = strtotime($first);
-        $last = strtotime($last);
-
-        while ($current <= $last) {
-            $dates[date($format, $current)]['utc'] = date($format, $current);
-            $dates[date($format, $current)]['summe'] = 0;
-            $current = strtotime($step, $current);
-        }
-
-        return $dates;
-    }
-
-    /**
      * @param int $id
      *
      * @return void
@@ -883,51 +858,5 @@ class Timesheets extends Repository
         }
 
         return $onTheClock;
-    }
-
-    /**
-     * getTicketHours - get the Ticket hours for a specific ticket
-     *
-     * @param int $ticketId
-     *
-     * @return array
-     */
-    public function getTicketHours(int $ticketId): array
-    {
-        $query = "SELECT
-            YEAR(zp_timesheets.workDate) AS year,
-            DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
-            DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
-            DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
-            (zp_timesheets.hours) AS summe
-        FROM
-            zp_timesheets
-        WHERE
-            zp_timesheets.ticketId = :ticketId
-        ORDER BY utc
-        ";
-
-        $call = $this->dbcall(func_get_args());
-        $call->prepare($query);
-        $call->bindValue(':ticketId', $ticketId);
-
-        $values = $call->fetchAll();
-        $returnValues = array();
-
-        if (count($values) > 0) {
-            $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
-            $endDate = "" . $values[(count($values) - 1)]['utc'];
-
-            $returnValues = $this->dateRange($startDate, $endDate);
-
-            foreach ($values as $row) {
-                $returnValues[$row['utc']]["summe"] = $row['summe'];
-            }
-        } else {
-            $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
-            $returnValues[date("%Y-%m-%d")]["summe"] = 0;
-        }
-
-        return $returnValues;
     }
 }
