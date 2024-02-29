@@ -95,7 +95,7 @@ class Timesheets
         }
 
         if (!empty($params['date'])) {
-            $values['date'] = format($params['date'])->isoDate();
+            $values['date'] = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'] ?? 'Y-m-d', $params['date'], 'UTC')->startOfDay();
         }
 
         if (!empty($params['hours'])) {

@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Timesheets\Repositories;
 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use DateTime;
 use Leantime\Core\Db as DbCore;
 use Leantime\Core\Repository;
@@ -165,26 +166,6 @@ class Timesheets extends Repository
      */
     public function export(array $values): void
     {
-        /*zp_timesheets.id,
-            zp_timesheets.userId,
-            zp_timesheets.ticketId,
-            zp_timesheets.workDate,
-            zp_timesheets.hours,
-            zp_timesheets.description,
-            zp_timesheets.kind,
-            zp_projects.name,
-            zp_projects.id AS projectId,
-            zp_timesheets.invoicedEmpl,
-            zp_timesheets.invoicedComp,
-            zp_timesheets.invoicedEmplDate,
-            zp_timesheets.invoicedCompDate,
-            zp_user.firstname,
-            zp_user.lastname,
-            zp_tickets.id as ticketId,
-            zp_tickets.headline,
-            zp_tickets.planHours*/
-
-        //  $this->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck)
         $values = $this->getAll($values['project'], $values['kind'], $values['dateFrom'], $values['dateTo'], $values['userId'], $values['invEmplCheck'], $values['invCompCheck']);
 
         $filename = "export_" . date('m-d_h:m');
@@ -341,7 +322,10 @@ class Timesheets extends Repository
      */
     public function getUsersTicketHours(int $ticketId, int $userId): mixed
     {
-        $sql = "SELECT SUM(hours) AS sumHours FROM `zp_timesheets` WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
+        $sql = "SELECT SUM(hours) AS sumHours
+                FROM `zp_timesheets`
+                WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId
+                GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
 
         $call = $this->dbcall(func_get_args());
 
@@ -557,15 +541,15 @@ class Timesheets extends Repository
     public function updateHours(array $values): void
     {
         $query = "UPDATE
-            zp_timesheets
-        SET
-            hours = :hours
-        WHERE
-            userId = :userId
-            AND ticketId = :ticketId
-            AND kind = :kind
-            AND TO_DAYS(workDate) = TO_DAYS(:date)
-            LIMIT 1";
+                zp_timesheets
+            SET
+                hours = :hours
+            WHERE
+                userId = :userId
+                AND ticketId = :ticketId
+                AND kind = :kind
+                AND TO_DAYS(workDate) = TO_DAYS(:date)
+                LIMIT 1";
 
         $query = self::dispatch_filter('sql', $query);
 
@@ -643,17 +627,27 @@ class Timesheets extends Repository
         $values = $call->fetchAll();
         $returnValues = array();
         if (count($values) > 0) {
-            $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
-            $endDate = "" . $values[(count($values) - 1)]['utc'];
+            $startDate = (Carbon::createFromFormat('Y-m-d', $values[0]['utc'], 'UTC'))->startOfMonth();
+            $endDate = Carbon::createFromFormat('Y-m-d', last($values)['utc'], 'UTC');
 
-            $returnValues = $this->dateRange($startDate, $endDate);
+            $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
+            foreach ($range as $key => $date) {
+                $utc = $date->format('Y-m-d');
+                $returnValues[$utc] = [
+                    'utc' => $utc,
+                    'summe' => 0,
+                ];
+            }
 
             foreach ($values as $row) {
                 $returnValues[$row['utc']]["summe"] = $row['summe'];
             }
         } else {
-            $returnValues[date("Y-m-d")]["utc"] = date("Y-m-d");
-            $returnValues[date("Y-m-d")]["summe"] = 0;
+            $utc = Carbon::now('utc')->format('Y-m-d');
+            $returnValues[$utc] = [
+              'utc' => $utc,
+              'summe' => 0,
+            ];
         }
 
         return $returnValues;

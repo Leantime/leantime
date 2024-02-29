@@ -215,8 +215,8 @@ if (! function_exists('format')) {
             $language = app()->make(Language::class);
             $format = match ($value2) {
                 'short' => $_SESSION['usersettings.language.date_format'] ?? $language->__("language.dateformat"),
-                'long' => $_SESSION['usersettings.language.date_format'] ?? $language->__("language.dateformat") . ' ' . $_SESSION['usersettings.language.time_format'],
-                default => $value2,
+                'long' => ($_SESSION['usersettings.language.date_format'] ?? $language->__("language.dateformat")) . ' ' . $_SESSION['usersettings.language.time_format'],
+                default => $value2 ?? 'Y-m-d',
             };
 
             return $value->format($format);

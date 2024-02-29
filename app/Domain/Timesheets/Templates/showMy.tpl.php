@@ -200,12 +200,14 @@ jQuery(document).ready(function(){
         echo $tpl->displayNotification();
         ?>
 
-        <form action="<?=BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
+        <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
             <div class="btn-group viewDropDown pull-right">
-                <button class="btn dropdown-toggle" data-toggle="dropdown"><?=$tpl->__("links.week_view") ?> <?=$tpl->__("links.view") ?></button>
+                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                    <?php echo $tpl->__("links.week_view") ?> <?=$tpl->__("links.view") ?>
+                </button>
                 <ul class="dropdown-menu">
-                    <li><a href="<?=BASE_URL?>/timesheets/showMy" class="active"><?=$tpl->__("links.week_view") ?></a></li>
-                    <li><a href="<?=BASE_URL?>/timesheets/showMyList" ><?=$tpl->__("links.list_view") ?></a></li>
+                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMy" class="active"><?php echo $tpl->__("links.week_view") ?></a></li>
+                    <li><a href="<?php echo BASE_URL ?>/timesheets/showMyList" ><?php echo $tpl->__("links.list_view") ?></a></li>
                 </ul>
             </div>
             <div class="pull-left" style="padding-left:5px; margin-top:-3px;">
@@ -213,9 +215,9 @@ jQuery(document).ready(function(){
                 <div class="padding-top-sm">
                     <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?=format($tpl->get("dateFrom"), 'short') ?>" style="margin-top:5px;"/>
+                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo format($tpl->get("dateFrom"), 'short') ?>" style="margin-top:5px;"/>
                     <?php echo $tpl->__('label.until'); ?>
-                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?=format($tpl->get("dateFrom")->copy()->add(6, 'days'), 'short') ?>" style="margin-top:6px;"/>
+                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo format($tpl->get("dateFrom")->copy()->add(6, 'days'), 'short') ?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
@@ -238,9 +240,9 @@ jQuery(document).ready(function(){
                 </colgroup>
                 <thead>
                 <?php
-                    $dateFromHeader = clone $tpl->get("dateFrom");
+                    $dateFromHeader = $tpl->get("dateFrom")->copy();
                     $days = explode(',', $tpl->__('language.dayNamesShort'));
-                    // Make the first day of week monday.
+                    // Make the first day of week monday, by shifting sunday to the back of the array.
                     $days[] = array_shift($days);
                 ?>
                 <tr>
@@ -302,8 +304,8 @@ jQuery(document).ready(function(){
                             <?php foreach ($rowKeys as $key) { ?>
                                 <td width="7%" class="rowMo <?php if ($currentDate->isToday()) { echo"active"; } ?>">
                                     <input type="text"
-                                           class="<?php echo $timeRow["workDates"]; ?> hourCell"
-                                           name="<?php echo $timeRow["ticketId"];?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $currentDate ?>|<?php echo $timeRow["kind"];?>"
+                                           class="hourCell"
+                                           name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $timeRow['workDate'] ?>|<?php echo $timeRow["kind"];?>"
                                            value="<?php echo $timeRow[$key]; ?>"
                                     />
                                 </td>
@@ -376,7 +378,7 @@ jQuery(document).ready(function(){
 
                             <?php foreach ($days as $day) { ?>
                                 <td width="7%" class="rowMo <?php if ($currentDate->isToday()) { echo "active"; } ?>">
-                                    <input type="text" class="hourCell" name="new|new|<?php echo format($currentDate, 'short') ?>|GENERAL_BILLABLE" value="0" />
+                                    <input type="text" class="hourCell" name="new|new|<?php echo $currentDate->startOfDay() ?>|GENERAL_BILLABLE" value="0" />
                                 </td>
                                 <?php $currentDate->add('1', 'day'); ?>
                             <?php } ?>

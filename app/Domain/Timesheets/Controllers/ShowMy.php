@@ -104,44 +104,40 @@ class ShowMy extends Controller
      */
     public function saveTimeSheet(array $postData): void
     {
-        $ticketId = "";
-        $currentTimesheetId = -1;
         $userinfo = $this->userRepo->getUser($_SESSION["userdata"]["id"]);
 
         foreach ($postData as $key => $dateEntry) {
-            // Receiving a string of
-            // TICKET ID | New or existing timesheetID | Current Date | Type of booked hours
+            // The temp data should contain four parts, spectated by "|":
+            // TICKET ID | new or existing | Current Date (user format) | Type of booked hours
             $tempData = explode("|", $key);
-
-            if (count($tempData) == 4) {
+            if (count($tempData) === 4) {
                 $ticketId = $tempData[0];
-                $isCurrentTimesheetEntry = $tempData[1];
-                $currentDate = $tempData[2];
+                $isNewEntry = 'new' === $tempData[1];
+                $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]));
                 $hours = $dateEntry;
+                $kind = $tempData[3];
 
                 // No ticket ID set, ticket id comes from form fields
                 if ($ticketId == "new") {
                     $ticketId = $postData["ticketId"];
                     $kind = $postData["kindId"];
-                } else {
-                    $kind = $tempData[3];
                 }
 
                 $values = array(
                     "userId" => $_SESSION["userdata"]["id"],
                     "ticket" => $ticketId,
-                    "date" => format($currentDate)->isoDate(),
+                    "date" => $currentDate,
                     "hours" => $hours,
                     "kind" => $kind,
                     "rate" => $userinfo["wage"],
                 );
 
-                if ($isCurrentTimesheetEntry == "new") {
-                    if ($values["hours"] > 0) {
-                        $this->timesheetsRepo->simpleInsert($values);
+                if ($isNewEntry) {
+                    if ($hours > 0) {
+                        $this->timesheetRepo->simpleInsert($values);
                     }
                 } else {
-                    $this->timesheetsRepo->updateHours($values);
+                    $this->timesheetRepo->updateHours($values);
                 }
             }
         }
