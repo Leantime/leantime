@@ -495,18 +495,18 @@ class Timesheets extends Repository
     {
         $query = "UPDATE
                 zp_timesheets
-                SET
-            ticketId = :ticket,
-            workDate = :date,
-            hours = :hours,
-            kind = :kind,
-            description =:description,
-            invoicedEmpl =:invoicedEmpl,
-            invoicedComp =:invoicedComp,
-            invoicedEmplDate =:invoicedEmplDate,
-            invoicedCompDate =:invoicedCompDate,
-            paid =:paid,
-            paidDate =:paidDate
+            SET
+                ticketId = :ticket,
+                workDate = :date,
+                hours = :hours,
+                kind = :kind,
+                description =:description,
+                invoicedEmpl =:invoicedEmpl,
+                invoicedComp =:invoicedComp,
+                invoicedEmplDate =:invoicedEmplDate,
+                invoicedCompDate =:invoicedCompDate,
+                paid =:paid,
+                paidDate =:paidDate
             WHERE
                 id = :id";
 
