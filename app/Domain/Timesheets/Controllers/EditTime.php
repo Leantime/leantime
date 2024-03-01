@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use Carbon\Carbon;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
@@ -19,10 +18,6 @@ class EditTime extends Controller
     private TimesheetRepository $timesheetsRepo;
     private ProjectRepository $projects;
     private TicketRepository $tickets;
-
-    // This is the date we get back from the database, when no date has been sat. This is somewhat a hack and should
-    // be looked into.
-    const EMPTY_DATE = '0000-00-00 00:00:00';
 
     /**
      * init - initialize private variables
@@ -55,33 +50,28 @@ class EditTime extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
         $info = '';
-        // Only admins and employees
+        //Only admins and employees
         if (Auth::userIsAtLeast(Roles::$editor)) {
             if (isset($_GET['id']) === true) {
                 $id = ($_GET['id']);
 
                 $timesheet = $this->timesheetsRepo->getTimesheet($id);
 
-                // Date validation.
-                $timesheet['invoicedEmplDate'] = $timesheet['invoicedEmplDate'] == self::EMPTY_DATE ? 'now' : $timesheet['invoicedEmplDate'];
-                $timesheet['invoicedCompDate'] = $timesheet['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheet['invoicedCompDate'];
-                $timesheet['paidDate'] = $timesheet['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheet['paidDate'];
-
                 $values = array(
                     'id' => $id,
                     'userId' => $timesheet['userId'],
                     'ticket' => $timesheet['ticketId'],
                     'project' => $timesheet['projectId'],
-                    'date' => new Carbon($timesheet['workDate'], 'UTC'),
+                    'date' => $timesheet['workDate'],
                     'kind' => $timesheet['kind'],
                     'hours' => $timesheet['hours'],
                     'description' => $timesheet['description'],
                     'invoicedEmpl' => $timesheet['invoicedEmpl'],
                     'invoicedComp' => $timesheet['invoicedComp'],
-                    'invoicedEmplDate' => new Carbon($timesheet['invoicedEmplDate'], 'UTC'),
-                    'invoicedCompDate' => new Carbon($timesheet['invoicedCompDate'], 'UTC'),
+                    'invoicedEmplDate' => $timesheet['invoicedEmplDate'],
+                    'invoicedCompDate' => $timesheet['invoicedCompDate'],
                     'paid' => $timesheet['paid'],
-                    'paidDate' => new Carbon($timesheet['paidDate'], 'UTC'),
+                    'paidDate' => $timesheet['paidDate'],
                 );
 
                 if (Auth::userIsAtLeast(Roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
@@ -96,7 +86,9 @@ class EditTime extends Controller
                         }
 
                         if (isset($_POST['date']) && $_POST['date'] != '') {
-                            $values['date'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['date'], 'UTC');
+                            $timestamp = date_create_from_format($this->language->__("language.dateformat"), $_POST['date']);
+
+                            $values['date'] = format($_POST['date'])->isoDateMid();
                         }
 
                         if (isset($_POST['hours']) && $_POST['hours'] != '') {
@@ -114,9 +106,9 @@ class EditTime extends Controller
                                 }
 
                                 if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                                    $values['invoicedEmplDate'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedEmplDate'], 'UTC')->midDay();
+                                    $values['invoicedEmplDate'] = format($_POST['invoicedEmplDate'])->isoDateMid();
                                 } else {
-                                    $values['invoicedEmplDate'] = Carbon::now('UTC')->midDay();
+                                    $values['invoicedEmplDate'] = date("Y-m-d");
                                 }
                             } else {
                                 $values['invoicedEmpl'] = 0;
@@ -129,9 +121,9 @@ class EditTime extends Controller
                                 }
 
                                 if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                                    $values['invoicedCompDate'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedCompDate'], 'UTC')->midDay();
+                                    $values['invoicedCompDate'] = format($_POST['invoicedCompDate'])->isoDateMid();
                                 } else {
-                                    $values['invoicedCompDate'] = Carbon::now('UTC')->midDay();
+                                    $values['invoicedCompDate'] = date("Y-m-d");
                                 }
                             } else {
                                 $values['invoicedComp'] = 0;
@@ -144,15 +136,16 @@ class EditTime extends Controller
                                 }
 
                                 if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                                    $values['paidDate'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['paidDate'], 'UTC')->midDay();
+                                    $values['paidDate'] = format($_POST['paidDate'])->isoDateMid();
                                 } else {
-                                    $values['paidDate'] = Carbon::now('UTC')->midDay();
+                                    $values['paidDate'] = date("Y-m-d");
                                 }
                             } else {
                                 $values['paid'] = 0;
                                 $values['paidDate'] = '';
                             }
                         }
+
 
                         if ($values['ticket'] != '' && $values['project'] != '') {
                             if ($values['kind'] != '') {
@@ -163,26 +156,21 @@ class EditTime extends Controller
 
                                         $timesheetUpdated = $this->timesheetsRepo->getTimesheet($id);
 
-                                        // Date validation.
-                                        $timesheetUpdated['invoicedEmplDate'] = $timesheetUpdated['invoicedEmplDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['invoicedEmplDate'];
-                                        $timesheetUpdated['invoicedCompDate'] = $timesheetUpdated['invoicedCompDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['invoicedCompDate'];
-                                        $timesheetUpdated['paidDate'] = $timesheetUpdated['paidDate'] == self::EMPTY_DATE ? 'now' : $timesheetUpdated['paidDate'];
-
                                         $values = array(
                                             'id' => $id,
                                             'userId' => $timesheetUpdated['userId'],
                                             'ticket' => $timesheetUpdated['ticketId'],
                                             'project' => $timesheetUpdated['projectId'],
-                                            'date' => new Carbon($timesheetUpdated['workDate'], 'UTC'),
+                                            'date' => $timesheetUpdated['workDate'],
                                             'kind' => $timesheetUpdated['kind'],
                                             'hours' => $timesheetUpdated['hours'],
                                             'description' => $timesheetUpdated['description'],
                                             'invoicedEmpl' => $timesheetUpdated['invoicedEmpl'],
                                             'invoicedComp' => $timesheetUpdated['invoicedComp'],
-                                            'invoicedEmplDate' => new Carbon($timesheetUpdated['invoicedEmplDate'], 'UTC'),
-                                            'invoicedCompDate' => new Carbon($timesheetUpdated['invoicedCompDate'], 'UTC'),
+                                            'invoicedEmplDate' => $timesheetUpdated['invoicedEmplDate'],
+                                            'invoicedCompDate' => $timesheetUpdated['invoicedCompDate'],
                                             'paid' => $timesheetUpdated['paid'],
-                                            'paidDate' => new Carbon($timesheetUpdated['paidDate'], 'UTC'),
+                                            'paidDate' => $timesheetUpdated['paidDate'],
                                         );
                                     } else {
                                         $this->tpl->setNotification('notifications.time_logged_error_no_hours', 'error');
@@ -198,13 +186,13 @@ class EditTime extends Controller
                         }
                     }
 
+
                     $this->tpl->assign('values', $values);
 
                     $this->tpl->assign('info', $info);
                     $this->tpl->assign('allProjects', $this->projects->getAll());
                     $this->tpl->assign('allTickets', $this->tickets->getAll());
                     $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-
                     return $this->tpl->displayPartial('timesheets.editTime');
                 } else {
                     return $this->tpl->displayPartial('errors.error403');

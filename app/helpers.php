@@ -1,16 +1,18 @@
 <?php
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Str;
 use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\AppSettings;
 use Leantime\Core\Bootloader;
+use Leantime\Core\HtmxRequest;
+use Leantime\Core\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Format;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\Mix;
-use Carbon\Carbon;
 
 if (! function_exists('app')) {
     /**
@@ -203,25 +205,10 @@ if (! function_exists('format')) {
      * @param string|int|float|DateTime|null $value
      * @param string|int|float|DateTime|null $value2
      *
-     * @return Format|string
+     * @return Format
      */
-    function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format|string
+    function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format
     {
-        // @TODO: This is an hack that should be fixed when all date handling is moved into carbon. This is not the best
-        //        solution, but will work for now.
-        if ($value instanceof Carbon) {
-            $value->setTimezone($_SESSION['usersettings.timezone'] ?? 'UTC');
-
-            $language = app()->make(Language::class);
-            $format = match ($value2) {
-                'short' => $_SESSION['usersettings.language.date_format'] ?? $language->__("language.dateformat"),
-                'long' => ($_SESSION['usersettings.language.date_format'] ?? $language->__("language.dateformat")) . ' ' . $_SESSION['usersettings.language.time_format'],
-                default => $value2 ?? 'Y-m-d',
-            };
-
-            return $value->format($format);
-        }
-
         if ($value instanceof \DateTime) {
             $value = $value->format("Y-m-d H:i:s");
         }
