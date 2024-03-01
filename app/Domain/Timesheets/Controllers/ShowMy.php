@@ -68,7 +68,7 @@ class ShowMy extends Controller
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (!empty($_POST['startDate'])) {
-                $fromData = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], 'UTC');
+                $fromData = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], 'UTC')->startOfDay();
             }
         }
 

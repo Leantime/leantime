@@ -45,12 +45,12 @@ class ShowMyList extends Controller
 
         $dateFrom = Carbon::now('UTC')->startOfMonth();
         if (!empty($_POST['dateFrom'])) {
-            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], 'UTC');
+            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], 'UTC')->startOfDay();
         }
 
         $dateTo = Carbon::now('UTC')->endOfMonth();
         if (!empty($_POST['dateTo'])) {
-            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], 'UTC');
+            $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], 'UTC')->startOfDay();
         }
 
         $this->tpl->assign('dateFrom', $dateFrom);
