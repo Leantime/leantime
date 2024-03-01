@@ -157,21 +157,27 @@ foreach ($__data as $var => $val) {
                         <td>
                             <?php $tpl->e($row['description']); ?>
                         </td>
-                        <td data-order="<?php if ($row['invoicedEmpl'] == '1') { echo format($row['invoicedEmplDate'])->date(); }?>">
+                        <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
+                            echo format($row['invoicedEmplDate'])->date();
+                                        }?>">
                             <?php if ($row['invoicedEmpl'] == '1') {
                                 echo format($row['invoicedEmplDate'])->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
-                        <td data-order="<?php if ($row['invoicedComp'] == '1') { echo format($row['invoicedCompDate'])->date(); }?>">
+                        <td data-order="<?php if ($row['invoicedComp'] == '1') {
+                            echo format($row['invoicedCompDate'])->date();
+                                        }?>">
                             <?php if ($row['invoicedComp'] == '1') {
                                 echo format($row['invoicedCompDate'])->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
-                        <td data-order="<?php if ($row['paid'] == '1') { echo format($row['paidDate'])->date(); }?>">
+                        <td data-order="<?php if ($row['paid'] == '1') {
+                            echo format($row['paidDate'])->date();
+                                        }?>">
                             <?php if ($row['paid'] == '1') {
                                 echo format($row['paidDate'])->date();
                             } else {

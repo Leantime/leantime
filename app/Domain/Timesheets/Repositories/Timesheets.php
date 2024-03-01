@@ -160,6 +160,8 @@ class Timesheets extends Repository
     }
 
     /**
+     * @TODO: Function is currently not used by core.
+     *
      * @param array $values
      *
      * @return void
@@ -202,6 +204,8 @@ class Timesheets extends Repository
     }
 
     /**
+     * @TODO: Function is currently not used by core.
+     *
      * @param int $id
      *
      * @return mixed
@@ -237,11 +241,9 @@ class Timesheets extends Repository
 
         if (isset($values['hoursBooked']) === true) {
             return $values['hoursBooked'];
-        } else {
-            return 0;
         }
 
-        return $values;
+        return 0;
     }
 
     /**
@@ -568,6 +570,8 @@ class Timesheets extends Repository
     /**
      * getProjectHours - get the Project hours for a specific project
      *
+     * @TODO: Function is currently not used by core.
+     *
      * @param int $projectId
      *
      * @return mixed
@@ -682,8 +686,7 @@ class Timesheets extends Repository
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
         foreach ($invEmpl as $row1) {
-            $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
-            WHERE id = :id ";
+            $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW()) WHERE id = :id ";
 
             $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
             $invEmplCall->prepare($query);
@@ -728,7 +731,7 @@ class Timesheets extends Repository
      */
     public function punchIn(int $ticketId): mixed
     {
-        $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,:time)";
+        $query = "INSERT INTO `zp_punch_clock` (id, userId, punchIn) VALUES (:ticketId, :sessionId, :time)";
 
         $call = $this->dbcall(func_get_args());
 
@@ -736,6 +739,7 @@ class Timesheets extends Repository
 
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+        // Unix timestamp is by default UTC.
         $call->bindValue(':time', time());
 
         $value = $call->execute();
@@ -772,9 +776,7 @@ class Timesheets extends Repository
         $outTimestamp = time();
 
         $seconds =  ($outTimestamp - $inTimestamp);
-
         $totalMinutesWorked = $seconds / 60;
-
         $hoursWorked = round(($totalMinutesWorked / 60), 2);
 
         $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
@@ -790,13 +792,13 @@ class Timesheets extends Repository
 
         unset($call);
 
-        //At least 1 minutes
+        // At least 1 minutes
         if ($hoursWorked < 0.016) {
             return 0;
         }
 
-        $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind) VALUES
-                  (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
+        $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind)
+                  VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE')
                   ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
@@ -804,7 +806,7 @@ class Timesheets extends Repository
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
         $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', date("Y-m-d", $inTimestamp) . " 00:00:00");
+        $call->bindValue(':workDate', (new Carbon($inTimestamp, 'UTC'))->startOfDay());
 
         $call->execute();
 
@@ -848,9 +850,8 @@ class Timesheets extends Repository
             $onTheClock["id"] = $results[0]["id"];
             $onTheClock["since"] = $results[0]["punchIn"];
             $onTheClock["headline"] = $results[0]["headline"];
-            $start_date = new DateTime();
-            $start_date->setTimestamp($results[0]["punchIn"]);
-            $since_start = $start_date->diff(new DateTime('NOW'));
+            $start_date = new Carbon($results[0]["punchIn"], 'UTC');
+            $since_start = $start_date->diff(Carbon::now('UTC'));
 
             $r = $since_start->format('%H:%I');
 

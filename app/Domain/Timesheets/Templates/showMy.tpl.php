@@ -250,7 +250,9 @@ jQuery(document).ready(function(){
                     <th><?php echo $tpl->__('subtitles.todo')?></th>
                     <th><?php echo $tpl->__('label.type')?></th>
                     <?php foreach ($days as $day) { ?>
-                        <th class="<?php if ($dateFromHeader->isToday()) { echo "active"; } ?>"><?php echo $day ?><br />
+                        <th class="<?php if ($dateFromHeader->isToday()) {
+                            echo "active";
+                                   } ?>"><?php echo $day ?><br />
                             <?php
                                 echo format($dateFromHeader, 'short');
                                 $dateFromHeader->add('1', 'day');
@@ -277,24 +279,24 @@ jQuery(document).ready(function(){
                             $totalHours[$key] = 0;
                         }
 
-                    foreach ($tpl->get('allTimesheets') as $timeRow) {
-                        // Calculate totals.
-                        $rowSum = 0;
-                        foreach ($rowKeys as $key) {
-                            $totalHours[$key] += $timeRow[$key];
-                            $rowSum += $timeRow[$key];
-                        }
+                        foreach ($tpl->get('allTimesheets') as $timeRow) {
+                            // Calculate totals.
+                            $rowSum = 0;
+                            foreach ($rowKeys as $key) {
+                                $totalHours[$key] += $timeRow[$key];
+                                $rowSum += $timeRow[$key];
+                            }
 
-                        $timesheetId = "new";
+                            $timesheetId = "new";
 
-                        $workDatesArray = explode(",", $timeRow["workDates"]);
-                        $workDatesArray = array_map(function($item) {
-                            return format($item)->date();
-                        }, $workDatesArray);
+                            $workDatesArray = explode(",", $timeRow["workDates"]);
+                            $workDatesArray = array_map(function ($item) {
+                                return format($item)->date();
+                            }, $workDatesArray);
 
-                        /** @var \Carbon\Carbon $currentDate */
-                        $currentDate = $tpl->get("dateFrom")->copy();
-                        ?>
+                            /** @var \Carbon\Carbon $currentDate */
+                            $currentDate = $tpl->get("dateFrom")->copy();
+                            ?>
 
                         <tr class="gradeA timesheetRow">
                             <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
@@ -302,7 +304,9 @@ jQuery(document).ready(function(){
                             <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
 
                             <?php foreach ($rowKeys as $key) { ?>
-                                <td width="7%" class="rowMo <?php if ($currentDate->isToday()) { echo"active"; } ?>">
+                                <td width="7%" class="rowMo <?php if ($currentDate->isToday()) {
+                                    echo"active";
+                                                            } ?>">
                                     <input type="text"
                                            class="hourCell"
                                            name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $timeRow['workDate'] ?>|<?php echo $timeRow["kind"];?>"
@@ -314,7 +318,7 @@ jQuery(document).ready(function(){
 
                             <td width="7%" class="rowSum?>"><strong><?php echo $rowSum; ?></strong></td>
                         </tr>
-                    <?php } ?>
+                        <?php } ?>
 
                     <!-- Row to add new time registration -->
                     <?php
@@ -377,7 +381,9 @@ jQuery(document).ready(function(){
                             </td>
 
                             <?php foreach ($days as $day) { ?>
-                                <td width="7%" class="rowMo <?php if ($currentDate->isToday()) { echo "active"; } ?>">
+                                <td width="7%" class="rowMo <?php if ($currentDate->isToday()) {
+                                    echo "active";
+                                                            } ?>">
                                     <input type="text" class="hourCell" name="new|new|<?php echo $currentDate->startOfDay() ?>|GENERAL_BILLABLE" value="0" />
                                 </td>
                                 <?php $currentDate->add('1', 'day'); ?>

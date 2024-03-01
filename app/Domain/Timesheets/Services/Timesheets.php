@@ -5,6 +5,7 @@ namespace Leantime\Domain\Timesheets\Services;
 use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 
 /**
@@ -153,11 +154,11 @@ class Timesheets
     }
 
     /**
-     * @param $ticket
+     * @param Tickets $ticket
      *
      * @return int|mixed
      */
-    public function getRemainingHours($ticket): mixed
+    public function getRemainingHours(Tickets $ticket): mixed
     {
         $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticket->id);
         $planHours = $ticket->planHours;
@@ -191,10 +192,10 @@ class Timesheets
     }
 
     /**
-     * @param int      $projectId
-     * @param string   $kind
      * @param Carbon   $dateFrom
      * @param Carbon   $dateTo
+     * @param int      $projectId
+     * @param string   $kind
      * @param int|null $userId
      * @param string   $invEmpl
      * @param string   $invComp
@@ -221,10 +222,11 @@ class Timesheets
     }
 
     /**
-    * @param int $projectId
-    * @param Carbon $fromDate
-    * @param int $userId
-    * @return array
+     * @param int    $projectId
+     * @param Carbon $fromDate
+     * @param int    $userId
+     *
+     * @return array
      */
     public function getWeeklyTimesheets(int $projectId, Carbon $fromDate, int $userId = 0): array
     {
@@ -236,6 +238,8 @@ class Timesheets
     }
 
     /**
+     * @TODO: Function is currently not used by core.
+     *
      * @param array $values
      *
      * @return void

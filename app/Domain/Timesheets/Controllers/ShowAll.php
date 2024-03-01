@@ -78,16 +78,16 @@ class ShowAll extends Controller
         $kind = 'all';
         $userId = null;
 
-        if (isset($_POST['kind']) && $_POST['kind'] != '') {
+        if (!empty($_POST['kind'])) {
             $kind = strip_tags($_POST['kind']);
         }
 
-        if (isset($_POST['userId']) && $_POST['userId'] != '') {
+        if (!empty($_POST['userId'])) {
             $userId = intval(strip_tags($_POST['userId']));
         }
 
         $dateFrom = Carbon::now('UTC')->startOfMonth();
-        if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
+        if (!empty($_POST['dateFrom'])) {
             $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], 'UTC')->startOfDay();
         }
 
@@ -96,7 +96,7 @@ class ShowAll extends Controller
             $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], 'UTC')->startOfDay();
         }
 
-        if (isset($_POST['invEmpl']) === true) {
+        if (isset($_POST['invEmpl'])) {
             $invEmplCheck = $_POST['invEmpl'];
 
             if ($invEmplCheck == 'on') {
@@ -108,7 +108,7 @@ class ShowAll extends Controller
             $invEmplCheck = '0';
         }
 
-        if (isset($_POST['invComp']) === true) {
+        if (isset($_POST['invComp'])) {
             $invCompCheck = ($_POST['invComp']);
 
             if ($invCompCheck == 'on') {
@@ -118,7 +118,7 @@ class ShowAll extends Controller
             }
         }
 
-        if (isset($_POST['paid']) === true) {
+        if (isset($_POST['paid'])) {
             $paidCheck = ($_POST['paid']);
 
             if ($paidCheck == 'on') {
@@ -131,27 +131,13 @@ class ShowAll extends Controller
         }
 
         $projectFilter = "";
-        if (isset($_POST['project']) && $_POST['project'] != '') {
+        if (!empty($_POST['project'])) {
             $projectFilter = strip_tags($_POST['project']);
         }
 
         $clientId = -1;
-        if (isset($_POST['clientId']) && $_POST['clientId'] != '') {
+        if (!empty($_POST['clientId'])) {
             $clientId = strip_tags($_POST['clientId']);
-        }
-
-        if (isset($_POST['export'])) {
-            $values = array(
-                'project' => $projectFilter,
-                'clientId' => $clientId,
-                'kind' => $kind,
-                'userId' => $userId,
-                'dateFrom' => $dateFrom,
-                'dateTo' => $dateTo,
-                'invEmplCheck' => $invEmplCheck,
-                'invCompCheck' => $invCompCheck,
-            );
-            $this->timesheetsService->export($values);
         }
 
         $user = app()->make(UserRepository::class);

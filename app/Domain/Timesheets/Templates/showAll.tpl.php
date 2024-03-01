@@ -252,7 +252,7 @@ foreach ($__data as $var => $val) {
                         <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
                             echo format($row['invoicedEmplDate'])->date();
                                         }?>"><?php if ($row['invoicedEmpl'] == '1') {
-                            ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
+    ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
                                         <?php } else { ?>
                                             <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
                                 <input type="checkbox" name="invoicedEmpl[]" class="invoicedEmpl"
