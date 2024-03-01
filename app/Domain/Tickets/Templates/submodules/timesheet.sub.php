@@ -35,7 +35,7 @@ $currentPay = $tpl->get('userHours') * $userInfo['wage'];
                     </span>
 
                     <label for="timesheetdate"><?php echo $tpl->__('label.date') ?>:</label>
-                    <input type="text" id="timesheetdate" name="date" class="dates" value="<?php echo format($values['date'], 'short') ?>" /><br/>
+                    <input type="text" id="timesheetdate" name="date" class="dates" value="<?php echo format($values['date'])->date() ?>" /><br/>
 
                     <label for="hours"><?php echo $tpl->__('label.hours') ?></label>
                     <span class="field">
