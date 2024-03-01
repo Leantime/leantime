@@ -81,15 +81,19 @@ class Get extends Controller
                 $path_parts = pathinfo($fullPath);
 
                 if ($ext == 'pdf') {
+                    $mime_type = 'application/pdf';
                     header('Content-type: application/pdf');
                     header("Content-Disposition: inline; filename=\"" . $realName . "." . $ext . "\"");
                 } elseif ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'gif' || $ext == 'png') {
+                    $mime_type = $mimes[$ext];
                     header('Content-type: ' . $mimes[$ext]);
                     header('Content-disposition: inline; filename="' . $realName . "." . $ext . '";');
                 } elseif ($ext == 'svg') {
+                    $mime_type = 'image/svg+xml';
                     header('Content-type: image/svg+xml');
                     header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
                 } else {
+                    $mime_type = 'application/octet-stream';
                     header("Content-type: application/octet-stream");
                     header("Content-Disposition: filename=\"" . $realName . "." . $ext . "\"");
                 }
@@ -102,7 +106,7 @@ class Get extends Controller
 
 
                 $oStreamResponse = new StreamedResponse();
-                $oStreamResponse->headers->set("Content-Type", $mimes[$ext] );
+                $oStreamResponse->headers->set("Content-Type", $mime_type );
                 $oStreamResponse->headers->set("Content-Length", $sFileSize);
                 $oStreamResponse->headers->set("ETag", $sEtag);
 
