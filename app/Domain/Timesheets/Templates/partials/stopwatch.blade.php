@@ -3,14 +3,10 @@
     <li class='timerHeadMenu' id='timerHeadMenu' hx-get="{{BASE_URL}}/timesheets/stopwatch/get-status" hx-trigger="timerUpdate from:body">
 
     @if ($onTheClock !== false|null)
-
-
-
             <a
                 href='javascript:void(0);'
                 class='dropdown-toggle'
                 data-toggle='dropdown'
-
             >{!! sprintf(
                     __('text.timer_on_todo'),
                     $onTheClock['totalTime'],
@@ -34,10 +30,7 @@
                     >{!! __('links.stop_timer') !!}</a>
                 </li>
             </ul>
-
     @endif
-
     </li>
-
 @endif
 
