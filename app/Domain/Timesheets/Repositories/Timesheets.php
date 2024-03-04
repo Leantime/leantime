@@ -436,7 +436,7 @@ class Timesheets extends Repository
                 :invoicedCompDate,
                 :rate,
                 :paid,
-                :paidDate;
+                :paidDate
             ) ON DUPLICATE KEY UPDATE
                  hours = hours + :hours,
                  description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
