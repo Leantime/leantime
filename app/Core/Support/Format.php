@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Support;
 
+use Carbon\Carbon;
 use Leantime\Core\Language;
 
 /**
@@ -17,6 +18,14 @@ class Format
 
     private Language $language;
 
+    private string $userDf;
+    private string $userTF;
+    private string $userTZ;
+
+    private string $fromTimezone;
+
+
+
     /**
      * Constructs a new instance of the class.
      *
@@ -25,11 +34,16 @@ class Format
      *
      * @return void
      */
-    public function __construct(mixed $value, mixed $value2 = null)
+    public function __construct(mixed $value, mixed $value2 = null, string $fromTimezone = "UTC")
     {
         $this->value = $value;
         $this->value2 = $value2;
+        $this->fromTimezone = $fromTimezone;
         $this->language = app()->make(Language::class);
+        $this->userDF = $_SESSION['usersettings.date_format'] ?? $this->language->__("language.dateformat");
+        $this->userTF =  $_SESSION['usersettings.time_format'] ?? $this->language->__("language.timeformat");
+        $this->userTZ =  $_SESSION['usersettings.timezone'];
+
         $this->dateTimeHelper = app()->make(DateTimeHelper::class);
     }
 
@@ -42,33 +56,17 @@ class Format
      *
      * @return string The formatted date string or the $emptyOutput if the 'value' property is empty or the formatted date string is empty.
      */
-    public function date(string $emptyOutput = "", ): string
+    public function userDate(string $emptyOutput = ""): string
     {
 
         if (empty($this->value)) {
             return $emptyOutput;
         }
-        $formattedDate = $this->dateTimeHelper->getFormattedDateStringFromISO($this->value);
 
-        return $formattedDate !== "" ? $formattedDate : $emptyOutput;
-    }
+        $date = Carbon::createFromIsoFormat("!Y-m-d H:i:s", $this->value, $this->fromTimezone);
+        $date->setTimezone($this->userTZ);
 
-    /**
-     * Returns the formatted date string based on the 'value' property.
-     *
-     * @param string $emptyOutput The output to be returned when the 'value' property is empty. Defaults to an empty string.
-     *
-     * @return string The formatted date string or the $emptyOutput if the 'value' property is empty or the formatted date string is empty.
-     */
-    public function dateUtc(string $emptyOutput = "", ): string
-    {
-
-        if (empty($this->value)) {
-            return $emptyOutput;
-        }
-        $formattedDate = $this->dateTimeHelper->getFormattedUTCDateStringFromISO($this->value);
-
-        return $formattedDate !== "" ? $formattedDate : $emptyOutput;
+        return $date->format($this->userDF);
     }
 
     /**
@@ -77,12 +75,16 @@ class Format
      *
      * @return string The formatted time string.
      */
-    public function time(): string
+    public function userTime(): string
     {
         if ($this->value == null) {
             return "";
         }
-        return $this->dateTimeHelper->getFormattedTimeStringFromISO($this->value);
+
+        $date = Carbon::createFromIsoFormat("!Y-m-d H:i:s", $this->value, $this->fromTimezone);
+        $date->setTimezone($this->userTZ);
+
+        return $date->format($this->userTF);
     }
 
     /**
@@ -95,7 +97,10 @@ class Format
         if ($this->value == null) {
             return "";
         }
-        return $this->dateTimeHelper->get24HourTimestringFromISO($this->value);
+        $date = Carbon::createFromIsoFormat("!Y-m-d H:i:s", $this->value, $this->fromTimezone);
+        $date->setTimezone($this->userTZ);
+
+        return $date->format("H:i");
     }
 
     public function time24toLocalTime(bool $ignoreTimezone = false): string

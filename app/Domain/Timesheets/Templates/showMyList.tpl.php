@@ -137,8 +137,8 @@ foreach ($__data as $var => $val) {
                         <td data-order="<?php $tpl->e($row['planHours']); ?>">
                             <?php $tpl->e($row['planHours'] ?: 0); ?>
                         </td>
+                        <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
                         <td data-order="<?php echo $diff; ?>">
-                            <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
                             <?php echo $diff; ?>
                         </td>
                         <td data-order="<?php echo $tpl->e($row['headline']); ?>">
