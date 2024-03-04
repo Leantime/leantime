@@ -375,8 +375,8 @@ class Timesheets extends Repository
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticket', $values['ticket']);
         $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':dateStart', $values['date']->startOfDay());
-        $call->bindValue(':dateEnd', $values['date']->endOfDay());
+        $call->bindValue(':dateStart', $values['date']->copy()->startOfDay());
+        $call->bindValue(':dateEnd', $values['date']->copy()->endOfDay());
 
         $timesheets = $call->fetchAll();
         if (!empty($timesheets)) {
@@ -386,7 +386,8 @@ class Timesheets extends Repository
                 zp_timesheets
             SET
                 hours = :hours,
-                description = :description
+                description = :description,
+                workDate = :newWorkDate
             WHERE
                 userId = :userId
                 AND ticketId = :ticketId
@@ -401,6 +402,7 @@ class Timesheets extends Repository
             $call->prepare($query);
             $call->bindValue(':hours', $timesheet['hours'] + $values['hours']);
             $call->bindValue(':description', $values['description'] . '\n' . '--' . '\n\n' . $timesheet['description']);
+            $call->bindValue(':newWorkDate', $values['date']);
             $call->bindValue(':workDate', $timesheet['workDate']);
             $call->bindValue(':userId', $values['userId']);
             $call->bindValue(':ticketId', $values['ticket']);
