@@ -2,8 +2,10 @@
 
 namespace Leantime\Domain\Timesheets\Services;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 
 /**
@@ -12,6 +14,15 @@ use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 class Timesheets
 {
     private TimesheetRepository $timesheetsRepo;
+
+    public array $kind = array(
+        'GENERAL_BILLABLE' => 'label.general_billable',
+        'GENERAL_NOT_BILLABLE' => 'label.general_not_billable',
+        'PROJECTMANAGEMENT' => 'label.projectmanagement',
+        'DEVELOPMENT' => 'label.development',
+        'BUGFIXING_NOT_BILLABLE' => 'label.bugfixing_not_billable',
+        'TESTING' => 'label.testing',
+    );
 
     /**
      * @param TimesheetRepository $timesheetsRepo
@@ -85,7 +96,7 @@ class Timesheets
         }
 
         if (!empty($params['date'])) {
-            $values['date'] = format($params['date'])->isoDate();
+            $values['date'] = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'] ?? 'Y-m-d', $params['date'], 'UTC')->startOfDay();
         }
 
         if (!empty($params['hours'])) {
@@ -143,11 +154,11 @@ class Timesheets
     }
 
     /**
-     * @param $ticket
+     * @param Tickets $ticket
      *
      * @return int|mixed
      */
-    public function getRemainingHours($ticket): mixed
+    public function getRemainingHours(Tickets $ticket): mixed
     {
         $totalHoursLogged = $this->getSumLoggedHoursForTicket($ticket->id);
         $planHours = $ticket->planHours;
@@ -181,10 +192,10 @@ class Timesheets
     }
 
     /**
+     * @param Carbon   $dateFrom
+     * @param Carbon   $dateTo
      * @param int      $projectId
      * @param string   $kind
-     * @param string   $dateFrom
-     * @param string   $dateTo
      * @param int|null $userId
      * @param string   $invEmpl
      * @param string   $invComp
@@ -194,7 +205,7 @@ class Timesheets
      *
      * @return array|false
      */
-    public function getAll(int $projectId = -1, string $kind = 'all', string $dateFrom = '0000-01-01 00:00:00', string $dateTo = '9999-12-24 00:00:00', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
+    public function getAll(Carbon $dateFrom, Carbon $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
     {
         return $this->timesheetsRepo->getAll(
             id: $projectId,
@@ -211,6 +222,24 @@ class Timesheets
     }
 
     /**
+     * @param int    $projectId
+     * @param Carbon $fromDate
+     * @param int    $userId
+     *
+     * @return array
+     */
+    public function getWeeklyTimesheets(int $projectId, Carbon $fromDate, int $userId = 0): array
+    {
+        return $this->timesheetsRepo->getWeeklyTimesheets(
+            projectId: $projectId,
+            fromDate: $fromDate,
+            userId: $userId
+        );
+    }
+
+    /**
+     * @TODO: Function is currently not used by core.
+     *
      * @param array $values
      *
      * @return void

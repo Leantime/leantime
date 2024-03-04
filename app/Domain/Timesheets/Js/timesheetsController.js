@@ -3,9 +3,6 @@ leantime.timesheetsController = (function () {
 
     var initTimesheetsTable = function (groupBy) {
         jQuery(document).ready(function () {
-            var size = 100;
-            var columnIndex = false;
-
             var allTimesheets = jQuery("#allTimesheetsTable").DataTable({
                 "language": {
                     "decimal":        leantime.i18n.__("datatables.decimal"),
@@ -60,10 +57,9 @@ leantime.timesheetsController = (function () {
                                 }
                             }
                         }
-                },
-                    {
-                        extend: 'colvis',
-                        columns: ':not(.noVis)'
+                }, {
+                    extend: 'colvis',
+                    columns: ':not(.noVis)'
                 }
                 ]
             }).container().appendTo(jQuery('#tableButtons'));
@@ -91,7 +87,6 @@ leantime.timesheetsController = (function () {
                     }
                 },
                 afterShowCont: function () {
-
                     jQuery(".editTimeModal").nyroModal(canvasoptions);
                 },
                 beforeClose: function () {
@@ -109,6 +104,5 @@ leantime.timesheetsController = (function () {
     return {
         initTimesheetsTable:initTimesheetsTable,
         initEditTimeModal:initEditTimeModal,
-
     };
 })();

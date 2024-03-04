@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Timesheets\Repositories;
 
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use DateTime;
 use Leantime\Core\Db as DbCore;
 use Leantime\Core\Repository;
@@ -38,8 +40,8 @@ class Timesheets extends Repository
      *
      * @param int         $id
      * @param string|null $kind
-     * @param string|null $dateFrom
-     * @param string|null $dateTo
+     * @param Carbon|null $dateFrom
+     * @param Carbon|null $dateTo
      * @param int|null    $userId
      * @param string|null $invEmpl
      * @param string|null $invComp
@@ -49,9 +51,8 @@ class Timesheets extends Repository
      *
      * @return array|false
      */
-    public function getAll(int $id, ?string $kind, ?string $dateFrom, ?string $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
+    public function getAll(int $id, ?string $kind, ?Carbon $dateFrom, ?Carbon $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
-
         $query = "SELECT
                     zp_timesheets.id,
                     zp_timesheets.userId,
@@ -159,32 +160,14 @@ class Timesheets extends Repository
     }
 
     /**
+     * @TODO: Function is currently not used by core.
+     *
      * @param array $values
      *
      * @return void
      */
     public function export(array $values): void
     {
-        /*zp_timesheets.id,
-            zp_timesheets.userId,
-            zp_timesheets.ticketId,
-            zp_timesheets.workDate,
-            zp_timesheets.hours,
-            zp_timesheets.description,
-            zp_timesheets.kind,
-            zp_projects.name,
-            zp_projects.id AS projectId,
-            zp_timesheets.invoicedEmpl,
-            zp_timesheets.invoicedComp,
-            zp_timesheets.invoicedEmplDate,
-            zp_timesheets.invoicedCompDate,
-            zp_user.firstname,
-            zp_user.lastname,
-            zp_tickets.id as ticketId,
-            zp_tickets.headline,
-            zp_tickets.planHours*/
-
-        //  $this->getAll($projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck)
         $values = $this->getAll($values['project'], $values['kind'], $values['dateFrom'], $values['dateTo'], $values['userId'], $values['invEmplCheck'], $values['invCompCheck']);
 
         $filename = "export_" . date('m-d_h:m');
@@ -221,6 +204,8 @@ class Timesheets extends Repository
     }
 
     /**
+     * @TODO: Function is currently not used by core.
+     *
      * @param int $id
      *
      * @return mixed
@@ -256,21 +241,19 @@ class Timesheets extends Repository
 
         if (isset($values['hoursBooked']) === true) {
             return $values['hoursBooked'];
-        } else {
-            return 0;
         }
 
-        return $values;
+        return 0;
     }
 
     /**
      * @param int    $projectId
-     * @param string $dateStart
+     * @param Carbon $fromDate
      * @param int    $userId
      *
      * @return mixed
      */
-    public function getWeeklyTimesheets(int $projectId = -1, string $dateStart = '0000-01-01 00:00:00', int $userId = 0): mixed
+    public function getWeeklyTimesheets(int $projectId, Carbon $fromDate, int $userId = 0): mixed
     {
         $query = "SELECT
             zp_timesheets.id,
@@ -314,15 +297,14 @@ class Timesheets extends Repository
         if ($projectId > 0) {
             $query .= " AND zp_tickets.projectId = :projectId";
         }
-
         $query .= "GROUP BY ticketId, kind";
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
 
-        $call->bindValue(':dateStart1', $dateStart);
-        $call->bindValue(':dateStart2', $dateStart);
+        $call->bindValue(':dateStart1', $fromDate);
+        $call->bindValue(':dateStart2', $fromDate);
         $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 
         if ($projectId > 0) {
@@ -342,7 +324,10 @@ class Timesheets extends Repository
      */
     public function getUsersTicketHours(int $ticketId, int $userId): mixed
     {
-        $sql = "SELECT SUM(hours) AS sumHours FROM `zp_timesheets` WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
+        $sql = "SELECT SUM(hours) AS sumHours
+                FROM `zp_timesheets`
+                WHERE zp_timesheets.ticketId =:ticketId AND zp_timesheets.userId=:userId
+                GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')";
 
         $call = $this->dbcall(func_get_args());
 
@@ -512,18 +497,18 @@ class Timesheets extends Repository
     {
         $query = "UPDATE
                 zp_timesheets
-                SET
-            ticketId = :ticket,
-            workDate = :date,
-            hours = :hours,
-            kind = :kind,
-            description =:description,
-            invoicedEmpl =:invoicedEmpl,
-            invoicedComp =:invoicedComp,
-            invoicedEmplDate =:invoicedEmplDate,
-            invoicedCompDate =:invoicedCompDate,
-            paid =:paid,
-            paidDate =:paidDate
+            SET
+                ticketId = :ticket,
+                workDate = :date,
+                hours = :hours,
+                kind = :kind,
+                description =:description,
+                invoicedEmpl =:invoicedEmpl,
+                invoicedComp =:invoicedComp,
+                invoicedEmplDate =:invoicedEmplDate,
+                invoicedCompDate =:invoicedCompDate,
+                paid =:paid,
+                paidDate =:paidDate
             WHERE
                 id = :id";
 
@@ -558,15 +543,15 @@ class Timesheets extends Repository
     public function updateHours(array $values): void
     {
         $query = "UPDATE
-            zp_timesheets
-        SET
-            hours = :hours
-        WHERE
-            userId = :userId
-            AND ticketId = :ticketId
-            AND kind = :kind
-            AND TO_DAYS(workDate) = TO_DAYS(:date)
-            LIMIT 1";
+                zp_timesheets
+            SET
+                hours = :hours
+            WHERE
+                userId = :userId
+                AND ticketId = :ticketId
+                AND kind = :kind
+                AND TO_DAYS(workDate) = TO_DAYS(:date)
+                LIMIT 1";
 
         $query = self::dispatch_filter('sql', $query);
 
@@ -584,6 +569,8 @@ class Timesheets extends Repository
 
     /**
      * getProjectHours - get the Project hours for a specific project
+     *
+     * @TODO: Function is currently not used by core.
      *
      * @param int $projectId
      *
@@ -644,45 +631,30 @@ class Timesheets extends Repository
         $values = $call->fetchAll();
         $returnValues = array();
         if (count($values) > 0) {
-            $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
-            $endDate = "" . $values[(count($values) - 1)]['utc'];
+            $startDate = (Carbon::createFromFormat('Y-m-d', $values[0]['utc'], 'UTC'))->startOfMonth();
+            $endDate = Carbon::createFromFormat('Y-m-d', last($values)['utc'], 'UTC');
 
-            $returnValues = $this->dateRange($startDate, $endDate);
+            $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
+            foreach ($range as $key => $date) {
+                $utc = $date->format('Y-m-d');
+                $returnValues[$utc] = [
+                    'utc' => $utc,
+                    'summe' => 0,
+                ];
+            }
 
             foreach ($values as $row) {
                 $returnValues[$row['utc']]["summe"] = $row['summe'];
             }
         } else {
-            $returnValues[date("Y-m-d")]["utc"] = date("Y-m-d");
-            $returnValues[date("Y-m-d")]["summe"] = 0;
+            $utc = Carbon::now('utc')->format('Y-m-d');
+            $returnValues[$utc] = [
+              'utc' => $utc,
+              'summe' => 0,
+            ];
         }
 
         return $returnValues;
-    }
-
-    /**
-     * dateRange - returns every single day between two dates
-     *
-     * @param string $first  date
-     * @param string $last   date
-     * @param string $step   default 1 day, can be changed to get every other day, week etc.
-     * @param string $format date format
-     *
-     * @return array
-     */
-    private function dateRange(string $first, string $last, string $step = '+1 day', string $format = 'Y-m-d'): array
-    {
-        $dates = array();
-        $current = strtotime($first);
-        $last = strtotime($last);
-
-        while ($current <= $last) {
-            $dates[date($format, $current)]['utc'] = date($format, $current);
-            $dates[date($format, $current)]['summe'] = 0;
-            $current = strtotime($step, $current);
-        }
-
-        return $dates;
     }
 
     /**
@@ -714,8 +686,7 @@ class Timesheets extends Repository
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
         foreach ($invEmpl as $row1) {
-            $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW())
-            WHERE id = :id ";
+            $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW()) WHERE id = :id ";
 
             $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
             $invEmplCall->prepare($query);
@@ -760,7 +731,7 @@ class Timesheets extends Repository
      */
     public function punchIn(int $ticketId): mixed
     {
-        $query = "INSERT INTO `zp_punch_clock` (id,userId,punchIn) VALUES (:ticketId,:sessionId,:time)";
+        $query = "INSERT INTO `zp_punch_clock` (id, userId, punchIn) VALUES (:ticketId, :sessionId, :time)";
 
         $call = $this->dbcall(func_get_args());
 
@@ -768,6 +739,7 @@ class Timesheets extends Repository
 
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+        // Unix timestamp is by default UTC.
         $call->bindValue(':time', time());
 
         $value = $call->execute();
@@ -804,9 +776,7 @@ class Timesheets extends Repository
         $outTimestamp = time();
 
         $seconds =  ($outTimestamp - $inTimestamp);
-
         $totalMinutesWorked = $seconds / 60;
-
         $hoursWorked = round(($totalMinutesWorked / 60), 2);
 
         $query = "DELETE FROM `zp_punch_clock` WHERE userId=:sessionId AND id = :ticketId LIMIT 1 ";
@@ -822,13 +792,13 @@ class Timesheets extends Repository
 
         unset($call);
 
-        //At least 1 minutes
+        // At least 1 minutes
         if ($hoursWorked < 0.016) {
             return 0;
         }
 
-        $query = "INSERT INTO `zp_timesheets` (userId,ticketId,workDate,hours,kind) VALUES
-                  (:sessionId,:ticketId,:workDate,:hoursWorked,'GENERAL_BILLABLE')
+        $query = "INSERT INTO `zp_timesheets` (userId, ticketId, workDate, hours, kind)
+                  VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE')
                   ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
@@ -836,7 +806,7 @@ class Timesheets extends Repository
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
         $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', date("Y-m-d", $inTimestamp) . " 00:00:00");
+        $call->bindValue(':workDate', (new Carbon($inTimestamp, 'UTC'))->startOfDay());
 
         $call->execute();
 
@@ -880,9 +850,8 @@ class Timesheets extends Repository
             $onTheClock["id"] = $results[0]["id"];
             $onTheClock["since"] = $results[0]["punchIn"];
             $onTheClock["headline"] = $results[0]["headline"];
-            $start_date = new DateTime();
-            $start_date->setTimestamp($results[0]["punchIn"]);
-            $since_start = $start_date->diff(new DateTime('NOW'));
+            $start_date = new Carbon($results[0]["punchIn"], 'UTC');
+            $since_start = $start_date->diff(Carbon::now('UTC'));
 
             $r = $since_start->format('%H:%I');
 
@@ -890,51 +859,5 @@ class Timesheets extends Repository
         }
 
         return $onTheClock;
-    }
-
-    /**
-     * getTicketHours - get the Ticket hours for a specific ticket
-     *
-     * @param int $ticketId
-     *
-     * @return array
-     */
-    public function getTicketHours(int $ticketId): array
-    {
-        $query = "SELECT
-            YEAR(zp_timesheets.workDate) AS year,
-            DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
-            DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
-            DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
-            (zp_timesheets.hours) AS summe
-        FROM
-            zp_timesheets
-        WHERE
-            zp_timesheets.ticketId = :ticketId
-        ORDER BY utc
-        ";
-
-        $call = $this->dbcall(func_get_args());
-        $call->prepare($query);
-        $call->bindValue(':ticketId', $ticketId);
-
-        $values = $call->fetchAll();
-        $returnValues = array();
-
-        if (count($values) > 0) {
-            $startDate = "" . $values[0]['year'] . "-" . $values[0]['month'] . "-01";
-            $endDate = "" . $values[(count($values) - 1)]['utc'];
-
-            $returnValues = $this->dateRange($startDate, $endDate);
-
-            foreach ($values as $row) {
-                $returnValues[$row['utc']]["summe"] = $row['summe'];
-            }
-        } else {
-            $returnValues[date("%Y-%m-%d")]["utc"] = date("%Y-%m-%d");
-            $returnValues[date("%Y-%m-%d")]["summe"] = 0;
-        }
-
-        return $returnValues;
     }
 }
