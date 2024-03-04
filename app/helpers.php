@@ -205,7 +205,7 @@ if (! function_exists('format')) {
      *
      * @return Format|string
      */
-    function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format|string
+    function format(string|int|float|null|\DateTime|Carbon $value, string|int|float|null|\DateTime $value2 =null): Format|string
     {
         // @TODO: This is an hack that should be fixed when all date handling is moved into carbon. This is not the best
         //        solution, but will work for now.

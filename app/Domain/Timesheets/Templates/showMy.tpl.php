@@ -289,11 +289,6 @@ jQuery(document).ready(function(){
 
                             $timesheetId = "new";
 
-                            $workDatesArray = explode(",", $timeRow["workDates"]);
-                            $workDatesArray = array_map(function ($item) {
-                                return format($item)->date();
-                            }, $workDatesArray);
-
                             /** @var \Carbon\Carbon $currentDate */
                             $currentDate = $tpl->get("dateFrom")->copy();
                             ?>
@@ -309,7 +304,7 @@ jQuery(document).ready(function(){
                                                             } ?>">
                                     <input type="text"
                                            class="hourCell"
-                                           name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $timeRow['workDate'] ?>|<?php echo $timeRow["kind"];?>"
+                                           name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $timeRow[$key] > 0 ? $timeRow['workDate'] : format($currentDate, 'short') ?>|<?php echo $timeRow["kind"];?>"
                                            value="<?php echo $timeRow[$key]; ?>"
                                     />
                                 </td>
@@ -384,7 +379,7 @@ jQuery(document).ready(function(){
                                 <td width="7%" class="rowMo <?php if ($currentDate->isToday()) {
                                     echo "active";
                                                             } ?>">
-                                    <input type="text" class="hourCell" name="new|new|<?php echo $currentDate->startOfDay() ?>|GENERAL_BILLABLE" value="0" />
+                                    <input type="text" class="hourCell" name="new|new|<?php echo format($currentDate, 'short') ?>|GENERAL_BILLABLE" value="0" />
                                 </td>
                                 <?php $currentDate->add('1', 'day'); ?>
                             <?php } ?>

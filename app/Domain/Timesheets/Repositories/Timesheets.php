@@ -303,8 +303,9 @@ class Timesheets extends Repository
 
         $call->prepare($query);
 
-        $call->bindValue(':dateStart1', $fromDate);
-        $call->bindValue(':dateStart2', $fromDate);
+        $startOfDay = $fromDate->format('Y-m-d');
+        $call->bindValue(':dateStart1', $startOfDay);
+        $call->bindValue(':dateStart2', $startOfDay);
         $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 
         if ($projectId > 0) {
@@ -806,7 +807,7 @@ class Timesheets extends Repository
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
         $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', (new Carbon($inTimestamp, $_SESSION['usersettings.timezone']))->startOfDay()->setTimezone('UTC'));
+        $call->bindValue(':workDate', (new Carbon($inTimestamp, $_SESSION['usersettings.timezone']))->setTimezone('UTC'));
 
         $call->execute();
 

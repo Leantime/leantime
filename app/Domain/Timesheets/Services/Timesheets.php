@@ -96,7 +96,7 @@ class Timesheets
         }
 
         if (!empty($params['date'])) {
-            $date = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'] ?? 'Y-m-d', $params['date'], $_SESSION['usersettings.timezone'])->startOfDay();
+            $date = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'] ?? 'Y-m-d', $params['date'], $_SESSION['usersettings.timezone']);
             $date->setTimezone('UTC');
             $values['date'] = $date;
         }

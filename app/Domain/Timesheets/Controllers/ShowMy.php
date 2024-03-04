@@ -62,13 +62,13 @@ class ShowMy extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
         // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
-        $fromData = Carbon::now($_SESSION['usersettings.timezone'])->startOfWeek()->setTimezone('UTC');
+        $fromData = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->startOfWeek();
 
         $kind = 'all';
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (!empty($_POST['startDate'])) {
-                $date =  Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], $_SESSION['usersettings.timezone'])->startOfDay();
+                $date =  Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], $_SESSION['usersettings.timezone']);
                 $date->setTimezone('UTC');
                 $fromData = $date;
             }
@@ -115,10 +115,19 @@ class ShowMy extends Controller
             if (count($tempData) === 4) {
                 $ticketId = $tempData[0];
                 $isNewEntry = 'new' === $tempData[1];
-                $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]), $_SESSION['usersettings.timezone']);
-                $currentDate->setTimezone('UTC');
                 $hours = $dateEntry;
                 $kind = $tempData[3];
+
+                if ($isNewEntry) {
+                    // Add current time to ensure timezone conversion works correctly.
+                    $currentDate = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $tempData[2], $_SESSION['usersettings.timezone']);
+                    $currentDate->setTimeFrom(Carbon::now($_SESSION['usersettings.timezone']));
+                    $currentDate->setTimezone('UTC');
+                }
+                else {
+                    // To update existing entries, the timesheet date was saved in the front end.
+                    $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]), 'UTC');
+                }
 
                 // No ticket ID set, ticket id comes from form fields
                 if ($ticketId == "new") {
