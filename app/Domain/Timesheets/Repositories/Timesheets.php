@@ -400,7 +400,7 @@ class Timesheets extends Repository
 
             $call->prepare($query);
             $call->bindValue(':hours', $timesheet['hours'] + $values['hours']);
-            $call->bindValue(':description',  $values['description'] . '\n' . '--' . '\n\n' . $timesheet['description']);
+            $call->bindValue(':description', $values['description'] . '\n' . '--' . '\n\n' . $timesheet['description']);
             $call->bindValue(':workDate', $timesheet['workDate']);
             $call->bindValue(':userId', $values['userId']);
             $call->bindValue(':ticketId', $values['ticket']);
@@ -408,8 +408,7 @@ class Timesheets extends Repository
             $call->bindValue(':workDate', $timesheet['workDate']);
 
             $call->execute();
-        }
-        else {
+        } else {
             $query = "INSERT INTO zp_timesheets (
                 userId,
                 ticketId,

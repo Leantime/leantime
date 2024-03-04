@@ -122,8 +122,7 @@ class ShowMy extends Controller
                     $currentDate = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $tempData[2], $_SESSION['usersettings.timezone']);
                     $currentDate->setTimeFrom(Carbon::now($_SESSION['usersettings.timezone']));
                     $currentDate->setTimezone('UTC');
-                }
-                else {
+                } else {
                     // To update existing entries, the timesheet date was saved in the front end.
                     $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]), 'UTC');
                 }

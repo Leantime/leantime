@@ -191,6 +191,7 @@ class AddTime extends Controller
             $this->tpl->assign('allProjects', $this->timesheetsRepo->getAll());
             $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
             $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+
             return $this->tpl->display('timesheets.addTime');
         } else {
             return $this->tpl->display('errors.error403', responseCode: 403);
