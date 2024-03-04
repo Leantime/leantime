@@ -742,34 +742,45 @@ class Timesheets extends Repository
     public function updateInvoices(array $invEmpl, array $invComp = [], array $paid = []): bool
     {
         foreach ($invEmpl as $row1) {
-            $query = "UPDATE zp_timesheets SET invoicedEmpl = 1, invoicedEmplDate = DATE(NOW()) WHERE id = :id ";
+            $query = "UPDATE zp_timesheets
+                      SET invoicedEmpl = 1,
+                          invoicedEmplDate = :date
+                      WHERE id = :id ";
 
             $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
             $invEmplCall->prepare($query);
             $invEmplCall->bindValue(':id', $row1);
+            $invEmplCall->bindValue(':date', Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
             $invEmplCall->execute();
 
             unset($invEmplCall);
         }
 
         foreach ($invComp as $row2) {
-            $query2 = "UPDATE zp_timesheets SET invoicedComp = 1, invoicedCompDate = DATE(NOW()) WHERE id = :id ";
+            $query2 = "UPDATE zp_timesheets
+                       SET invoicedComp = 1,
+                           invoicedCompDate = :date
+                       WHERE id = :id ";
 
             $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
             $invCompCall->prepare($query2);
             $invCompCall->bindValue(':id', $row2);
+            $invCompCall->bindValue(':date', Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
             $invCompCall->execute();
 
             unset($invCompCall);
         }
 
         foreach ($paid as $row3) {
-            $query3 = "UPDATE zp_timesheets SET paid = 1, paidDate = DATE(NOW()) WHERE id = :id ";
+            $query3 = "UPDATE zp_timesheets
+                       SET paid = 1,
+                           paidDate = :date
+                       WHERE id = :id ";
 
             $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
             $paidCol->prepare($query3);
             $paidCol->bindValue(':id', $row3);
-
+            $paidCol->bindValue(':date', Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
             $paidCol->execute();
 
             unset($paidCol);
