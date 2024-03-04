@@ -128,8 +128,8 @@ foreach ($__data as $var => $val) {
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
                             <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format($row['workDate'])->date(); ?>">
-                            <?php echo format($row['workDate'])->date(); ?>
+                        <td data-order="<?php echo format((new Carbon\Carbon($row['workDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short'); ?>">
+                            <?php echo format((new Carbon\Carbon($row['workDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short'); ?>
                         </td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>">
                             <?php $tpl->e($row['hours'] ?: 0); ?>
@@ -158,28 +158,28 @@ foreach ($__data as $var => $val) {
                             <?php $tpl->e($row['description']); ?>
                         </td>
                         <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
-                            echo format($row['invoicedEmplDate'])->date();
+                            echo format((new Carbon\Carbon($row['invoicedEmplDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                                         }?>">
                             <?php if ($row['invoicedEmpl'] == '1') {
-                                echo format($row['invoicedEmplDate'])->date();
+                                echo format((new Carbon\Carbon($row['invoicedEmplDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
-                            echo format($row['invoicedCompDate'])->date();
+                            echo format((new Carbon\Carbon($row['invoicedCompDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                                         }?>">
                             <?php if ($row['invoicedComp'] == '1') {
-                                echo format($row['invoicedCompDate'])->date();
+                                echo format((new Carbon\Carbon($row['invoicedCompDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['paid'] == '1') {
-                            echo format($row['paidDate'])->date();
+                            echo format((new Carbon\Carbon($row['paidDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                                         }?>">
                             <?php if ($row['paid'] == '1') {
-                                echo format($row['paidDate'])->date();
+                                echo format((new Carbon\Carbon($row['paidDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>

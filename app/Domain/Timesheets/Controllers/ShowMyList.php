@@ -43,14 +43,14 @@ class ShowMyList extends Controller
             $kind = ($_POST['kind']);
         }
 
-        $dateFrom = Carbon::now($_SESSION['usersettings.timezone'])->startOfMonth()->setTimezone('UTC');
+        $dateFrom = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->startOfMonth();
         if (!empty($_POST['dateFrom'])) {
             // Time posted from the front end is in the user's timezone.
             $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], $_SESSION['usersettings.timezone']);
             $dateFrom->setTimezone('UTC');
         }
 
-        $dateTo = Carbon::now($_SESSION['usersettings.timezone'])->endOfMonth()->setTimezone('UTC');
+        $dateTo = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->endOfMonth();
         if (!empty($_POST['dateTo'])) {
             // Time posted from the front end is in the user's timezone.
             $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], $_SESSION['usersettings.timezone']);
