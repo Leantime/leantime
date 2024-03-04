@@ -12,15 +12,15 @@ class LoginCest
     {
     }
 
-    #[Depends('Tests\Acceptance\InstallCest:createDBSuccessfully')]
-    public function loginPageWorks(AcceptanceTester $I)
+    #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
+    public function loginPageWorks(AcceptanceTester $I): void
     {
         $I->amOnPage('/auth/login');
         $I->see('Login');
     }
 
-    #[Depends('Tests\Acceptance\InstallCest:createDBSuccessfully')]
-    public function loginDeniedForWrongCredentials(AcceptanceTester $I)
+    #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
+    public function loginDeniedForWrongCredentials(AcceptanceTester $I): void
     {
         $I->amOnPage('/auth/login');
         $I->fillField(['name' => 'username'], 'test@leantime.io');
@@ -31,14 +31,14 @@ class LoginCest
         $I->see('Username or password incorrect!');
     }
 
-    #[Depends('Tests\Acceptance\InstallCest:createDBSuccessfully')]
-    public function loginSuccessfully(AcceptanceTester $I, Login $loginPage)
+    #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
+    public function loginSuccessfully(AcceptanceTester $I, Login $loginPage): void
     {
         $loginPage->login('test@leantime.io', 'test');
     }
 
-    #[Depends('Tests\Acceptance\InstallCest::createdDBSuccessfully')]
-    public function loginFormIsHidden(AcceptanceTester $I)
+    #[Depends('Acceptance\InstallCest::createdDBSuccessfully')]
+    public function loginFormIsHidden(AcceptanceTester $I): void
     {
         $_ENV['LEAN_DISABLE_LOGIN_FORM'] = true;
 

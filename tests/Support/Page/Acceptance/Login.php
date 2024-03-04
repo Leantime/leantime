@@ -41,7 +41,6 @@ class Login
         $this->I->fillField(['name' => 'password'], $password);
         $this->I->click('Login');
         $this->I->waitForElementVisible('.stickyHeader', 30);
-        echo $this->I->grabPageSource();
         $this->I->see('Hi John');
 
         $this->saveSessionSnapshot('sid');

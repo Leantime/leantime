@@ -13,18 +13,21 @@ $values = $tpl->get('values');
         jQuery(".ticket-select").chosen();
 
         jQuery(".project-select").change(function () {
+
             jQuery(".ticket-select").removeAttr("selected");
             jQuery(".ticket-select").val("");
             jQuery(".ticket-select").trigger("liszt:updated");
 
             jQuery(".ticket-select option").show();
             jQuery("#ticketSelect .chosen-results li").show();
-
             var selectedValue = jQuery(this).find("option:selected").val();
             jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
-       });
+
+
+        });
 
         jQuery(".ticket-select").change(function () {
+
             var selectedValue = jQuery(this).find("option:selected").attr("data-value");
             jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
             jQuery(".project-select").trigger("liszt:updated");
@@ -47,8 +50,11 @@ $values = $tpl->get('values');
                 weekHeader: leantime.i18n.__("language.weekHeader"),
             });
         });
+
     });
+
 </script>
+
 
 <?php echo $tpl->displayNotification() ?>
 
@@ -98,7 +104,7 @@ $values = $tpl->get('values');
 
 </select><br />
 <label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
-    id="datepicker" name="date" value="<?php echo format($values['date'], 'short'); ?>" size="7" />
+    id="datepicker" name="date" value="<?php echo format($values['date'])->dateUtc(); ?>" size="7" />
 <br />
 <label for="hours"><?php echo $tpl->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"
@@ -120,7 +126,7 @@ $values = $tpl->get('values');
 
             <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
-                                                  value="<?php echo format($values['invoicedEmplDate'], 'short'); ?>"
+                                                  value="<?php echo format($values['invoicedEmplDate'])->date(); ?>"
                                                   size="7"/><br/>
 
 
@@ -135,7 +141,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
-                                                      value="<?php echo format($values['invoicedCompDate'], 'short'); ?>"
+                                                      value="<?php echo format($values['invoicedCompDate'])->date(); ?>"
                                                       size="7"/><br/>
 
         <br/>
@@ -149,7 +155,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                           id="paidDate"
                                                           name="paidDate"
-                                                          value="<?php echo format($values['paidDate'], 'short'); ?>"
+                                                          value="<?php echo format($values['paidDate'])->date(); ?>"
                                                           size="7"/><br/>
     <?php } ?>
 

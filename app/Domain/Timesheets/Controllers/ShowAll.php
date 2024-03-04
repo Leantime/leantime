@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use Carbon\Carbon;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
@@ -74,29 +73,35 @@ class ShowAll extends Controller
             $this->timesheetsService->updateInvoices($invEmpl, $invComp, $paid);
         }
 
+        $invEmplCheck = '0';
         $invCompCheck = '0';
+
+        $projectFilter =  "";
+        $dateFromMk = mktime(0, 0, 0, date("m"), '1', date("Y"));
+        $dateToMk = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
+
+        $dateFrom = date("Y-m-d", $dateFromMk);
+        $dateTo = date("Y-m-d", $dateToMk);
         $kind = 'all';
         $userId = null;
 
-        if (!empty($_POST['kind'])) {
+        if (isset($_POST['kind']) && $_POST['kind'] != '') {
             $kind = strip_tags($_POST['kind']);
         }
 
-        if (!empty($_POST['userId'])) {
+        if (isset($_POST['userId']) && $_POST['userId'] != '') {
             $userId = intval(strip_tags($_POST['userId']));
         }
 
-        $dateFrom = Carbon::now('UTC')->startOfMonth();
-        if (!empty($_POST['dateFrom'])) {
-            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], 'UTC')->startOfDay();
+        if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
+            $dateFrom = format($_POST['dateFrom'])->isoDate();
         }
 
-        $dateTo = Carbon::now('UTC')->endOfMonth();
-        if (!empty($_POST['dateTo'])) {
-            $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], 'UTC')->startOfDay();
+        if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
+            $dateTo = format($_POST['dateTo'])->isoDateEnd();
         }
 
-        if (isset($_POST['invEmpl'])) {
+        if (isset($_POST['invEmpl']) === true) {
             $invEmplCheck = $_POST['invEmpl'];
 
             if ($invEmplCheck == 'on') {
@@ -108,7 +113,7 @@ class ShowAll extends Controller
             $invEmplCheck = '0';
         }
 
-        if (isset($_POST['invComp'])) {
+        if (isset($_POST['invComp']) === true) {
             $invCompCheck = ($_POST['invComp']);
 
             if ($invCompCheck == 'on') {
@@ -118,7 +123,7 @@ class ShowAll extends Controller
             }
         }
 
-        if (isset($_POST['paid'])) {
+        if (isset($_POST['paid']) === true) {
             $paidCheck = ($_POST['paid']);
 
             if ($paidCheck == 'on') {
@@ -131,13 +136,27 @@ class ShowAll extends Controller
         }
 
         $projectFilter = "";
-        if (!empty($_POST['project'])) {
+        if (isset($_POST['project']) && $_POST['project'] != '') {
             $projectFilter = strip_tags($_POST['project']);
         }
 
         $clientId = -1;
-        if (!empty($_POST['clientId'])) {
+        if (isset($_POST['clientId']) && $_POST['clientId'] != '') {
             $clientId = strip_tags($_POST['clientId']);
+        }
+
+        if (isset($_POST['export'])) {
+            $values = array(
+                'project' => $projectFilter,
+                'clientId' => $clientId,
+                'kind' => $kind,
+                'userId' => $userId,
+                'dateFrom' => $dateFrom,
+                'dateTo' => $dateTo,
+                'invEmplCheck' => $invEmplCheck,
+                'invCompCheck' => $invCompCheck,
+            );
+            $this->timesheetsService->export($values);
         }
 
         $user = app()->make(UserRepository::class);
@@ -157,18 +176,7 @@ class ShowAll extends Controller
         $this->tpl->assign('projectFilter', $projectFilter);
         $this->tpl->assign('clientFilter', $clientId);
         $this->tpl->assign('allClients', $this->clientService->getAll());
-        $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll(
-            $dateFrom,
-            $dateTo,
-            (int)$projectFilter,
-            $kind,
-            $userId,
-            $invEmplCheck,
-            $invCompCheck,
-            '-1',
-            $paidCheck,
-            $clientId
-        ));
+        $this->tpl->assign('allTimesheets', $this->timesheetsService->getAll((int)$projectFilter, $kind, $dateFrom, $dateTo, $userId, $invEmplCheck, $invCompCheck, '-1', $paidCheck, $clientId));
 
         return $this->tpl->display('timesheets.showAll');
     }

@@ -2,7 +2,6 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
-    use Carbon\Carbon;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -155,12 +154,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
 
-            $this->tpl->assign("timesheetValues", array(
-                "kind" => "",
-                "date" => Carbon::now('UTC')->startOfDay(),
-                "hours" => "",
-                "description" => "",
-            ));
+            $this->tpl->assign("timesheetValues", array("kind" => "", "date" => date($this->language->__("language.dateformat")), "hours" => "", "description" => ""));
 
             //TODO: Refactor thumbnail generation in file manager
             $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
@@ -170,7 +164,6 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $response = $this->tpl->displayPartial('tickets.showTicketModal');
             $response->headers->set('HX-Trigger', 'ticketUpdate');
-
             return $response;
         }
 
