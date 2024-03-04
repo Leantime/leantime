@@ -133,8 +133,7 @@ jQuery(document).ready(function(){
         var dateFormat = inst.settings.dateFormat || jQuery.datepicker._defaults.dateFormat;
         jQuery('#startDate').val(jQuery.datepicker.formatDate(dateFormat, startDate, inst.settings));
         jQuery('#endDate').val(jQuery.datepicker.formatDate(dateFormat, endDate, inst.settings));
-       jQuery("#timesheetList").submit();
-
+        jQuery("#timesheetList").submit();
     });
 
     jQuery(".timesheetTable input").change(function(){
@@ -156,25 +155,25 @@ jQuery(document).ready(function(){
 
                 var currentClass = jQuery(this).parent().attr('class');
 
-                if(currentClass.indexOf("rowMo") > -1){ colSumMo = colSumMo + currentValue; }
-                if(currentClass.indexOf("rowTu") > -1){ colSumTu = colSumTu + currentValue; }
-                if(currentClass.indexOf("rowWe") > -1){ colSumWe = colSumWe + currentValue;  }
-                if(currentClass.indexOf("rowTh") > -1){ colSumTh = colSumTh + currentValue; }
-                if(currentClass.indexOf("rowFr") > -1){ colSumFr = colSumFr + currentValue;  }
-                if(currentClass.indexOf("rowSa") > -1){ colSumSa = colSumSa + currentValue;  }
-                if(currentClass.indexOf("rowSu") > -1){ colSumSu = colSumSu + currentValue;  }
+                if(currentClass.indexOf("rowMon") > -1){ colSumMo = colSumMo + currentValue; }
+                if(currentClass.indexOf("rowTue") > -1){ colSumTu = colSumTu + currentValue; }
+                if(currentClass.indexOf("rowWed") > -1){ colSumWe = colSumWe + currentValue;  }
+                if(currentClass.indexOf("rowThu") > -1){ colSumTh = colSumTh + currentValue; }
+                if(currentClass.indexOf("rowFri") > -1){ colSumFr = colSumFr + currentValue;  }
+                if(currentClass.indexOf("rowSat") > -1){ colSumSa = colSumSa + currentValue;  }
+                if(currentClass.indexOf("rowSun") > -1){ colSumSu = colSumSu + currentValue;  }
             });
 
             jQuery(this).find(".rowSum strong").text(rowSum);
         });
 
-        jQuery("#sumMo").text(colSumMo.toFixed(2));
-        jQuery("#sumTu").text(colSumTu.toFixed(2));
-        jQuery("#sumWe").text(colSumWe.toFixed(2));
-        jQuery("#sumTh").text(colSumTh.toFixed(2));
-        jQuery("#sumFr").text(colSumFr.toFixed(2));
-        jQuery("#sumSa").text(colSumSa.toFixed(2));
-        jQuery("#sumSu").text(colSumSu.toFixed(2));
+        jQuery("#sumMon").text(colSumMo.toFixed(2));
+        jQuery("#sumTue").text(colSumTu.toFixed(2));
+        jQuery("#sumWed").text(colSumWe.toFixed(2));
+        jQuery("#sumThu").text(colSumTh.toFixed(2));
+        jQuery("#sumFri").text(colSumFr.toFixed(2));
+        jQuery("#sumSat").text(colSumSa.toFixed(2));
+        jQuery("#sumSun").text(colSumSu.toFixed(2));
 
         var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
         var roundedSum = Math.round((finalSum)*100)/100;
@@ -298,9 +297,9 @@ jQuery(document).ready(function(){
                             <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
                             <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
 
-                            <?php foreach ($rowKeys as $key) { ?>
-                                <td width="7%" class="rowMo <?php if ($currentDate->isToday()) {
-                                    echo"active";
+                            <?php foreach ($rowKeys as $i => $key) { ?>
+                                <td width="7%" class="row<?php echo $days[$i]; ?><?php if ($currentDate->isToday()) {
+                                    echo " active";
                                                             } ?>">
                                     <input type="text"
                                            class="hourCell"
@@ -311,7 +310,7 @@ jQuery(document).ready(function(){
                                 <?php $currentDate->add('1', 'day');  ?>
                             <?php } ?>
 
-                            <td width="7%" class="rowSum?>"><strong><?php echo $rowSum; ?></strong></td>
+                            <td width="7%" class="rowSum"><strong><?php echo $rowSum; ?></strong></td>
                         </tr>
                         <?php } ?>
 
@@ -322,7 +321,7 @@ jQuery(document).ready(function(){
                     ?>
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
-                                <div class="form-group">
+                                <div class="form-group" id="projectSelect">
                                     <select data-placeholder="<?php echo $tpl->__('input.placeholders.choose_project')?>" style="" class="project-select" >
                                         <option value=""></option>
                                         <?php foreach ($tpl->get('allProjects') as $projectRow) { ?>
@@ -376,8 +375,8 @@ jQuery(document).ready(function(){
                             </td>
 
                             <?php foreach ($days as $day) { ?>
-                                <td width="7%" class="rowMo <?php if ($currentDate->isToday()) {
-                                    echo "active";
+                                <td width="7%" class="row<?php echo $day?><?php if ($currentDate->isToday()) {
+                                    echo " active";
                                                             } ?>">
                                     <input type="text" class="hourCell" name="new|new|<?php echo format($currentDate, 'short') ?>|GENERAL_BILLABLE" value="0" />
                                 </td>
