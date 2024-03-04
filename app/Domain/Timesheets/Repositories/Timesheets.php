@@ -631,7 +631,7 @@ class Timesheets extends Repository
         $values = $call->fetchAll();
         $returnValues = array();
         if (count($values) > 0) {
-            $startDate = (Carbon::createFromFormat('Y-m-d', $values[0]['utc'], 'UTC'))->startOfMonth();
+            $startDate = Carbon::createFromFormat('Y-m-d', $values[0]['utc'], 'UTC')->startOfMonth();
             $endDate = Carbon::createFromFormat('Y-m-d', last($values)['utc'], 'UTC');
 
             $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
@@ -647,7 +647,7 @@ class Timesheets extends Repository
                 $returnValues[$row['utc']]["summe"] = $row['summe'];
             }
         } else {
-            $utc = Carbon::now('utc')->format('Y-m-d');
+            $utc = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->format('Y-m-d');
             $returnValues[$utc] = [
               'utc' => $utc,
               'summe' => 0,
@@ -806,7 +806,7 @@ class Timesheets extends Repository
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
         $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', (new Carbon($inTimestamp, 'UTC'))->startOfDay());
+        $call->bindValue(':workDate', (new Carbon($inTimestamp, $_SESSION['usersettings.timezone']))->startOfDay()->setTimezone('UTC'));
 
         $call->execute();
 
@@ -851,7 +851,7 @@ class Timesheets extends Repository
             $onTheClock["since"] = $results[0]["punchIn"];
             $onTheClock["headline"] = $results[0]["headline"];
             $start_date = new Carbon($results[0]["punchIn"], 'UTC');
-            $since_start = $start_date->diff(Carbon::now('UTC'));
+            $since_start = $start_date->diff(Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
 
             $r = $since_start->format('%H:%I');
 

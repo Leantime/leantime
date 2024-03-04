@@ -157,7 +157,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign("timesheetValues", array(
                 "kind" => "",
-                "date" => Carbon::now('UTC')->startOfDay(),
+                "date" => Carbon::now($_SESSION['usersettings.timezone'])->startOfDay()->setTimezone('UTC'),
                 "hours" => "",
                 "description" => "",
             ));

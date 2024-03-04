@@ -86,14 +86,18 @@ class ShowAll extends Controller
             $userId = intval(strip_tags($_POST['userId']));
         }
 
-        $dateFrom = Carbon::now('UTC')->startOfMonth();
+        $dateFrom = Carbon::now($_SESSION['usersettings.timezone'])->startOfMonth()->setTimezone('UTC');
         if (!empty($_POST['dateFrom'])) {
-            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], 'UTC')->startOfDay();
+            $date = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], $_SESSION['usersettings.timezone'])->startOfDay();
+            $date->setTimezone('UTC');
+            $dateFrom = $date;
         }
 
-        $dateTo = Carbon::now('UTC')->endOfMonth();
+        $dateTo = Carbon::now($_SESSION['usersettings.timezone'])->endOfMonth()->setTimezone('UTC');
         if (!empty($_POST['dateTo'])) {
-            $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], 'UTC')->startOfDay();
+            $date = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], $_SESSION['usersettings.timezone'])->startOfDay();
+            $date->setTimezone('UTC');
+            $dateTo = $date;
         }
 
         if (isset($_POST['invEmpl'])) {

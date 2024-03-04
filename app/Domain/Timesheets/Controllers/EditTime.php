@@ -96,7 +96,10 @@ class EditTime extends Controller
                         }
 
                         if (isset($_POST['date']) && $_POST['date'] != '') {
-                            $values['date'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['date'], 'UTC');
+                            $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['date'], $_SESSION['usersettings.timezone']);
+                            $date->setTimezone('UTC');
+                            $values['date'] = $date;
+
                         }
 
                         if (isset($_POST['hours']) && $_POST['hours'] != '') {
@@ -114,9 +117,11 @@ class EditTime extends Controller
                                 }
 
                                 if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                                    $values['invoicedEmplDate'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedEmplDate'], 'UTC')->midDay();
+                                    $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedEmplDate'], $_SESSION['usersettings.timezone'])->midDay();
+                                    $date->setTimezone('UTC');
+                                    $values['invoicedEmplDate'] = $date;
                                 } else {
-                                    $values['invoicedEmplDate'] = Carbon::now('UTC')->midDay();
+                                    $values['invoicedEmplDate'] = Carbon::now($_SESSION['usersettings.timezone'])->midDay()->setTimezone('UTC');
                                 }
                             } else {
                                 $values['invoicedEmpl'] = 0;
@@ -129,9 +134,11 @@ class EditTime extends Controller
                                 }
 
                                 if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                                    $values['invoicedCompDate'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedCompDate'], 'UTC')->midDay();
+                                    $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedCompDate'], $_SESSION['usersettings.timezone'])->midDay();
+                                    $date->setTimezone('UTC');
+                                    $values['invoicedCompDate'] = $date;
                                 } else {
-                                    $values['invoicedCompDate'] = Carbon::now('UTC')->midDay();
+                                    $values['invoicedCompDate'] = Carbon::now($_SESSION['usersettings.timezone'])->midDay()->setTimezone('UTC');
                                 }
                             } else {
                                 $values['invoicedComp'] = 0;
@@ -144,9 +151,11 @@ class EditTime extends Controller
                                 }
 
                                 if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                                    $values['paidDate'] = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['paidDate'], 'UTC')->midDay();
+                                    $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['paidDate'], $_SESSION['usersettings.timezone'])->midDay();
+                                    $date->setTimezone('UTC');
+                                    $values['paidDate'] = $date;
                                 } else {
-                                    $values['paidDate'] = Carbon::now('UTC')->midDay();
+                                    $values['paidDate'] = Carbon::now($_SESSION['usersettings.timezone'])->midDay()->setTimezone('UTC');
                                 }
                             } else {
                                 $values['paid'] = 0;

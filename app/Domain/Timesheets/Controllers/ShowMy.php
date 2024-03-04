@@ -61,14 +61,16 @@ class ShowMy extends Controller
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        // Use UTC here as all data stored in the database should be UTC.
-        $fromData = Carbon::now('UTC')->startOfWeek();
+        // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
+        $fromData = Carbon::now($_SESSION['usersettings.timezone'])->startOfWeek()->setTimezone('UTC');
 
         $kind = 'all';
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (!empty($_POST['startDate'])) {
-                $fromData = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], 'UTC')->startOfDay();
+                $date =  Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], $_SESSION['usersettings.timezone'])->startOfDay();
+                $date->setTimezone('UTC');
+                $fromData = $date;
             }
         }
 
@@ -113,7 +115,8 @@ class ShowMy extends Controller
             if (count($tempData) === 4) {
                 $ticketId = $tempData[0];
                 $isNewEntry = 'new' === $tempData[1];
-                $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]));
+                $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]), $_SESSION['usersettings.timezone']);
+                $currentDate->setTimezone('UTC');
                 $hours = $dateEntry;
                 $kind = $tempData[3];
 

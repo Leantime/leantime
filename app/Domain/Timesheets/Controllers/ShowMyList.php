@@ -43,14 +43,18 @@ class ShowMyList extends Controller
             $kind = ($_POST['kind']);
         }
 
-        $dateFrom = Carbon::now('UTC')->startOfMonth();
+        $dateFrom = Carbon::now($_SESSION['usersettings.timezone'])->startOfMonth()->setTimezone('UTC');
         if (!empty($_POST['dateFrom'])) {
-            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], 'UTC')->startOfDay();
+            // Time posted from the front end is in the user's timezone.
+            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], $_SESSION['usersettings.timezone'])->startOfDay();
+            $dateFrom->setTimezone('UTC');
         }
 
-        $dateTo = Carbon::now('UTC')->endOfMonth();
+        $dateTo = Carbon::now($_SESSION['usersettings.timezone'])->endOfMonth()->setTimezone('UTC');
         if (!empty($_POST['dateTo'])) {
-            $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], 'UTC')->startOfDay();
+            // Time posted from the front end is in the user's timezone.
+            $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], $_SESSION['usersettings.timezone'])->startOfDay();
+            $dateTo->setTimezone('UTC');
         }
 
         $this->tpl->assign('dateFrom', $dateFrom);
