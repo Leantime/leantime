@@ -86,37 +86,36 @@ class EditTime extends Controller
 
                 if (Auth::userIsAtLeast(Roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
                     if (isset($_POST['saveForm']) === true) {
-                        if (isset($_POST['tickets']) && $_POST['tickets'] != '') {
+                        if (!empty($_POST['tickets'])) {
                             $values['project'] = (int) $_POST['projects'];
                             $values['ticket'] = (int) $_POST['tickets'];
                         }
 
-                        if (isset($_POST['kind']) && $_POST['kind'] != '') {
+                        if (!empty($_POST['kind'])) {
                             $values['kind'] = ($_POST['kind']);
                         }
 
-                        if (isset($_POST['date']) && $_POST['date'] != '') {
+                        if (!empty($_POST['date'])) {
                             $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['date'], $_SESSION['usersettings.timezone']);
                             $date->setTimezone('UTC');
                             $values['date'] = $date;
-
                         }
 
-                        if (isset($_POST['hours']) && $_POST['hours'] != '') {
+                        if (!empty($_POST['hours'])) {
                             $values['hours'] = (float)($_POST['hours']);
                         }
 
-                        if (isset($_POST['description']) && $_POST['description'] != '') {
+                        if (!empty($_POST['description'])) {
                             $values['description'] = ($_POST['description']);
                         }
 
                         if (Auth::userIsAtLeast(Roles::$manager)) {
-                            if (isset($_POST['invoicedEmpl']) && $_POST['invoicedEmpl'] != '') {
+                            if (!empty($_POST['invoicedEmpl'])) {
                                 if ($_POST['invoicedEmpl'] == 'on') {
                                     $values['invoicedEmpl'] = 1;
                                 }
 
-                                if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
+                                if (!empty($_POST['invoicedEmplDate'])) {
                                     $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedEmplDate'], $_SESSION['usersettings.timezone']);
                                     $date->setTimezone('UTC');
                                     $values['invoicedEmplDate'] = $date;
@@ -128,12 +127,12 @@ class EditTime extends Controller
                                 $values['invoicedEmplDate'] = '';
                             }
 
-                            if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
+                            if (!empty($_POST['invoicedComp'])) {
                                 if ($_POST['invoicedComp'] == 'on') {
                                     $values['invoicedComp'] = 1;
                                 }
 
-                                if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
+                                if (!empty($_POST['invoicedCompDate'])) {
                                     $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedCompDate'], $_SESSION['usersettings.timezone']);
                                     $date->setTimezone('UTC');
                                     $values['invoicedCompDate'] = $date;
@@ -145,17 +144,17 @@ class EditTime extends Controller
                                 $values['invoicedCompDate'] = '';
                             }
 
-                            if (isset($_POST['paid']) && $_POST['paid'] != '') {
+                            if (!empty($_POST['paid'])) {
                                 if ($_POST['paid'] == 'on') {
                                     $values['paid'] = 1;
                                 }
 
-                                if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
+                                if (!empty($_POST['paidDate'])) {
                                     $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['paidDate'], $_SESSION['usersettings.timezone']);
                                     $date->setTimezone('UTC');
                                     $values['paidDate'] = $date;
                                 } else {
-                                    $values['paidDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
+                                    $values['paidDate'] = Carbon::now($_SESSION['usersettings.timezone'])   ->setTimezone('UTC');
                                 }
                             } else {
                                 $values['paid'] = 0;
