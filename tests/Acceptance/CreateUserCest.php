@@ -8,13 +8,13 @@ use Tests\Support\Page\Acceptance\Login;
 
 class CreateUserCest
 {
-    public function _before(AcceptanceTester $I, Login $loginPage)
+    public function _before(AcceptanceTester $I, Login $loginPage): void
     {
         $loginPage->login('test@leantime.io', 'test');
     }
 
-    #[Depends('Tests\Acceptance\LoginCest:loginSuccessfully')]
-    public function createAUser(AcceptanceTester $I)
+    #[Depends('Acceptance\LoginCest:loginSuccessfully')]
+    public function createAUser(AcceptanceTester $I): void
     {
         $I->wantTo('Create a user');
         $I->amOnPage('/users/showAll');
@@ -30,14 +30,13 @@ class CreateUserCest
         $I->fillField('#jobLevel', 'Testing');
         $I->fillField('#department', 'Testing');
         $I->click('Invite User');
-        echo $I->grabPageSource();
         $I->waitForElement('.growl', 120);
         $I->wait(2);
         $I->see('New user invited successfully');
     }
 
-    #[Depends('Tests\Acceptance\LoginCest:loginSuccessfully')]
-    public function editAUser(AcceptanceTester $I)
+    #[Depends('Acceptance\LoginCest:loginSuccessfully')]
+    public function editAUser(AcceptanceTester $I): void
     {
         $I->wantTo('Edit a user');
         $I->amOnPage('/users/editUser/1/');
