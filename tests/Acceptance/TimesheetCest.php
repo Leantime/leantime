@@ -158,24 +158,43 @@ class TimesheetCest
         $I->see('8', '#finalSum');
     }
 
-
-    #[Skip]
     #[Group('timesheet')]
-    #[Depends('createMyTimesheet')]
+    #[Depends('createMyTimesheet', 'editTimesheet', 'logTimeOnTicketTimesheet')]
     public function showAllTimesheet(AcceptanceTester $I): void
     {
-        // /timesheets/showAll
+        $I->wantTo('Show all timesheet list');
+        $I->amOnPage('/timesheets/showAll');
+
+        $I->waitForElementVisible('#allTimesheetsTable');
+        $I->see('2', '//*//tr[@class="odd"]//td', '2');
+        $I->see('2', '//*//tr[@class="odd"]//td', '-2');
     }
 
-    #[Skip]
     #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
     public function showAllEditsTimesheet(AcceptanceTester $I): void
     {
-        // /timesheets/showAll
-        // make paid
-        // make Invoiced
-        // make MGR Approval
+        $I->wantTo('Show all timesheet list');
+        $I->amOnPage('/timesheets/showAll');
+        $I->waitForElementVisible('#allTimesheetsTable');
+
+        // Maker paid
+        $I->checkOption('//*//tr[@class="odd"]//input[@class="paid"]');
+        $I->click('#allTimesheetsTable_wrapper .button');
+        $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->cantSeeElement('//*//tr[@class="odd"]//input[@class="paid"]');
+
+        // Make Invoiced
+        $I->checkOption('//*//tr[@class="odd"]//input[@class="invoicedEmpl"]');
+        $I->click('#allTimesheetsTable_wrapper .button');
+        $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->cantSeeElement('//*//tr[@class="odd"]//input[@class="invoicedEmpl"]');
+
+        // Make MGR Approval
+        $I->checkOption('//*//tr[@class="even"]//input[@class="invoicedComp"]');
+        $I->click('#allTimesheetsTable_wrapper .button');
+        $I->waitForElementVisible('#allTimesheetsTable_wrapper');
+        $I->cantSeeElement('//*//tr[@class="even"]//input[@class="invoicedComp"]');
     }
 
     #[Group('timesheet')]

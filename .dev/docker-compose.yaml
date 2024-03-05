@@ -56,6 +56,9 @@ services:
   selenium:
     image: selenium/standalone-firefox
     shm_size: 2gb
+    environment:
+      - SCREEN_WIDTH=1920
+      - SCREEN_HEIGHT=1080
     ports:
       - "4444"
       - "7900"

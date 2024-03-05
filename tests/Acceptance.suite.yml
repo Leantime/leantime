@@ -13,11 +13,12 @@ modules:
         browser: firefox
         wait: 20
         log_js_errors: true
+        window_size: "1920x1080"
         capabilities:
           acceptInsecureCerts: true
-#          "moz:firefoxOptions": {
-#            args: ["-headless"]
-#          }
+          "moz:firefoxOptions": {
+            args: ["-headless"]
+          }
     - Db:
         dsn: "mysql:host=db;port=3306;dbname=leantime_test"
         user: leantime
