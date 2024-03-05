@@ -7,38 +7,44 @@ foreach ($__data as $var => $val) {
 }
 ?>
 
-
+<!-- page header -->
 <div class="pageheader">
-
-
     <div class="pageicon"><span class="fa-regular fa-clock"></span></div>
     <div class="pagetitle">
         <h5><?php echo $tpl->__('headline.overview'); ?></h5>
         <h1><?php echo $tpl->__("headline.my_timesheets") ?></h1>
     </div>
-</div><!--pageheader-->
+</div>
+<!-- page header -->
+
 
 <div class="maincontent">
     <div class="maincontentinner">
-
         <?php
         echo $tpl->displayNotification();
         ?>
 
-
-        <form action="<?=BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
-
+        <form action="<?php echo BASE_URL ?>/timesheets/showMyList" method="post" id="form" name="form">
             <div class="filterWrapper tw-relative">
-                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?=$tpl->__("links.filter") ?> (1)</a>
+                <a onclick="jQuery('.filterBar').toggle();" class="btn btn-default pull-left"><?php echo $tpl->__("links.filter") ?> (1)</a>
                 <div class="filterBar" style="display:none; top:30px;">
 
                     <div class="filterBoxLeft">
                         <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?> <?php echo $tpl->__('label.date_to'); ?></label>
-                        <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom"
-                               value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
-                        <input type="text" id="dateTo" class="dateTo" name="dateTo"
-                               value="<?php echo format($tpl->get('dateTo'))->date(); ?>" style="margin-bottom:10px; width:90px" />
+                        <input type="text"
+                               id="dateFrom"
+                               class="dateFrom"
+                               name="dateFrom"
+                               value="<?php echo format($tpl->get('dateFrom'), 'short'); ?>"
+                               style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
+                        <input type="text"
+                               id="dateTo"
+                               class="dateTo"
+                               name="dateTo"
+                               value="<?php echo format($tpl->get('dateTo'), 'short'); ?>"
+                               style="margin-bottom:10px; width:90px" />
                     </div>
+
                     <div class="filterBoxLeft">
                         <label for="kind"><?php echo $tpl->__("label.type")?></label>
                         <select id="kind" name="kind" onchange="submit();">
@@ -77,8 +83,6 @@ foreach ($__data as $var => $val) {
 
             <div class="clearfix"></div>
 
-
-
             <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered display" id="allTimesheetsTable">
                 <colgroup>
                       <col class="con0" width="100px"/>
@@ -92,7 +96,7 @@ foreach ($__data as $var => $val) {
                       <col class="con0"/>
                       <col class="con1" />
                       <col class="con0"/>
-                        <col class="con1"/>
+                      <col class="con1"/>
                 </colgroup>
                 <thead>
                     <tr>
@@ -122,43 +126,64 @@ foreach ($__data as $var => $val) {
                 foreach ($tpl->get('allTimesheets') as $row) {
                     $sum = $sum + $row['hours'];?>
                     <tr>
-                        <td data-order="<?=$tpl->e($row['id']); ?>"> <a href="<?=BASE_URL?>/timesheets/editTime/<?=$row['id']?>" class="editTimeModal">#<?=$row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format($row['workDate'])->date(); ?>">
-                                            <?php echo format($row['workDate'])->date(); ?>
+                        <td data-order="<?php echo $tpl->e($row['id']); ?>">
+                            <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
+                        <td data-order="<?php echo format((new Carbon\Carbon($row['workDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short'); ?>">
+                            <?php echo format((new Carbon\Carbon($row['workDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short'); ?>
                         </td>
-                        <td data-order="<?php $tpl->e($row['hours']); ?>"><?php $tpl->e($row['hours'] ?: 0); ?></td>
-                        <td data-order="<?php $tpl->e($row['planHours']); ?>"><?php $tpl->e($row['planHours'] ?: 0); ?></td>
-                                        <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
-                        <td data-order="<?=$diff; ?>"><?php echo $diff; ?></td>
-                        <td data-order="<?=$tpl->e($row['headline']); ?>"><a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a></td>
+                        <td data-order="<?php $tpl->e($row['hours']); ?>">
+                            <?php $tpl->e($row['hours'] ?: 0); ?>
+                        </td>
+                        <td data-order="<?php $tpl->e($row['planHours']); ?>">
+                            <?php $tpl->e($row['planHours'] ?: 0); ?>
+                        </td>
+                        <td data-order="<?php echo $diff; ?>">
+                            <?php $diff = ($row['planHours'] ?: 0) - ($row['hours'] ?: 0); ?>
+                            <?php echo $diff; ?>
+                        </td>
+                        <td data-order="<?php echo $tpl->e($row['headline']); ?>">
+                            <a href="#/tickets/showTicket/<?php echo $row['ticketId']; ?>"><?php $tpl->e($row['headline']); ?></a>
+                        </td>
 
-                        <td data-order="<?=$tpl->e($row['name']); ?>"><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a></td>
-                        <td><?php sprintf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?></td>
-                        <td><?php echo $tpl->__($tpl->get('kind')[$row['kind']]); ?></td>
-                        <td><?php $tpl->e($row['description']); ?></td>
+                        <td data-order="<?php echo $tpl->e($row['name']); ?>">
+                            <a href="<?php echo BASE_URL ?>/projects/showProject/<?php echo $row['projectId']; ?>"><?php $tpl->e($row['name']); ?></a>
+                        </td>
+                        <td>
+                            <?php sprintf($tpl->__('text.full_name'), $tpl->escape($row['firstname']), $tpl->escape($row['lastname'])); ?>
+                        </td>
+                        <td>
+                            <?php echo $tpl->__($tpl->get('kind')[$row['kind']]); ?>
+                        </td>
+                        <td>
+                            <?php $tpl->e($row['description']); ?>
+                        </td>
                         <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
-                            echo format($row['invoicedEmplDate'])->date();
-                                        }?>"><?php if ($row['invoicedEmpl'] == '1') {
-    ?> <?php echo format($row['invoicedEmplDate'])->date(); ?>
-                                        <?php } else {
-                                            echo $tpl->__("label.pending");
-                                        } ?></td>
+                            echo format((new Carbon\Carbon($row['invoicedEmplDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                                        }?>">
+                            <?php if ($row['invoicedEmpl'] == '1') {
+                                echo format((new Carbon\Carbon($row['invoicedEmplDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                            } else {
+                                echo $tpl->__("label.pending");
+                            } ?>
+                        </td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
-                            echo format($row['invoicedCompDate'])->date();
+                            echo format((new Carbon\Carbon($row['invoicedCompDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                                         }?>">
                             <?php if ($row['invoicedComp'] == '1') {
-                                ?> <?php echo format($row['invoicedCompDate'])->date(); ?>
-                            <?php } else {
+                                echo format((new Carbon\Carbon($row['invoicedCompDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                            } else {
                                 echo $tpl->__("label.pending");
-                            } ?></td>
+                            } ?>
+                        </td>
                         <td data-order="<?php if ($row['paid'] == '1') {
-                            echo format($row['paidDate'])->date();
+                            echo format((new Carbon\Carbon($row['paidDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
                                         }?>">
                             <?php if ($row['paid'] == '1') {
-                                ?> <?php echo format($row['paidDate'])->date(); ?>
-                            <?php } else {
+                                echo format((new Carbon\Carbon($row['paidDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                            } else {
                                 echo $tpl->__("label.pending");
-                            } ?></td>
+                            } ?>
+                        </td>
                     </tr>
                 <?php } ?>
                 </tbody>
@@ -167,8 +192,6 @@ foreach ($__data as $var => $val) {
                         <td></td>
                         <td colspan="1"><strong><?php echo $tpl->__("label.total_hours")?></strong></td>
                         <td colspan="11"><strong><?php echo $sum; ?></strong></td>
-
-
                     </tr>
                 </tfoot>
             </table>
@@ -177,11 +200,9 @@ foreach ($__data as $var => $val) {
 </div>
 
 <script type="text/javascript">
-
     jQuery(document).ready(function(){
         leantime.timesheetsController.initTimesheetsTable();
         leantime.timesheetsController.initEditTimeModal();
         leantime.dateController.initDateRangePicker(".dateFrom", ".dateTo", 1);
     });
-
 </script>

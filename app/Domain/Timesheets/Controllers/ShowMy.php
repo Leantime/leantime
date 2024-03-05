@@ -2,13 +2,15 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
-use DateTime;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
 use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Auth\Services\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +20,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ShowMy extends Controller
 {
-    private TimesheetRepository $timesheetsRepo;
+    private timesheetService $timesheetService;
+    private TimesheetRepository $timesheetRepo;
     private ProjectRepository $projects;
     private TicketRepository $tickets;
     private UserRepository $userRepo;
@@ -26,7 +29,8 @@ class ShowMy extends Controller
     /**
      * init - initialze private variables
      *
-     * @param TimesheetRepository $timesheetsRepo
+     * @param TimesheetService    $timesheetService
+     * @param TimesheetRepository $timesheetRepo
      * @param ProjectRepository   $projects
      * @param TicketRepository    $tickets
      * @param UserRepository      $userRepo
@@ -34,12 +38,14 @@ class ShowMy extends Controller
      * @return void
      */
     public function init(
-        TimesheetRepository $timesheetsRepo,
+        TimesheetService $timesheetService,
+        TimesheetRepository $timesheetRepo,
         ProjectRepository $projects,
         TicketRepository $tickets,
         UserRepository $userRepo
     ): void {
-        $this->timesheetsRepo = $timesheetsRepo;
+        $this->timesheetService = $timesheetService;
+        $this->timesheetRepo = $timesheetRepo;
         $this->projects = $projects;
         $this->tickets = $tickets;
         $this->userRepo = $userRepo;
@@ -56,37 +62,38 @@ class ShowMy extends Controller
     {
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        // Start with user monday 00:00 of this week in user timezone.
-        $dateStart = new \DateTime('Monday this week', new \DateTimeZone($_SESSION['usersettings.timezone']));
-
-        // Change to UTC for processing
-        $dateStart->setTimezone(new \DateTimeZone("UTC"));
-        $dateFrom = $dateStart->format("Y-m-d H:i:s");
+        // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
+        // The front end javascript is hardcode to start the week on mondays, so we use that here too.
+        $fromData = Carbon::now($_SESSION['usersettings.timezone'])->startOfWeek(CarbonInterface::MONDAY);
+        $fromData->setTimeFrom(Carbon::now($_SESSION['usersettings.timezone']))->setTimezone('UTC');
 
         $kind = 'all';
-
-        if (isset($_POST['search']) === true) {
-            // User date comes is in user date format and user timezone. change to utc and iso
-            if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
-                $dateFrom = format($_POST['startDate'])->isoDate();
+        if (isset($_POST['search'])) {
+            // User date comes is in user date format and user timezone. Change it to utc.
+            if (!empty($_POST['startDate'])) {
+                $fromData =  Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], $_SESSION['usersettings.timezone']);
+                $fromData->setTimezone('UTC');
             }
         }
 
-        if (isset($_POST['saveTimeSheet']) === true) {
+        if (isset($_POST['saveTimeSheet'])) {
             $this->saveTimeSheet($_POST);
-
             $this->tpl->setNotification('Timesheet successfully updated', 'success');
         }
 
-        $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
+        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromData, $_SESSION['userdata']['id']);
 
-        // Ensure we assume this is UTC
-        $dateFromDate = new \DateTime($dateFrom, new \DateTimeZone("UTC"));
-        $this->tpl->assign('dateFrom', $dateFromDate);
+        $this->tpl->assign('dateFrom', $fromData);
         $this->tpl->assign('actKind', $kind);
-        $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-        $this->tpl->assign('allProjects', $this->projects->getUserProjects(userId: $_SESSION["userdata"]["id"], projectTypes: "project"));
-        $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
+        $this->tpl->assign('kind', $this->timesheetRepo->kind);
+        $this->tpl->assign('allProjects', $this->projects->getUserProjects(
+            userId: $_SESSION["userdata"]["id"],
+            projectTypes: "project"
+        ));
+        $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
+            id: $_SESSION["userdata"]["id"],
+            limit: -1
+        ));
         $this->tpl->assign('allTimesheets', $myTimesheets);
 
         return $this->tpl->display('timesheets.showMy');
@@ -96,48 +103,54 @@ class ShowMy extends Controller
      * @param array $postData
      *
      * @return void
+     *
      * @throws BindingResolutionException
      */
     public function saveTimeSheet(array $postData): void
     {
-        $ticketId = "";
-        $currentTimesheetId = -1;
         $userinfo = $this->userRepo->getUser($_SESSION["userdata"]["id"]);
 
         foreach ($postData as $key => $dateEntry) {
-            // Receiving a string of
-            // TICKET ID | New or existing timesheetID | Current Date | Type of booked hours
+            // The temp data should contain four parts, spectated by "|":
+            // TICKET ID | new or existing | Current Date (user format) | Type of booked hours
             $tempData = explode("|", $key);
-
-            if (count($tempData) == 4) {
+            if (count($tempData) === 4) {
                 $ticketId = $tempData[0];
-                $isCurrentTimesheetEntry = $tempData[1];
-                $currentDate = $tempData[2];
+                $isNewEntry = 'new' === $tempData[1];
                 $hours = $dateEntry;
+                $kind = $tempData[3];
+
+                if ($isNewEntry) {
+                    // Add current time to ensure timezone conversion works correctly.
+                    $currentDate = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $tempData[2], $_SESSION['usersettings.timezone']);
+                    $currentDate->setTimeFrom(Carbon::now($_SESSION['usersettings.timezone']));
+                    $currentDate->setTimezone('UTC');
+                } else {
+                    // To update existing entries, the timesheet date was saved in the front end.
+                    $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]), 'UTC');
+                }
 
                 // No ticket ID set, ticket id comes from form fields
                 if ($ticketId == "new") {
                     $ticketId = $postData["ticketId"];
                     $kind = $postData["kindId"];
-                } else {
-                    $kind = $tempData[3];
                 }
 
                 $values = array(
                     "userId" => $_SESSION["userdata"]["id"],
                     "ticket" => $ticketId,
-                    "date" => format($currentDate)->isoDate(),
+                    "date" => $currentDate,
                     "hours" => $hours,
                     "kind" => $kind,
                     "rate" => $userinfo["wage"],
                 );
 
-                if ($isCurrentTimesheetEntry == "new") {
-                    if ($values["hours"] > 0) {
-                        $this->timesheetsRepo->simpleInsert($values);
+                if ($isNewEntry) {
+                    if ($hours > 0) {
+                        $this->timesheetRepo->simpleInsert($values);
                     }
                 } else {
-                    $this->timesheetsRepo->updateHours($values);
+                    $this->timesheetRepo->updateHours($values);
                 }
             }
         }

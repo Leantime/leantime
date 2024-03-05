@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
@@ -92,54 +93,54 @@ class AddTime extends Controller
                     $values['ticket'] = $tempArr[1];
                 }
 
-                if (isset($_POST['kind']) && $_POST['kind'] != '') {
+                if (!empty($_POST['kind'])) {
                     $values['kind'] = ($_POST['kind']);
                 }
 
-                if (isset($_POST['date']) && $_POST['date'] != '') {
-                    $values['date'] = format($_POST['date'])->isoDateStart();
+                if (!empty($_POST['date'])) {
+                    $values['date'] = (new Carbon($_POST['date'], $_SESSION['usersettings.timezone']))->setTimezone('UTC');
                 }
 
-                if (isset($_POST['hours']) && $_POST['hours'] != '') {
+                if (!empty($_POST['hours'])) {
                     $values['hours'] = ($_POST['hours']);
                 }
 
-                if (isset($_POST['invoicedEmpl']) && $_POST['invoicedEmpl'] != '') {
+                if (!empty($_POST['invoicedEmpl'])) {
                     if ($_POST['invoicedEmpl'] == 'on') {
                         $values['invoicedEmpl'] = 1;
                     }
 
-                    if (isset($_POST['invoicedEmplDate']) && $_POST['invoicedEmplDate'] != '') {
-                        $values['invoicedEmplDate'] = format($_POST['invoicedEmplDate'])->isoDateMid();
+                    if (!empty($_POST['invoicedEmplDate'])) {
+                        $values['invoicedEmplDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
                     }
                 }
 
-                if (isset($_POST['invoicedComp']) && $_POST['invoicedComp'] != '') {
+                if (!empty($_POST['invoicedComp'])) {
                     if (Auth::userIsAtLeast(Roles::$manager)) {
                         if ($_POST['invoicedComp'] == 'on') {
                             $values['invoicedComp'] = 1;
                         }
 
-                        if (isset($_POST['invoicedCompDate']) && $_POST['invoicedCompDate'] != '') {
-                            $values['invoicedCompDate'] = format($_POST['invoicedCompDate'])->isoDateMid();
+                        if (!empty($_POST['invoicedCompDate'])) {
+                            $values['invoicedCompDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
                         }
                     }
                 }
 
-                if (isset($_POST['paid']) && $_POST['paid'] != '') {
+                if (!empty($_POST['paid'])) {
                     if (Auth::userIsAtLeast(Roles::$manager)) {
                         if ($_POST['paid'] == 'on') {
                             $values['paid'] = 1;
                         }
 
-                        if (isset($_POST['paidDate']) && $_POST['paidDate'] != '') {
-                            $values['paidDate'] = format($_POST['paidDate'])->isoDateMid();
+                        if (!empty($_POST['paidDate'])) {
+                            $values['paidDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
                         }
                     }
                 }
 
 
-                if (isset($_POST['description']) && $_POST['description'] != '') {
+                if (!empty($_POST['description'])) {
                     $values['description'] = ($_POST['description']);
                 }
 
@@ -190,6 +191,7 @@ class AddTime extends Controller
             $this->tpl->assign('allProjects', $this->timesheetsRepo->getAll());
             $this->tpl->assign('allTickets', $this->timesheetsRepo->getAll());
             $this->tpl->assign('kind', $this->timesheetsRepo->kind);
+
             return $this->tpl->display('timesheets.addTime');
         } else {
             return $this->tpl->display('errors.error403', responseCode: 403);
