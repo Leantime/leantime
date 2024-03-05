@@ -3,6 +3,7 @@
 namespace Acceptance;
 
 use Codeception\Attribute\Depends;
+use Codeception\Attribute\Group;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
@@ -13,6 +14,8 @@ class TicketsCest
         $loginPage->login('test@leantime.io', 'test');
     }
 
+    #[Group('timesheet', 'ticket')]
+    #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
     public function createTicket(AcceptanceTester $I)
     {
         $I->wantTo('Create a ticket');
@@ -40,6 +43,7 @@ class TicketsCest
         ]);
     }
 
+    #[Group('ticket')]
     #[Depends('createTicket')]
     public function editTicket(AcceptanceTester $I)
     {

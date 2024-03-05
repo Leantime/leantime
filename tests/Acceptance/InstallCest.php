@@ -3,6 +3,7 @@
 namespace Acceptance;
 
 use Codeception\Attribute\Depends;
+use Codeception\Attribute\Group;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Install;
 
@@ -12,6 +13,7 @@ class InstallCest
     {
     }
 
+    #[Group('install')]
     public function installPageWorks(AcceptanceTester $I): void
     {
         $I->amOnPage('/install');
@@ -20,6 +22,7 @@ class InstallCest
         $I->see('Install');
     }
 
+    #[Group('install')]
     #[Depends('installPageWorks')]
     public function createDBSuccessfully(AcceptanceTester $I, Install $installPage): void
     {
