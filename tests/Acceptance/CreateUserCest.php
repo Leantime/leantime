@@ -3,6 +3,7 @@
 namespace Acceptance;
 
 use Codeception\Attribute\Depends;
+use Codeception\Attribute\Group;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
@@ -13,6 +14,7 @@ class CreateUserCest
         $loginPage->login('test@leantime.io', 'test');
     }
 
+    #[Group('user')]
     #[Depends('Acceptance\LoginCest:loginSuccessfully')]
     public function createAUser(AcceptanceTester $I): void
     {
@@ -35,6 +37,7 @@ class CreateUserCest
         $I->see('New user invited successfully');
     }
 
+    #[Group('user')]
     #[Depends('Acceptance\LoginCest:loginSuccessfully')]
     public function editAUser(AcceptanceTester $I): void
     {

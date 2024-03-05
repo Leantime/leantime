@@ -3,6 +3,7 @@
 namespace Acceptance;
 
 use Codeception\Attribute\Depends;
+use Codeception\Attribute\Group;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
@@ -12,6 +13,7 @@ class LoginCest
     {
     }
 
+    #[Group('login')]
     #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
     public function loginPageWorks(AcceptanceTester $I): void
     {
@@ -19,6 +21,7 @@ class LoginCest
         $I->see('Login');
     }
 
+    #[Group('login')]
     #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
     public function loginDeniedForWrongCredentials(AcceptanceTester $I): void
     {
@@ -31,13 +34,15 @@ class LoginCest
         $I->see('Username or password incorrect!');
     }
 
+    #[Group('login')]
     #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
     public function loginSuccessfully(AcceptanceTester $I, Login $loginPage): void
     {
         $loginPage->login('test@leantime.io', 'test');
     }
 
-    #[Depends('Acceptance\InstallCest::createdDBSuccessfully')]
+    #[Group('login')]
+    #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
     public function loginFormIsHidden(AcceptanceTester $I): void
     {
         $_ENV['LEAN_DISABLE_LOGIN_FORM'] = true;
