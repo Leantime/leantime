@@ -288,6 +288,13 @@ jQuery(document).ready(function(){
 
                             $timesheetId = "new";
 
+
+                            $workDatesArray = [];
+                            foreach (explode(",", $timeRow["workDates"]) as $workDate) {
+                                $date = new \Carbon\Carbon($workDate, 'UTC');
+                                $workDatesArray[format($date, 'short')] = $date;
+                             }
+
                             /** @var \Carbon\Carbon $currentDate */
                             $currentDate = $tpl->get("dateFrom")->copy();
                             ?>
@@ -303,7 +310,7 @@ jQuery(document).ready(function(){
                                                             } ?>">
                                     <input type="text"
                                            class="hourCell"
-                                           name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $timeRow[$key] > 0 ? $timeRow['workDate'] : format($currentDate, 'short') ?>|<?php echo $timeRow["kind"];?>"
+                                           name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $timeRow[$key] > 0 ? $workDatesArray[format($currentDate, 'short')] : format($currentDate, 'short') ?>|<?php echo $timeRow["kind"];?>"
                                            value="<?php echo $timeRow[$key]; ?>"
                                     />
                                 </td>
