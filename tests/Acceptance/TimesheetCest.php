@@ -90,7 +90,7 @@ class TimesheetCest
 
     #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
-    public function changeTimezone(AcceptanceTester $I)
+    public function changeTimezone(AcceptanceTester $I): void
     {
         $I->wantTo('Change timezone and see the correct timesheet');
 
@@ -110,7 +110,7 @@ class TimesheetCest
 
     #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
-    public function editTimesheet(AcceptanceTester $I)
+    public function editTimesheet(AcceptanceTester $I): void
     {
         $I->wantTo('Edit timesheet');
 
@@ -137,10 +137,39 @@ class TimesheetCest
         $I->see('2', '//*//tr[@class="odd"]//td', '-2');
     }
 
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet', 'editTimesheet')]
+    public function logTimeOnTicketTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('Open ticket and add time');
+
+        $I->amOnPage('/#/tickets/showTicket/10');
+        $I->waitForElementVisible('#ui-id-8');
+        $I->click('#ui-id-8');
+        $I->waitForElementVisible('#hours');
+        $I->fillField('#hours', 4);
+
+        $I->click('.formModal .button');
+        $I->wait(1);
+
+        // Go and see if the total is correct.
+        $I->amOnPage('/timesheets/showMy');
+        $I->waitForElementVisible('#finalSum');
+        $I->see('8', '#finalSum');
+    }
+
     #[Skip]
     #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
-    public function showAllTimesheet(AcceptanceTester $I)
+    public function deleteTimesheet(AcceptanceTester $I): void
+    {
+        // Delete timesheet
+    }
+
+    #[Skip]
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function showAllTimesheet(AcceptanceTester $I): void
     {
         // /timesheets/showAll
     }
@@ -148,7 +177,7 @@ class TimesheetCest
     #[Skip]
     #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
-    public function showAllEditsTimesheet(AcceptanceTester $I)
+    public function showAllEditsTimesheet(AcceptanceTester $I): void
     {
         // /timesheets/showAll
         // make paid
@@ -156,14 +185,6 @@ class TimesheetCest
         // make MGR Approval
     }
 
-
-    #[Skip]
-    #[Group('timesheet')]
-    #[Depends('createMyTimesheet')]
-    public function deleteTimesheet(AcceptanceTester $I)
-    {
-        // Delete timesheet
-    }
 
     /**
      * Change the timezone for the logged-in user.
