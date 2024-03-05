@@ -65,7 +65,7 @@ class ShowMy extends Controller
         // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
         // The front end javascript is hardcode to start the week on mondays, so we use that here too.
         $fromData = Carbon::now($_SESSION['usersettings.timezone'])->startOfWeek(CarbonInterface::MONDAY);
-        $fromData->setTimezone('UTC');
+        $fromData->setTimeFrom(Carbon::now($_SESSION['usersettings.timezone']))->setTimezone('UTC');
 
         $kind = 'all';
         if (isset($_POST['search'])) {
