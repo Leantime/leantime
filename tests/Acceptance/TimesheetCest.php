@@ -61,8 +61,6 @@ class TimesheetCest
             'hours' => 2,
             'kind' => 'GENERAL_BILLABLE'
         ]);
-
-        $I->wait(90);
     }
 
     /**
@@ -80,29 +78,37 @@ class TimesheetCest
         $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
         $I->waitForElement('.growl', 60);
         $I->see('Timesheet successfully updated');
-        $I->reloadPage();
 
-        $I->wait(90);
+        // An page reload will trigger an "resend submission popup".
+        $I->amOnPage('/timesheets/showMy');
 
         $I->waitForElementVisible('//*[contains(@class, "rowMon")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowMon")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowTue")]//input[@class="hourCell"]', '2');
         $I->see('3', '#finalSum');
-
-        $I->wait(30);
     }
 
-
-    #[Skip]
+    #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
     public function changeTimezone(AcceptanceTester $I)
     {
-        // Change timezome and see correct timesheets.
+        // Change timezone and see the correct timesheet.
+        $this->changeUsersTimeZone($I, 'Europe/Copenhagen');
+
+        // Check timesheet
+        $I->amOnPage('/timesheets/showMy');
+        $I->waitForElementVisible('//*[contains(@class, "rowMon")]//input[@class="hourCell"]');
+        $I->wait(30);
+        $I->seeInField('//*[contains(@class, "rowMon")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowTue")]//input[@class="hourCell"]', '2');
+        $I->see('3', '#finalSum');
 
         // Switch back.
+        $this->changeUsersTimeZone($I);
     }
 
     #[Skip]
+    #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
     public function editTimesheet(AcceptanceTester $I)
     {
@@ -110,6 +116,7 @@ class TimesheetCest
     }
 
     #[Skip]
+    #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
     public function showAllTimesheet(AcceptanceTester $I)
     {
@@ -117,6 +124,7 @@ class TimesheetCest
     }
 
     #[Skip]
+    #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
     public function showAllEditsTimesheet(AcceptanceTester $I)
     {
@@ -128,9 +136,28 @@ class TimesheetCest
 
 
     #[Skip]
+    #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
     public function deleteTimesheet(AcceptanceTester $I)
     {
         // Delete timesheet
+    }
+
+    /**
+     * Change the timezone for the logged-in user.
+     *
+     * @param AcceptanceTester $I The AcceptanceTester object representing the test runner.
+     * @param string           $timezone The timezone to be set. Defaults to 'America/Los_Angeles'.
+     *
+     * @return void
+     */
+    private function changeUsersTimeZone(AcceptanceTester $I, string $timezone = 'America/Los_Angeles'): void
+    {
+        $I->amOnPage('/users/editOwn#settings');
+        $I->waitForElementVisible('#timezone');
+        $I->selectOption('#timezone', $timezone);
+        $I->click('#saveSettings');
+        $I->waitForElement('.growl', 60);
+        $I->see('Profile settings saved successfully');
     }
 }
