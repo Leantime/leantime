@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
 use Leantime\Domain\Auth\Models\Roles;
@@ -62,7 +63,9 @@ class ShowMy extends Controller
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
         // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
-        $fromData = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->startOfWeek();
+        // The front end javascript is hardcode to start the week on mondays, so we use that here too.
+        $fromData = Carbon::now($_SESSION['usersettings.timezone'])->startOfWeek(CarbonInterface::MONDAY);
+        $fromData->setTimezone('UTC');
 
         $kind = 'all';
         if (isset($_POST['search'])) {

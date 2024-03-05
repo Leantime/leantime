@@ -214,7 +214,7 @@ jQuery(document).ready(function(){
                 <div class="padding-top-sm">
                     <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo format($tpl->get("dateFrom"), 'short') ?>" style="margin-top:5px;"/>
+                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo format($tpl->get("dateFrom")->copy(), 'short') ?>" style="margin-top:5px;"/>
                     <?php echo $tpl->__('label.until'); ?>
                     <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo format($tpl->get("dateFrom")->copy()->add(6, 'days'), 'short') ?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
