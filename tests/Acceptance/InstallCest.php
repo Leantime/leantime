@@ -12,17 +12,16 @@ class InstallCest
     {
     }
 
-    public function installPageWorks(AcceptanceTester $I)
+    public function installPageWorks(AcceptanceTester $I): void
     {
         $I->amOnPage('/install');
-        echo $I->grabPageSource();
         $I->waitForElementVisible('.registrationForm', 120);
 
         $I->see('Install');
     }
 
     #[Depends('installPageWorks')]
-    public function createDBSuccessfully(AcceptanceTester $I, Install $installPage)
+    public function createDBSuccessfully(AcceptanceTester $I, Install $installPage): void
     {
         $installPage->install(
             'test@leantime.io',
