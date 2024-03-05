@@ -158,13 +158,6 @@ class TimesheetCest
         $I->see('8', '#finalSum');
     }
 
-    #[Skip]
-    #[Group('timesheet')]
-    #[Depends('createMyTimesheet')]
-    public function deleteTimesheet(AcceptanceTester $I): void
-    {
-        // Delete timesheet
-    }
 
     #[Skip]
     #[Group('timesheet')]
@@ -185,6 +178,31 @@ class TimesheetCest
         // make MGR Approval
     }
 
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function deleteTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('Delete timesheet');
+
+        $I->amOnPage('/timesheets/showMyList');
+        $I->waitForElementVisible('#allTimesheetsTable');
+        $I->see('#1 - Edit');
+
+        $I->click('#1 - Edit');
+        $I->waitForElementVisible('.delete');
+        $I->click('.stdformbutton .delete');
+
+        $I->wait(1);
+        $I->see('Should the timesheet really be deleted?');
+
+        $I->click('.nyroModalLink .button');
+        $I->waitForElement('.growl', 60);
+        $I->wait(1);
+        $I->see('Time entry deleted successfully');
+
+        $I->waitForElementVisible('#allTimesheetsTable');
+        $I->cantSee('#1 - Edit');
+    }
 
     /**
      * Change the timezone for the logged-in user.
