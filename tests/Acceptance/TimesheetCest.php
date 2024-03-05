@@ -92,13 +92,14 @@ class TimesheetCest
     #[Depends('createMyTimesheet')]
     public function changeTimezone(AcceptanceTester $I)
     {
+        $I->wantTo('Change timezone and see the correct timesheet');
+
         // Change timezone and see the correct timesheet.
         $this->changeUsersTimeZone($I, 'Europe/Copenhagen');
 
         // Check timesheet
         $I->amOnPage('/timesheets/showMy');
         $I->waitForElementVisible('//*[contains(@class, "rowMon")]//input[@class="hourCell"]');
-        $I->wait(30);
         $I->seeInField('//*[contains(@class, "rowMon")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowTue")]//input[@class="hourCell"]', '2');
         $I->see('3', '#finalSum');
@@ -107,12 +108,33 @@ class TimesheetCest
         $this->changeUsersTimeZone($I);
     }
 
-    #[Skip]
     #[Group('timesheet')]
     #[Depends('createMyTimesheet')]
     public function editTimesheet(AcceptanceTester $I)
     {
-        // Edit timesheet through timesheets/showMyList
+        $I->wantTo('Edit timesheet');
+
+        $I->amOnPage('/timesheets/showMyList');
+        $I->waitForElementVisible('#allTimesheetsTable');
+        $I->see('#1 - Edit');
+
+        $I->click('#1 - Edit');
+        $I->waitForElementVisible('#hours');
+        $I->fillField('#hours', 2);
+        $I->click('.stdformbutton .button');
+        $I->waitForElement('.growl', 60);
+        $I->wait(1);
+        $I->see('Time logged successfully');
+
+        // Close modal.
+        $I->waitForElementVisible('.nyroModalClose');
+        $I->click('.nyroModalClose');
+
+        // Check that data have been updated.
+        $I->wait(5);
+        $I->waitForElementVisible('#allTimesheetsTable');
+        $I->see('2', '//*//tr[@class="odd"]//td', '2');
+        $I->see('2', '//*//tr[@class="odd"]//td', '-2');
     }
 
     #[Skip]
