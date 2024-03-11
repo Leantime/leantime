@@ -146,8 +146,8 @@ namespace Leantime\Domain\Notifications\Services {
                         $subject = sprintf($this->language->__('text.x_mentioned_you'), $authorName);
                         $mailer->setSubject($subject);
 
-                        $emailMessage = $subject;
-                        $emailMessage .= sprintf($this->language->__('text.click_here'), $url);
+                        $emailMessage = $subject . '. ';
+                        $emailMessage .= sprintf('<a href="%s">%s</a>', $url, $this->language->__('text.click_here'));
                         $mailer->setHtml($emailMessage);
                         $recipient = $this->userRepository->getUser($taggedUser)['username'];
                         $mailer->sendMail(array($recipient), $authorName);
