@@ -49,7 +49,10 @@ leantime.editorController = (function () {
             // Do your ajax call
             // When using multiple delimiters you can alter the query depending on the delimiter used
             if (delimiter === '@') {
-                jQuery.getJSON(leantime.appUrl + '/api/users?projectUsersAccess=current', function (data) {
+                jQuery.getJSON(leantime.appUrl + '/api/users', {
+                    projectUsersAccess: 'current',
+                    query: query
+                }, function (data) {
                     //call process to show the result
                     let users = [];
                     for (let i = 0; i < data.length; i++) {
@@ -72,7 +75,9 @@ leantime.editorController = (function () {
         },
         insert: function (item) {
             return '<a class="userMention" data-tagged-user-id="' + item.id + '" href="javascript:void(0)"><img src="' + leantime.appUrl + '/api/users?profileImage=' + item.id + '" alt="' + item.name + ' Image"/>' + item.name.trim() + '</a>&nbsp;';
-        }
+        },
+        // The default value is 10 (cf. https://github.com/StevenDevooght/tinyMCE-mention?tab=readme-ov-file#items)
+        items: 10
     };
 
     var imageUploadHandler = function(blobInfo, success, failure) {
