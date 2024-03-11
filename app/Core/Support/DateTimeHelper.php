@@ -2,7 +2,10 @@
 
 namespace Leantime\Core\Support;
 
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Leantime\Core\ApiRequest;
+use Leantime\Core\Environment;
 use Leantime\Core\Language;
 use DateTime;
 use DateTimeZone;
@@ -12,23 +15,149 @@ use DateTimeZone;
  *
  * A helper class for working with dates and times.
  */
-class DateTimeHelper
+class DateTimeHelper extends CarbonImmutable
 {
     private Language $language;
 
     private ApiRequest $apiRequest;
 
+    private string $userTimezone;
+
+    private string $userLanguage;
+
+    private string $userDateFormat;
+
+    private string $userTimeFormat;
+
+    private Environment $config;
+
+    private readonly string $dbTimezone;
+
+    private readonly string $dbFormat;
+
+    private CarbonImmutable $datetime;
     /**
      * Initializes a new instance of the class.
      *
-     * @param Language   $language   The Language object to use for translations.
-     * @param ApiRequest $apiRequest The ApiRequest object to use for accessing the API.
      */
-    public function __construct(Language $language, ApiRequest $apiRequest)
+    public function __construct($time = null, $tz = null)
     {
-            $this->language = $language;
-            $this->apiRequest = $apiRequest;
+
+        parent::__construct($time, $tz);
+
+        $this->language = app()->make(Language::class);
+        $this->apiRequest = app()->make(ApiRequest::class);
+        $this->config = app()->make(Environment::class);
+
+        //These are read only for a reason
+        $this->dbFormat = "Y-m-d H:i:s";
+        $this->dbTimezone = "UTC";
+
+        //Session is set in middleware, unlikely to not be set but just in case set defaults.
+        $this->userTimezone = $_SESSION['usersettings.timezone'] ?? $this->config->defaultTimezone;
+        $this->userLanguage = $_SESSION['usersettings.language'] ?? $this->config->language;
+        $this->userDateFormat = $_SESSION['usersettings.language.date_format'] ?? $this->language->__("language.dateformat");
+        $this->userTimeFormat = $_SESSION['usersettings.language.time_format'] ?? $this->language->__("language.timeformat");
+
+        CarbonImmutable::mixin(new CarbonMacros(
+            $this->userTimezone,
+            $this->userLanguage,
+            $this->userDateFormat,
+            $this->userTimeFormat,
+            $this->dbFormat,
+            $this->dbTimezone
+        ));
     }
+
+    /**
+     * Parses a user input date and time and returns a CarbonImmutable object.
+     *
+     * @param string $userDate The user input date in the format specified by $this->userDateFormat.
+     * @param string $userTime The user input time in the format specified by $this->userTimeFormat.
+     *                         Defaults to an empty string. Can also be one of start|end to denot start or end time of day
+     * @return CarbonImmutable     The parsed date and time as a CarbonImmutable object.
+     */
+    public function parseUserDateTime(string $userDate, string $userTime = ""): CarbonImmutable
+    {
+
+        if ($userTime == "start") {
+            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone)
+
+                ->startOfDay();
+        } elseif ($userTime == "end") {
+            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone)
+
+                ->endOfDay();
+        } elseif ($userTime == "") {
+            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat, trim($userDate), $this->userTimezone
+            );
+        } else {
+            $this->datetime = CarbonImmutable::createFromFormat("!" . $this->userDateFormat . " " . $this->userTimeFormat, trim($userDate . " " . $userTime), $this->userTimezone
+            );
+        }
+
+        return $this->datetime;
+    }
+
+    /**
+     * Parses a database date string and returns a CarbonImmutable instance.
+     *
+     * @param string $dbDate The date string in the database format to parse.
+     * @return CarbonImmutable The parsed CarbonImmutable instance.
+     */
+    public function parseDbDateTime(string $dbDate): CarbonImmutable
+    {
+
+        $this->datetime = CarbonImmutable::createFromFormat($this->dbFormat, $dbDate, $this->dbTimezone)->locale($this->userLanguage);
+
+        return $this->datetime;
+    }
+
+    public function userNow()
+    {
+        return CarbonImmutable::now($this->userTimezone)->locale($this->userLanguage);
+    }
+
+    public function dbNow()
+    {
+        return CarbonImmutable::now($this->dbTimezone)->locale($this->userLanguage);
+    }
+
+
+    /**
+     * Loads the custom macros for Carbon library.
+     *
+     * The method defines custom macros for Carbon library that allow formatting dates and times
+     * based on user preferences and for storage in the database.
+     *
+     * Macros:
+     *  - formatDateForUser: Sets the timezone to local timezone and returns the date
+     *    formatted according to the user's preferred date format.
+     *  - formatTimeForUser: Sets the timezone to local timezone and returns the time
+     *    formatted according to the user's preferred time format.
+     *  - formatDateTimeForDb: Sets the timezone to UTC and returns the date and time
+     *    formatted according to the specified format for storage in the database.
+     *
+     * @return void
+     */
+    public function loadCarbonMacros()
+    {
+    }
+
+
+    public function setCarbonDate(CarbonImmutable|Carbon $date)
+    {
+        return $this->datetime = CarbonImmutable::create($date)->locale($this->userLanguage);
+    }
+
+
+
+
+/* OLD Stuff */
+
+
+
+
 
     /**
      * Get the formatted date string from ISO format.
@@ -154,7 +283,7 @@ class DateTimeHelper
 
         return $this->convertDateTime(
             dateTime: $date . " " . $time,
-            fromFormat: $this->language->__("language.dateformat"). " H:i:s",
+            fromFormat: $this->language->__("language.dateformat") . " H:i:s",
             fromTz: $fromTimzone,
             toFormat: "Y-m-d H:i:s",
             toTz: "UTC"
@@ -174,7 +303,7 @@ class DateTimeHelper
 
         return $this->convertDateTime(
             dateTime: $date . " " . $time,
-            fromFormat: $this->language->__("language.dateformat"). " ".$this->language->__("language.timeformat") ,
+            fromFormat: $this->language->__("language.dateformat") . " " . $this->language->__("language.timeformat"),
             fromTz: $fromTimezone,
             toFormat: "Y-m-d H:i:s",
             toTz: "UTC"
@@ -195,7 +324,7 @@ class DateTimeHelper
 
         return $this->convertDateTime(
             dateTime: $date . " " . $time,
-            fromFormat: $this->language->__("language.dateformat"). " H:i",
+            fromFormat: $this->language->__("language.dateformat") . " H:i",
             fromTz: $fromTimezone,
             toFormat: "Y-m-d H:i:s",
             toTz: "UTC"
@@ -222,8 +351,7 @@ class DateTimeHelper
                 toFormat: $this->language->__("language.timeformat"),
                 toTz: "UTC"
             );
-        }else{
-
+        } else {
             return $this->convertDateTime(
                 dateTime: $time,
                 fromFormat: "H:i",
@@ -241,7 +369,7 @@ class DateTimeHelper
      * @param bool    $db2User Indicates whether the date string is in database format. Defaults to true.
      * @return bool|int The timestamp of the converted date string, or 0 if the conversion fails.
      */
-    public function getTimestamp(?string $date, bool $db2User = true): bool|int
+    public function getTimestampFromTimezone(?string $date, bool $db2User = true): bool|int
     {
         if ($this->isValidDateString($date)) {
             if ($db2User == true) {

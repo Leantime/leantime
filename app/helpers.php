@@ -8,9 +8,11 @@ use Leantime\Core\Bootloader;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Format;
+use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\Mix;
 use Carbon\Carbon;
+
 
 if (! function_exists('app')) {
     /**
@@ -205,28 +207,9 @@ if (! function_exists('format')) {
      *
      * @return Format|string
      */
-    function format(string|int|float|null|\DateTime|Carbon $value, string|int|float|null|\DateTime $value2 =null): Format|string
+    function format(string|int|float|null|\DateTime|Carbon $value, string|int|float|null|\DateTime $value2 =null, null|FromFormat $fromFormat = null): Format|string
     {
-        // @TODO: This is an hack that should be fixed when all date handling is moved into carbon. This is not the best
-        //        solution, but will work for now.
-        if ($value instanceof Carbon) {
-            $value->setTimezone($_SESSION['usersettings.timezone'] ?? 'UTC');
-
-            $language = app()->make(Language::class);
-            $format = match ($value2) {
-                'short' => $_SESSION['usersettings.language.date_format'] ?? $language->__("language.dateformat"),
-                'long' => ($_SESSION['usersettings.language.date_format'] ?? $language->__("language.dateformat")) . ' ' . $_SESSION['usersettings.language.time_format'],
-                default => $value2 ?? 'Y-m-d',
-            };
-
-            return $value->format($format);
-        }
-
-        if ($value instanceof \DateTime) {
-            $value = $value->format("Y-m-d H:i:s");
-        }
-
-        return new Format($value, $value2);
+        return new Format($value, $value2, $fromFormat);
     }
 }
 
@@ -278,3 +261,4 @@ if (! function_exists('mix')) {
         return $mix($path, $manifestDirectory);
     }
 }
+

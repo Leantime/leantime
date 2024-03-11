@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Timesheets\Repositories;
 
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonPeriod;
 use DateTime;
 use Leantime\Core\Db as DbCore;
@@ -52,7 +53,7 @@ class Timesheets extends Repository
      *
      * @return array|false
      */
-    public function getAll(?int $id, ?string $kind, ?Carbon $dateFrom, ?Carbon $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
+    public function getAll(?int $id, ?string $kind, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
         $query = "SELECT
                     zp_timesheets.id,
@@ -254,7 +255,7 @@ class Timesheets extends Repository
      *
      * @return mixed
      */
-    public function getWeeklyTimesheets(int $projectId, Carbon $fromDate, int $userId = 0): mixed
+    public function getWeeklyTimesheets(int $projectId, CarbonImmutable $fromDate, int $userId = 0): mixed
     {
         $query = "SELECT
             zp_timesheets.id,
@@ -276,37 +277,36 @@ class Timesheets extends Repository
             zp_projects.name,
             zp_projects.id AS projectId,
             zp_projects.clientId AS clientId,
-            zp_clients.name AS clientName,
-            GROUP_CONCAT(zp_timesheets.workDate SEPARATOR ',') as workDates
-            , ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = TO_DAYS(:dateStart1) then zp_timesheets.hours else 0 end),2) as hoursMonday
-            , ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 1) then zp_timesheets.hours else 0 end),2) as hoursTuesday
-            , ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 2) then zp_timesheets.hours else 0 end),2) as hoursWednesday
-            , ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 3) then zp_timesheets.hours else 0 end),2) as hoursThursday
-            , ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 4) then zp_timesheets.hours else 0 end),2) as hoursFriday
-            , ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 5) then zp_timesheets.hours else 0 end),2) as hoursSaturday
-            , ROUND(sum(case when TO_DAYS(zp_timesheets.workDate) = (TO_DAYS(:dateStart1) + 6) then zp_timesheets.hours else 0 end),2) as hoursSunday
+            zp_clients.name AS clientName
         FROM
             zp_timesheets
         LEFT JOIN zp_tickets ON zp_tickets.id = zp_timesheets.ticketId
         LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
         LEFT JOIN zp_clients ON zp_clients.id = zp_projects.clientId
         WHERE
-            ((TO_DAYS(zp_timesheets.workDate) >= TO_DAYS(:dateStart1)) AND (TO_DAYS(zp_timesheets.workDate) < (TO_DAYS(:dateStart2) + 7)))
+            (zp_timesheets.workDate >= :dateStart1 AND zp_timesheets.workDate < :dateEnd)
             AND (zp_timesheets.userId = :userId)
+            AND hours > 0
         ";
 
         if ($projectId > 0) {
             $query .= " AND zp_tickets.projectId = :projectId";
         }
-        $query .= "GROUP BY ticketId, kind";
+
+        $query .= " ORDER BY zp_timesheets.ticketId, zp_timesheets.kind, zp_timesheets.workDate DESC";
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
 
-        $startOfDay = $fromDate->format('Y-m-d');
+        if (!$fromDate->isUtc()) {
+            $fromDate->setTimezone("UTC");
+        }
+        $startOfDay = $fromDate->format('Y-m-d H:i:s');
         $call->bindValue(':dateStart1', $startOfDay);
-        $call->bindValue(':dateStart2', $startOfDay);
+
+        $endDate = $fromDate->addDays(7)->format('Y-m-d H:i:s');
+        $call->bindValue(':dateEnd', $endDate);
         $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 
         if ($projectId > 0) {
@@ -357,60 +357,7 @@ class Timesheets extends Repository
      */
     public function addTime(array $values): void
     {
-        $query = "SELECT
-            zp_timesheets.id,
-            zp_timesheets.hours,
-            zp_timesheets.workDate,
-            zp_timesheets.description
-        FROM
-            zp_timesheets
-        WHERE
-            zp_timesheets.userId = :userId AND
-            zp_timesheets.ticketId = :ticket AND
-            zp_timesheets.kind = :kind AND
-            ((TO_SECONDS(zp_timesheets.workDate) >= TO_SECONDS(:dateStart)) AND (TO_SECONDS(zp_timesheets.workDate) < (TO_SECONDS(:dateEnd))))";
 
-        $call = $this->dbcall(func_get_args());
-        $call->prepare($query);
-        $call->bindValue(':userId', $values['userId']);
-        $call->bindValue(':ticket', $values['ticket']);
-        $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':dateStart', $values['date']->copy()->startOfDay());
-        $call->bindValue(':dateEnd', $values['date']->copy()->endOfDay());
-
-        $timesheets = $call->fetchAll();
-        if (!empty($timesheets)) {
-            // Update time sheets as one exists on the same date with another time.
-            $timesheet = reset($timesheets);
-            $query = "UPDATE
-                zp_timesheets
-            SET
-                hours = :hours,
-                description = :description,
-                workDate = :newWorkDate
-            WHERE
-                userId = :userId
-                AND ticketId = :ticketId
-                AND kind = :kind
-                AND workDate = :workDate
-                LIMIT 1";
-
-            $query = self::dispatch_filter('sql', $query);
-
-            $call = $this->dbcall(func_get_args());
-
-            $call->prepare($query);
-            $call->bindValue(':hours', $timesheet['hours'] + $values['hours']);
-            $call->bindValue(':description', $values['description'] . '\n' . '--' . '\n\n' . $timesheet['description']);
-            $call->bindValue(':newWorkDate', $values['date']);
-            $call->bindValue(':workDate', $timesheet['workDate']);
-            $call->bindValue(':userId', $values['userId']);
-            $call->bindValue(':ticketId', $values['ticket']);
-            $call->bindValue(':kind', $values['kind']);
-            $call->bindValue(':workDate', $timesheet['workDate']);
-
-            $call->execute();
-        } else {
             $query = "INSERT INTO zp_timesheets (
                 userId,
                 ticketId,
@@ -448,58 +395,83 @@ class Timesheets extends Repository
             $call = $this->dbcall(func_get_args());
 
             $call->prepare($query);
+
             $call->bindValue(':userId', $values['userId']);
             $call->bindValue(':ticket', $values['ticket']);
             $call->bindValue(':date', $values['date']);
-            $call->bindValue(':hours', $values['hours']);
             $call->bindValue(':kind', $values['kind']);
-            $call->bindValue(':description', $values['description']);
-            $call->bindValue(':invoicedEmpl', $values['invoicedEmpl']);
-            $call->bindValue(':invoicedComp', $values['invoicedComp']);
-            $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate']);
-            $call->bindValue(':invoicedCompDate', $values['invoicedCompDate']);
-            $call->bindValue(':rate', $values['rate']);
+            $call->bindValue(':description', $values['description'] ?? '');
+            $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
+            $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
+            $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
+            $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
+            $call->bindValue(':rate', $values['rate'] ?? '');
             $call->bindValue(':hours', $values['hours']);
-            $call->bindValue(':paid', $values['paid']);
-            $call->bindValue(':paidDate', $values['paidDate']);
+            $call->bindValue(':paid', $values['paid'] ?? '');
+            $call->bindValue(':paidDate', $values['paidDate'] ?? '');
 
             $call->execute();
-        }
     }
 
     /**
+     * addTime - add user-specific time entry
+     *
      * @param array $values
      *
      * @return void
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
-    public function simpleInsert(array $values): void
+    public function upsertTimesheetEntry(array $values): void
     {
-        $query = "INSERT INTO zp_timesheets(
-            userId,
-            ticketId,
-            workDate,
-            hours,
-            kind,
-            rate
+
+        $query = "INSERT INTO zp_timesheets (
+                userId,
+                ticketId,
+                workDate,
+                hours,
+                kind,
+                invoicedEmpl,
+                invoicedComp,
+                invoicedEmplDate,
+                invoicedCompDate,
+                rate,
+                paid,
+                paidDate
             ) VALUES (
-            :userId,
-            :ticket,
-            :date,
-            :hours,
-            :kind,
-            :rate)
-            ON DUPLICATE KEY UPDATE hours = hours + :hoursB";
+                :userId,
+                :ticket,
+                :date,
+                :hours,
+                :kind,
+                :invoicedEmpl,
+                :invoicedComp,
+                :invoicedEmplDate,
+                :invoicedCompDate,
+                :rate,
+                :paid,
+                :paidDate
+            ) ON DUPLICATE KEY UPDATE
+                 hours = :hours";
+
+        $query = self::dispatch_filter('sql', $query);
 
         $call = $this->dbcall(func_get_args());
 
         $call->prepare($query);
+
         $call->bindValue(':userId', $values['userId']);
         $call->bindValue(':ticket', $values['ticket']);
         $call->bindValue(':date', $values['date']);
-        $call->bindValue(':hours', $values['hours']);
-        $call->bindValue(':hoursB', $values['hours']);
         $call->bindValue(':kind', $values['kind']);
-        $call->bindValue(':rate', $values['rate']);
+        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
+        $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
+        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
+        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
+        $call->bindValue(':rate', $values['rate'] ?? '');
+        $call->bindValue(':hours', $values['hours']);
+        $call->bindValue(':paid', $values['paid'] ?? '');
+        $call->bindValue(':paidDate', $values['paidDate'] ?? '');
 
         $call->execute();
     }

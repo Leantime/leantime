@@ -98,7 +98,7 @@ $values = $tpl->get('values');
 
 </select><br />
 <label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
-    id="datepicker" name="date" value="<?php echo format($values['date'], 'short'); ?>" size="7" />
+    id="datepicker" name="date" value="<?php echo format($values['date'], "", \Leantime\Core\Support\FromFormat::DbDate)->date(); ?>" size="7" />
 <br />
 <label for="hours"><?php echo $tpl->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"
@@ -120,7 +120,7 @@ $values = $tpl->get('values');
 
             <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
-                                                  value="<?php echo format($values['invoicedEmplDate'], 'short'); ?>"
+                                                  value="<?php echo format($values['invoicedEmplDate'], "", \Leantime\Core\Support\FromFormat::DbDate)->date(); ?>"
                                                   size="7"/><br/>
 
 
@@ -135,7 +135,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
-                                                      value="<?php echo format($values['invoicedCompDate'], 'short'); ?>"
+                                                      value="<?php echo format($values['invoicedCompDate'], "", \Leantime\Core\Support\FromFormat::DbDate)->date(); ?>"
                                                       size="7"/><br/>
 
         <br/>
@@ -149,7 +149,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                           id="paidDate"
                                                           name="paidDate"
-                                                          value="<?php echo format($values['paidDate'], 'short'); ?>"
+                                                          value="<?php echo format($values['paidDate'], "", \Leantime\Core\Support\FromFormat::DbDate)->date(); ?>"
                                                           size="7"/><br/>
     <?php } ?>
 

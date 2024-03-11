@@ -20,6 +20,7 @@ use Illuminate\View\View;
 use Illuminate\View\ViewFinderInterface;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
+use Leantime\Core\Support\FromFormat;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -366,6 +367,7 @@ class Template
             'login' => $this->login,
             'roles' => $this->roles,
             'language' => $this->language,
+
         ]);
     }
 

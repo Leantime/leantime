@@ -7,36 +7,56 @@ use Leantime\Core\Language;
 /**
  * Class Format
  *
- * This class provides various formatting methods for different types of data.
+ * This class provides various formatting methods for simple data types (strings, ints, floats)
  */
 class Format
 {
-    private mixed $value;
-    private mixed $value2;
+    private mixed $value = "";
+    private mixed $value2 = "";
     private DateTimeHelper $dateTimeHelper;
 
     private Language $language;
 
     /**
-     * Constructs a new instance of the class.
+     * Creates a new instance of the class.
      *
-     * @param mixed      $value  The value to be assigned to the 'value' property.
-     * @param mixed|null $value2 The value to be assigned to the 'value2' property. Defaults to null.
-     *
+     * @param string|int|float $value The value to be assigned. If empty, the constructor will return early.
+     * @param null|string|int|float $value2 The second value to be assigned. It can be null. Used for certain cases as specified by $fromFormat.
+     * @param FromFormat|null $fromFormat The format of the values. Can be one of the constants defined in the FromFormat class.
      * @return void
      */
-    public function __construct(mixed $value, mixed $value2 = null)
+    public function __construct(string|int|float $value, null|string|int|float $value2, ?FromFormat $fromFormat)
     {
-        $this->value = $value;
-        $this->value2 = $value2;
-        $this->language = app()->make(Language::class);
+
         $this->dateTimeHelper = app()->make(DateTimeHelper::class);
+        $this->language = app()->make(Language::class);
+
+        if(empty($value)) {
+            return;
+        }
+
+        switch($fromFormat){
+            case FromFormat::DbDate:
+                $this->value = $this->dateTimeHelper->parseDbDateTime($value);
+                break;
+            case FromFormat::UserDateTime:
+                $this->value = $this->dateTimeHelper->parseUserDateTime($value, $value2);
+                break;
+            case FromFormat::UserDateStartOfDay:
+                $this->value = $this->dateTimeHelper->parseUserDateTime($value, "start");
+                break;
+            case FromFormat::UserDateEndOfDay:
+                $this->value = $this->dateTimeHelper->parseUserDateTime($value, "end");
+                break;
+            default:
+                $this->value = $value;
+                break;
+        }
+
     }
 
-    //date formatters
-
     /**
-     * Returns the formatted date string based on the 'value' property.
+     * Returns the user formatted date string based on the 'value' property.
      *
      * @param string $emptyOutput The output to be returned when the 'value' property is empty. Defaults to an empty string.
      *
@@ -48,25 +68,8 @@ class Format
         if (empty($this->value)) {
             return $emptyOutput;
         }
-        $formattedDate = $this->dateTimeHelper->getFormattedDateStringFromISO($this->value);
 
-        return $formattedDate !== "" ? $formattedDate : $emptyOutput;
-    }
-
-    /**
-     * Returns the formatted date string based on the 'value' property.
-     *
-     * @param string $emptyOutput The output to be returned when the 'value' property is empty. Defaults to an empty string.
-     *
-     * @return string The formatted date string or the $emptyOutput if the 'value' property is empty or the formatted date string is empty.
-     */
-    public function dateUtc(string $emptyOutput = "", ): string
-    {
-
-        if (empty($this->value)) {
-            return $emptyOutput;
-        }
-        $formattedDate = $this->dateTimeHelper->getFormattedUTCDateStringFromISO($this->value);
+        $formattedDate = $this->value->formatDateForUser();
 
         return $formattedDate !== "" ? $formattedDate : $emptyOutput;
     }
@@ -82,8 +85,39 @@ class Format
         if ($this->value == null) {
             return "";
         }
-        return $this->dateTimeHelper->getFormattedTimeStringFromISO($this->value);
+
+        return $this->value->formatTimeForUser();
     }
+
+    /**
+     * Generates an ISO 8601 formatted date and time string.
+     *
+     * @return string The ISO 8601 formatted date and time string. Returns an empty string if the value is null.
+     */
+    public function isoDateTime(): string
+    {
+        if ($this->value == null) {
+            return "";
+        }
+        return $this->value->formatDateTimeForDb();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ /* # # # # # # # # # # Refactor # # # # # */
+
+
 
     /**
      * Retrieves the 24-hour time string from the ISO formatted value property.
@@ -109,18 +143,7 @@ class Format
     }
 
 
-    /**
-     * Generates an ISO 8601 formatted date and time string.
-     *
-     * @return string The ISO 8601 formatted date and time string. Returns an empty string if the value is null.
-     */
-    public function isoDateTime(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->getISODateTimeString($this->value, $this->value2);
-    }
+
 
     /**
      * Generates an ISO 8601 formatted date and time string from user defined date and 24h time.
@@ -136,70 +159,7 @@ class Format
         return $this->dateTimeHelper->getISODateTimeStringFrom24h($this->value, $this->value2);
     }
 
-    /**
-     * Generates an ISO 8601 formatted date string.
-     *
-     * @return string The ISO 8601 formatted date string. Returns an empty string if the value is null.
-     */
-    public function isoDate(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->getISODateString($this->value);
-    }
 
-    /**
-     * Generates an ISO 8601 formatted date string representing the start of the day.
-     *
-     * @return string The ISO 8601 formatted date string representing the start of the day. Returns an empty string if the value is null.
-     */
-    public function isoDateStart(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->getISODateString($this->value, "b");
-    }
-
-    /**
-     * Generates an ISO 8601 formatted date string.
-     *
-     * @return string The ISO 8601 formatted date string. Returns an empty string if the value is null.
-     */
-    public function isoDateEnd(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->getISODateString($this->value, "e");
-    }
-
-    /**
-     * Generates an ISO 8601 formatted date string with only the month and day.
-     *
-     * @return string The ISO 8601 formatted date string with only the month and day. Returns an empty string if the value is null.
-     */
-    public function isoDateMid(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->getISODateString($this->value, "m");
-    }
-
-    /**
-     * Generates an ISO 8601 formatted time string.
-     *
-     * @return string The ISO 8601 formatted time string. Returns an empty string if the value is null.
-     */
-    public function isoTime(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->getISOTimeString($this->value);
-    }
 
     /**
      * Generate unix timestamp from date.
@@ -212,7 +172,7 @@ class Format
             return "";
         }
 
-        return $this->dateTimeHelper->getTimestamp($this->value);
+        return $this->dateTimeHelper->parseDbDateTime($this->value)->getTimestamp();
     }
 
     /**

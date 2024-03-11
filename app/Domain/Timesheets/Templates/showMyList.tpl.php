@@ -1,6 +1,7 @@
 <?php
 
 defined('RESTRICTED') or die('Restricted access');
+use Leantime\Core\Support\FromFormat;
 
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
@@ -35,13 +36,13 @@ foreach ($__data as $var => $val) {
                                id="dateFrom"
                                class="dateFrom"
                                name="dateFrom"
-                               value="<?php echo format($tpl->get('dateFrom'), 'short'); ?>"
+                               value="<?php echo $tpl->get('dateFrom')->formatDateForUser(); ?>"
                                style="margin-bottom:10px; width:90px; float:left; margin-right:10px"/>
                         <input type="text"
                                id="dateTo"
                                class="dateTo"
                                name="dateTo"
-                               value="<?php echo format($tpl->get('dateTo'), 'short'); ?>"
+                               value="<?php echo  $tpl->get('dateTo')->formatDateForUser(); ?>"
                                style="margin-bottom:10px; width:90px" />
                     </div>
 
@@ -128,8 +129,8 @@ foreach ($__data as $var => $val) {
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
                             <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format((new Carbon\Carbon($row['workDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short'); ?>">
-                            <?php echo format((new Carbon\Carbon($row['workDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short'); ?>
+                        <td data-order="<?php echo format($row['workDate'], "", FromFormat::DbDate)->date(); ?>">
+                            <?php echo format($row['workDate'], "", FromFormat::DbDate)->date(); ?>
                         </td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>">
                             <?php $tpl->e($row['hours'] ?: 0); ?>
@@ -158,28 +159,29 @@ foreach ($__data as $var => $val) {
                             <?php $tpl->e($row['description']); ?>
                         </td>
                         <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
-                            echo format((new Carbon\Carbon($row['invoicedEmplDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                            echo format($row['invoicedEmplDate'], "", FromFormat::DbDate)->date();
                                         }?>">
                             <?php if ($row['invoicedEmpl'] == '1') {
-                                echo format((new Carbon\Carbon($row['invoicedEmplDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                                echo format($row['invoicedEmplDate'], "", FromFormat::DbDate)->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
-                            echo format((new Carbon\Carbon($row['invoicedCompDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                            echo format($row['invoicedCompDate'], "", FromFormat::DbDate)->date();
                                         }?>">
                             <?php if ($row['invoicedComp'] == '1') {
-                                echo format((new Carbon\Carbon($row['invoicedCompDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                                echo format($row['invoicedCompDate'], "", FromFormat::DbDate)->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['paid'] == '1') {
-                            echo format((new Carbon\Carbon($row['paidDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+
+                            echo format($row['paidDate'], "", FromFormat::DbDate)->date();
                                         }?>">
                             <?php if ($row['paid'] == '1') {
-                                echo format((new Carbon\Carbon($row['paidDate'], 'UTC'))->setTimeZone($_SESSION['usersettings.timezone']), 'short');
+                                echo format($row['paidDate'], "", FromFormat::DbDate)->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>

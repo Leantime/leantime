@@ -3,7 +3,9 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Leantime\Core\Controller;
+use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Auth\Services\Auth;
@@ -43,18 +45,20 @@ class ShowMyList extends Controller
             $kind = ($_POST['kind']);
         }
 
-        $dateFrom = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->startOfMonth();
+        // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
+        // The front end javascript is hardcode to start the week on mondays, so we use that here too.
+
+        //Get start of the week in current users timezone and then switch to UTC
+        $dateTimeHelper = new DateTimeHelper();
+        $dateFrom = $dateTimeHelper->userNow()->startOfMonth();
+        $dateTo = $dateTimeHelper->userNow()->endOfMonth();
+
         if (!empty($_POST['dateFrom'])) {
-            // Time posted from the front end is in the user's timezone.
-            $dateFrom = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], $_SESSION['usersettings.timezone']);
-            $dateFrom->setTimezone('UTC');
+            $dateFrom =  $dateTimeHelper->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
         }
 
-        $dateTo = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->endOfMonth();
         if (!empty($_POST['dateTo'])) {
-            // Time posted from the front end is in the user's timezone.
-            $dateTo = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], $_SESSION['usersettings.timezone']);
-            $dateTo->setTimezone('UTC');
+            $dateTo =  $dateTimeHelper->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
         $this->tpl->assign('dateFrom', $dateFrom);

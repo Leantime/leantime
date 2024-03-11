@@ -3,9 +3,11 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Controller;
+use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
 use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -13,6 +15,7 @@ use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
 use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Auth\Services\Auth;
+use PHPUnit\Exception;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -64,26 +67,26 @@ class ShowMy extends Controller
 
         // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
         // The front end javascript is hardcode to start the week on mondays, so we use that here too.
-        $fromData = Carbon::now($_SESSION['usersettings.timezone'])->startOfWeek(CarbonInterface::MONDAY);
-        $fromData->setTimeFrom(Carbon::now($_SESSION['usersettings.timezone']))->setTimezone('UTC');
+
+        //Get start of the week in current users timezone and then switch to UTC
+        $dateTimeHelper = new DateTimeHelper();
+        $fromDate = $dateTimeHelper->userNow()->startOfWeek(CarbonInterface::MONDAY);
 
         $kind = 'all';
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (!empty($_POST['startDate'])) {
-                $fromData =  Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['startDate'], $_SESSION['usersettings.timezone']);
-                $fromData->setTimezone('UTC');
+                $fromDate =  $dateTimeHelper->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
             }
         }
 
         if (isset($_POST['saveTimeSheet'])) {
             $this->saveTimeSheet($_POST);
-            $this->tpl->setNotification('Timesheet successfully updated', 'success');
         }
 
-        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromData, $_SESSION['userdata']['id']);
+        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, $_SESSION['userdata']['id']);
 
-        $this->tpl->assign('dateFrom', $fromData);
+        $this->tpl->assign('dateFrom', $fromDate);
         $this->tpl->assign('actKind', $kind);
         $this->tpl->assign('kind', $this->timesheetRepo->kind);
         $this->tpl->assign('allProjects', $this->projects->getUserProjects(
@@ -108,49 +111,40 @@ class ShowMy extends Controller
      */
     public function saveTimeSheet(array $postData): void
     {
-        $userinfo = $this->userRepo->getUser($_SESSION["userdata"]["id"]);
 
         foreach ($postData as $key => $dateEntry) {
             // The temp data should contain four parts, spectated by "|":
-            // TICKET ID | new or existing | Current Date (user format) | Type of booked hours
+            // TICKET ID | Type of booked hours | Current Date (user format)
             $tempData = explode("|", $key);
+
             if (count($tempData) === 4) {
-                $ticketId = $tempData[0];
-                $isNewEntry = 'new' === $tempData[1];
+                $ticketId =  (int)$tempData[0];
+                $kind = $tempData[1];
+                $date = $tempData[2];
+                $time = $tempData[3];
                 $hours = $dateEntry;
-                $kind = $tempData[3];
 
-                if ($isNewEntry) {
-                    // Add current time to ensure timezone conversion works correctly.
-                    $currentDate = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $tempData[2], $_SESSION['usersettings.timezone']);
-                    $currentDate->setTimeFrom(Carbon::now($_SESSION['usersettings.timezone']));
-                    $currentDate->setTimezone('UTC');
-                } else {
-                    // To update existing entries, the timesheet date was saved in the front end.
-                    $currentDate = new Carbon(str_replace('_', ' ', $tempData[2]), 'UTC');
-                }
-
-                // No ticket ID set, ticket id comes from form fields
+                // if ticket ID is set to new, pull id and hour type from form field
                 if ($ticketId == "new") {
-                    $ticketId = $postData["ticketId"];
+                    $ticketId = (int)$postData["ticketId"];
                     $kind = $postData["kindId"];
                 }
 
                 $values = array(
                     "userId" => $_SESSION["userdata"]["id"],
                     "ticket" => $ticketId,
-                    "date" => $currentDate,
+                    "date" => $date,
+                    "time" => $time,
                     "hours" => $hours,
                     "kind" => $kind,
-                    "rate" => $userinfo["wage"],
                 );
 
-                if ($isNewEntry) {
-                    if ($hours > 0) {
-                        $this->timesheetRepo->simpleInsert($values);
-                    }
-                } else {
-                    $this->timesheetRepo->updateHours($values);
+                try {
+                    $this->timesheetService->upsertTime($ticketId, $values);
+                    $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
+                } catch (\Exception $e) {
+                    $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
+                    continue;
                 }
             }
         }
