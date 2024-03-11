@@ -149,7 +149,8 @@ namespace Leantime\Domain\Notifications\Services {
                         $emailMessage = $subject;
                         $emailMessage .= sprintf($this->language->__('text.click_here'), $url);
                         $mailer->setHtml($emailMessage);
-                        $mailer->sendMail(array($taggedUser), $authorName);
+                        $recipient = $this->userRepository->getUser($taggedUser)['username'];
+                        $mailer->sendMail(array($recipient), $authorName);
                     }
                 }
             }
