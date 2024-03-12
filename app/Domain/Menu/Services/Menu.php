@@ -121,8 +121,8 @@ class Menu
 
         $projectType = "project";
         $project = [];
-        if (isset($_SESSION['currentProject'])) {
-            $project = $this->projectService->getProject($_SESSION['currentProject']);
+        if ($currentProjectId = $this->projectService->getCurrentProjectId()) {
+            $project = $this->projectService->getProject($currentProjectId);
 
             $projectType = ($project !== false && isset($project['type']))
                 ? $project['type']

@@ -627,6 +627,17 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
+         * Get current project id or 0 if no current project is set.
+         *
+         * @return int
+         */
+        public function getCurrentProjectId(): int
+        {
+            // Make sure that we never return a value less than 0.
+            return max(0, (int) ($_SESSION['currentProject'] ?? 0));
+        }
+
+        /**
          * @param $projectId
          * @return bool
          * @throws BindingResolutionException
