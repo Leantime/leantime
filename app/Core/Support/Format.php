@@ -31,7 +31,7 @@ class Format
      * @return void
      */
     public function __construct(
-        string|int|float $value,
+        null|string|int|float $value,
         null|string|int|float $value2,
         ?FromFormat $fromFormat = FromFormat::DbDate
     ) {
@@ -72,6 +72,7 @@ class Format
             //Most common is an invalid date format. This could also be an empty string or a 0000-00... date.
             //Since this format class is purely for user facing purposes we will not show an error message
             //but return an empty string.
+            $this->value = $value;
             return;
         }
     }
@@ -123,6 +124,44 @@ class Format
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return "";
         }
+        return $this->value->formatDateTimeForDb();
+    }
+
+    /**
+     * @deprecated
+     *
+     * This method is deprecated and only included because of plugin backwards compatibility.
+     * Once all plugins are updated this will be removed.
+     *
+     * @return string The ISO 8601 formatted date string. Returns an empty string if the value is null.
+     */
+    public function isoDate(): string
+    {
+
+        if (empty($this->value)) {
+            return "";
+        }
+
+        //This method should not be used anymore however we have plugins that are still using it and they will not have
+        //the new enum values. So they are still calling format($var)->isoDate() without a enum modifier that would
+        //indicate that this is a user date (which it was historically).
+        //So now we have to shuffle things around and since the format was probably not correct anyways, let's reparse
+
+        if(!$this->value instanceof CarbonImmutable) {
+
+            $this->value = $this->dateTimeHelper->parseUserDateTime($this->value, "start");
+
+        }else{
+
+            //If for some reason Carbon was able to parse the date we'll need to make sure the timezone is set to the
+            //users timezone.
+
+            //Date was falsly parsed as UTC but is actually user date. Shift timezone.
+            $userTimezone = $_SESSION['usersettings.timezone'];
+            //Carbon shift timezone will change timezone without actually changing the numbers
+            $this->value->shiftTimezone($userTimezone);
+        }
+
         return $this->value->formatDateTimeForDb();
     }
 
