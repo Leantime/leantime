@@ -307,7 +307,6 @@ class Jsonrpc extends Controller
                 }
 
                 try {
-                    // @TODO: this is override in linge 318 before the casted value here is used?
                     $filtered_parameters[$position] = cast($params[$name], $type->getName());
                 } catch (\Throwable $e) {
                     error_log($e);
@@ -315,7 +314,9 @@ class Jsonrpc extends Controller
                 }
             }
 
-            $filtered_parameters[$position] = $params[$name];
+            if (!isset($filtered_parameters[$position])) {
+                $filtered_parameters[$position] = $params[$name];
+            }
         }
 
         // make sure it is in the right order
