@@ -186,12 +186,6 @@ $fullReportLatest = $tpl->get('fullReportLatest');
                             }
                             ?>
                             <?php foreach ($tpl->get('milestones') as $row) {
-                                if ($row->editTo == "0000-00-00 00:00:00") {
-                                    $date = $tpl->__("text.no_date_defined");
-                                } else {
-                                    $date = new DateTime($row->editTo);
-                                    $date = $date->format($tpl->__("language.dateformat"));
-                                }
 
                                 ?>
                                     <li class="ui-state-default" id="milestone_<?php echo $row->id; ?>" >
@@ -206,7 +200,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
 
                                                 <div class="col-md-7">
                                                     <?=$tpl->__("label.due") ?>
-                                                    <?php echo $date; ?>
+                                                    <?php echo format($row->editTo)->date( $tpl->__("text.no_date_defined")); ?>
                                                 </div>
                                                 <div class="col-md-5" style="text-align:right">
                                                     <?=sprintf($tpl->__("text.percent_complete"), $row->percentDone)?>

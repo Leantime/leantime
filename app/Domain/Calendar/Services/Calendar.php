@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Calendar\Services;
 
 use Leantime\Core\Language as LanguageCore;
+use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Repositories\Calendar as CalendarRepository;
@@ -98,13 +99,13 @@ class Calendar
 
         $dateFrom = null;
         if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-            $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTimeFrom24h();
+            $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTime();
         }
         $values['dateFrom'] = $dateFrom;
 
         $dateTo = null;
         if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-            $dateTo =  format($values['dateTo'], $values['timeTo'])->isoDateTimeFrom24h();
+            $dateTo =  format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTime();
         }
         $values['dateTo'] = $dateTo;
 

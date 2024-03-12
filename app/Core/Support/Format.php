@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Support;
 
+use Carbon\CarbonImmutable;
 use Leantime\Core\Language;
 
 /**
@@ -14,62 +15,85 @@ class Format
     private mixed $value = "";
     private mixed $value2 = "";
     private DateTimeHelper $dateTimeHelper;
-
     private Language $language;
 
     /**
      * Creates a new instance of the class.
      *
-     * @param string|int|float $value The value to be assigned. If empty, the constructor will return early.
-     * @param null|string|int|float $value2 The second value to be assigned. It can be null. Used for certain cases as specified by $fromFormat.
-     * @param FromFormat|null $fromFormat The format of the values. Can be one of the constants defined in the FromFormat class.
+     * PSA: This class will NOT throw exceptions or error messages since it is a user facing string formatting class.
+     * If you need to evaluate correct parsing of datetimes use the datetime helper and not this format class.
+     *
+     * @param string|int|float      $value      The value to be assigned. If empty, the constructor will return early.
+     * @param null|string|int|float $value2     The second value to be assigned. It can be null. Used for certain cases
+     *                                          as specified by $fromFormat.
+     * @param FromFormat|null       $fromFormat The format of the values. Can be one of the constants defined in the
+     *                                          FromFormat class.
      * @return void
      */
-    public function __construct(string|int|float $value, null|string|int|float $value2, ?FromFormat $fromFormat)
-    {
+    public function __construct(
+        string|int|float $value,
+        null|string|int|float $value2,
+        ?FromFormat $fromFormat = FromFormat::DbDate
+    ) {
 
         $this->dateTimeHelper = app()->make(DateTimeHelper::class);
         $this->language = app()->make(Language::class);
 
-        if(empty($value)) {
+        if (empty($value)) {
             return;
         }
 
-        switch($fromFormat){
-            case FromFormat::DbDate:
-                $this->value = $this->dateTimeHelper->parseDbDateTime($value);
-                break;
-            case FromFormat::UserDateTime:
-                $this->value = $this->dateTimeHelper->parseUserDateTime($value, $value2);
-                break;
-            case FromFormat::UserDateStartOfDay:
-                $this->value = $this->dateTimeHelper->parseUserDateTime($value, "start");
-                break;
-            case FromFormat::UserDateEndOfDay:
-                $this->value = $this->dateTimeHelper->parseUserDateTime($value, "end");
-                break;
-            default:
-                $this->value = $value;
-                break;
+        try {
+            switch ($fromFormat) {
+                case FromFormat::DbDate:
+                    $this->value = $this->dateTimeHelper->parseDbDateTime($value);
+                    break;
+                case FromFormat::UserDateTime:
+                    $this->value = $this->dateTimeHelper->parseUserDateTime($value, $value2);
+                    break;
+                case FromFormat::User24hTime:
+                    $this->value = $this->dateTimeHelper->parseUser24hTime($value);
+                    break;
+                case FromFormat::Db24hTime:
+                    $this->value = $this->dateTimeHelper->parseDb24hTime($value);
+                    break;
+                case FromFormat::UserDateStartOfDay:
+                    $this->value = $this->dateTimeHelper->parseUserDateTime($value, "start");
+                    break;
+                case FromFormat::UserDateEndOfDay:
+                    $this->value = $this->dateTimeHelper->parseUserDateTime($value, "end");
+                    break;
+                default:
+                    $this->value = $value;
+                    break;
+            }
+        } catch (\Exception $e) {
+            //Several things can throw exceptions in the date parsing scripts.
+            //Most common is an invalid date format. This could also be an empty string or a 0000-00... date.
+            //Since this format class is purely for user facing purposes we will not show an error message
+            //but return an empty string.
+            return;
         }
-
     }
 
     /**
      * Returns the user formatted date string based on the 'value' property.
      *
-     * @param string $emptyOutput The output to be returned when the 'value' property is empty. Defaults to an empty string.
+     * @param string $emptyOutput The output to be returned when the 'value' property is empty.
+     *                            Defaults to an empty string.
      *
-     * @return string The formatted date string or the $emptyOutput if the 'value' property is empty or the formatted date string is empty.
+     * @return string             The formatted date string or the $emptyOutput if the 'value' property is empty or
+     *                            the formatted date string is empty.
      */
-    public function date(string $emptyOutput = "", ): string
+    public function date(string $emptyOutput = ""): string
     {
 
-        if (empty($this->value)) {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return $emptyOutput;
         }
 
         $formattedDate = $this->value->formatDateForUser();
+
 
         return $formattedDate !== "" ? $formattedDate : $emptyOutput;
     }
@@ -82,7 +106,7 @@ class Format
      */
     public function time(): string
     {
-        if ($this->value == null) {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return "";
         }
 
@@ -96,70 +120,11 @@ class Format
      */
     public function isoDateTime(): string
     {
-        if ($this->value == null) {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return "";
         }
         return $this->value->formatDateTimeForDb();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- /* # # # # # # # # # # Refactor # # # # # */
-
-
-
-    /**
-     * Retrieves the 24-hour time string from the ISO formatted value property.
-     *
-     * @return string The 24-hour time string. If the value property is null, an empty string is returned.
-     */
-    public function time24(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->get24HourTimestringFromISO($this->value);
-    }
-
-    public function time24toLocalTime(bool $ignoreTimezone = false): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-
-        return $this->dateTimeHelper->getLocalFormatFrom24hTime($this->value, $ignoreTimezone);
-
-    }
-
-
-
-
-    /**
-     * Generates an ISO 8601 formatted date and time string from user defined date and 24h time.
-     * Html time fields will always return 24h time
-     *
-     * @return string The ISO 8601 formatted date and time string. Returns an empty string if the value is null.
-     */
-    public function isoDateTimeFrom24h(): string
-    {
-        if ($this->value == null) {
-            return "";
-        }
-        return $this->dateTimeHelper->getISODateTimeStringFrom24h($this->value, $this->value2);
-    }
-
-
 
     /**
      * Generate unix timestamp from date.
@@ -168,11 +133,40 @@ class Format
      */
     public function timestamp(): int|bool
     {
-        if ($this->value == null) {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return "";
         }
 
-        return $this->dateTimeHelper->parseDbDateTime($this->value)->getTimestamp();
+        return $this->value->getTimestamp();
+    }
+
+    /**
+     * Retrieves the 24-hour time string from the ISO formatted value property.
+     *
+     * @return string The 24-hour time string. If the value property is null, an empty string is returned.
+     */
+    public function time24(): string
+    {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
+            return "";
+        }
+        return $this->value->format24HTimeForUser();
+    }
+
+
+    /**
+     * Converts a 24-hour formatted time string to a user-friendly time string.
+     *
+     * @return string The user-friendly time string in the format "H:i A". Returns an empty string if the value is null.
+     */
+    public function userTime24toUserTime(): string
+    {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
+            return "";
+        }
+
+        return $this->value->formatTimeForUser();
+
     }
 
     /**
@@ -213,6 +207,11 @@ class Format
         return number_format($percent, 2) . "%";
     }
 
+    /**
+     * Formats a decimal number with two decimal places.
+     *
+     * @return string The decimal number formatted with two decimal places.
+     */
     public function decimal(): string
     {
         return number_format($this->value, 2);

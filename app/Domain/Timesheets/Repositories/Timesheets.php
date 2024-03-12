@@ -302,10 +302,10 @@ class Timesheets extends Repository
         if (!$fromDate->isUtc()) {
             $fromDate->setTimezone("UTC");
         }
-        $startOfDay = $fromDate->format('Y-m-d H:i:s');
-        $call->bindValue(':dateStart1', $startOfDay);
 
-        $endDate = $fromDate->addDays(7)->format('Y-m-d H:i:s');
+        $call->bindValue(':dateStart1', $fromDate);
+
+        $endDate = $fromDate->addDays(7);
         $call->bindValue(':dateEnd', $endDate);
         $call->bindValue(':userId', $userId, PDO::PARAM_INT);
 

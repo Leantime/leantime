@@ -20,6 +20,16 @@ enum FromFormat {
     case UserDateTime;
 
     /**
+     * For values containing the time string in local timezone but formatted as 24 hour time (time html fields)
+     */
+    case User24hTime;
+
+    /**
+     * For values containing UTC date time with 24hour time format
+     */
+    case Db24hTime;
+
+    /**
      * for values containing only the user formatted date and timezone. Adds start of day time to string
      */
     case UserDateStartOfDay;

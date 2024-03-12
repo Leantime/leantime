@@ -120,9 +120,9 @@ namespace Leantime\Domain\Tickets\Controllers {
         {
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
 
-                $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->time24toLocalTime(ignoreTimezone: true);
-                $params['timeFrom'] = format($params['timeFrom'] ?? '')->time24toLocalTime(ignoreTimezone: true);
-                $params['timeTo'] = format($params['timeTo'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->userTime24toUserTime();
+                $params['timeFrom'] = format($params['timeFrom'] ?? '')->userTime24toUserTime();
+                $params['timeTo'] = format($params['timeTo'] ?? '')->userTime24toUserTime();
 
                 $result = $this->ticketService->addTicket($params);
 

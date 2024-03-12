@@ -2,6 +2,8 @@
 
 namespace Leantime\Domain\Sprints\Services {
 
+    use Leantime\Core\Support\DateTimeHelper;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
@@ -147,8 +149,8 @@ namespace Leantime\Domain\Sprints\Services {
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = format($sprint->startDate)->isoDateStart();
-            $sprint->endDate = format($sprint->endDate)->isoDateEnd();
+            $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
+            $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
 
             $sprint->projectId = $params['projectId'] ?? $_SESSION['currentProject'];
 
@@ -169,8 +171,8 @@ namespace Leantime\Domain\Sprints\Services {
         {
 
             $sprint = (object) $params;
-            $sprint->startDate = format($sprint->startDate)->isoDate();
-            $sprint->endDate = format($sprint->endDate)->isoDateEnd();
+            $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
+            $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
 
             $sprint->projectId = $params['projectId'] ?? $_SESSION['currentProject'];
 
@@ -217,30 +219,17 @@ namespace Leantime\Domain\Sprints\Services {
                 $plannedEffortStart = 0;
             }
 
-            //The sprint object can come from the repository or the service.
-            //Dates get formatted in the service and could not be parsed
-            //Checking if we have an iso date or not
-            if (strlen($sprint->startDate) > 11) {
-                //DB dateformat
-                $dateStart = new DateTime($sprint->startDate);
-                $dateEnd = new DateTime($sprint->endDate);
-                $period = new DatePeriod(
-                    new DateTime($sprint->startDate),
-                    new DateInterval('P1D'),
-                    new DateTime($sprint->endDate)
-                );
-            } else {
-                //language formatted
-                $dateStart = new DateTime(format($sprint->startDate)->isoDate());
-                $dateEnd = new DateTime(format($sprint->endDate)->isoDateEnd());
-                $period = new DatePeriod(
-                    new DateTime(format($sprint->startDate)->isoDate()),
-                    new DateInterval('P1D'),
-                    new DateTime(format($sprint->endDate)->isoDateEnd())
-                );
-            }
 
-            $sprintLength = $dateEnd->diff($dateStart)->format("%a");
+            $dtHelper = new DateTimeHelper();
+
+            $dateStart = $dtHelper->parseDbDateTime($sprint->startDate)->startOfDay();
+            $dateEnd = $dtHelper->parseDbDateTime($sprint->endDate)->endOfDay();
+
+
+            $sprintLength = $dateStart->diffInDays($dateEnd);
+
+            $period = $dateStart->daysUntil($dateEnd);
+
             $sprintLength++; //Diff is 1 day less than actual sprint days (eg even if a sprint starts and ends today it should still be a 1 day sprint, but the diff would be 0)
 
             $dailyHoursPlanned = $plannedHoursStart / $sprintLength;
@@ -292,11 +281,7 @@ namespace Leantime\Domain\Sprints\Services {
             return $burnDown;
         }
 
-        /**
-         * @param $project
-         * @return array|false
-         * @throws \Exception
-         */
+
         /**
          * @param $project
          * @return array|false

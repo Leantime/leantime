@@ -285,25 +285,35 @@ jQuery(document).ready(function(){
                             <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
                             <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
 
-                            <?php for ($i = 1; $i < 8; $i++) {
-                                $colSum["day" . $i] = ($colSum["day" . $i] ?? 0) + $timeRow["day" . $i]["hours"];
-                                ?>
+                            <?php foreach(keys($timeRow) as $dayKey){
 
-                                <td width="7%" class="rowDay<?php echo $i; ?><?php if ($dateFrom->addDays(($i-1))->isToday()) {
-                                    echo " active";
-                                                            } ?>">
+                                if(str_starts_with($dayKey, "day")) {
 
-                                    <input type="text"
-                                           class="hourCell"
-                                           name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow["kind"];?>|<?php echo $timeRow["day" . $i]["actualWorkDate"]->formatDateForUser() ?>|<?php echo $timeRow["day" . $i]["actualWorkDate"]->formatTimeForUser() ?>"
-                                           value="<?php echo $timeRow["day" . $i]["hours"]; ?>"
+                                    $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $timeRow[$dayKey]["hours"]; ?>
 
-                                           <?php if(!empty($timeRow["day" . $i]["description"])){?>
-                                            data-tippy-content="<?php echo $tpl->escape($timeRow["day" . $i]["description"]); ?>"
-                                           <?php } ?>
-                                    />
-                                </td>
-                            <?php } ?>
+                                    <td width="7%" class="row<?php
+                                            echo $dayKey;
+                                            if ($dateFrom->addDays(($i-1))->isToday()) {
+                                                echo " active";
+                                            }
+                                        ?>">
+
+                                        <?php
+                                            $inputNameKey = $timeRow["ticketId"] . "|" . $timeRow["kind"] . "|" . $timeRow["day" . $i]["actualWorkDate"]->formatDateForUser() . "|" .  $timeRow[$timeRow[$dayKey]]["actualWorkDate"]->formatTimeForUser();
+                                        ?>
+                                        <input type="text"
+                                               class="hourCell"
+                                               name="<?php echo $inputNameKey ?>"
+                                               value="<?php echo $timeRow[$dayKey]["hours"]; ?>"
+
+                                               <?php if(!empty($timeRow[$dayKey]["description"])){?>
+                                                data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]["description"]); ?>"
+                                               <?php } ?>
+                                        />
+                                    </td>
+                            <?php
+                                }
+                            } ?>
 
                             <td width="7%" class="rowSum"><strong><?php echo $timeRow["rowSum"]; ?></strong></td>
                         </tr>

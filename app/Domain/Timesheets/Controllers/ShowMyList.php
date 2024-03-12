@@ -50,8 +50,8 @@ class ShowMyList extends Controller
 
         //Get start of the week in current users timezone and then switch to UTC
         $dateTimeHelper = new DateTimeHelper();
-        $dateFrom = $dateTimeHelper->userNow()->startOfMonth();
-        $dateTo = $dateTimeHelper->userNow()->endOfMonth();
+        $dateFrom = $dateTimeHelper->userNow()->startOfMonth()->setToDbTimezone();
+        $dateTo = $dateTimeHelper->userNow()->endOfMonth()->setToDbTimezone();
 
         if (!empty($_POST['dateFrom'])) {
             $dateFrom =  $dateTimeHelper->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();

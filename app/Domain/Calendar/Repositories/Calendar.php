@@ -122,8 +122,9 @@ class Calendar extends RepositoryCore
 
         $newValues = array();
         foreach ($values as $value) {
-            $dateFrom = $this->dateTimeHelper->getTimestamp($value['dateFrom']);
-            $dateTo = $this->dateTimeHelper->getTimestamp($value['dateTo']);
+
+            $dateFrom = $this->dateTimeHelper->parseDbDateTime($value['dateFrom'])->getTimestamp();
+            $dateTo = $this->dateTimeHelper->parseDbDateTime($value['dateTo'])->getTimestamp();
 
             $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
@@ -176,8 +177,8 @@ class Calendar extends RepositoryCore
                 $backgroundColor = "var(--accent2)";
 
                 if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
-                    $dateFrom = $this->dateTimeHelper->getTimestamp($ticket['dateToFinish']);
-                    $dateTo = $this->dateTimeHelper->getTimestamp($ticket['dateToFinish']);
+                    $dateFrom = $this->dateTimeHelper->parseDbDateTime($ticket['dateToFinish'])->getTimestamp();
+                    $dateTo = $this->dateTimeHelper->parseDbDateTime($ticket['dateToFinish'])->getTimestamp();
                     $context = '❕ ' . $this->language->__("label.due_todo");
 
                     $newValues[] = $this->mapEventData(
@@ -194,19 +195,16 @@ class Calendar extends RepositoryCore
                     );
                 }
 
-                if ($ticket['editFrom'] != "0000-00-00 00:00:00" && $ticket['editFrom'] != "1969-12-31 00:00:00") {
-                    // Set ticket to all-day ticket when no time is set
-                    $timeStart = format($ticket['editFrom'])->time24();
-                    $timeEnd = format($ticket['editTo'])->time24();
+                if ($this->dateTimeHelper->isValidDateString($ticket['editFrom'])) {
 
-                    if ($timeStart == '00:00' && ($timeEnd == '00:00' ||  $timeEnd == '23:59')) {
+                    // Set ticket to all-day ticket when no time is set
+                    $dateFrom = $this->dateTimeHelper->parseDbDateTime($ticket['editFrom']);
+                    $dateTo = $this->dateTimeHelper->parseDbDateTime($ticket['editTo']);
+
+                    if($dateFrom->diffInDays($dateTo) >= 1) {
                         $allDay = true;
-                    } else {
-                        $allDay = false;
                     }
 
-                    $dateFrom = $this->dateTimeHelper->getTimestamp($ticket['editFrom']);
-                    $dateTo = $this->dateTimeHelper->getTimestamp($ticket['editTo']);
                     $context = $this->language->__("label.planned_edit");
 
                     $newValues[] = $this->mapEventData(
@@ -218,8 +216,8 @@ class Calendar extends RepositoryCore
                         dateContext: "edit",
                         backgroundColor: $backgroundColor,
                         borderColor: $statusColor,
-                        dateFrom: $dateFrom,
-                        dateTo: $dateTo
+                        dateFrom: $dateFrom->getTimestamp(),
+                        dateTo: $dateTo->getTimestamp()
                     );
                 }
             }

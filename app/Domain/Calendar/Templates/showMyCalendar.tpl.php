@@ -177,6 +177,7 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
         const calendarEl = document.getElementById('calendar');
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
+                timeZone: leantime.i18n.__("usersettings.timezone"),
                 height:heightWindow,
                 initialView: '<?=$_SESSION['submenuToggle']["myCalendarView"] ?>',
                 eventSources:eventSources,

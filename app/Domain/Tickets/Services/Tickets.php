@@ -2,10 +2,13 @@
 
 namespace Leantime\Domain\Tickets\Services {
 
+    use Carbon\CarbonInterface;
     use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Eventhelpers;
     use Leantime\Core\Service;
+    use Leantime\Core\Support\DateTimeHelper;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Environment as EnvironmentCore;
@@ -28,59 +31,40 @@ namespace Leantime\Domain\Tickets\Services {
     {
 
         Use Eventhelpers;
-        private TemplateCore $tpl;
-        private LanguageCore $language;
-        private EnvironmentCore $config;
-        private ProjectRepository $projectRepository;
-        private TicketRepository $ticketRepository;
-        private TimesheetRepository $timesheetsRepo;
-        private SettingRepository $settingsRepo;
-        private ProjectService $projectService;
-        private TimesheetService $timesheetService;
-        private SprintService $sprintService;
 
-        private TicketHistory $ticketHistoryRepo;
-
-        private Goalcanvas $goalcanvasService;
 
         /**
-         * @param TemplateCore        $tpl
-         * @param LanguageCore        $language
-         * @param EnvironmentCore     $config
-         * @param ProjectRepository   $projectRepository
-         * @param TicketRepository    $ticketRepository
-         * @param TimesheetRepository $timesheetsRepo
-         * @param SettingRepository   $settingsRepo
-         * @param ProjectService      $projectService
-         * @param TimesheetService    $timesheetService
-         * @param SprintService       $sprintService
+         * Constructor method for the class.
+         *
+         * @param TemplateCore $tpl The template core instance.
+         * @param LanguageCore $language The language core instance.
+         * @param EnvironmentCore $config The environment core instance.
+         * @param ProjectRepository $projectRepository The project repository instance.
+         * @param TicketRepository $ticketRepository The ticket repository instance.
+         * @param TimesheetRepository $timesheetsRepo The timesheet repository instance.
+         * @param SettingRepository $settingsRepo The setting repository instance.
+         * @param ProjectService $projectService The project service instance.
+         * @param TimesheetService $timesheetService The timesheet service instance.
+         * @param SprintService $sprintService The sprint service instance.
+         * @param TicketHistory $ticketHistoryRepo The ticket history repository instance.
+         * @param Goalcanvas $goalcanvasService The goal canvas service instance.
+         * @param DateTimeHelper $dateTimeHelper The date time helper instance.
          */
         public function __construct(
-            TemplateCore $tpl,
-            LanguageCore $language,
-            EnvironmentCore $config,
-            ProjectRepository $projectRepository,
-            TicketRepository $ticketRepository,
-            TimesheetRepository $timesheetsRepo,
-            SettingRepository $settingsRepo,
-            ProjectService $projectService,
-            TimesheetService $timesheetService,
-            SprintService $sprintService,
-            TicketHistory $ticketHistoryRepo,
-            Goalcanvas $goalcanvasService
+            private TemplateCore $tpl,
+            private LanguageCore $language,
+            private EnvironmentCore $config,
+            private ProjectRepository $projectRepository,
+            private TicketRepository $ticketRepository,
+            private TimesheetRepository $timesheetsRepo,
+            private SettingRepository $settingsRepo,
+            private ProjectService $projectService,
+            private TimesheetService $timesheetService,
+            private SprintService $sprintService,
+            private TicketHistory $ticketHistoryRepo,
+            private Goalcanvas $goalcanvasService,
+            private DateTimeHelper $dateTimeHelper
         ) {
-            $this->tpl = $tpl;
-            $this->language = $language;
-            $this->config = $config;
-            $this->projectRepository = $projectRepository;
-            $this->ticketRepository = $ticketRepository;
-            $this->timesheetsRepo = $timesheetsRepo;
-            $this->settingsRepo = $settingsRepo;
-            $this->projectService = $projectService;
-            $this->timesheetService = $timesheetService;
-            $this->sprintService = $sprintService;
-            $this->ticketHistoryRepo = $ticketHistoryRepo;
-            $this->goalcanvasService = $goalcanvasService;
         }
 
         /**
@@ -677,26 +661,25 @@ namespace Leantime\Domain\Tickets\Services {
                             );
                         }
                     } else {
-                        $today = new DateTime();
-                        $date = new DateTime($row['dateToFinish']);
+                        $dtHelper = new DateTimeHelper();
 
-                        $nextFriday = strtotime('friday this week');
-                        $nextFridayDateTime = new DateTime();
-                        $nextFridayDateTime->setTimestamp($nextFriday);
-                        $formattedDate = $nextFridayDateTime->format("Y-m-d");
+                        $today = $dtHelper->userNow()->setToDbTimezone();
+                        $dbDueDate = $dtHelper->parseDbDateTime($row['dateToFinish']);
+                        $nextFriday = $dtHelper->userNow()->endOfWeek(CarbonInterface::FRIDAY)->setToDbTimezone();
 
-                        if ($date <= $nextFridayDateTime && $date >= $today) {
+
+                        if ($dbDueDate <= $nextFriday && $dbDueDate >= $today) {
                             if (isset($tickets["thisWeek"]["tickets"])) {
                                 $tickets["thisWeek"]["tickets"][] = $row;
                             } else {
                                 $tickets['thisWeek'] = array(
                                     "labelName" => "subtitles.due_this_week",
                                     "tickets" => array($row),
-                                    "groupValue" => $formattedDate,
+                                    "groupValue" => $dbDueDate,
                                     "order" => 2,
                                 );
                             }
-                        } else if ($date <= $today) {
+                        } else if ($dbDueDate <= $today) {
                             if (isset($tickets["overdue"]["tickets"])) {
                                 $tickets["overdue"]["tickets"][] = $row;
                             } else {
@@ -705,7 +688,7 @@ namespace Leantime\Domain\Tickets\Services {
                                 $tickets['overdue'] = array(
                                     "labelName" => "subtitles.overdue",
                                     "tickets" => array($row),
-                                    "groupValue" => $formattedDate,
+                                    "groupValue" => $dbDueDate,
                                     "order" => 1,
                                 );
                             }
@@ -1065,7 +1048,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $params['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' =>  $params['editorId'] ?? $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
+                'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => "",
                 'status' => 3,
                 'storypoints' => '',
@@ -1199,7 +1182,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'description' => $values['description'] ?? "",
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'] ?? "",
-                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
+                'date' =>  $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
                 'status' => $values['status'] ?? "",
@@ -1347,7 +1330,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $_SESSION['currentProject'],
                 'editorId' => $params['editorId'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
+                'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => "",
                 'status' => $params['status'],
                 'storypoints' => '',
@@ -1391,7 +1374,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => format(date("Y-m-d H:i:s"))->isoDate(),
+                'date' =>  $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => $values['dateToFinish'] ?? '',
                 'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
@@ -1901,10 +1884,10 @@ namespace Leantime\Domain\Tickets\Services {
             if (!empty($values['dateToFinish'])) {
 
                 if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                    $values['dateToFinish'] = format($values['dateToFinish']." ".$values['timeToFinish']."")->isoDateTime();
+                    $values['dateToFinish'] =  $this->dateTimeHelper->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
                     unset($values['timeToFinish']);
                 }else{
-                    $values['dateToFinish'] = format($values['dateToFinish'])->isoDateEnd();
+                    $values['dateToFinish'] = $this->dateTimeHelper->parseUserDateTime($values['dateToFinish'], "end")->formatDateTimeForDb();
                 }
 
             }
@@ -1912,20 +1895,20 @@ namespace Leantime\Domain\Tickets\Services {
             if (!empty($values['editFrom'])) {
 
                 if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                    $values['editFrom'] = format($values['editFrom']." ".$values['timeFrom']."")->isoDateTime();
+                    $values['editFrom'] = $this->dateTimeHelper->parseUserDateTime($values['editFrom'], $values['timeFrom'], FromFormat::UserDateTime)->formatDateTimeForDb();
                     unset($values['timeFrom']);
                 }else{
-                    $values['editFrom'] = format($values['editFrom'])->isoDateStart();
+                    $values['editFrom'] = $this->dateTimeHelper->parseUserDateTime($values['editFrom'], "start")->formatDateTimeForDb();
                 }
             }
 
             if (!empty($values['editTo'])) {
 
                 if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                    $values['editTo'] = format($values['editTo']." ".$values['timeTo']."")->isoDateTime();
+                    $values['editTo'] = $this->dateTimeHelper->parseUserDateTime($values['editTo'], $values['timeTo'])->formatDateTimeForDb();
                     unset($values['timeTo']);
                 }else{
-                    $values['editTo'] = format($values['editTo'])->isoDateEnd();
+                    $values['editTo'] = $this->dateTimeHelper->parseUserDateTime($values['editTo'], "end")->isoDateTime();
                 }
             }
 

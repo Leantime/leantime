@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Projects\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
@@ -840,10 +841,10 @@ namespace Leantime\Domain\Projects\Services {
                 'end' => $values['end'],
             );
             if ($values['start'] != null) {
-                $values['start'] = format($values['start'])->isoDate();
+                $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
             }
             if ($values['end'] != null) {
-                $values['end'] = format($values['end'])->isoDateEnd();
+                $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
             }
             $this->projectRepository->addProject($values);
         }

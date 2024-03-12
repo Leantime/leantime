@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Sprints\Controllers {
 
     use Leantime\Core\Controller;
+    use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -49,11 +50,12 @@ namespace Leantime\Domain\Sprints\Controllers {
                 $sprint = $this->sprintService->getSprint($params['id']);
             } else {
                 $sprint = app()->make(SprintModel::class);
-                $startDate = new DateTime();
-                $endDate = new DateTime();
-                $endDate = $endDate->add(new DateInterval("P13D"));
-                $sprint->startDate = $startDate->format($this->language->__("language.dateformat"));
-                $sprint->endDate = $endDate->format($this->language->__("language.dateformat"));
+                $dtHelper = new DateTimeHelper();
+                $startDate = $dtHelper->userNow();
+                $endDate = $dtHelper->userNow()->addDays(13);
+
+                $sprint->startDate = $startDate;
+                $sprint->endDate = $endDate;
             }
 
             $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');

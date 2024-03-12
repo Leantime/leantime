@@ -129,8 +129,8 @@ foreach ($__data as $var => $val) {
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
                             <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format($row['workDate'], "", FromFormat::DbDate)->date(); ?>">
-                            <?php echo format($row['workDate'], "", FromFormat::DbDate)->date(); ?>
+                        <td data-order="<?php echo format(value: $row['workDate'], fromFormat: FromFormat::DbDate)->date(); ?>">
+                            <?php echo format(value: $row['workDate'], fromFormat: FromFormat::DbDate)->date(); ?>
                         </td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>">
                             <?php $tpl->e($row['hours'] ?: 0); ?>
@@ -159,29 +159,29 @@ foreach ($__data as $var => $val) {
                             <?php $tpl->e($row['description']); ?>
                         </td>
                         <td data-order="<?php if ($row['invoicedEmpl'] == '1') {
-                            echo format($row['invoicedEmplDate'], "", FromFormat::DbDate)->date();
+                            echo format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date();
                                         }?>">
                             <?php if ($row['invoicedEmpl'] == '1') {
-                                echo format($row['invoicedEmplDate'], "", FromFormat::DbDate)->date();
+                                echo format(value: $row['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['invoicedComp'] == '1') {
-                            echo format($row['invoicedCompDate'], "", FromFormat::DbDate)->date();
+                            echo format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date();
                                         }?>">
                             <?php if ($row['invoicedComp'] == '1') {
-                                echo format($row['invoicedCompDate'], "", FromFormat::DbDate)->date();
+                                echo format(value: $row['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['paid'] == '1') {
 
-                            echo format($row['paidDate'], "", FromFormat::DbDate)->date();
+                            echo format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date();
                                         }?>">
                             <?php if ($row['paid'] == '1') {
-                                echo format($row['paidDate'], "", FromFormat::DbDate)->date();
+                                echo format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date();
                             } else {
                                 echo $tpl->__("label.pending");
                             } ?>
