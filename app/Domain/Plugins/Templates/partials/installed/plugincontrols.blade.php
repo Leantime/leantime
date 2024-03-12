@@ -8,7 +8,7 @@
         @endif
     </div>
     <div class="col-md-4" style="padding-top:10px; text-align:right;">
-        @if (file_exists(APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Controllers/Settings.php'))
+        @if ($plugin->enabled && file_exists(APP_ROOT . '/app/Plugins/' . $plugin->foldername . '/Controllers/Settings.php'))
         <a href="{{ BASE_URL }}/{{ $plugin->foldername }}/settings"><i class="fa fa-cog"></i> Settings</a>
         @endif
     </div>
