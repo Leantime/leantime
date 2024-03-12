@@ -79,7 +79,7 @@ class DateTimeHelper extends CarbonImmutable
      * @param string $userDate The user input date in the format specified by $this->userDateFormat.
      * @param string $userTime The user input time in the format specified by $this->userTimeFormat.
      *                         Defaults to an empty string. Can also be one of start|end to denot start or end time of day
-     * @return CarbonImmutable     The parsed date and time as a CarbonImmutable object.
+     * @return CarbonImmutable     The parsed date and time in user timezone as a CarbonImmutable object.
      */
     public function parseUserDateTime(string $userDate, string $userTime = ""): CarbonImmutable
     {
@@ -109,7 +109,7 @@ class DateTimeHelper extends CarbonImmutable
      * Parses a database date string and returns a CarbonImmutable instance.
      *
      * @param string $dbDate The date string in the database format to parse.
-     * @return CarbonImmutable The parsed CarbonImmutable instance.
+     * @return CarbonImmutable The parsed CarbonImmutable instance in db timezone (UTC)
      */
     public function parseDbDateTime(string $dbDate): CarbonImmutable
     {
@@ -123,6 +123,12 @@ class DateTimeHelper extends CarbonImmutable
         return $this->datetime;
     }
 
+    /**
+     * Parses a user 24-hour time string and returns a CarbonImmutable instance.
+     *
+     * @param string $local24Time The 24-hour time string to parse.
+     * @return CarbonImmutable The parsed CarbonImmutable instance in the user's timezone
+     */
     public function parseUser24hTime(string $local24Time) {
 
         $this->datetime = CarbonImmutable::createFromFormat("!H:m" . trim($local24Time), $this->userTimezone);
@@ -131,22 +137,37 @@ class DateTimeHelper extends CarbonImmutable
 
     }
 
+    /**
+     * Returns the current date and time based on the user's timezone and language.
+     *
+     * @return CarbonImmutable The current date and time in the user's timezone and language.
+     */
     public function userNow()
     {
         return CarbonImmutable::now($this->userTimezone)->locale($this->userLanguage);
     }
 
+    /**
+     * Returns the current date and time in the database timezone as a CarbonImmutable instance.
+     *
+     * @return CarbonImmutable The current date and time in the database timezone (UTC) as a CarbonImmutable instance.
+     */
     public function dbNow()
     {
         return CarbonImmutable::now($this->dbTimezone)->locale($this->userLanguage);
     }
 
 
+    /**
+     * Sets the CarbonImmutable date for the current instance.
+     *
+     * @param CarbonImmutable|Carbon $date The CarbonImmutable or Carbon instance to set the date.
+     * @return void
+     */
     public function setCarbonDate(CarbonImmutable|Carbon $date)
     {
         return $this->datetime = CarbonImmutable::create($date)->locale($this->userLanguage);
     }
-
 
     /**
      * isValidDateString - checks if a given string is a valid date and time string
