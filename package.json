@@ -10,7 +10,7 @@
     "@fullcalendar/luxon3": "^6.1.10",
     "@lottiefiles/lottie-player": "^2.0.2",
     "@popperjs/core": "^2.11.8",
-    "@sentry/browser": "^7.100.1",
+    "@sentry/browser": "^7.102.0",
     "@sentry/webpack-plugin": "^2.10.2",
     "ajv": "^8.12.0",
     "chart.js": "^3.6.0",
@@ -42,7 +42,7 @@
     "tinymce": "5.10.9",
     "tinymce-mention": "^4.0.2",
     "tippy.js": "^6.3.7",
-    "uppy": "^3.21.0"
+    "uppy": "^3.22.1"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",

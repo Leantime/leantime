@@ -61,7 +61,7 @@
         renderInput: function () {
             var rawHtml =  '<span id="autocomplete">' +
                                 '<span id="autocomplete-delimiter">' + this.options.delimiter + '</span>' +
-                                '<span id="autocomplete-searchtext"><span class="dummy">\uFEFF</span></span>' +
+                                '<span id="autocomplete-searchtext"><span class="dummy">\u200b</span></span>' +
                             '</span>';
 
             this.editor.execCommand('mceInsertContent', false, rawHtml);
@@ -181,7 +181,7 @@
         },
 
         lookup: function () {
-            this.query = $.trim($(this.editor.getBody()).find('#autocomplete-searchtext').text()).replace('\ufeff', '');
+            this.query = $.trim($(this.editor.getBody()).find('#autocomplete-searchtext').text()).replace('\u200b', '');
 
             if (this.$dropdown === undefined) {
                 this.show();

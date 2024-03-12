@@ -58,6 +58,14 @@ class Users extends Controller
 
             $users = $this->userService->getUsersWithProjectAccess($_SESSION['userdata']['id'], $projectId);
 
+            if (isset($params['query'])) {
+                $query = $params['query'];
+                // Perform a simple filter by query and create a list of the result.
+                $users = array_values(
+                    array_filter($users, static fn (array $user) => false !== stripos(implode(' ', $user), $query))
+                );
+            }
+
             return $this->tpl->displayJson($users);
         }
 
