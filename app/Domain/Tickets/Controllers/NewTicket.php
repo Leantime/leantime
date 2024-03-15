@@ -78,7 +78,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     "status" => 3,
                     "projectId" => $_SESSION['currentProject'],
                     "sprint" => $_SESSION['currentSprint'] ?? '',
-                    "editorId" => $_SESSION['userdata']['id']
+                    "editorId" => $_SESSION['userdata']['id'],
                 ],
             ]);
 
@@ -119,7 +119,6 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function post($params): Response
         {
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
-
                 $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->time24toLocalTime(ignoreTimezone: true);
                 $params['timeFrom'] = format($params['timeFrom'] ?? '')->time24toLocalTime(ignoreTimezone: true);
                 $params['timeTo'] = format($params['timeTo'] ?? '')->time24toLocalTime(ignoreTimezone: true);
@@ -161,6 +160,8 @@ namespace Leantime\Domain\Tickets\Controllers {
                     return $this->tpl->displayPartial('tickets.newTicketModal');
                 }
             }
+
+            return Frontcontroller::redirect(BASE_URL . "/tickets/newTicket");
         }
     }
 
