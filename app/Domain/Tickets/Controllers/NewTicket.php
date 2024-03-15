@@ -120,7 +120,7 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function post($params): Response
         {
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
-                
+
                 $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
                 $params['timeFrom'] = format(value: $params['timeFrom'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
                 $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
@@ -162,6 +162,8 @@ namespace Leantime\Domain\Tickets\Controllers {
                     return $this->tpl->displayPartial('tickets.newTicketModal');
                 }
             }
+
+            return Frontcontroller::redirect(BASE_URL . "/tickets/newTicket");
         }
     }
 
