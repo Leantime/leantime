@@ -661,14 +661,14 @@ class Timesheets extends Repository
 
         $values = $call->fetchAll();
         $returnValues = array();
-        if (count($values) > 0) {
+        $dtHelper = app()->make(DateTimeHelper::class);
 
-            $dtHelper = new DateTimeHelper();
+        if (count($values) > 0) {
 
             try {
 
                 $startDate = $dtHelper->parseDbDateTime($values[0]['workdate'])->startOfMonth();
-                $endDate = $dtHelper->parseDbDateTime(last($values['workdate'])['workdate'])->lastOfMonth();
+                $endDate = $dtHelper->parseDbDateTime(last($values)['workdate'])->lastOfMonth();
 
                 $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
                 foreach ($range as $key => $date) {
