@@ -130,6 +130,7 @@ class Calendar
 
     /**
      * edits an event on the user's calendar
+     * Important: Time needs to come in as user formatted time value.
      *
      * @access public
      *
@@ -158,13 +159,13 @@ class Calendar
 
             $dateFrom = null;
             if (isset($values['dateFrom']) === true && isset($values['timeFrom']) === true) {
-                $dateFrom = format($values['dateFrom'], $values['timeFrom'])->isoDateTime();
+                $dateFrom = format($values['dateFrom'], $values['timeFrom'], FromFormat::UserDateTime)->isoDateTime();
             }
             $values['dateFrom'] = $dateFrom;
 
             $dateTo = null;
             if (isset($values['dateTo']) === true && isset($values['timeTo']) === true) {
-                $dateTo = format($values['dateTo'], $values['timeTo'])->isoDateTime();
+                $dateTo = format($values['dateTo'], $values['timeTo'], FromFormat::UserDateTime)->isoDateTime();
             }
             $values['dateTo'] = $dateTo;
 

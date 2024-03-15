@@ -4,6 +4,7 @@ namespace Leantime\Core\Support;
 
 use Carbon\CarbonImmutable;
 use Leantime\Core\Language;
+use PHPUnit\Exception;
 
 /**
  * Class Format
@@ -67,7 +68,7 @@ class Format
                     $this->value = $value;
                     break;
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             //Several things can throw exceptions in the date parsing scripts.
             //Most common is an invalid date format. This could also be an empty string or a 0000-00... date.
             //Since this format class is purely for user facing purposes we will not show an error message
@@ -149,7 +150,12 @@ class Format
 
         if(!$this->value instanceof CarbonImmutable) {
 
-            $this->value = $this->dateTimeHelper->parseUserDateTime($this->value, "start");
+            try {
+                $this->value = $this->dateTimeHelper->parseUserDateTime($this->value, "start");
+            }catch(Exception $e) {
+                error_log($e);
+                return "";
+            }
 
         }else{
 

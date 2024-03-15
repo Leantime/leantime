@@ -4,6 +4,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -119,10 +120,10 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function post($params): Response
         {
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
-
-                $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->userTime24toUserTime();
-                $params['timeFrom'] = format($params['timeFrom'] ?? '')->userTime24toUserTime();
-                $params['timeTo'] = format($params['timeTo'] ?? '')->userTime24toUserTime();
+                
+                $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+                $params['timeFrom'] = format(value: $params['timeFrom'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+                $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
 
                 $result = $this->ticketService->addTicket($params);
 

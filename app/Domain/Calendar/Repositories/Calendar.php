@@ -13,6 +13,7 @@ use Leantime\Domain\Setting\Repositories\Setting;
 use Leantime\Domain\Tickets\Services\Tickets;
 use Leantime\Domain\Users\Repositories\Users;
 use PDO;
+use PHPUnit\Exception;
 
 /**
  *
@@ -123,8 +124,13 @@ class Calendar extends RepositoryCore
         $newValues = array();
         foreach ($values as $value) {
 
-            $dateFrom = $this->dateTimeHelper->parseDbDateTime($value['dateFrom'])->getTimestamp();
-            $dateTo = $this->dateTimeHelper->parseDbDateTime($value['dateTo'])->getTimestamp();
+            try {
+                $dateFrom = $this->dateTimeHelper->parseDbDateTime($value['dateFrom'])->getTimestamp();
+                $dateTo = $this->dateTimeHelper->parseDbDateTime($value['dateTo'])->getTimestamp();
+            }catch(\Exception $e) {
+                error_log($e);
+                continue;
+            }
 
             $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 

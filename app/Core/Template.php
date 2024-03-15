@@ -1015,7 +1015,12 @@ class Template
      */
     public function dispatchTplEvent(string $hookName, mixed $payload = null): void
     {
-        $this->dispatchTplHook('event', $hookName, $payload);
+        try {
+            $this->dispatchTplHook('event', $hookName, $payload);
+        }catch(\Exception $e){
+            //If some plugin or other event decides to go rouge it shouldn't take down the entire page
+            error_log($e);
+        }
     }
 
     /**
@@ -1027,7 +1032,16 @@ class Template
      */
     public function dispatchTplFilter(string $hookName, mixed $payload, array $available_params = []): mixed
     {
-        return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
+        try {
+
+            return $this->dispatchTplHook('filter', $hookName, $payload, $available_params);
+
+        }catch(\Exception $e){
+            //If some plugin or other event decides to go rouge it shouldn't take down the entire page
+            error_log($e);
+
+            return $payload;
+        }
     }
 
     /**

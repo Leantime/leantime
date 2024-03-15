@@ -16,7 +16,7 @@ use DateTimeZone;
  *
  * A helper class for working with dates and times.
  */
-class DateTimeHelper extends CarbonImmutable
+final class DateTimeHelper extends CarbonImmutable
 {
     private Language $language;
 
@@ -131,7 +131,7 @@ class DateTimeHelper extends CarbonImmutable
      */
     public function parseUser24hTime(string $local24Time) {
 
-        $this->datetime = CarbonImmutable::createFromFormat("!H:m" . trim($local24Time), $this->userTimezone);
+        $this->datetime = CarbonImmutable::createFromFormat("!H:i", $local24Time, $this->userTimezone);
 
         return $this->datetime;
 

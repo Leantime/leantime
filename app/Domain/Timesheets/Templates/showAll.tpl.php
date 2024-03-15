@@ -99,11 +99,11 @@ foreach ($__data as $var => $val) {
                     <td>
                         <label for="dateFrom"><?php echo $tpl->__('label.date_from'); ?></label>
                         <input type="text" id="dateFrom" class="dateFrom"  name="dateFrom" autocomplete="off"
-                        value="<?php echo format($tpl->get('dateFrom'), 'short'); ?>" size="5" style="max-width:100px; margin-bottom:10px"/></td>
+                        value="<?php echo format($tpl->get('dateFrom'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px"/></td>
                     <td>
                         <label for="dateTo"><?php echo $tpl->__('label.date_to'); ?></label>
                         <input type="text" id="dateTo" class="dateTo" name="dateTo" autocomplete="off"
-                        value="<?php echo format($tpl->get('dateTo'), 'short'); ?>" size="5" style="max-width:100px; margin-bottom:10px" /></td>
+                        value="<?php echo format($tpl->get('dateTo'))->date(); ?>" size="5" style="max-width:100px; margin-bottom:10px" /></td>
                     <td>
                     <label for="userId"><?php echo $tpl->__("label.employee"); ?></label>
                         <select name="userId" id="userId" onchange="submit();" style="max-width:120px;">

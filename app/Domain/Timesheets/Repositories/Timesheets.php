@@ -8,6 +8,7 @@ use Carbon\CarbonPeriod;
 use DateTime;
 use Leantime\Core\Db as DbCore;
 use Leantime\Core\Repository;
+use Leantime\Core\Support\DateTimeHelper;
 use PDO;
 use PHPUnit\Exception;
 
@@ -640,6 +641,7 @@ class Timesheets extends Repository
     {
         $query = "SELECT
             YEAR(zp_timesheets.workDate) AS year,
+            zp_timesheets.workdate,
             DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
             DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
             DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
@@ -660,23 +662,42 @@ class Timesheets extends Repository
         $values = $call->fetchAll();
         $returnValues = array();
         if (count($values) > 0) {
-            $startDate = Carbon::createFromFormat('Y-m-d', $values[0]['utc'], 'UTC')->startOfMonth();
-            $endDate = Carbon::createFromFormat('Y-m-d', last($values)['utc'], 'UTC');
 
-            $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
-            foreach ($range as $key => $date) {
-                $utc = $date->format('Y-m-d');
+            $dtHelper = new DateTimeHelper();
+
+            try {
+
+                $startDate = $dtHelper->parseDbDateTime($values[0]['workdate'])->startOfMonth();
+                $endDate = $dtHelper->parseDbDateTime(last($values['workdate'])['workdate'])->lastOfMonth();
+
+                $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
+                foreach ($range as $key => $date) {
+                    $utc = $date->format('Y-m-d');
+                    $returnValues[$utc] = [
+                        'utc' => $utc,
+                        'summe' => 0,
+                    ];
+                }
+
+                foreach ($values as $row) {
+                    $returnValues[$row['utc']]["summe"] = $row['summe'];
+                }
+
+            }catch(\Exception $e){
+
+                //Some broken date formats in the db. Log error and return empty results.
+                error_log($e);
+
+                $utc = $dtHelper->dbNow()->format("Y-m-d");
                 $returnValues[$utc] = [
                     'utc' => $utc,
                     'summe' => 0,
                 ];
             }
 
-            foreach ($values as $row) {
-                $returnValues[$row['utc']]["summe"] = $row['summe'];
-            }
         } else {
-            $utc = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->format('Y-m-d');
+
+            $utc = $dtHelper->dbNow()->format("Y-m-d");
             $returnValues[$utc] = [
               'utc' => $utc,
               'summe' => 0,

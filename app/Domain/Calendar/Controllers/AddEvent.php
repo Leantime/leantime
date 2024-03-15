@@ -8,6 +8,7 @@
 namespace Leantime\Domain\Calendar\Controllers;
 
 use Leantime\Core\Controller;
+use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Calendar\Services\Calendar;
@@ -58,6 +59,10 @@ class AddEvent extends Controller
      */
     public function post(array $params): Response
     {
+
+        //Time comes in as 24:00 time from html5 element. Make it user date format
+        $params['timeFrom'] = format(value: $params['timeFrom'], fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+        $params['timeTo'] = format(value: $params['timeTo'], fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
         $result = $this->calendarService->addEvent($params);
 
         if (is_numeric($result) === true) {
