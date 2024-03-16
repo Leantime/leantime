@@ -15,7 +15,7 @@
 
         <div class="center">
             <span style="font-size:44px; color:var(--main-titles-color);">
-                {{ (new \Leantime\Core\Support\DateTimeHelper())->userNow()->formatTimeForUser() }}
+                {{ dtHelper()->userNow()->formatTimeForUser() }}
             </span><br />
             <span style="font-size:24px; color:var(--main-titles-color);">
                 {{ __("welcome_widget.hi") }} {{ $currentUser['firstname'] }}

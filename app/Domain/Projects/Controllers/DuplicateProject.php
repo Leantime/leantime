@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Projects\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Support\FromFormat;
     use Symfony\Component\HttpFoundation\Response;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
@@ -73,7 +74,7 @@ namespace Leantime\Domain\Projects\Controllers {
             if (Auth::userIsAtLeast(Roles::$manager)) {
                 $id = (int)($_GET['id']);
                 $projectName = $params['projectName'];
-                $startDate = format($params['startDate'])->isoDate();
+                $startDate = format(value: $_POST['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
                 $clientId = (int) $params['clientId'];
                 $assignSameUsers = false;
 

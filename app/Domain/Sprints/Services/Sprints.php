@@ -219,11 +219,8 @@ namespace Leantime\Domain\Sprints\Services {
                 $plannedEffortStart = 0;
             }
 
-
-            $dtHelper = new DateTimeHelper();
-
-            $dateStart = $dtHelper->parseDbDateTime($sprint->startDate)->startOfDay();
-            $dateEnd = $dtHelper->parseDbDateTime($sprint->endDate)->endOfDay();
+            $dateStart =  dtHelper()->parseDbDateTime($sprint->startDate)->startOfDay();
+            $dateEnd =  dtHelper()->parseDbDateTime($sprint->endDate)->endOfDay();
 
 
             $sprintLength = $dateStart->diffInDays($dateEnd);

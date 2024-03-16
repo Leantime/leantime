@@ -69,14 +69,13 @@ class ShowMy extends Controller
         // The front end javascript is hardcode to start the week on mondays, so we use that here too.
 
         //Get start of the week in current users timezone and then switch to UTC
-        $dateTimeHelper = new DateTimeHelper();
-        $fromDate = $dateTimeHelper->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
+        $fromDate = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
 
         $kind = 'all';
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (!empty($_POST['startDate'])) {
-                $fromDate =  $dateTimeHelper->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
+                $fromDate =   dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
             }
         }
 

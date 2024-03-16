@@ -650,6 +650,7 @@ class Timesheets extends Repository
             zp_timesheets
         WHERE
             zp_timesheets.ticketId = :ticketId
+            AND workDate <> '0000-00-00 00:00:00' AND workDate <> '1969-12-31 00:00:00'
         GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
         ORDER BY utc
         ";
@@ -661,14 +662,11 @@ class Timesheets extends Repository
 
         $values = $call->fetchAll();
         $returnValues = array();
-        $dtHelper = app()->make(DateTimeHelper::class);
 
         if (count($values) > 0) {
-
             try {
-
-                $startDate = $dtHelper->parseDbDateTime($values[0]['workdate'])->startOfMonth();
-                $endDate = $dtHelper->parseDbDateTime(last($values)['workdate'])->lastOfMonth();
+                $startDate = dtHelper()->parseDbDateTime($values[0]['workdate'])->startOfMonth();
+                $endDate = dtHelper()->parseDbDateTime(last($values)['workdate'])->lastOfMonth();
 
                 $range = CarbonPeriod::since($startDate)->days(1)->until($endDate);
                 foreach ($range as $key => $date) {
@@ -682,22 +680,18 @@ class Timesheets extends Repository
                 foreach ($values as $row) {
                     $returnValues[$row['utc']]["summe"] = $row['summe'];
                 }
-
-            }catch(\Exception $e){
-
+            } catch (\Exception $e) {
                 //Some broken date formats in the db. Log error and return empty results.
                 error_log($e);
 
-                $utc = $dtHelper->dbNow()->format("Y-m-d");
+                $utc = dtHelper()->dbNow()->format("Y-m-d");
                 $returnValues[$utc] = [
                     'utc' => $utc,
                     'summe' => 0,
                 ];
             }
-
         } else {
-
-            $utc = $dtHelper->dbNow()->format("Y-m-d");
+            $utc = dtHelper()->dbNow()->format("Y-m-d");
             $returnValues[$utc] = [
               'utc' => $utc,
               'summe' => 0,

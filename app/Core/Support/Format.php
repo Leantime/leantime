@@ -3,6 +3,7 @@
 namespace Leantime\Core\Support;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Date;
 use Leantime\Core\Language;
 use PHPUnit\Exception;
 
@@ -186,6 +187,20 @@ class Format
     }
 
     /**
+     * Generate unix timestamp from date in miliseconds for javascript usage
+     *
+     * @return int|bool
+     */
+    public function jsTimestamp(): int|bool
+    {
+        if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
+            return "";
+        }
+
+        return $this->value->getTimestampMs();
+    }
+
+    /**
      * Retrieves the 24-hour time string from the ISO formatted value property.
      *
      * @return string The 24-hour time string. If the value property is null, an empty string is returned.
@@ -195,6 +210,7 @@ class Format
         if (empty($this->value) || !$this->value instanceof CarbonImmutable) {
             return "";
         }
+
         return $this->value->format24HTimeForUser();
     }
 
@@ -213,6 +229,7 @@ class Format
         return $this->value->formatTimeForUser();
 
     }
+
 
     /**
      * Generates a string representation of currency.

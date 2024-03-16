@@ -49,16 +49,15 @@ class ShowMyList extends Controller
         // The front end javascript is hardcode to start the week on mondays, so we use that here too.
 
         //Get start of the week in current users timezone and then switch to UTC
-        $dateTimeHelper = new DateTimeHelper();
-        $dateFrom = $dateTimeHelper->userNow()->startOfMonth()->setToDbTimezone();
-        $dateTo = $dateTimeHelper->userNow()->endOfMonth()->setToDbTimezone();
+        $dateFrom = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
+        $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
 
         if (!empty($_POST['dateFrom'])) {
-            $dateFrom =  $dateTimeHelper->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
+            $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
         }
 
         if (!empty($_POST['dateTo'])) {
-            $dateTo =  $dateTimeHelper->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
+            $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
         $this->tpl->assign('dateFrom', $dateFrom);

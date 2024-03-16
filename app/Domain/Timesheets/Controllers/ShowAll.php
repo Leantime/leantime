@@ -88,15 +88,14 @@ class ShowAll extends Controller
             $userId = intval(strip_tags($_POST['userId']));
         }
 
-        $dateTimeHelper = new DateTimeHelper();
-        $dateFrom = $dateTimeHelper->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
+        $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
         if (!empty($_POST['dateFrom'])) {
-            $dateFrom =  $dateTimeHelper->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
+            $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
         }
 
-        $dateTo = $dateTimeHelper->userNow()->endOfMonth()->setToDbTimezone();
+        $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
         if (!empty($_POST['dateTo'])) {
-            $dateTo =  $dateTimeHelper->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
+            $dateTo =  dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
         if (isset($_POST['invEmpl'])) {

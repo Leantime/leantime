@@ -316,7 +316,7 @@ class Timesheets
         $timesheetGroups = [];
         foreach ($allTimesheets as $timesheet) {
 
-            $currentWorkDate = (new DateTimeHelper())->parseDbDateTime($timesheet['workDate']);
+            $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
 
             //Various Entries can be in different timezones and thus would not be caught by upsert or grouping by default
             //Creating new rows for each timezone adjustment

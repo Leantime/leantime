@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Calendar\Repositories;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Environment;
 use Leantime\Core\Language;
@@ -64,9 +65,26 @@ class Calendar extends RepositoryCore
      *
      * @return array|false
      */
-    public function getAllDates(string $dateFrom, string $dateTo): false|array
+    public function getAllDates(?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
-        $query = "SELECT * FROM zp_calendar WHERE userId = :userId ORDER BY zp_calendar.dateFrom";
+        $query = "SELECT *
+                    FROM
+                        zp_calendar
+                    WHERE
+                        userId = :userId
+                        AND dateFrom <> '0000-00-00 00:00:00'";
+
+        if (!empty($dateFrom)) {
+            $query .= " AND dateFrom >= :dateFrom";
+            $stmn->bindValue(':dateFrom', $dateFrom->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        }
+
+        if (!empty($dateTo)) {
+            $query .= " AND dateTo <= :dateTo";
+            $stmn->bindValue(':dateTo', $dateTo->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        }
+
+         $query .= " ORDER BY zp_calendar.dateFrom";
 
         $stmn = $this->db->database->prepare($query);
         $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
@@ -77,14 +95,45 @@ class Calendar extends RepositoryCore
     }
 
     /**
-     * @param string $dateFrom
-     * @param string $dateTo
+     * Retrieves calendar events based on optional filters.
      *
-     * @return false|array
+     * @param int|null             $userId   The user ID to filter the results by.
+     * @param CarbonImmutable|null $dateFrom The minimum date and time of the events.
+     * @param CarbonImmutable|null $dateTo   The maximum date and time of the events.
+     *
+     * @return bool|array Returns an array of calendar events if successful, otherwise false.
      */
-    public function getAll(string $dateFrom, string $dateTo): false|array
+    public function getAll(?int $userId, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo): false|array
     {
-        return $this->getAllDates($dateFrom, $dateTo);
+        $query = "SELECT *
+                    FROM
+                        zp_calendar
+                    WHERE
+                        dateFrom <> '0000-00-00 00:00:00'";
+
+        if (!empty($userId)) {
+            $query .= " AND userId >= :userId";
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+        }
+
+        if (!empty($dateFrom)) {
+            $query .= " AND dateFrom >= :dateFrom";
+            $stmn->bindValue(':dateFrom', $dateFrom->formatDateTimeForDb(), PDO::PARAM_STR);
+        }
+
+        if (!empty($dateTo)) {
+            $query .= " AND dateTo <= :dateTo";
+            $stmn->bindValue(':dateTo', $dateTo->formatDateTimeForDb(), PDO::PARAM_STR);
+        }
+
+        $query .= " ORDER BY zp_calendar.dateFrom";
+
+        $stmn = $this->db->database->prepare($query);
+
+
+        $stmn->execute();
+
+        return $stmn->fetchAll();
     }
 
     /**
@@ -112,7 +161,7 @@ class Calendar extends RepositoryCore
             $tickets = array_merge($tickets, $dbTickets["overdue"]["tickets"]);
         }
 
-        $sql = "SELECT * FROM zp_calendar WHERE userId = :userId";
+        $sql = "SELECT * FROM zp_calendar WHERE userId = :userId AND dateFrom <> '0000-00-00 00:00:00'";
 
         $stmn = $this->db->database->prepare($sql);
         $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
@@ -123,42 +172,21 @@ class Calendar extends RepositoryCore
 
         $newValues = array();
         foreach ($values as $value) {
-
-            try {
-                $dateFrom = $this->dateTimeHelper->parseDbDateTime($value['dateFrom'])->getTimestamp();
-                $dateTo = $this->dateTimeHelper->parseDbDateTime($value['dateTo'])->getTimestamp();
-            }catch(\Exception $e) {
-                error_log($e);
-                continue;
-            }
-
             $allDay = filter_var($value['allDay'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
             $newValues[] = array(
                 'title'  => $value['description'],
                 'allDay' => $allDay,
-                'dateFrom' => array(
-                    'y' => date('Y', $dateFrom),
-                    'm' => date('m', $dateFrom),
-                    'd' => date('d', $dateFrom),
-                    'h' => $allDay ? "00" : date('H', $dateFrom),
-                    'i' => $allDay ? "00" : date('i', $dateFrom),
-                'ical' => date('Ymd\THis', $dateFrom),
-                ),
-                'dateTo' => array(
-                    'y' => date('Y', $dateTo),
-                    'm' => date('m', $dateTo),
-                    'd' => $allDay ? date('d', ($dateFrom + (60 * 60 * 24))) : date('d', $dateTo),
-                    'h' => $allDay ? "00" : date('H', $dateTo),
-                    'i' => $allDay ? "00" : date('i', $dateTo),
-                    'ical' => date('Ymd\THis', $dateTo),
-                ),
+                'description' => '',
+                'dateFrom' => $value['dateFrom'],
+                'dateTo' => $value['dateTo'],
                 'id' => $value['id'],
                 'projectId' => '',
                 'eventType' => "calendar",
                 'dateContext' => 'plan',
                 'backgroundColor' => 'var(--accent1)',
                 'borderColor' => 'var(--accent1)',
+                'url' => BASE_URL . '/calendar/showMyCalendar/#/calendar/editEvent/' . $value['id'],
             );
         }
 
@@ -183,31 +211,30 @@ class Calendar extends RepositoryCore
                 $backgroundColor = "var(--accent2)";
 
                 if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
-                    $dateFrom = $this->dateTimeHelper->parseDbDateTime($ticket['dateToFinish'])->getTimestamp();
-                    $dateTo = $this->dateTimeHelper->parseDbDateTime($ticket['dateToFinish'])->getTimestamp();
                     $context = '❕ ' . $this->language->__("label.due_todo");
 
                     $newValues[] = $this->mapEventData(
                         title:$context . $ticket['headline'] . " (" . $statusName . ")",
+                        description: $ticket['description'],
                         allDay:false,
                         id: $ticket['id'],
                         projectId: $ticket['projectId'],
                         eventType: "ticket",
-                        dateContext: "edit",
+                        dateContext: "due",
                         backgroundColor: $backgroundColor,
                         borderColor: $statusColor,
-                        dateFrom: $dateFrom,
-                        dateTo: $dateTo
+                        dateFrom: $ticket['dateToFinish'],
+                        dateTo: $ticket['dateToFinish']
                     );
                 }
 
-                if ($this->dateTimeHelper->isValidDateString($ticket['editFrom'])) {
-
+                if (dtHelper()->isValidDateString($ticket['editFrom'])) {
                     // Set ticket to all-day ticket when no time is set
-                    $dateFrom = $this->dateTimeHelper->parseDbDateTime($ticket['editFrom']);
-                    $dateTo = $this->dateTimeHelper->parseDbDateTime($ticket['editTo']);
+                    $dateFrom =  dtHelper()->parseDbDateTime($ticket['editFrom']);
+                    $dateTo =  dtHelper()->parseDbDateTime($ticket['editTo']);
 
-                    if($dateFrom->diffInDays($dateTo) >= 1) {
+                    $allDay = false;
+                    if ($dateFrom->diffInDays($dateTo) >= 1) {
                         $allDay = true;
                     }
 
@@ -215,6 +242,7 @@ class Calendar extends RepositoryCore
 
                     $newValues[] = $this->mapEventData(
                         title: $context . $ticket['headline'] . " (" . $statusName . ")",
+                        description: $ticket['description'],
                         allDay:$allDay,
                         id: $ticket['id'],
                         projectId: $ticket['projectId'],
@@ -222,8 +250,8 @@ class Calendar extends RepositoryCore
                         dateContext: "edit",
                         backgroundColor: $backgroundColor,
                         borderColor: $statusColor,
-                        dateFrom: $dateFrom->getTimestamp(),
-                        dateTo: $dateTo->getTimestamp()
+                        dateFrom: $ticket['editFrom'],
+                        dateTo: $ticket['editTo']
                     );
                 }
             }
@@ -250,6 +278,7 @@ class Calendar extends RepositoryCore
      */
     private function mapEventData(
         string $title,
+        string $description,
         bool $allDay,
         int $id,
         int $projectId,
@@ -257,34 +286,22 @@ class Calendar extends RepositoryCore
         string $dateContext,
         string $backgroundColor,
         string $borderColor,
-        ?int $dateFrom,
-        ?int $dateTo
+        string $dateFrom,
+        string $dateTo
     ): array {
         return array(
             'title'  => $title,
             'allDay' => $allDay,
-            'dateFrom' => array(
-                'y' => date('Y', $dateFrom),
-                'm' => date('m', $dateFrom),
-                'd' => date('d', $dateFrom),
-                'h' => date('H', $dateFrom),
-                'i' => date('i', $dateFrom),
-                'ical' => date('Ymd\THis', $dateFrom),
-            ),
-            'dateTo' => array(
-                'y' => date('Y', $dateTo),
-                'm' => date('m', $dateTo),
-                'd' => date('d', $dateTo),
-                'h' => date('H', $dateTo),
-                'i' => date('i', $dateTo),
-                'ical' => date('Ymd\THis', $dateTo),
-            ),
+            'description' => $description,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
             'id' => $id,
             'projectId' => $projectId,
             'eventType' => $eventType,
             'dateContext' => $dateContext,
             'backgroundColor' => $backgroundColor,
             'borderColor' => $borderColor,
+            'url' => BASE_URL . "/dashboard/home/#/tickets/showTicket/" . $id,
         );
     }
 
@@ -318,117 +335,6 @@ class Calendar extends RepositoryCore
         } else {
             return false;
         }
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return array
-     */
-    public function getCalendarEventsForToday(int $id): array
-    {
-        $userTickets = "SELECT
-                tickets.dateToFinish,
-                tickets.headline,
-                tickets.id,
-                tickets.editFrom,
-                tickets.editTo
-            FROM zp_tickets AS tickets
-            WHERE
-                (tickets.userId = :userId OR tickets.editorId = :userId)
-                AND
-                (
-                    TO_DAYS(tickets.dateToFinish) = TO_DAYS(CURDATE()) OR
-                    (TO_DAYS(tickets.editFrom) <= TO_DAYS(CURDATE()) AND TO_DAYS(tickets.editTo) >= TO_DAYS(CURDATE()) )
-                )";
-
-        $stmn = $this->db->database->prepare($userTickets);
-        $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $tickets = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        $sql = "SELECT * FROM zp_calendar WHERE userId = :userId AND TO_DAYS(dateFrom) = TO_DAYS(CURDATE())";
-
-        $stmn = $this->db->database->prepare($sql);
-        $stmn->bindValue(':userId', $id, PDO::PARAM_INT);
-
-        $stmn->execute();
-        $values = $stmn->fetchAll();
-        $stmn->closeCursor();
-
-        $newValues = array();
-        foreach ($values as $value) {
-            $dateFrom     = strtotime($value['dateFrom']);
-            $dateTo     = strtotime($value['dateTo']);
-
-            $newValues[] = array(
-                'title'  => $value['description'],
-                'allDay' => $value['allDay'],
-                'dateFrom' => array(
-                    'y' => date('Y', $dateFrom),
-                    'm' => date('m', $dateFrom),
-                    'd' => date('d', $dateFrom),
-                    'h' => date('H', $dateFrom),
-                    'i' => date('i', $dateFrom),
-                ),
-                'dateTo' => array(
-                    'y' => date('Y', $dateTo),
-                    'm' => date('m', $dateTo),
-                    'd' => date('d', $dateTo),
-                    'h' => date('H', $dateTo),
-                    'i' => date('i', $dateTo),
-                ),
-                'id' => $value['id'],
-                'eventType' => "calendar",
-            );
-        }
-
-        if (count($tickets)) {
-            foreach ($tickets as $ticket) {
-                if ($ticket['dateToFinish'] != "0000-00-00 00:00:00") {
-                    $current = strtotime(date("Y-m-d"));
-                    $date    = strtotime(date("Y-m-d", strtotime($ticket['dateToFinish'])));
-
-                    $datediff = $date - $current;
-                    $difference = floor($datediff / (60 * 60 * 24));
-                } else {
-                    $difference = 1;
-                }
-
-                if ($difference == 0) {
-                    $dateFrom = strtotime($ticket['dateToFinish']);
-                    $dateTo = strtotime($ticket['dateToFinish']);
-                } else {
-                    $dateFrom = strtotime($ticket['editFrom']);
-                    $dateTo     = strtotime($ticket['editTo']);
-                }
-
-                $newValues[] = array(
-                    'title'  => 'To-Do: ' . $ticket['headline'],
-                    'allDay' => false,
-                    'dateFrom' => array(
-                        'y' => date('Y', $dateFrom),
-                        'm' => date('m', $dateFrom),
-                        'd' => date('d', $dateFrom),
-                        'h' => date('H', $dateFrom),
-                        'i' => date('i', $dateFrom),
-                    ),
-                    'dateTo' => array(
-                        'y' => date('Y', $dateTo),
-                        'm' => date('m', $dateTo),
-                        'd' => date('d', $dateTo),
-                        'h' => date('H', $dateTo),
-                        'i' => date('i', $dateTo),
-                    ),
-                    'id' => $ticket['id'],
-                    'eventType' => "ticket",
-                );
-            }
-        }
-
-        return $newValues;
     }
 
     /**

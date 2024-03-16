@@ -262,3 +262,22 @@ if (! function_exists('mix')) {
     }
 }
 
+
+if (! function_exists('dtHelper')) {
+
+    /**
+     * Get a singleton instance of the DateTimeHelper class.
+     *
+     * @return \Leantime\Core\Support\DateTimeHelper
+     **/
+    function dtHelper() {
+
+        if (! ($app = app())->bound(\Leantime\Core\Support\DateTimeHelper::class)) {
+            app()->singleton(\Leantime\Core\Support\DateTimeHelper::class);
+        }
+
+        return app()->make(\Leantime\Core\Support\DateTimeHelper::class);
+    }
+
+}
+

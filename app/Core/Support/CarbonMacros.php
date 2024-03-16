@@ -37,12 +37,12 @@ final class  CarbonMacros
      * @return void
      */
     public function __construct(
-        public string $userTimezone,
-        public string $userLanguage,
-        public string $userDateFormat,
-        public string $userTimeFormat,
-        public string $dbFormat,
-        public string $dbTimezone
+        public string $userTimezone = "",
+        public string $userLanguage = "",
+        public string $userDateFormat = "",
+        public string $userTimeFormat = "",
+        public string $dbFormat = "Y-m-d H:i:s",
+        public string $dbTimezone = "UTC"
     ) {}
 
 

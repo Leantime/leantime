@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "eabd2d0ad66d9b7e30d5722b487dcc8b",
+    "content-hash": "d69454908d7f2a7422ed26848843b98d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -259,6 +259,54 @@
                 }
             ],
             "time": "2023-01-15T23:15:59+00:00"
+        },
+        {
+            "name": "carbon-cli/carbon-cli",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kylekatarnls/carbon-cli.git",
+                "reference": "e325f21406c32a90a4b757f5e852a0298318e8b3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kylekatarnls/carbon-cli/zipball/e325f21406c32a90a4b757f5e852a0298318e8b3",
+                "reference": "e325f21406c32a90a4b757f5e852a0298318e8b3",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "^2.20",
+                "php": "^7.1 || ^8.0",
+                "simple-cli/simple-cli": "^1.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.5 || ^8.2"
+            },
+            "bin": [
+                "bin/carbon"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Carbon\\": "src/Carbon/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "kylekatarnls",
+                    "homepage": "http://github.com/kylekatarnls"
+                }
+            ],
+            "description": "CLI tool for Carbon",
+            "support": {
+                "issues": "https://github.com/kylekatarnls/carbon-cli/issues",
+                "source": "https://github.com/kylekatarnls/carbon-cli/tree/master"
+            },
+            "time": "2019-10-11T09:42:48+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -4066,6 +4114,64 @@
             "time": "2022-03-22T16:11:07+00:00"
         },
         {
+            "name": "simple-cli/simple-cli",
+            "version": "1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kylekatarnls/simple-cli.git",
+                "reference": "47055c9a172ab032e33a498001d2978c9800fd59"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kylekatarnls/simple-cli/zipball/47055c9a172ab032e33a498001d2978c9800fd59",
+                "reference": "47055c9a172ab032e33a498001d2978c9800fd59",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.15.0",
+                "phan/phan": "^2.3",
+                "phpmd/phpmd": "dev-master",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^7",
+                "squizlabs/php_codesniffer": "^3.0",
+                "vimeo/psalm": "^3.6"
+            },
+            "bin": [
+                "bin/simple-cli"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SimpleCli\\": "src/SimpleCli/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "KyleK",
+                    "email": "kylekatarnls@gmail.com"
+                }
+            ],
+            "description": "A simple command line framework",
+            "support": {
+                "issues": "https://github.com/kylekatarnls/simple-cli/issues",
+                "source": "https://github.com/kylekatarnls/simple-cli/tree/1.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/simple-cli/simple-cli",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-11-18T22:40:00+00:00"
+        },
+        {
             "name": "simplepie/simplepie",
             "version": "1.8.0",
             "source": {
@@ -4140,6 +4246,142 @@
                 "source": "https://github.com/simplepie/simplepie/tree/1.8.0"
             },
             "time": "2023-01-20T08:37:35+00:00"
+        },
+        {
+            "name": "spatie/enum",
+            "version": "3.13.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/enum.git",
+                "reference": "f1a0f464ba909491a53e60a955ce84ad7cd93a2c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/enum/zipball/f1a0f464ba909491a53e60a955ce84ad7cd93a2c",
+                "reference": "f1a0f464ba909491a53e60a955ce84ad7cd93a2c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "fakerphp/faker": "^1.9.1",
+                "larapack/dd": "^1.1",
+                "phpunit/phpunit": "^9.0",
+                "vimeo/psalm": "^4.3"
+            },
+            "suggest": {
+                "fakerphp/faker": "To use the enum faker provider",
+                "phpunit/phpunit": "To use the enum assertions"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Enum\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brent Roose",
+                    "email": "brent@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Tom Witkowski",
+                    "email": "dev@gummibeer.de",
+                    "homepage": "https://gummibeer.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP Enums",
+            "homepage": "https://github.com/spatie/enum",
+            "keywords": [
+                "enum",
+                "enumerable",
+                "spatie"
+            ],
+            "support": {
+                "docs": "https://docs.spatie.be/enum",
+                "issues": "https://github.com/spatie/enum/issues",
+                "source": "https://github.com/spatie/enum"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-04-22T08:51:55+00:00"
+        },
+        {
+            "name": "spatie/icalendar-generator",
+            "version": "2.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/icalendar-generator.git",
+                "reference": "378c70e6fc0246174a7613fc995e9d77b24e15ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/icalendar-generator/zipball/378c70e6fc0246174a7613fc995e9d77b24e15ee",
+                "reference": "378c70e6fc0246174a7613fc995e9d77b24e15ee",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.4|^8.0",
+                "spatie/enum": "^3.11"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "larapack/dd": "^1.1",
+                "nesbot/carbon": "^2.6|^3.0",
+                "pestphp/pest": "^1.22",
+                "spatie/pest-plugin-snapshots": "^1.1",
+                "vimeo/psalm": "^4.13"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\IcalendarGenerator\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ruben Van Assche",
+                    "email": "ruben@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Build calendars in the iCalendar format",
+            "homepage": "https://github.com/spatie/icalendar-generator",
+            "keywords": [
+                "calendar",
+                "iCalendar",
+                "ical",
+                "ics",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/icalendar-generator/issues",
+                "source": "https://github.com/spatie/icalendar-generator/tree/2.6.1"
+            },
+            "time": "2024-02-26T11:53:49+00:00"
         },
         {
             "name": "symfony/cache",

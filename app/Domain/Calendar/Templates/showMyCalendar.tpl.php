@@ -118,19 +118,9 @@ if (!isset($_SESSION['submenuToggle']["myCalendarView"])) {
         {
             title: <?php echo json_encode($calendar['title']); ?>,
 
-            start: new Date(<?php echo
-                $calendar['dateFrom']['y'] . ',' .
-                ($calendar['dateFrom']['m'] - 1) . ',' .
-                $calendar['dateFrom']['d'] . ',' .
-                $calendar['dateFrom']['h'] . ',' .
-                $calendar['dateFrom']['i'] ?>),
+            start: new Date(<?php echo format($calendar['dateFrom'])->jsTimestamp() ?>),
             <?php if (isset($calendar['dateTo'])) : ?>
-            end: new Date(<?php echo
-                $calendar['dateTo']['y'] . ',' .
-                ($calendar['dateTo']['m'] - 1) . ',' .
-                $calendar['dateTo']['d'] . ',' .
-                $calendar['dateTo']['h'] . ',' .
-                $calendar['dateTo']['i'] ?>),
+            end: new Date(<?php echo format($calendar['dateTo'])->jsTimestamp() ?>),
             <?php endif; ?>
             <?php if ((isset($calendar['allDay']) && $calendar['allDay'] === true)) : ?>
             allDay: true,

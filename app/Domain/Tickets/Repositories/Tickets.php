@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Repositories {
 
+    use Carbon\CarbonImmutable;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Eventhelpers as EventhelperCore;
     use Leantime\Core\Db as DbCore;
@@ -685,7 +686,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 
         }
 
-        public function getScheduledTasks(\DateTime $dateFrom, \DateTime $dateTo, ?int $userId = null)
+        public function getScheduledTasks(CarbonImmutable $dateFrom, CarbonImmutable $dateTo, ?int $userId = null)
         {
 
             $query = <<<SQL
@@ -737,11 +738,9 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
             }
 
-            $dateFromString = $dateFrom->format("Y-m-d 00:00:00");
-            $stmn->bindValue(':dateFrom', $dateFromString, PDO::PARAM_STR);
+            $stmn->bindValue(':dateFrom', $dateFrom, PDO::PARAM_STR);
 
-            $dateToString = $dateTo->format("Y-m-d 23:59:59");
-            $stmn->bindValue(':dateTo', $dateToString, PDO::PARAM_STR);
+            $stmn->bindValue(':dateTo', $dateTo, PDO::PARAM_STR);
 
 
             if (isset($_SESSION['userdata'])) {

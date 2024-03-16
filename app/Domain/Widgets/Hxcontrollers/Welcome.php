@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Widgets\Hxcontrollers;
 
 use Leantime\Core\HtmxController;
+use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Timesheets\Services\Timesheets;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -80,20 +81,9 @@ class Welcome extends HtmxController
         }
 
         $todayTaskCount = 0;
-        $todayStart = new \DateTime();
 
-        if ($_SESSION['usersettings.timezone'] !== null) {
-            $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
-        }
-
-        $todayStart->setTime(0, 0, 0);
-
-        $todayEnd = new \DateTime();
-        if ($_SESSION['usersettings.timezone'] !== null) {
-            $todayStart->setTimezone(new \DateTimeZone($_SESSION['usersettings.timezone']));
-        }
-        $todayEnd->setTime(23, 59, 59);
-
+        $todayStart = dtHelper()->userNow()->startOfDay();
+        $todayEnd = dtHelper()->userNow()->endOfDay();
         $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, $_SESSION["userdata"]["id"]);
         $totalToday = count($todaysTasks['totalTasks'] ?? []);
         $doneToday = count($todaysTasks['doneTasks'] ?? []);

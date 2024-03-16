@@ -217,6 +217,11 @@
       <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
       <path value="$PROJECT_DIR$/vendor/symfony/browser-kit" />
       <path value="$PROJECT_DIR$/vendor/symfony/dom-crawler" />
+      <path value="$PROJECT_DIR$/app/Plugins/CustomFields/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/spatie/icalendar-generator" />
+      <path value="$PROJECT_DIR$/vendor/spatie/enum" />
+      <path value="$PROJECT_DIR$/vendor/carbon-cli/carbon-cli" />
+      <path value="$PROJECT_DIR$/vendor/simple-cli/simple-cli" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

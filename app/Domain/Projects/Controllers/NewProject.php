@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Core\Controller;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Menu\Repositories\Menu as MenuRepository;
@@ -107,8 +108,8 @@ namespace Leantime\Domain\Projects\Controllers {
                     'menuType' => $_POST['menuType'] ?? 'default',
                     'type' => $_POST['type']  ?? 'project',
                     'parent' => $_POST['parent'] ?? '',
-                    'start' => format($_POST['start'])->isoDate(),
-                    'end' => $_POST['end'] ? format($_POST['end'])->isoDateEnd() : '',
+                    'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
+                    'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime() : '',
                 );
 
                 if ($values['name'] === '') {

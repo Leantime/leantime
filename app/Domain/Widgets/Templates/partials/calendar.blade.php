@@ -57,19 +57,9 @@
 
                 title: {!! json_encode($event['title']) !!},
 
-                start: new Date({{
-                    $event['dateFrom']['y'] . ',' .
-                    ($event['dateFrom']['m'] - 1) . ',' .
-                    $event['dateFrom']['d'] . ',' .
-                    $event['dateFrom']['h'] . ',' .
-                    $event['dateFrom']['i'] }}),
+                start: new Date({{ format($event['dateFrom'])->jsTimestamp() }}),
                 @if (isset($event['dateTo']))
-                    end: new Date({{
-                        $event['dateTo']['y'] . ',' .
-                        ($event['dateTo']['m'] - 1) . ',' .
-                        $event['dateTo']['d'] . ',' .
-                        $event['dateTo']['h'] . ',' .
-                        $event['dateTo']['i'] }}),
+                    end: new Date({{ format($event['dateTo'])->jsTimestamp() }}),
                 @endif
                 @if ((isset($event['allDay']) && $event['allDay'] === true))
                     allDay: true,

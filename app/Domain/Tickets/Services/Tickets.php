@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Tickets\Services {
 
+    use Carbon\CarbonImmutable;
     use Carbon\CarbonInterface;
     use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
@@ -431,8 +432,11 @@ namespace Leantime\Domain\Tickets\Services {
 
         }
 
-        public function getScheduledTasks(DateTime $dateFrom, DateTime $dateTo, ?int $userId)
+        public function getScheduledTasks(CarbonImmutable $dateFrom, CarbonImmutable $dateTo, ?int $userId)
         {
+
+            if(!$dateFrom->isUtc()) $dateFrom->setTimezone("UTC");
+            if(!$dateTo->isUtc()) $dateFrom->setTimezone("UTC");
 
             $totalTasks = $this->ticketRepository->getScheduledTasks($dateFrom, $dateTo, $userId);
 
@@ -661,11 +665,10 @@ namespace Leantime\Domain\Tickets\Services {
                             );
                         }
                     } else {
-                        $dtHelper = new DateTimeHelper();
 
-                        $today = $dtHelper->userNow()->setToDbTimezone();
-                        $dbDueDate = $dtHelper->parseDbDateTime($row['dateToFinish']);
-                        $nextFriday = $dtHelper->userNow()->endOfWeek(CarbonInterface::FRIDAY)->setToDbTimezone();
+                        $today = dtHelper()->userNow()->setToDbTimezone();
+                        $dbDueDate = dtHelper()->parseDbDateTime($row['dateToFinish']);
+                        $nextFriday = dtHelper()->userNow()->endOfWeek(CarbonInterface::FRIDAY)->setToDbTimezone();
 
 
                         if ($dbDueDate <= $nextFriday && $dbDueDate >= $today) {
@@ -1048,7 +1051,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $params['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' =>  $params['editorId'] ?? $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
+                'date' =>  dtHelper()->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => "",
                 'status' => 3,
                 'storypoints' => '',
@@ -1182,7 +1185,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'description' => $values['description'] ?? "",
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $values['editorId'] ?? "",
-                'date' =>  $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
+                'date' =>   dtHelper()->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => $values['dateToFinish'] ?? "",
                 'timeToFinish' => $values['timeToFinish'] ?? "",
                 'status' => $values['status'] ?? "",
@@ -1330,7 +1333,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $_SESSION['currentProject'],
                 'editorId' => $params['editorId'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
+                'date' => dtHelper()->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => "",
                 'status' => $params['status'],
                 'storypoints' => '',
@@ -1374,7 +1377,7 @@ namespace Leantime\Domain\Tickets\Services {
                 'projectId' => $parentTicket->projectId,
                 'editorId' => $_SESSION['userdata']['id'],
                 'userId' => $_SESSION['userdata']['id'],
-                'date' =>  $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
+                'date' => $this->dateTimeHelper->userNow()->formatDateTimeForDb(),
                 'dateToFinish' => $values['dateToFinish'] ?? '',
                 'priority' => $values['priority'] ?? 3,
                 'status' => $values['status'],
@@ -1884,10 +1887,10 @@ namespace Leantime\Domain\Tickets\Services {
             if (!empty($values['dateToFinish'])) {
 
                 if (isset($values['timeToFinish']) && $values['timeToFinish'] != null) {
-                    $values['dateToFinish'] =  $this->dateTimeHelper->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
+                    $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], $values['timeToFinish'])->formatDateTimeForDb();
                     unset($values['timeToFinish']);
                 }else{
-                    $values['dateToFinish'] = $this->dateTimeHelper->parseUserDateTime($values['dateToFinish'], "end")->formatDateTimeForDb();
+                    $values['dateToFinish'] = dtHelper()->parseUserDateTime($values['dateToFinish'], "end")->formatDateTimeForDb();
                 }
 
             }
@@ -1895,20 +1898,20 @@ namespace Leantime\Domain\Tickets\Services {
             if (!empty($values['editFrom'])) {
 
                 if (isset($values['timeFrom']) && $values['timeFrom'] != null) {
-                    $values['editFrom'] = $this->dateTimeHelper->parseUserDateTime($values['editFrom'], $values['timeFrom'], FromFormat::UserDateTime)->formatDateTimeForDb();
+                    $values['editFrom'] = dtHelper()->parseUserDateTime($values['editFrom'], $values['timeFrom'], FromFormat::UserDateTime)->formatDateTimeForDb();
                     unset($values['timeFrom']);
                 }else{
-                    $values['editFrom'] = $this->dateTimeHelper->parseUserDateTime($values['editFrom'], "start")->formatDateTimeForDb();
+                    $values['editFrom'] = dtHelper()->parseUserDateTime($values['editFrom'], "start")->formatDateTimeForDb();
                 }
             }
 
             if (!empty($values['editTo'])) {
 
                 if (isset($values['timeTo']) && $values['timeTo'] != null) {
-                    $values['editTo'] = $this->dateTimeHelper->parseUserDateTime($values['editTo'], $values['timeTo'])->formatDateTimeForDb();
+                    $values['editTo'] = dtHelper()->parseUserDateTime($values['editTo'], $values['timeTo'])->formatDateTimeForDb();
                     unset($values['timeTo']);
                 }else{
-                    $values['editTo'] = $this->dateTimeHelper->parseUserDateTime($values['editTo'], "end")->isoDateTime();
+                    $values['editTo'] = dtHelper()->parseUserDateTime($values['editTo'], "end")->isoDateTime();
                 }
             }
 

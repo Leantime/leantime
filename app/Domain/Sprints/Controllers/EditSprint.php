@@ -50,9 +50,9 @@ namespace Leantime\Domain\Sprints\Controllers {
                 $sprint = $this->sprintService->getSprint($params['id']);
             } else {
                 $sprint = app()->make(SprintModel::class);
-                $dtHelper = new DateTimeHelper();
-                $startDate = $dtHelper->userNow();
-                $endDate = $dtHelper->userNow()->addDays(13);
+
+                $startDate =  dtHelper()->userNow();
+                $endDate =  dtHelper()->userNow()->addDays(13);
 
                 $sprint->startDate = $startDate;
                 $sprint->endDate = $endDate;
