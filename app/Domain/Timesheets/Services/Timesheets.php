@@ -181,10 +181,10 @@ class Timesheets
             throw new Exceptions\MissingParameterException("Timesheet type is a required field");
         }
 
-        if (empty($params['time'])) {
+        if (empty($params['timestamp'])) {
             $values['date'] = format($params['date'], "start", FromFormat::UserDateStartOfDay)->isoDateTime();
         } else {
-            $values['date'] = format($params['date'], $params['time'], FromFormat::UserDateTime)->isoDateTime();
+            $values['date'] = dtHelper()->timestamp($params['timestamp'])->formatDateTimeForDb();
         }
 
         $values['hours'] = $params['hours'];
@@ -317,10 +317,14 @@ class Timesheets
         foreach ($allTimesheets as $timesheet) {
 
             $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
+            $currentTimeZoneOffset = dtHelper()->userNow()->getOffset() / 60 / 60;
+
+            //Detect timezone offset
+            $workdateOffsetStart = ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);
 
             //Various Entries can be in different timezones and thus would not be caught by upsert or grouping by default
             //Creating new rows for each timezone adjustment
-            $timezonedTime = $currentWorkDate->format("H:m:s");
+            $timezonedTime = $currentWorkDate->format("H:i:s");
 
             $groupKey = $timesheet["ticketId"] . "-" . $timesheet["kind"] . "-". $timezonedTime;
 
@@ -333,52 +337,54 @@ class Timesheets
                     "name" => $timesheet["name"],
                     "headline" => $timesheet["headline"],
                     "ticketId" => $timesheet["ticketId"],
+                    "hasTimesheetOffset" => $workdateOffsetStart !== 0 ? true: false,
                     "day1" => array(
                         "start" =>  $fromDate,
                         "end" => $fromDate->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate,
+                        "actualWorkDate" => $fromDate->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day2" => array(
                         "start" =>  $fromDate->addDays(1),
                         "end" => $fromDate->addDays(1)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(1),
+                        "actualWorkDate" => $fromDate->addDays(1)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day3" => array(
                         "start" =>  $fromDate->addDays(2),
                         "end" => $fromDate->addDays(2)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(2),
+                        "actualWorkDate" => $fromDate->addDays(2)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day4" => array(
                         "start" =>  $fromDate->addDays(3),
                         "end" => $fromDate->addDays(3)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(3),
+                        "actualWorkDate" => $fromDate->addDays(3)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day5" => array(
                         "start" =>  $fromDate->addDays(4),
                         "end" => $fromDate->addDays(4)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(4),
+                        "actualWorkDate" => $fromDate->addDays(4)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day6" => array(
                         "start" =>  $fromDate->addDays(5),
                         "end" => $fromDate->addDays(5)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(5),
+                        "actualWorkDate" => $fromDate->addDays(5)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day7" => array(
                         "start" =>  $fromDate->addDays(6),
                         "end" => $fromDate->addDays(6)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(6),
+                        "actualWorkDate" => $fromDate->addDays(6)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
                         "hours" => 0,
                         "description" => "",
                     ),

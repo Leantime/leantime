@@ -129,8 +129,9 @@ foreach ($__data as $var => $val) {
                     <tr>
                         <td data-order="<?php echo $tpl->e($row['id']); ?>">
                             <a href="<?=BASE_URL?>/timesheets/editTime/<?php echo $row['id']?>" class="editTimeModal">#<?php echo $row['id'] . " - " . $tpl->__('label.edit'); ?> </a></td>
-                        <td data-order="<?php echo format(value: $row['workDate'], fromFormat: FromFormat::DbDate)->date(); ?>">
-                            <?php echo format(value: $row['workDate'], fromFormat: FromFormat::DbDate)->date(); ?>
+                        <td data-order="<?php echo format($row['workDate'])->date(); ?>">
+                            <?php echo format($row['workDate'])->date(); ?>
+                            <?php echo format($row['workDate'])->time(); ?>
                         </td>
                         <td data-order="<?php $tpl->e($row['hours']); ?>">
                             <?php $tpl->e($row['hours'] ?: 0); ?>

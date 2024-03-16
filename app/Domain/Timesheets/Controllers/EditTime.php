@@ -85,6 +85,7 @@ class EditTime extends Controller
                 );
 
                 if (Auth::userIsAtLeast(Roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
+
                     if (isset($_POST['saveForm']) === true) {
                         if (!empty($_POST['tickets'])) {
                             $values['project'] = (int) $_POST['projects'];
@@ -96,8 +97,7 @@ class EditTime extends Controller
                         }
 
                         if (!empty($_POST['date'])) {
-                            $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['date'], $_SESSION['usersettings.timezone']);
-                            $date->setTimezone('UTC');
+                            $date = dtHelper()->parseUserDateTime($_POST['date'], "start")->formatDateTimeForDb();
                             $values['date'] = $date;
                         }
 
@@ -116,11 +116,10 @@ class EditTime extends Controller
                                 }
 
                                 if (!empty($_POST['invoicedEmplDate'])) {
-                                    $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedEmplDate'], $_SESSION['usersettings.timezone']);
-                                    $date->setTimezone('UTC');
+                                    $date = dtHelper()->parseUserDateTime($_POST['invoicedEmplDate'], "start")->formatDateTimeForDb();
                                     $values['invoicedEmplDate'] = $date;
                                 } else {
-                                    $values['invoicedEmplDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
+                                    $values['invoicedEmplDate'] = dtHelper()->userNow()->formatDateTimeForDb();
                                 }
                             } else {
                                 $values['invoicedEmpl'] = 0;
@@ -133,11 +132,10 @@ class EditTime extends Controller
                                 }
 
                                 if (!empty($_POST['invoicedCompDate'])) {
-                                    $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['invoicedCompDate'], $_SESSION['usersettings.timezone']);
-                                    $date->setTimezone('UTC');
+                                    $date = dtHelper()->parseUserDateTime($_POST['invoicedCompDate'], "start")->formatDateTimeForDb();
                                     $values['invoicedCompDate'] = $date;
                                 } else {
-                                    $values['invoicedCompDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
+                                    $values['invoicedCompDate'] = dtHelper()->userNow()->formatDateTimeForDb();
                                 }
                             } else {
                                 $values['invoicedComp'] = 0;
@@ -150,11 +148,11 @@ class EditTime extends Controller
                                 }
 
                                 if (!empty($_POST['paidDate'])) {
-                                    $date = Carbon::createFromFormat($this->language->__("language.dateformat"), $_POST['paidDate'], $_SESSION['usersettings.timezone']);
+                                    $date = dtHelper()->parseUserDateTime($_POST['paidDate'], "start")->formatDateTimeForDb();
                                     $date->setTimezone('UTC');
                                     $values['paidDate'] = $date;
                                 } else {
-                                    $values['paidDate'] = Carbon::now($_SESSION['usersettings.timezone'])   ->setTimezone('UTC');
+                                    $values['paidDate'] = dtHelper()->userNow()->formatDateTimeForDb();
                                 }
                             } else {
                                 $values['paid'] = 0;

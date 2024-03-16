@@ -142,13 +142,13 @@ jQuery(document).ready(function(){
 
     jQuery(".timesheetTable input").change(function(){
         //Row Sum
-        colSumMo = 0;
-        colSumTu = 0;
-        colSumWe = 0;
-        colSumTh = 0;
-        colSumFr = 0;
-        colSumSa = 0;
-        colSumSu = 0;
+        let colSum1 = 0;
+        let colSum2 = 0;
+        let colSum3 = 0;
+        let colSum4 = 0;
+        let colSum5 = 0;
+        let colSum6 = 0;
+        let colSum7 = 0;
 
         jQuery(".timesheetRow").each(function(i){
             var rowSum = 0;
@@ -159,27 +159,27 @@ jQuery(document).ready(function(){
 
                 var currentClass = jQuery(this).parent().attr('class');
 
-                if(currentClass.indexOf("rowMon") > -1){ colSumMo = colSumMo + currentValue; }
-                if(currentClass.indexOf("rowTue") > -1){ colSumTu = colSumTu + currentValue; }
-                if(currentClass.indexOf("rowWed") > -1){ colSumWe = colSumWe + currentValue;  }
-                if(currentClass.indexOf("rowThu") > -1){ colSumTh = colSumTh + currentValue; }
-                if(currentClass.indexOf("rowFri") > -1){ colSumFr = colSumFr + currentValue;  }
-                if(currentClass.indexOf("rowSat") > -1){ colSumSa = colSumSa + currentValue;  }
-                if(currentClass.indexOf("rowSun") > -1){ colSumSu = colSumSu + currentValue;  }
+                if(currentClass.indexOf("rowday1") > -1){ colSum1 = colSum1 + currentValue; }
+                if(currentClass.indexOf("rowday2") > -1){ colSum2 = colSum2 + currentValue; }
+                if(currentClass.indexOf("rowday3") > -1){ colSum3 = colSum3 + currentValue; }
+                if(currentClass.indexOf("rowday4") > -1){ colSum4 = colSum4 + currentValue; }
+                if(currentClass.indexOf("rowday5") > -1){ colSum5 = colSum5 + currentValue; }
+                if(currentClass.indexOf("rowday6") > -1){ colSum6 = colSum6 + currentValue; }
+                if(currentClass.indexOf("rowday7") > -1){ colSum7 = colSum7 + currentValue; }
             });
 
             jQuery(this).find(".rowSum strong").text(rowSum);
         });
 
-        jQuery("#sumMon").text(colSumMo.toFixed(2));
-        jQuery("#sumTue").text(colSumTu.toFixed(2));
-        jQuery("#sumWed").text(colSumWe.toFixed(2));
-        jQuery("#sumThu").text(colSumTh.toFixed(2));
-        jQuery("#sumFri").text(colSumFr.toFixed(2));
-        jQuery("#sumSat").text(colSumSa.toFixed(2));
-        jQuery("#sumSun").text(colSumSu.toFixed(2));
+        jQuery("#day1").text(colSum1.toFixed(2));
+        jQuery("#day2").text(colSum2.toFixed(2));
+        jQuery("#day3").text(colSum3.toFixed(2));
+        jQuery("#day4").text(colSum4.toFixed(2));
+        jQuery("#day5").text(colSum5.toFixed(2));
+        jQuery("#day6").text(colSum6.toFixed(2));
+        jQuery("#day7").text(colSum7.toFixed(2));
 
-        var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
+        var finalSum = colSum1 + colSum2 + colSum3 + colSum4 + colSum5 + colSum6 + colSum7;
         var roundedSum = Math.round((finalSum)*100)/100;
 
         jQuery("#finalSum").text(roundedSum);
@@ -283,9 +283,16 @@ jQuery(document).ready(function(){
                             <tr class="gradeA timesheetRow">
                             <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
                             <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
-                            <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
+                            <td width="10%">
+                                <?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?>
+                            <?php if($timeRow['hasTimesheetOffset']){ ?>
+                                <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
+                                   data-tippy-content="This entry was likely created using a different timezone">
+                                </i>
+                            <?php } ?>
+                            </td>
 
-                            <?php foreach(keys($timeRow) as $dayKey){
+                            <?php foreach(array_keys($timeRow) as $dayKey){
 
                                 if(str_starts_with($dayKey, "day")) {
 
@@ -293,23 +300,24 @@ jQuery(document).ready(function(){
 
                                     <td width="7%" class="row<?php
                                             echo $dayKey;
-                                            if ($dateFrom->addDays(($i-1))->isToday()) {
+                                            if ($timeRow[$dayKey]["actualWorkDate"]->setToUserTimezone()->isToday()) {
                                                 echo " active";
                                             }
                                         ?>">
 
+
                                         <?php
-                                            $inputNameKey = $timeRow["ticketId"] . "|" . $timeRow["kind"] . "|" . $timeRow["day" . $i]["actualWorkDate"]->formatDateForUser() . "|" .  $timeRow[$timeRow[$dayKey]]["actualWorkDate"]->formatTimeForUser();
+                                            $inputNameKey = $timeRow["ticketId"] . "|" . $timeRow["kind"] . "|" . $timeRow[$dayKey]["actualWorkDate"]->formatDateForUser() . "|" .  $timeRow[$dayKey]["actualWorkDate"]->getTimestamp();
                                         ?>
                                         <input type="text"
                                                class="hourCell"
                                                name="<?php echo $inputNameKey ?>"
                                                value="<?php echo $timeRow[$dayKey]["hours"]; ?>"
-
-                                               <?php if(!empty($timeRow[$dayKey]["description"])){?>
-                                                data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]["description"]); ?>"
-                                               <?php } ?>
                                         />
+
+                                        <?php if(!empty($timeRow[$dayKey]["description"])){?>
+                                            <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]["description"]); ?>"></i>
+                                        <?php } ?>
                                     </td>
                             <?php
                                 }
@@ -383,7 +391,7 @@ jQuery(document).ready(function(){
                                 <td width="7%" class="row<?php echo $day ?><?php if ($dateFrom->addDays($i)->isToday()) {
                                     echo " active";
                                                             } ?>">
-                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->formatTimeForUser() ?>" value="0" />
+                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="0" />
                                 </td>
                             <?php
                             $i++;

@@ -113,18 +113,18 @@ class ShowMy extends Controller
 
         foreach ($postData as $key => $dateEntry) {
             // The temp data should contain four parts, spectated by "|":
-            // TICKET ID | Type of booked hours | Current Date (user format)
+            // TICKET ID | Type of booked hours | Date | Timestamp
             $tempData = explode("|", $key);
 
             if (count($tempData) === 4) {
-                $ticketId =  (int)$tempData[0];
+                $ticketId =  $tempData[0];
                 $kind = $tempData[1];
                 $date = $tempData[2];
-                $time = $tempData[3];
+                $timestamp = $tempData[3];
                 $hours = $dateEntry;
 
                 // if ticket ID is set to new, pull id and hour type from form field
-                if ($ticketId == "new") {
+                if ($ticketId === "new" || $ticketId === 0) {
                     $ticketId = (int)$postData["ticketId"];
                     $kind = $postData["kindId"];
                 }
@@ -133,7 +133,7 @@ class ShowMy extends Controller
                     "userId" => $_SESSION["userdata"]["id"],
                     "ticket" => $ticketId,
                     "date" => $date,
-                    "time" => $time,
+                    "timestamp" => $timestamp,
                     "hours" => $hours,
                     "kind" => $kind,
                 );
@@ -143,6 +143,7 @@ class ShowMy extends Controller
                     $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
                 } catch (\Exception $e) {
                     $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
+                    error_log($e);
                     continue;
                 }
             }
