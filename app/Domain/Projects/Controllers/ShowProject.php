@@ -4,6 +4,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
     use Leantime\Core\Frontcontroller as FrontcontrollerCore;
     use Leantime\Core\Controller;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Setting\Repositories\Setting as SettingRepository;
@@ -231,8 +232,8 @@ namespace Leantime\Domain\Projects\Controllers {
                         'menuType' => $_POST['menuType'],
                         'type' => $_POST['type'] ?? $project['type'],
                         'parent' => $_POST['parent'] ?? '',
-                        'start' => format($_POST['start'])->isoDate(),
-                        'end' => $_POST['end'] ? format($_POST['end'])->isoDateEnd() : '',
+                        'start' => format(value: $_POST['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
+                        'end' => $_POST['end'] ? format(value: $_POST['end'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime() : ''
                     );
 
                     if ($values['name'] !== '') {
@@ -324,39 +325,15 @@ namespace Leantime\Domain\Projects\Controllers {
                 $this->tpl->assign('availableUsers', $this->userRepo->getAll());
                 $this->tpl->assign('clients', $this->clientsRepo->getAll());
 
-
                 $this->tpl->assign("todoStatus", $this->ticketService->getStatusLabels());
 
                 $this->tpl->assign('employees', $employees);
-
-                $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
-                $this->tpl->assign('projectTickets', $this->projectRepo->getProjectTickets($id));
 
                 $this->tpl->assign('project', $project);
 
                 $files = $this->fileRepo->getFilesByModule('project', $id);
                 $this->tpl->assign('files', $files);
                 $this->tpl->assign('numFiles', count($files));
-
-                $bookedHours = $this->projectRepo->getProjectBookedHours($id);
-                if ($bookedHours['totalHours'] != '') {
-                    $booked = round($bookedHours['totalHours'], 3);
-                } else {
-                    $booked = 0;
-                }
-
-                $this->tpl->assign('bookedHours', $booked);
-
-                $bookedDollars = $this->projectRepo->getProjectBookedDollars($id);
-                if ($bookedDollars['totalDollars'] != '') {
-                    $dollars = round($bookedDollars['totalDollars'], 3);
-                } else {
-                    $dollars = 0;
-                }
-
-                $this->tpl->assign('bookedDollars', $dollars);
-
-                $this->tpl->assign("bookedHoursArray", $this->projectRepo->getProjectBookedHoursArray($id));
 
                 $comment = $this->commentsRepo->getComments('project', $_GET['id'], 0);
                 $this->tpl->assign('comments', $comment);

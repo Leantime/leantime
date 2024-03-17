@@ -2,10 +2,12 @@
 
 namespace Leantime\Core\Middleware;
 
+use Carbon\CarbonImmutable;
 use Closure;
 use Leantime\Core\Environment;
 use Leantime\Core\IncomingRequest;
 use Leantime\Core\Language;
+use Leantime\Core\Support\CarbonMacros;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
 use Leantime\Domain\Setting\Services\Setting;
@@ -44,6 +46,15 @@ class Localization
 
         $_SESSION['usersettings.language.date_format'] ??= $this->settings->getSetting("usersettings.$userId.date_format") ?: $this->language->__("language.dateformat");
         $_SESSION['usersettings.language.time_format'] ??= $this->settings->getSetting("usersettings.$userId.time_format") ?: $this->language->__("language.timeformat");
+
+        //Set macros for CabonImmutable date handling
+        CarbonImmutable::mixin(new CarbonMacros(
+            $_SESSION['usersettings.timezone'],
+            $_SESSION['usersettings.language'],
+            $_SESSION['usersettings.language.date_format'],
+            $_SESSION['usersettings.language.time_format']
+        ));
+
 
         return $next($request);
     }

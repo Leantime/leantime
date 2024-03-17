@@ -135,6 +135,7 @@
                                     <div class="col-md-4 tw-px-[15px] tw-py-0">
 
                                         <i class="fa-solid fa-business-time infoIcon" data-tippy-content=" {{ __("label.due") }}"></i>
+
                                              <input
                                             type="text"
                                             title="{{ __('label.due') }}"

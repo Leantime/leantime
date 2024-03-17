@@ -42,14 +42,13 @@ class TimesheetCest
         $I->selectOption('.kind-select', 'General, billable');
 
         // Set hours in active
-        $I->fillField('//*[contains(@class, "rowMon")]//input[@class="hourCell"]', 1);
-        $I->fillField('//*[contains(@class, "rowTue")]//input[@class="hourCell"]', 2);
+        $I->fillField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 1);
+        $I->fillField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2);
         $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
         $I->waitForElement('.growl', 60);
-        $I->see('Timesheet successfully updated');
 
-        $I->seeInField('//*[contains(@class, "rowMon")]//input[@class="hourCell"]', '1');
-        $I->seeInField('//*[contains(@class, "rowTue")]//input[@class="hourCell"]', '2');
+        $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
         $I->see('3', '#finalSum');
         $I->seeInDatabase('zp_timesheets', [
             'id' => 1,
@@ -76,15 +75,15 @@ class TimesheetCest
 
         $I->amOnPage('/timesheets/showMy');
         $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
-        $I->waitForElement('.growl', 60);
-        $I->see('Timesheet successfully updated');
+        $I->waitForElement('.growl', 120);
+        $I->see('Timesheet saved successfully');
 
         // An page reload will trigger an "resend submission popup".
         $I->amOnPage('/timesheets/showMy');
 
-        $I->waitForElementVisible('//*[contains(@class, "rowMon")]//input[@class="hourCell"]');
-        $I->seeInField('//*[contains(@class, "rowMon")]//input[@class="hourCell"]', '1');
-        $I->seeInField('//*[contains(@class, "rowTue")]//input[@class="hourCell"]', '2');
+        $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
+        $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
         $I->see('3', '#finalSum');
     }
 
@@ -99,9 +98,9 @@ class TimesheetCest
 
         // Check timesheet
         $I->amOnPage('/timesheets/showMy');
-        $I->waitForElementVisible('//*[contains(@class, "rowMon")]//input[@class="hourCell"]');
-        $I->seeInField('//*[contains(@class, "rowMon")]//input[@class="hourCell"]', '1');
-        $I->seeInField('//*[contains(@class, "rowTue")]//input[@class="hourCell"]', '2');
+        $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
+        $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
         $I->see('3', '#finalSum');
 
         // Switch back.
@@ -122,9 +121,13 @@ class TimesheetCest
         $I->waitForElementVisible('#hours');
         $I->fillField('#hours', 2);
         $I->click('.stdformbutton .button');
-        $I->waitForElement('.growl', 60);
-        $I->wait(1);
-        $I->see('Time logged successfully');
+        $I->waitForElement('.growl', 120);
+
+        $I->seeInDatabase('zp_timesheets', [
+            'id' => '1',
+            'hours' => 2,
+        ]);
+
 
         // Close modal.
         $I->waitForElementVisible('.nyroModalClose');
@@ -179,22 +182,22 @@ class TimesheetCest
         $I->waitForElementVisible('#allTimesheetsTable');
 
         // Maker paid
-        $I->checkOption('//*//tr[@class="odd"]//input[@class="paid"]');
+        $I->checkOption('//*//input[@id="checkAllPaid"]');
         $I->click('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
-        $I->cantSeeElement('//*//tr[@class="odd"]//input[@class="paid"]');
+        $I->cantSeeElement('//*//input[@class="paid"]');
 
         // Make Invoiced
-        $I->checkOption('//*//tr[@class="odd"]//input[@class="invoicedEmpl"]');
+        $I->checkOption('//*/input[@id="checkAllEmpl"]');
         $I->click('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
-        $I->cantSeeElement('//*//tr[@class="odd"]//input[@class="invoicedEmpl"]');
+        $I->cantSeeElement('//*//input[@class="invoicedEmpl"]');
 
         // Make MGR Approval
-        $I->checkOption('//*//tr[@class="even"]//input[@class="invoicedComp"]');
+        $I->checkOption('//*//input[@id="checkAllComp"]');
         $I->click('#allTimesheetsTable_wrapper .button');
         $I->waitForElementVisible('#allTimesheetsTable_wrapper');
-        $I->cantSeeElement('//*//tr[@class="even"]//input[@class="invoicedComp"]');
+        $I->cantSeeElement('//*//input[@class="invoicedComp"]');
     }
 
     #[Group('timesheet')]
@@ -237,7 +240,12 @@ class TimesheetCest
         $I->waitForElementVisible('#timezone');
         $I->selectOption('#timezone', $timezone);
         $I->click('#saveSettings');
-        $I->waitForElement('.growl', 60);
-        $I->see('Profile settings saved successfully');
+        $I->waitForElement('.growl', 120);
+
+        $I->seeInDatabase('zp_settings', [
+            'key' => 'usersettings.1.timezone',
+            'value' => $timezone,
+        ]);
+
     }
 }

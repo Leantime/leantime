@@ -26,7 +26,7 @@ namespace Leantime\Domain\Install\Controllers {
             $this->installRepo = $installRepo;
 
             if ($this->installRepo->checkIfInstalled()) {
-                throw new HttpResponseException(FrontcontrollerCore::redirect(BASE_URL));
+                return FrontcontrollerCore::redirect(BASE_URL);
             }
         }
 

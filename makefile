@@ -128,5 +128,8 @@ get-version:
 phpstan:
 	./vendor/bin/phpstan analyse --memory-limit 512M
 
+update-carbon-macros:
+	./vendor/bin/carbon macro Leantime\\Core\\Support\\CarbonMacros app/Core/Support/CarbonMacros.php
+
 .PHONY: install-deps build package clean run-dev
 

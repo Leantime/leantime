@@ -4,7 +4,6 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $project = $tpl->get('project');
-$bookedHours = $tpl->get('bookedHours');
 $state = $tpl->get('state');
 ?>
 

@@ -223,12 +223,7 @@ if (isset($_GET['canvasId'])) {
 
                             </li>
                         <?php } else {
-                            if ($canvasItem['milestoneEditTo'] == "0000-00-00 00:00:00") {
-                                $date = $tpl->__("text.no_date_defined");
-                            } else {
-                                $date = new DateTime($canvasItem['milestoneEditTo']);
-                                $date = $date->format($tpl->__("language.dateformat"));
-                            }
+
                             ?>
 
                             <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
@@ -246,7 +241,7 @@ if (isset($_GET['canvasId'])) {
 
                                         <div class="col-md-7">
                                             <?=$tpl->__("label.due") ?>
-                                            <?php echo $date; ?>
+                                            <?php echo format($canvasItem['milestoneEditTo'])->date($tpl->__("text.no_date_defined")); ?>
                                         </div>
                                         <div class="col-md-5" style="text-align:right">
                                             <?=sprintf($tpl->__("text.percent_complete"), $canvasItem['percentDone'])?>

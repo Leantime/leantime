@@ -3,7 +3,9 @@
 namespace Leantime\Domain\Timesheets\Controllers;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Leantime\Core\Controller;
+use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Users\Repositories\Users as UserRepository;
 use Leantime\Domain\Projects\Services\Projects as ProjectService;
@@ -86,18 +88,14 @@ class ShowAll extends Controller
             $userId = intval(strip_tags($_POST['userId']));
         }
 
-        $dateFrom = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->startOfMonth();
+        $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
         if (!empty($_POST['dateFrom'])) {
-            $date = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateFrom'], $_SESSION['usersettings.timezone']);
-            $date->setTimezone('UTC');
-            $dateFrom = $date;
+            $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
         }
 
-        $dateTo = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC')->endOfMonth();
+        $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
         if (!empty($_POST['dateTo'])) {
-            $date = Carbon::createFromFormat($_SESSION['usersettings.language.date_format'], $_POST['dateTo'], $_SESSION['usersettings.timezone']);
-            $date->setTimezone('UTC');
-            $dateTo = $date;
+            $dateTo =  dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
         }
 
         if (isset($_POST['invEmpl'])) {

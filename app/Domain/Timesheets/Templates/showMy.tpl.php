@@ -3,6 +3,10 @@ defined('RESTRICTED') or die('Restricted access');
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
+
+/** @var \Carbon\Carbon $currentDate */
+$dateFrom = $tpl->get("dateFrom");
+
 ?>
 <script type="text/javascript">
 
@@ -138,13 +142,13 @@ jQuery(document).ready(function(){
 
     jQuery(".timesheetTable input").change(function(){
         //Row Sum
-        colSumMo = 0;
-        colSumTu = 0;
-        colSumWe = 0;
-        colSumTh = 0;
-        colSumFr = 0;
-        colSumSa = 0;
-        colSumSu = 0;
+        let colSum1 = 0;
+        let colSum2 = 0;
+        let colSum3 = 0;
+        let colSum4 = 0;
+        let colSum5 = 0;
+        let colSum6 = 0;
+        let colSum7 = 0;
 
         jQuery(".timesheetRow").each(function(i){
             var rowSum = 0;
@@ -155,27 +159,27 @@ jQuery(document).ready(function(){
 
                 var currentClass = jQuery(this).parent().attr('class');
 
-                if(currentClass.indexOf("rowMon") > -1){ colSumMo = colSumMo + currentValue; }
-                if(currentClass.indexOf("rowTue") > -1){ colSumTu = colSumTu + currentValue; }
-                if(currentClass.indexOf("rowWed") > -1){ colSumWe = colSumWe + currentValue;  }
-                if(currentClass.indexOf("rowThu") > -1){ colSumTh = colSumTh + currentValue; }
-                if(currentClass.indexOf("rowFri") > -1){ colSumFr = colSumFr + currentValue;  }
-                if(currentClass.indexOf("rowSat") > -1){ colSumSa = colSumSa + currentValue;  }
-                if(currentClass.indexOf("rowSun") > -1){ colSumSu = colSumSu + currentValue;  }
+                if(currentClass.indexOf("rowday1") > -1){ colSum1 = colSum1 + currentValue; }
+                if(currentClass.indexOf("rowday2") > -1){ colSum2 = colSum2 + currentValue; }
+                if(currentClass.indexOf("rowday3") > -1){ colSum3 = colSum3 + currentValue; }
+                if(currentClass.indexOf("rowday4") > -1){ colSum4 = colSum4 + currentValue; }
+                if(currentClass.indexOf("rowday5") > -1){ colSum5 = colSum5 + currentValue; }
+                if(currentClass.indexOf("rowday6") > -1){ colSum6 = colSum6 + currentValue; }
+                if(currentClass.indexOf("rowday7") > -1){ colSum7 = colSum7 + currentValue; }
             });
 
             jQuery(this).find(".rowSum strong").text(rowSum);
         });
 
-        jQuery("#sumMon").text(colSumMo.toFixed(2));
-        jQuery("#sumTue").text(colSumTu.toFixed(2));
-        jQuery("#sumWed").text(colSumWe.toFixed(2));
-        jQuery("#sumThu").text(colSumTh.toFixed(2));
-        jQuery("#sumFri").text(colSumFr.toFixed(2));
-        jQuery("#sumSat").text(colSumSa.toFixed(2));
-        jQuery("#sumSun").text(colSumSu.toFixed(2));
+        jQuery("#day1").text(colSum1.toFixed(2));
+        jQuery("#day2").text(colSum2.toFixed(2));
+        jQuery("#day3").text(colSum3.toFixed(2));
+        jQuery("#day4").text(colSum4.toFixed(2));
+        jQuery("#day5").text(colSum5.toFixed(2));
+        jQuery("#day6").text(colSum6.toFixed(2));
+        jQuery("#day7").text(colSum7.toFixed(2));
 
-        var finalSum = colSumMo + colSumTu + colSumWe + colSumTh + colSumFr + colSumSa + colSumSu;
+        var finalSum = colSum1 + colSum2 + colSum3 + colSum4 + colSum5 + colSum6 + colSum7;
         var roundedSum = Math.round((finalSum)*100)/100;
 
         jQuery("#finalSum").text(roundedSum);
@@ -197,6 +201,9 @@ jQuery(document).ready(function(){
     <div class="maincontentinner">
         <?php
         echo $tpl->displayNotification();
+
+
+
         ?>
 
         <form action="<?php echo BASE_URL ?>/timesheets/showMy" method="post" id="timesheetList">
@@ -214,9 +221,9 @@ jQuery(document).ready(function(){
                 <div class="padding-top-sm">
                     <span><?php echo $tpl->__('label.week_from')?></span>
                     <a href="javascript:void(0)" style="font-size:16px;" id="prevWeek"><i class="fa fa-chevron-left"></i></a>
-                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo format($tpl->get("dateFrom")->copy(), 'short') ?>" style="margin-top:5px;"/>
+                    <input type="text" class="week-picker" name="startDate" autocomplete="off" id="startDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->formatDateForUser() ?>" style="margin-top:5px;"/>
                     <?php echo $tpl->__('label.until'); ?>
-                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo format($tpl->get("dateFrom")->copy()->add(6, 'days'), 'short') ?>" style="margin-top:6px;"/>
+                    <input type="text" class="week-picker" name="endDate" autocomplete="off" id="endDate" placeholder="<?php echo $tpl->__('language.dateformat')?>" value="<?php echo $dateFrom->addDays(6)->formatDateForUser() ?>" style="margin-top:6px;"/>
                     <a href="javascript:void(0)" style="font-size:16px;" id="nextWeek"><i class="fa fa-chevron-right"></i></a>
                     <input type="hidden" name="search" value="1" />
                 </div>
@@ -239,7 +246,7 @@ jQuery(document).ready(function(){
                 </colgroup>
                 <thead>
                 <?php
-                    $dateFromHeader = $tpl->get("dateFrom")->copy();
+
                     $days = explode(',', $tpl->__('language.dayNamesShort'));
                     // Make the first day of week monday, by shifting sunday to the back of the array.
                     $days[] = array_shift($days);
@@ -248,13 +255,16 @@ jQuery(document).ready(function(){
                     <th><?php echo $tpl->__('label.client_product')?></th>
                     <th><?php echo $tpl->__('subtitles.todo')?></th>
                     <th><?php echo $tpl->__('label.type')?></th>
-                    <?php foreach ($days as $day) { ?>
-                        <th class="<?php if ($dateFromHeader->isToday()) {
+                    <?php
+                    $i = 0;
+                    foreach ($days as $day) { ?>
+                        <th class="<?php if ($dateFrom->isToday()) {
                             echo "active";
                                    } ?>"><?php echo $day ?><br />
                             <?php
-                                echo format($dateFromHeader, 'short');
-                                $dateFromHeader->add('1', 'day');
+
+                                echo $dateFrom->addDays($i)->formatDateForUser();
+                                $i++;
                             ?>
                         </th>
                     <?php } ?>
@@ -263,69 +273,65 @@ jQuery(document).ready(function(){
                 </thead>
                 <tbody>
                     <?php
-                        // @todo: move all this calculations into the service the timesheets class.
-                        $rowKeys = [
-                           "hoursMonday",
-                           "hoursTuesday",
-                           "hoursWednesday",
-                           "hoursThursday",
-                           "hoursFriday",
-                           "hoursSaturday",
-                           "hoursSunday",
+                        $colSum = [
+                            "day1" => 0,
+                            "day2" => 0,
+                            "day3" => 0,
+                            "day4" => 0,
+                            "day5" => 0,
+                            "day6" => 0,
+                            "day7" => 0,
                         ];
-                        $totalHours = [];
-                        foreach ($rowKeys as $key) {
-                            $totalHours[$key] = 0;
-                        }
-
-                        foreach ($tpl->get('allTimesheets') as $timeRow) {
-                            // Calculate totals.
-                            $rowSum = 0;
-                            foreach ($rowKeys as $key) {
-                                $totalHours[$key] += $timeRow[$key];
-                                $rowSum += $timeRow[$key];
-                            }
-
-                            $timesheetId = "new";
-
-
-                            $workDatesArray = [];
-                            foreach (explode(",", $timeRow["workDates"]) as $workDate) {
-                                $date = new \Carbon\Carbon($workDate, 'UTC');
-                                $workDatesArray[format($date, 'short')] = $date;
-                             }
-
-                            /** @var \Carbon\Carbon $currentDate */
-                            $currentDate = $tpl->get("dateFrom")->copy();
-                            ?>
-
-                        <tr class="gradeA timesheetRow">
-                            <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
-                            <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
-                            <td width="10%"><?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?></td>
-
-                            <?php foreach ($rowKeys as $i => $key) { ?>
-                                <td width="7%" class="row<?php echo $days[$i]; ?><?php if ($currentDate->isToday()) {
-                                    echo " active";
-                                                            } ?>">
-                                    <input type="text"
-                                           class="hourCell"
-                                           name="<?php echo $timeRow["ticketId"]; ?>|<?php echo $timeRow[$key] > 0 ? "existing" : "new"; ?>|<?php echo $timeRow[$key] > 0 ? $workDatesArray[format($currentDate, 'short')] : format($currentDate, 'short') ?>|<?php echo $timeRow["kind"];?>"
-                                           value="<?php echo $timeRow[$key]; ?>"
-                                    />
-                                </td>
-                                <?php $currentDate->add('1', 'day');  ?>
+                        // @todo: move all this calculations into the service the timesheets class.
+                    foreach ($tpl->get('allTimesheets') as $timeRow) {
+                        $timesheetId = "new";
+                        ?>
+                            <tr class="gradeA timesheetRow">
+                                <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
+                                <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
+                                <td width="10%">
+                                <?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?>
+                            <?php if ($timeRow['hasTimesheetOffset']) { ?>
+                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
+                                       data-tippy-content="This entry was likely created using a different timezone">
+                                    </i>
                             <?php } ?>
+                                </td>
 
-                            <td width="7%" class="rowSum"><strong><?php echo $rowSum; ?></strong></td>
-                        </tr>
-                        <?php } ?>
+                            <?php foreach (array_keys($timeRow) as $dayKey) {
+                                if (str_starts_with($dayKey, "day")) {
+                                    $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $timeRow[$dayKey]["hours"]; ?>
 
-                    <!-- Row to add new time registration -->
-                    <?php
-                        /** @var \Carbon\Carbon $currentDate */
-                        $currentDate = $tpl->get("dateFrom")->copy();
-                    ?>
+                                        <td width="7%" class="row<?php
+                                            echo $dayKey;
+                                        if ($timeRow[$dayKey]["actualWorkDate"]->setToUserTimezone()->isToday()) {
+                                            echo " active";
+                                        }
+                                        ?>">
+
+
+                                            <?php
+                                            $inputNameKey = $timeRow["ticketId"] . "|" . $timeRow["kind"] . "|" . $timeRow[$dayKey]["actualWorkDate"]->formatDateForUser() . "|" .  $timeRow[$dayKey]["actualWorkDate"]->getTimestamp();
+                                            ?>
+                                            <input type="text"
+                                                   class="hourCell"
+                                                   name="<?php echo $inputNameKey ?>"
+                                                   value="<?php echo $timeRow[$dayKey]["hours"]; ?>"
+                                            />
+
+                                            <?php if (!empty($timeRow[$dayKey]["description"])) {?>
+                                                <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]["description"]); ?>"></i>
+                                            <?php } ?>
+                                        </td>
+                                    <?php
+                                }
+                            } ?>
+
+                                <td width="7%" class="rowSum"><strong><?php echo $timeRow["rowSum"]; ?></strong></td>
+                            </tr>
+                    <?php } ?>
+
+                        <!-- Row to add new time registration -->
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
@@ -381,24 +387,33 @@ jQuery(document).ready(function(){
                                     </select>
                             </td>
 
-                            <?php foreach ($days as $day) { ?>
-                                <td width="7%" class="row<?php echo $day?><?php if ($currentDate->isToday()) {
+                            <?php
+                            $i = 0;
+                            foreach ($days as $day) {
+                                ?>
+                                <td width="7%" class="rowday<?php echo ($i + 1); ?><?php if ($dateFrom->addDays($i)->isToday()) {
                                     echo " active";
                                                             } ?>">
-                                    <input type="text" class="hourCell" name="new|new|<?php echo format($currentDate, 'short') ?>|GENERAL_BILLABLE" value="0" />
+                                    <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="0" />
                                 </td>
-                                <?php $currentDate->add('1', 'day'); ?>
-                            <?php } ?>
+                                <?php
+                                $i++;
+                            } ?>
                         </tr>
                 </tbody>
 
                 <tfoot>
                     <tr style="font-weight:bold;">
                         <td colspan="3"><?php echo $tpl->__('label.total')?></td>
-                        <?php foreach ($rowKeys as $key) { ?>
-                            <td id="<?php echo $key ?>"><?php echo $totalHours[$key]; ?></td>
+                        <?php
+                        $totalHours = 0;
+                        foreach ($colSum as $key => $col) {
+                            $totalHours += $col;
+
+                            ?>
+                            <td id="<?php echo $key ?>"><?php echo $col; ?></td>
                         <?php } ?>
-                        <td id="finalSum"><?php echo array_sum($totalHours); ?></td>
+                        <td id="finalSum"><?php echo $totalHours; ?></td>
                     </tr>
                 </tfoot>
             </table>
