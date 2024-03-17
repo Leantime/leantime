@@ -21,7 +21,7 @@ use Leantime\Core\Language;
  * @property string $dbTimezone The database timezone
  * @property string $dbFormat The database format
  */
-final class  CarbonMacros
+class  CarbonMacros
 {
 
     /**

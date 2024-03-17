@@ -20,7 +20,7 @@ use DateTimeZone;
  *
  * @mixin CarbonMacros
  */
-final class DateTimeHelper extends CarbonImmutable
+class DateTimeHelper extends CarbonImmutable
 {
     private Language $language;
 

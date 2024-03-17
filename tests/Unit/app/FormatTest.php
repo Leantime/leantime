@@ -2,6 +2,8 @@
 
 namespace Unit\app;
 
+use Carbon\CarbonImmutable;
+use Leantime\Core\Support\CarbonMacros;
 use Leantime\Core\Support\Format;
 use Tests\DateTimeHelper;
 use Tests\Language;
@@ -13,7 +15,7 @@ class FormatTest extends \Codeception\Test\Unit
     /**
      * @var DateTimeHelper|MockObject
      */
-    private $dateTimeHelperMock;
+    private $carbonMacrosMock;
 
     /**
      * @var Language|MockObject
@@ -22,41 +24,47 @@ class FormatTest extends \Codeception\Test\Unit
 
     protected function setUp(): void
     {
-        $this->dateTimeHelperMock = $this->createMock(\Leantime\Core\Support\DateTimeHelper::class);
+
         $this->languageMock = $this->createMock(\Leantime\Core\Language::class);
-        app()->instance(\Leantime\Core\Support\DateTimeHelper::class, $this->dateTimeHelperMock);
+        app()->instance(\Leantime\Core\Support\CarbonMacros::class, $this->carbonMacrosMock);
         app()->instance(\Leantime\Core\Language::class, $this->languageMock);
-        $this->format = new Format('2022-01-01T00:00:00Z');
+
+        //America Los_Angeles is UTC - 8 so all db times need to come back from UTC - 8 hours
+        CarbonImmutable::mixin(new CarbonMacros(
+            "America/Los_Angeles",
+            "en-US",
+            "m/d/Y",
+            "h:i A"
+        ));
+
     }
 
     public function testDate(): void
     {
-        $formattedDateString = 'Jan 1, 2022';
-        $this->dateTimeHelperMock
-            ->method('getFormattedDateStringFromISO')
-            ->willReturn($formattedDateString);
+        $formattedDateString = '12/31/2021';
+        $dbDate = "2022-01-01 00:00:00";
+        $format = new Format($dbDate, "");
 
-        $this->assertSame($formattedDateString, $this->format->date());
+        $this->assertSame($formattedDateString, $format->date());
     }
 
     public function testTime(): void
     {
-        $formattedTimeString = '00:00 AM';
-        $this->dateTimeHelperMock
-            ->method('getFormattedTimeStringFromISO')
-            ->willReturn($formattedTimeString);
+        $formattedTimeString = '04:00 PM';
+        $dbDate = "2022-01-01 00:00:00";
+        $format = new Format($dbDate, "");
 
-        $this->assertSame($formattedTimeString, $this->format->time());
+        $this->assertSame($formattedTimeString, $format->time());
     }
 
     public function testTime24(): void
     {
-        $formattedTimeString = '00:00';
-        $this->dateTimeHelperMock
-            ->method('get24HourTimestringFromISO')
-            ->willReturn($formattedTimeString);
+        $formattedTimeString = '16:00';
+        $dbDate = "2022-01-01 00:00:00";
+        $format = new Format($dbDate, "");
 
-        $this->assertSame($formattedTimeString, $this->format->time24());
+        $this->assertSame($formattedTimeString, $format->time24());
+
     }
 
     //Similarly you can add tests for other 'Format' class methods.
