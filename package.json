@@ -22,7 +22,7 @@
     "datatables.net-buttons": "^2.4.2",
     "datatables.net-rowgroup": "^1.4.1",
     "datatables.net-rowreorder": "^1.4.1",
-    "fullcalendar": "^6.1.10",
+    "fullcalendar": "^6.1.11",
     "htmx.org": "^1.9.10",
     "gridstack": "^10.1.0",
     "ical.js": "^1.5.0",
