@@ -33,8 +33,10 @@ class CreateUserCest
         $I->fillField('#department', 'Testing');
         $I->click('Invite User');
         $I->waitForElement('.growl', 120);
-        $I->wait(2);
-        $I->see('New user invited successfully');
+
+        $I->seeInDatabase('zp_user', [
+            'username' => 'john@doe.com'
+        ]);
     }
 
     #[Group('user')]

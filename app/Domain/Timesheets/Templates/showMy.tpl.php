@@ -273,62 +273,65 @@ jQuery(document).ready(function(){
                 </thead>
                 <tbody>
                     <?php
-                        $colSum = [];
+                        $colSum = [
+                            "day1" => 0,
+                            "day2" => 0,
+                            "day3" => 0,
+                            "day4" => 0,
+                            "day5" => 0,
+                            "day6" => 0,
+                            "day7" => 0,
+                        ];
                         // @todo: move all this calculations into the service the timesheets class.
-                        foreach ($tpl->get('allTimesheets') as $timeRow) {
-
-                            $timesheetId = "new";
-                            ?>
-
+                    foreach ($tpl->get('allTimesheets') as $timeRow) {
+                        $timesheetId = "new";
+                        ?>
                             <tr class="gradeA timesheetRow">
-                            <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
-                            <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
-                            <td width="10%">
+                                <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
+                                <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
+                                <td width="10%">
                                 <?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?>
-                            <?php if($timeRow['hasTimesheetOffset']){ ?>
-                                <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
-                                   data-tippy-content="This entry was likely created using a different timezone">
-                                </i>
+                            <?php if ($timeRow['hasTimesheetOffset']) { ?>
+                                    <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
+                                       data-tippy-content="This entry was likely created using a different timezone">
+                                    </i>
                             <?php } ?>
-                            </td>
+                                </td>
 
-                            <?php foreach(array_keys($timeRow) as $dayKey){
-
-                                if(str_starts_with($dayKey, "day")) {
-
+                            <?php foreach (array_keys($timeRow) as $dayKey) {
+                                if (str_starts_with($dayKey, "day")) {
                                     $colSum[$dayKey] = ($colSum[$dayKey] ?? 0) + $timeRow[$dayKey]["hours"]; ?>
 
-                                    <td width="7%" class="row<?php
+                                        <td width="7%" class="row<?php
                                             echo $dayKey;
-                                            if ($timeRow[$dayKey]["actualWorkDate"]->setToUserTimezone()->isToday()) {
-                                                echo " active";
-                                            }
+                                        if ($timeRow[$dayKey]["actualWorkDate"]->setToUserTimezone()->isToday()) {
+                                            echo " active";
+                                        }
                                         ?>">
 
 
-                                        <?php
+                                            <?php
                                             $inputNameKey = $timeRow["ticketId"] . "|" . $timeRow["kind"] . "|" . $timeRow[$dayKey]["actualWorkDate"]->formatDateForUser() . "|" .  $timeRow[$dayKey]["actualWorkDate"]->getTimestamp();
-                                        ?>
-                                        <input type="text"
-                                               class="hourCell"
-                                               name="<?php echo $inputNameKey ?>"
-                                               value="<?php echo $timeRow[$dayKey]["hours"]; ?>"
-                                        />
+                                            ?>
+                                            <input type="text"
+                                                   class="hourCell"
+                                                   name="<?php echo $inputNameKey ?>"
+                                                   value="<?php echo $timeRow[$dayKey]["hours"]; ?>"
+                                            />
 
-                                        <?php if(!empty($timeRow[$dayKey]["description"])){?>
-                                            <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]["description"]); ?>"></i>
-                                        <?php } ?>
-                                    </td>
-                            <?php
+                                            <?php if (!empty($timeRow[$dayKey]["description"])) {?>
+                                                <i class="fa fa-circle-info" data-tippy-content="<?php echo $tpl->escape($timeRow[$dayKey]["description"]); ?>"></i>
+                                            <?php } ?>
+                                        </td>
+                                    <?php
                                 }
                             } ?>
 
-                            <td width="7%" class="rowSum"><strong><?php echo $timeRow["rowSum"]; ?></strong></td>
-                        </tr>
-                        <?php } ?>
+                                <td width="7%" class="rowSum"><strong><?php echo $timeRow["rowSum"]; ?></strong></td>
+                            </tr>
+                    <?php } ?>
 
-                    <!-- Row to add new time registration -->
-
+                        <!-- Row to add new time registration -->
                         <tr class="gradeA timesheetRow">
                             <td width="14%">
                                 <div class="form-group" id="projectSelect">
@@ -388,13 +391,13 @@ jQuery(document).ready(function(){
                             $i = 0;
                             foreach ($days as $day) {
                                 ?>
-                                <td width="7%" class="row<?php echo $day ?><?php if ($dateFrom->addDays($i)->isToday()) {
+                                <td width="7%" class="rowday<?php echo ($i + 1); ?><?php if ($dateFrom->addDays($i)->isToday()) {
                                     echo " active";
                                                             } ?>">
                                     <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="0" />
                                 </td>
-                            <?php
-                            $i++;
+                                <?php
+                                $i++;
                             } ?>
                         </tr>
                 </tbody>

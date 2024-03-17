@@ -63,8 +63,12 @@ class TicketsCest
         $I->switchToIFrame();
         $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 120);
         $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
-        $I->waitForElement('.growl', 60);
+        $I->waitForElement('.growl', 120);
         $I->wait(2);
-        $I->see('To-Do was saved successfully');
+        $I->seeInDatabase('zp_tickets', [
+            'id' => 10,
+            'headline' => 'Test Ticket',
+            'description like' => '%<p>Test Description Edited</p>%',
+        ]);
     }
 }
