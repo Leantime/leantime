@@ -276,6 +276,6 @@ class Format
      */
     public function decimal(): string
     {
-        return number_format($this->value, 2);
+        return number_format((float)$this->value, 2);
     }
 }

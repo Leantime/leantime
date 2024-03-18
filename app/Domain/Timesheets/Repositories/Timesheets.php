@@ -856,12 +856,15 @@ class Timesheets extends Repository
                   VALUES (:sessionId, :ticketId, :workDate, :hoursWorked, 'GENERAL_BILLABLE')
                   ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
+
+        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp)->setToUserTimezone()->startOfDay();
+
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
         $call->prepare($query);
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
         $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', (new Carbon($inTimestamp, $_SESSION['usersettings.timezone']))->setTimezone('UTC'));
+        $call->bindValue(':workDate', $userDay->formatDateTimeForDb());
 
         $call->execute();
 

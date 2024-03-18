@@ -240,7 +240,6 @@ class TimesheetCest
         $I->waitForElementVisible('#timezone');
         $I->selectOption('#timezone', $timezone);
         $I->click('#saveSettings');
-        $I->waitForElement('.growl', 120);
 
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',

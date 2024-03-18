@@ -391,7 +391,7 @@ jQuery(document).ready(function(){
                             $i = 0;
                             foreach ($days as $day) {
                                 ?>
-                                <td width="7%" class="rowday<?php echo ($i + 1); ?><?php if ($dateFrom->addDays($i)->isToday()) {
+                                <td width="7%" class="rowday<?php echo ($i + 1); ?><?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
                                     echo " active";
                                                             } ?>">
                                     <input type="text" class="hourCell" name="new|GENERAL_BILLABLE|<?php echo $dateFrom->addDays($i)->formatDateForUser() ?>|<?php echo $dateFrom->addDays($i)->getTimestamp() ?>" value="0" />
