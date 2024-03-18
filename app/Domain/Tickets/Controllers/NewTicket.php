@@ -83,7 +83,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 ],
             ]);
 
-            $ticket->date =  format(date("Y-m-d H:i:s"))->date();
+            $ticket->date =  dtHelper()->userNow();
 
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('ticketParents', $this->ticketService->getAllPossibleParents($ticket));
@@ -106,7 +106,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
 
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             return $this->tpl->displayPartial('tickets.newTicketModal');
@@ -138,7 +138,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 } else {
                     $this->tpl->setNotification($this->language->__($result["msg"]), "error");
 
-                    $ticket = app()->make(TicketModel::class, [$params]);
+                    $ticket = app()->makeWith(TicketModel::class, ["values"=>$params]);
                     $ticket->userLastname = $_SESSION['userdata']["name"];
 
                     $this->tpl->assign('ticket', $ticket);
@@ -158,6 +158,9 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
                     $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+
+                    $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open');
+                    $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
                     return $this->tpl->displayPartial('tickets.newTicketModal');
                 }
