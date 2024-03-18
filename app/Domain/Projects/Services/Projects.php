@@ -604,7 +604,7 @@ namespace Leantime\Domain\Projects\Services {
                 return;
             }
 
-            $_SESSION['currentProject'] = '';
+            $_SESSION['currentProject'] = 0;
 
             //If last project setting is set use that
             $lastProject = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject");
