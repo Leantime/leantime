@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Projects\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Core\Template as TemplateCore;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
@@ -603,7 +604,7 @@ namespace Leantime\Domain\Projects\Services {
                 return;
             }
 
-            $_SESSION['currentProject'] = '';
+            $_SESSION['currentProject'] = 0;
 
             //If last project setting is set use that
             $lastProject = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".lastProject");
@@ -624,6 +625,17 @@ namespace Leantime\Domain\Projects\Services {
             }
 
             throw new Exception("Error trying to set a project");
+        }
+
+        /**
+         * Get current project id or 0 if no current project is set.
+         *
+         * @return int
+         */
+        public function getCurrentProjectId(): int
+        {
+            // Make sure that we never return a value less than 0.
+            return max(0, (int) ($_SESSION['currentProject'] ?? 0));
         }
 
         /**
@@ -840,10 +852,10 @@ namespace Leantime\Domain\Projects\Services {
                 'end' => $values['end'],
             );
             if ($values['start'] != null) {
-                $values['start'] = format($values['start'])->isoDate();
+                $values['start'] = format(value: $values['start'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
             }
             if ($values['end'] != null) {
-                $values['end'] = format($values['end'])->isoDateEnd();
+                $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
             }
             $this->projectRepository->addProject($values);
         }

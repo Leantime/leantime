@@ -6,6 +6,7 @@
         <option name="items">
           <set>
             <TailItem>
+              <option name="autodetectEncoding" value="true" />
               <option name="encoding" value="UTF-8" />
               <option name="path" value="$PROJECT_DIR$/logs/error.log" />
             </TailItem>

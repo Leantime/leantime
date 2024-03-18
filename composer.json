@@ -61,7 +61,10 @@
         "illuminate/pipeline": "^9.52",
         "illuminate/cache": "^9.52",
         "symfony/cache": "^6.3",
-        "nikic/php-parser": "^4.17"
+        "nikic/php-parser": "^4.17",
+        "nesbot/carbon": "^2.72",
+        "spatie/icalendar-generator": "^2.6",
+        "carbon-cli/carbon-cli": "^1.2"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.8",
@@ -88,6 +91,11 @@
         "installer-paths": {
             "app/Plugins/{$name}/": [
                 "type:leantime-plugin"
+            ]
+        },
+        "carbon": {
+            "macros": [
+                "Leantime\\Core\\Support\\CarbonMacros"
             ]
         }
     }

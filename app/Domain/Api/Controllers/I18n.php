@@ -3,6 +3,7 @@
 namespace Leantime\Domain\Api\Controllers;
 
 use Leantime\Core\Controller;
+use Leantime\Core\Environment;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -38,6 +39,9 @@ class I18n extends Controller
         foreach ($dateTimeIniSettings as $index) {
             $languageIni[$index] = $this->language->__($index, true);
         }
+
+        //Fullcalendar and other scripts can handle local to use the browser timezone
+        $languageIni["usersettings.timezone"] = $_SESSION['usersettings.timezone'] ?? "local";
 
         $decodedString = json_encode($languageIni);
 

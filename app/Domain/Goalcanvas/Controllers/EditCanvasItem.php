@@ -8,6 +8,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
+    use Leantime\Core\Support\DateTimeHelper;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Goalcanvas\Repositories\Goalcanvas as GoalcanvaRepository;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -198,8 +200,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'parent' => $params['parent'] ?? null,
                             "id" => $params['itemId'],
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => format($params['startDate'])->isoDate(),
-                            'endDate' => format($params['endDate'])->isoDateEnd(),
+                            'startDate' => format(value: $params['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
+                            'endDate' => format(value: $params['endDate'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',
@@ -209,8 +211,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                             $params['headline'] = $params['newMilestone'];
                             $params['tags'] = '#ccc';
-                            $params['editFrom'] = format(date($this->language->__("language.dateformat")))->isoDate();
-                            $params['editTo'] = format(date($this->language->__("language.dateformat"), strtotime('+1 week')))->isoDate();
+                            $params['editFrom'] =  dtHelper()->userNow()->formatDateTimeForDb();
+                            $params['editTo'] =  dtHelper()->userNow()->addDays(7)->formatDateTimeForDb();
                             $params['dependentMilestone'] = '';
                             $id = $this->ticketService->quickAddMilestone($params);
 
@@ -231,7 +233,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         ));
                         $this->tpl->assign('comments', $comments);
 
-                        $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success');
+                        $this->tpl->setNotification($this->language->__('notifications.canvas_item_updates'), 'success', 'goal_created');
 
                         $subject = $this->language->__('email_notifications.canvas_board_edited');
                         $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$params['itemId'];
@@ -260,6 +262,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                     return Frontcontroller::redirect(BASE_URL . '/goalcanvas/editCanvasItem/' . $params['itemId']);
                 } else {
+
                     if (isset($_POST['title']) && !empty($_POST['title'])) {
                         $canvasItem = array(
                             'box' => $params['box'],
@@ -274,8 +277,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                             'canvasId' => $params['canvasId'],
                             'parent' => $params['parent'] ?? null,
                             'kpi' => $params['kpi'] ?? '',
-                            'startDate' => format($params['startDate'])->isoDate(),
-                            'endDate' => format($params['endDate'])->isoDateEnd(),
+                            'startDate' => format(value: $params['startDate'], fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime(),
+                            'endDate' => format(value: $params['endDate'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime(),
                             'setting' => $params['setting'] ?? '',
                             'metricType' =>  $params['metricType'],
                             'assignedTo' => $params['assignedTo'] ?? '',

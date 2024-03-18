@@ -13,6 +13,7 @@ leantime.calendarController = (function () {
         var heightWindow = jQuery("body").height() - 260;
 
         var calendar = jQuery('#calendar').fullCalendar({
+            timeZone: leantime.i18n.__("usersettings.timezone"),
             height: heightWindow,
             header: {
                 left: 'prev,next today',
@@ -191,6 +192,7 @@ leantime.calendarController = (function () {
 
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
+            timeZone: leantime.i18n.__("usersettings.timezone"),
             height:'auto',
             initialView: initialView,
             dayHeaderFormat: userDateFormat,

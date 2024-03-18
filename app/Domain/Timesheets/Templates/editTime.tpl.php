@@ -1,6 +1,9 @@
 <?php
 
 defined('RESTRICTED') or die('Restricted access');
+
+use \Leantime\Core\Support\FromFormat;
+
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
@@ -13,21 +16,18 @@ $values = $tpl->get('values');
         jQuery(".ticket-select").chosen();
 
         jQuery(".project-select").change(function () {
-
             jQuery(".ticket-select").removeAttr("selected");
             jQuery(".ticket-select").val("");
             jQuery(".ticket-select").trigger("liszt:updated");
 
             jQuery(".ticket-select option").show();
             jQuery("#ticketSelect .chosen-results li").show();
+
             var selectedValue = jQuery(this).find("option:selected").val();
             jQuery("#ticketSelect .chosen-results li").not(".project_" + selectedValue).hide();
-
-
-        });
+       });
 
         jQuery(".ticket-select").change(function () {
-
             var selectedValue = jQuery(this).find("option:selected").attr("data-value");
             jQuery(".project-select option[value=" + selectedValue + "]").attr("selected", "selected");
             jQuery(".project-select").trigger("liszt:updated");
@@ -36,7 +36,7 @@ $values = $tpl->get('values');
         jQuery(document).ready(function ($) {
             jQuery("#datepicker, #date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
                 numberOfMonths: 1,
-                dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery")
+                dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),
@@ -50,11 +50,8 @@ $values = $tpl->get('values');
                 weekHeader: leantime.i18n.__("language.weekHeader"),
             });
         });
-
     });
-
 </script>
-
 
 <?php echo $tpl->displayNotification() ?>
 
@@ -104,7 +101,7 @@ $values = $tpl->get('values');
 
 </select><br />
 <label for="date"><?php echo $tpl->__('label.date')?></label> <input type="text" autocomplete="off"
-    id="datepicker" name="date" value="<?php echo format($values['date'])->dateUtc(); ?>" size="7" />
+    id="datepicker" name="date" value="<?php echo format(value: $values['date'], fromFormat: FromFormat::DbDate)->date(); ?>" size="7" />
 <br />
 <label for="hours"><?php echo $tpl->__('label.hours')?></label> <input
     type="text" id="hours" name="hours"
@@ -126,7 +123,7 @@ $values = $tpl->get('values');
 
             <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                   id="invoicedEmplDate" name="invoicedEmplDate"
-                                                  value="<?php echo format($values['invoicedEmplDate'])->date(); ?>"
+                                                  value="<?php echo format(value: $values['invoicedEmplDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
                                                   size="7"/><br/>
 
 
@@ -141,7 +138,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                       id="invoicedCompDate"
                                                       name="invoicedCompDate"
-                                                      value="<?php echo format($values['invoicedCompDate'])->date(); ?>"
+                                                      value="<?php echo format(value: $values['invoicedCompDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
                                                       size="7"/><br/>
 
         <br/>
@@ -155,7 +152,7 @@ $values = $tpl->get('values');
         <?php echo $tpl->__('label.date') ?>&nbsp;<input type="text" autocomplete="off"
                                                           id="paidDate"
                                                           name="paidDate"
-                                                          value="<?php echo format($values['paidDate'])->date(); ?>"
+                                                          value="<?php echo format(value: $values['paidDate'], fromFormat: FromFormat::DbDate)->date(); ?>"
                                                           size="7"/><br/>
     <?php } ?>
 
@@ -163,7 +160,7 @@ $values = $tpl->get('values');
 
     <input type="hidden" name="saveForm" value="1"/>
     <p class="stdformbutton">
-        <a class="elete editTimeModal pull-right" href="<?=BASE_URL?>/timesheets/delTime/<?=$_GET['id']?>"><?=$tpl->__('links.delete') ?></a>
+        <a class="delete editTimeModal pull-right" href="<?=BASE_URL?>/timesheets/delTime/<?=$_GET['id']?>"><?=$tpl->__('links.delete') ?></a>
         <input type="submit" value="<?php echo $tpl->__('buttons.save'); ?>" name="save" class="button" />
     </p>
 </form>

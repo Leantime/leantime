@@ -15,15 +15,7 @@
 
         <div class="center">
             <span style="font-size:44px; color:var(--main-titles-color);">
-                @php
-                    $date = new DateTime();
-                    if(!empty($_SESSION['usersettings.timezone'])){
-                        $date->setTimezone(new DateTimeZone($_SESSION['usersettings.timezone']));
-                    }
-                    $date = $date->format(__("language.timeformat"));
-                @endphp
-
-                {{ $date }}
+                {{ dtHelper()->userNow()->formatTimeForUser() }}
             </span><br />
             <span style="font-size:24px; color:var(--main-titles-color);">
                 {{ __("welcome_widget.hi") }} {{ $currentUser['firstname'] }}

@@ -24,7 +24,6 @@
         </div>
         <div class="row">
             <div class="col-md-12 tw-text-right">
-                <a href="javascript:void(0);" class="btn btn-secondary" onclick="jQuery.nmTop().close();">{{ __('links.skip_for_now') }}</a>
                 <input type="submit" value="{{ __('buttons.next') }}" />
             </div>
         </div>

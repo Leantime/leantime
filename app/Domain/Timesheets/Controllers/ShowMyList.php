@@ -1,65 +1,80 @@
 <?php
 
-namespace Leantime\Domain\Timesheets\Controllers {
+namespace Leantime\Domain\Timesheets\Controllers;
 
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
-    use Leantime\Domain\Auth\Services\Auth;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Leantime\Core\Controller;
+use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+use Leantime\Domain\Auth\Services\Auth;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ *
+ */
+class ShowMyList extends Controller
+{
+    private TimesheetService $timesheetService;
 
     /**
+     * @param TimesheetService $timesheetService
      *
+     * @return void
      */
-    class ShowMyList extends Controller
+    public function init(TimesheetService $timesheetService): void
     {
-        private TimesheetService $timesheetService;
+        $this->timesheetService = $timesheetService;
+        $_SESSION['lastPage'] = BASE_URL . "/timesheets/showMyList";
+    }
 
-        /**
-         * @param TimesheetService $timesheetService
-         * @return void
-         */
-        public function init(TimesheetService $timesheetService): void
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+    /**
+     * run - display template and edit data
+     *
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function run(): Response
+    {
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-            $this->timesheetService = $timesheetService;
-
-            $_SESSION['lastPage'] = BASE_URL . "/timesheets/showMyList";
+        $kind = 'all';
+        if (!empty($_POST['kind'])) {
+            $kind = ($_POST['kind']);
         }
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
-        {
-            $projectFilter =  $_SESSION['currentProject'];
-            $dateFrom = mktime(0, 0, 0, date("m"), '1', date("Y"));
-            $dateTo = mktime(0, 0, 0, date("m"), date("t"), date("Y"));
-            $dateFrom = date("Y-m-d 00:00:00", $dateFrom);
-            $dateTo = date("Y-m-d 00:00:00", $dateTo);
-            $kind = 'all';
+        // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
+        // The front end javascript is hardcode to start the week on mondays, so we use that here too.
 
-            if (isset($_POST['kind']) && $_POST['kind'] != '') {
-                $kind = ($_POST['kind']);
-            }
+        //Get start of the week in current users timezone and then switch to UTC
+        $dateFrom = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
+        $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
 
-            if (isset($_POST['dateFrom']) && $_POST['dateFrom'] != '') {
-                $dateFrom =  format($_POST['dateFrom'])->isoDate();
-            }
-
-            if (isset($_POST['dateTo']) && $_POST['dateTo'] != '') {
-                $dateTo =  format($_POST['dateTo'])->isoDateEnd();
-            }
-
-            $this->tpl->assign('dateFrom', $dateFrom);
-            $this->tpl->assign('dateTo', $dateTo);
-            $this->tpl->assign('actKind', $kind);
-            $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
-            $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(-1, $kind, $dateFrom, $dateTo, $_SESSION['userdata']['id'], 0, 0, "-1", 0));
-
-            return $this->tpl->display('timesheets.showMyList');
+        if (!empty($_POST['dateFrom'])) {
+            $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();
         }
+
+        if (!empty($_POST['dateTo'])) {
+            $dateTo = dtHelper()->parseUserDateTime($_POST['dateTo'])->setToDbTimezone();
+        }
+
+        $this->tpl->assign('dateFrom', $dateFrom);
+        $this->tpl->assign('dateTo', $dateTo);
+        $this->tpl->assign('actKind', $kind);
+        $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
+        $this->tpl->assign('allTimesheets', $this->timesheetService->getAll(
+            dateFrom: $dateFrom,
+            dateTo: $dateTo,
+            projectId: -1,
+            kind: $kind,
+            userId: $_SESSION['userdata']['id'],
+            invEmpl: 0,
+            invComp: 0,
+            paid: 0
+        ));
+
+        return $this->tpl->display('timesheets.showMyList');
     }
 }

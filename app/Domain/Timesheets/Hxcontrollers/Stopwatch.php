@@ -26,6 +26,7 @@ class Stopwatch extends HtmxController
      * Controller constructor
      *
      * @param Timesheets $timesheetService
+     *
      * @return void
      */
     public function init(Timesheets $timesheetService): void
@@ -87,7 +88,7 @@ class Stopwatch extends HtmxController
 
         if (isset($params["action"]) === true && $params["action"] == "start") {
             $ticketId = filter_var($params["ticketId"], FILTER_SANITIZE_NUMBER_INT);
-            if($ticketId > 0){
+            if ($ticketId > 0) {
                 $this->timesheetService->punchIn($ticketId);
             }
         }

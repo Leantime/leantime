@@ -1,143 +1,152 @@
 <?php
 
-namespace Leantime\Domain\Timesheets\Controllers {
+namespace Leantime\Domain\Timesheets\Controllers;
 
-    use DateTime;
-    use Leantime\Core\Controller;
-    use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-    use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
-    use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
-    use Leantime\Domain\Auth\Services\Auth;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Leantime\Core\Controller;
+use Leantime\Core\Support\DateTimeHelper;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
+use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
+use Leantime\Domain\Tickets\Repositories\Tickets as TicketRepository;
+use Leantime\Domain\Timesheets\Services\Timesheets as TimesheetService;
+use Leantime\Domain\Users\Repositories\Users as UserRepository;
+use Leantime\Domain\Auth\Services\Auth;
+use PHPUnit\Exception;
+use Symfony\Component\HttpFoundation\Response;
+
+/**
+ *
+ */
+class ShowMy extends Controller
+{
+    private timesheetService $timesheetService;
+    private TimesheetRepository $timesheetRepo;
+    private ProjectRepository $projects;
+    private TicketRepository $tickets;
+    private UserRepository $userRepo;
 
     /**
+     * init - initialze private variables
      *
+     * @param TimesheetService    $timesheetService
+     * @param TimesheetRepository $timesheetRepo
+     * @param ProjectRepository   $projects
+     * @param TicketRepository    $tickets
+     * @param UserRepository      $userRepo
+     *
+     * @return void
      */
-    class ShowMy extends Controller
+    public function init(
+        TimesheetService $timesheetService,
+        TimesheetRepository $timesheetRepo,
+        ProjectRepository $projects,
+        TicketRepository $tickets,
+        UserRepository $userRepo
+    ): void {
+        $this->timesheetService = $timesheetService;
+        $this->timesheetRepo = $timesheetRepo;
+        $this->projects = $projects;
+        $this->tickets = $tickets;
+        $this->userRepo = $userRepo;
+    }
+
+    /**
+     * run - display template and edit data
+     *
+     * @return Response
+     *
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function run(): Response
     {
-        private TimesheetRepository $timesheetsRepo;
-        private ProjectRepository $projects;
-        private TicketRepository $tickets;
-        private UserRepository $userRepo;
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
 
-        /**
-         * init - initialze private variables
-         *
-         * @access public
-         */
-        public function init(
-            TimesheetRepository $timesheetsRepo,
-            ProjectRepository $projects,
-            TicketRepository $tickets,
-            UserRepository $userRepo
-        ) {
-            $this->timesheetsRepo = $timesheetsRepo;
-            $this->projects = $projects;
-            $this->tickets = $tickets;
-            $this->userRepo = $userRepo;
+        // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
+        // The front end javascript is hardcode to start the week on mondays, so we use that here too.
+
+        //Get start of the week in current users timezone and then switch to UTC
+        $fromDate = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
+
+        $kind = 'all';
+        if (isset($_POST['search'])) {
+            // User date comes is in user date format and user timezone. Change it to utc.
+            if (!empty($_POST['startDate'])) {
+                $fromDate =   dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
+            }
         }
 
-        /**
-         * run - display template and edit data
-         *
-         * @access public
-         */
-        public function run()
-        {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager, Roles::$editor], true);
+        if (isset($_POST['saveTimeSheet'])) {
+            $this->saveTimeSheet($_POST);
+        }
 
-            $invEmplCheck = '0';
-            $invCompCheck = '0';
+        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, $_SESSION['userdata']['id']);
 
-            //Start with user monday 00:00 of this week in user timezone.
-            $dateStart = new \DateTime('Monday this week', new \DateTimeZone($_SESSION['usersettings.timezone']));
+        $this->tpl->assign('dateFrom', $fromDate);
+        $this->tpl->assign('actKind', $kind);
+        $this->tpl->assign('kind', $this->timesheetRepo->kind);
+        $this->tpl->assign('allProjects', $this->projects->getUserProjects(
+            userId: $_SESSION["userdata"]["id"],
+            projectTypes: "project"
+        ));
+        $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
+            id: $_SESSION["userdata"]["id"],
+            limit: -1
+        ));
+        $this->tpl->assign('allTimesheets', $myTimesheets);
 
-            //Change to UTC for processing
-            $dateStart->setTimezone(new \DateTimeZone("UTC"));
-            $dateFrom = $dateStart->format("Y-m-d H:i:s");
+        return $this->tpl->display('timesheets.showMy');
+    }
 
-            $kind = 'all';
+    /**
+     * @param array $postData
+     *
+     * @return void
+     *
+     * @throws BindingResolutionException
+     */
+    public function saveTimeSheet(array $postData): void
+    {
 
-            if (isset($_POST['search']) === true) {
+        foreach ($postData as $key => $dateEntry) {
+            // The temp data should contain four parts, spectated by "|":
+            // TICKET ID | Type of booked hours | Date | Timestamp
+            $tempData = explode("|", $key);
 
-                //User date comes is in user date format and user timezone. change to utc and iso
-                if (isset($_POST['startDate']) === true && $_POST['startDate'] != "") {
-                    $dateFrom = format($_POST['startDate'])->isoDate();
+            if (count($tempData) === 4) {
+                $ticketId =  $tempData[0];
+                $kind = $tempData[1];
+                $date = $tempData[2];
+                $timestamp = $tempData[3];
+                $hours = $dateEntry;
+
+                // if ticket ID is set to new, pull id and hour type from form field
+                if ($ticketId === "new" || $ticketId === 0) {
+                    $ticketId = (int)$postData["ticketId"];
+                    $kind = $postData["kindId"];
                 }
-            }
 
-            if (isset($_POST['saveTimeSheet']) === true) {
-                $this->saveTimeSheet($_POST);
+                $values = array(
+                    "userId" => $_SESSION["userdata"]["id"],
+                    "ticket" => $ticketId,
+                    "date" => $date,
+                    "timestamp" => $timestamp,
+                    "hours" => $hours,
+                    "kind" => $kind,
+                );
 
-                $this->tpl->setNotification('Timesheet successfully updated', 'success');
-            }
-
-            $myTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(-1, $dateFrom, $_SESSION['userdata']['id']);
-
-
-            //Ensure we assume this is UTC
-            $dateFromDate = new  DateTime($dateFrom, new \DateTimeZone("UTC"));
-            $this->tpl->assign('dateFrom',$dateFromDate);
-            $this->tpl->assign('actKind', $kind);
-            $this->tpl->assign('kind', $this->timesheetsRepo->kind);
-            $this->tpl->assign('allProjects', $this->projects->getUserProjects(userId: $_SESSION["userdata"]["id"], projectTypes: "project" ));
-            $this->tpl->assign('allTickets', $this->tickets->getUsersTickets($_SESSION["userdata"]["id"], -1));
-            $this->tpl->assign('allTimesheets', $myTimesheets);
-
-            return $this->tpl->display('timesheets.showMy');
-        }
-
-        /**
-         * @param $postData
-         * @return void
-         */
-        public function saveTimeSheet($postData): void
-        {
-            $ticketId = "";
-
-            $currentTimesheetId = -1;
-            $userinfo = $this->userRepo->getUser($_SESSION["userdata"]["id"]);
-
-            foreach ($postData as $key => $dateEntry) {
-                //Receiving a string of
-                //TICKET ID | New or existing timesheetID | Current Date | Type of booked hours
-                $tempData = explode("|", $key);
-
-                if (count($tempData) == 4) {
-                    $ticketId = $tempData[0];
-                    $isCurrentTimesheetEntry = $tempData[1];
-                    $currentDate = $tempData[2];
-                    $hours = $dateEntry;
-
-                    //No ticket ID set, ticket id comes from form fields
-                    if ($ticketId == "new") {
-                        $ticketId = $postData["ticketId"];
-                        $kind = $postData["kindId"];
-                    } else {
-                        $kind = $tempData[3];
-                    }
-
-                    $values = array(
-                        "userId" => $_SESSION["userdata"]["id"],
-                        "ticket" => $ticketId,
-                        "date" => format($currentDate)->isoDate(),
-                        "hours" => $hours,
-                        "kind" => $kind,
-                        "rate" => $userinfo["wage"],
-
-                    );
-
-                    if ($isCurrentTimesheetEntry == "new") {
-                        if ($values["hours"] > 0) {
-                            $this->timesheetsRepo->simpleInsert($values);
-                        }
-                    } else {
-                        $this->timesheetsRepo->UpdateHours($values);
-                    }
+                try {
+                    $this->timesheetService->upsertTime($ticketId, $values);
+                    $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
+                } catch (\Exception $e) {
+                    $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
+                    error_log($e);
+                    continue;
                 }
             }
         }
     }
-
 }

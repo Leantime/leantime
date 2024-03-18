@@ -16,7 +16,7 @@ $project = $tpl->get('project');
     <input type="text" name="projectName" value="<?=$tpl->__('label.copy_of')?> <?php $tpl->e($project['name'])?>" /><br />
 
     <label><?=$tpl->__('label.planned_start_date') ?></label>
-    <input type="text" name="startDate" class="projectDateFrom" value="<?php echo $tpl->getFormattedDateString(date("Y-m-d")) ?>" placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
+    <input type="text" name="startDate" class="projectDateFrom" value="<?php echo format(date("Y-m-d"))->date()?>" placeholder="<?=$tpl->__('language.dateformat') ?>" id="sprintStart" /><br />
 
     <label><?=$tpl->__('label.client_product') ?></label>
     <select name="clientId" id="clientId">

@@ -3,6 +3,7 @@
 namespace Acceptance;
 
 use Codeception\Attribute\Depends;
+use Codeception\Attribute\Group;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
@@ -13,12 +14,13 @@ class TicketsCest
         $loginPage->login('test@leantime.io', 'test');
     }
 
+    #[Group('timesheet', 'ticket')]
+    #[Depends('Acceptance\InstallCest:createDBSuccessfully')]
     public function createTicket(AcceptanceTester $I)
     {
         $I->wantTo('Create a ticket');
 
         $I->amOnPage('/tickets/showKanban#/tickets/newTicket');
-        echo $I->grabPageSource();
         $I->waitForElementVisible(".main-title-input", 120);
         $I->fillField(["class" => "main-title-input"], 'Test Ticket');
         $I->click('.tagsinput');
@@ -41,6 +43,7 @@ class TicketsCest
         ]);
     }
 
+    #[Group('ticket')]
     #[Depends('createTicket')]
     public function editTicket(AcceptanceTester $I)
     {
@@ -60,8 +63,12 @@ class TicketsCest
         $I->switchToIFrame();
         $I->waitForElementClickable('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]', 120);
         $I->click('//*[@id="ticketdetails"]//input[@name="saveTicket"][@type="submit"]');
-        $I->waitForElement('.growl', 60);
+        $I->waitForElement('.growl', 120);
         $I->wait(2);
-        $I->see('To-Do was saved successfully');
+        $I->seeInDatabase('zp_tickets', [
+            'id' => 10,
+            'headline' => 'Test Ticket',
+            'description like' => '%<p>Test Description Edited</p>%',
+        ]);
     }
 }

@@ -71,12 +71,12 @@ namespace Leantime\Domain\Dashboard\Controllers {
          */
         public function get(): Response
         {
-
-            if (!isset($_SESSION['currentProject']) || $_SESSION['currentProject'] == '') {
+            $currentProjectId = $this->projectService->getCurrentProjectId();
+            if (0 === $currentProjectId) {
                 return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
             }
 
-            $project = $this->projectService->getProject($_SESSION['currentProject']);
+            $project = $this->projectService->getProject($currentProjectId);
             if (isset($project['id']) === false) {
                 return FrontcontrollerCore::redirect(BASE_URL . "/dashboard/home");
             }
@@ -86,14 +86,14 @@ namespace Leantime\Domain\Dashboard\Controllers {
                 return FrontcontrollerCore::redirect(BASE_URL . $projectRedirectFilter);
             }
 
-            [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
+            [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($currentProjectId);
             $this->tpl->assign("progressSteps", $progressSteps);
             $this->tpl->assign("percentDone", $percentDone);
 
-            $project['assignedUsers'] = $this->projectService->getProjectUserRelation($_SESSION['currentProject']);
+            $project['assignedUsers'] = $this->projectService->getProjectUserRelation($currentProjectId);
             $this->tpl->assign('project', $project);
 
-            $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $_SESSION['currentProject'], Reactions::$favorite);
+            $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $currentProjectId, Reactions::$favorite);
             if ($userReaction && is_array($userReaction) && count($userReaction) > 0) {
                 $this->tpl->assign("isFavorite", true);
             } else {
@@ -103,9 +103,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->tpl->assign('allUsers', $this->userService->getAll());
 
             //Project Progress
-            $progress = $this->projectService->getProjectProgress($_SESSION['currentProject']);
+            $progress = $this->projectService->getProjectProgress($currentProjectId);
             $this->tpl->assign('projectProgress', $progress);
-            $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($_SESSION['currentProject']));
+            $this->tpl->assign("currentProjectName", $this->projectService->getProjectName($currentProjectId));
 
             //Milestones
 
@@ -127,20 +127,20 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $comment = array_map(function ($comment) use ($comments) {
                 $comment['replies'] = $comments->getReplies($comment['id']);
                 return $comment;
-            }, $comments->getComments('project', $_SESSION['currentProject'], 0));
+            }, $comments->getComments('project', $currentProjectId, 0));
 
 
             $url = parse_url(CURRENT_URL);
             $this->tpl->assign('delUrlBase', $url['scheme'] . '://' . $url['host'] . $url['path'] . '?delComment='); // for delete comment
 
             $this->tpl->assign('comments', $comment);
-            $this->tpl->assign('numComments', $comments->countComments('project', $_SESSION['currentProject']));
+            $this->tpl->assign('numComments', $comments->countComments('project', $currentProjectId));
 
             $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
             $this->tpl->assign("completedOnboarding", $completedOnboarding);
 
             // TICKETS
-            $this->tpl->assign('tickets', $this->ticketService->getLastTickets($_SESSION['currentProject']));
+            $this->tpl->assign('tickets', $this->ticketService->getLastTickets($currentProjectId));
             $this->tpl->assign("onTheClock", $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
@@ -176,9 +176,10 @@ namespace Leantime\Domain\Dashboard\Controllers {
             // Manage Post comment
             $comments = app()->make(CommentRepository::class);
             if (isset($_POST['comment']) === true) {
-                $project = $this->projectService->getProject($_SESSION['currentProject']);
+                $currentProjectId = $this->projectService->getCurrentProjectId();
+                $project = $this->projectService->getProject($currentProjectId);
 
-                if ($this->commentService->addComment($_POST, "project", $_SESSION['currentProject'], $project)) {
+                if ($project && $this->commentService->addComment($_POST, "project", $currentProjectId, $project)) {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success", "dashboardcomment_created");
                 } else {
                     $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");

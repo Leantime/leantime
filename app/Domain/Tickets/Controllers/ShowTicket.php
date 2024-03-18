@@ -2,8 +2,10 @@
 
 namespace Leantime\Domain\Tickets\Controllers {
 
+    use Carbon\Carbon;
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
     use Leantime\Domain\Sprints\Services\Sprints as SprintService;
@@ -154,7 +156,12 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
 
-            $this->tpl->assign("timesheetValues", array("kind" => "", "date" => date($this->language->__("language.dateformat")), "hours" => "", "description" => ""));
+            $this->tpl->assign("timesheetValues", array(
+                "kind" => "",
+                "date" => Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'),
+                "hours" => "",
+                "description" => "",
+            ));
 
             //TODO: Refactor thumbnail generation in file manager
             $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
@@ -164,6 +171,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $response = $this->tpl->displayPartial('tickets.showTicketModal');
             $response->headers->set('HX-Trigger', 'ticketUpdate');
+
             return $response;
         }
 
@@ -226,9 +234,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $params['id'] = $id;
 
                 //Prepare values, time comes in as 24hours from time input. Service expects time to be in local user format
-                $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->time24toLocalTime(ignoreTimezone: true);
-                $params['timeFrom'] = format($params['timeFrom'] ?? '')->time24toLocalTime(ignoreTimezone: true);
-                $params['timeTo'] = format($params['timeTo'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+                $params['timeFrom'] = format(value: $params['timeFrom'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+                $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
 
                 $result = $this->ticketService->updateTicket($params);
 

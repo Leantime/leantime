@@ -4,6 +4,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Controller;
+    use Leantime\Core\Support\FromFormat;
     use Leantime\Domain\Auth\Models\Roles;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
     use Leantime\Domain\Tickets\Services\Tickets as TicketService;
@@ -120,9 +121,9 @@ namespace Leantime\Domain\Tickets\Controllers {
         {
             if (isset($params['saveTicket']) || isset($params['saveAndCloseTicket'])) {
 
-                $params['timeToFinish'] = format($params['timeToFinish'] ?? '')->time24toLocalTime(ignoreTimezone: true);
-                $params['timeFrom'] = format($params['timeFrom'] ?? '')->time24toLocalTime(ignoreTimezone: true);
-                $params['timeTo'] = format($params['timeTo'] ?? '')->time24toLocalTime(ignoreTimezone: true);
+                $params['timeToFinish'] = format(value: $params['timeToFinish'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+                $params['timeFrom'] = format(value: $params['timeFrom'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
+                $params['timeTo'] = format(value: $params['timeTo'] ?? '', fromFormat: FromFormat::User24hTime)->userTime24toUserTime();
 
                 $result = $this->ticketService->addTicket($params);
 
@@ -161,6 +162,8 @@ namespace Leantime\Domain\Tickets\Controllers {
                     return $this->tpl->displayPartial('tickets.newTicketModal');
                 }
             }
+
+            return Frontcontroller::redirect(BASE_URL . "/tickets/newTicket");
         }
     }
 

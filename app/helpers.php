@@ -1,18 +1,18 @@
 <?php
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Str;
 use Illuminate\View\Factory;
 use Leantime\Core\Application;
 use Leantime\Core\AppSettings;
 use Leantime\Core\Bootloader;
-use Leantime\Core\HtmxRequest;
-use Leantime\Core\IncomingRequest;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
 use Leantime\Core\Support\Format;
+use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\Mix;
+use Carbon\Carbon;
+
 
 if (! function_exists('app')) {
     /**
@@ -201,16 +201,15 @@ if (! function_exists('build')) {
 if (! function_exists('format')) {
     /**
      * Returns a format object to format string values
-     * @param string|int|float $value
-     * @return Format
-     **/
-    function format(string|int|float|null|\DateTime $value, string|int|float|null|\DateTime $value2 =null): Format
+     *
+     * @param string|int|float|DateTime|null $value
+     * @param string|int|float|DateTime|null $value2
+     *
+     * @return Format|string
+     */
+    function format(string|int|float|null|\DateTime|Carbon $value, string|int|float|null|\DateTime $value2 =null, null|FromFormat $fromFormat = FromFormat::DbDate): Format|string
     {
-        if ($value instanceof \DateTime) {
-            $value = $value->format("Y-m-d H:i:s");
-        }
-
-        return new Format($value, $value2);
+        return new Format($value, $value2, $fromFormat);
     }
 }
 
@@ -262,3 +261,23 @@ if (! function_exists('mix')) {
         return $mix($path, $manifestDirectory);
     }
 }
+
+
+if (! function_exists('dtHelper')) {
+
+    /**
+     * Get a singleton instance of the DateTimeHelper class.
+     *
+     * @return \Leantime\Core\Support\DateTimeHelper
+     **/
+    function dtHelper() {
+
+        if (! ($app = app())->bound(\Leantime\Core\Support\DateTimeHelper::class)) {
+            app()->singleton(\Leantime\Core\Support\DateTimeHelper::class);
+        }
+
+        return app()->make(\Leantime\Core\Support\DateTimeHelper::class);
+    }
+
+}
+
