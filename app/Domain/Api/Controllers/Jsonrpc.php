@@ -366,12 +366,15 @@ class Jsonrpc extends Controller
      */
     private function returnError(string $errorMessage, int $errorcode, mixed $additional_info = null, int|string|null $id = 0): Response
     {
+
+        //TODO: And FYI. json_encode cannot encode throwable. https://github.com/pmjones/throwable-properties
+        //For now we'll just return the message
         return $this->tpl->displayJson([
             'jsonrpc' => '2.0',
             'error' => [
                 'code' => $errorcode,
                 'message' => $errorMessage,
-                'data' => $additional_info,
+                'data' => $additional_info->getMessage(),
             ],
             'id' => $id,
         ]);
