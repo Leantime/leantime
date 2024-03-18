@@ -232,15 +232,25 @@ class Ldap
                 }
             }
         }
-        //Find Firstname & Lastname
-        $firstname = isset($entries[0][$this->ldapKeys->firstname]) ? $entries[0][$this->ldapKeys->firstname][0] : '';
-        $lastname = isset($entries[0][$this->ldapKeys->lastname]) ? $entries[0][$this->ldapKeys->lastname][0] : '';
-        $phone = isset($entries[0][$this->ldapKeys->phone]) ? $entries[0][$this->ldapKeys->phone][0] : '';
-        $uname = isset($entries[0][$this->ldapKeys->email]) ? $entries[0][$this->ldapKeys->email][0] : '';
-        $jobTitle = isset($entries[0][$this->ldapKeys->jobTitle]) ? $entries[0][$this->ldapKeys->jobTitle][0] : '';
-        $jobLevel = isset($entries[0][$this->ldapKeys->jobLevel]) ? $entries[0][$this->ldapKeys->jobLevel][0] : '';
-        $department = isset($entries[0][$this->ldapKeys->department]) ? $entries[0][$this->ldapKeys->department][0] : '';
 
+        /*
+         *  The ldap_get_entries function returns all LDAP atribute names in lowercase to insure consistency.
+         *  A few of these were not camelCase and were already lowercase so they showed up ie; lastname
+         *  But givenName did not as it needed to be normalized to match the PHP LDAP return
+         *  Example before and after code change - which has been applied to all LDAP vars in the same fashion
+            $firstname = isset($entries[0][$this->ldapKeys->firstname])             ? $entries[0][           $this->ldapKeys->firstname ][0] : '';
+            $firstname = isset($entries[0][strtolower($this->ldapKeys->firstname)]) ? $entries[0][strtolower($this->ldapKeys->firstname)][0] : '';
+        */
+
+        //Find Firstname & Lastname
+        $firstname = isset($entries[0][strtolower($this->ldapKeys->firstname)]) ? $entries[0][strtolower($this->ldapKeys->firstname)][0] : '';
+        $lastname = isset($entries[0][strtolower($this->ldapKeys->lastname)]) ? $entries[0][strtolower($this->ldapKeys->lastname)][0] : '';
+        $phone = isset($entries[0][strtolower($this->ldapKeys->phone)]) ? $entries[0][strtolower($this->ldapKeys->phone)][0] : '';
+        $uname = isset($entries[0][strtolower($this->ldapKeys->email)]) ? $entries[0][strtolower($this->ldapKeys->email)][0] : '';
+        $jobTitle = isset($entries[0][strtolower($this->ldapKeys->jobTitle)]) ? $entries[0][strtolower($this->ldapKeys->jobTitle)][0] : '';
+        $jobLevel = isset($entries[0][strtolower($this->ldapKeys->jobLevel)]) ? $entries[0][strtolower($this->ldapKeys->jobLevel)][0] : '';
+        $department = isset($entries[0][strtolower($this->ldapKeys->department)]) ? $entries[0][strtolower($this->ldapKeys->department)][0] : '';
+	
         if ($this->config->debug) {
             error_log("LEANTIME: Testing the logging\n");
 
