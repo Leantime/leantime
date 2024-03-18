@@ -36,7 +36,7 @@ $values = $tpl->get('values');
         jQuery(document).ready(function ($) {
             jQuery("#datepicker, #date, #invoicedCompDate, #invoicedEmplDate, #paidDate").datepicker({
                 numberOfMonths: 1,
-                dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery")
+                dateFormat:  leantime.dateHelper.getFormatFromSettings("dateformat", "jquery"),
                 dayNames: leantime.i18n.__("language.dayNames").split(","),
                 dayNamesMin:  leantime.i18n.__("language.dayNamesMin").split(","),
                 dayNamesShort: leantime.i18n.__("language.dayNamesShort").split(","),

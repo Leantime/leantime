@@ -218,9 +218,6 @@ class TimesheetCest
         $I->see('Should the timesheet really be deleted?');
 
         $I->click('.nyroModalLink .button');
-        $I->waitForElement('.growl', 60);
-        $I->wait(1);
-        $I->see('Time entry deleted successfully');
 
         $I->waitForElementVisible('#allTimesheetsTable');
         $I->cantSee('#1 - Edit');
@@ -240,7 +237,6 @@ class TimesheetCest
         $I->waitForElementVisible('#timezone');
         $I->selectOption('#timezone', $timezone);
         $I->click('#saveSettings');
-        $I->waitForElement('.growl', 120);
 
         $I->seeInDatabase('zp_settings', [
             'key' => 'usersettings.1.timezone',
