@@ -52,5 +52,38 @@ People *love* thorough bug reports. I'm not even kidding.
 ## Use a Consistent Coding Style
 We are using the [PSR-12 coding style](https://www.php-fig.org/psr/psr-12/) for PHP. 
 
+### Naming conventions
+
+As mentioned above we are following PSR-12 naming conventions. Some areas are not covered in the standard and will be covered in this section. For sake of completion we include all naming conventions in this section.
+
+**Classes**
+Pascal Case (Example: `Leantime.Core.FrontController`
+
+**Class Methods**
+Camel Case (Example: `$object->getItem()`
+
+**Variable Names**
+Camel Case (Example: `$variableName`)
+
+**Array Index Keys**
+Camel Case (Example: `$array['indexDefinition']`)
+
+**Constants**
+Macro Case (Example: `MY_CONSTANT`)
+
+**Event Strings**
+Pascal Case with periods for the path (Example: `Leantime.Core.Method.SomeEvent`)
+
+**HTML elements, classes, ids**
+Kebab Case (Example: `<div class="my-class" id="my-id">`
+
+**Blade Components**
+Kebab Case (Example: `<x-global::my-directive>`
+
+**Blade File Names**
+Kebab Case + `blade.php` (Example: my-directive.blade.php`)
+
+
+
 ## References
 This document was adapted from the open-source contribution guidelines for [Facebook's Draft](https://github.com/facebookarchive/draft-js/blob/5dd99d327066f5f0b30b95ab95770822cff1ac65/CONTRIBUTING.md)
