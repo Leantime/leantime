@@ -160,8 +160,8 @@ IDE key in the ``.dev/xdebug.ini`` file(or alternatively, on your IDE). You also
 * Replace all files in your directory with the updated version
 * If there were any database changes, the system will redirect you to `<yourdomain.com>/update`
 
-#### Script
-* Execute ./updateLeantime.sh in the root of your leantime application.
+#### CLI
+* Run `bin/leantime system:update` 
 
 #### Docker
 * Before updating, make sure your mysql container was started using a mounted volume, otherwise your content will be deleted
