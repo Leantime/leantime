@@ -13,8 +13,8 @@
     <div class="row" id="yourToDoContainer">
         <div class="col-md-12">
             <div class="tw-mb-l">
-
-                <form method="get">
+                @if($allAssignedprojects)
+                    <form method="get">
                     @dispatchEvent("beforeTodoWidgetGroupByDropdown")
 
                     <a href="javascript:void(0);"
@@ -104,6 +104,7 @@
                     @dispatchEvent("afterTodoWidgetGroupByDropdown")
                     <div class="clearall"></div>
                 </form>
+                @endif
             </div>
             <div class="hideOnLoad " id="ticket_new" style="padding-top:5px; padding-bottom:15px;">
 
@@ -153,7 +154,9 @@
                     <br />
                     <h4>{{ __("headlines.no_todos_this_week") }}</h4>
                     {{ __("text.take_the_day_off") }}
-                    <a href='{{ BASE_URL }}/tickets/showAll'>{{ __("links.goto_backlog") }}</a><br/><br/>
+                    @if($allAssignedprojects)
+                        <a href='{{ BASE_URL }}/tickets/showAll'>{{ __("links.goto_backlog") }}</a><br/><br/>
+                    @endif
                 </div>
                 @endif
 

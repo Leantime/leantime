@@ -17,14 +17,18 @@ leantime.modals = (function () {
             callbacks: {
                 beforePostSubmit: function () {
                     jQuery(".showDialogOnLoad").show();
+
                     if(tinymce.editors.length>0) {
 
-                        if(typeof jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce() !== "undefined" &&
-                            jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce() != null &&
-                            jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().length > 0) {
-                            jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().save();
-                            jQuery('textarea.complexEditor, textarea.tinymceSimple').tinymce().remove();
-                        }
+                        jQuery(".simpleEditor").each(function() {
+                            jQuery(this).tinymce().save();
+                            jQuery(this).tinymce().remove();
+                        });
+
+                        jQuery(".complexEditor").each(function() {
+                            jQuery(this).tinymce().save();
+                            jQuery(this).tinymce().remove();
+                        });
                     }
                 },
                 beforeShowCont: function () {
