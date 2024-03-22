@@ -40,32 +40,32 @@ namespace Carbon
 {
     class CarbonImmutable
     {
-        public function formatDateForUser()
+        public function formatDateForUser(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:59
         }
 
-        public function formatTimeForUser()
+        public function formatTimeForUser(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:77
         }
 
-        public function format24HTimeForUser()
+        public function format24HTimeForUser(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:95
         }
 
-        public function formatDateTimeForDb()
+        public function formatDateTimeForDb(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:113
         }
 
-        public function setToUserTimezone()
+        public function setToUserTimezone(): CarbonInterface
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:130
         }
 
-        public function setToDbTimezone()
+        public function setToDbTimezone(): CarbonInterface
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:145
         }
@@ -74,34 +74,37 @@ namespace Carbon
 
 namespace Illuminate\Support
 {
+
+    use Carbon\CarbonInterface;
+
     class Carbon
     {
-        public function formatDateForUser()
+        public function formatDateForUser(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:59
         }
 
-        public function formatTimeForUser()
+        public function formatTimeForUser(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:77
         }
 
-        public function format24HTimeForUser()
+        public function format24HTimeForUser(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:95
         }
 
-        public function formatDateTimeForDb()
+        public function formatDateTimeForDb(): String
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:113
         }
 
-        public function setToUserTimezone()
+        public function setToUserTimezone(): CarbonInterface
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:130
         }
 
-        public function setToDbTimezone()
+        public function setToDbTimezone(): CarbonInterface
         {
             // Content, see src/app/Core/Support/CarbonMacros.php:145
         }

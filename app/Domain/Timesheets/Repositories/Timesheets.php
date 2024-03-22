@@ -4,6 +4,7 @@ namespace Leantime\Domain\Timesheets\Repositories;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use DateTime;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -42,20 +43,20 @@ class Timesheets extends Repository
     /**
      * getAll - get all timesheet entries
      *
-     * @param int         $id
+     * @param int|null $id
      * @param string|null $kind
-     * @param Carbon|null $dateFrom
-     * @param Carbon|null $dateTo
-     * @param int|null    $userId
+     * @param CarbonInterface|null $dateFrom
+     * @param CarbonInterface|null $dateTo
+     * @param int|null $userId
      * @param string|null $invEmpl
      * @param string|null $invComp
      * @param string|null $paid
-     * @param int|null    $clientId
-     * @param int|null    $ticketFilter
+     * @param int|null $clientId
+     * @param int|null $ticketFilter
      *
      * @return array|false
      */
-    public function getAll(?int $id, ?string $kind, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
+    public function getAll(?int $id, ?string $kind, ?CarbonInterface $dateFrom, ?CarbonInterface $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
         $query = "SELECT
                     zp_timesheets.id,
@@ -252,12 +253,12 @@ class Timesheets extends Repository
 
     /**
      * @param int             $projectId
-     * @param CarbonImmutable $fromDate
+     * @param CarbonInterface $fromDate
      * @param int             $userId
      *
      * @return mixed
      */
-    public function getWeeklyTimesheets(int $projectId, CarbonImmutable $fromDate, int $userId = 0): mixed
+    public function getWeeklyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): mixed
     {
         $query = "SELECT
             zp_timesheets.id,

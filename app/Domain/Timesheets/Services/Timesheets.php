@@ -2,8 +2,7 @@
 
 namespace Leantime\Domain\Timesheets\Services;
 
-use Carbon\Carbon;
-use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Tickets\Models\Tickets;
@@ -264,8 +263,8 @@ class Timesheets
     }
 
     /**
-     * @param CarbonImmutable $dateFrom
-     * @param CarbonImmutable $dateTo
+     * @param CarbonInterface $dateFrom
+     * @param CarbonInterface $dateTo
      * @param int             $projectId
      * @param string          $kind
      * @param int|null        $userId
@@ -277,7 +276,7 @@ class Timesheets
      *
      * @return array|false
      */
-    public function getAll(CarbonImmutable $dateFrom, CarbonImmutable $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
+    public function getAll(CarbonInterface $dateFrom, CarbonInterface $dateTo, int $projectId = -1, string $kind = 'all', ?int $userId = null, string $invEmpl = '1', string $invComp = '1', string $ticketFilter = '-1', string $paid = '1', string $clientId = '-1'): array|false
     {
         return $this->timesheetsRepo->getAll(
             id: $projectId,
@@ -294,13 +293,15 @@ class Timesheets
     }
 
     /**
-     * @param int             $projectId
-     * @param CarbonImmutable $fromDate
-     * @param int             $userId
+     * @param int $projectId
+     * @param CarbonInterface $fromDate
+     * @param int $userId
      *
      * @return array
+     *
+     * @throws BindingResolutionException
      */
-    public function getWeeklyTimesheets(int $projectId, CarbonImmutable $fromDate, int $userId = 0): array
+    public function getWeeklyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): array
     {
         // Get timesheet entries and group by day
         $allTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(

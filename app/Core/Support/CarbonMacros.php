@@ -3,6 +3,7 @@
 namespace Leantime\Core\Support;
 
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 
 /**
  * Class CarbonMacros
@@ -53,7 +54,7 @@ class CarbonMacros
     public function formatDateForUser(): \Closure
     {
         $mixin = $this;
-        return function () use ($mixin) {
+        return function () use ($mixin): String {
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
@@ -71,7 +72,7 @@ class CarbonMacros
     public function formatTimeForUser(): \Closure
     {
         $mixin = $this;
-        return function () use ($mixin) {
+        return function () use ($mixin): String {
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
@@ -89,7 +90,7 @@ class CarbonMacros
     public function format24HTimeForUser(): \Closure
     {
         $mixin = $this;
-        return function () use ($mixin) {
+        return function () use ($mixin): String {
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage)
@@ -107,7 +108,7 @@ class CarbonMacros
     public function formatDateTimeForDb(): \Closure
     {
         $mixin = $this;
-        return function () use ($mixin) {
+        return function () use ($mixin): String {
             return self::this()
                 ->setTimezone($mixin->dbTimezone)
                 ->locale($mixin->userLanguage)
@@ -124,7 +125,7 @@ class CarbonMacros
     public function setToUserTimezone(): \Closure
     {
         $mixin = $this;
-        return function () use ($mixin) {
+        return function () use ($mixin): CarbonInterface {
             return self::this()
                 ->setTimezone($mixin->userTimezone)
                 ->locale($mixin->userLanguage);
@@ -141,7 +142,7 @@ class CarbonMacros
     public function setToDbTimezone(): \Closure
     {
         $mixin = $this;
-        return function () use ($mixin) {
+        return function () use ($mixin): CarbonInterface {
             return self::this()
                 ->setTimezone($mixin->dbTimezone)
                 ->locale($mixin->userLanguage);
