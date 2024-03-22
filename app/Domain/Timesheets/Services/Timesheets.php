@@ -5,13 +5,10 @@ namespace Leantime\Domain\Timesheets\Services;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Http\Resources\MissingValue;
-use Leantime\Core\Language as LanguageCore;
-use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Domain\Tickets\Models\Tickets;
 use Leantime\Domain\Timesheets\Repositories\Timesheets as TimesheetRepository;
-use Leantime\Core\Exceptions;
+use Leantime\Core\Exceptions\MissingParameterException;
 use Leantime\Domain\Users\Repositories\Users;
 
 /**
@@ -82,6 +79,7 @@ class Timesheets
      * @return array|bool
      *
      * @throws BindingResolutionException
+     * @throws MissingParameterException
      */
     public function logTime(int $ticketId, array $params): array|bool
     {
@@ -102,19 +100,19 @@ class Timesheets
         );
 
         if (!isset($ticketId)) {
-            throw new Exceptions\MissingParameterException("Ticket Id is a required field");
+            throw new MissingParameterException("Ticket Id is a required field");
         }
 
         if (!isset($params['date'])) {
-            throw new Exceptions\MissingParameterException("Date is a required field");
+            throw new MissingParameterException("Date is a required field");
         }
 
         if (!isset($params['hours'])) {
-            throw new Exceptions\MissingParameterException("Hours is a required field");
+            throw new MissingParameterException("Hours is a required field");
         }
 
         if (!isset($params['kind'])) {
-            throw new Exceptions\MissingParameterException("Timesheet type is a required field");
+            throw new MissingParameterException("Timesheet type is a required field");
         }
 
         if (empty($params['time'])) {
@@ -137,16 +135,17 @@ class Timesheets
     /**
      * Upserts a time entry for a ticket. Will update hours based on the values provided, not touching descriptions
      *
-     * @param int $ticketId The ID of the ticket.
-     * @param array $params An associative array of parameters for the time entry.
-     *   - userId: The ID of the user creating the time entry. Defaults to the ID of the logged-in user.
-     *   - kind: The type of timesheet entry. Required.
-     *   - date: The date of the time entry. Required.
-     *   - hours: The number of hours for the time entry. Required.
+     * @param int   $ticketId The ID of the ticket.
+     * @param array $params   An associative array of parameters for the time entry.
+     *     - userId: The ID of the user creating the time entry. Defaults to the ID of the logged-in user.
+     *     - kind: The type of timesheet entry. Required.
+     *     - date: The date of the time entry. Required.
+     *     - hours: The number of hours for the time entry. Required.
      *
      * @return array|bool Returns true if the time entry was successfully upserted.
      *
      * @throws MissingParameterException If any of the required parameters are missing.
+     * @throws BindingResolutionException
      */
     public function upsertTime(int $ticketId, array $params): array|bool
     {
@@ -166,19 +165,19 @@ class Timesheets
         );
 
         if (!isset($ticketId)) {
-            throw new Exceptions\MissingParameterException("Ticket Id is a required field");
+            throw new MissingParameterException("Ticket Id is a required field");
         }
 
         if (!isset($params['date'])) {
-            throw new Exceptions\MissingParameterException("Date is a required field");
+            throw new MissingParameterException("Date is a required field");
         }
 
         if (!isset($params['hours'])) {
-            throw new Exceptions\MissingParameterException("Hours is a required field");
+            throw new MissingParameterException("Hours is a required field");
         }
 
         if (!isset($params['kind'])) {
-            throw new Exceptions\MissingParameterException("Timesheet type is a required field");
+            throw new MissingParameterException("Timesheet type is a required field");
         }
 
         if (empty($params['timestamp'])) {
@@ -265,16 +264,16 @@ class Timesheets
     }
 
     /**
-     * @param Carbon   $dateFrom
-     * @param Carbon   $dateTo
-     * @param int      $projectId
-     * @param string   $kind
-     * @param int|null $userId
-     * @param string   $invEmpl
-     * @param string   $invComp
-     * @param string   $ticketFilter
-     * @param string   $paid
-     * @param string   $clientId
+     * @param CarbonImmutable $dateFrom
+     * @param CarbonImmutable $dateTo
+     * @param int             $projectId
+     * @param string          $kind
+     * @param int|null        $userId
+     * @param string          $invEmpl
+     * @param string          $invComp
+     * @param string          $ticketFilter
+     * @param string          $paid
+     * @param string          $clientId
      *
      * @return array|false
      */
@@ -295,49 +294,44 @@ class Timesheets
     }
 
     /**
-     * @param int    $projectId
-     * @param Carbon $fromDate
-     * @param int    $userId
+     * @param int             $projectId
+     * @param CarbonImmutable $fromDate
+     * @param int             $userId
      *
      * @return array
      */
     public function getWeeklyTimesheets(int $projectId, CarbonImmutable $fromDate, int $userId = 0): array
     {
-
-        //Get timesheet entries and group by day
-
+        // Get timesheet entries and group by day
         $allTimesheets = $this->timesheetsRepo->getWeeklyTimesheets(
             projectId: $projectId,
             fromDate: $fromDate,
             userId: $userId
         );
 
-        //Timesheets are grouped by ticketId + type
+        // Timesheets are grouped by ticketId + type
         $timesheetGroups = [];
         foreach ($allTimesheets as $timesheet) {
-
             $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
-            $currentTimeZoneOffset = dtHelper()->userNow()->getOffset() / 60 / 60;
 
-            //Detect timezone offset
+            // Detect timezone offset
             $workdateOffsetStart = ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);
 
-            //Various Entries can be in different timezones and thus would not be caught by upsert or grouping by default
-            //Creating new rows for each timezone adjustment
+            // Various Entries can be in different timezones and thus would not be caught by upsert or grouping by
+            // default Creating new rows for each timezone adjustment
             $timezonedTime = $currentWorkDate->format("H:i:s");
 
-            $groupKey = $timesheet["ticketId"] . "-" . $timesheet["kind"] . "-". $timezonedTime;
-
+            $groupKey = $timesheet["ticketId"] . "-" . $timesheet["kind"] . "-" . $timezonedTime;
             if (!isset($timesheetGroups[$groupKey])) {
-                //Build an array of 7 days for the weekly timesheet. Include start date of the current users timezone in
-                //UTC. That way we can compare the dates coming from the db
+                // Build an array of 7 days for the weekly timesheet. Include the start date of the current users
+                // timezone in UTC. That way we can compare the dates coming from the db
                 $timesheetGroups[$groupKey] = array(
                     "kind" =>  $timesheet["kind"],
                     "clientName" => $timesheet["clientName"],
                     "name" => $timesheet["name"],
                     "headline" => $timesheet["headline"],
                     "ticketId" => $timesheet["ticketId"],
-                    "hasTimesheetOffset" => $workdateOffsetStart !== 0 ? true: false,
+                    "hasTimesheetOffset" => $workdateOffsetStart !== 0,
                     "day1" => array(
                         "start" =>  $fromDate,
                         "end" => $fromDate->addHours(23)->addMinutes(59),
@@ -392,15 +386,15 @@ class Timesheets
                 );
             }
 
-            //Check if timesheet entry falls within the day range of the weekly grouped timesheets that we are trying
-            //to pull up.
+            // Check if timesheet entry falls within the day range of the weekly grouped timesheets that we are trying
+            // to pull up.
             //
-            //Why would that be different you might ask?
-            //If a user adds time entries and then changes timezones (even just 1 hour) the values in the db
-            //will be different since it is based on start of the day 00:00:00 in the current users timezone and then
-            //stored as UTC timezone shoifted value in the db.
-            //If the value is not exact but falls within the time period we're adding a new row
-
+            // Why would that be different you might ask?
+            //
+            // If a user adds time entries and then changes timezones (even just 1 hour) the values in the db
+            // will be different since it is based on start of the day 00:00:00 in the current users timezone and then
+            // stored as UTC timezone shoifted value in the db.
+            // If the value is not exact but falls within the time period we're adding a new row
             for ($i = 1; $i < 8; $i++) {
                 $start = $timesheetGroups[$groupKey]["day" . $i]["start"];
                 $end = $timesheetGroups[$groupKey]["day" . $i]["end"];
@@ -409,12 +403,12 @@ class Timesheets
                     $timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] = $currentWorkDate;
                     $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
 
-                    //No need to check further, we found what we came for
+                    // No need to check further, we found what we came for
                     break;
                 }
             }
 
-            //Add to rowsum
+            // Add to rowsum
             $timesheetGroups[$groupKey]["rowSum"] += $timesheet['hours'];
         }
 

@@ -11,7 +11,10 @@ use Leantime\Core\Support\Format;
 use Leantime\Core\Support\FromFormat;
 use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\Mix;
+use \Leantime\Core\Support\DateTimeHelper;
 use Carbon\Carbon;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 
 if (! function_exists('app')) {
@@ -20,12 +23,15 @@ if (! function_exists('app')) {
      *
      * @param string $abstract
      * @param array  $parameters
+     *
      * @return mixed|Application
+     *
      * @throws BindingResolutionException
      */
     function app(string $abstract = '', array $parameters = []): mixed
     {
         $app = Application::getInstance();
+
         return !empty($abstract) ? $app->make($abstract, $parameters) : $app;
     }
 }
@@ -65,6 +71,7 @@ if (! function_exists('bootstrap_minimal_app')) {
      * Bootstrap a new IoC container instance.
      *
      * @return Application
+     *
      * @throws BindingResolutionException
      */
     function bootstrap_minimal_app(): Application
@@ -85,7 +92,7 @@ if (! function_exists('__')) {
      * @return string
      * @throws BindingResolutionException
      */
-    function __(string $index, $default = ''): string
+    function __(string $index, string $default = ''): string
     {
         return app()->make(Language::class)->__(index: $index, default: $default);
     }
@@ -96,6 +103,7 @@ if (! function_exists('view')) {
      * Get the view factory instance.
      *
      * @return Factory
+     *
      * @throws BindingResolutionException
      */
     function view(): Factory
@@ -110,6 +118,7 @@ if (! function_exists('array_sort')) {
      *
      * @param array  $array
      * @param string $sortyBy
+     *
      * @return array
      */
     function array_sort(array $array, mixed $sortyBy): array
@@ -134,8 +143,9 @@ if (! function_exists('do_once')) {
      * @param Closure $callback
      * @param bool    $across_requests
      * @param string  $key
+     *
      * @return void
-     **/
+     */
     function do_once(string $key, Closure $callback, bool $across_requests = false): void
     {
         $key = "do_once_{$key}";
@@ -167,11 +177,16 @@ if (! function_exists('config')) {
     /**
      * Get / set the specified configuration value.
      * If an array is passed as the key, we will assume you want to set an array of values.
+     *
      * @param array|string|null $key
      * @param mixed             $default
+     *
      * @return mixed|Application
+     *
      * @throws BindingResolutionException
-     **/
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     function config(array|string|null $key = null, mixed $default = null): mixed
     {
         if (is_null($key)) {
@@ -190,6 +205,7 @@ if (! function_exists('build')) {
     /**
      * Turns any object into a builder object
      * @param object $object
+     *
      * @return Build
      **/
     function build(object $object): Build
@@ -202,8 +218,9 @@ if (! function_exists('format')) {
     /**
      * Returns a format object to format string values
      *
-     * @param string|int|float|DateTime|null $value
+     * @param string|int|float|DateTime|Carbon|null $value
      * @param string|int|float|DateTime|null $value2
+     * @param FromFormat|null $fromFormat
      *
      * @return Format|string
      */
@@ -221,9 +238,11 @@ if (! function_exists('cast')) {
      * @param string $to_class The class to which the object should be cast.
      * @param array $construct_params Optional parameters to pass to the constructor.
      * @param array $mappings Make sure certain sub properties are casted to specific types.
+     *
      * @return mixed The casted object, or throws an exception on failure.
+     *
      * @throws \InvalidArgumentException If the class does not exist.
-     * @throws \RuntimeException On serialization errors.
+     * @throws \RuntimeException|ReflectionException On serialization errors.
      */
     function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): mixed {
         if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean', 'object', 'stdClass', 'array'])) {
@@ -245,7 +264,9 @@ if (! function_exists('mix')) {
      * @param string $path
      * @param string $manifestDirectory
      * @return Mix|string
-     **/
+     *
+     * @throws BindingResolutionException
+     */
     function mix(string $path = '', string $manifestDirectory = ''): Mix|string
     {
         if (! ($app = app())->bound(Mix::class)) {
@@ -262,22 +283,20 @@ if (! function_exists('mix')) {
     }
 }
 
-
 if (! function_exists('dtHelper')) {
-
     /**
      * Get a singleton instance of the DateTimeHelper class.
      *
-     * @return \Leantime\Core\Support\DateTimeHelper
-     **/
-    function dtHelper() {
-
-        if (! ($app = app())->bound(\Leantime\Core\Support\DateTimeHelper::class)) {
-            app()->singleton(\Leantime\Core\Support\DateTimeHelper::class);
+     * @return DateTimeHelper|null
+     *
+     * @throws BindingResolutionException
+     */
+    function dtHelper(): ?DateTimeHelper
+    {
+        if (!app()->bound(DateTimeHelper::class)) {
+            app()->singleton(DateTimeHelper::class);
         }
 
-        return app()->make(\Leantime\Core\Support\DateTimeHelper::class);
+        return app()->make(DateTimeHelper::class);
     }
-
 }
-

@@ -85,7 +85,6 @@ class EditTime extends Controller
                 );
 
                 if (Auth::userIsAtLeast(Roles::$manager) || $_SESSION['userdata']['id'] == $values['userId']) {
-
                     if (isset($_POST['saveForm']) === true) {
                         if (!empty($_POST['tickets'])) {
                             $values['project'] = (int) $_POST['projects'];

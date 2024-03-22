@@ -2,11 +2,7 @@
 
 namespace Leantime\Core\Support;
 
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
-use Leantime\Core\ApiRequest;
-use Leantime\Core\Environment;
-use Leantime\Core\Language;
 
 /**
  * Class CarbonMacros
@@ -20,19 +16,20 @@ use Leantime\Core\Language;
  * @property string $userTimeFormat The user's time format
  * @property string $dbTimezone The database timezone
  * @property string $dbFormat The database format
+ *
+ * @method static CarbonImmutable this()
  */
-class  CarbonMacros
+class CarbonMacros
 {
-
     /**
      * Constructor method for creating a new instance of the class.
      *
-     * @param string $userTimezone The user's preferred timezone.
-     * @param string $userLanguage The user's preferred language.
+     * @param string $userTimezone   The user's preferred timezone.
+     * @param string $userLanguage   The user's preferred language.
      * @param string $userDateFormat The user's preferred date format.
      * @param string $userTimeFormat The user's preferred time format.
-     * @param string $dbFormat The format to be used for database storage.
-     * @param string $dbTimezone The timezone to be used for database storage.
+     * @param string $dbFormat       The format to be used for database storage.
+     * @param string $dbTimezone     The timezone to be used for database storage.
      *
      * @return void
      */
@@ -43,8 +40,8 @@ class  CarbonMacros
         public string $userTimeFormat = "",
         public string $dbFormat = "Y-m-d H:i:s",
         public string $dbTimezone = "UTC"
-    ) {}
-
+    ) {
+    }
 
     /**
      * Formats the current date for the user based on the user's timezone,
@@ -71,7 +68,7 @@ class  CarbonMacros
      * @return \Closure Returns a closure that accepts no arguments and returns
      *         the formatted time as per the user's settings.
      */
-    public  function formatTimeForUser(): \Closure
+    public function formatTimeForUser(): \Closure
     {
         $mixin = $this;
         return function () use ($mixin) {
@@ -82,7 +79,6 @@ class  CarbonMacros
         };
     }
 
-
     /**
      * Formats the current time for the user based on the user's timezone,
      * language, and time format.
@@ -90,7 +86,7 @@ class  CarbonMacros
      * @return \Closure Returns a closure that accepts no arguments and returns
      *         the formatted time as per the user's settings.
      */
-    public  function format24HTimeForUser(): \Closure
+    public function format24HTimeForUser(): \Closure
     {
         $mixin = $this;
         return function () use ($mixin) {
@@ -129,7 +125,9 @@ class  CarbonMacros
     {
         $mixin = $this;
         return function () use ($mixin) {
-            return self::this()->setTimezone($mixin->userTimezone)->locale($mixin->userLanguage);
+            return self::this()
+                ->setTimezone($mixin->userTimezone)
+                ->locale($mixin->userLanguage);
         };
     }
 
@@ -144,7 +142,9 @@ class  CarbonMacros
     {
         $mixin = $this;
         return function () use ($mixin) {
-            return self::this()->setTimezone($mixin->dbTimezone)->locale($mixin->userLanguage);
+            return self::this()
+                ->setTimezone($mixin->dbTimezone)
+                ->locale($mixin->userLanguage);
         };
     }
 }
