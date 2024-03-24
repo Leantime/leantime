@@ -4,13 +4,13 @@ namespace Acceptance;
 
 use Codeception\Attribute\Depends;
 use Codeception\Attribute\Group;
-use Codeception\Attribute\Skip;
+use Codeception\Util\Locator;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
 class TimesheetCest
 {
-    public function _before(AcceptanceTester $I, Login $loginPage)
+    public function _before(AcceptanceTester $I, Login $loginPage): void
     {
         $loginPage->login('test@leantime.io', 'test');
     }
@@ -60,6 +60,93 @@ class TimesheetCest
             'hours' => 2,
             'kind' => 'GENERAL_BILLABLE'
         ]);
+    }
+
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function checkForEmptyTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('I do not what to see empty ("zero") time registrations');
+
+        $I->amOnPage('/timesheets/showMy');
+
+        // Do not what to see empty time regs.
+        $I->dontSeeInDatabase('zp_timesheets', [
+            'hours' => 0,
+        ]);
+    }
+
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function notShiftingTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('Try registering time on the same ticket on another day. Should not remove existing registrations.');
+
+        $I->amOnPage('/timesheets/showMy');
+
+        // Select project.
+        $I->waitForElementNotVisible(".project-select", 120);
+        $I->click('#projectSelect .chosen-single');
+        $I->waitForElementVisible('.chosen-drop', 120);
+        $I->click('#projectSelect .chosen-results .active-result');
+
+        // Select ticket.
+        $I->waitForElementNotVisible(".ticket-select", 120);
+        $I->click('#ticketSelect .chosen-single');
+        $I->waitForElementVisible('.chosen-drop', 120);
+        $I->click('#ticketSelect .chosen-results .active-result');
+
+        // Select type.
+        $I->waitForElementVisible(".kind-select", 120);
+        $I->selectOption('.kind-select', 'General, billable');
+
+        // Set hours.
+        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', 2), 1);
+        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', 2), 2);
+        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->waitForElement('.growl', 60);
+
+        $I->wait(10);
+
+        $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
+        $I->seeInField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', '2');
+
+        $I->see('6', '#finalSum');
+    }
+
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function sameTicketTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('Test timesheet updated with data one same ticket');
+
+        $I->amOnPage('/timesheets/showMy');
+
+        // Select project.
+        $I->waitForElementNotVisible(".project-select", 120);
+        $I->click('#projectSelect .chosen-single');
+        $I->waitForElementVisible('.chosen-drop', 120);
+        $I->click('#projectSelect .chosen-results .active-result');
+
+        // Select ticket.
+        $I->waitForElementNotVisible(".ticket-select", 120);
+        $I->click('#ticketSelect .chosen-single');
+        $I->waitForElementVisible('.chosen-drop', 120);
+        $I->click('#ticketSelect .chosen-results .active-result');
+
+        // Select type.
+        $I->waitForElementVisible(".kind-select", 120);
+        $I->selectOption('.kind-select', 'General, billable');
+
+        // Set hours in active
+        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 2), 1);
+        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2), 2);
+        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->waitForElement('.growl', 60);
+
+        $I->see('6', '#finalSum');
     }
 
     /**

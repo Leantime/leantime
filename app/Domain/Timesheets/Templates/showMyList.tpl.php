@@ -178,7 +178,6 @@ foreach ($__data as $var => $val) {
                             } ?>
                         </td>
                         <td data-order="<?php if ($row['paid'] == '1') {
-
                             echo format(value: $row['paidDate'], fromFormat: FromFormat::DbDate)->date();
                                         }?>">
                             <?php if ($row['paid'] == '1') {

@@ -4,8 +4,10 @@ namespace Leantime\Domain\Timesheets\Repositories;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
 use DateTime;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Leantime\Core\Db as DbCore;
 use Leantime\Core\Repository;
 use Leantime\Core\Support\DateTimeHelper;
@@ -41,20 +43,20 @@ class Timesheets extends Repository
     /**
      * getAll - get all timesheet entries
      *
-     * @param int         $id
+     * @param int|null $id
      * @param string|null $kind
-     * @param Carbon|null $dateFrom
-     * @param Carbon|null $dateTo
-     * @param int|null    $userId
+     * @param CarbonInterface|null $dateFrom
+     * @param CarbonInterface|null $dateTo
+     * @param int|null $userId
      * @param string|null $invEmpl
      * @param string|null $invComp
      * @param string|null $paid
-     * @param int|null    $clientId
-     * @param int|null    $ticketFilter
+     * @param int|null $clientId
+     * @param int|null $ticketFilter
      *
      * @return array|false
      */
-    public function getAll(?int $id, ?string $kind, ?CarbonImmutable $dateFrom, ?CarbonImmutable $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
+    public function getAll(?int $id, ?string $kind, ?CarbonInterface $dateFrom, ?CarbonInterface $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
         $query = "SELECT
                     zp_timesheets.id,
@@ -250,13 +252,13 @@ class Timesheets extends Repository
     }
 
     /**
-     * @param int    $projectId
-     * @param Carbon $fromDate
-     * @param int    $userId
+     * @param int             $projectId
+     * @param CarbonInterface $fromDate
+     * @param int             $userId
      *
      * @return mixed
      */
-    public function getWeeklyTimesheets(int $projectId, CarbonImmutable $fromDate, int $userId = 0): mixed
+    public function getWeeklyTimesheets(int $projectId, CarbonInterface $fromDate, int $userId = 0): mixed
     {
         $query = "SELECT
             zp_timesheets.id,
@@ -358,60 +360,59 @@ class Timesheets extends Repository
      */
     public function addTime(array $values): void
     {
+        $query = "INSERT INTO zp_timesheets (
+            userId,
+            ticketId,
+            workDate,
+            hours,
+            kind,
+            description,
+            invoicedEmpl,
+            invoicedComp,
+            invoicedEmplDate,
+            invoicedCompDate,
+            rate,
+            paid,
+            paidDate
+        ) VALUES (
+            :userId,
+            :ticket,
+            :date,
+            :hours,
+            :kind,
+            :description,
+            :invoicedEmpl,
+            :invoicedComp,
+            :invoicedEmplDate,
+            :invoicedCompDate,
+            :rate,
+            :paid,
+            :paidDate
+        ) ON DUPLICATE KEY UPDATE
+             hours = hours + :hours,
+             description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
 
-            $query = "INSERT INTO zp_timesheets (
-                userId,
-                ticketId,
-                workDate,
-                hours,
-                kind,
-                description,
-                invoicedEmpl,
-                invoicedComp,
-                invoicedEmplDate,
-                invoicedCompDate,
-                rate,
-                paid,
-                paidDate
-            ) VALUES (
-                :userId,
-                :ticket,
-                :date,
-                :hours,
-                :kind,
-                :description,
-                :invoicedEmpl,
-                :invoicedComp,
-                :invoicedEmplDate,
-                :invoicedCompDate,
-                :rate,
-                :paid,
-                :paidDate
-            ) ON DUPLICATE KEY UPDATE
-                 hours = hours + :hours,
-                 description = CONCAT(:date, '\n', :description, '\n', '--', '\n\n', description)";
+        $query = self::dispatch_filter('sql', $query);
 
-            $query = self::dispatch_filter('sql', $query);
+        $call = $this->dbcall(func_get_args());
 
-            $call = $this->dbcall(func_get_args());
+        $call->prepare($query);
 
-            $call->prepare($query);
+        $call->bindValue(':userId', $values['userId']);
+        $call->bindValue(':ticket', $values['ticket']);
+        $call->bindValue(':date', $values['date']);
+        $call->bindValue(':kind', $values['kind']);
+        $call->bindValue(':description', $values['description'] ?? '');
+        $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
+        $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
+        $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
+        $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
+        $call->bindValue(':rate', $values['rate'] ?? '');
+        $call->bindValue(':hours', $values['hours']);
+        $call->bindValue(':paid', $values['paid'] ?? '');
+        $call->bindValue(':paidDate', $values['paidDate'] ?? '');
 
-            $call->bindValue(':userId', $values['userId']);
-            $call->bindValue(':ticket', $values['ticket']);
-            $call->bindValue(':date', $values['date']);
-            $call->bindValue(':kind', $values['kind']);
-            $call->bindValue(':description', $values['description'] ?? '');
-            $call->bindValue(':invoicedEmpl', $values['invoicedEmpl'] ?? '');
-            $call->bindValue(':invoicedComp', $values['invoicedComp'] ?? '');
-            $call->bindValue(':invoicedEmplDate', $values['invoicedEmplDate'] ?? '');
-            $call->bindValue(':invoicedCompDate', $values['invoicedCompDate'] ?? '');
-            $call->bindValue(':rate', $values['rate'] ?? '');
-            $call->bindValue(':hours', $values['hours']);
-            $call->bindValue(':paid', $values['paid'] ?? '');
-            $call->bindValue(':paidDate', $values['paidDate'] ?? '');
-
-            $call->execute();
+        $call->execute();
     }
 
     /**
@@ -425,7 +426,6 @@ class Timesheets extends Repository
      */
     public function upsertTimesheetEntry(array $values): void
     {
-
         $query = "INSERT INTO zp_timesheets (
                 userId,
                 ticketId,
@@ -636,24 +636,25 @@ class Timesheets extends Repository
      * @param int $ticketId
      *
      * @return array
+     *
+     * @throws BindingResolutionException
      */
     public function getLoggedHoursForTicket(int $ticketId): array
     {
         $query = "SELECT
-            YEAR(zp_timesheets.workDate) AS year,
-            zp_timesheets.workdate,
-            DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
-            DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
-            DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
-            SUM(ROUND(zp_timesheets.hours, 2)) AS summe
-        FROM
-            zp_timesheets
-        WHERE
-            zp_timesheets.ticketId = :ticketId
-            AND workDate <> '0000-00-00 00:00:00' AND workDate <> '1969-12-31 00:00:00'
-        GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
-        ORDER BY utc
-        ";
+                YEAR(zp_timesheets.workDate) AS year,
+                zp_timesheets.workdate,
+                DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d') AS utc,
+                DATE_FORMAT(zp_timesheets.workDate, '%M') AS monthName,
+                DATE_FORMAT(zp_timesheets.workDate, '%m') AS month,
+                SUM(ROUND(zp_timesheets.hours, 2)) AS summe
+            FROM
+                zp_timesheets
+            WHERE
+                zp_timesheets.ticketId = :ticketId
+                AND workDate <> '0000-00-00 00:00:00' AND workDate <> '1969-12-31 00:00:00'
+            GROUP BY DATE_FORMAT(zp_timesheets.workDate, '%Y-%m-%d')
+            ORDER BY utc";
 
         $call = $this->dbcall(func_get_args());
 
@@ -681,7 +682,7 @@ class Timesheets extends Repository
                     $returnValues[$row['utc']]["summe"] = $row['summe'];
                 }
             } catch (\Exception $e) {
-                //Some broken date formats in the db. Log error and return empty results.
+                // Some broken date formats in the db. Log error and return empty results.
                 error_log($e);
 
                 $utc = dtHelper()->dbNow()->format("Y-m-d");
@@ -808,6 +809,8 @@ class Timesheets extends Repository
      * @param int $ticketId
      *
      * @return float|false|int
+     *
+     * @throws BindingResolutionException
      */
     public function punchOut(int $ticketId): float|false|int
     {

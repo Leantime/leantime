@@ -15,25 +15,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class Localization
 {
-
     public function __construct(
-        private Setting $settings,
-        private Environment $config,
-        private Language $language,
+        private readonly Setting     $settings,
+        private readonly Environment $config,
+        private readonly Language    $language,
     ) {
-        //
     }
 
     /**
      * Handle the incoming request.
      *
      * @param IncomingRequest $request The incoming request object.
-     * @param Closure         $next    The closure to execute next.
+     * @param Closure $next The closure to execute next.
+     *
      * @return Response The response object.
+     *
+     * @throws \ReflectionException
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-
         $_SESSION['companysettings.language'] ??= $this->settings->getSetting("companysettings.language") ?: $this->config->language;
 
         if (! $userId = $_SESSION['userdata']['id'] ?? false) {
@@ -55,14 +55,13 @@ class Localization
         $_SESSION['usersettings.language.date_format'] ??= $this->settings->getSetting("usersettings.$userId.date_format") ?: $this->language->__("language.dateformat");
         $_SESSION['usersettings.language.time_format'] ??= $this->settings->getSetting("usersettings.$userId.time_format") ?: $this->language->__("language.timeformat");
 
-        //Set macros for CabonImmutable date handling
+        // Set macros for CabonImmutable date handling
         CarbonImmutable::mixin(new CarbonMacros(
             $_SESSION['usersettings.timezone'],
             $_SESSION['usersettings.language'],
             $_SESSION['usersettings.language.date_format'],
             $_SESSION['usersettings.language.time_format']
         ));
-
 
         return $next($request);
     }

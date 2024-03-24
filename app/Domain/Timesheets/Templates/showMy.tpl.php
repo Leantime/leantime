@@ -283,9 +283,9 @@ jQuery(document).ready(function(){
                             "day7" => 0,
                         ];
                         // @todo: move all this calculations into the service the timesheets class.
-                    foreach ($tpl->get('allTimesheets') as $timeRow) {
-                        $timesheetId = "new";
-                        ?>
+                        foreach ($tpl->get('allTimesheets') as $timeRow) {
+                            $timesheetId = "new";
+                            ?>
                             <tr class="gradeA timesheetRow">
                                 <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
                                 <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
@@ -329,7 +329,7 @@ jQuery(document).ready(function(){
 
                                 <td width="7%" class="rowSum"><strong><?php echo $timeRow["rowSum"]; ?></strong></td>
                             </tr>
-                    <?php } ?>
+                        <?php } ?>
 
                         <!-- Row to add new time registration -->
                         <tr class="gradeA timesheetRow">

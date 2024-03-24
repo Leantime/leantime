@@ -68,14 +68,14 @@ class ShowMy extends Controller
         // Use UTC here as all data stored in the database should be UTC (start in user's timezone and convert to UTC).
         // The front end javascript is hardcode to start the week on mondays, so we use that here too.
 
-        //Get start of the week in current users timezone and then switch to UTC
+        // Get start of the week in current users timezone and then switch to UTC
         $fromDate = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
 
         $kind = 'all';
         if (isset($_POST['search'])) {
             // User date comes is in user date format and user timezone. Change it to utc.
             if (!empty($_POST['startDate'])) {
-                $fromDate =   dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
+                $fromDate = dtHelper()->parseUserDateTime($_POST['startDate'])->setToDbTimezone();
             }
         }
 
@@ -110,7 +110,6 @@ class ShowMy extends Controller
      */
     public function saveTimeSheet(array $postData): void
     {
-
         foreach ($postData as $key => $dateEntry) {
             // The temp data should contain four parts, spectated by "|":
             // TICKET ID | Type of booked hours | Date | Timestamp
