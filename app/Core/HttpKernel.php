@@ -100,6 +100,7 @@ class HttpKernel implements HttpKernelContract
      */
     public function terminate($request, $response)
     {
+
         if (method_exists($this->getApplication(), 'terminate')) {
             $this->getApplication()->terminate();
         }
@@ -120,6 +121,8 @@ class HttpKernel implements HttpKernelContract
             app()->make($middleware)->terminate($request, $response);
         }
 
+        //error_log("Before Request Terminated");
+        //error_log(print_r($request, true));
         self::dispatch_event('request_terminated', ['request' => $request, 'response' => $response]);
 
         $this->requestStartedAt = null;

@@ -3,6 +3,7 @@
 namespace Leantime\Core\Support;
 
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Date;
 use Leantime\Core\Language;
 use PHPUnit\Exception;
@@ -33,8 +34,8 @@ class Format
      * @return void
      */
     public function __construct(
-        null|string|int|float $value,
-        null|string|int|float $value2,
+        string|int|float|null|\DateTimeInterface|CarbonInterface $value,
+        string|int|float|null|\DateTimeInterface|CarbonInterface $value2,
         ?FromFormat $fromFormat = FromFormat::DbDate
     ) {
 
@@ -43,6 +44,16 @@ class Format
 
         if (empty($value)) {
             return;
+        }
+
+        if($value instanceof \DateTime) {
+            $value = CarbonImmutable::create($value);
+            $this->value = CarbonImmutable::create($value);
+        }
+
+        if($value2 instanceof \DateTime) {
+            $value2 = CarbonImmutable::create($value2);
+            $this->value = CarbonImmutable::create($value2);
         }
 
         try {
@@ -261,7 +272,7 @@ class Format
 
         //Second value empty return first value with % sign
         if (empty($this->value2)) {
-            return $this->value . "%";
+            return number_format($this->value, 2) . "%";
         }
 
         //Both values set. Return percent calculation

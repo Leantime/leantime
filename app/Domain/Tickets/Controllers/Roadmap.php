@@ -33,8 +33,8 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->ticketService = $ticketService;
 
             $_SESSION['lastPage'] = CURRENT_URL;
-            $_SESSION['lastTicketView'] = "timeline";
-            $_SESSION['lastFilterdTicketRoadmapView'] = CURRENT_URL;
+            $_SESSION['lastMilestoneView'] = "timeline";
+            $_SESSION['lastFilterdMilestonesView'] = CURRENT_URL;
         }
 
         /**
@@ -46,10 +46,28 @@ namespace Leantime\Domain\Tickets\Controllers {
         public function get($params)
         {
 
+            if (isset($params["type"]) === false) {
+                $params["type"] = 'milestone';
+            }
+
+            if (isset($params["showTasks"]) === true) {
+                $params["type"] = '';
+                $params["excludeType"] = '';
+            }
+
+            //Sets the filter module to show a quick toggle for task types
+            $this->tpl->assign("enableTaskTypeToggle", true);
+            $this->tpl->assign("showTasks", $params["showTasks"] ?? 'false');
+
             $template_assignments = $this->ticketService->getTicketTemplateAssignments($params);
+
+
+
             array_map([$this->tpl, 'assign'], array_keys($template_assignments), array_values($template_assignments));
 
             $allProjectMilestones = $this->ticketService->getAllMilestones($template_assignments['searchCriteria']);
+            $allProjectMilestones = $this->ticketService->getBulkMilestoneProgress($allProjectMilestones);
+
             $this->tpl->assign('timelineTasks', $allProjectMilestones);
 
             return $this->tpl->display('tickets.roadmap');

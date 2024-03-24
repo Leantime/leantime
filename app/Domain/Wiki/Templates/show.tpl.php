@@ -164,7 +164,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                         </div>
                                             <?php if ($wikis && count($wikis) >= 1 && $login::userIsAtLeast($roles::$editor)) {?>
                                             <div class="creationLinks">
-                                                <a class="inlineEdit" href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
+                                                <a class="inlineEdit " href="#/wiki/articleDialog/"><i class="fa fa-plus"></i> <?=$tpl->__("link.create_article") ?></a>
                                             </div>
                                             <?php } ?>
 
@@ -179,14 +179,9 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                 <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="right">
-                                        <a class="btn btn-default" href="#/wiki/articleDialog/<?=$currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
-                                        <div class="dropdownWrapper pull-right" style="margin-left:10px;">
-                                            <a class="dropdown-toggle btn btn-default" data-toggle="dropdown" href="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>"><i class="fa fa-link"></i></a>
-                                            <div class="dropdown-menu padding-md">
-                                                <input type="text" id="wikiURL" value="<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>" />
-                                                <button class="btn btn-primary" onclick="leantime.snippets.copyUrl('wikiURL');"><?=$tpl->__('links.copy_url') ?></button>
-                                            </div>
-                                        </div>
+                                        <a class="btn btn-default round-button" href="#/wiki/articleDialog/<?=$currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
+                                        <a class="dropdown-toggle btn btn-default round-button" data-toggle="dropdown" href="javascript:void(0)" onclick="leantime.snippets.copyToClipboard('<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>')"><i class="fa fa-link"></i></a>
+
 
                                     </div>
                                 <?php } ?>
@@ -225,27 +220,14 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
 
                                 <?php if ($currentArticle->milestoneHeadline != '') { ?>
                                     <div class="milestonContainer border">
-                                        <div class="row">
+                                        <div hx-trigger="load"
+                                             hx-indicator=".htmx-indicator"
+                                             hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$currentArticle->milestoneId ?>">
 
-                                            <div class="col-md-5">
-                                                <?php $tpl->e($currentArticle->milestoneHeadline); ?>
-                                            </div>
-                                            <div class="col-md-7" style="text-align:right">
-                                                <?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?>
+                                            <div class="htmx-indicator">
+                                                <?=$tpl->__("label.loading_milestone") ?>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="progress">
-                                                    <div class="progress-bar progress-bar-success" role="progressbar"
-                                                         aria-valuenow="<?php echo $currentArticle->percentDone; ?>" aria-valuemin="0"
-                                                         aria-valuemax="100" style="width: <?php echo $currentArticle->percentDone; ?>%">
-                                                        <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $currentArticle->percentDone)?></span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
 
                                 </div><br /><br />
                                 <?php } ?>

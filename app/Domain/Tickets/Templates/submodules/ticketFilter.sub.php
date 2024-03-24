@@ -10,6 +10,7 @@ $groupBy        = $tpl->get('groupByOptions');
 $sortBy        = $tpl->get('sortOptions');
 $searchCriteria = $tpl->get("searchCriteria");
 $statusLabels = $tpl->get("allTicketStates");
+$taskToggle = $tpl->get("enableTaskTypeToggle");
 
 ?>
 <form action="" method="get" id="ticketSearch">
@@ -165,9 +166,9 @@ $statusLabels = $tpl->get("allTicketStates");
                 <div class="">
                     <div class="form-group">
                         <label class="inline"><?=$tpl->__("label.search_term")?></label>
-                        <input type="text" name="termInput" id="termInput" 
+                        <input type="text" name="termInput" id="termInput"
                         style="width: 230px"
-                        value="<?=$searchCriteria['term']?>" 
+                        value="<?=$searchCriteria['term']?>"
                         placeholder="<?=$tpl->__("label.search_term")?>">
                     </div>
                 </div>
@@ -179,7 +180,20 @@ $statusLabels = $tpl->get("allTicketStates");
             </div>
 
         </div>
+
+        <?php if(isset($taskToggle) && $taskToggle === true){ ?>
+            <div class="" style="float:right; margin-left:5px; ">
+                <input type="checkbox" class="toggle" id="taskTypeToggle" onchange="jQuery('#ticketSearch').submit();" name="showTasks" value="true" <?=($tpl->get('showTasks') === "true") ? 'checked="checked"' : ''; ?> style="margin-right:5px;" />
+                <label style="text-wrap: nowrap; float:right;">Show Tasks</label>
+            </div>
+        <?php } ?>
+
+
+
     </div>
+
+
+
     <div class="clearall"></div>
 
     <?php $tpl->dispatchTplEvent('filters.beforeBar'); ?>

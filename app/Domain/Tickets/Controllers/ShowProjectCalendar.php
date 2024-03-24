@@ -42,6 +42,10 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->projectsRepo = $projectsRepo;
             $this->sprintService = $sprintService;
             $this->ticketService = $ticketService;
+
+            $_SESSION['lastPage'] = CURRENT_URL;
+            $_SESSION['lastMilestoneView'] = "calendar";
+
         }
 
         /**

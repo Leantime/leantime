@@ -605,3 +605,7 @@ table.fc-multimonth-header-table {
     border:0px;
 }
 
+.dataTable .progress-wrapper {
+    display:none;
+}
+

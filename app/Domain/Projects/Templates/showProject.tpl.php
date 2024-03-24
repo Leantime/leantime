@@ -35,8 +35,6 @@ $state = $tpl->get('state');
                 <li><a href="#team"><span class="fa fa-group"></span> <?php echo $tpl->__('tabs.team'); ?></a></li>
 
                 <li><a href="#integrations"> <span class="fa fa-asterisk"></span> <?php echo $tpl->__('tabs.Integrations'); ?></a></li>
-                <li><a href="#files"><span class="fa fa-file"></span> <?php echo sprintf($tpl->__('tabs.files_with_count'), $tpl->get('numFiles')); ?></a></li>
-                <li><a href="#comment"><span class="fa fa-comments"></span> <?php echo sprintf($tpl->__('tabs.discussion_with_count'), $tpl->get('numComments')); ?></a></li>
                 <li><a href="#todosettings"><span class="fa fa-list-ul"></span> <?php echo $tpl->__('tabs.todosettings'); ?></a></li>
                 <?php $tpl->dispatchTplEvent('projectTabsList'); ?>
             </ul>
@@ -202,91 +200,6 @@ $state = $tpl->get('state');
                     <br/>
                     <input type="submit" name="saveUsers" id="save" class="button" value="<?php echo $tpl->__('buttons.save'); ?>" class="button" />
 
-                </form>
-
-            </div>
-
-            <div id="files">
-
-                <?php $tpl->displaySubmodule('files-showAll'); ?>
-
-                <?php /*
-                <div class="mediamgr_category">
-                            <form action='#files' method='POST' enctype="multipart/form-data" id="fileForm">
-
-                            <div class="par f-left" style="margin-right: 15px;">
-
-                                 <div class='fileupload fileupload-new' data-provides='fileupload'>
-                                        <input type="hidden" />
-                                    <div class="input-append">
-                                        <div class="uneditable-input span3">
-                                            <i class="fa-file fileupload-exists"></i><span class="fileupload-preview"></span>
-                                        </div>
-                                        <span class="btn btn-file">
-                                            <span class="fileupload-new"><?=$tpl->__('label.select_file'); ?></span>
-                                            <span class='fileupload-exists'><?=$tpl->__('label.change'); ?></span>
-                                            <input type='file' name='file' />
-                                        </span>
-                                        <a href='#' class='btn fileupload-exists' data-dismiss='fileupload'><?=$tpl->__('buttons.remove'); ?></a>
-                                    </div>
-                                  </div>
-                               </div>
-
-                               <input type="submit" name="upload" class="button" value="<?=$tpl->__('buttons.upload'); ?>" />
-
-                            </form>
-                </div>
-
-
-                <div class="mediamgr_content">
-
-                    <ul id='medialist' class='listfile'>
-                            <?php foreach($tpl->get('files') as $file): ?>
-                                            <li class="<?php echo $file['moduleId'] ?>">
-                                                <div class="inlineDropDownContainer" style="float:right;">
-
-                                                    <a href="javascript:void(0);" class="dropdown-toggle ticketDropDown" data-toggle="dropdown">
-                                                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li class="nav-header"><?php echo $tpl->__("subtitles.file"); ?></li>
-                                                        <li><a href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>"><?php echo $tpl->__("links.download"); ?></a></li>
-
-                                                        <?php if ($login::userIsAtLeast($roles::$manager)) { ?>
-                                                            <li><a href="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>?delFile=<?php echo $file['id'] ?>" class="delete"><i class="fa fa-trash"></i> <?php echo $tpl->__("links.delete"); ?></a></li>
-                                                        <?php  } ?>
-
-                                                    </ul>
-                                                </div>
-                                                  <a class="cboxElement" href="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                                                    <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
-                                                        <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
-                                                        <?php else: ?>
-                                                        <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/thumbs/doc.png' />
-                                                        <?php endif; ?>
-                                                    <span class="filename"><?php $tpl->e($file['realName']) ?></span>
-
-                                                  </a>
-
-                                               </li>
-                            <?php endforeach; ?>
-                                       <br class="clearall" />
-                    </ul>
-
-                </div><!--mediamgr_content-->
-                <div style='clear:both'>&nbsp;</div>
- */ ?>
-
-            </div><!-- end files -->
-
-            <div id="comment">
-
-                <form method="post" action="<?=BASE_URL ?>/projects/showProject/<?php echo $project['id']; ?>#comment">
-                    <input type="hidden" name="comment" value="1" />
-                    <?php
-                    $tpl->assign('formUrl', BASE_URL . "/projects/showProject/" . $project['id'] . "");
-                    $tpl->displaySubmodule('comments-generalComment') ;
-                    ?>
                 </form>
 
             </div>

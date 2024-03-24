@@ -37,6 +37,14 @@ class Localization
         $_SESSION['companysettings.language'] ??= $this->settings->getSetting("companysettings.language") ?: $this->config->language;
 
         if (! $userId = $_SESSION['userdata']['id'] ?? false) {
+
+            CarbonImmutable::mixin(new CarbonMacros(
+                $this->config->defaultTimezone,
+                $_SESSION["companysettings.language"],
+                $this->language->__("language.dateformat"),
+                $this->language->__("language.timeformat")
+            ));
+
             return $next($request);
         }
 

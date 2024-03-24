@@ -169,27 +169,15 @@ $canvasItems = $tpl->get('canvasItems');
             </div>
 
             <?php if ($row['milestoneHeadline'] != '') {?>
-                <hr style="margin-top: 5px; margin-bottom: 5px;"/><small>
-                    <div class="row">
-                        <div class="col-md-5" >
-                            <?php strlen($row['milestoneHeadline']) > 60 ?
-                            $tpl->e(substr(($row['milestoneHeadline']), 0, 60) . " ...") : $tpl->e($row['milestoneHeadline']); ?>
-                        </div>
-                        <div class="col-md-7" style="text-align:right">
-                            <?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?>
-                        </div>
+                <br/>
+                <div hx-trigger="load"
+                     hx-indicator=".htmx-indicator"
+                     hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$row['milestoneId'] ?>">
+
+                    <div class="htmx-indicator">
+                        <?=$tpl->__("label.loading_milestone") ?>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-success" role="progressbar"
-                                     aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100"
-                                     style="width: <?php echo $row['percentDone']; ?>%">
-                                    <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div></small>
+                </div>
             <?php } ?>
         </div>
         <?php } ?>

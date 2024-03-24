@@ -207,7 +207,7 @@ if (! function_exists('format')) {
      *
      * @return Format|string
      */
-    function format(string|int|float|null|\DateTime|Carbon $value, string|int|float|null|\DateTime $value2 =null, null|FromFormat $fromFormat = FromFormat::DbDate): Format|string
+    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 =null, null|FromFormat $fromFormat = FromFormat::DbDate): Format|string
     {
         return new Format($value, $value2, $fromFormat);
     }

@@ -16,7 +16,11 @@ $statusLabels = $tpl->get('statusLabels');
     }
 </script>
 
-
+<div class="modal-icons">
+    <?php if( isset($currentMilestone->id) && $currentMilestone->id != '') {?>
+        <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="danger" data-tippy-content="Delete"><i class='fa fa-trash-can'></i></a>
+    <?php } ?>
+</div>
 
 <h4 class="widgettitle title-light"><?=$tpl->__("headline.milestone"); ?> </h4>
 
@@ -103,11 +107,7 @@ $statusLabels = $tpl->get('statusLabels');
             <input type="submit" value="<?=$tpl->__("buttons.save"); ?>" class="btn btn-primary"/>
         </div>
         <div class="col-md-6 align-right padding-top-sm">
-            <?php if (
-                isset($currentMilestone->id) && $currentMilestone->id != ''
-) { ?>
-                <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="delete"><i class="fa fa-trash"></i> <?=$tpl->__("buttons.delete"); ?></a>
-            <?php } ?>
+
         </div>
     </div>
 

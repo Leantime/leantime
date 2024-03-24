@@ -12,7 +12,7 @@ leantime.lbmCanvasController = (function () {
         var firstRowHeight = rowHeight * 0.666;
         jQuery("#firstRow div.contentInner").each(function () {
             if (jQuery(this).height() > firstRowHeight) {
-                firstRowHeight = jQuery(this).height() + 25;
+                firstRowHeight = jQuery(this).height() + 50;
             }
         });
         jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
@@ -20,7 +20,7 @@ leantime.lbmCanvasController = (function () {
         var secondRowHeight = rowHeight * 0.333;
         jQuery("#secondRow div.contentInner").each(function () {
             if (jQuery(this).height() > secondRowHeight) {
-                secondRowHeight = jQuery(this).height() + 25;
+                secondRowHeight = jQuery(this).height() + 50;
             }
         });
         jQuery("#secondRow .column .contentInner").css("height", secondRowHeight);
@@ -49,6 +49,7 @@ leantime.lbmCanvasController = (function () {
                     }
                 },
                 afterShowCont: function () {
+                    window.htmx.process('.nyroModalCont');
                     jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
 
                 },

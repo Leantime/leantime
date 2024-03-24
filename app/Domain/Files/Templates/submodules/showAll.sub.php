@@ -61,7 +61,7 @@ $moduleId = $_GET['id'] ?? '';
                             </ul>
                         </div>
                         <a class="imageLink" data-ext="<?php echo $file['extension'] ?>" href="<?=BASE_URL?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>">
-                            <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions'))) :  ?>
+                            <?php if (in_array(strtolower($file['extension']), $tpl->get('imgExtensions') ?? [])) :  ?>
                                 <img style='max-height: 50px; max-width: 70px;' src="<?=BASE_URL ?>/files/get?module=<?php echo $file['module'] ?>&encName=<?php echo $file['encName'] ?>&ext=<?php echo $file['extension'] ?>&realName=<?php echo $file['realName'] ?>" alt="" />
                             <?php else : ?>
                                 <img style='max-height: 50px; max-width: 70px;' src='<?=BASE_URL ?>/dist/images/doc.png' />

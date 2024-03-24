@@ -211,8 +211,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                             $params['headline'] = $params['newMilestone'];
                             $params['tags'] = '#ccc';
-                            $params['editFrom'] =  dtHelper()->userNow()->formatDateTimeForDb();
-                            $params['editTo'] =  dtHelper()->userNow()->addDays(7)->formatDateTimeForDb();
+                            $params['editFrom'] =  dtHelper()->userNow()->formatDateForUser();
+                            $params['editTo'] =  dtHelper()->userNow()->addDays(7)->formatDateForUser();
                             $params['dependentMilestone'] = '';
                             $id = $this->ticketService->quickAddMilestone($params);
 

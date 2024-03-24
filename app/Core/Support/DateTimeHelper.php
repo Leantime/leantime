@@ -126,7 +126,7 @@ class DateTimeHelper extends CarbonImmutable
     public function parseUser24hTime(string $local24Time)
     {
 
-        $this->datetime = CarbonImmutable::createFromFormat("!H:i", $local24Time, $this->userTimezone);
+        $this->datetime = CarbonImmutable::createFromFormat("H:i", $local24Time, $this->userTimezone);
 
         return $this->datetime;
     }
