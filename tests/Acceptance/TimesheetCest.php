@@ -84,25 +84,11 @@ class TimesheetCest
 
         $I->amOnPage('/timesheets/showMy');
 
-        // Select project.
-        $I->waitForElementNotVisible(".project-select", 120);
-        $I->click('#projectSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->click('#projectSelect .chosen-results .active-result');
-
-        // Select ticket.
-        $I->waitForElementNotVisible(".ticket-select", 120);
-        $I->click('#ticketSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->click('#ticketSelect .chosen-results .active-result');
-
-        // Select type.
-        $I->waitForElementVisible(".kind-select", 120);
-        $I->selectOption('.kind-select', 'General, billable');
+        //Since we assume "Create Timesheet was created we just add values to day 3 and 4.
 
         // Set hours.
-        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', 2), 1);
-        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', 2), 2);
+        $I->fillField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', 1);
+        $I->fillField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', 2);
         $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
         $I->waitForElement('.growl', 60);
 
@@ -124,25 +110,9 @@ class TimesheetCest
 
         $I->amOnPage('/timesheets/showMy');
 
-        // Select project.
-        $I->waitForElementNotVisible(".project-select", 120);
-        $I->click('#projectSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->click('#projectSelect .chosen-results .active-result');
-
-        // Select ticket.
-        $I->waitForElementNotVisible(".ticket-select", 120);
-        $I->click('#ticketSelect .chosen-single');
-        $I->waitForElementVisible('.chosen-drop', 120);
-        $I->click('#ticketSelect .chosen-results .active-result');
-
-        // Select type.
-        $I->waitForElementVisible(".kind-select", 120);
-        $I->selectOption('.kind-select', 'General, billable');
-
         // Set hours in active
-        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 2), 1);
-        $I->fillField(Locator::elementAt('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2), 2);
+        $I->fillField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 1);
+        $I->fillField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2);
         $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
         $I->waitForElement('.growl', 60);
 
@@ -171,7 +141,7 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('3', '#finalSum');
+        $I->see('6', '#finalSum');
     }
 
     #[Group('timesheet')]
@@ -188,7 +158,7 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('3', '#finalSum');
+        $I->see('6', '#finalSum');
 
         // Switch back.
         $this->changeUsersTimeZone($I);
@@ -245,7 +215,7 @@ class TimesheetCest
         // Go and see if the total is correct.
         $I->amOnPage('/timesheets/showMy');
         $I->waitForElementVisible('#finalSum');
-        $I->see('8', '#finalSum');
+        $I->see('11', '#finalSum');
     }
 
     #[Group('timesheet')]

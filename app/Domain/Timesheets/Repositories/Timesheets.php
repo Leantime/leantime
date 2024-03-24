@@ -41,7 +41,7 @@ class Timesheets extends Repository
     }
 
     /**
-     * getAll - get all timesheet entries
+     * Retrieves all timesheets based on the provided filters.
      *
      * @param int|null $id
      * @param string|null $kind
@@ -54,7 +54,7 @@ class Timesheets extends Repository
      * @param int|null $clientId
      * @param int|null $ticketFilter
      *
-     * @return array|false
+     * @return array|false An array of timesheets or false if there was an error
      */
     public function getAll(?int $id, ?string $kind, ?CarbonInterface $dateFrom, ?CarbonInterface $dateTo, ?int $userId, ?string $invEmpl, ?string $invComp, ?string $paid, ?int $clientId, ?int $ticketFilter): array|false
     {
@@ -227,11 +227,11 @@ class Timesheets extends Repository
         return $call->fetchAll();
     }
 
+
     /**
-     * @return int|mixed
-     */
-    /**
-     * @return int|mixed
+     * Retrieves the total number of hours booked from the timesheets table.
+     *
+     * @return mixed The total number of hours booked, or 0 if no hours are booked.
      */
     public function getHoursBooked(): mixed
     {
@@ -413,6 +413,8 @@ class Timesheets extends Repository
         $call->bindValue(':paidDate', $values['paidDate'] ?? '');
 
         $call->execute();
+
+        $this->cleanUpEmptyTimesheets();
     }
 
     /**
@@ -475,6 +477,8 @@ class Timesheets extends Repository
         $call->bindValue(':paidDate', $values['paidDate'] ?? '');
 
         $call->execute();
+
+        $this->cleanUpEmptyTimesheets();
     }
 
     /**
@@ -559,6 +563,8 @@ class Timesheets extends Repository
         $call->bindValue(':id', $values['id']);
 
         $call->execute();
+
+        $this->cleanUpEmptyTimesheets();
     }
 
     /**
@@ -595,6 +601,8 @@ class Timesheets extends Repository
         $call->bindValue(':kind', $values['kind']);
 
         $call->execute();
+
+        $this->cleanUpEmptyTimesheets();
     }
 
     /**
@@ -715,6 +723,25 @@ class Timesheets extends Repository
 
         $call->prepare($query);
         $call->bindValue(':id', $id);
+
+        $call->execute();
+    }
+
+    /**
+     * Clean up empty timesheets.
+     *
+     * This function deletes all timesheets from the "zp_timesheets" table
+     * where the hours value is equal to 0.
+     *
+     * @return void
+     */
+    public function cleanUpEmptyTimesheets(): void
+    {
+        $query = "DELETE FROM zp_timesheets WHERE hours = 0";
+
+        $call = $this->dbcall(func_get_args());
+
+        $call->prepare($query);
 
         $call->execute();
     }
@@ -921,4 +948,6 @@ class Timesheets extends Repository
 
         return $onTheClock;
     }
+
+
 }
