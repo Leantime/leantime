@@ -174,8 +174,12 @@ if (str_contains($formUrl, '?delComment=')) {
 
             jQuery('.commentBox-'+formHash+'').hide();
 
-            jQuery('#comment-'+formHash+'-' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+            jQuery('#comment-'+formHash+'-' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" id="editor_'+formHash+'" class="tinymceSimple"></textarea>');
             leantime.editorController.initSimpleEditor();
+
+            setTimeout(function () {                         // you may not need the timeout
+                tinyMCE.get('editor_'+formHash+'').focus();
+            }, 50);
 
             jQuery('#comment-'+formHash+'-' + id + '').show();
             jQuery('#father-'+formHash).val(id);

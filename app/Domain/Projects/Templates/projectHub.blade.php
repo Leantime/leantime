@@ -25,8 +25,9 @@
         </div>
 
         @if(is_array($allProjects) && count($allProjects) == 0)
-            <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" headline="{{  __('notifications.not_assigned_to_any_project')  }}" maxWidth="30%">
+            <x-global::undrawSvg image="undraw_a_moment_to_relax_bbpa.svg" style="color:var(--main-titles-color);" maxWidth="30%">
             </x-global::undrawSvg>
+
         @endif
 
         <div id="myProjectsHub"
@@ -64,7 +65,7 @@
             @if (count($allProjects) == 0)
                 <br /><br />
                 <div class='center'>
-                    <div style='width:70%' class='svgContainer'>
+                    <div style='width:70%; color:var(--main-titles-color)' class='svgContainer'>
                         {{ __('notifications.not_assigned_to_any_project') }}
                         @if($login::userIsAtLeast($roles::$manager))
                             <br /><br />

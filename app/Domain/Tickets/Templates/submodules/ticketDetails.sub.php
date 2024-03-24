@@ -426,8 +426,11 @@ $ticketTypes = $tpl->get('ticketTypes');
     jQuery(document).ready(function(){
         //Set accordion states
         //All accordions start open
+        leantime.editorController.initComplexEditor();
+        tinymce.activeEditor.hide()
     });
 
+    leantime.editorController.initComplexEditor();
 
     jQuery(".viewDescription").click(function(e){
 
@@ -436,8 +439,7 @@ $ticketTypes = $tpl->get('ticketTypes');
             jQuery(this).hide();
             jQuery('#descriptionEditor').show('fast',
                 function() {
-                    leantime.editorController.initComplexEditor();
-
+                    tinymce.activeEditor.show();
                 }
             );
         }

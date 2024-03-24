@@ -95,7 +95,7 @@ class Get extends Controller
                 } else {
                     $mime_type = 'application/octet-stream';
                     header("Content-type: application/octet-stream");
-                    header("Content-Disposition: filename=\"" . $realName . "." . $ext . "\"");
+                    header("Content-Disposition: attachment; filename=\"" . $realName . "." . $ext . "\"");
                 }
 
 
