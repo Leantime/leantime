@@ -150,3 +150,8 @@ blockquote.pull-right {
 .maincontent > h2 {
     color:var(--main-action-color);
 }
+
+a.danger,
+a.delete {
+    color:var(--red) !important;
+}

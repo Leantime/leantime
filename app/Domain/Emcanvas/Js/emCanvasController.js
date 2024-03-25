@@ -12,7 +12,7 @@ leantime.emCanvasController = (function () {
         var firstRowHeight = rowHeight / nbRows;
         jQuery("#firstRow div.contentInner").each(function () {
             if (jQuery(this).height() > firstRowHeight) {
-                firstRowHeight = jQuery(this).height() + 25;
+                firstRowHeight = jQuery(this).height() + 50;
             }
         });
         jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
@@ -20,7 +20,7 @@ leantime.emCanvasController = (function () {
         var secondRowHeight = rowHeight / nbRows;
         jQuery("#secondRow div.contentInner").each(function () {
             if (jQuery(this).height() > secondRowHeight) {
-                secondRowHeight = jQuery(this).height() + 25;
+                secondRowHeight = jQuery(this).height() + 50;
             }
         });
         jQuery("#secondRow .column .contentInner").css("height", secondRowHeight);
@@ -28,7 +28,7 @@ leantime.emCanvasController = (function () {
         var thirdRowHeight = rowHeight / nbRows;
         jQuery("#thirdRow div.contentInner").each(function () {
             if (jQuery(this).height() > thirdRowHeight) {
-                thirdRowHeight = jQuery(this).height() + 25;
+                thirdRowHeight = jQuery(this).height() + 50;
             }
         });
         jQuery("#thirdRow .column .contentInner").css("height", thirdRowHeight);
@@ -36,7 +36,7 @@ leantime.emCanvasController = (function () {
         var fourthRowHeight = rowHeight / nbRows;
         jQuery("#fourthRow div.contentInner").each(function () {
             if (jQuery(this).height() > fourthRowHeight) {
-                fourthRowHeight = jQuery(this).height() + 25;
+                fourthRowHeight = jQuery(this).height() + 50;
             }
         });
         jQuery("#fourthRow .column .contentInner").css("height", fourthRowHeight);
@@ -65,6 +65,7 @@ leantime.emCanvasController = (function () {
                     }
                 },
                 afterShowCont: function () {
+                    window.htmx.process('.nyroModalCont');
                     jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
 
                 },

@@ -438,8 +438,11 @@ namespace Leantime\Domain\Tickets\Repositories {
                     OR (zp_projects.psettings = 'client' AND zp_projects.clientId = :clientId)
                     OR (requestor.role >= 40)
                 )
-                AND zp_tickets.type <> 'milestone'
             SQL;
+
+            if (isset($searchCriteria["excludeType"]) && $searchCriteria["excludeType"]  != "") {
+                $query .= " AND zp_tickets.type <> :excludeType";
+            }
 
             //Pulling tasks is currrently locked to the currentProject (which is tied to the user session)
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"]  != "") {
@@ -486,6 +489,8 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $query .= " AND zp_tickets.status <> -1";
             }
 
+
+
             if (isset($searchCriteria["type"]) && $searchCriteria["type"]  != "") {
                 $typeIn = DbCore::arrayToPdoBindingString("type", count(explode(",", strtolower($searchCriteria["type"]))));
                 $query .= " AND LOWER(zp_tickets.type) IN(" . $typeIn . ")";
@@ -524,6 +529,10 @@ namespace Leantime\Domain\Tickets\Repositories {
             }
 
             $stmn = $this->db->database->prepare($query);
+
+            if (isset($searchCriteria["excludeType"]) && $searchCriteria["excludeType"]  != "") {
+                $stmn->bindValue(':excludeType', $searchCriteria["excludeType"], PDO::PARAM_STR);
+            }
 
             // NOTE: This should not be removed as it is used for authorization
             if (isset($searchCriteria["currentUser"])) {
@@ -1089,27 +1098,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 						zp_user.lastname AS userLastname,
 						t3.firstname AS editorFirstname,
 						t3.lastname AS editorLastname,
-						t3.profileId AS editorProfileId,
-
-						(SELECT SUM(progressSub.planHours) FROM zp_tickets as progressSub WHERE progressSub.milestoneid = zp_tickets.id) AS planHours,
-						(SELECT SUM(progressSub.hourRemaining) FROM zp_tickets as progressSub WHERE progressSub.milestoneid = zp_tickets.id) AS hourRemaining,
-						SUM(ROUND(timesheets.hours, 2)) AS bookedHours,
-
-						COUNT(DISTINCT progressTickets.id) AS allTickets,
-
-						(SELECT (
-                            CASE WHEN
-                              COUNT(DISTINCT progressSub.id) > 0
-                            THEN
-                              ROUND(
-                                (
-                                  SUM(CASE WHEN progressSub.status " . $statusGroups["DONE"] . " THEN IF(progressSub.storypoints = 0, 3, progressSub.storypoints) ELSE 0 END) /
-                                  SUM(IF(progressSub.storypoints = 0, 3, progressSub.storypoints))
-                                ) *100)
-                            ELSE
-                              0
-                            END) AS percentDone
-                        FROM zp_tickets AS progressSub WHERE progressSub.milestoneid = zp_tickets.id AND progressSub.type <> 'milestone') AS percentDone
+						t3.profileId AS editorProfileId
 					FROM
 						zp_tickets
 						LEFT JOIN zp_projects ON zp_tickets.projectId = zp_projects.id
@@ -1270,6 +1259,7 @@ namespace Leantime\Domain\Tickets\Repositories {
 
             return $values;
         }
+
 
         /**
          * getType - get the Type from the type array

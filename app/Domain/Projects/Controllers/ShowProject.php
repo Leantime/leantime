@@ -279,45 +279,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     }
                 }
 
-                // Manage Post comment
-                if (isset($_POST['comment']) === true) {
-                    if ($this->commentService->addComment($_POST, "project", $id, $project)) {
-                        $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                    } else {
-                        $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
-                    }
-                }
 
-                //Manage File Uploads
-                if (isset($_POST['upload'])) {
-                    if (isset($_FILES['file']) === true && $_FILES['file']["tmp_name"] != "") {
-                        $this->fileRepo->upload($_FILES, 'project', $id);
-                        $this->tpl->setNotification($this->language->__("notifications.file_upload_success"), 'success');
-                    } else {
-                        $this->tpl->setNotification($this->language->__("notifications.file_upload_error"), 'error');
-                    }
-                }
-
-                //Delete File
-                if (isset($_GET['delFile']) === true) {
-                    $result = $this->fileService->deleteFile($_GET['delFile']);
-
-                    if ($result === true) {
-                        $this->tpl->setNotification($this->language->__("notifications.file_deleted"), "success");
-                        return Frontcontroller::redirect(BASE_URL . "/projects/showProject/" . $id . "#files");
-                    } else {
-                        $this->tpl->setNotification('notifications.file_deleted_error', "success");
-                    }
-                }
-
-                //Delete comment
-                if (isset($_GET['delComment']) === true) {
-                    $commentId = (int)($_GET['delComment']);
-
-                    $this->commentsRepo->deleteComment($commentId);
-
-                    $this->tpl->setNotification($this->language->__("notifications.comment_deleted"), "success");
-                }
 
                 $employees = $this->userRepo->getEmployees();
 
@@ -330,14 +292,6 @@ namespace Leantime\Domain\Projects\Controllers {
                 $this->tpl->assign('employees', $employees);
 
                 $this->tpl->assign('project', $project);
-
-                $files = $this->fileRepo->getFilesByModule('project', $id);
-                $this->tpl->assign('files', $files);
-                $this->tpl->assign('numFiles', count($files));
-
-                $comment = $this->commentsRepo->getComments('project', $_GET['id'], 0);
-                $this->tpl->assign('comments', $comment);
-                $this->tpl->assign('numComments', $this->commentsRepo->countComments('project', $_GET['id']));
 
                 $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
                 $this->tpl->assign('projectTypes', $projectTypes);

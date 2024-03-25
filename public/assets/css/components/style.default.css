@@ -2091,7 +2091,8 @@ body .widgettitle .editHeadline:hover {
 }
 
 .commentContent {
-    background:var(--col-title-bg);
+    background:var(--layered-background);
+    border: 1px solid var(--main-border-color);
     border-radius:var(--box-radius);
     width:100%;
     padding:12px 15px;
@@ -3055,4 +3056,15 @@ body a.btn-link.btn-fancy:hover {
 
 .widgetContent {
     padding:0px 2px;
+}
+
+.modalWindowIcon {
+    height:25px;
+    line-height:25px;
+    border:1px solid var(--main-border-color);
+}
+
+
+.modal.fade {
+    display:none;
 }

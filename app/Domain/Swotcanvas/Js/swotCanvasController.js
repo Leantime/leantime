@@ -10,7 +10,7 @@ leantime.swotCanvasController = (function () {
         var firstRowHeight = rowHeight / nbRows;
         jQuery("#firstRow div.contentInner").each(function () {
             if (jQuery(this).height() > firstRowHeight) {
-                firstRowHeight = jQuery(this).height() + 25;
+                firstRowHeight = jQuery(this).height() + 50;
             }
         });
         jQuery("#firstRow .column .contentInner").css("height", firstRowHeight);
@@ -18,7 +18,7 @@ leantime.swotCanvasController = (function () {
         var secondRowHeight = rowHeight / nbRows;
         jQuery("#secondRow div.contentInner").each(function () {
             if (jQuery(this).height() > secondRowHeight) {
-                secondRowHeight = jQuery(this).height() + 25;
+                secondRowHeight = jQuery(this).height() + 50;
             }
         });
 
@@ -48,6 +48,7 @@ leantime.swotCanvasController = (function () {
                     }
                 },
                 afterShowCont: function () {
+                    window.htmx.process('.nyroModalCont');
                     jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
 
                 },

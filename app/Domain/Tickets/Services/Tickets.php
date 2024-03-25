@@ -6,7 +6,9 @@ namespace Leantime\Domain\Tickets\Services {
     use Carbon\CarbonInterface;
     use DateTime;
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Illuminate\Contracts\Queue\EntityNotFoundException;
     use Leantime\Core\Eventhelpers;
+    use Leantime\Core\Exceptions\MissingParameterException;
     use Leantime\Core\Service;
     use Leantime\Core\Support\DateTimeHelper;
     use Leantime\Core\Support\FromFormat;
@@ -227,6 +229,7 @@ namespace Leantime\Domain\Tickets\Services {
                 "term" => "",
                 "effort" => "",
                 "type" => "",
+                "excludeType" => "milestone",
                 "milestone" => "",
                 "priority" => "",
                 "orderBy" => "sortIndex",
@@ -234,6 +237,7 @@ namespace Leantime\Domain\Tickets\Services {
                 "groupBy" => "",
             );
 
+            //Isset is all we want to do since empty values are valid
             if (isset($searchParams["currentProject"]) === true) {
                 $searchCriteria["currentProject"] = $searchParams["currentProject"];
             }
@@ -258,8 +262,19 @@ namespace Leantime\Domain\Tickets\Services {
                 $searchCriteria["effort"] = $searchParams["effort"];
             }
 
+            if (isset($searchParams["excludeType"]) === true) {
+                $searchCriteria["excludeType"] = $searchParams["excludeType"];
+            }
+
             if (isset($searchParams["type"]) === true) {
                 $searchCriteria["type"] = $searchParams["type"];
+
+                //Give inclusion higher priority than exclusion for now
+                $typeIn = explode(",", $searchCriteria["type"]);
+                $typeOut =  explode(",", $searchCriteria["excludeType"]);
+
+                $typeOutFiltered = array_diff($typeOut, $typeIn);
+                $searchCriteria["excludeType"] = implode(",", $typeOutFiltered);
             }
 
             if (isset($searchParams["milestone"]) === true) {
@@ -868,6 +883,101 @@ namespace Leantime\Domain\Tickets\Services {
                     $allProjectMilestones = $this->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
 
                     $milestones[$row['projectId']] = $allProjectMilestones;
+                }
+            }
+
+            return $milestones;
+        }
+
+        /**
+         * Gets the progress of a milestone based on the tickets associated with it.
+         *
+         * @param int $milestoneId The ID of the milestone.
+         *
+         * @return float The percentage of the milestone's progress.
+         * @throws EntityNotFoundException If milestone cannot be found.
+         *
+         * @throws MissingParameterException If milestone ID is not set.
+         */
+        public function getMilestoneProgress(int|string $milestoneId): float {
+
+            if(is_numeric($milestoneId)){
+                $milestoneId = (int) $milestoneId;
+            }
+
+            if(!isset($milestoneId)){
+                throw new MissingParameterException("Milestone ID is required");
+            }
+
+            $milestone = $this->getTicket($milestoneId);
+            if(!$milestone) {
+                throw new EntityNotFoundException("Can't find milestone");
+            }
+
+            $prepareSearchParams = $this->prepareTicketSearchArray(array("milestone" => $milestoneId, "currentProject" => $milestone->projectId, "currentSprint" => ''));
+            $tickets = $this->ticketRepository->getAllBySearchCriteria($prepareSearchParams);
+
+            $statusLabels = $this->getStatusLabels($milestone->projectId);
+
+            $defaultEffort = 3;
+            $defaultPriority = 3; //low number high priority high priority 1-5 low priority
+
+            //We want to take priority into consideration but not make it the main driver.
+            $priorityFactor = array(
+                1 => 2,
+                2 => 1.75,
+                3 => 1.5,
+                4 => 1.25,
+                5 => 1
+            );
+
+            $totalScore = 0;
+            $doneScore = 0;
+            $inProgressScore = 0;
+
+            foreach($tickets as $ticket) {
+
+                $effort =  empty($ticket['storypoints']) ? $defaultEffort : $ticket['storypoints'];
+                $priority = empty($ticket['priority']) ? $defaultPriority : $ticket['priority'];
+
+                $ticketScore = $effort * $priorityFactor[$priority] ?? 1;
+
+                $totalScore += $ticketScore;
+
+                if(isset($statusLabels[$ticket['status']])
+                    && $statusLabels[$ticket['status']]['statusType'] == "DONE") {
+                    $doneScore += $ticketScore;
+                    continue;
+                }
+
+                if(isset($statusLabels[$ticket['status']])
+                    && $statusLabels[$ticket['status']]['statusType'] == "INPROGRESS") {
+                    $inProgressScore += $ticketScore;
+                }
+            }
+
+            if($totalScore == 0) {
+                return (float) 0;
+            }
+
+            $percentDone = $doneScore / $totalScore * 100;
+
+            return (float) $percentDone;
+
+        }
+
+
+        public function getBulkMilestoneProgress(array $milestones) {
+
+
+            if(empty($milestones)) {
+                return $milestones;
+            }
+
+            foreach($milestones as &$milestone) {
+                if($milestone->type == 'milestone') {
+                    $milestoneProgress = $this->getMilestoneProgress($milestone->id);
+                    $milestone->percentDone = $milestoneProgress;
                 }
             }
 
@@ -1911,7 +2021,7 @@ namespace Leantime\Domain\Tickets\Services {
                     $values['editTo'] = dtHelper()->parseUserDateTime($values['editTo'], $values['timeTo'])->formatDateTimeForDb();
                     unset($values['timeTo']);
                 }else{
-                    $values['editTo'] = dtHelper()->parseUserDateTime($values['editTo'], "end")->isoDateTime();
+                    $values['editTo'] = dtHelper()->parseUserDateTime($values['editTo'], "end")->formatDateTimeForDb();
                 }
             }
 

@@ -4,6 +4,7 @@
     margin-top: 0;
     border-radius: var(--box-radius);
     border:0px;
+    padding: 8px 0;
     box-shadow: var(--regular-shadow);
     background:var(--secondary-background);
 }
@@ -16,9 +17,9 @@
 .bigMenu ul li a{
     font-size: var(--base-font-size);
     color:var(--primary-font-color);
-    margin: 0 5px;
+    margin: 0;
     padding: 5px 10px;
-    border-radius: var(--element-radius);
+    border-radius: 0px;
 }
 .pagetitle .dropdown-menu > li > a {
     color:var(--primary-font-color);
@@ -196,7 +197,6 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 .nyroModalCont .ticketDropdown ul li a[class*="label-"] {
     padding: 5px 10px;
     display:block;
-    border-radius: var(--element-radius);
 }
 
 .chosen-results li[class*=" label-"] {
@@ -348,6 +348,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
 
 .maincontent .ticketDropdown ul li {
     margin-bottom:1px;
+    padding:0px 10px;
 }
 
 .maincontent .ticketDropdown.milestoneDropdown li a:hover{
@@ -584,6 +585,11 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     color:var(--main-titles-color);
     border:1px solid var(--main-action-color);
     font-size:var(--font-size-l);
+}
+
+.headerEditDropdown .dropdown-toggle {
+    padding:4px 13px;
+    border-radius:50% !important;
 }
 
 .editCanvasDropdown {

@@ -3,7 +3,12 @@
     cursor:move;
 
     position:absolute;
+}
 
+#ideaMason .ticketBox .ticketBox {
+    position:relative;
+    width:auto;
+    cursor:auto;
 }
 
 #ideaMason .ticketBox:hover {

@@ -1281,8 +1281,9 @@ jQuery(function($, undefined) {
                     success: function(data) {
                         nm._setCont(data, nm.store.link.sel);
                     },
-                    error: function() {
-                        nm._error();
+                    error: function(content) {
+                        console.log(content);
+                        nm._setCont(content.responseText);
                     }
                 });
             }
@@ -1455,7 +1456,7 @@ jQuery(function($, undefined) {
                     data: data,
                     type: nm.opener.attr('method') ? nm.opener.attr('method') : 'get',
                     success: function(data) {
-
+                        console.log(action);
                         if(action == "closeModal") {
                             nm.close();
                         }else{
@@ -1463,8 +1464,9 @@ jQuery(function($, undefined) {
                         }
 
                     },
-                    error: function() {
-                        nm._error();
+                    error: function(content) {
+                        console.log(content);
+                        nm._setCont(content.responseText);
                     }
                 });
             }

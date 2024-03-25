@@ -351,7 +351,7 @@ leantime.projectsController = (function () {
 
 
                                 if (entityType == "ticket") {
-                                    leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, task._index);
+                                    leantime.ticketsRepository.updateMilestoneDates(entityId, start, end, project._index);
                                 } else {
                                     jQuery.ajax(
                                         {

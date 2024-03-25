@@ -38,7 +38,6 @@ namespace Leantime\Domain\Cron\Controllers {
                 return new Response();
             }
 
-            error_log("Adding Event Listener to request_terminated");
             Events::add_event_listener('leantime.core.httpkernel.terminate.request_terminated', function () {
                 ignore_user_abort(true);
 
@@ -46,7 +45,6 @@ namespace Leantime\Domain\Cron\Controllers {
                 set_time_limit(0);
 
                 $output = new \Symfony\Component\Console\Output\BufferedOutput();
-
 
                     register_shutdown_function(function () use ($output) {
                         if ($this->config->debug) {

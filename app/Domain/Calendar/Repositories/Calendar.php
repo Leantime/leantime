@@ -210,7 +210,7 @@ class Calendar extends RepositoryCore
 
                 $backgroundColor = "var(--accent2)";
 
-                if ($ticket['dateToFinish'] != "0000-00-00 00:00:00" && $ticket['dateToFinish'] != "1969-12-31 00:00:00") {
+                if (dtHelper()->isValidDateString($ticket['dateToFinish'])) {
                     $context = '❕ ' . $this->language->__("label.due_todo");
 
                     $newValues[] = $this->mapEventData(
@@ -228,7 +228,8 @@ class Calendar extends RepositoryCore
                     );
                 }
 
-                if (dtHelper()->isValidDateString($ticket['editFrom'])) {
+                if (dtHelper()->isValidDateString($ticket['editFrom'])
+                    && dtHelper()->isValidDateString($ticket['editTo'])) {
                     // Set ticket to all-day ticket when no time is set
                     $dateFrom =  dtHelper()->parseDbDateTime($ticket['editFrom']);
                     $dateTo =  dtHelper()->parseDbDateTime($ticket['editTo']);
