@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\View\Factory;
 use Leantime\Core\Application;
@@ -7,11 +9,11 @@ use Leantime\Core\AppSettings;
 use Leantime\Core\Bootloader;
 use Leantime\Core\Language;
 use Leantime\Core\Support\Build;
+use Leantime\Core\Support\Cast;
+use Leantime\Core\Support\DateTimeHelper;
 use Leantime\Core\Support\Format;
 use Leantime\Core\Support\FromFormat;
-use Leantime\Core\Support\Cast;
 use Leantime\Core\Support\Mix;
-use Carbon\Carbon;
 
 
 if (! function_exists('app')) {
@@ -232,6 +234,11 @@ if (! function_exists('cast')) {
 
         if (enum_exists($classOrType)) {
             return Cast::castEnum($source, $classOrType);
+        }
+
+        // Convert string to date if required.
+        if (is_string($source) && is_a($classOrType, CarbonInterface::class, true)) {
+            return new DateTimeHelper($source);
         }
 
         return (new Cast($source))->castTo($classOrType, $constructParams, $mappings);
