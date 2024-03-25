@@ -8,7 +8,7 @@
     "@fullcalendar/google-calendar": "^6.1.11",
     "@fullcalendar/icalendar": "^6.1.11",
     "@fullcalendar/luxon3": "^6.1.11",
-    "@lottiefiles/lottie-player": "^2.0.2",
+    "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
     "@sentry/browser": "^7.104.0",
     "@sentry/webpack-plugin": "^2.14.2",
