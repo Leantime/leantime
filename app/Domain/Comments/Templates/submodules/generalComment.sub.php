@@ -22,7 +22,7 @@ if (str_contains($formUrl, '?delComment=')) {
             <div class="commentImage">
                 <img src="<?= BASE_URL ?>/api/users?profileImage=<?=$_SESSION['userdata']['id'] ?>&v=<?=format($_SESSION['userdata']['modified'])->timestamp() ?>" />
             </div>
-            <div class="commentReply" style="border:1px solid var(--main-border-color); padding:15px; border-radius:var(--box-radius); margin-bottom:10px;">
+            <div class="commentReply inactive">
                 <a href="javascript:void(0);" onclick="toggleCommentBoxes(0, '<?=$formHash?>')">
                     <?php echo $tpl->__('links.add_new_comment') ?>
                 </a>
@@ -150,11 +150,6 @@ if (str_contains($formUrl, '?delComment=')) {
         </div>
     </div>
 
-    <?php if (count($tpl->get('comments')) == 0) { ?>
-        <div style="padding-left:40px;">
-            <?php echo $tpl->__('text.no_comments') ?>
-        </div>
-    <?php } ?>
     <div class="clearall"></div>
 </form>
 

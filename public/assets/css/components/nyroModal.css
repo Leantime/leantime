@@ -27,26 +27,7 @@
 
 }
 
-.nyroModalCloseButton {
 
-    font-size: var(--font-size-xxl);
-    text-indent: 0;
-    color: #aaa !important;
-    border-radius:5px;
-    height: 25px;
-    line-height: 26px;
-    right: 26px;
-    text-align: center;
-    top: 31px;
-    width: 25px;
-    z-index: 1000010;
-}
-
-.nyroModalCloseButton:hover {
-    text-decoration: none;
-    color: var(--primary-font-color)  !important;
-    background-color:var(--col-hover-bg);
-}
 
 .nyroModalTitle {
     top: -26px;
@@ -145,4 +126,52 @@
     font-size:var(--font-size-xxl);
     color:var(--primary-font-color);
     margin-bottom:20px;
+}
+
+.nyroModalCont .row .regLeft {
+    display:none;
+}
+
+.nyroModalCont .row  .regRight {
+    min-width:500px;
+}
+
+.modal-icons {
+    float:right;
+    margin-top:1px;
+    margin-right:30px;
+
+}
+
+.nyroModalCont .modal-icons a {
+    display:inline-block;
+    line-height:23px;
+    border:0px solid var(--main-border-color);
+    border-radius:var(--box-radius-small);
+    width: 25px;
+    text-align: center;
+    color:var(--primary-font-color);
+    font-size: var(--font-size-m);
+}
+
+.nyroModalCloseButton {
+    border:0px solid var(--main-border-color);
+    font-size: var(--font-size-xl);
+    text-indent: 0;
+    color: var(--primary-font-color) !important;
+    border-radius:var(--box-radius-small);
+    height: 25px;
+    line-height: 25px;
+    right: 40px;
+    text-align: center;
+    top: 35px;
+    width: 25px;
+    z-index: 1000010;
+}
+
+.nyroModalCloseButton:hover,
+.modal-icons a:hover {
+    text-decoration: none;
+    background:var(--main-border-color-hover) !important;
+    color:var(--primary-font-color);
 }

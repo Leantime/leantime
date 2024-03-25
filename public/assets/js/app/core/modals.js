@@ -10,7 +10,7 @@ leantime.modals = (function () {
         var modalOptions = {
             sizes: {
                 minW: 500,
-                minH: 500
+                minH: 200
             },
             resizable: true,
             autoSizable: true,

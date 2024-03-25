@@ -12,20 +12,20 @@ leantime.obmCanvasController = (function () {
         var firstRowHeight = rowHeight * 0.6666;
         jQuery("#firstRow div.contentInner").each(function () {
             if (jQuery(this).height() > firstRowHeight) {
-                firstRowHeight = jQuery(this).height() + 25;
+                firstRowHeight = jQuery(this).height() + 50;
             }
         });
 
         var firstRowHeightTop = firstRowHeight * 0.5;
         jQuery("#firstRowTop div.contentInner").each(function () {
             if (jQuery(this).height() > firstRowHeightTop) {
-                firstRowHeightTop = jQuery(this).height() + 25;
+                firstRowHeightTop = jQuery(this).height() + 50;
             }
         });
         var firstRowHeightBottom = firstRowHeight * 0.5;
         jQuery("#firstRowBottom div.contentInner").each(function () {
             if (jQuery(this).height() > firstRowHeightBottom) {
-                firstRowHeightBottom = jQuery(this).height() + 25;
+                firstRowHeightBottom = jQuery(this).height() + 50;
             }
         });
         if (firstRowHeightTop + firstRowHeightBottom + 25 > firstRowHeight) {
@@ -35,7 +35,7 @@ leantime.obmCanvasController = (function () {
         var secondRowHeight = rowHeight * 0.333;
         jQuery("#secondRow div.contentInner").each(function () {
             if (jQuery(this).height() > secondRowHeight) {
-                secondRowHeight = jQuery(this).height() + 25;
+                secondRowHeight = jQuery(this).height() + 50;
             }
         });
 
@@ -68,6 +68,7 @@ leantime.obmCanvasController = (function () {
                     }
                 },
                 afterShowCont: function () {
+                    window.htmx.process('.nyroModalCont');
                     jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions());
 
                 },

@@ -188,36 +188,15 @@ if (isset($canvasItem['id']) && $canvasItem['id'] != '') {
                 ?>
 
                     <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
-                        <div class="ticketBox fixed">
-
-                            <div class="row">
-                                <div class="col-md-8">
-                                    <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php echo $canvasItem['milestoneHeadline']; ?></a></strong>
-                                </div>
-                                <div class="col-md-4 align-right">
-                                    <a href="<?=BASE_URL ?>/<?=$canvasName ?>canvas/editCanvasItem/<?php echo $id;?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
-                                </div>
-                            </div>
-                            <div class="row">
-
-                                <div class="col-md-7">
-                                    <?=$tpl->__("label.due") ?>
-                                    <?php echo format($canvasItem['milestoneEditTo'])->date($tpl->__("text.no_date_defined")); ?>
-                                </div>
-                                <div class="col-md-5" style="text-align:right">
-                                    <?=sprintf($tpl->__("text.percent_complete"), $canvasItem['percentDone'])?>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $canvasItem['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $canvasItem['percentDone']; ?>%">
-                                            <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $canvasItem['percentDone'])?></span>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div hx-trigger="load"
+                             hx-indicator=".htmx-indicator"
+                             hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$canvasItem['milestoneId'] ?>">
+                            <div class="htmx-indicator">
+                                <?=$tpl->__("label.loading_milestone") ?>
                             </div>
                         </div>
+                        <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+
                     </li>
             <?php } ?>
 

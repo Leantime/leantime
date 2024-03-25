@@ -35,21 +35,21 @@ $size = floor(100 / $numberofColumns);
         <?php echo $tpl->displayNotification(); ?>
 
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <?php
                 $tpl->dispatchTplEvent('filters.afterLefthandSectionOpen');
 
                 $tpl->displaySubmodule('tickets-ticketNewBtn');
+
                 $tpl->displaySubmodule('tickets-ticketFilter');
 
                 $tpl->dispatchTplEvent('filters.beforeLefthandSectionClose');
                 ?>
-            </div>
-
-            <div class="col-md-4 center">
 
             </div>
-            <div class="col-md-4">
+
+
+            <div class="col-md-6">
                 <div class="pull-right">
 
                     <?php $tpl->dispatchTplEvent('filters.afterRighthandSectionOpen'); ?>
@@ -104,6 +104,7 @@ $size = floor(100 / $numberofColumns);
                 <tr>
                     <th><?= $tpl->__("label.title"); ?></th>
                     <th><?= $tpl->__("label.todo_type"); ?></th>
+                    <th><?= $tpl->__("label.progress"); ?></th>
                     <th class="milestone-col"><?= $tpl->__("label.dependent_on"); ?></th>
 
                     <th><?= $tpl->__("label.todo_status"); ?></th>
@@ -114,7 +115,7 @@ $size = floor(100 / $numberofColumns);
                     <th><?= $tpl->__("label.planned_hours"); ?></th>
                     <th><?= $tpl->__("label.estimated_hours_remaining"); ?></th>
                     <th><?= $tpl->__("label.booked_hours"); ?></th>
-                    <th><?= $tpl->__("label.progress"); ?></th>
+
                     <th class="no-sort"></th>
 
                 </tr>
@@ -134,9 +135,22 @@ $size = floor(100 / $numberofColumns);
                                 <?php } ?>
                             </td>
                             <td><?php echo $tpl->__("label." . strtolower($row['type'])); ?></td>
+
+
+                            <td>
+                                <?php if($row["type"] == "milestone"){ ?>
+                                    <div hx-trigger="load"
+                                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/progress?milestoneId=<?=$row["id"] ?>&view=Progress">
+                                        <div class="htmx-indicator">
+                                            <?=$tpl->__("label.calculating_progress") ?>
+                                        </div>
+                                    </div>
+                                <?php } ?>
+                            </td>
+
                                 <?php
                                 if ($row["milestoneid"] != "" && $row["milestoneid"] != 0) {
-                                    $milestoneHeadline = $tpl->escape($row["milestoneid"]);
+                                    $milestoneHeadline = $tpl->escape($row["milestoneHeadline"]);
                                 } else {
                                     $milestoneHeadline = $tpl->__("label.no_milestone");
                                 }?>
@@ -236,15 +250,7 @@ $size = floor(100 / $numberofColumns);
                                 <?php echo $row["bookedHours"] ?>
                             </td>
 
-                            <td data-order="<?=$row["percentDone"] ?? 0?>">
 
-                                <div class="progress " style="width: 100%;">
-
-                                    <div class="progress-bar progress-bar-success " role="progressbar" aria-valuenow="<?php echo $row["percentDone"] ?? 0; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $row["percentDone"] ?? 0; ?>%">
-                                        <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row["percentDone"] ?? 0)?></span>
-                                    </div>
-                                </div>
-                            </td>
                             <td>
                                 <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="inlineDropDownContainer">

@@ -936,6 +936,7 @@ leantime.ticketsController = (function () {
             var status = jQuery("#statusSelect").val();
             var sort = jQuery("#sortBySelect").val();
             var groupBy = jQuery("input[name='groupBy']:checked").val();
+            var showTasks = jQuery("input[name='showTasks']:checked").val();
 
             var query = "?search=true";
             if (project != "" && project != undefined) {
@@ -958,6 +959,8 @@ leantime.ticketsController = (function () {
                 query = query + "&sort=" + sort;}
             if (groupBy != "" && groupBy != undefined) {
                 query = query + "&groupBy=" + groupBy;}
+            if (showTasks != "" && showTasks != undefined) {
+                query = query + "&showTasks=" + showTasks;}
 
             var rediredirectUrl = url + query;
 

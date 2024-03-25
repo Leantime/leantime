@@ -23,7 +23,9 @@ textarea:focus,
 
 form label{
     padding-top:5px;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
+    font-weight:bold;
+    opacity:0.8;
 }
 
 form .switchery {
@@ -36,15 +38,15 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     background-color: var(--secondary-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: var(--input-shadow);
+    -moz-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
     -webkit-transition: border linear .2s, box-shadow linear .2s;
     -moz-transition: border linear .2s, box-shadow linear .2s;
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
-    padding: 4px 14px;
+    padding: var(--input-padding);
     color:var(--primary-font-color);
 }
 
@@ -60,15 +62,45 @@ body input:focus {
     border-color:var(--main-border-color-hover);
 }
 
+
+
+/* Tags */
+
+body div.tagsinput {
+    border:1px solid transparent;
+    overflow:hidden;
+}
+
+body div.tagsinput:hover,
+body div.tagsinput:focus,
+body input[type=text].main-title-input.main-title-input:hover,
+body input[type=text].main-title-input.main-title-input:focus{
+    border: 1px solid var(--main-border-color-hover);
+}
+
+body div.tagsinput.readonly {
+    display:inline-block;
+    width:auto;
+    padding:0px;
+    border:0px !important;
+    height:auto !important;
+    background:none;
+}
+
+body .ticketBox div.tagsinput.readonly {
+    background:none !important;
+    margin-bottom:0px !important;
+}
+
 body div.tagsinput {
     background-color: var(--input-background);
     color:var(--primary-font-color);
     font-family: var(--primary-font-family);
     width:100% !important;
-    height:31px !important;
+    height:auto !important;
     border-radius:var(--input-radius);
     box-shadow: none;
-    padding:4px;
+    padding:var(--input-padding);
     border:0px;
 }
 
@@ -77,6 +109,7 @@ body div.tagsinput input {
     color:var(--primary-font-color) !important;
     width:auto;
     padding:0px;
+    margin-bottom:0px;
     font-family: var(--primary-font-family);
 }
 
@@ -92,6 +125,23 @@ div.tagsinput span.tag {
 
 div.tagsinput span.tag a {
     vertical-align: text-bottom;
+}
+
+.ss-main .ss-multi-selected {
+    padding:var(--input-padding);
+}
+
+.ss-main .ss-multi-selected .ss-values,
+.ss-main .ss-multi-selected .ss-disabled{
+    padding:0px;
+    height:21px; /* Equivalend to line height on tags input*/
+}
+
+.ss-main .ss-multi-selected .ss-values .ss-value {
+    border-radius: 12px;
+    padding: 0px 10px;
+    margin: 0px;
+    border: 0px solid var(--primary-color);
 }
 
 select {
@@ -169,7 +219,7 @@ textarea, button {
 }
 
 
-/*Secondary Button*/
+/* Secondary Button */
 body .btn-default,
 body .btn,
 body a.btn,
@@ -186,7 +236,7 @@ a.btn-default,
     font-family: var(--primary-font-family);
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 4px 14px;
+    padding: var(--input-padding);
     line-height:21px;
     background: var(--secondary-action-bg);
     text-shadow: none;
@@ -257,7 +307,7 @@ input[type='submit'],
     outline:0;
     font-size: var(--base-font-size);
     font-weight:bold;
-    padding: 4px 14px;
+    padding: var(--input-padding);
     line-height:21px;
     box-shadow:none;
     text-shadow: none;
@@ -301,15 +351,15 @@ body input[type='submit'].btn-primary .caret,
     background-color: var(--secondary-background);
     line-height:21px;
     border: 1px solid var(--main-border-color);
-    -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
-    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.075);
+    -webkit-box-shadow: var(--input-shadow);
+    -moz-box-shadow: var(--input-shadow);
+    box-shadow: var(--input-shadow);
     -webkit-transition: border linear .2s, box-shadow linear .2s;
     -moz-transition: border linear .2s, box-shadow linear .2s;
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
     border-radius: var(--input-radius);
-    padding: 4px 14px;
+    padding: var(--input-padding);
     color:var(--primary-font-color);
 }
 
@@ -419,7 +469,7 @@ body input[type='submit'].btn-primary .caret,
 }
 
 .btn-file {
-    padding: 4px 12px 3px 12px;
+    padding: var(--input-padding);
 }
 
 .btn,
@@ -619,7 +669,7 @@ select,
 
 .chosen-container-multi .chosen-choices .search-field input {
     height: auto;
-    padding: 4px 14px;
+    padding: var(--input-padding);
 }
 
 .chosen-container-single .chosen-search input {
@@ -639,7 +689,7 @@ input[type=color] {
     height:29px;
     padding:0px;
     width:29px;
-    border:2px solid #ccc;
+    border:2px solid var(--main-border-color);
 }
 
 .assign-container {
@@ -734,32 +784,7 @@ body input[type=text].main-title-input.main-title-input {
     margin-bottom:5px;
 }
 
-body div.tagsinput {
-    border:1px solid transparent;
-    margin-bottom:5px;
-    overflow:hidden;
-}
 
-body div.tagsinput:hover,
-body div.tagsinput:focus,
-body input[type=text].main-title-input.main-title-input:hover,
-body input[type=text].main-title-input.main-title-input:focus{
-    border: 1px solid var(--main-border-color-hover);
-}
-
-body div.tagsinput.readonly {
-    display:inline-block;
-    width:auto;
-    padding:0px;
-    border:0px !important;
-    height:auto !important;
-    background:none;
-}
-
-body .ticketBox div.tagsinput.readonly {
-    background:none !important;
-    margin-bottom:0px !important;
-}
 
 div.border {
     border:1px solid var(--main-border-color);
@@ -849,7 +874,7 @@ input.secretInput:active {
     border:1px solid var(--main-action-bg);
     font-size: var(--base-font-size);
     font-family: var(--primary-font-family);
-    padding: 4px 14px;
+    padding: var(--input-padding);
     line-height: 21px;
     border-radius: var(--element-radius);
     vertical-align: top;
@@ -1142,8 +1167,8 @@ input[type=range]:focus::-ms-fill-upper {
     display: flex;
     cursor: pointer;
     width: 100%;
-    height: 37px;
-    padding: 4px 14px;
+    height: auto;
+    padding: var(--input-padding);
     border: 1px solid var(--main-border-color);
     background-color: var(--input-background);
     line-height:21px;
@@ -1151,7 +1176,7 @@ input[type=range]:focus::-ms-fill-upper {
     -webkit-box-shadow: var(--input-shadow);
     -moz-box-shadow: var(--input-shadow);
     box-shadow: var(--input-shadow);
-    border-radius: 4px;
+    border-radius: var(--input-radius);
 
     outline: 0;
     box-sizing: border-box;
@@ -1163,7 +1188,7 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .ss-main .ss-multi-selected {
-    min-height: 37px;
+    min-height: auto;
     background-color: var(--input-background);
     line-height: 21px;
     border: 1px solid var(--main-border-color);
@@ -1172,18 +1197,36 @@ input[type=range]:focus::-ms-fill-upper {
     border-radius: var(--input-radius);
 }
 
+.ss-main .ss-single-selected .placeholder {
+    line-height: 21px;
+}
+
 .ss-main .ss-multi-selected .ss-values .ss-disabled {
-    color:#999999;
+    color:var(--main-border-color);
+}
+
+.ss-main .ss-multi-selected .ss-values .ss-disabled {
+    padding:0px;
+    margin:0px;
 }
 
 .ss-main .ss-multi-selected .ss-add {
     display: flex;
     flex: 1 1 3px;
-    margin: 12px 12px 0 5px;
+    margin: 4px 0px 0 5px;
 }
 
 .ss-main .ss-multi-selected .ss-values .ss-value {
     background:var(--primary-color);
+}
+
+.ss-main .ss-single-selected .ss-arrow span {
+    padding:0px 4px;
+}
+
+.ss-main .ss-single-selected .ss-arrow span.arrow-up,
+.ss-main .ss-single-selected .ss-arrow span.arrow-down {
+    margin:0px;
 }
 
 
@@ -1411,7 +1454,7 @@ body .croppie-container {
 
 .selectable .selectableContent {
     border: 1px solid var(--main-border-color);
-    padding:5px 10px;
+    padding:5px;
     border-radius: var(--element-radius);
     background: var(--tab-background);
     color: var(--tab-color);
@@ -1432,7 +1475,7 @@ body .croppie-container {
 }
 
 .selectable.active .selectableContent{
-    background: var(--tab-active-background);
+    background: var(--col-hover-bg);
     color: var(--tab-active-color);
 }
 
@@ -1477,7 +1520,7 @@ input[type="checkbox"].toggle {
     background: var(--input-background);
     box-shadow: var(--min-shadow);
     transition: all .2s ease;
-    margin-top: 7px;
+    margin-top: 5px;
 
 }
 
@@ -1617,7 +1660,6 @@ body div.clearForm input
 {
     width:50% !important;
     border:0px;
-    padding-left: 10px;
 }
 
 body .noteContainer div.tagsinput input,
@@ -1631,10 +1673,27 @@ body .clearForm div.tagsinput input:focus{
     border:none;
 }
 
+div.tagsinput span.tag {
+    margin-bottom:0px;
+}
+
 .headerEditDropdown {
     margin-left:10px;
 }
 
 .headerEditDropdown .caret {
     border-top-color:var(--main-action-color);
+}
+
+
+.commentReply.inactive {
+    border:1px solid var(--main-border-color);
+    padding:9px 14px;
+    border-radius:var(--box-radius);
+    margin-bottom:10px;
+}
+
+.round-button {
+    padding:4px 0px !important;
+    min-width:31px;
 }
