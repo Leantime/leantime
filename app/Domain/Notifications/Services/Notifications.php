@@ -151,7 +151,7 @@ namespace Leantime\Domain\Notifications\Services {
                         $mailer->setHtml($emailMessage);
 
                         $taggedUserObject = $this->userRepository->getUser($taggedUser);
-                        if(!empty($taggedUserObject['username'])) {
+                        if (isset($taggedUserObject['username'])) {
                             $mailer->sendMail(array($taggedUserObject['username']), $authorName);
                         }
                     }
