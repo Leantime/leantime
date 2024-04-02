@@ -167,50 +167,6 @@ class Timesheets extends Repository
     /**
      * @TODO: Function is currently not used by core.
      *
-     * @param array $values
-     *
-     * @return void
-     */
-    public function export(array $values): void
-    {
-        $values = $this->getAll($values['project'], $values['kind'], $values['dateFrom'], $values['dateTo'], $values['userId'], $values['invEmplCheck'], $values['invCompCheck']);
-
-        $filename = "export_" . date('m-d_h:m');
-        $hash = md5(time() . $_SESSION['userdata']['id']);
-        $path = $_SERVER['DOCUMENT_ROOT'] . '/userdata/export/';
-        $ext = 'xls';
-        $file = $path . $hash . '.' . $ext;
-        header('Content-type: application/ms-excel');
-        header('Content-Disposition: attachment; filename=' . $filename);
-
-        $sql = "INSERT INTO zp_file (module, userId, extension, encName, realName, date)
-                VALUES (:module,:userId,:extension,:encName,:realName,NOW())";
-
-        $call = $this->dbcall(func_get_args());
-
-        $call->prepare($sql, ['values' => $values]);
-
-        $call->bindValue(':module', 'export');
-        $call->bindValue(':userId', $_SESSION['userdata']['id']);
-        $call->bindValue(':extension', $ext);
-        $call->bindValue(':encName', $hash);
-        $call->bindValue(':realName', $filename);
-
-        $call->execute();
-
-        $content = 'ID: \t NAME: \t HEADLINE: \t HOURS: \t DESCRIPTION: \t KIND: \t NAME: \t \n';
-
-        foreach ($values as $value) {
-            $content .= $value['id'] . '\t' . $value['firstname'] . ' ' . $value['lastname'] . '\t' . $value['headline'] . '\t' . $value['hours'] . '\t'
-                . $value['description'] . '\t' . $value['kind'] . '\t' . $value['name'] . '\t \n';
-        }
-
-        file_put_contents($file, $content);
-    }
-
-    /**
-     * @TODO: Function is currently not used by core.
-     *
      * @param int $id
      *
      * @return mixed
@@ -887,14 +843,14 @@ class Timesheets extends Repository
                   ON DUPLICATE KEY UPDATE hours = hours + :hoursWorked";
 
 
-        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp)->setToUserTimezone()->startOfDay();
+        $userStartOfDay = dtHelper()::createFromTimestamp($inTimestamp, "UTC")->setToUserTimezone()->startOfDay();
 
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
         $call->prepare($query);
         $call->bindValue(':ticketId', $ticketId);
         $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
         $call->bindValue(':hoursWorked', $hoursWorked);
-        $call->bindValue(':workDate', $userDay->formatDateTimeForDb());
+        $call->bindValue(':workDate', $userStartOfDay->formatDateTimeForDb());
 
         $call->execute();
 

@@ -21,7 +21,7 @@ use PHPUnit\Exception;
  */
 class Calendar extends RepositoryCore
 {
-    private array $classColorMap = array(
+    public array $classColorMap = array(
          "label-warning" => "var(--yellow)",
          "label-purple" => "var(--purple)",
          "label-pink" => "var(--pink)",
@@ -76,17 +76,23 @@ class Calendar extends RepositoryCore
 
         if (!empty($dateFrom)) {
             $query .= " AND dateFrom >= :dateFrom";
-            $stmn->bindValue(':dateFrom', $dateFrom->format('Y-m-d H:i:s'), PDO::PARAM_STR);
         }
 
         if (!empty($dateTo)) {
             $query .= " AND dateTo <= :dateTo";
-            $stmn->bindValue(':dateTo', $dateTo->format('Y-m-d H:i:s'), PDO::PARAM_STR);
         }
 
          $query .= " ORDER BY zp_calendar.dateFrom";
 
         $stmn = $this->db->database->prepare($query);
+
+        if (!empty($dateFrom)) {
+            $stmn->bindValue(':dateFrom', $dateFrom->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        }
+
+        if (!empty($dateTo)) {
+            $stmn->bindValue(':dateTo', $dateTo->format('Y-m-d H:i:s'), PDO::PARAM_STR);
+        }
         $stmn->bindValue(':userId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
 
         $stmn->execute();
@@ -113,23 +119,31 @@ class Calendar extends RepositoryCore
 
         if (!empty($userId)) {
             $query .= " AND userId >= :userId";
-            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
         }
 
         if (!empty($dateFrom)) {
             $query .= " AND dateFrom >= :dateFrom";
-            $stmn->bindValue(':dateFrom', $dateFrom->formatDateTimeForDb(), PDO::PARAM_STR);
         }
 
         if (!empty($dateTo)) {
             $query .= " AND dateTo <= :dateTo";
-            $stmn->bindValue(':dateTo', $dateTo->formatDateTimeForDb(), PDO::PARAM_STR);
         }
 
         $query .= " ORDER BY zp_calendar.dateFrom";
 
         $stmn = $this->db->database->prepare($query);
 
+        if (!empty($userId)) {
+            $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
+        }
+
+        if (!empty($dateFrom)) {
+            $stmn->bindValue(':dateFrom', $dateFrom->formatDateTimeForDb(), PDO::PARAM_STR);
+        }
+
+        if (!empty($dateTo)) {
+            $stmn->bindValue(':dateTo', $dateTo->formatDateTimeForDb(), PDO::PARAM_STR);
+        }
 
         $stmn->execute();
 

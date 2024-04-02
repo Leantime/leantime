@@ -6,6 +6,7 @@ use Illuminate\Console\Command as LaravelCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Console\Application as ConsoleApplicationContract;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
+use Illuminate\Foundation\Bus;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ProcessUtils;
 use Illuminate\Support\Str;
@@ -238,9 +239,11 @@ class ConsoleKernel implements ConsoleKernelContract
      * @param  array  $parameters
      * @todo Implement
      */
+    /** @phpstan-ignore-next-line */
     public function queue($command, array $parameters = []): \Illuminate\Foundation\Bus\PendingDispatch
     {
-        return new \Illuminate\Foundation\Bus\PendingDispatch();
+        /** @phpstan-ignore-next-line */
+        return \Illuminate\Foundation\Bus\PendingDispatch();
     }
 
     /**

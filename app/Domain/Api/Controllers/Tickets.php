@@ -63,6 +63,8 @@ class Tickets extends Controller
              **/
             $this->apiService->jsonResponse(1, $results);
         }
+
+        return new Response();
     }
 
     /**

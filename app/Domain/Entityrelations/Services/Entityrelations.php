@@ -3,32 +3,27 @@
 namespace Leantime\Domain\Entityrelations\Services {
 
     use Leantime\Domain\Entityrelations\Repositories\Entityrelations as EntityrelationRepository;
+    use Leantime\Domain\Setting\Repositories\Setting;
 
     /**
      *
      */
     class Entityrelations
     {
-        private EntityrelationRepository $entityRelationshipsRepo;
+
 
         /**
-         * @param EntityrelationRepository $entityRelationshipsRepo
+         * Class constructor.
+         *
+         * @param EntityrelationRepository $entityRelationshipsRepo The entity relationships repository.
+         * @param Setting $settingsRepo The settings repository.
+         * @return void
          */
         public function __construct(
-            EntityrelationRepository $entityRelationshipsRepo
-        ) {
-            $this->entityRelationshipsRepo = $entityRelationshipsRepo;
-        }
+            private EntityrelationRepository $entityRelationshipsRepo,
+            private Setting $settingsRepo
+        ) {}
 
-        /**
-         * @param $entityA
-         * @param $entityAType
-         * @param $relationship
-         * @param $entityB
-         * @param $entityBType
-         * @param $meta
-         * @return mixed
-         */
         /**
          * @param $entityA
          * @param $entityAType
@@ -43,13 +38,6 @@ namespace Leantime\Domain\Entityrelations\Services {
             return $this->settingsRepo->saveSetting($entityA, $entityAType, $relationship, $entityB, $entityBType, $meta = "");
         }
 
-        /**
-         * @param string $entitySide
-         * @param int $entity
-         * @param string $entityType
-         * @param string $relationship
-         * @return mixed
-         */
         /**
          * @param string $entitySide
          * @param int    $entity

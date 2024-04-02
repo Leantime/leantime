@@ -66,7 +66,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->settingRepo = $settingRepo;
             $this->calendarRepo = $calendarRepo;
             $this->reactionsService = $reactionsService;
-            $this->reportsService = $reportsService;
+            $this->reportService = $reportsService;
             $this->widgetService = $widgetService;
 
             $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";

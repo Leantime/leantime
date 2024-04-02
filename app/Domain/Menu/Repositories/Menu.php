@@ -378,7 +378,7 @@ namespace Leantime\Domain\Menu\Repositories {
             $ticketService = $this->ticketsService;
 
             //Removing base URL from here since it is being added in the menu for loop in the template
-            $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
+            $base_url = !empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
             return str_replace($base_url, '', $ticketService->getLastTicketViewUrl());
         }
 
@@ -388,7 +388,7 @@ namespace Leantime\Domain\Menu\Repositories {
             $ticketService = $this->ticketsService;
 
             //Removing base URL from here since it is being added in the menu for loop in the template
-            $base_url = !empty($config->appUrl) ? $config->appUrl : BASE_URL;
+            $base_url = !empty($this->config->appUrl) ? $this->config->appUrl : BASE_URL;
             return str_replace($base_url, '', $ticketService->getLastTimelineViewUrl());
         }
 

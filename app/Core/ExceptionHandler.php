@@ -68,7 +68,7 @@ class ExceptionHandler implements ExceptionHandlerContract
      */
     public function renderForConsole($output, Throwable $e)
     {
-        (new \Illuminate\Console\Application())->renderThrowable($e, $output);
+        app()->renderThrowable($e, $output);
     }
-    
+
 }

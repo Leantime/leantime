@@ -51,6 +51,7 @@
         "illuminate/view": "^9.0",
         "illuminate/events": "^9.0",
         "illuminate/filesystem": "^9.0",
+        "illuminate/bus": "^9.0",
         "metasyntactical/composer-plugin-license-check": "^2.1",
         "symfony/http-foundation": "^6.3",
         "symfony/error-handler": "^6.3",

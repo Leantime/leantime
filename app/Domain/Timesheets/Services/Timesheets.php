@@ -418,18 +418,6 @@ class Timesheets
     }
 
     /**
-     * @TODO: Function is currently not used by core.
-     *
-     * @param array $values
-     *
-     * @return void
-     */
-    public function export(array $values): void
-    {
-        $this->timesheetsRepo->export($values);
-    }
-
-    /**
      * @param array $invEmpl
      * @param array $invComp
      * @param array $paid

@@ -64,7 +64,6 @@ class Subtasks extends HtmxController
         $this->tpl->assign("ticketSubtasks", $ticketSubtasks);
         $this->tpl->assign("statusLabels", $statusLabels);
         $this->tpl->assign("efforts", $efforts);
-
     }
 
     /**
@@ -74,7 +73,7 @@ class Subtasks extends HtmxController
     {
 
         if (! $this->incomingRequest->getMethod() == 'GET') {
-            throw new Error('This endpoint only supports GET requests');
+            throw new \Exception('This endpoint only supports GET requests');
         }
 
         $getVars = $_GET;
@@ -90,11 +89,10 @@ class Subtasks extends HtmxController
         $this->tpl->assign("ticketSubtasks", $ticketSubtasks);
         $this->tpl->assign("statusLabels", $statusLabels);
         $this->tpl->assign("efforts", $efforts);
-
-
     }
 
-    public function delete() {
+    public function delete()
+    {
 
         $getVars = $_GET;
         $id = $getVars["ticketId"];
@@ -116,6 +114,5 @@ class Subtasks extends HtmxController
         $this->tpl->assign("ticketSubtasks", $ticketSubtasks);
         $this->tpl->assign("statusLabels", $statusLabels);
         $this->tpl->assign("efforts", $efforts);
-
     }
 }

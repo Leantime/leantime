@@ -228,7 +228,7 @@ namespace Leantime\Domain\Tickets\Repositories {
          */
         public function getStatusList(): mixed
         {
-            return $this->statusList;
+            return $this->statusListSeed;
         }
 
 

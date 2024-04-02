@@ -510,7 +510,7 @@ namespace Leantime\Domain\Connector\Services {
                 }
             } else {
                 $id = $_SESSION['userdata']['id'];
-                foreach ($this->values as &$row) {
+                foreach ($values as &$row) {
                     $row['editorId'] = $id;
                 }
             }

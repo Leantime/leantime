@@ -34,7 +34,7 @@ abstract class Repository
      * @param array $args - usually the value of func_get_args(), gives events/filters values to work with
      * @return object
      */
-    protected function dbcall(array $args): object
+    protected function dbcall(array ...$args): object
     {
         return new class ($args, $this) {
             /**

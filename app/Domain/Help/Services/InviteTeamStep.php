@@ -30,17 +30,46 @@ class InviteTeamStep implements OnboardingSteps
         return "Invite your team";
     }
 
+    /**
+     * Retrieves the action for the current request.
+     *
+     * This method is responsible for returning the action to be performed based on the current request.
+     * The action is returned as a string.
+     *
+     * @return string The action to be performed.
+     */
     public function getAction(): string
     {
         // TODO: Implement getAction() method.
+        return "InviteTeam";
     }
 
+    /**
+     * Retrieves the template for the current request.
+     *
+     * This method is responsible for returning the template to be used for rendering the content based on the current request.
+     * The template is returned as a string.
+     *
+     * @return string The template to be used for rendering the content.
+     */
     public function getTemplate(): string
     {
         return "help.inviteTeamStep";
     }
 
 
+    /**
+     * Handles the given parameters for performing a specific action.
+     *
+     * This method is responsible for processing and handling the given parameters for performing a specific action.
+     * It iterates over the parameters and checks if the corresponding email is set and not empty.
+     * If the email is valid and does not exist as a username, it creates a new user invite and then establishes a relation
+     * between the new user and the current project.
+     * In the end, a success notification is set.
+     *
+     * @param array $params The parameters to be handled.
+     * @return bool True if the handling was successful, false otherwise.
+     */
     public function handle($params): bool
     {
 

@@ -333,7 +333,7 @@ class Calendar
 
                 if (isset($statusLabelsArray[$ticket['projectId']][$ticket['status']])) {
                     $statusName = $statusLabelsArray[$ticket['projectId']][$ticket['status']]["name"];
-                    $statusColor = $this->classColorMap[$statusLabelsArray[$ticket['projectId']][$ticket['status']]["class"]];
+                    $statusColor = $this->calendarRepo->classColorMap[$statusLabelsArray[$ticket['projectId']][$ticket['status']]["class"]];
                 } else {
                     $statusName = "";
                     $statusColor = "var(--grey)";
@@ -389,5 +389,50 @@ class Calendar
         }
 
         return $newValues;
+    }
+
+    /**
+     * Generates an event array for fullcalendar.io frontend.
+     *
+     * @param string   $title
+     * @param bool     $allDay
+     * @param int      $id
+     * @param int      $projectId
+     * @param string   $eventType
+     * @param string   $dateContext
+     * @param string   $backgroundColor
+     * @param string   $borderColor
+     * @param int|null $dateFrom
+     * @param int|null $dateTo
+     *
+     * @return array
+     */
+    private function mapEventData(
+        string $title,
+        string $description,
+        bool $allDay,
+        int $id,
+        int $projectId,
+        string $eventType,
+        string $dateContext,
+        string $backgroundColor,
+        string $borderColor,
+        string $dateFrom,
+        string $dateTo
+    ): array {
+        return array(
+            'title'  => $title,
+            'allDay' => $allDay,
+            'description' => $description,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'id' => $id,
+            'projectId' => $projectId,
+            'eventType' => $eventType,
+            'dateContext' => $dateContext,
+            'backgroundColor' => $backgroundColor,
+            'borderColor' => $borderColor,
+            'url' => BASE_URL . "/dashboard/home/#/tickets/showTicket/" . $id,
+        );
     }
 }

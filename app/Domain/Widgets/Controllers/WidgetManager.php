@@ -73,8 +73,8 @@ namespace Leantime\Domain\Widgets\Controllers {
         {
             if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
                 $this->settingRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
-                return new \Symfony\Component\HttpFoundation\Response();
             }
+            return new \Symfony\Component\HttpFoundation\Response();
         }
     }
 
