@@ -177,8 +177,8 @@ class EditCanvasItem extends Controller
                     if (isset($params['newMilestone']) && $params['newMilestone'] != '') {
                         $params['headline'] = $params['newMilestone'];
                         $params['tags'] = '#ccc';
-                        $params['editFrom'] = date('Y-m-d');
-                        $params['editTo'] = date('Y-m-d', strtotime('+1 week'));
+                        $params['editFrom'] = dtHelper()->userNow()->formatDateForUser();
+                        $params['editTo'] = dtHelper()->userNow()->addDays(7)->formatDateForUser();
                         $params['dependentMilestone'] = '';
                         $id = $this->ticketService->quickAddMilestone($params);
 

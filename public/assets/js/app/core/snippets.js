@@ -17,6 +17,15 @@ leantime.snippets = (function () {
 
     };
 
+    var copyToClipboard = function (content) {
+
+        navigator.clipboard.writeText(content);
+
+        // Alert the copied text
+        jQuery.growl({message: leantime.i18n.__("short_notifications.url_copied"), style: "success"});
+
+    };
+
     var initConfettiClick = function() {
         jQuery(".confetti").click(function(){
             confetti.start();
@@ -88,6 +97,7 @@ leantime.snippets = (function () {
     // Make public what you want to have public, everything else is private
     return {
         copyUrl:copyUrl,
+        copyToClipboard:copyToClipboard,
         initConfettiClick:initConfettiClick,
         accordionToggle:accordionToggle,
         toggleTheme:toggleTheme,

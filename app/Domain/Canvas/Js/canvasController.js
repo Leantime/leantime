@@ -66,6 +66,7 @@ leantime.canvasController = (function () {
                 }
             },
             afterShowCont: function () {
+                window.htmx.process('.nyroModalCont');
                 jQuery("." + canvasName + "CanvasModal, #commentForm, #commentForm .deleteComment, ." + canvasName + "CanvasMilestone .deleteMilestone").nyroModal(canvasoptions);
 
             },

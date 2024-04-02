@@ -27,7 +27,7 @@
                 @if ($login::userIsAtLeast($roles::$admin))
                     <div class="pull-right dropdownWrapper">
                         <a
-                            class="dropdown-toggle btn"
+                            class="dropdown-toggle btn round-button"
                             data-toggle="dropdown"
                             data-tippy-content="{{ __('label.edit_project') }}"
                             href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
@@ -37,7 +37,7 @@
                                 <a
                                     href="{{ BASE_URL }}/projects/showProject/{{ $project['id'] }}"
 
-                                >Edit Project</a>
+                                ><i class="fa fa-edit"></i> Edit Project</a>
                             </li>
                             <li class="dropdown-item">
                                 <a
@@ -53,7 +53,7 @@
 
                 <div class="pull-right dropdownWrapper tw-mr-[5px]">
                     <a
-                        class="dropdown-toggle btn"
+                        class="dropdown-toggle btn round-button"
                         data-toggle="dropdown"
                         data-tippy-content="{{ __('label.copy_url_tooltip') }}"
                         href="{{ BASE_URL }}/project/changeCurrentProject/{{ $project['id'] }}"
@@ -67,7 +67,7 @@
                 <a
                     href="javascript:void(0);"
                     id="favoriteProject"
-                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px]"
+                    class="btn pull-right margin-right {{ $isFavorite ? 'isFavorite' : ''}} tw-mr-[5px] round-button"
                     data-tippy-content="{{ __('label.favorite_tooltip') }}"
                 ><i class="{{ $isFavorite ? 'fa-solid' : 'fa-regular' }} fa-star"></i></a>
 
@@ -478,49 +478,15 @@
                                 @endif
 
                                 <li class="ui-state-default" id="milestone_{!! $row->id !!}">
-                                    <div class="ticketBox fixed">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <strong>
-                                                    <a href="{{ BASE_URL }}/tickets/showKanban?search=true&milestone={!! $row->id !!}">
-                                                        {{ $row->headline }}
-                                                    </a>
-                                                </strong>
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-md-7">
-                                                {{ __('label.due') }}
-                                                {{ format($row->editTo)->date(__('text.no_date_defined')) }}
-                                            </div>
-
-                                            <div class="col-md-5 tw-text-right">
-                                                {!! sprintf(
-                                                    __('text.percent_complete'),
-                                                    $row->percentDone
-                                                ) !!}
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="progress">
-                                                    <div
-                                                        class="progress-bar progress-bar-success"
-                                                        role="progressbar"
-                                                        aria-valuenow="{{ $row->percentDone }}"
-                                                        aria-valuemin="0"
-                                                        aria-valuemax="100"
-                                                        style="width: {{ $row->percentDone }}%"
-                                                    ><span class="sr-only">{!! sprintf(
-                                                        __('text.percent_complete'),
-                                                        $row->percentDone
-                                                    ) !!}</span></div>
-                                                </div>
-                                            </div>
+                                    <div hx-trigger="load"
+                                         hx-indicator=".htmx-indicator"
+                                         hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$row->id ?>">
+                                        <div class="htmx-indicator">
+                                                <?=$tpl->__("label.loading_milestone") ?>
                                         </div>
                                     </div>
+
                                 </li>
                             @endforeach
                         </ul>

@@ -174,93 +174,71 @@ if (isset($_GET['canvasId'])) {
                     <br /><br />
                     <h4 class="widgettitle title-light"><span class="fa fa-link"></span> <?=$tpl->__("headlines.linked_milestone") ?> <i class="fa fa-question-circle-o helperTooltip" data-tippy-content="<?=$tpl->__("tooltip.link_milestones_tooltip") ?>"></i></h4>
 
-                    <ul class="sortableTicketList" style="width: 100%">
+
 
                         <?php if ($canvasItem['milestoneId'] == '') {?>
-                            <li class="ui-state-default center" id="milestone_0">
-                                <h4><?=$tpl->__("headlines.no_milestone_link") ?></h4>
-                                <div class="row" id="milestoneSelectors">
-                                    <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
-                                        <div class="col-md-12">
-                                            <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
-                                            <?php if (count($tpl->get('milestones')) > 0) { ?>
-                                                | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
-                                            <?php } ?>
-                                        </div>
-                                    <?php } ?>
-                                </div>
-                                <div class="row" id="newMilestone" style="display:none;">
-                                    <div class="col-md-12">
-                                        <input type="text" width="50%" name="newMilestone"></textarea><br />
-                                        <input type="hidden" name="type" value="milestone" />
-                                        <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
-                                        <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                                    </div>
-                                </div>
-
-                                <div class="row" id="existingMilestone" style="display:none;">
-                                    <div class="col-md-12">
-                                        <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
-                                            <option value=""></option>
-                                            <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
-                                                <?php echo"<option value='" . $milestoneRow->id . "'";
-
-                                                if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
-                                                    echo" selected='selected' ";
-                                                }
-
-                                                echo">" . $milestoneRow->headline . "</option>"; ?>
-                                                <?php
-                                            }     ?>
-                                        </select>
-                                        <input type="hidden" name="type" value="milestone" />
-                                        <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
-                                        <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
-                                        <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
-                                    </div>
-                                </div>
-
-                            </li>
-                        <?php } else {
-
-                            ?>
-
-                            <li class="ui-state-default" id="milestone_<?php echo $canvasItem['milestoneId']; ?>" class="<?=$canvasName ?>CanvasMilestone" >
-                                <div class="ticketBox fixed">
-
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <strong><a href="<?=BASE_URL ?>/tickets/showKanban?milestone=<?php echo $canvasItem['milestoneId'];?>" ><?php $tpl->e($canvasItem['milestoneHeadline']); ?></a></strong>
-                                        </div>
-                                        <div class="col-md-4 align-right">
-                                            <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-
-                                        <div class="col-md-7">
-                                            <?=$tpl->__("label.due") ?>
-                                            <?php echo format($canvasItem['milestoneEditTo'])->date($tpl->__("text.no_date_defined")); ?>
-                                        </div>
-                                        <div class="col-md-5" style="text-align:right">
-                                            <?=sprintf($tpl->__("text.percent_complete"), $canvasItem['percentDone'])?>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="progress">
-                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="<?php echo $canvasItem['percentDone']; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $canvasItem['percentDone']; ?>%">
-                                                    <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $canvasItem['percentDone'])?></span>
-                                                </div>
+                                <center>
+                                    <h4><?=$tpl->__("headlines.no_milestone_link") ?></h4>
+                                    <div class="row" id="milestoneSelectors">
+                                        <?php if ($login::userIsAtLeast($roles::$editor)) { ?>
+                                            <div class="col-md-12">
+                                                <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('new');"><?=$tpl->__("links.create_link_milestone") ?></a>
+                                                <?php if (count($tpl->get('milestones')) > 0) { ?>
+                                                    | <a href="javascript:void(0);" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('existing');"><?=$tpl->__("links.link_existing_milestone") ?></a>
+                                                <?php } ?>
                                             </div>
+                                        <?php } ?>
+                                    </div>
+                                    <div class="row" id="newMilestone" style="display:none;">
+                                        <div class="col-md-12">
+                                            <input type="text" width="50%" name="newMilestone"></textarea><br />
+                                            <input type="hidden" name="type" value="milestone" />
+                                            <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
+                                            <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                                            <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
                                         </div>
                                     </div>
+
+                                    <div class="row" id="existingMilestone" style="display:none;">
+                                        <div class="col-md-12">
+                                            <select data-placeholder="<?=$tpl->__("input.placeholders.filter_by_milestone") ?>" name="existingMilestone"  class="user-select">
+                                                <option value=""></option>
+                                                <?php foreach ($tpl->get('milestones') as $milestoneRow) { ?>
+                                                    <?php echo"<option value='" . $milestoneRow->id . "'";
+
+                                                    if (isset($searchCriteria['milestone']) && ($searchCriteria['milestone'] == $milestoneRow->id)) {
+                                                        echo" selected='selected' ";
+                                                    }
+
+                                                    echo">" . $milestoneRow->headline . "</option>"; ?>
+                                                    <?php
+                                                }     ?>
+                                            </select>
+                                            <input type="hidden" name="type" value="milestone" />
+                                            <input type="hidden" name="<?=$canvasName ?>canvasitemid" value="<?php echo $id; ?> " />
+                                            <input type="button" value="<?=$tpl->__("buttons.save") ?>" onclick="jQuery('#primaryCanvasSubmitButton').click()" class="btn btn-primary" />
+                                            <input type="button" value="<?=$tpl->__("buttons.cancel") ?>" onclick="leantime.<?=$canvasName ?>CanvasController.toggleMilestoneSelectors('hide')" class="btn btn-primary" />
+                                        </div>
+                                    </div>
+
+                                </center>
+
+                        <?php } else { ?>
+
+
+                                <div hx-trigger="load"
+                                     hx-indicator=".htmx-indicator"
+                                     hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$canvasItem['milestoneId'] ?>">
+                                    <div class="htmx-indicator">
+                                        <?=$tpl->__("label.loading_milestone") ?>
+                                    </div>
                                 </div>
-                            </li>
+                                <a href="<?=CURRENT_URL ?>?removeMilestone=<?php echo $canvasItem['milestoneId'];?>" class="<?=$canvasName ?>CanvasModal delete formModal"><i class="fa fa-close"></i> <?=$tpl->__("links.remove") ?></a>
+
+
                         <?php } ?>
 
-                    </ul>
+
 
                 <?php } ?>
 

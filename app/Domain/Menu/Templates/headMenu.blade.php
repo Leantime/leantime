@@ -20,7 +20,7 @@
             hx-indicator=".htmx-indicator"
             hx-trigger="click"
             data-toggle='dropdown'
-            data-tippy-content='{{ __('popover.notifications') }}'
+            data-tippy-content='{{ __('popover.latest_updates') }}'
         >
             <span class="fa-solid fa-bolt-lightning"></span>
             <span hx-get="{{ BASE_URL }}/notifications/news-badge/get" hx-trigger="load" hx-target="this"></span>

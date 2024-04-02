@@ -128,7 +128,7 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
             foreach ($timelineTasks as $mlst) {
                 $headline = $tpl->__('label.' . strtolower($mlst->type)) . ": " . $mlst->headline;
                 if ($mlst->type == "milestone") {
-                    $headline .= " (" . $mlst->percentDone . "% Done)";
+                    $headline .= " (" . format($mlst->percentDone)->decimal() . "% Done)";
                 }
 
                 $color = "#8D99A6";
@@ -145,8 +145,10 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
                     $sortIndex = $lastMilestoneSortIndex[$mlst->id] . ".000";
                 } else {
                     //If it has a milestone dependency, add milestone index
-                    if ($mlst->milestoneid > 0) {
-                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ) . "." . str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
+                    if($mlst->dependingTicketId > 0){
+                        $sortIndex = ($lastMilestoneSortIndex[$mlst->dependingTicketId] ?? "999") . "." . str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
+                    }else if ($mlst->milestoneid > 0) {
+                        $sortIndex = ($lastMilestoneSortIndex[$mlst->milestoneid] ?? "999" ). "." . str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
                     } else {
                         $sortIndex = "999" . "." . str_pad(($mlst->sortIndex ?? 999), 3, 0, STR_PAD_LEFT);
                     }
@@ -170,7 +172,7 @@ $roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
                         '1969-12-31'
                     )) ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',
                     end :'" . (($mlst->editTo != '0000-00-00 00:00:00' && !str_starts_with($mlst->editTo, '1969-12-31')) ? $mlst->editTo :  date('Y-m-d', strtotime("+1 week", time()))) . "',
-                    progress :'" . $mlst->percentDone . "',
+                    progress :'" . format($mlst->percentDone)->decimal() . "',
                     dependencies :'" . implode(",", $dependencyList) . "',
                     custom_class :'',
                     type: '" . strtolower($mlst->type) . "',

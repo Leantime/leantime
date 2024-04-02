@@ -138,6 +138,7 @@ namespace Leantime\Domain\Goalcanvas\Repositories {
                         zp_canvas.id,
                         zp_canvas.title,
                         zp_canvas.author,
+                        zp_canvas.description,
                         zp_canvas.created,
                         zp_canvas.projectId,
                         t1.firstname AS authorFirstname,

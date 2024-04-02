@@ -244,28 +244,35 @@ class Calendar
 
         //Create array of event objects for ical generator
         foreach ($calendarEvents as $event) {
-            $currentEvent = IcalEvent::create()
-                ->image(BASE_URL . '/dist/images/favicon.png', 'image/png', Display::badge())
-                ->startsAt(dtHelper()->parseDbDateTime($event['dateFrom'])->setToUserTimezone())
-                ->endsAt(dtHelper()->parseDbDateTime($event['dateFrom'])->setToUserTimezone())
-                ->name($event['title'])
-                ->description($event['description'] ?? '')
-                ->uniqueIdentifier($event['id'])
-                ->url($event['url'] ?? '');
 
-            if ($event['allDay'] === true) {
-                $currentEvent->fullDay();
+            try {
+                $currentEvent = IcalEvent::create()
+                    ->image(BASE_URL . '/dist/images/favicon.png', 'image/png', Display::badge())
+                    ->startsAt(dtHelper()->parseDbDateTime($event['dateFrom'])->setToUserTimezone())
+                    ->endsAt(dtHelper()->parseDbDateTime($event['dateTo'])->setToUserTimezone())
+                    ->name($event['title'])
+                    ->description($event['description'] ?? '')
+                    ->uniqueIdentifier($event['id'])
+                    ->url($event['url'] ?? '');
+
+                if ($event['allDay'] === true) {
+                    $currentEvent->fullDay();
+                }
+
+                if ($event['eventType'] == 'ticket' && $event['dateContext'] == "due") {
+                    $currentEvent->alertMinutesBefore(30, $this->language->__('text.ical.todo_is_due'));
+                }
+
+                if ($event['eventType'] == 'ticket' && $event['dateContext'] == "edit") {
+                    $currentEvent->alertMinutesBefore(5, $this->language->__('text.ical.todo_start_alert'));
+                }
+
+                $eventObjects[] = $currentEvent;
+
+            }catch(\Exception $e) {
+                //Do not include event in ical
+                error_log($e);
             }
-
-            if ($event['eventType'] == 'ticket' && $event['dateContext'] == "due") {
-                $currentEvent->alertMinutesBefore(30, $this->language->__('text.ical.todo_is_due'));
-            }
-
-            if ($event['eventType'] == 'ticket' && $event['dateContext'] == "edit") {
-                $currentEvent->alertMinutesBefore(5, $this->language->__('text.ical.todo_start_alert'));
-            }
-
-            $eventObjects[] = $currentEvent;
         }
 
         $icalCalendar = IcalCalendar::create($this->language->__('text.ical_title'))->event($eventObjects);

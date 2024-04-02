@@ -42,28 +42,11 @@ namespace Leantime\Domain\Wiki\Repositories {
                     zp_canvas_items.sortindex,
                     zp_canvas.projectId,
                     milestone.headline as milestoneHeadline,
-                    milestone.editTo as milestoneEditTo,
-                    SUM(CASE WHEN progressTickets.status < 1 THEN 1 ELSE 0 END) AS doneTickets,
-                    SUM(CASE WHEN progressTickets.status < 1 THEN 0 ELSE IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)  END) AS openTicketsEffort,
-                    SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) AS doneTicketsEffort,
-                    SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints)) AS allTicketsEffort,
-                    COUNT(progressTickets.id) AS allTickets,
-                    CASE WHEN
-                      COUNT(progressTickets.id) > 0
-                    THEN
-                      ROUND(
-                        (
-                          SUM(CASE WHEN progressTickets.status < 1 THEN IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints) ELSE 0 END) /
-                          SUM(IF(progressTickets.storypoints = 0, 3, progressTickets.storypoints))
-                        ) *100)
-                    ELSE
-                      0
-                    END AS percentDone
+                    milestone.editTo as milestoneEditTo
 
 				FROM zp_canvas_items
 				LEFT JOIN zp_canvas ON zp_canvas.id = zp_canvas_items.canvasId
 				LEFT JOIN zp_user ON zp_canvas_items.author = zp_user.id
-				LEFT JOIN zp_tickets AS progressTickets ON progressTickets.milestoneid = zp_canvas_items.milestoneId AND progressTickets.type <> 'milestone' AND progressTickets.type <> 'subtask'
 			    LEFT JOIN zp_tickets AS milestone ON milestone.id = zp_canvas_items.milestoneId
 				WHERE zp_canvas.projectId = :projectId AND zp_canvas_items.box = 'article'";
 

@@ -1280,7 +1280,7 @@ namespace Leantime\Domain\Projects\Services {
                     "status" => '',
                 ),
                 "implementation" => array(
-                    "title" => "label.implementation",
+                    "title" => "label.implement",
                     "description" => "checklist.implementation.description",
                     "tasks" => array(
                         "createTasks" =>  array(

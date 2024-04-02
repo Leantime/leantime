@@ -192,28 +192,14 @@ foreach ($tpl->get('allCanvas') as $canvasRow) {
                             </div>
                         </div>
 
-                        <?php if ($row['milestoneHeadline'] != '') {
-                            ?>
+                        <?php if ($row['milestoneHeadline'] != '') { ?>
                             <br/>
-                            <hr/>
-                            <div class="row">
+                            <div hx-trigger="load"
+                                 hx-indicator=".htmx-indicator"
+                                 hx-get="<?=BASE_URL ?>/hx/tickets/milestones/showCard?milestoneId=<?=$row['milestoneId'] ?>">
 
-                                <div class="col-md-5">
-                                    <?php $tpl->e(substr($row['milestoneHeadline'], 0, 10)); ?>[...]
-                                </div>
-                                <div class="col-md-7" style="text-align:right">
-                                    <?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="progress">
-                                        <div class="progress-bar progress-bar-success" role="progressbar"
-                                             aria-valuenow="<?php echo $row['percentDone']; ?>" aria-valuemin="0"
-                                             aria-valuemax="100" style="width: <?php echo $row['percentDone']; ?>%">
-                                            <span class="sr-only"><?=sprintf($tpl->__("text.percent_complete"), $row['percentDone'])?></span>
-                                        </div>
-                                    </div>
+                                <div class="htmx-indicator">
+                                    <?=$tpl->__("label.loading_milestone") ?>
                                 </div>
                             </div>
                         <?php } ?>

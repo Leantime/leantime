@@ -4,13 +4,13 @@ namespace Acceptance;
 
 use Codeception\Attribute\Depends;
 use Codeception\Attribute\Group;
-use Codeception\Attribute\Skip;
+use Codeception\Util\Locator;
 use Tests\Support\AcceptanceTester;
 use Tests\Support\Page\Acceptance\Login;
 
 class TimesheetCest
 {
-    public function _before(AcceptanceTester $I, Login $loginPage)
+    public function _before(AcceptanceTester $I, Login $loginPage): void
     {
         $loginPage->login('test@leantime.io', 'test');
     }
@@ -62,6 +62,63 @@ class TimesheetCest
         ]);
     }
 
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function checkForEmptyTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('I do not what to see empty ("zero") time registrations');
+
+        $I->amOnPage('/timesheets/showMy');
+
+        // Do not what to see empty time regs.
+        $I->dontSeeInDatabase('zp_timesheets', [
+            'hours' => 0,
+        ]);
+    }
+
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function notShiftingTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('Try registering time on the same ticket on another day. Should not remove existing registrations.');
+
+        $I->amOnPage('/timesheets/showMy');
+
+        //Since we assume "Create Timesheet was created we just add values to day 3 and 4.
+
+        // Set hours.
+        $I->fillField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', 1);
+        $I->fillField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', 2);
+        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->waitForElement('.growl', 60);
+
+        $I->wait(10);
+
+        $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
+        $I->seeInField('//*[contains(@class, "rowday3")]//input[@class="hourCell"]', '1');
+        $I->seeInField('//*[contains(@class, "rowday4")]//input[@class="hourCell"]', '2');
+
+        $I->see('6', '#finalSum');
+    }
+
+    #[Group('timesheet')]
+    #[Depends('createMyTimesheet')]
+    public function sameTicketTimesheet(AcceptanceTester $I): void
+    {
+        $I->wantTo('Test timesheet updated with data one same ticket');
+
+        $I->amOnPage('/timesheets/showMy');
+
+        // Set hours in active
+        $I->fillField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', 1);
+        $I->fillField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', 2);
+        $I->click('//input[@name="saveTimeSheet"][@type="submit"]');
+        $I->waitForElement('.growl', 60);
+
+        $I->see('6', '#finalSum');
+    }
+
     /**
      * Save the timesheet once more to ensure number do not change.
      *
@@ -84,7 +141,7 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('3', '#finalSum');
+        $I->see('6', '#finalSum');
     }
 
     #[Group('timesheet')]
@@ -101,7 +158,7 @@ class TimesheetCest
         $I->waitForElementVisible('//*[contains(@class, "rowday1")]//input[@class="hourCell"]');
         $I->seeInField('//*[contains(@class, "rowday1")]//input[@class="hourCell"]', '1');
         $I->seeInField('//*[contains(@class, "rowday2")]//input[@class="hourCell"]', '2');
-        $I->see('3', '#finalSum');
+        $I->see('6', '#finalSum');
 
         // Switch back.
         $this->changeUsersTimeZone($I);
@@ -158,7 +215,7 @@ class TimesheetCest
         // Go and see if the total is correct.
         $I->amOnPage('/timesheets/showMy');
         $I->waitForElementVisible('#finalSum');
-        $I->see('8', '#finalSum');
+        $I->see('11', '#finalSum');
     }
 
     #[Group('timesheet')]
