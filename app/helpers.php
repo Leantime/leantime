@@ -256,7 +256,7 @@ if (! function_exists('cast')) {
 
         // Convert string to date if required.
         if (is_string($source) && is_a($classOrType, CarbonInterface::class, true)) {
-            return new DateTimeHelper($source);
+            return Cast::castDateTime($source);
         }
 
         return (new Cast($source))->castTo($classOrType, $constructParams, $mappings);
