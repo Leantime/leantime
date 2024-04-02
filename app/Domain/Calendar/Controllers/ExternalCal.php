@@ -46,7 +46,6 @@ class ExternalCal extends Controller
      *
      * @throws BindingResolutionException
      */
-    #[NoReturn]
     public function run(): void
     {
 

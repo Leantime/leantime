@@ -34,14 +34,21 @@ class InstalledPlugin implements PluginDisplayStrategy
     }
 
     /**
-     * @return array
+     * Retrieves the metadata links for the plugin.
+     *
+     * The metadata links include author's email, author's name, plugin version, and homepage URL.
+     * If the authors are not empty, the email of the first author is included as a link.
+     * If the version is not empty, the plugin version is included as a link.
+     * If the homepage is not empty, the homepage URL is included as a link.
+     *
+     * @return array An array of metadata links.
      */
     public function getMetadataLinks(): array
     {
         $links = [];
 
-        if (! empty($plugin->authors)) {
-            $author = is_array($plugin->authors) ? $plugin->authors[0] : $plugin->authors;
+        if (! empty($this->authors)) {
+            $author = is_array($this->authors) ? $this->authors[0] : $this->authors;
             $links[] = [
                 'prefix' => __('text.by'),
                 'link' => "mailto:{$author->email}",
@@ -49,16 +56,16 @@ class InstalledPlugin implements PluginDisplayStrategy
             ];
         }
 
-        if (! empty($plugin->version)) {
+        if (! empty($this->version)) {
             $links[] = [
                 'prefix' => __('text.version'),
-                'text' => $plugin->version,
+                'text' => $this->version,
             ];
         }
 
-        if (! empty($plugin->homepage)) {
+        if (! empty($this->homepage)) {
             $links[] = [
-                'link' => $plugin->homepage,
+                'link' => $this->homepage,
                 'text' => __('text.visit_site'),
             ];
         }

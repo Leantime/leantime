@@ -159,6 +159,8 @@ class Projects extends Controller
 
             return $this->tpl->displayJson(['status' => 'ok']);
         }
+
+        return new Response();
     }
 
 

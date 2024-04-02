@@ -583,8 +583,13 @@ namespace Leantime\Domain\Projects\Services {
         }
 
         /**
+         * Sets the current project in the session.
+         * If a project ID is provided in the query string, it is used to set the current project.
+         * If no project ID is provided, the last visited project or the first assigned project is set as the current project.
+         * If no project is found, an exception is thrown.
+         *
          * @return void
-         * @throws BindingResolutionException
+         * @throws \Exception when unable to set the current project
          */
         public function setCurrentProject(): void
         {
@@ -624,7 +629,7 @@ namespace Leantime\Domain\Projects\Services {
                 return;
             }
 
-            throw new Exception("Error trying to set a project");
+            throw new \Exception("Error trying to set a project");
         }
 
         /**
@@ -1110,9 +1115,10 @@ namespace Leantime\Domain\Projects\Services {
                     $idMap = array();
 
                     foreach ($canvasItems as $item) {
+
                         $milestoneId = "";
-                        if (isset($ticketIdList[$item['milestoneId']])) {
-                            $milestoneId = $ticketIdList[$item['milestoneId']];
+                        if (isset($idMap[$item['milestoneId']])) {
+                            $milestoneId = $idMap[$item['milestoneId']];
                         }
 
                         $canvasItemValues = array(
@@ -1127,7 +1133,7 @@ namespace Leantime\Domain\Projects\Services {
                             "sortindex" => $item['sortindex'] ?? '',
                             "status" => $item['status'] ?? '',
                             "relates" => $item['relates'] ?? '',
-                            "milestoneId" => $milestoneId ?? '',
+                            "milestoneId" => $milestoneId,
                             "title" => $item['title'] ?? '',
                             "parent" => $item['parent'] ?? '',
                             "featured" => $item['featured'] ?? '',

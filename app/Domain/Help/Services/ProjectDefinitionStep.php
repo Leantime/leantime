@@ -24,15 +24,32 @@ class ProjectDefinitionStep implements OnboardingSteps
        return "Describe your project";
     }
 
+    /**
+     * Retrieves the action of the current object.
+     *
+     * @return string The action of the current object.
+     */
     public function getAction() : string{
         // TODO: Implement getAction() method.
+        return "ProjectDefinition";
     }
 
+    /**
+     * Retrieves the template to render for the current object.
+     *
+     * @return string The template to render for the current object.
+     */
     public function getTemplate() : string{
         return "help.projectDefinitionStep";
     }
 
 
+    /**
+     * Handles the given parameters and performs necessary operations.
+     *
+     * @param array $params The parameters passed to the method.
+     * @return bool Returns true.
+     */
     public function handle($params): bool
     {
 

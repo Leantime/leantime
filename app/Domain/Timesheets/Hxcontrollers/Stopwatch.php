@@ -57,8 +57,6 @@ class Stopwatch extends HtmxController
             throw new Error('This endpoint only supports PATCH requests');
         }
 
-
-
         $params =  $this->incomingRequest->request->all();
 
         if (isset($params["action"]) === true && $params["action"] == "stop") {
@@ -66,7 +64,7 @@ class Stopwatch extends HtmxController
             $hoursBooked = $this->timesheetService->punchOut($ticketId);
         }
 
-        header("HX-Trigger:timerUpdate");
+        $this->setHTMXEvent("timerUpdate");
 
         $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
 
@@ -82,8 +80,6 @@ class Stopwatch extends HtmxController
             throw new Error('This endpoint only supports PATCH requests');
         }
 
-        header("HX-Trigger:timerUpdate");
-
         $params =  $this->incomingRequest->request->all();
 
         if (isset($params["action"]) === true && $params["action"] == "start") {
@@ -92,6 +88,8 @@ class Stopwatch extends HtmxController
                 $this->timesheetService->punchIn($ticketId);
             }
         }
+
+        $this->setHTMXEvent("timerUpdate");
 
         $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
         $this->tpl->assign("onTheClock", $onTheClock);

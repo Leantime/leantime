@@ -54,12 +54,16 @@ class Get extends Controller
         } else {
             return $this->getFileLocally($encName, $ext, $module, $realName);
         }
-
     }
 
     /**
-     * @return void
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * Retrieves a file locally and returns it as a streamed response.
+     *
+     * @param string $encName The encoded name of the file.
+     * @param string $ext The extension of the file.
+     * @param string $module The module of the file.
+     * @param string $realName The real name of the file.
+     * @return Response The streamed response containing the file or a 404 response if the file was not found.
      */
     private function getFileLocally($encName, $ext, $module, $realName): Response
     {
@@ -106,24 +110,25 @@ class Get extends Controller
 
 
                 $oStreamResponse = new StreamedResponse();
-                $oStreamResponse->headers->set("Content-Type", $mime_type );
+                $oStreamResponse->headers->set("Content-Type", $mime_type);
                 $oStreamResponse->headers->set("Content-Length", $sFileSize);
                 $oStreamResponse->headers->set("ETag", $sEtag);
 
-                if(app()->make(Environment::class)->debug == false) {
+                if (app()->make(Environment::class)->debug == false) {
                     $oStreamResponse->headers->set("Pragma", 'public');
                     $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
-                    $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified)." GMT");
+                    $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified) . " GMT");
                 }
-                $oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
+                $oStreamResponse->setCallback(function () use ($fullPath) {
+                    readfile($fullPath);
+                });
 
                 return $oStreamResponse;
-
             }
-        } else {
-            http_response_code(404);
-            die();
         }
+
+        return new Response("File not found", 404);
+
     }
 
     /**
@@ -171,16 +176,18 @@ class Get extends Controller
                 $response->headers->set('Content-type', $result['ContentType']);
             } elseif ($ext == 'svg') {
                 $response->headers->set('Content-type', 'image/svg+xml');
-
             } else {
                 header('Content-disposition: attachment; filename="' . $realName . "." . $ext . '";');
             }
 
             $response->headers->set('Content-Disposition', "inline; filename=\"" . $realName . "." . $ext . "\"");
 
-          return $response;
-        } catch (Aws\S3\Exception\S3Exception $e) {
-            return new Response($e->getMessage());
+            return $response;
+        } catch (\Exception $e) {
+
+            error_log($e);
+
+            return new Response($e->getMessage(), 500);
         }
     }
 }
