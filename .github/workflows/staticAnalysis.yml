@@ -7,12 +7,12 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  phpstan:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Run PHPStan
+    - name: Run Tests
       run: make phpstan
