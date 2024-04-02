@@ -124,7 +124,7 @@
                                         @endif
 
                                         <a href="#/tickets/showTicket/{{ $row['id'] }}">
-                                           {!! sprintf("<strong>%s</strong>", $row['headline']) !!}
+                                            <strong>{{ $row['headline'] }}</strong>
                                         </a>
 
                                         @include("tickets::partials.ticketsubmenu", ["ticket" => $row,"onTheClock" => $tpl->get("onTheClock")])
