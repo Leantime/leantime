@@ -42,6 +42,9 @@ namespace Leantime\Domain\Modulemanager\Services {
             "modulemanager" => array("required" => true, "enabled" => true, "dependsOn" => "", "scope" => "system"),
         );
 
+
+        private Plugins $pluginService;
+
         /**
          * __construct - get and test Session or make session
          *

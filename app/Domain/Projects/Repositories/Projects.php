@@ -1163,11 +1163,6 @@ namespace Leantime\Domain\Projects\Repositories {
          * @param $projectId
          * @return void
          */
-        /**
-         * @param $userId
-         * @param $projectId
-         * @return void
-         */
         public function deleteProjectRelation($userId, $projectId): void
         {
 
@@ -1318,14 +1313,6 @@ namespace Leantime\Domain\Projects\Repositories {
             $project = $this->getProject($id);
 
             $files = app()->make(Files::class);
-
-            if (isset($values['profileId']) && $values['profileId'] > 0) {
-                $file = $files->getFile($values['profileId']);
-                $img = 'userdata/' . $file['encName'] . $file['extension'];
-
-                $files->deleteFile($values['avatar']);
-            }
-
 
             $lastId = $files->upload($_FILE, 'project', $id, true, 300, 300);
 

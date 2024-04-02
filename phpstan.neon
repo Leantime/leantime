@@ -11,13 +11,6 @@ parameters:
         - vendor
         - config
     ignoreErrors:
-        - '#Variable \$tpl might not be defined\.#'
-        - '#Variable \$login might not be defined\.#'
-        - '#Variable \$roles might not be defined\.#'
-        - '#Variable \$__data might not be defined\.#'
-        - '#Constant BASE_URL not found\.#'
-        - '#Constant APP_ROOT not found\.#'
-        - '#Constant CURRENT_URL not found\.#'
     universalObjectCratesClasses:
         - Leantime\Core\Environment
     earlyTerminatingMethodCalls:
