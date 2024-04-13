@@ -434,6 +434,8 @@ $state = $tpl->get('state');
 <script type='text/javascript'>
 
     jQuery(document).ready(function() {
+        jQuery("#projectdetails select").chosen();
+
         <?php if (isset($_GET['integrationSuccess'])) {?>
             window.history.pushState({},document.title, '<?=BASE_URL ?>/projects/showProject/<?php echo (int)$project['id']; ?>');
         <?php } ?>

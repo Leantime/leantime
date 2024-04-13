@@ -53,7 +53,12 @@ class Login extends Controller
         $redirectUrl = BASE_URL . "/dashboard/home";
 
         if (isset($_GET['redirect']) && trim($_GET['redirect']) !== '' && trim($_GET['redirect']) !== '/') {
-            $redirectUrl = BASE_URL . urldecode($_GET['redirect']);
+            $url = urldecode($_GET['redirect']);
+
+            //Check for open redirects, don't allow redirects to external sites.
+            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+                $redirectUrl = BASE_URL ."/" . $url;
+            }
         }
 
         if ($this->config->useLdap) {
