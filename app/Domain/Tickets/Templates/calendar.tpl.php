@@ -125,16 +125,15 @@ echo $tpl->displayNotification();
 
             title: <?php echo json_encode($headline); ?>,
 
-            start: <?php echo "'" . (($mlst->editFrom != '0000-00-00 00:00:00' && !str_starts_with(
-                $mlst->editFrom,
-                '1969-12-31'
-            )) ? $mlst->editFrom :  date('Y-m-d', strtotime("+1 day", time()))) . "',"; ?>
-            <?php if (isset($mlst->editTo)) : ?>
-            end: <?php echo "'" . (($mlst->editTo != '0000-00-00 00:00:00' && !str_starts_with(
-                $mlst->editTo,
-                '1969-12-31'
-            )) ? $mlst->editTo :  date('Y-m-d', strtotime("+1 day", time()))) . "',"; ?>
-            <?php endif; ?>
+            <?php if(dtHelper()->isValidDateString($mlst->dateToFinish)){ ?>
+                start: new Date(<?php echo format($mlst->dateToFinish)->jsTimestamp() ?>),
+                end: new Date(<?php echo format(dtHelper()->parseDbDateTime($mlst->dateToFinish)->addHour(1))->jsTimestamp() ?>),
+            <?php } elseif(dtHelper()->isValidDateString($mlst->editFrom)){ ?>
+                start: new Date(<?php echo format($mlst->editFrom)->jsTimestamp() ?>),
+                end: new Date(<?php echo format($mlst->editTo)->jsTimestamp() ?>),
+            <?php } ?>
+
+
             enitityId: <?php echo $mlst->id ?>,
             <?php if ($mlst->type == "milestone") { ?>
             url: '#/tickets/editMilestone/<?php echo $mlst->id ?>',
@@ -160,13 +159,18 @@ echo $tpl->displayNotification();
         const calendarEl = document.getElementById('calendar');
 
         const calendar = new FullCalendar.Calendar(calendarEl, {
+                timeZone: leantime.i18n.__("usersettings.timezone"),
+
                 height:heightWindow,
                 initialView: '<?=$_SESSION['submenuToggle']["myProjectCalendarView"] ?>',
                 events: events,
                 editable: true,
                 headerToolbar: false,
+                dayHeaderFormat: leantime.dateHelper.getFormatFromSettings("dateformat", "luxon"),
+                eventTimeFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
+                slotLabelFormat: leantime.dateHelper.getFormatFromSettings("timeformat", "luxon"),
 
-                nowIndicator: true,
+            nowIndicator: true,
                 bootstrapFontAwesome: {
                     close: 'fa-times',
                     prev: 'fa-chevron-left',

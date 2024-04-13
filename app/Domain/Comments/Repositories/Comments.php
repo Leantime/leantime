@@ -203,7 +203,7 @@ namespace Leantime\Domain\Comments\Repositories {
             $stmn->bindValue(':commentParent', $values['commentParent'], PDO::PARAM_INT);
             $stmn->bindValue(':text', $values['text'], PDO::PARAM_STR);
             $stmn->bindValue(':module', $module, PDO::PARAM_STR);
-            $stmn->bindValue(':date', date("Y-m-d H:i:s"), PDO::PARAM_STR);
+            $stmn->bindValue(':date', $values["date"], PDO::PARAM_STR);
             $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
 
             $result = $stmn->execute();
