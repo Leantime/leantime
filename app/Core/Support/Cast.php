@@ -2,6 +2,7 @@
 
 namespace Leantime\Core\Support;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Str;
 
 /**
@@ -23,8 +24,8 @@ class Cast
 
     /**
      * @param string $classDest
-     * @param array $constructParams
-     * @param array $mappings
+     * @param array  $constructParams
+     * @param array  $mappings
      * @return object
      * @throws \InvalidArgumentException
      * @throws \RuntimeException
@@ -100,7 +101,7 @@ class Cast
     }
 
     /**
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $simpleType
      * @return mixed
      * @throws \RuntimeException
@@ -108,7 +109,8 @@ class Cast
      **/
     public static function castSimple(mixed $value, string $simpleType): mixed
     {
-        if (is_null($castedValue = match ($simpleType) {
+        if (
+            is_null($castedValue = match ($simpleType) {
             'int', 'integer' => filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
             'float' => filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE),
             'string', 'str' => is_array($value) || (is_object($value) && ! method_exists($value, '__toString')) ? null : (string) $value,
@@ -116,7 +118,8 @@ class Cast
             'object', 'stdClass' => is_array($value) ? (object) $value : null,
             'array' => is_object($value) || is_array($value) ? (array) $value : null,
             default => throw new \InvalidArgumentException(sprintf('%s is not a simple type.', $simpleType)),
-        })) {
+            })
+        ) {
             throw new \RuntimeException(sprintf('Could not cast value to type %s.', $simpleType));
         }
 
@@ -126,7 +129,7 @@ class Cast
     /**
      * Cast to backed enum
      *
-     * @param mixed $value
+     * @param mixed  $value
      * @param string $enumClass
      **/
     public static function castEnum(mixed $value, string $enumClass): mixed
@@ -152,12 +155,29 @@ class Cast
     }
 
     /**
+     * Casts a string value into a datetime object.
+     *
+     * @param string $value The value to be casted into a datetime object.
+     * @return \DateTime The datetime object.
+     * @throws \InvalidArgumentException If the value is not a valid datetime string.
+     **/
+    public static function castDateTime(string $value)
+    {
+        if (is_string($value)) {
+            return dtHelper()->parseDbDateTime($value);
+        }
+
+        throw new \InvalidArgumentException('Value cannot be casted datetime');
+    }
+
+    /**
      * @param array|object $iterator
-     * @param array $mappings
+     * @param array        $mappings
      * @return array|object
      **/
-    protected function handleIterator(iterable $iterator, array $mappings = []): array|object {
-        $result = is_object($iterator) ? new \stdClass : [];
+    protected function handleIterator(iterable $iterator, array $mappings = []): array|object
+    {
+        $result = is_object($iterator) ? new \stdClass() : [];
 
         foreach ($iterator as $key => $value) {
             if (is_numeric($key)) {
@@ -191,7 +211,7 @@ class Cast
     }
 
     /**
-     * @param array $mappings
+     * @param array  $mappings
      * @param string $propName
      * @return array
      **/
