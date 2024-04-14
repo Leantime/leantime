@@ -55,7 +55,7 @@ There are two main ways to install LeanTime for production. The first of which i
 
 #### Local Production Installation ####
 
-* Download latest release package from our <a href="https://leantime.io/download-leantime/">Website</a> or <a href="https://github.com/Leantime/docker-leantime/releases">Github</a>
+* Download latest release package (file is called: Leantime-vx.x.x.zip) from the <a href="https://github.com/Leantime/docker-leantime/releases">release page</a>
 * Create an empty MySQL database
 * Upload the entire directory to your server 
 * Point your domain root to the `public/` directory
