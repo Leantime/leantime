@@ -29,6 +29,7 @@ class Auth
         "errors.error404",
         "errors.error500",
         "api.i18n",
+        "api.static-asset",
         "calendar.ical",
         "oidc.login",
         "oidc.callback",
