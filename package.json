@@ -10,7 +10,7 @@
     "@fullcalendar/luxon3": "^6.1.11",
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
-    "@sentry/browser": "^7.104.0",
+    "@sentry/browser": "^7.108.0",
     "@sentry/webpack-plugin": "^2.14.2",
     "ajv": "^8.12.0",
     "chart.js": "^3.6.0",
