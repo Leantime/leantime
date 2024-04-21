@@ -4,6 +4,7 @@ namespace Leantime\Core\Middleware;
 
 use Closure;
 use Illuminate\Cache\RateLimiter;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\ApiRequest;
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller;
@@ -29,9 +30,10 @@ class RequestRateLimiter
      * @param RateLimiter $limiter The RateLimiter object to be initialized.
      * @return void.
      */
-    public function __construct(RateLimiter $limiter)
+    public function __construct()
     {
-        $this->limiter = $limiter;
+        app()->singleton(RateLimiter::class, fn($app)=> new RateLimiter(Cache::store("installation")));
+        $this->limiter = app()->make(RateLimiter::class);
     }
 
     /**
