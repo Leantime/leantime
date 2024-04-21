@@ -98,6 +98,7 @@ namespace Leantime\Domain\Plugins\Services {
                     : $plugin->type = $this->pluginTypes['custom'];
 
                 $installedPluginsById[$plugin->foldername] = $plugin;
+
             }
 
             // Gets plugins from the config, which are automatically enabled
