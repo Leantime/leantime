@@ -471,4 +471,9 @@ class DefaultConfig
      * @var string Redis URL
      */
     public string $redisUrl = '';
+
+    /**
+     * @var string trusted Proxies
+     */
+    public string $trustedProxies = '127.0.0.1,REMOTE_ADDR';
 }

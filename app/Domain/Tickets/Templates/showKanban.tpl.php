@@ -303,26 +303,17 @@ $allTicketGroups = $tpl->get("allTickets");
                                                             <?php
 
                                                             foreach ($tagsArray as $tag) {
-                                                                echo"<span class='tag'><span>" . $tag . "</span></span>";
+                                                                echo"<span class='tag'><span>" . $tpl->escape($tag) . "</span></span>";
                                                             }
 
                                                             ?>
                                                                 </div></li></ul>
                                                     <?php } ?>
 
-                                                    <?php
-                                                        /*<a href="<?=BASE_URL ?>/tickets/showTicket/<?php echo $row["id"];?>#files"><span class="fa-paper-clip"></span> <?php echo $row["fileCount"] ?></a>&nbsp;&nbsp;&nbsp;*/
-                                                    ?>
-
-
-
                                                 </div>
-
 
                                             </div>
                                             <?php } ?>
-
-
 
                                         </div>
                                         <?php } ?>
