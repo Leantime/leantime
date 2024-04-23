@@ -218,6 +218,7 @@ class Bootloader
          *  then fileStore
          **/
         $this->app->singleton(\Illuminate\Cache\CacheManager::class, function ($app) {
+
             $app['config']['cache.stores.installation'] = [
                 'driver' => 'file',
                 'path' => APP_ROOT . '/cache/installation',
@@ -258,7 +259,6 @@ class Bootloader
         $this->app->singleton('cache.store', fn ($app) => $app['cache']->driver());
         $this->app->singleton('cache.psr6', fn ($app) => new \Symfony\Component\Cache\Adapter\Psr16Adapter($app['cache.store']));
         $this->app->singleton('memcached.connector', fn () => new MemcachedConnector());
-        $this->app->singleton(\Illuminate\Cache\RateLimiter::class, fn ($app) => new \Illuminate\Cache\RateLimiter($app['cache']->driver($app['config']['cache.limiter'])));
     }
 
     private function registerCoreAliases(): void

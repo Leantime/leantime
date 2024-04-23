@@ -5,8 +5,11 @@ parameters:
         - app/Command
         - app/Core
         - app/Domain
+        - app/Plugins
         - app/Views
         - bin/
+    excludes_analyse:
+        - app/Plugins/*/vendor/*
     scanDirectories:
         - vendor
         - config

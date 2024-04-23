@@ -20,9 +20,9 @@
                         {{ __("text.installed_plugins") }}
                     </h5>
                     <div class="row sortableTicketList">
-                        @foreach($tpl->get("installedPlugins") as $installedPlugins)
-                               @include('plugins::partials.plugin', ["plugin" => $installedPlugins])
-                        @endforeach
+                        @each('plugins::partials.plugin', $tpl->get("installedPlugins"), 'plugin')
+
+
                         @if ($tpl->get("installedPlugins") === false || count($tpl->get("installedPlugins")) == 0)
                                 <span class="tw-block tw-px-4 tw-mb-4">{{ __("text.no_plugins_activated") }}</span>
                         @endif

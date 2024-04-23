@@ -11,7 +11,7 @@
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
     "@sentry/browser": "^7.108.0",
-    "@sentry/webpack-plugin": "^2.14.2",
+    "@sentry/webpack-plugin": "^2.16.0",
     "ajv": "^8.12.0",
     "chart.js": "^3.6.0",
     "chartjs-adapter-luxon": "^1.3.1",
@@ -23,8 +23,8 @@
     "datatables.net-rowgroup": "^1.4.1",
     "datatables.net-rowreorder": "^1.4.1",
     "fullcalendar": "^6.1.11",
-    "htmx.org": "^1.9.10",
-    "gridstack": "^10.1.1",
+    "htmx.org": "^1.9.11",
+    "gridstack": "^10.1.2",
     "ical.js": "^1.5.0",
     "imagesloaded": "^5.0.0",
     "isotope-layout": "^3.0.6",
@@ -42,7 +42,7 @@
     "tinymce": "5.10.9",
     "tinymce-mention": "^4.0.2",
     "tippy.js": "^6.3.7",
-    "uppy": "^3.23.0"
+    "uppy": "^3.24.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.22.15",

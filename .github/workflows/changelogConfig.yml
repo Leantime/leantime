@@ -1,0 +1,31 @@
+changelog_type: 'commit_message'
+header_prefix: 'Version:'
+commit_changelog: true
+comment_changelog: true
+include_unlabeled_changes: true
+unlabeled_group_title: 'Unlabeled Changes'
+pull_request_title_regex: '^Release'
+version_regex: 'v?([0-9]{1,2})+[.]+([0-9]{1,2})+[.]+([0-9]{1,2})\s\(\d{1,2}-\d{1,2}-\d{4}\)'
+exclude_labels:
+  - bot
+  - dependabot
+  - ci
+group_config:
+  - title: Bug Fixes
+    labels:
+      - bug
+      - bugfix
+      - fix
+  - title: Code Improvements
+    labels:
+      - improvements
+      - enhancement
+      - cleanup
+  - title: New Features
+    labels:
+      - feature
+  - title: Documentation Updates
+    labels:
+      - docs
+      - documentation
+      - doc

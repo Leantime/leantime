@@ -67,14 +67,31 @@ class Session
 
         if (isset($_COOKIE['sid']) === true) {
             self::$sid = htmlspecialchars($_COOKIE['sid']);
+
+            //Part 0 random string without session pw
+            //Part 1 remote adds + host with session pw
+            //Part 2 random string with session pw
             $testSession = explode('-', self::$sid);
         }
 
         //Don't allow session ids from user.
         if (is_array($testSession) === true && count($testSession) > 1) {
-            $testMD5 = hash('sha1', $testSession[0] . $this->sessionpassword);
+            $testSessionPw = hash('sha1', $testSession[0] . $this->sessionpassword);
 
-            if ($testMD5 !== $testSession[1]) {
+            if ($testSessionPw !== $testSession[2]) {
+                error_log("failed session pw test of tmp");
+                self::makeSID();
+            }
+
+            //test remote host info
+            $session_string = ! $this->request instanceof CliRequest
+                ? self::get_client_ip() . $_SERVER['HTTP_HOST']
+                : 'cli';
+
+            $testSessionHost = hash('sha1', $session_string . $this->sessionpassword);
+
+            if ($testSessionHost !== $testSession[1]) {
+                error_log("failed ip and host check");
                 self::makeSID();
             }
         } else {
@@ -89,11 +106,11 @@ class Session
             'leantime.core.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('sid')
-                ->withValue(self::$sid)
-                ->withExpires(time() + $config->sessionExpiration)
-                ->withPath('/')
-                ->withSameSite('Lax')
-                ->withSecure(true)
+                    ->withValue(self::$sid)
+                    ->withExpires(time() + $config->sessionExpiration)
+                    ->withPath('/')
+                    ->withSameSite('Strict')
+                    ->withSecure(true)
             ))
         );
     }
@@ -119,12 +136,12 @@ class Session
     private function makeSID(): void
     {
         $session_string = ! $this->request instanceof CliRequest
-            ? $_SERVER['REMOTE_ADDR']
+            ? self::get_client_ip() . $_SERVER['HTTP_HOST']
             : 'cli';
 
         $tmp = hash('sha1', mt_rand(32, 32) . $session_string . time());
 
-        self::$sid = $tmp . '-' . hash('sha1', $tmp . $this->sessionpassword);
+        self::$sid = $tmp . '-' . hash('sha1', $session_string . $this->sessionpassword) . '-'  . hash('sha1', $tmp . $this->sessionpassword);
     }
 
     /**
@@ -143,12 +160,33 @@ class Session
             'leantime.core.httpkernel.handle.beforeSendResponse',
             fn ($response) => tap($response, fn (Response $response) => $response->headers->setCookie(
                 Cookie::create('sid')
-                ->withValue('')
-                ->withExpires(time() - 42000)
-                ->withPath('/')
-                ->withSameSite('Strict')
-                ->withSecure(true)
+                    ->withValue('')
+                    ->withExpires(time() - 42000)
+                    ->withPath('/')
+                    ->withSameSite('Strict')
+                    ->withSecure(true)
             ))
         );
+    }
+
+    private static function get_client_ip()
+    {
+        $ipaddress = '';
+        if (getenv('HTTP_CLIENT_IP')) {
+            $ipaddress = getenv('HTTP_CLIENT_IP');
+        } elseif (getenv('HTTP_X_FORWARDED_FOR')) {
+            $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+        } elseif (getenv('HTTP_X_FORWARDED')) {
+            $ipaddress = getenv('HTTP_X_FORWARDED');
+        } elseif (getenv('HTTP_FORWARDED_FOR')) {
+            $ipaddress = getenv('HTTP_FORWARDED_FOR');
+        } elseif (getenv('HTTP_FORWARDED')) {
+            $ipaddress = getenv('HTTP_FORWARDED');
+        } elseif (getenv('REMOTE_ADDR')) {
+            $ipaddress = getenv('REMOTE_ADDR');
+        } else {
+            $ipaddress = 'UNKNOWN';
+        }
+        return $ipaddress;
     }
 }

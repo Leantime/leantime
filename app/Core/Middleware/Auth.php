@@ -29,6 +29,7 @@ class Auth
         "errors.error404",
         "errors.error500",
         "api.i18n",
+        "api.static-asset",
         "calendar.ical",
         "oidc.login",
         "oidc.callback",
@@ -64,10 +65,12 @@ class Auth
     }
 
     /**
-     * Handle an incoming request
+     * Handle the request
      *
-     * @param \Closure(IncomingRequest): Response $next
-     **/
+     * @param IncomingRequest $request
+     * @param Closure $next
+     * @return Response
+     */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
         if (in_array($this->frontController::getCurrentRoute(), $this->publicActions)) {
