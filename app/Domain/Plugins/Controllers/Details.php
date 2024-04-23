@@ -3,6 +3,8 @@
 namespace Leantime\Domain\Plugins\Controllers;
 
 use Leantime\Core\Controller;
+use Leantime\Domain\Auth\Models\Roles;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Plugins\Services\Plugins as PluginService;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,6 +29,9 @@ class Details extends Controller
      */
     public function get(): Response
     {
+
+        Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
+
         if (! $this->incomingRequest->query->has('id')) {
             throw new \Exception('Plugin Identifier is required');
         }

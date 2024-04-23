@@ -23,7 +23,7 @@ namespace Leantime\Domain\Plugins\Controllers {
          */
         public function init(PluginService $pluginService): void
         {
-            Auth::authOrRedirect([Roles::$owner, Roles::$admin]);
+            Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
             $this->pluginService = $pluginService;
         }
 

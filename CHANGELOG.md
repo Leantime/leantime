@@ -1,5 +1,16 @@
 # Version: 3.1.1
 
+* [c1cfd20](https://github.com/Leantime/leantime/commit/c1cfd200349679b17f98f2a62a9054fa639b800b): [Changelog CI] Add Changelog for Version 3.1.1
+* [c73e858](https://github.com/Leantime/leantime/commit/c73e8586f8d5d16cd0db0571e21a4cf03045042c): fix: upgrade @sentry/browser from 7.108.0 to 7.109.0
+
+Snyk has created this PR to upgrade @sentry/browser from 7.108.0 to 7.109.0.
+
+See this package in npm:
+https://www.npmjs.com/package/@sentry/browser
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+
 * [9e4ca51](https://github.com/Leantime/leantime/commit/9e4ca514b4292187f7c9dde8bd386a1c3f15c0cb): Update release.yml
 
 Include new changelog generator
