@@ -64,7 +64,7 @@ namespace Leantime\Domain\Comments\Services {
             if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)) {
                 $mapper = array(
                     'text' => $values['text'],
-                    'date' => date("Y-m-d H:i:s"),
+                    'date' => $values["date"] ?? dtHelper()->dbNow()->formatDateTimeForDb(),
                     'userId' => ($_SESSION['userdata']['id']),
                     'moduleId' => $entityId,
                     'commentParent' => ($values['father']),

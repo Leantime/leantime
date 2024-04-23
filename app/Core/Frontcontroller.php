@@ -189,7 +189,7 @@ class Frontcontroller
 
 
     /**
-     * getCurrentRoute - gets the current main action
+     * getCurrentRoute - gets the current main action in format module.action
      *
      * @access public
      * @return string

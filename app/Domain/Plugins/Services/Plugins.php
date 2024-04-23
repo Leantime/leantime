@@ -98,6 +98,7 @@ namespace Leantime\Domain\Plugins\Services {
                     : $plugin->type = $this->pluginTypes['custom'];
 
                 $installedPluginsById[$plugin->foldername] = $plugin;
+
             }
 
             // Gets plugins from the config, which are automatically enabled
@@ -115,10 +116,9 @@ namespace Leantime\Domain\Plugins\Services {
                         $installedPluginsById[$plugin] ??= $pluginModel;
                         $installedPluginsById[$plugin]->enabled = true;
                         $installedPluginsById[$plugin]->type = $this->pluginTypes['system'];
-                    }catch(Exception $e){
+                    } catch (Exception $e) {
                         error_log($e);
                     }
-
                 });
             }
 
@@ -362,7 +362,7 @@ namespace Leantime\Domain\Plugins\Services {
                         return false;
                     }
                 }
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 //Silence is golden
             }
 
@@ -435,7 +435,7 @@ namespace Leantime\Domain\Plugins\Services {
 
             $data = $response->json();
 
-            return build(new MarketplacePlugin)
+            return build(new MarketplacePlugin())
                 ->set('identifier', $identifier ?? '')
                 ->set('name', $data['name'] ?? '')
                 ->set('icon', $data['icon'] ?? '')
@@ -456,7 +456,7 @@ namespace Leantime\Domain\Plugins\Services {
 
         /**
          * @param MarketplacePlugin $plugin
-         * @param string $version
+         * @param string            $version
          * @return void
          * @throws Illuminate\Http\Client\RequestException|Exception
          */
@@ -472,20 +472,25 @@ namespace Leantime\Domain\Plugins\Services {
                 ])
                 ->get("{$this->marketplaceUrl}/ltmp-api/download/{$plugin->identifier}/{$version}");
 
-            $response->throwIf(in_array(true, [
-                ! $response->ok(),
-                $response->header('Content-Type') !== 'application/zip',
-            ]), fn () => new RequestException($response));
+            if (!$response->ok()) {
+                throw new RequestException($response);
+            }
+
+            if ($response->header('Content-Type') !== 'application/zip') {
+                throw new RequestException($response);
+            }
 
             $filename = $response->header('Content-Disposition');
             $filename = substr($filename, strpos($filename, 'filename=') + 9);
             $foldername = Str::studly(basename($filename, '.zip'));
             $filename = Str::finish($foldername, '.zip');
 
-            if (! file_put_contents(
-                $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
-                $response->body()
-            )) {
+            if (
+                ! file_put_contents(
+                    $temporaryFile = Str::finish(sys_get_temp_dir(), '/') . $filename,
+                    $response->body()
+                )
+            ) {
                 throw new \Exception(__('notification.plugin_cant_download'));
             }
 
@@ -528,7 +533,6 @@ namespace Leantime\Domain\Plugins\Services {
             if (! $this->pluginRepository->addPlugin($pluginModel)) {
                 throw new \Exception(__('notification_cant_add_to_db'));
             }
-
         }
 
         public function canActivate(InstalledPlugin $plugin): bool
@@ -556,10 +560,10 @@ namespace Leantime\Domain\Plugins\Services {
             return true;
         }
 
-        public function clearCache() {
+        public function clearCache()
+        {
 
             unset($_SESSION['commands']['plugins'], $_SESSION['enabledPlugins'], $_SESSION['template_paths'], $_SESSION['composers']);
-
         }
     }
 }

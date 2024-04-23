@@ -97,14 +97,17 @@ class Fileupload
                 ],
             ];
 
-            if ($this->config->s3EndPoint != "" && $this->config->s3EndPoint !== false && $this->config->s3EndPoint != null) {
+            if (
+                !empty($this->config->s3EndPoint)
+                && $this->config->s3EndPoint != "null"
+                && $this->config->s3EndPoint != "false"
+            ) {
                 $s3Config['endpoint'] = $this->config->s3EndPoint;
             }
 
             if ($this->config->s3UsePathStyleEndpoint === true || $this->config->s3UsePathStyleEndpoint === "true") {
                 $s3Config['use_path_style_endpoint'] = true;
             }
-
 
             // Instantiate the S3 client with your AWS credentials
             $this->s3Client = new S3Client($s3Config);
@@ -429,14 +432,14 @@ class Fileupload
         $sFileSize = filesize($fullPath);
 
         $oStreamResponse = new BinaryFileResponse($fullPath);
-        $oStreamResponse->headers->set("Content-Type", $mimes[$ext] );
+        $oStreamResponse->headers->set("Content-Type", $mimes[$ext]);
         //$oStreamResponse->headers->set("Content-Length", $sFileSize);
         //$oStreamResponse->headers->set("ETag", $sEtag);
 
-        if(app()->make(Environment::class)->debug == false) {
+        if (app()->make(Environment::class)->debug == false) {
             $oStreamResponse->headers->set("Pragma", 'public');
             $oStreamResponse->headers->set("Cache-Control", 'max-age=86400');
-            $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified)." GMT");
+            $oStreamResponse->headers->set("Last-Modified", gmdate("D, d M Y H:i:s", $sLastModified) . " GMT");
         }
         //$oStreamResponse->setCallback(function() use ($fullPath) {readfile($fullPath);});
 

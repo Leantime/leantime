@@ -21,14 +21,28 @@ class InitialHeaders
     {
         $response = $next($request);
 
+        //Content Security Policy
+        $cspParts = [
+            "default-src 'self' 'unsafe-inline'",
+            "base-uri 'self';",
+            "script-src 'self' 'unsafe-inline' unpkg.com",
+            "font-src 'self'  data:",
+            "img-src 'self' *.leantime.io data: blob:",
+            "frame-src 'self' *.google.com *.microsoft.com *.live.com",
+            "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
+        ];
+        $csp = implode(";", $cspParts);
+
         foreach (
             self::dispatch_filter('headers', [
             'X-Frame-Options' => 'SAMEORIGIN',
             'X-XSS-Protection' => '1; mode=block',
             'X-Content-Type-Options' => 'nosniff',
+            'Referrer-Policy', 'same-origin',
             'Access-Control-Allow-Origin' => BASE_URL,
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Pragma' => 'no-cache'
+            'Pragma' => 'no-cache',
+            'Content-Security-Policy' => $csp,
             ]) as $key => $value
         ) {
             if ($response->headers->has($key)) {
