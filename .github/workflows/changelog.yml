@@ -19,6 +19,7 @@ jobs:
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
         with:
+          changelog_filename: CHANGELOG.md
           release_version: ${{ steps.version.outputs.version }}
           config_file: .github/workflows/changelogConfig.yml
           github_token: ${{ secrets.GITHUB_TOKEN }}
