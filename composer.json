@@ -1,7 +1,7 @@
 {
     "name": "leantime/leantime",
     "description": "Open source project management system",
-    "version": "3.1.1",
+    "version": "3.1.2",
     "type": "project",
     "config": {
         "platform-check": false,
