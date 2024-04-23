@@ -20,5 +20,6 @@ jobs:
         uses: saadmk11/changelog-ci@v1.1.2
         with:
           release_version: ${{ steps.version.outputs.version }}
-          config_file: changelogConfig.yml
+          config_file: .github/workflows/changelogConfig.yml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           
