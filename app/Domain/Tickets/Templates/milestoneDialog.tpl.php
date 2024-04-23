@@ -17,7 +17,7 @@ $statusLabels = $tpl->get('statusLabels');
 </script>
 
 <div class="modal-icons">
-    <?php if( isset($currentMilestone->id) && $currentMilestone->id != '') {?>
+    <?php if (isset($currentMilestone->id) && $currentMilestone->id != '') {?>
         <a href="#/tickets/delMilestone/<?php echo $currentMilestone->id; ?>" class="danger" data-tippy-content="Delete"><i class='fa fa-trash-can'></i></a>
     <?php } ?>
 </div>
@@ -33,19 +33,22 @@ $statusLabels = $tpl->get('statusLabels');
 
     <label class="control-label"><?=$tpl->__('label.project') ?></label>
     <select name="projectId" class="tw-w-full">
-        <?php foreach($allAssignedprojects as $project) {
-            if(empty($project['type']) || $project['type'] == "project"){
-            ?>
+        <?php foreach ($allAssignedprojects as $project) {
+            if (empty($project['type']) || $project['type'] == "project") {
+                ?>
             <option value="<?=$project['id'] ?>"
                 <?php
-                    if($currentMilestone->projectId == $project['id']) {
-                        echo "selected";
-                    }else if( $_SESSION['currentProject'] == $project['id']){
-                        echo "selected";
-                    }
+                if (
+                    !empty($currentMilestone->projectId)
+                        && $currentMilestone->projectId == $project['id']
+                ) {
+                    echo "selected";
+                } else if ($_SESSION['currentProject'] == $project['id']) {
+                    echo "selected";
+                }
                 ?>
             ><?=$tpl->escape($project["name"]); ?></option>
-        <?php }
+            <?php }
         } ?>
     </select>
 
