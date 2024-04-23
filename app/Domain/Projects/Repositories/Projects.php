@@ -749,7 +749,7 @@ namespace Leantime\Domain\Projects\Repositories {
                 }
             }
 
-            return $projectId;
+            return is_numeric($projectId) ? (int) $projectId : false;
         }
 
         /**
