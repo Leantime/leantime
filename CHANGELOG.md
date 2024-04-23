@@ -10,6 +10,7 @@ https://www.npmjs.com/package/@sentry/browser
 
 See this project in Snyk:
 https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+
 * [9e4ca51](https://github.com/Leantime/leantime/commit/9e4ca514b4292187f7c9dde8bd386a1c3f15c0cb): Update release.yml
 
 Include new changelog generator
