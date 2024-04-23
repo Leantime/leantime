@@ -821,7 +821,6 @@ namespace Leantime\Domain\Projects\Services {
          */
         public function isUserMemberOfProject(int $userId, int $projectId): bool
         {
-
             return $this->projectRepository->isUserMemberOfProject($userId, $projectId);
         }
 
@@ -829,20 +828,20 @@ namespace Leantime\Domain\Projects\Services {
         /**
          * Adds a new project to the system.
          *
-         * @param array $values The project details
-         *                      - name: string, required, the name of the project
-         *                      - details: string, optional, additional details about the project
-         *                      - clientId: int, required, the client ID associated with the project
-         *                      - hourBudget: int, optional, the hour budget for the project (default: 0)
-         *                      - assignedUsers: string, optional, the assigned users for the project (default: '')
-         *                      - dollarBudget: int, optional, the dollar budget for the project (default: 0)
-         *                      - psettings: string, optional, the project settings (default: 'restricted')
-         *                      - type: string, required, the type of the project (always set to 'project')
-         *                      - start: string|null, the start date of the project in "Y-m-d" format or null
-         *                      - end: string|null, the end date of the project in "Y-m-d" format or null
-         * @return void
+         * @param array $values An associative array containing the project details.
+         *                      - name: The name of the project.
+         *                      - details: Additional details of the project (optional, default: '').
+         *                      - clientId: The ID of the client associated with the project.
+         *                      - hourBudget: The hour budget for the project (optional, default: 0).
+         *                      - assignedUsers: Comma-separated list of user IDs assigned to the project (optional, default: '').
+         *                      - dollarBudget: The dollar budget for the project (optional, default: 0).
+         *                      - psettings: The settings for the project (optional, default: 'restricted').
+         *                      - type: The type of the project (optional, default: 'project').
+         *                      - start: The start date of the project in user format (YYYY-MM-DD).
+         *                      - end: The end date of the project in user format (YYYY-MM-DD).
+         * @return int|false The ID of the newly added project
          */
-        public function addProject($values)
+        public function addProject(array $values): int|false
         {
             $values = array(
                 "name" => $values['name'],
@@ -862,7 +861,7 @@ namespace Leantime\Domain\Projects\Services {
             if ($values['end'] != null) {
                 $values['end'] = format($values['end'], fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
             }
-            $this->projectRepository->addProject($values);
+            return $this->projectRepository->addProject($values);
         }
 
         /**
