@@ -114,6 +114,7 @@ class AddUserCommand extends Command
             "firstname" => $firstName,
             "lastname" => $lastName,
             "phone" => $phone,
+            "status" => "A"
         );
 
         try {
