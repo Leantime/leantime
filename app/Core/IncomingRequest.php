@@ -87,7 +87,6 @@ class IncomingRequest extends Request
     public function getRequestUri(): string
     {
 
-
         $requestUri = parent::getRequestUri();
 
         $config = app()->make(Environment::class);
@@ -122,6 +121,7 @@ class IncomingRequest extends Request
     {
         $method ??= $this->getMethod();
         $method = strtoupper($method);
+        $patch_vars = [];
 
         if ($method == 'PATCH') {
             parse_str($this->getContent(), $patch_vars);
@@ -134,4 +134,5 @@ class IncomingRequest extends Request
             default => $this->query->all(),
         };
     }
+
 }
