@@ -33,7 +33,9 @@ $statusLabels = $tpl->get('statusLabels');
 
     <label class="control-label"><?=$tpl->__('label.project') ?></label>
     <select name="projectId" class="tw-w-full">
-        <?php foreach($allAssignedprojects as $project) { ?>
+        <?php foreach($allAssignedprojects as $project) {
+            if(empty($project['type']) || $project['type'] == "project"){
+            ?>
             <option value="<?=$project['id'] ?>"
                 <?php
                     if($currentMilestone->projectId == $project['id']) {
@@ -43,7 +45,8 @@ $statusLabels = $tpl->get('statusLabels');
                     }
                 ?>
             ><?=$tpl->escape($project["name"]); ?></option>
-        <?php } ?>
+        <?php }
+        } ?>
     </select>
 
     <label><?php echo $tpl->__('label.todo_status'); ?></label>
