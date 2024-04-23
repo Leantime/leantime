@@ -12,5 +12,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: version
+        run: echo "version=$(make get-version)" >> $GITHUB_OUTPUT
+        id: version
+        
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
+        with:
+          release_version: ${{ steps.version.outputs.version }}
