@@ -11,7 +11,7 @@
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
     "@sentry/browser": "^7.109.0",
-    "@sentry/webpack-plugin": "^2.16.0",
+    "@sentry/webpack-plugin": "^2.16.1",
     "ajv": "^8.12.0",
     "chart.js": "^3.6.0",
     "chartjs-adapter-luxon": "^1.3.1",
