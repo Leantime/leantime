@@ -487,7 +487,7 @@ body .maincontentinner .viewDropDown .dropdown-menu li a.active,
     display:block;
     font-size: 12px;
     color: var(--main-menu-link-color);
-    margin: 0 5px;
+    margin: 0px;
     padding: 5px 10px;
 }
 

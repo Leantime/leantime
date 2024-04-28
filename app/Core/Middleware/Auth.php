@@ -6,6 +6,7 @@ use Closure;
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\IncomingRequest;
+use Leantime\Core\Theme;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
 use Leantime\Domain\Projects\Services\Projects as ProjectsService;
 use Symfony\Component\HttpFoundation\RedirectResponse;

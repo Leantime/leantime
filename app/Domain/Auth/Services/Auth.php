@@ -10,6 +10,7 @@ use Leantime\Core\Frontcontroller as FrontcontrollerCore;
 use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Session as SessionCore;
+use Leantime\Core\Theme;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;
@@ -336,6 +337,9 @@ class Auth
         ]);
 
         $this->updateUserSessionDB($this->userId, $this->session);
+
+        //Clear user theme cache on login
+        Theme::clearCache();
     }
 
 
@@ -362,11 +366,26 @@ class Auth
         // Check if we actually have a php session available
         if (isset($_SESSION['userdata']) === true) {
             return true;
-
             // If the session doesn't have any session data we are out of sync. Start again
         } else {
             return false;
         }
+    }
+
+    /**
+     * Checks if a user is logged in.
+     *
+     * @return bool Returns true if the user is logged in, false otherwise.
+     */
+    public static function isLoggedIn(): bool {
+
+        // Check if we actually have a php session available
+        if (isset($_SESSION['userdata']) === true) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**

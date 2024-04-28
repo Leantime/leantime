@@ -169,6 +169,8 @@ class Session
         );
     }
 
+
+
     private static function get_client_ip()
     {
         $ipaddress = '';

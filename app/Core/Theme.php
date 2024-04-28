@@ -5,6 +5,7 @@ namespace Leantime\Core;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
+use Leantime\Domain\Auth\Services\Auth;
 use Leantime\Domain\Setting\Repositories\Setting;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -146,6 +147,7 @@ class Theme
     {
 
         $this->readIniData();
+        ;
         $parsedColorSchemes = $this->colorSchemes;
         $parsedColorSchemes["themeDefault"] = array(
             "name" => "label.themeDefault",
@@ -154,12 +156,12 @@ class Theme
         );
 
         $settingsRepo = app()->make(Setting::class);
-        $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor");
-        $secondaryColor = $settingsRepo->getSetting("companysettings.secondarycolor");
+        $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor") ? $settingsRepo->getSetting("companysettings.primarycolor") : null;
+        $secondaryColor = $settingsRepo->getSetting("companysettings.secondarycolor") ? $settingsRepo->getSetting("companysettings.secondarycolor") : null; ;
         $parsedColorSchemes["companyColors"] = array(
             "name" => "label.companyColors",
-            "primaryColor" => $primaryColor ?? $parsedColorSchemes["themeDefault"]["primaryColor"],
-            "secondaryColor" => $secondaryColor ?? $parsedColorSchemes["themeDefault"]["secondaryColor"],
+            "primaryColor" => $primaryColor ?? $this->config->primarycolor ?? $parsedColorSchemes["themeDefault"]["primaryColor"],
+            "secondaryColor" => $secondaryColor ?? $this->config->secondarycolor ?? $parsedColorSchemes["themeDefault"]["secondaryColor"],
         );
 
         $colorschemes = self::dispatch_filter("colorschemes", $parsedColorSchemes);
@@ -184,13 +186,13 @@ class Theme
         // Reset .ini data
         $this->iniData = [];
 
-        if (isset($_SESSION['usersettings.theme'])) {
+        if (isset($_SESSION['usersettings.theme']) &&  Auth::isLoggedIn()) {
             return $_SESSION['usersettings.theme'];
         }
 
         // Return user specific theme, if active
         //This is an active logged in session.
-        if (isset($_SESSION["userdata"]["id"])) {
+        if(Auth::isLoggedIn()){
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $theme = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".theme");
@@ -228,11 +230,11 @@ class Theme
     {
 
         //Return generic theme
-        if (isset($_SESSION['usersettings.colorMode'])) {
+        if (isset($_SESSION['usersettings.colorMode']) &&  Auth::isLoggedIn()) {
             return $_SESSION['usersettings.colorMode'];
         }
 
-        if (isset($_SESSION["userdata"]["id"])) {
+        if(Auth::isLoggedIn()){
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $colorMode = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".colorMode");
@@ -265,12 +267,12 @@ class Theme
     {
 
         //Return generic theme
-        if (isset($_SESSION['usersettings.colorScheme'])) {
+        if (isset($_SESSION['usersettings.colorScheme']) && Auth::isLoggedIn()) {
             $this->setAccentColors($_SESSION['usersettings.colorScheme']);
             return $_SESSION['usersettings.colorScheme'];
         }
 
-        if (isset($_SESSION["userdata"]["id"])) {
+        if(Auth::isLoggedIn()){
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $colorScheme = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".colorScheme");
@@ -300,12 +302,12 @@ class Theme
     {
 
         //Return generic theme
-        if (isset($_SESSION['usersettings.themeFont'])) {
+        if (isset($_SESSION['usersettings.themeFont']) && Auth::isLoggedIn()) {
             $this->setFont($_SESSION['usersettings.themeFont']);
             return $_SESSION['usersettings.themeFont'];
         }
 
-        if (isset($_SESSION["userdata"]["id"])) {
+        if(Auth::isLoggedIn()){
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $themeFont = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".themeFont");
@@ -347,7 +349,10 @@ class Theme
             $id = 'default';
         }
 
-        $_SESSION['usersettings.theme'] = $id;
+        //Only set if user is logged in
+        if(Auth::isLoggedIn()){
+            $_SESSION['usersettings.theme'] = $id;
+        }
 
         Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
@@ -375,7 +380,10 @@ class Theme
             $colorMode = 'light';
         }
 
-        $_SESSION['usersettings.colorMode'] = $colorMode;
+        //Only store colors in session for logged in users
+        if(Auth::isLoggedIn()){
+            $_SESSION['usersettings.colorMode'] = $colorMode;
+        }
 
         Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
@@ -404,7 +412,9 @@ class Theme
             $font = 'roboto';
         }
 
-        $_SESSION['usersettings.themeFont'] = $font;
+        if(Auth::isLoggedIn()){
+            $_SESSION['usersettings.themeFont'] = $font;
+        }
 
         Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
@@ -433,7 +443,10 @@ class Theme
             $colorScheme = 'themeDefault';
         }
 
-        $_SESSION['usersettings.colorScheme'] = $colorScheme;
+        if(Auth::isLoggedIn()){
+            $_SESSION['usersettings.colorScheme'] = $colorScheme;
+            $this->setAccentColors($colorScheme);
+        }
 
         Events::add_filter_listener(
             'leantime.core.httpkernel.handle.beforeSendResponse',
@@ -446,7 +459,7 @@ class Theme
             ))
         );
 
-        $this->setAccentColors($colorScheme);
+
     }
 
 
@@ -614,11 +627,18 @@ class Theme
     }
 
     /**
-     * getName - Get localized name of theme
+     * Retrieves the name of the theme.
      *
-     * @access public
-     * @return string Localized name of theme
-     * @throws BindingResolutionException
+     * First, it checks if the INI data is empty. If it is, the method tries to read the INI data.
+     * If an exception occurs during the reading process, it is logged in the error log and the method returns
+     * the language translation of the active theme name using the "__" method of the $language object.
+     *
+     * If the INI data contains a 'name' key, it returns the corresponding value.
+     *
+     * If none of the above conditions are met, it returns the language translation of the active theme name
+     * using the "__" method of the $language object.
+     *
+     * @return string The name of the theme.
      */
     public function getName(): string
     {
@@ -640,10 +660,9 @@ class Theme
     }
 
     /**
-     * getVersion - Get version of theme
+     * Retrieves the version number from the initialization data or returns an empty string if not available.
      *
-     * @access public
-     * @return string Version of theme or empty string
+     * @return string The version number.
      */
     public function getVersion(): string
     {
@@ -665,10 +684,9 @@ class Theme
     }
 
     /**
-     * getLogoUrl - Get logo associated with the theme
+     * Retrieves the URL of the company logo from the user's settings or the default logo path.
      *
-     * @access public
-     * @return string|false Logo associated with the theme, false if logo cannot be found
+     * @return string|false The URL of the company logo, or false if the company doesn't have a logo.
      */
     public function getLogoUrl(): string|false
     {
@@ -702,7 +720,9 @@ class Theme
     }
 
     /**
-     * @param string $colorScheme
+     * Sets the accent colors for the specified color scheme.
+     *
+     * @param string $colorScheme The name of the color scheme.
      * @return void
      */
     public function setAccentColors(string $colorScheme)
@@ -719,7 +739,9 @@ class Theme
 
 
     /**
-     * @return void
+     * Sets the default theme colors in the user's settings.
+     *
+     * This method sets the primary and secondary colors of the theme to the default values by assigning false to the corresponding session variables.
      */
     public function setThemeDefaultColors()
     {
@@ -729,13 +751,23 @@ class Theme
     }
 
     /**
+     * Sets the company colors in the user's settings.
+     *
+     * If the primary color setting is not already set in the user's settings,
+     * it retrieves the primary color setting from the company settings. If the
+     * primary color setting is not found in the company settings, it sets the
+     * primary and secondary colors to the values specified in the application's
+     * config file.
+     *
+     * If the secondary color setting is found in the company settings, it
+     * sets the secondary color in the user's settings as well.
+     *
      * @return void
-     * @throws BindingResolutionException
      */
     public function setCompanyColors()
     {
 
-        if (! isset($_SESSION["usersettings.colorScheme.primaryColor"])) {
+        if (! isset($_SESSION["usersettings.colorScheme.primaryColor"]) ) {
             $settingsRepo = app()->make(Setting::class);
             $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor");
 
@@ -755,7 +787,9 @@ class Theme
     }
 
     /**
-     * @param $colorscheme
+     * Sets the primary and secondary colors for the user's color scheme.
+     *
+     * @param string $colorscheme The color scheme to set. Should be a valid key in the available color schemes array.
      * @return void
      */
     public function setSchemeColors($colorscheme)
@@ -775,29 +809,58 @@ class Theme
         return;
     }
 
+    /**
+     * Retrieves the primary color from the user's settings or the default color scheme.
+     *
+     * @return string The primary color.
+     */
     public function getPrimaryColor() {
 
         if (isset($_SESSION["usersettings.colorScheme.primaryColor"])
-            && $_SESSION["usersettings.colorScheme.primaryColor"] != '') {
+            && $_SESSION["usersettings.colorScheme.primaryColor"] != ''
+            &&  Auth::isLoggedIn()) {
             return $_SESSION["usersettings.colorScheme.primaryColor"];
         }
 
+        $currentColorScheme = $this->getColorScheme();
+
         $colorSchemes = $this->getAvailableColorSchemes();
-        $_SESSION["usersettings.colorScheme.primaryColor"] = $colorSchemes['themeDefault']['primaryColor'];
-        return $_SESSION["usersettings.colorScheme.primaryColor"];
+
+        if(Auth::isLoggedIn()) {
+            $_SESSION["usersettings.colorScheme.primaryColor"] = $colorSchemes[$currentColorScheme]['primaryColor'];
+        }
+
+        return $colorSchemes[$currentColorScheme]['primaryColor'];
     }
 
+    /**
+     * getSecondaryColor - Retrieves the secondary color for the current user's color scheme
+     *
+     * This method returns the secondary color based on the following conditions:
+     * - If the secondary color is set in the user's session and is not empty, and the user is logged in,
+     *   it will return the value stored in the session.
+     * - If the user is logged in, it will set the secondary color from the available color schemes based on the current color scheme in use.
+     * - If none of the above conditions are met, it will return the secondary color from the available color schemes based on the current color scheme in use.
+     *
+     * @access public
+     * @return string The secondary color for the current user's color scheme
+     */
     public function getSecondaryColor() {
 
         if (isset($_SESSION["usersettings.colorScheme.secondaryColor"])
-        && $_SESSION["usersettings.colorScheme.secondaryColor"] != '') {
+        && $_SESSION["usersettings.colorScheme.secondaryColor"] != ''
+        &&  Auth::isLoggedIn()) {
             return $_SESSION["usersettings.colorScheme.secondaryColor"];
         }
 
         $colorSchemes = $this->getAvailableColorSchemes();
-        $_SESSION["usersettings.colorScheme.secondaryColor"] = $colorSchemes['themeDefault']['secondaryColor'];
+        $currentColorScheme = $this->getColorScheme();
 
-        return $_SESSION["usersettings.colorScheme.secondaryColor"];
+        if(Auth::isLoggedIn()) {
+            $_SESSION["usersettings.colorScheme.secondaryColor"] = $colorSchemes[$currentColorScheme]['secondaryColor'];
+        }
+
+        return $colorSchemes[$currentColorScheme]['secondaryColor'];
     }
 
     /**
@@ -825,10 +888,8 @@ class Theme
         }
     }
 
-    public function clearCache(): void
+    public static function clearCache(): void
     {
-        $this->iniData = [];
-
         unset($_SESSION["usersettings.colorScheme.primaryColor"]);
         unset($_SESSION["usersettings.colorScheme.secondarycolor"]);
         unset($_SESSION["usersettings.colorMode"]);

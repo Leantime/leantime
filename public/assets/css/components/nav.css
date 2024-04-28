@@ -1240,7 +1240,7 @@ a.barmenu:hover {
 .maincontentinner.tabs ul li a {
     font-weight:bold;
     padding:5px 16px; /*Other buttons have 1px borders so this makes up for it */
-    border-radius:var(--element-radius);
+    border-radius: 5px;
     line-height:21px;
     display:block;
     transition: background-color 0.2s ease-in-out 0s;

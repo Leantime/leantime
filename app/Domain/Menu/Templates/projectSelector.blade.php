@@ -1,4 +1,3 @@
-
 <a href="{{ BASE_URL }}/projects/showMy"
    class="dropdown-toggle bigProjectSelector {{ $menuType == "project" ? "active" : "" }}"
    data-toggle="dropdown">
@@ -14,10 +13,8 @@
         {{ $currentProject['name'] ?? "" }}&nbsp;
 
     @else
-
         {!! __('menu.projects') !!}
     @endif
-
 
    <i class="fa fa-caret-down" aria-hidden="true"></i>
 </a>
