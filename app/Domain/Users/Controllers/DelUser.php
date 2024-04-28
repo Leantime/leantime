@@ -4,25 +4,25 @@ namespace Leantime\Domain\Users\Controllers {
 
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;
-    use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Core\Frontcontroller;
+    use Leantime\Domain\Users\Services\Users;
 
     /**
      *
      */
     class DelUser extends Controller
     {
-        private UserRepository $userRepo;
+        private Users $userService;
 
         /**
          * init - initialize private variables
          *
          * @access public
          */
-        public function init(UserRepository $userRepo)
+        public function init(Users $userService)
         {
-            $this->userRepo = $userRepo;
+            $this->userService = $userService;
         }
 
         /**
@@ -39,12 +39,12 @@ namespace Leantime\Domain\Users\Controllers {
             if (isset($_GET['id']) === true) {
                 $id = (int)($_GET['id']);
 
-                $user = $this->userRepo->getUser($id);
+                $user = $this->userService->getUser($id);
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
                     if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
-                        $this->userRepo->deleteUser($id);
+                        $this->userService->deleteUser($id);
 
                         $this->tpl->setNotification($this->language->__("notifications.user_deleted"), "success", "user_deleted");
 
