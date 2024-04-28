@@ -85,7 +85,7 @@ class Session
 
             //test remote host info
             $session_string = ! $this->request instanceof CliRequest
-                ? self::get_client_ip() . $_SERVER['HTTP_HOST']
+                ? self::get_client_ip() . $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']
                 : 'cli';
 
             $testSessionHost = hash('sha1', $session_string . $this->sessionpassword);
@@ -136,7 +136,7 @@ class Session
     private function makeSID(): void
     {
         $session_string = ! $this->request instanceof CliRequest
-            ? self::get_client_ip() . $_SERVER['HTTP_HOST']
+            ? self::get_client_ip() . $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME']
             : 'cli';
 
         $tmp = hash('sha1', mt_rand(32, 32) . $session_string . time());
@@ -168,8 +168,6 @@ class Session
             ))
         );
     }
-
-
 
     private static function get_client_ip()
     {
