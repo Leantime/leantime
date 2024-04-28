@@ -99,7 +99,7 @@ class Language
 
         //Start checking if the user has a language set
         if (!$this->setLanguage($language)) {
-            $this->setLanguage($this->config->language);
+            $this->setLanguage("en-US");
         }
     }
 
