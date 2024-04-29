@@ -1,6 +1,4 @@
 # Version: 3.1.2
-
-
 * [b73d95f](https://github.com/Leantime/leantime/commit/b73d95ff91b5c1a26e35f96eee4f3ed378adaf68): version bump
 * [fb6f64d](https://github.com/Leantime/leantime/commit/fb6f64ddfce1c60fa47b4938a499b90848d12d44): [Changelog CI] Add Changelog for Version 3.1.1
 * [b33e7be](https://github.com/Leantime/leantime/commit/b33e7bea1c17c7a27283145f3a9bfcdc1279bd31): [fix] global role check for plugin modules
