@@ -19,7 +19,7 @@
 
                 @if ($login::userIsAtLeast("manager"))
                     @dispatchEvent('beforeProjectCreateLink')
-                    <li><a href="#/projects/createnew">
+                    <li><a href="{{ $startSomethingUrl }}">
                             <span class="fancyLink">
                                 {!! __('menu.create_something_new') !!}
                             </span>
@@ -98,7 +98,7 @@
 
                 @if ($login::userIsAtLeast("manager"))
                     @dispatchEvent('beforeProjectCreateLink')
-                    <li><a href="#/projects/createnew">
+                    <li><a href="{{ $startSomethingUrl }}">
                             <span class="fancyLink">
                                 {!! __('menu.create_something_new') !!}
                             </span>

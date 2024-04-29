@@ -11,14 +11,14 @@ leantime.widgetController = (function () {
             minRow: 2, // don't let it collapse when empty
             cellHeight: '30px',
             float:false,
+            animate: false,
             draggable: {
                 handle: '.grid-handler-top',
                 appendTo: 'body',
                 scroll: false
             },
+            disableAutoScroll: true,
         });
-
-
 
         grid.on('dragstop', function(event, item) {
             saveGrid();

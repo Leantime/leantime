@@ -2,6 +2,7 @@
 
 namespace Leantime\Domain\Projects\Controllers {
 
+    use Leantime\Core\Eventhelpers;
     use Leantime\Core\Mailer as MailerCore;
     use Leantime\Core\Controller;
     use Leantime\Domain\Auth\Models\Roles;

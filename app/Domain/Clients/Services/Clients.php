@@ -11,7 +11,7 @@ use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
 use Leantime\Domain\Projects\Repositories\Projects;
 
 /**
- *
+ * Class Clients
  */
 class Clients
 {
@@ -77,26 +77,26 @@ class Clients
     /**
      * updates the client by key.
      *
-     * @param  object|array $object expects the entire object to be updated as object or array
+     * @param  object|array $values expects the entire object to be updated as object or array
      * @access public
      *
      * @return bool                 Returns true on success, false on failure
      */
-    public function editClient(object|array $object): bool
+    public function editClient(object|array $values): bool
     {
-        return $this->clientRepository->editClient($object, $object['id']);
+        return $this->clientRepository->editClient($values, $values['id']);
     }
 
     /**
      * Creates a new client
      *
      * @access public
-     * @param  object|array $object Object or array to be created
+     * @param  object|array $values Object or array to be created
      * @return int|false                Returns id of new element or false
      */
-    public function create(object|array $object): int|false
+    public function create(object|array $values): int|false
     {
-        return $this->clientRepository->addClient($object);
+        return $this->clientRepository->addClient($values);
     }
 
     /**
