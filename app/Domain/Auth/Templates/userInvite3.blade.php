@@ -12,11 +12,12 @@
                 aria-valuenow="0"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                style="width: 85%"
-            ><span class="sr-only">80%</span></div>
+                style="width: 62%"
+            ><span class="sr-only">62%</span></div>
         </div>
 
-        <div class="step complete" style="left: 15%;">
+
+        <div class="step complete" style="left: 12%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
@@ -25,7 +26,7 @@
             </a>
         </div>
 
-        <div class="step complete" style="left: 50%;">
+        <div class="step complete" style="left: 37%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
@@ -34,11 +35,20 @@
             </a>
         </div>
 
-        <div class="step current" style="left: 85%;">
+        <div class="step current" style="left: 62%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
                     <i class="fa-regular fa-circle"></i> Step 3
+                </span>
+            </a>
+        </div>
+
+        <div class="step " style="left: 88%;">
+            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
+                <span class="innerCircle"></span>
+                <span class="title">
+                    <i class="fa-regular fa-circle"></i> Step 4
                 </span>
             </a>
         </div>
@@ -48,41 +58,45 @@
 <br /><br /><br />
 
 
-<h2 style="font-size:var(--font-size-xxl);">🥷 What did you say you do here?</h2>
-
+<h2>Managing work is about more than long To Do lists,<br />
+    it's about reaching goals and making impact</h2>
 
 <div class="regcontent">
 
     <form id="resetPassword" action="" method="post">
-
-        <input type="hidden" name="step" value="3"/>
+        <input type="hidden" name="step" value="3" />
 
         {{  $tpl->displayInlineNotification() }}
 
-        <p>Describe the work you are managing.<br /><br /></p>
+        <p>
+            How will your life change if you solve your current challenges?<br /><br /></p>
 
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'ic'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl">🤓</span> I manage only my own work
+        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'accomplish'" :label="''" class="tw-w-full tw-text-left">
+            <span class="emoji">🚀</span> I feel like I get to accomplish something
         </x-global::selectable>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'pm'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl">🧙</span> I manage a project for a team and my own work
+        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'manageable'" :label="''" class="tw-w-full tw-text-left">
+            <span class="emoji">💪</span> Things will feel manageable
         </x-global::selectable>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'pgm'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl"> 😸</span> I manage multiple projects for several teams
+        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'teamWork'" :label="''" class="tw-w-full tw-text-left">
+            <span class="emoji"> 👥</span>  My team will work better together
         </x-global::selectable>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'business'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl">♟️</span> I manage a business (unit)
+        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'safeMoney'" :label="''" class="tw-w-full tw-text-left">
+            <span class="emoji">💰</span> I will safe money
         </x-global::selectable>
 
-        <x-global::selectable :selected="false" :id="''" :name="'function'" :value="'no_answer'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl"> 🤷</span> Heck, if I knew
+        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'relateTasks'" :label="''" class="tw-w-full tw-text-left">
+            <span class="emoji">🎯</span> I will be able to relate my tasks to the goals I have
         </x-global::selectable>
 
-        <input type="submit" name="createAccount" value="Complete Sign up" />
+        <x-global::selectable :selected="false" :id="''" :name="'impact'" :value="'justWork'" :label="''" class="tw-w-full tw-text-left">
+            <span class="emoji"> 🥸</span> I just work here
+        </x-global::selectable>
+        <br /> <br />
+        <input type="submit" name="createAccount" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
 
 
     </form>

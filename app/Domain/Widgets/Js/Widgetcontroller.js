@@ -6,6 +6,10 @@ leantime.widgetController = (function () {
     var initGrid = function () {
 
         grid = GridStack.init({
+            columnOpts: {
+                breakpointForWindow: true,  // test window vs grid size
+                breakpoints: [{w:700, c:1},{w:850, c:6},{w:950, c:8},{w:1100, c:12}],
+            },
             margin: '0px 15px 15px 0px',
             handle: ".grid-handler-top",
             minRow: 2, // don't let it collapse when empty

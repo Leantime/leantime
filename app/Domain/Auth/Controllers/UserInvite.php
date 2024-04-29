@@ -142,12 +142,30 @@ class UserInvite extends Controller
             return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=3");
         }
 
-        if (isset($_POST["function"]) && isset($_POST["step"]) && $_POST["step"] == 3) {
+        if (isset($_POST["impact"]) && isset($_POST["step"]) && $_POST["step"] == 3) {
+            $userInvite = $this->authService->getUserByInviteLink($invitationId);
+
+            $challenge = $_POST["impact"];
+
+            $this->settingService->saveSetting("usersettings." . $userInvite['id'] . ".impact", $challenge);
+
+            return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=4");
+        }
+
+        if (isset($_POST["function"]) && isset($_POST["step"]) && $_POST["step"] == 4) {
+
             $userInvite = $this->authService->getUserByInviteLink($invitationId);
 
             $function = $_POST["function"];
 
             $this->settingService->saveSetting("usersettings." . $userInvite['id'] . ".function", $function);
+
+            return FrontcontrollerCore::redirect(BASE_URL . "/auth/userInvite/" . $invitationId . "?step=5");
+        }
+
+        if (isset($_POST["complete"]) && isset($_POST["step"]) && $_POST["step"] == 5) {
+
+            $userInvite = $this->authService->getUserByInviteLink($invitationId);
 
             $userInvite["status"] = "A";
             $userInvite["password"] = "";

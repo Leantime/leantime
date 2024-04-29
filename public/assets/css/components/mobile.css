@@ -18,6 +18,20 @@ min-width: 1200px
         overflow:scroll;
     }
 
+    .headerinner .bigProjectSelector {
+        width:auto;
+        min-width: 40px;
+    }
+
+    .mainwrapper.menuclosed .bigProjectSelector .fa {
+        font-size:var(--base-font-size);
+        line-height: 50px;
+    }
+
+    .row .regpanel {
+    }
+
+
     .header .logo {
         display:none !important;
     }
@@ -58,6 +72,10 @@ min-width: 1200px
         width:320px;
     }
 
+    .headmenu > li.appsLink {
+        display:none;
+    }
+
     .mainwrapper .primaryContent {
         padding-left:0px !important;
     }
@@ -73,9 +91,10 @@ min-width: 1200px
 
     .barmenu,
     .headerCTA{
-
+        line-height: 50px;
     }
 
+    .mainwrapper .headmenu,
     .mainwrapper.menuclosed .headmenu {
         margin-left: 15px;
     }
@@ -447,7 +466,7 @@ min-width: 1200px
     }
 
     .header {
-        height: 60px;
+        height: 50px;
     }
 
     .headmenu > li {
@@ -457,7 +476,7 @@ min-width: 1200px
 
     .headmenu > li > a {
         padding: 0 5px;
-        line-height:60px;
+        line-height:50px;
         text-align:center;
 
     }
@@ -469,7 +488,7 @@ min-width: 1200px
     }
 
     .header .userloggedinfo img {
-        margin-top:15px;
+        margin-top:10px;
     }
 
     .headmenu > li > a .head-icon {
