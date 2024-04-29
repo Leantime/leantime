@@ -6,6 +6,8 @@ namespace Leantime\Domain\Users\Services {
     use Leantime\Core\Eventhelpers;
     use Leantime\Core\Language as LanguageCore;
     use Leantime\Core\Mailer as MailerCore;
+    use Leantime\Domain\Auth\Models\Roles;
+    use Leantime\Domain\Auth\Services\Auth;
     use Leantime\Domain\Users\Repositories\Users as UserRepository;
     use Leantime\Domain\Projects\Repositories\Projects as ProjectRepository;
     use Leantime\Domain\Clients\Repositories\Clients as ClientRepository;
@@ -368,6 +370,26 @@ namespace Leantime\Domain\Users\Services {
             $this->authService->setUserSession($user);
 
             self::dispatch_event("editUser", ["id" => $id, "values" => $values]);
+        }
+
+        /**
+         * Delete the user with the specified id.
+         *
+         * @param int $id The id of the user to delete.
+         * @return bool True if the user was deleted successfully, false otherwise.
+         * @throws \Exception If the user is not authorized to delete the user.
+         */
+        public function deleteUser(int $id): bool
+        {
+
+            if(Auth::userIsAtLeast(Roles::$admin, true)) {
+                $this->userRepo->deleteUser($id);
+                $this->projectRepository->deleteAllProjectRelations($id);
+                return true;
+            }
+
+            throw new \Exception("Not authorized");
+
         }
     }
 }
