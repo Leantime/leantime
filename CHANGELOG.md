@@ -1,3 +1,10 @@
+# Version: 3.1.2
+
+* [11f02af](https://github.com/Leantime/leantime/commit/11f02af475a33600ed70a5a54c362d1ac50667d3): Add servername as fallback for http_host
+* [739b5ec](https://github.com/Leantime/leantime/commit/739b5ec54c709e1b18be376a1ad272a1d6c5fd75): Update Language.php
+* [edfc9fc](https://github.com/Leantime/leantime/commit/edfc9fc219c71a08da779b98e2c75e328be5a797): [fix] #2473  custom themes and colors were not cleared/stored correctly
+
+
 # Version: 3.1.1
 
 * [c1cfd20](https://github.com/Leantime/leantime/commit/c1cfd200349679b17f98f2a62a9054fa639b800b): [Changelog CI] Add Changelog for Version 3.1.1
