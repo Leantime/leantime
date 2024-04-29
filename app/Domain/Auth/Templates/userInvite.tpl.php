@@ -14,12 +14,12 @@ $user = $tpl->get("user");
                 aria-valuenow="0"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                style="width: 15%"
-            ><span class="sr-only">30%</span></div>
+                style="width: 12%"
+            ><span class="sr-only">12%</span></div>
         </div>
 
 
-        <div class="step current" style="left: 15%;">
+        <div class="step current" style="left: 12%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
@@ -29,7 +29,7 @@ $user = $tpl->get("user");
             </a>
         </div>
 
-        <div class="step " style="left: 50%;">
+        <div class="step " style="left: 37%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
@@ -39,7 +39,7 @@ $user = $tpl->get("user");
             </a>
         </div>
 
-        <div class="step " style="left: 85%;">
+        <div class="step " style="left: 62%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
@@ -49,24 +49,31 @@ $user = $tpl->get("user");
             </a>
         </div>
 
+        <div class="step " style="left: 88%;">
+            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
+                <span class="innerCircle"></span>
+                <span class="title">
+                           <i class="fa-regular fa-circle"></i>
+                        Step 4
+                        </span>
+            </a>
+        </div>
+
     </div>
 </div>
 <br /><br /><br />
 
 
-<h2 style="font-size:var(--font-size-xxl);"><?php echo $tpl->language->__("headlines.your_account"); ?></h2>
+<h2><?php echo $tpl->language->__("headlines.set_up_your_account"); ?></h2>
 
 <?php $tpl->dispatchTplEvent('afterPageHeaderClose'); ?>
 <div class="regcontent">
     <?php $tpl->dispatchTplEvent('afterRegcontentOpen'); ?>
 
-
     <form id="resetPassword" action="" method="post">
         <?php $tpl->dispatchTplEvent('afterFormOpen'); ?>
 
         <?php echo $tpl->displayInlineNotification(); ?>
-
-        <p><?php echo $tpl->language->__("text.welcome_to_leantime_2"); ?><br /><br /></p>
 
         <input type="hidden" name="step" value="1"/>
 

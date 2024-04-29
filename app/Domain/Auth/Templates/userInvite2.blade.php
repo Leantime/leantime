@@ -12,12 +12,12 @@
                 aria-valuenow="0"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                style="width: 50%"
+                style="width: 37%"
             ><span class="sr-only">50%</span></div>
         </div>
 
 
-        <div class="step complete" style="left: 15%;">
+        <div class="step complete" style="left: 12%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
@@ -26,7 +26,7 @@
             </a>
         </div>
 
-        <div class="step current" style="left: 50%;">
+        <div class="step current" style="left: 37%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
@@ -35,11 +35,20 @@
             </a>
         </div>
 
-        <div class="step " style="left: 85%;">
+        <div class="step " style="left: 62%;">
             <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
                 <span class="innerCircle"></span>
                 <span class="title">
                     <i class="fa-regular fa-circle"></i> Step 3
+                </span>
+            </a>
+        </div>
+
+        <div class="step " style="left: 88%;">
+            <a href="javascript:void(0)" data-toggle="dropdown" class="dropdown-toggle">
+                <span class="innerCircle"></span>
+                <span class="title">
+                    <i class="fa-regular fa-circle"></i> Step 4
                 </span>
             </a>
         </div>
@@ -49,7 +58,7 @@
 <br /><br /><br />
 
 
-<h2 style="font-size:var(--font-size-xxl);">🩺 Where does it hurt? </h2>
+<h2>{{ __("text.point_to_where_it_hurts") }}</h2>
 
 
 <div class="regcontent">
@@ -59,33 +68,33 @@
 
         {{  $tpl->displayInlineNotification() }}
 
-        <p>Tell us about your main challenge rightnow<br /><br /></p>
+        <p>{{ __("text.challenges_brings_you_here") }}<br /><br /></p>
 
 
         <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'organization'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl">🤯</span> I have too many things to manage and organize
+            <span class="emoji">🤯</span> I have too many things to manage and organize
         </x-global::selectable>
 
         <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'progress'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl">📉</span> I don't feel like I'm making progress
+            <span class="emoji">📉</span> I don't feel like I'm making progress
         </x-global::selectable>
 
         <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'adoption'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl"> 👥</span>  I need a tool that my team will actually use
+            <span class="emoji"> 👥</span> I need a tool that my team will actually use
         </x-global::selectable>
 
         <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'price'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl">💰</span> My current tool is too expensive
+            <span class="emoji">💰</span> My current tool is too expensive
         </x-global::selectable>
 
         <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'brain'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl"> 🧠</span>  The other tools don't organize the way my brain does
+            <span class="emoji"> 🧠</span> The other tools don't organize the way my brain does
         </x-global::selectable>
 
         <x-global::selectable :selected="false" :id="''" :name="'challenge'" :value="'collaboration'" :label="''" class="tw-w-full tw-text-left">
-            <span class="tw-text-2xl"> 🥸</span>  I was just invited to collaborate
+            <span class="emoji"> 🥸</span> I was just invited to collaborate
         </x-global::selectable>
-
+        <br /> <br />
         <input type="submit" name="createAccount" value="<?php echo $tpl->language->__("buttons.next"); ?>" />
 
 

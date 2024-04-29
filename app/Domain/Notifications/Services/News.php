@@ -73,7 +73,7 @@ namespace Leantime\Domain\Notifications\Services {
                 return true;
             }
 
-            if($lastNewsGuid !== $lastNewsGuid) {
+            if($lastNewsGuid !== $latestGuid) {
                 return true;
             }
 

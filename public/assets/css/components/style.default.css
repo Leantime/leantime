@@ -273,33 +273,62 @@ body.loginpage {
     position:relative;
     z-index:3;
     height:100%;
+
     overflow:hidden;
     display: flex;
     align-items: center;
-    padding-left:100px;
+    padding-left:25px;
+    padding-right:25px;
     color:var(--accent1-color);
     background:linear-gradient(45deg, var(--accent1) 20%,var(--accent2) 100%);
     box-shadow: var(--large-shadow);
 }
-.row .regLeft .mainWelcome {
+.row .regLeft .welcomeContent h1 {
     font-family: var(--primary-font-family);
-    font-size: 54px;
-    padding-left:15px;
+    font-size: 32px;
     font-weight:400;
 }
 
-
+.row .regLeft .welcomeContent {
+    padding-left:30px;
+}
 
 .row .regLeft::after {
-    background:url(../../images/03-1.png) no-repeat 50px 0px;
+    background:url(/dist/images/backgrounds/bg5.png) no-repeat left center;
     top:0px;
     left:0px;
     content:"";
-    opacity:0.2;
+    opacity:0.1;
     position:absolute;
-    width: 250px;
-    height: 326px;
+    width:100%;
+    height:100%;
+}
 
+.row .regLeft .logo {
+    /* Reduce by margin left and then allow for 25px margin to the right */
+    width:calc(100% - 80px);
+    position:absolute;
+    top:25px;
+    left:0px;
+    padding: 0px;
+}
+
+.row .regLeft .logo a {
+    text-align:left;
+}
+
+
+.row .regLeft .socialProofContent  {
+    /* Reduce by margin left and then allow for 25px margin to the right */
+    width:calc(100% - 80px);
+    position:absolute;
+    bottom:25px;
+    left:0px;
+    margin-left:55px;
+
+    background:rgba(255,255,255, 0.3);
+    border-radius:10px;
+    padding:20px;
 }
 
 .row .regRight {
@@ -316,12 +345,15 @@ body.loginpage {
     margin-top:-40px;
 }
 
-
+.row .regRight h2 {
+    font-weight:bold;
+    font-size:var(--font-size-xxl);
+}
 
 .iq-objects-04 {
     position: absolute;
-    top: 150%;
-    right: -50%;
+    top: 300%;
+    right: -75%;
     border: 56px solid rgba(255,255,255, 0.4);
     border-radius: 900px;
     height: 600px;
@@ -478,7 +510,8 @@ body.loginpage {
 }
 
 .regcontent {
-    width:400px;
+    width:476px;
+    max-width:90vw;
     padding-top:25px;
 }
 

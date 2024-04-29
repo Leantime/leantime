@@ -1450,11 +1450,12 @@ body .croppie-container {
     vertical-align: middle;
     text-align: center;
     line-height: 20px;
+    margin-bottom:10px;
 }
 
 .selectable .selectableContent {
     border: 1px solid var(--main-border-color);
-    padding:5px;
+    padding:5px 10px 2px 10px;
     border-radius: var(--element-radius);
     background: var(--tab-background);
     color: var(--tab-color);
@@ -1465,6 +1466,12 @@ body .croppie-container {
     border-radius: 50%;
     width: 60px;
     height: 60px;
+}
+
+.selectable .selectableContent .emoji {
+    font-size:var(--font-size-xxl);
+    padding-right:5px;
+    vertical-align: middle;
 }
 
 .colorCircle {

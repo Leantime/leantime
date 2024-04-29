@@ -16,25 +16,21 @@
     </a>
 </div>
 
-<div class="row " style="height:100%; width: 99%;">
-    <div class="col-md-6 hidden-phone regLeft">
+<div class="row" style="height:100vh; width: 99%;">
+    <div class="col-md-4 hidden-phone regLeft">
 
-        <div class="logo tw-absolute tw-top-[50px] tw-left-0 tw-ml-[100px] tw-p-0">
+        <div class="logo">
             <a href="{!! BASE_URL !!}" target="_blank"><img src="{{ BASE_URL }}/dist/images/logo.svg" /></a>
         </div>
 
-        <div class="row">
-            <div class="col-md-12" style="position:relative;">
-                <h1 class="mainWelcome">
-                    @dispatchFilter('welcomeText', $language->__("headlines.welcome_back"))
-                </h1>
-                <span class="iq-objects-04 iq-fadebounce">
-                    <span class="iq-round"></span>
-                </span>
-            </div>
+        <div class="welcomeContent">
+            @dispatchFilter('welcomeText', '<h1 class="mainWelcome">'.$language->__("headlines.welcome_back").'</h1>')
         </div>
+
+        @dispatchFilter('belowWelcomeText', '')
+
     </div>
-    <div class="col-md-6 col-sm-12 regRight">
+    <div class="col-md-8 col-sm-12 regRight">
 
         <div class="regpanel">
             <div class="regpanelinner">

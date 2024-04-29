@@ -320,7 +320,7 @@ foreach ($__data as $var => $val) {
                                         <?php
 
                                         foreach ($tagsArray as $tag) {
-                                            echo"<span class='tag'><span>" . $this->escape($tag) . "</span></span>";
+                                            echo"<span class='tag'><span>" . $tpl->escape($tag) . "</span></span>";
                                         }
 
                                         ?>
