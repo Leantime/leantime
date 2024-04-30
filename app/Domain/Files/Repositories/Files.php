@@ -4,7 +4,7 @@ namespace Leantime\Domain\Files\Repositories {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
     use Leantime\Core\Db as DbCore;
-    use Leantime\Core\Fileupload as FileuploadCore;
+    use Leantime\Core\Fileupload;
     use Leantime\Domain\Users\Repositories\Users as UserRepo;
     use PDO;
 
@@ -257,7 +257,7 @@ namespace Leantime\Domain\Files\Repositories {
          * @return array|false
          * @throws BindingResolutionException
          */
-        public function upload($file, $module, $moduleId): false|array
+        public function upload($file, $module, $moduleId): false|string|array
         {
 
             //Clean module mess
@@ -268,7 +268,7 @@ namespace Leantime\Domain\Files\Repositories {
                 $module = "ticket";
             }
 
-            $upload = app()->make(FileuploadCore::class);
+            $upload = app()->make(Fileupload::class);
 
             $path = $file['file']['name'];
             $ext = pathinfo($path, PATHINFO_EXTENSION);
@@ -303,9 +303,8 @@ namespace Leantime\Domain\Files\Repositories {
                         $return = false;
                     }
                 } else {
-
                     error_log($upload->error);
-                    return false;
+                    return $upload->error;
                 }
             }
 
