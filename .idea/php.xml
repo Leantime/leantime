@@ -160,8 +160,6 @@
       <path value="$PROJECT_DIR$/vendor/spatie/enum" />
       <path value="$PROJECT_DIR$/vendor/carbon-cli/carbon-cli" />
       <path value="$PROJECT_DIR$/vendor/simple-cli/simple-cli" />
-<<<<<<< Updated upstream
-=======
       <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
       <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
       <path value="$PROJECT_DIR$/vendor/symfony/dom-crawler" />
@@ -224,9 +222,6 @@
       <path value="$PROJECT_DIR$/vendor/php-webdriver/webdriver" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
       <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
-      <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/stripe/stripe-php" />
-      <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/composer" />
->>>>>>> Stashed changes
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

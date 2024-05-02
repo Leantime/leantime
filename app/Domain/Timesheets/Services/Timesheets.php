@@ -316,10 +316,12 @@ class Timesheets
             $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
 
             // Detect timezone offset
+
             $workdateOffsetStart = ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);
 
             // Various Entries can be in different timezones and thus would not be caught by upsert or grouping by
             // default Creating new rows for each timezone adjustment
+            //to avoid timezone collisions we disable adding new times to rows that were created in an different timezone
             $timezonedTime = $currentWorkDate->format("H:i:s");
 
             $groupKey = $timesheet["ticketId"] . "-" . $timesheet["kind"] . "-" . $timezonedTime;
@@ -336,7 +338,7 @@ class Timesheets
                     "day1" => array(
                         "start" =>  $fromDate,
                         "end" => $fromDate->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
 
                         "hours" => 0,
                         "description" => "",
@@ -344,42 +346,42 @@ class Timesheets
                     "day2" => array(
                         "start" =>  $fromDate->addDays(1),
                         "end" => $fromDate->addDays(1)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(1)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(1)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day3" => array(
                         "start" =>  $fromDate->addDays(2),
                         "end" => $fromDate->addDays(2)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(2)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(2)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day4" => array(
                         "start" =>  $fromDate->addDays(3),
                         "end" => $fromDate->addDays(3)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(3)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(3)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day5" => array(
                         "start" =>  $fromDate->addDays(4),
                         "end" => $fromDate->addDays(4)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(4)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(4)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day6" => array(
                         "start" =>  $fromDate->addDays(5),
                         "end" => $fromDate->addDays(5)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(5)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(5)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
                         "hours" => 0,
                         "description" => "",
                     ),
                     "day7" => array(
                         "start" =>  $fromDate->addDays(6),
                         "end" => $fromDate->addDays(6)->addHours(23)->addMinutes(59),
-                        "actualWorkDate" => $fromDate->addDays(6)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second),
+                        "actualWorkDate" => $workdateOffsetStart === 0 ? $fromDate->addDays(6)->setTime($currentWorkDate->hour, $currentWorkDate->minute, $currentWorkDate->second) : "",
                         "hours" => 0,
                         "description" => "",
                     ),
@@ -397,9 +399,11 @@ class Timesheets
             // stored as UTC timezone shoifted value in the db.
             // If the value is not exact but falls within the time period we're adding a new row
             for ($i = 1; $i < 8; $i++) {
+
                 $start = $timesheetGroups[$groupKey]["day" . $i]["start"];
                 $end = $timesheetGroups[$groupKey]["day" . $i]["end"];
-                if ($currentWorkDate->gte($start) && $currentWorkDate->lte($end)) {
+
+                if ($currentWorkDate->gte($start) && $currentWorkDate->lt($end)) {
                     $timesheetGroups[$groupKey]["day" . $i]['hours'] += $timesheet['hours'];
                     $timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] = $currentWorkDate;
                     $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
@@ -408,6 +412,18 @@ class Timesheets
                     break;
                 }
             }
+
+            /*for ($i = 1; $i < 8; $i++) {
+                if ($timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] == $currentWorkDate) {
+                    $timesheetGroups[$groupKey]["day" . $i]['hours'] += $timesheet['hours'];
+                    $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
+                    // No need to check further, we found what we came for
+                    break;
+                }
+            }*/
+
+
+
 
             // Add to rowsum
             $timesheetGroups[$groupKey]["rowSum"] += $timesheet['hours'];
