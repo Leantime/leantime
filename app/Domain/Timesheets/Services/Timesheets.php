@@ -396,7 +396,7 @@ class Timesheets
             // will be different since it is based on start of the day 00:00:00 in the current users timezone and then
             // stored as UTC timezone shoifted value in the db.
             // If the value is not exact but falls within the time period we're adding a new row
-            for ($i = 1; $i < 8; $i++) {
+            /*for ($i = 1; $i < 8; $i++) {
                 $start = $timesheetGroups[$groupKey]["day" . $i]["start"];
                 $end = $timesheetGroups[$groupKey]["day" . $i]["end"];
                 if ($currentWorkDate->gte($start) && $currentWorkDate->lte($end)) {
@@ -407,7 +407,22 @@ class Timesheets
                     // No need to check further, we found what we came for
                     break;
                 }
+            }*/
+
+            for ($i = 1; $i < 8; $i++) {
+
+                if ($timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] == $currentWorkDate) {
+
+                    $timesheetGroups[$groupKey]["day" . $i]['hours'] += $timesheet['hours'];
+                    $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
+
+                    // No need to check further, we found what we came for
+                    break;
+                }
             }
+
+
+
 
             // Add to rowsum
             $timesheetGroups[$groupKey]["rowSum"] += $timesheet['hours'];
