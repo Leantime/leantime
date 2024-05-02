@@ -32,6 +32,15 @@
       <PhpSpecSuiteConfiguration>
         <option name="myPath" value="$PROJECT_DIR$/app/Plugins/Billing" />
       </PhpSpecSuiteConfiguration>
+<<<<<<< Updated upstream
+=======
+      <PhpSpecSuiteConfiguration>
+        <option name="myPath" value="$PROJECT_DIR$" />
+      </PhpSpecSuiteConfiguration>
+      <PhpSpecSuiteConfiguration>
+        <option name="myPath" value="$PROJECT_DIR$/app/Plugins/Billing" />
+      </PhpSpecSuiteConfiguration>
+>>>>>>> Stashed changes
     </suites>
   </component>
 </project>

@@ -10,6 +10,9 @@
           <option name="namespace" value="Tests" />
           <option name="path" value="$PROJECT_DIR$/tests" />
         </Configuration>
+        <Configuration>
+          <option name="path" value="$PROJECT_DIR$/app/Plugins/Billing/tests" />
+        </Configuration>
       </list>
     </option>
   </component>
