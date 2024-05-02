@@ -1,3 +1,35 @@
+# Version: 3.1.3
+
+* [5a0a3fd](https://github.com/Leantime/leantime/commit/5a0a3fdc297067b1f2655254b3cb64902ddd1cdd): file repo fixes
+* [df3cef4](https://github.com/Leantime/leantime/commit/df3cef4c1339f7709447aa6c50955c2bd33348f1): version bump
+* [ef21247](https://github.com/Leantime/leantime/commit/ef21247e3eb9d726111965596c4405a6803908ab): Update changelog.yml
+* [27ba535](https://github.com/Leantime/leantime/commit/27ba535f7c8c494a909475354b204a5a9e964204): [Changelog CI] Add Changelog for Version 3.1.2
+* [c9c65ef](https://github.com/Leantime/leantime/commit/c9c65ef863859d5761681ef368584f8d14f329a3): [Changelog CI] Add Changelog for Version 3.1.2
+* [8d5e47f](https://github.com/Leantime/leantime/commit/8d5e47f4c579983f0966bbb87c9ac84f16451a58): [featuer] New onboarding flow
+* [cb95173](https://github.com/Leantime/leantime/commit/cb95173932942d243344223589a5852c50cadecb): [fix] Delete user should remove project relationships
+* [11f02af](https://github.com/Leantime/leantime/commit/11f02af475a33600ed70a5a54c362d1ac50667d3): Add servername as fallback for http_host
+* [739b5ec](https://github.com/Leantime/leantime/commit/739b5ec54c709e1b18be376a1ad272a1d6c5fd75): Update Language.php
+* [edfc9fc](https://github.com/Leantime/leantime/commit/edfc9fc219c71a08da779b98e2c75e328be5a797): [fix] #2473  custom themes and colors were not cleared/stored correctly
+* [f4304a5](https://github.com/Leantime/leantime/commit/f4304a5844d956800d550f4ccea2097d9b1d6d07): fix: upgrade @sentry/webpack-plugin from 2.16.0 to 2.16.1
+
+Snyk has created this PR to upgrade @sentry/webpack-plugin from 2.16.0 to 2.16.1.
+
+See this package in npm:
+https://www.npmjs.com/package/@sentry/webpack-plugin
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+* [0f6a404](https://github.com/Leantime/leantime/commit/0f6a404a899170b9d912d01a23f3d55f726eb1cd): fix: upgrade @fortawesome/fontawesome-free from 6.5.1 to 6.5.2
+
+Snyk has created this PR to upgrade @fortawesome/fontawesome-free from 6.5.1 to 6.5.2.
+
+See this package in npm:
+https://www.npmjs.com/package/@fortawesome/fontawesome-free
+
+See this project in Snyk:
+https://app.snyk.io/org/broskees/project/c3e7f2a0-597b-4965-a7cf-7e6ea71043ae?utm_source=github&utm_medium=referral&page=upgrade-pr
+
+
 # Version: 3.1.2
 * [b73d95f](https://github.com/Leantime/leantime/commit/b73d95ff91b5c1a26e35f96eee4f3ed378adaf68): version bump
 * [fb6f64d](https://github.com/Leantime/leantime/commit/fb6f64ddfce1c60fa47b4938a499b90848d12d44): [Changelog CI] Add Changelog for Version 3.1.1
