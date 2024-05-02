@@ -137,13 +137,16 @@ class ShowMy extends Controller
                     "kind" => $kind,
                 );
 
-                try {
-                    $this->timesheetService->upsertTime($ticketId, $values);
-                    $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
-                } catch (\Exception $e) {
-                    $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
-                    error_log($e);
-                    continue;
+                //This should not be the case since we set the input to disabled, but check anyways
+                if($timestamp !== "false" && $timestamp != false) {
+                    try {
+                        $this->timesheetService->upsertTime($ticketId, $values);
+                        $this->tpl->setNotification("Timesheet saved successfully", "success", "save_timesheet");
+                    } catch (\Exception $e) {
+                        $this->tpl->setNotification("Error logging time: " . $e->getMessage(), "error", "save_timesheet");
+                        error_log($e);
+                        continue;
+                    }
                 }
             }
         }

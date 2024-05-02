@@ -50,12 +50,12 @@ select, textarea, input[type="text"], input[type="password"], input[type="dateti
     color:var(--primary-font-color);
 }
 
-input:read-only,
+input[type="text"]:read-only,
 input:disabled,
 .btn-primary[disabled]{
     border:none;
     box-shadow:none;
-    padding-left: 0px;
+    opacity:0.4;
 }
 
 body input:focus {
