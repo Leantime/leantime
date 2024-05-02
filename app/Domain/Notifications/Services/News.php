@@ -51,8 +51,8 @@ namespace Leantime\Domain\Notifications\Services {
 
             $rss = $this->getFeed();
 
-            $latestGuid = $rss?->channel?->item[0]?->guid;
-            $this->settingService->saveSetting("usersettings.".$userId.".lastNewsGuid", $latestGuid);
+            $latestGuid = strval($rss?->channel?->item[0]?->guid);
+            $this->settingService->saveSetting("usersettings.".$userId.".lastNewsGuid", strval($latestGuid));
 
             //Todo: check last article the user read
             //Only load rss feed once a day
@@ -65,7 +65,7 @@ namespace Leantime\Domain\Notifications\Services {
 
             $rss = $this->getFeed();
 
-            $latestGuid = $rss?->channel?->item[0]?->guid;
+            $latestGuid = strval($rss?->channel?->item[0]?->guid);
 
             $lastNewsGuid = $this->settingService->getSetting("usersettings.".$userId.".lastNewsGuid");
 
