@@ -10,6 +10,7 @@ use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\IncomingRequest;
 use Leantime\Core\Middleware\Request;
+use Leantime\Domain\Api\Services\Api;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -55,7 +56,7 @@ class RequestRateLimiter
         //API Routes Limit
         if ($request instanceof ApiRequest) {
             $apiKey = "";
-            $key = app()->make(ApiRequest::class)->getAPIKeyUser($apiKey);
+            $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
             $limit = 10;
         }
 

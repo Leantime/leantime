@@ -49,8 +49,8 @@ class ShowMyList extends Controller
         // The front end javascript is hardcode to start the week on mondays, so we use that here too.
 
         //Get start of the week in current users timezone and then switch to UTC
-        $dateFrom = dtHelper()->userNow()->startOfMonth()->setToDbTimezone();
-        $dateTo = dtHelper()->userNow()->endOfMonth()->setToDbTimezone();
+        $dateFrom = dtHelper()->userNow()->startOfWeek(CarbonInterface::MONDAY)->setToDbTimezone();
+        $dateTo = dtHelper()->userNow()->endOfWeek()->setToDbTimezone();
 
         if (!empty($_POST['dateFrom'])) {
             $dateFrom = dtHelper()->parseUserDateTime($_POST['dateFrom'])->setToDbTimezone();

@@ -258,9 +258,10 @@ jQuery(document).ready(function(){
                     <?php
                     $i = 0;
                     foreach ($days as $day) { ?>
-                        <th class="<?php if ($dateFrom->isToday()) {
+                        <th class="<?php if ($dateFrom->addDays($i)->setToUserTimezone()->isToday()) {
                             echo "active";
-                                   } ?>"><?php echo $day ?><br />
+                                   } ?>
+                    "><?php echo $day ?><br />
                             <?php
 
                                 echo $dateFrom->addDays($i)->formatDateForUser();
@@ -293,7 +294,7 @@ jQuery(document).ready(function(){
                                 <?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?>
                             <?php if ($timeRow['hasTimesheetOffset']) { ?>
                                     <i class="fa-solid fa-clock-rotate-left pull-right label-blue"
-                                       data-tippy-content="This entry was likely created using a different timezone">
+                                       data-tippy-content="This entry was likely created using a different timezone. Only existing entries can be updated in this timezone">
                                     </i>
                             <?php } ?>
                                 </td>
@@ -304,19 +305,23 @@ jQuery(document).ready(function(){
 
                                         <td width="7%" class="row<?php
                                             echo $dayKey;
-                                        if ($timeRow[$dayKey]["actualWorkDate"]->setToUserTimezone()->isToday()) {
+                                        if ($timeRow[$dayKey]["start"]->setToUserTimezone()->isToday()) {
                                             echo " active";
                                         }
                                         ?>">
 
 
                                             <?php
-                                            $inputNameKey = $timeRow["ticketId"] . "|" . $timeRow["kind"] . "|" . $timeRow[$dayKey]["actualWorkDate"]->formatDateForUser() . "|" .  $timeRow[$dayKey]["actualWorkDate"]->getTimestamp();
+                                            $inputNameKey = $timeRow["ticketId"] . "|" . $timeRow["kind"] . "|" . ($timeRow[$dayKey]["actualWorkDate"] ? $timeRow[$dayKey]["actualWorkDate"]->formatDateForUser() : "false" ). "|" .  ($timeRow[$dayKey]["actualWorkDate"] ? $timeRow[$dayKey]["actualWorkDate"]->getTimestamp() : "false");
                                             ?>
                                             <input type="text"
                                                    class="hourCell"
+                                                   <?php if(empty($timeRow[$dayKey]["actualWorkDate"])) echo "disabled='disabled'"; ?>
                                                    name="<?php echo $inputNameKey ?>"
                                                    value="<?php echo $timeRow[$dayKey]["hours"]; ?>"
+                                                    <?php if(empty($timeRow[$dayKey]["actualWorkDate"])) { ?>
+                                                        data-tippy-content="Cannot add time entry in previous timezone"
+                                                    <?php } ?>
                                             />
 
                                             <?php if (!empty($timeRow[$dayKey]["description"])) {?>
@@ -418,7 +423,7 @@ jQuery(document).ready(function(){
                 </tfoot>
             </table>
             <div class="right">
-                <input type="submit" name="saveTimeSheet" value="Save"/>
+                <input type="submit" name="saveTimeSheet" value="Save" />
             </div>
             <div class="clearall"></div>
         </form>
