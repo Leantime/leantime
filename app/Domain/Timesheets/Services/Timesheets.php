@@ -316,6 +316,7 @@ class Timesheets
             $currentWorkDate = dtHelper()->parseDbDateTime($timesheet['workDate']);
 
             // Detect timezone offset
+
             $workdateOffsetStart = ($currentWorkDate->setToUserTimezone()->secondsSinceMidnight() / 60 / 60);
 
             // Various Entries can be in different timezones and thus would not be caught by upsert or grouping by
@@ -323,9 +324,12 @@ class Timesheets
             $timezonedTime = $currentWorkDate->format("H:i:s");
 
             $groupKey = $timesheet["ticketId"] . "-" . $timesheet["kind"] . "-" . $timezonedTime;
+
             if (!isset($timesheetGroups[$groupKey])) {
                 // Build an array of 7 days for the weekly timesheet. Include the start date of the current users
-                // timezone in UTC. That way we can compare the dates coming from the db
+                // timezone in UTC. That way we can compare the dates coming from the db and add the actual time entry
+                // to the correct date in our prepared line
+
                 $timesheetGroups[$groupKey] = array(
                     "kind" =>  $timesheet["kind"],
                     "clientName" => $timesheet["clientName"],
@@ -387,48 +391,24 @@ class Timesheets
                 );
             }
 
-            // Check if timesheet entry falls within the day range of the weekly grouped timesheets that we are trying
-            // to pull up.
-            //
-            // Why would that be different you might ask?
-            //
-            // If a user adds time entries and then changes timezones (even just 1 hour) the values in the db
-            // will be different since it is based on start of the day 00:00:00 in the current users timezone and then
-            // stored as UTC timezone shoifted value in the db.
-            // If the value is not exact but falls within the time period we're adding a new row
-            /*for ($i = 1; $i < 8; $i++) {
-                $start = $timesheetGroups[$groupKey]["day" . $i]["start"];
-                $end = $timesheetGroups[$groupKey]["day" . $i]["end"];
-                if ($currentWorkDate->gte($start) && $currentWorkDate->lte($end)) {
-                    $timesheetGroups[$groupKey]["day" . $i]['hours'] += $timesheet['hours'];
-                    $timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] = $currentWorkDate;
-                    $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
-
-                    // No need to check further, we found what we came for
-                    break;
-                }
-            }*/
-
+            //Take the date from the db and add the hours to the appropriate day in our week array
             for ($i = 1; $i < 8; $i++) {
-
                 if ($timesheetGroups[$groupKey]["day" . $i]['actualWorkDate'] == $currentWorkDate) {
 
+                    //It should be impossible for 2 entries in the db to have the same group key given the unique
+                    // index on the date + ticketid + type.
+                    // but just in case add up the hours. A save will merge the entries later.
                     $timesheetGroups[$groupKey]["day" . $i]['hours'] += $timesheet['hours'];
                     $timesheetGroups[$groupKey]["day" . $i]['description'] = $timesheet['description'];
-
                     // No need to check further, we found what we came for
                     break;
                 }
             }
 
-
-
-
             // Add to rowsum
             $timesheetGroups[$groupKey]["rowSum"] += $timesheet['hours'];
         }
-
-
+        
         return $timesheetGroups;
     }
 
