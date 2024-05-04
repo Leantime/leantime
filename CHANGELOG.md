@@ -5,7 +5,7 @@
 * [ef6a6c6](https://github.com/Leantime/leantime/commit/ef6a6c63bd0c4ea346b0af87af42e12a0bea91b7): [fix] news notification doesn't disappear bug
 * [fc6cf2f](https://github.com/Leantime/leantime/commit/fc6cf2f95077573b2f6a5876c017183db0724497): [enhancement] Align initial filters to be the current week
 * [ab40097](https://github.com/Leantime/leantime/commit/ab400978b501e0665ef9154278f1bd5edeead286): [fix] disabling adding time registrations in previous timezones
-* [9f9adf0](https://github.com/Leantime/leantime/commit/9f9adf0fd0a9d2fec41cc8bd02c4ce1eb62cd273): [housekeeping] clean up.
+* [9f9adf0](https://github.com/Leantime/leantime/commit/9f9adf0fd0a9d2fec41cc8bd02c4ce1eb62cd273): [housekeeping] clean up whitespaces and comments
 * [2e9db31](https://github.com/Leantime/leantime/commit/2e9db313fee6c5380ebe04e34567cc6c97485103): [fix] timesheet entries that fall on midnight were not included
 
 # Version: 3.1.3
