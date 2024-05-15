@@ -203,23 +203,28 @@ class Messengers
      */
     public function discordWebhook(NotificationModel $notification): bool
     {
-        $converter = false;
+        $ticketService = app()->make(Tickets::class);
 
         for ($i = 1; 3 >= $i; $i++) {
             $discordWebhookURL = $this->settingsRepo->getSetting("projectsettings.{$notification->projectId}.discordWebhookURL{$i}");
             if ($discordWebhookURL !== '' && $discordWebhookURL !== false) {
-                if (!$converter) {
-                    $converter = new HtmlConverter();
-                }
-                $timestamp = date('c', strtotime('now'));
                 $fields = [
-                    // Additional data to be sent; e.g.:
-                    //[
-                    //  'name' => $subject,
-                    //  'value' => $message,
-                    //  'inline' => FALSE
-                    //],
+                    [
+                        'name' => $this->language->__("label.project"),
+                        'value' => $this->projectName,
+                        'inline' => true
+                    ],
                 ];
+
+                $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
+                if (!empty($notification->entity->status) && !empty($statusLabelsArray[$notification->entity->status])) {
+                    $fields[] = [
+                        'name' => $this->language->__("label.todo_status"),
+                        'value' => $statusLabelsArray[$notification->entity->status]['name'],
+                        'inline' => true
+                    ];
+                }
+
                 $url_link = (
                     empty($notification->url['url'])
                     ? ''
@@ -228,29 +233,17 @@ class Messengers
 
                 // For details on the JSON layout: https://birdie0.github.io/discord-webhooks-guide/index.html
                 $data_string = json_encode([
-                    'content' => 'Leantime' . ' - ' . $_SESSION["companysettings.sitename"],
                     'avatar_url' => 'https://s3-us-west-2.amazonaws.com/leantime-website/wp-content/uploads/2019/03/22224016/logoIcon.png',
                     'tts' => false,
                     'embeds' => [
                         [
-                            'title' => $notification->subject,
-                            'type' => 'rich',
-                            'description' => html_entity_decode($converter->convert($notification->message)),
-                            'url' => $url_link,
-                            'timestamp' => $timestamp,
                             'color' => hexdec('1b75bb'),
-                            'footer' => [
-                                'text' => 'Leantime',
-                                'icon_url' => $url_link,
-                            ],
-                            'author' => [
-                                'name' =>  $this->projectName,
-                                'url' => $url_link,
-                            ],
+                            'title' => $notification->message,
+                            'url' => $url_link,
+                            'timestamp' => date('c', strtotime('now')),
                             'fields' => $fields,
-                        ],
+                        ]
                     ],
-
                 ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
                 try {
@@ -283,23 +276,27 @@ class Messengers
             $headline = $notification->entity->headline;
             $status = $notification->entity->status;
         }
+
+        $fields = [
+            'title' => $this->language->__("headlines.project_with_name") . ' ' . $this->projectName,
+            'short' => false,
+        ];
+
         $statusLabelsArray = $ticketService->getStatusLabels($notification->projectId);
-        $message = array(
+        if (!empty($statusLabelsArray[$status])) {
+            $fields['value'] = $this->language->__("label.todo_status") . ': '. $statusLabelsArray[$status]['name'];
+        }
+
+        $message = [
             [
                 'color'    => '#1b75bb',
                 'fallback' => $notification->message,
                 'pretext'  => $notification->message,
                 'title' => $headline,
                 'title_link' => $notification->url['url'],
-                'fields'   => array(
-                    [
-                        'title' => $this->language->__("headlines.project_with_name") . ' ' . $this->projectName,
-                        'value' => $this->language->__("label.todo_status") . ': ' . empty($statusLabelsArray[$status]) ? '' : $statusLabelsArray[$status]['name'],
-                        'short' => false,
-                    ],
-                ),
+                'fields' => $fields,
             ],
-        );
+        ];
 
         return $message;
     }
