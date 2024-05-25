@@ -48,10 +48,15 @@ class RequestRateLimiter
     {
 
         //Key
-        $key = $request->getClientIp();
+        $keyModifier = "-1";
+        if(isset($_SESSION['userdata'])){
+            $keyModifier =  $_SESSION['userdata']['id'];
+        }
+
+        $key = $request->getClientIp()."-".$keyModifier;
 
         //General Limit per minute
-        $limit = 1000;
+        $limit = 2000;
 
         //API Routes Limit
         if ($request instanceof ApiRequest) {
@@ -63,7 +68,7 @@ class RequestRateLimiter
         $route = Frontcontroller::getCurrentRoute();
 
         if ($route == "auth.login") {
-            $limit = 20;
+            $limit = 50;
             $key = $key . ".loginAttempts";
         }
 
