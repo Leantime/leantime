@@ -108,6 +108,11 @@ class ConsoleKernel implements ConsoleKernelContract
         });
     }
 
+    /**
+     * Load and register the commands for the application.
+     *
+     * @return void
+     */
     protected function commands()
     {
         static $commandsLoaded;
@@ -181,6 +186,11 @@ class ConsoleKernel implements ConsoleKernelContract
         $commandsLoaded = true;
     }
 
+    /**
+     * Schedule tasks to be executed.
+     *
+     * @return void
+     */
     private function schedule()
     {
         // Set default timezone
