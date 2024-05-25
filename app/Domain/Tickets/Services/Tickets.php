@@ -1085,7 +1085,7 @@ namespace Leantime\Domain\Tickets\Services {
 
             $values = array(
                 'headline' => $params['headline'],
-                'type' => 'Task',
+                'type' => 'task',
                 'description' => $params['description'] ?? '',
                 'projectId' => $params['projectId'] ?? $_SESSION['currentProject'],
                 'editorId' => $_SESSION['userdata']['id'],
@@ -1193,7 +1193,7 @@ namespace Leantime\Domain\Tickets\Services {
             $values = array(
                 'id' => '',
                 'headline' => $values['headline'] ?? "",
-                'type' => $values['type'] ?? "Task",
+                'type' => $values['type'] ?? "task",
                 'description' => $values['description'] ?? "",
                 'projectId' => $values['projectId'] ?? $_SESSION['currentProject'] ,
                 'editorId' => $values['editorId'] ?? "",
