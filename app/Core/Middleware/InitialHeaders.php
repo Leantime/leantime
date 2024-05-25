@@ -27,7 +27,7 @@ class InitialHeaders
             "base-uri 'self';",
             "script-src 'self' 'unsafe-inline' unpkg.com",
             "font-src 'self'  data:",
-            "img-src 'self' *.leantime.io data: blob:",
+            "img-src 'self' *.leantime.io *.amazonaws.com data: blob:",
             "frame-src 'self' *.google.com *.microsoft.com *.live.com",
             "frame-ancestors 'self' *.google.com *.microsoft.com *.live.com",
         ];
