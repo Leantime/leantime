@@ -3,6 +3,7 @@
 /**
  * menu class - Menu definitions
  */
+
 namespace Leantime\Domain\Menu\Repositories {
 
     use Leantime\Core\Environment as EnvironmentCore;
@@ -143,16 +144,12 @@ namespace Leantime\Domain\Menu\Repositories {
         public function __construct(
             /** @var SettingRepository */
             private SettingRepository $settingsRepo,
-
             /** @var LanguageCore */
             private LanguageCore $language,
-
             /** @var EnvironmentCore */
             private EnvironmentCore $config,
-
             /** @var TicketService */
             private TicketService $ticketsService,
-
             /** @var AuthService */
             private AuthService $authService,
         ) {
@@ -251,14 +248,21 @@ namespace Leantime\Domain\Menu\Repositories {
         public function getMenuStructure(string $menuType = ''): array
         {
             $language = $this->language;
+            $filter = "menuStructures.$menuType";
+
+            $menuCollection =  collect($this->menuStructures)->map(
+                function ($menu) use ($menuType, $filter) {
+                    return self::dispatch_filter(
+                        $filter,
+                        $this->buildMenuStructure($menu, $filter),
+                        'getMenuStructure'
+                        );
+                        }
+            )->all();
 
             $this->menuStructures = self::dispatch_filter(
                 'menuStructures',
-                collect($this->menuStructures)->map(fn ($menu, $menuType) => self::dispatch_filter(
-                    hook: $filter = "menuStructures.$menuType",
-                    payload: $this->buildMenuStructure($menu, $filter),
-                    function: 'getMenuStructure'
-                ))->all(),
+                $menuCollection,
                 ['menuType' => $menuType]
             );
 
@@ -275,8 +279,7 @@ namespace Leantime\Domain\Menu\Repositories {
             ksort($menuStructure);
 
             foreach ($menuStructure as $key => $element) {
-
-                if(isset($menuStructure[$key]['title'])){
+                if (isset($menuStructure[$key]['title'])) {
                     $menuStructure[$key]['title'] = $language->__($element['title']);
                 }
 
