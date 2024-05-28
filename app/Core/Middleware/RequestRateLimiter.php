@@ -4,8 +4,10 @@ namespace Leantime\Core\Middleware;
 
 use Closure;
 use Illuminate\Cache\RateLimiter;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Leantime\Core\ApiRequest;
+use Leantime\Core\Environment;
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\IncomingRequest;
@@ -41,11 +43,16 @@ class RequestRateLimiter
      * Handle the incoming request.
      *
      * @param IncomingRequest $request The incoming request object.
-     * @param Closure         $next    The next middleware closure.
+     * @param Closure $next The next middleware closure.
      * @return Response The response object.
+     * @throws BindingResolutionException
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
+        //Configurable rate limits
+        $rateLimitGeneral = app()->make(Environment::class)->get('LEAN_RATELIMIT_GENERAL') ?? 1000;
+        $rateLimitApi = app()->make(Environment::class)->get('LEAN_RATELIMIT_API') ?? 10;
+        $rateLimitAuth = app()->make(Environment::class)->get('LEAN_RATELIMIT_AUTH') ?? 20;
 
         //Key
         $keyModifier = "-1";
@@ -56,19 +63,19 @@ class RequestRateLimiter
         $key = $request->getClientIp()."-".$keyModifier;
 
         //General Limit per minute
-        $limit = 2000;
+        $limit = $rateLimitGeneral;
 
         //API Routes Limit
         if ($request instanceof ApiRequest) {
             $apiKey = "";
             $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
-            $limit = 10;
+            $limit = $rateLimitApi;
         }
 
         $route = Frontcontroller::getCurrentRoute();
 
         if ($route == "auth.login") {
-            $limit = 50;
+            $limit = $rateLimitAuth;
             $key = $key . ".loginAttempts";
         }
 
@@ -88,13 +95,36 @@ class RequestRateLimiter
                 "key" => $key,
             ],
         );
-
         if ($this->limiter->tooManyAttempts($key, $limit)) {
             error_log("too many requests per minute: " . $key);
-            return new Response(json_encode(['error' => 'Too many requests per minute.']), Response::HTTP_TOO_MANY_REQUESTS);
+            return new Response(
+                json_encode(['error' => 'Too many requests per minute.']),
+                Response::HTTP_TOO_MANY_REQUESTS,
+                $this->getHeaders($key, $limit),
+            );
         }
+
         $this->limiter->hit($key, 60);
 
         return $next($request);
+    }
+
+
+    /**
+     * Get rate limiter headers for response.
+     *
+     * @param string $key
+     *
+     * @param string $limit
+     *
+     * @return array
+     */
+    private function getHeaders(string $key, string $limit): array
+    {
+        return [
+            'X-RateLimit-Remaining' => $this->limiter->retriesLeft($key, $limit),
+            'X-RateLimit-Retry-After' => $this->limiter->availableIn($key),
+            'X-RateLimit-Limit' => $this->limiter->attempts($key),
+        ];
     }
 }
