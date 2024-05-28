@@ -50,27 +50,27 @@ class RequestRateLimiter
     public function handle(IncomingRequest $request, Closure $next): Response
     {
         //Configurable rate limits
-        $LEAN_RATELIMIT_GENERAL = app()->make(Environment::class)->get('LEAN_RATELIMIT_GENERAL') ?? 1000;
-        $LEAN_RATELIMIT_API = app()->make(Environment::class)->get('LEAN_RATELIMIT_API') ?? 10;
-        $LEAN_RATELIMIT_AUTH = app()->make(Environment::class)->get('LEAN_RATELIMIT_AUTH') ?? 20;
+        $rateLimitGeneral = app()->make(Environment::class)->get('LEAN_RATELIMIT_GENERAL') ?? 1000;
+        $rateLimitApi = app()->make(Environment::class)->get('LEAN_RATELIMIT_API') ?? 10;
+        $rateLimitAuth = app()->make(Environment::class)->get('LEAN_RATELIMIT_AUTH') ?? 20;
 
         //Key
         $key = $request->getClientIp();
 
         //General Limit per minute
-        $limit = $LEAN_RATELIMIT_GENERAL;
+        $limit = $rateLimitGeneral;
 
         //API Routes Limit
         if ($request instanceof ApiRequest) {
             $apiKey = "";
             $key = app()->make(Api::class)->getAPIKeyUser($apiKey);
-            $limit = $LEAN_RATELIMIT_API;
+            $limit = $rateLimitApi;
         }
 
         $route = Frontcontroller::getCurrentRoute();
 
         if ($route == "auth.login") {
-            $limit = $LEAN_RATELIMIT_AUTH;
+            $limit = $rateLimitAuth;
             $key = $key . ".loginAttempts";
         }
 
