@@ -55,7 +55,12 @@ class RequestRateLimiter
         $rateLimitAuth = app()->make(Environment::class)->get('LEAN_RATELIMIT_AUTH') ?? 20;
 
         //Key
-        $key = $request->getClientIp();
+        $keyModifier = "-1";
+        if(isset($_SESSION['userdata'])){
+            $keyModifier =  $_SESSION['userdata']['id'];
+        }
+
+        $key = $request->getClientIp()."-".$keyModifier;
 
         //General Limit per minute
         $limit = $rateLimitGeneral;

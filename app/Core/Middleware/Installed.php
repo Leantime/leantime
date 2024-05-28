@@ -52,6 +52,12 @@ class Installed
 
         \Illuminate\Support\Facades\Cache::set('installed', true);
 
+        $route = Frontcontroller::getCurrentRoute();
+
+        if($session_says && $route == "install") {
+            return Frontcontroller::redirect(BASE_URL . "/auth/logout");
+        }
+
         return $next($request);
     }
 

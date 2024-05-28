@@ -5,7 +5,7 @@
     xmlns="https://www.phpdoc.org"
     xsi:noNamespaceSchemaLocation="https://docs.phpdoc.org/latest/phpdoc.xsd"
 >
-    <title>phpDocumentor</title>
+    <title>Leantime Code Reference</title>
     <!-- Build Paths -->
     <paths>
         <output>builddocs/technical</output>
@@ -19,7 +19,7 @@
                 <path>tests</path>
             </source>
             <ignore>
-                <path>app/plugins</path>
+                <path>app/Plugins</path>
             </ignore>
         </api>
     </version>
