@@ -143,11 +143,16 @@ class Theme
         $this->language = $language;
     }
 
+    /**
+     * Retrieves the available color schemes.
+     *
+     * @return array The available color schemes.
+     */
     public function getAvailableColorSchemes(): array
     {
 
         $this->readIniData();
-        ;
+
         $parsedColorSchemes = $this->colorSchemes;
         $parsedColorSchemes["themeDefault"] = array(
             "name" => "label.themeDefault",
@@ -157,7 +162,8 @@ class Theme
 
         $settingsRepo = app()->make(Setting::class);
         $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor") ? $settingsRepo->getSetting("companysettings.primarycolor") : null;
-        $secondaryColor = $settingsRepo->getSetting("companysettings.secondarycolor") ? $settingsRepo->getSetting("companysettings.secondarycolor") : null; ;
+        $secondaryColor = $settingsRepo->getSetting("companysettings.secondarycolor") ? $settingsRepo->getSetting("companysettings.secondarycolor") : null;
+        ;
         $parsedColorSchemes["companyColors"] = array(
             "name" => "label.companyColors",
             "primaryColor" => $primaryColor ?? $this->config->primarycolor ?? $parsedColorSchemes["themeDefault"]["primaryColor"],
@@ -192,7 +198,7 @@ class Theme
 
         // Return user specific theme, if active
         //This is an active logged in session.
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $theme = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".theme");
@@ -234,7 +240,7 @@ class Theme
             return $_SESSION['usersettings.colorMode'];
         }
 
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $colorMode = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".colorMode");
@@ -272,7 +278,7 @@ class Theme
             return $_SESSION['usersettings.colorScheme'];
         }
 
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $colorScheme = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".colorScheme");
@@ -307,7 +313,7 @@ class Theme
             return $_SESSION['usersettings.themeFont'];
         }
 
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
             $themeFont = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".themeFont");
@@ -350,7 +356,7 @@ class Theme
         }
 
         //Only set if user is logged in
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             $_SESSION['usersettings.theme'] = $id;
         }
 
@@ -381,7 +387,7 @@ class Theme
         }
 
         //Only store colors in session for logged in users
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             $_SESSION['usersettings.colorMode'] = $colorMode;
         }
 
@@ -412,7 +418,7 @@ class Theme
             $font = 'roboto';
         }
 
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             $_SESSION['usersettings.themeFont'] = $font;
         }
 
@@ -443,7 +449,7 @@ class Theme
             $colorScheme = 'themeDefault';
         }
 
-        if(Auth::isLoggedIn()){
+        if (Auth::isLoggedIn()) {
             $_SESSION['usersettings.colorScheme'] = $colorScheme;
             $this->setAccentColors($colorScheme);
         }
@@ -458,8 +464,6 @@ class Theme
                 ->withSameSite('Strict')
             ))
         );
-
-
     }
 
 
@@ -767,7 +771,7 @@ class Theme
     public function setCompanyColors()
     {
 
-        if (! isset($_SESSION["usersettings.colorScheme.primaryColor"]) ) {
+        if (! isset($_SESSION["usersettings.colorScheme.primaryColor"])) {
             $settingsRepo = app()->make(Setting::class);
             $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor");
 
@@ -814,11 +818,14 @@ class Theme
      *
      * @return string The primary color.
      */
-    public function getPrimaryColor() {
+    public function getPrimaryColor()
+    {
 
-        if (isset($_SESSION["usersettings.colorScheme.primaryColor"])
+        if (
+            isset($_SESSION["usersettings.colorScheme.primaryColor"])
             && $_SESSION["usersettings.colorScheme.primaryColor"] != ''
-            &&  Auth::isLoggedIn()) {
+            &&  Auth::isLoggedIn()
+        ) {
             return $_SESSION["usersettings.colorScheme.primaryColor"];
         }
 
@@ -826,7 +833,7 @@ class Theme
 
         $colorSchemes = $this->getAvailableColorSchemes();
 
-        if(Auth::isLoggedIn()) {
+        if (Auth::isLoggedIn()) {
             $_SESSION["usersettings.colorScheme.primaryColor"] = $colorSchemes[$currentColorScheme]['primaryColor'];
         }
 
@@ -845,18 +852,21 @@ class Theme
      * @access public
      * @return string The secondary color for the current user's color scheme
      */
-    public function getSecondaryColor() {
+    public function getSecondaryColor()
+    {
 
-        if (isset($_SESSION["usersettings.colorScheme.secondaryColor"])
-        && $_SESSION["usersettings.colorScheme.secondaryColor"] != ''
-        &&  Auth::isLoggedIn()) {
+        if (
+            isset($_SESSION["usersettings.colorScheme.secondaryColor"])
+            && $_SESSION["usersettings.colorScheme.secondaryColor"] != ''
+            &&  Auth::isLoggedIn()
+        ) {
             return $_SESSION["usersettings.colorScheme.secondaryColor"];
         }
 
         $colorSchemes = $this->getAvailableColorSchemes();
         $currentColorScheme = $this->getColorScheme();
 
-        if(Auth::isLoggedIn()) {
+        if (Auth::isLoggedIn()) {
             $_SESSION["usersettings.colorScheme.secondaryColor"] = $colorSchemes[$currentColorScheme]['secondaryColor'];
         }
 
@@ -876,7 +886,6 @@ class Theme
             error_log("Configuration file for theme " . $this->getActive() . " not found");
             $this->clearCache();
             $this->setActive("default");
-
         }
         $this->iniData = parse_ini_file(
             ROOT . '/theme/' . $this->getActive() . '/' . static::DEFAULT_INI . '.ini',
