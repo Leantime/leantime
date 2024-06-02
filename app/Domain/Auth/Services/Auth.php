@@ -323,7 +323,7 @@ class Auth
         $_SESSION['userdata'] = self::dispatch_filter('user_session_vars', [
                     'role' => $this->role,
                     'id' => $this->userId,
-                    'name' => $this->name,
+                    'name' => substr(strip_tags($this->name), 0, 12),
                     'profileId' => $this->profileId,
                     'mail' => $this->mail,
                     'clientId' => $this->clientId,
