@@ -125,6 +125,7 @@ class RequestRateLimiter
             'X-RateLimit-Remaining' => $this->limiter->retriesLeft($key, $limit),
             'X-RateLimit-Retry-After' => $this->limiter->availableIn($key),
             'X-RateLimit-Limit' => $this->limiter->attempts($key),
+            'Retry-After' => $this->limiter->availableIn($key),
         ];
     }
 }
