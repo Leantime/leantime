@@ -243,7 +243,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function has($key): bool
     {
-        return Arr::has([], $key) || Arr::has($this->config, $key);
+        return Cache::has($key) || Arr::has($this->config, $key);
     }
 
     /**
