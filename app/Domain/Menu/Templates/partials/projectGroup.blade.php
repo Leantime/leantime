@@ -1,20 +1,20 @@
 @php
-    $groupState = isset($_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$parent]) ? $_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$parent] : 'closed';
+    $groupState = session("submenuToggle.".$prefix.'-projectSelectorlist-group-'.$parent, 'closed');
 @endphp
 <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $parent }}" class="level-{{ $level }} projectGroup {{ $groupState }}">
     @foreach($projects as $project)
 
         @if(
-            !isset($_SESSION['userdata']["projectSelectFilter"]['client'])
-            || $_SESSION['userdata']["projectSelectFilter"]['client'] == $project["clientId"]
-            || $_SESSION['userdata']["projectSelectFilter"]['client'] == 0
-            || $_SESSION['userdata']["projectSelectFilter"]['client'] == ""
+            !session()->exists("userdata.projectSelectFilter.client")
+            || session("userdata.projectSelectFilter.client") == $project["clientId"]
+            || session("userdata.projectSelectFilter.client") == 0
+            || session("userdata.projectSelectFilter.client") == ""
             || $project["clientId"] == ''
             )
 
-            <li class="projectLineItem hasSubtitle {{ $_SESSION['currentProject'] == $project['id'] ? "active" : '' }}" >
+            <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
                 @php
-                    $parentState = isset($_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['id']]) ? $_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['id']] : 'closed';
+                    $parentState = session("submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['id'], 'closed');
                 @endphp
 
                 @if((empty($project['children']) || count($project['children']) ==0))

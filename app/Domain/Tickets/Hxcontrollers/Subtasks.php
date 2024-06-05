@@ -57,7 +57,7 @@ class Subtasks extends HtmxController
 
         $this->setHTMXEvent("HTMX.ShowNotification");
         $ticketSubtasks = $this->ticketService->getAllSubtasks($ticket->id);
-        $statusLabels  = $this->ticketService->getStatusLabels($_SESSION['currentProject']);
+        $statusLabels  = $this->ticketService->getStatusLabels(session("currentProject"));
         $efforts = $this->ticketService->getEffortLabels();
 
         $this->tpl->assign("ticket", $ticket);
@@ -81,7 +81,7 @@ class Subtasks extends HtmxController
 
         $ticket = $this->ticketService->getTicket($id);
         $ticketSubtasks = $this->ticketService->getAllSubtasks($id);
-        $statusLabels  = $this->ticketService->getStatusLabels($_SESSION['currentProject']);
+        $statusLabels  = $this->ticketService->getStatusLabels(session("currentProject"));
         $efforts = $this->ticketService->getEffortLabels();
 
 
@@ -106,7 +106,7 @@ class Subtasks extends HtmxController
 
         $ticket = $this->ticketService->getTicket($parentId);
         $ticketSubtasks = $this->ticketService->getAllSubtasks($parentId);
-        $statusLabels  = $this->ticketService->getStatusLabels($_SESSION['currentProject']);
+        $statusLabels  = $this->ticketService->getStatusLabels(session("currentProject"));
         $efforts = $this->ticketService->getEffortLabels();
 
         $this->setHTMXEvent("HTMX.ShowNotification");

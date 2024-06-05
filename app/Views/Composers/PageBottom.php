@@ -39,7 +39,7 @@ class PageBottom extends Composer
         return [
             'version' => $this->settings->appVersion,
             'poorMansCron' => $this->environment->get('poorMansCron'),
-            'loggedIn' => isset($_SESSION['userdata']),
+            'loggedIn' => session()->exists("userdata"),
         ];
     }
 }

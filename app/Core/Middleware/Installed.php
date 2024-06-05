@@ -21,7 +21,7 @@ class Installed
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        $session_says = isset($_SESSION['isInstalled']) && $_SESSION['isInstalled'];
+        $session_says = session()->exists("isInstalled") && session("isInstalled");
         $config_says = app()->make(SettingRepository::class)->checkIfInstalled();
 
         if (! $session_says && ! $config_says) {
@@ -68,7 +68,7 @@ class Installed
      */
     private function setInstalled(): void
     {
-        $_SESSION['isInstalled'] = true;
+        session(["isInstalled" => true]);
     }
 
     /**
@@ -78,10 +78,10 @@ class Installed
      */
     private function setUninstalled(): void
     {
-        $_SESSION['isInstalled'] = false;
+        session(["isInstalled" => false]);
 
-        if (isset($_SESSION['userdata'])) {
-            unset($_SESSION['userdata']);
+        if (session()->exists("userdata")) {
+            session()->forget("userdata");
         }
     }
 

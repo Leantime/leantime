@@ -2,8 +2,11 @@
 
 namespace Leantime\Domain\Auth\Services;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Session\SessionManager;
 use Leantime\Core\Environment as EnvironmentCore;
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller as FrontcontrollerCore;
@@ -11,6 +14,7 @@ use Leantime\Core\Language as LanguageCore;
 use Leantime\Core\Mailer as MailerCore;
 use Leantime\Core\Session as SessionCore;
 use Leantime\Core\Theme;
+use Leantime\Domain\Auth\Models\CurrentUser;
 use Leantime\Domain\Auth\Models\Roles;
 use Leantime\Domain\Auth\Repositories\Auth as AuthRepository;
 use Leantime\Domain\Ldap\Services\Ldap;
@@ -78,7 +82,7 @@ class Auth
     /**
      * @var string|null
      */
-    private ?string $session = null;
+    private SessionManager|null $session = null;
 
     /**
      * @var string userrole (admin, client, employee)
@@ -124,7 +128,7 @@ class Auth
      * __construct - getInstance of session and get sessionId and refers to login if post is set
      *
      * @param EnvironmentCore   $config
-     * @param SessionCore       $session
+     * @param SessionManager    $session
      * @param LanguageCore      $language
      * @param SettingRepository $settingsRepo
      * @param AuthRepository    $authRepo
@@ -133,14 +137,14 @@ class Auth
      */
     public function __construct(
         EnvironmentCore $config,
-        SessionCore $session,
+        ?SessionManager $session,
         LanguageCore $language,
         SettingRepository $settingsRepo,
         AuthRepository $authRepo,
         UserRepository $userRepo
     ) {
         $this->config = $config;
-        $this->session = SessionCore::getSID();
+        $this->session = $session;
         $this->language = $language;
         $this->settingsRepo = $settingsRepo;
         $this->authRepo = $authRepo;
@@ -158,21 +162,21 @@ class Auth
      */
     public static function getRoleToCheck(bool $forceGlobalRoleCheck): string|bool
     {
-        if (isset($_SESSION['userdata']) === false) {
+        if (session()->exists("userdata") === false) {
             return false;
         }
 
         if ($forceGlobalRoleCheck) {
-            $roleToCheck = $_SESSION['userdata']['role'];
+            $roleToCheck = session("userdata.role");
             // If projectRole is not defined or if it is set to inherited
-        } elseif (!isset($_SESSION['userdata']['projectRole']) || $_SESSION['userdata']['projectRole'] == "inherited" || $_SESSION['userdata']['projectRole'] == "") {
-            $roleToCheck = $_SESSION['userdata']['role'];
+        } elseif (!session()->exists("userdata.projectRole") || session("userdata.projectRole") == "inherited" || session("userdata.projectRole") == "") {
+            $roleToCheck = session("userdata.role");
             // Do not overwrite admin or owner roles
-        } elseif ($_SESSION['userdata']['role'] == Roles::$owner || $_SESSION['userdata']['role'] == Roles::$admin || $_SESSION['userdata']['role'] == Roles::$manager) {
-            $roleToCheck = $_SESSION['userdata']['role'];
+        } elseif (session("userdata.role") == Roles::$owner || session("userdata.role") == Roles::$admin || session("userdata.role") == Roles::$manager) {
+            $roleToCheck = session("userdata.role");
             // In all other cases check the project role
         } else {
-            $roleToCheck = $_SESSION['userdata']['projectRole'];
+            $roleToCheck = session("userdata.projectRole");
         }
 
         // Ensure the role is a valid role
@@ -303,40 +307,33 @@ class Auth
      *
      * @throws BindingResolutionException
      */
-    public function setUserSession(mixed $user, bool $isLdap = false)
+    public function setUsersession(mixed $user, bool $isLdap = false)
     {
         if (!$user || !is_array($user)) {
             return false;
         }
 
-        $this->name = htmlentities($user['firstname']);
-        $this->mail = filter_var($user['username'], FILTER_SANITIZE_EMAIL);
-        $this->userId = $user['id'];
-        $this->settings = $user['settings'] ? unserialize($user['settings']) : array();
-        $this->clientId = $user['clientId'];
-        $this->twoFAEnabled = $user['twoFAEnabled'] ?? false;
-        $this->twoFASecret = $user['twoFASecret'] ?? '';
-        $this->role = Roles::getRoleString($user['role']);
-        $this->profileId = $user['profileId'];
+        $currentUser = array(
+            "id" => (int)$user['id'],
+            "name" => strip_tags($user['firstname']),
+            "profileId" => $user['profileId'],
+            "mail" => filter_var($user['username'], FILTER_SANITIZE_EMAIL),
+            "clientId" => $user['clientId'],
+            "role" => Roles::getRoleString($user['role']),
+            "settings" => $user['settings'] ? unserialize($user['settings']) : array(),
+            "twoFAEnabled" => $user['twoFAEnabled'] ?? false,
+            "twoFAVerified" => false,
+            "twoFASecret" => $user['twoFASecret'] ?? '',
+            "isLdap" => $isLdap,
+            "createdOn" => dtHelper()->parseDbDateTime($user['createdOn']) ?? dtHelper()->userNow(),
+            "modified" => dtHelper()->parseDbDateTime($user['modified']) ?? dtHelper()->userNow()
+        );
 
-        // Set Sessions
-        $_SESSION['userdata'] = self::dispatch_filter('user_session_vars', [
-                    'role' => $this->role,
-                    'id' => $this->userId,
-                    'name' => substr(strip_tags($this->name), 0, 12),
-                    'profileId' => $this->profileId,
-                    'mail' => $this->mail,
-                    'clientId' => $this->clientId,
-                    'settings' => $this->settings,
-                    'twoFAEnabled' => $this->twoFAEnabled,
-                    'twoFAVerified' => false,
-                    'twoFASecret' => $this->twoFASecret,
-                    'isLdap' => $isLdap,
-                    'createdOn' => $user['createdOn'] ?? '',
-                    'modified' => $user['modified'] ?? date("Y-m-d H:i:s"),
-        ]);
+        $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
 
-        $this->updateUserSessionDB($this->userId, $this->session);
+        $this->session->put('userdata', $currentUser);
+
+        $this->updateUserSessionDB($currentUser['id'], $this->session->getId());
 
         //Clear user theme cache on login
         Theme::clearCache();
@@ -364,7 +361,7 @@ class Auth
     public function loggedIn(): bool
     {
         // Check if we actually have a php session available
-        if (isset($_SESSION['userdata']) === true) {
+        if ($this->session->exists("userdata")) {
             return true;
             // If the session doesn't have any session data we are out of sync. Start again
         } else {
@@ -377,15 +374,15 @@ class Auth
      *
      * @return bool Returns true if the user is logged in, false otherwise.
      */
-    public static function isLoggedIn(): bool {
+    public static function isLoggedIn(): bool
+    {
 
         // Check if we actually have a php session available
-        if (isset($_SESSION['userdata']) === true) {
+        if (session()->exists("userdata")) {
             return true;
         } else {
             return false;
         }
-
     }
 
     /**
@@ -393,7 +390,7 @@ class Auth
      */
     public function getSessionId(): ?string
     {
-        return $this->session;
+        return $this->session->getSid();
     }
 
     /**
@@ -408,27 +405,24 @@ class Auth
 
         $this->authRepo->invalidateSession($this->session);
 
-        SessionCore::destroySession();
+        $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
+                    'userdata',
+                    'template',
+                    'subdomainData',
+                    'currentProject',
+                    'currentSprint',
+                    'projectsettings',
+                    'currentSubscriptions',
+                    'lastTicketView',
+                    'lastFilterdTicketTableView',
+        ]);
 
-        if (isset($_SESSION)) {
-            $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
-                        'userdata',
-                        'template',
-                        'subdomainData',
-                        'currentProject',
-                        'currentSprint',
-                        'projectsettings',
-                        'currentSubscriptions',
-                        'lastTicketView',
-                        'lastFilterdTicketTableView',
-            ]);
-
-            foreach ($sessionsToDestroy as $key) {
-                unset($_SESSION[$key]);
-            }
-
-            self::dispatch_event("afterSessionDestroy", ['authService' => app()->make(self::class)]);
+        foreach ($sessionsToDestroy as $key) {
+            session()->forget($key);
         }
+
+        self::dispatch_event("afterSessionDestroy", ['authService' => app()->make(self::class)]);
+
     }
 
     /**
@@ -597,7 +591,7 @@ class Auth
      */
     public static function getUserClientId(): mixed
     {
-        return $_SESSION['userdata']['clientId'];
+        return session("userdata.clientId");
     }
 
     /**
@@ -605,7 +599,7 @@ class Auth
      */
     public static function getUserId(): mixed
     {
-        return $_SESSION['userdata']['id'];
+        return session("userdata.id");
     }
 
     /**
@@ -613,7 +607,7 @@ class Auth
      */
     public function use2FA(): mixed
     {
-        return $_SESSION['userdata']['twoFAEnabled'];
+        return session("userdata.twoFAEnabled");
     }
 
 
@@ -626,7 +620,7 @@ class Auth
     {
         $tfa = new TwoFactorAuth('Leantime');
 
-        return $tfa->verifyCode($_SESSION['userdata']['twoFASecret'], $code);
+        return $tfa->verifyCode(session("userdata.twoFASecret"), $code);
     }
 
 
@@ -635,7 +629,7 @@ class Auth
      */
     public function get2FAVerified(): mixed
     {
-        return $_SESSION['userdata']['twoFAVerified'];
+        return session("userdata.twoFAVerified");
     }
 
     /**
@@ -643,7 +637,7 @@ class Auth
      */
     public function set2FAVerified(): void
     {
-        $_SESSION['userdata']['twoFAVerified'] = true;
+        session(["userdata.twoFAVerified" => true]);
     }
 
     /**

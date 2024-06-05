@@ -96,7 +96,7 @@ namespace Leantime\Domain\Setting\Controllers {
         public function post($params)
         {
             //If ID is set its an update
-
+            $sanitizedString = '';
             if (isset($_GET['module']) && isset($_GET['label'])) {
                 $sanitizedString = strip_tags($params['newLabel']);
 
@@ -109,9 +109,9 @@ namespace Leantime\Domain\Setting\Controllers {
                     if (isset($currentStateLabels[$statusKey]) && is_array($currentStateLabels[$statusKey])) {
                         $currentStateLabels[$statusKey]['name'] = $sanitizedString;
 
-                        unset($_SESSION["projectsettings"]["ticketlabels"]);
+                        session()->forget("projectsettings.ticketlabels");
                         $this->settingsRepo->saveSetting(
-                            "projectsettings." . $_SESSION['currentProject'] . ".ticketlabels",
+                            "projectsettings." . session("currentProject") . ".ticketlabels",
                             serialize($currentStateLabels)
                         );
                     }
@@ -120,9 +120,9 @@ namespace Leantime\Domain\Setting\Controllers {
                 if ($_GET['module'] == "retrolabels") {
                     $stateLabels = $this->retroRepo->getCanvasLabels();
                     $stateLabels[$_GET['label']] = $sanitizedString;
-                    unset($_SESSION["projectsettings"]["retrolabels"]);
+                    session()->forget("projectsettings.retrolabels");
                     $this->settingsRepo->saveSetting(
-                        "projectsettings." . $_SESSION['currentProject'] . ".retrolabels",
+                        "projectsettings." . session("currentProject") . ".retrolabels",
                         serialize($stateLabels)
                     );
                 }
@@ -130,9 +130,9 @@ namespace Leantime\Domain\Setting\Controllers {
                 if ($_GET['module'] == "researchlabels") {
                     $stateLabels = $this->canvasRepo->getCanvasLabels();
                     $stateLabels[$_GET['label']] = $sanitizedString;
-                    unset($_SESSION["projectsettings"]["researchlabels"]);
+                    session()->forget("projectsettings.researchlabels");
                     $this->settingsRepo->saveSetting(
-                        "projectsettings." . $_SESSION['currentProject'] . ".researchlabels",
+                        "projectsettings." . session("currentProject") . ".researchlabels",
                         serialize($stateLabels)
                     );
                 }
@@ -145,9 +145,9 @@ namespace Leantime\Domain\Setting\Controllers {
                     }
                     $newStateLabels[$_GET['label']] = $sanitizedString;
 
-                    unset($_SESSION["projectsettings"]["idealabels"]);
+                    session()->forget("projectsettings.idealabels");
                     $this->settingsRepo->saveSetting(
-                        "projectsettings." . $_SESSION['currentProject'] . ".idealabels",
+                        "projectsettings." . session("currentProject") . ".idealabels",
                         serialize($newStateLabels)
                     );
                 }

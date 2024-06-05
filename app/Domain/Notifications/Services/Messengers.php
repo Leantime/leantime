@@ -228,7 +228,7 @@ class Messengers
 
                 // For details on the JSON layout: https://birdie0.github.io/discord-webhooks-guide/index.html
                 $data_string = json_encode([
-                    'content' => 'Leantime' . ' - ' . $_SESSION["companysettings.sitename"],
+                    'content' => 'Leantime' . ' - ' . session("companysettings.sitename"),
                     'avatar_url' => 'https://s3-us-west-2.amazonaws.com/leantime-website/wp-content/uploads/2019/03/22224016/logoIcon.png',
                     'tts' => false,
                     'embeds' => [

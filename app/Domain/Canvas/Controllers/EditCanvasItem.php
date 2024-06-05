@@ -133,7 +133,7 @@ class EditCanvasItem extends Controller
 
         $this->tpl->assign('comments', $comments);
 
-        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasItem', $canvasItem);
         $this->tpl->assign('canvasIcon', $this->canvasRepo->getIcon());
@@ -156,11 +156,11 @@ class EditCanvasItem extends Controller
         if (isset($params['changeItem'])) {
             if (isset($params['itemId']) && !empty($params['itemId'])) {
                 if (isset($params['description']) && !empty($params['description'])) {
-                    $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                    $currentCanvasId = (int)session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
 
                     $canvasItem = array(
                         'box' => $params['box'],
-                        'author' => $_SESSION['userdata']['id'],
+                        'author' => session("userdata.id"),
                         'description' => $params['description'],
                         'status' => $params['status'],
                         'relates' => $params['relates'],
@@ -205,7 +205,7 @@ class EditCanvasItem extends Controller
                     $actual_link = BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . (int)$params['itemId'];
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item_update_message'),
-                        $_SESSION['userdata']['name'],
+                        session("userdata.name"),
                         $canvasItem['description']
                     );
 
@@ -216,9 +216,9 @@ class EditCanvasItem extends Controller
                     );
                     $notification->entity = $canvasItem;
                     $notification->module = static::CANVAS_NAME . 'canvas';
-                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->projectId = session("currentProject");
                     $notification->subject = $subject;
-                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->authorId = session("userdata.id");
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -234,11 +234,11 @@ class EditCanvasItem extends Controller
                 }
             } else {
                 if (isset($_POST['description']) && !empty($_POST['description'])) {
-                    $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                    $currentCanvasId = (int)session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
 
                     $canvasItem = array(
                         'box' => $params['box'],
-                        'author' => $_SESSION['userdata']['id'],
+                        'author' => session("userdata.id"),
                         'description' => $params['description'],
                         'status' => $params['status'],
                         'relates' => $params['relates'],
@@ -257,7 +257,7 @@ class EditCanvasItem extends Controller
                     $actual_link = BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . (int)$params['itemId'];
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item_created_message'),
-                        $_SESSION['userdata']['name'],
+                        session("userdata.name"),
                         $canvasItem['description']
                     );
 
@@ -269,9 +269,9 @@ class EditCanvasItem extends Controller
 
                     $notification->entity = $canvasItem;
                     $notification->module = static::CANVAS_NAME . 'canvas';
-                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->projectId = session("currentProject");
                     $notification->subject = $subject;
-                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->authorId = session("userdata.id");
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -294,7 +294,7 @@ class EditCanvasItem extends Controller
             $values = array(
                 'text' => $params['text'],
                 'date' => date('Y-m-d H:i:s'),
-                'userId' => ($_SESSION['userdata']['id']),
+                'userId' => (session("userdata.id")),
                 'moduleId' => $_GET['id'],
                 'commentParent' => ($params['father']),
             );
@@ -307,7 +307,7 @@ class EditCanvasItem extends Controller
             $actual_link = BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . (int)$_GET['id'];
             $message = sprintf(
                 $this->language->__('email_notifications.canvas_item__comment_created_message'),
-                $_SESSION['userdata']['name']
+                session("userdata.name")
             );
 
             $notification = app()->make(NotificationModel::class);
@@ -317,9 +317,9 @@ class EditCanvasItem extends Controller
             );
             $notification->entity = $values;
             $notification->module = static::CANVAS_NAME . 'canvas';
-            $notification->projectId = $_SESSION['currentProject'];
+            $notification->projectId = session("currentProject");
             $notification->subject = $subject;
-            $notification->authorId = $_SESSION['userdata']['id'];
+            $notification->authorId = session("userdata.id");
             $notification->message = $message;
 
             $this->projectService->notifyProjectUsers($notification);
@@ -327,7 +327,7 @@ class EditCanvasItem extends Controller
             return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas' . '/editCanvasItem/' . $_GET['id']);
         }
 
-        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+        $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
         $this->tpl->assign('milestones', $allProjectMilestones);
         $this->tpl->assign('canvasTypes', $this->canvasRepo->getCanvasTypes());
         $this->tpl->assign('statusLabels', $this->canvasRepo->getStatusLabels());
@@ -340,7 +340,7 @@ class EditCanvasItem extends Controller
             $value = array(
                 'id' => '',
                 'box' => $params['box'],
-                'author' => $_SESSION['userdata']['id'],
+                'author' => session("userdata.id"),
                 'description' => '',
                 'status' => array_key_first($this->canvasRepo->getStatusLabels()),
                 'relates' => array_key_first($this->canvasRepo->getRelatesLabels()),

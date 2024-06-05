@@ -166,7 +166,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         {
 
             if ($projectId == null) {
-                $projectId = $_SESSION['currentProject'];
+                $projectId = session("currentProject");
             }
 
             $sql = "SELECT
@@ -217,7 +217,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                 return $a['sortKey'] <=> $b['sortKey'];
             });
 
-            $_SESSION["projectsettings"]["ticketlabels"] = $statusList;
+            session(["projectsettings.ticketlabels" => $statusList]);
 
             return $statusList;
         }
@@ -302,7 +302,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         public function getAll(int $limit = 9999): false|array
         {
 
-            $id = $_SESSION['userdata']['id'];
+            $id = session("userdata.id");
 
             $values = $this->getUsersTickets($id, $limit);
 
@@ -538,7 +538,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($searchCriteria["currentUser"])) {
                 $stmn->bindValue(':userId', $searchCriteria["currentUser"], PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
+                $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
             }
 
             //Current client is only used for authorization as it represents the current client Id assigned to a user.
@@ -546,7 +546,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($searchCriteria["currentClient"])) {
                 $stmn->bindValue(':clientId', $searchCriteria["currentClient"], PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':clientId', $_SESSION['userdata']['clientId'] ?? '-1', PDO::PARAM_INT);
+                $stmn->bindValue(':clientId', session("userdata.clientId") ?? '-1', PDO::PARAM_INT);
             }
 
             if (isset($searchCriteria["currentProject"]) && $searchCriteria["currentProject"] != "") {
@@ -602,8 +602,8 @@ namespace Leantime\Domain\Tickets\Repositories {
                 $stmn->bindValue(':limit', $limit, PDO::PARAM_INT);
             }
 
-            if (isset($_SESSION['userdata'])) {
-                $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            if (session()->exists("userdata")) {
+                $stmn->bindValue(':requestorId', session("userdata.id"), PDO::PARAM_INT);
             } else {
                 $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
             }
@@ -675,13 +675,13 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($userId) && $userId  != "") {
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
+                $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
             }
 
             //Current client is only used for authorization as it represents the current client Id assigned to a user.
             // Do not attempt to filter tickets using this value.
-            if (isset($_SESSION['userdata'])) {
-                $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            if (session()->exists("userdata")) {
+                $stmn->bindValue(':requestorId', session("userdata.id"), PDO::PARAM_INT);
             } else {
                 $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
             }
@@ -744,7 +744,7 @@ namespace Leantime\Domain\Tickets\Repositories {
             if (isset($userId)) {
                 $stmn->bindValue(':userId', $userId, PDO::PARAM_INT);
             } else {
-                $stmn->bindValue(':userId', $_SESSION['userdata']['id'] ?? '-1', PDO::PARAM_INT);
+                $stmn->bindValue(':userId', session("userdata.id") ?? '-1', PDO::PARAM_INT);
             }
 
             $stmn->bindValue(':dateFrom', $dateFrom, PDO::PARAM_STR);
@@ -752,8 +752,8 @@ namespace Leantime\Domain\Tickets\Repositories {
             $stmn->bindValue(':dateTo', $dateTo, PDO::PARAM_STR);
 
 
-            if (isset($_SESSION['userdata'])) {
-                $stmn->bindValue(':requestorId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            if (session()->exists("userdata")) {
+                $stmn->bindValue(':requestorId', session("userdata.id"), PDO::PARAM_INT);
             } else {
                 $stmn->bindValue(':requestorId', -1, PDO::PARAM_INT);
             }
@@ -1061,7 +1061,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         public function getAllMilestones(array $searchCriteria, string $sort = 'standard'): false|array
         {
 
-            $statusGroups = $this->getStatusListGroupedByType($searchCriteria["currentProject"] ?? $_SESSION['currentProject']);
+            $statusGroups = $this->getStatusListGroupedByType($searchCriteria["currentProject"] ?? session("currentProject"));
 
 
             $query = "SELECT
@@ -1743,7 +1743,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         public function patchTicket($id, $params): bool
         {
 
-            $this->addTicketChange($_SESSION['userdata']['id'], $id, $params);
+            $this->addTicketChange(session("userdata.id"), $id, $params);
 
             $sql = "UPDATE zp_tickets SET ";
 
@@ -1782,7 +1782,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         public function updateTicket(array $values, $id): bool
         {
 
-            $this->addTicketChange($_SESSION['userdata']['id'], $id, $values);
+            $this->addTicketChange(session("userdata.id"), $id, $values);
 
             $query = "UPDATE zp_tickets
 			SET
@@ -1867,7 +1867,7 @@ namespace Leantime\Domain\Tickets\Repositories {
         public function updateTicketStatus($ticketId, $status, int $ticketSorting = -1, $handler = null): bool
         {
 
-            $this->addTicketChange($_SESSION['userdata']['id'], $ticketId, array('status' => $status));
+            $this->addTicketChange(session("userdata.id"), $ticketId, array('status' => $status));
 
             if ($ticketSorting > -1) {
                 $query = "UPDATE zp_tickets

@@ -19,7 +19,7 @@
     @dispatchEvent('afterMenuOpen')
 
     @if ($allAvailableProjects
-        || !empty($_SESSION['currentProject'])
+        || !session()->has("currentProject")
         || $menuType == "personal"
         || $menuType == "company")
 
@@ -103,7 +103,7 @@
 
                 @if ($login::userIsAtLeast(Roles::$manager) && $menuType != 'company' && $menuType != 'personal' && $menuType != 'projecthub')
                     <li class="fixedMenuPoint {{ $module == $settingsLink['module'] && $action == $settingsLink['action'] ? 'active' : '' }}">
-                        <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ $_SESSION['currentProject'] }}">
+                        <a href="{{ BASE_URL }}/{{ $settingsLink['module'] }}/{{ $settingsLink['action'] }}/{{ session("currentProject") }}">
                             {!! $settingsLink['label']  !!}
                         </a>
                     </li>

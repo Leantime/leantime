@@ -6,7 +6,7 @@
     "config": {
         "platform-check": false,
         "platform": {
-            "php": "8.1"
+            "php": "8.2"
         },
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
@@ -61,6 +61,8 @@
         "illuminate/console": "^9.52",
         "illuminate/pipeline": "^9.52",
         "illuminate/cache": "^9.52",
+        "illuminate/session": "^9.52",
+        "illuminate/encryption": "^9.52",
         "symfony/cache": "^6.3",
         "nikic/php-parser": "^4.17",
         "nesbot/carbon": "^2.72",

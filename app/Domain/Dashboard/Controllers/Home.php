@@ -69,7 +69,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->reportService = $reportsService;
             $this->widgetService = $widgetService;
 
-            $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
+            session(["lastPage" => BASE_URL . "/dashboard/home"]);
         }
 
         /**
@@ -81,9 +81,9 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             //Debug uncomment to reset dashboard
             if(isset($_GET['resetDashboard']) === true){
-                $this->widgetService->resetDashboard($_SESSION['userdata']['id']);
+                $this->widgetService->resetDashboard(session("userdata.id"));
             }
-            $dashboardGrid = $this->widgetService->getActiveWidgets($_SESSION['userdata']['id']);
+            $dashboardGrid = $this->widgetService->getActiveWidgets(session("userdata.id"));
             $this->tpl->assign("dashboardGrid", $dashboardGrid);
 
             $completedOnboarding = $this->settingRepo->getSetting("companysettings.completedOnboarding");
@@ -116,7 +116,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
         {
 
             if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
-                $this->settingRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
+                $this->settingRepo->saveSetting("usersettings." . session("userdata.id") . ".dashboardGrid", serialize($params['data']));
                 return new Response();
             }
 

@@ -44,7 +44,7 @@ class News extends HtmxController
     {
 
         try {
-            $news = $this->newsService->getLatest($_SESSION['userdata']['id']);
+            $news = $this->newsService->getLatest(session("userdata.id"));
 
         }catch(\Exception $e) {
             error_log($e);

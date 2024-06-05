@@ -46,10 +46,10 @@ namespace Leantime\Domain\Sprints\Controllers {
 
                     $this->tpl->setNotification($this->language->__('notifications.sprint_deleted_successfully'), "success");
 
-                    $_SESSION["currentSprint"] = "";
+                    session(["currentSprint" => ""]);
 
-                    if (isset($_SESSION['lastPage'])) {
-                        return Frontcontroller::redirect($_SESSION['lastPage']);
+                    if (session()->exists("lastPage")) {
+                        return Frontcontroller::redirect(session("lastPage"));
                     } else {
                         return Frontcontroller::redirect(BASE_URL . "/tickets/showKanban");
                     }

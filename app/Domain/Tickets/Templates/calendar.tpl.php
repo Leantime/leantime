@@ -5,8 +5,8 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $milestones = $tpl->get('milestones');
-if (!isset($_SESSION['submenuToggle']["myProjectCalendarView"])) {
-    $_SESSION['submenuToggle']["myProjectCalendarView"] = "dayGridMonth";
+if (!session()->exists("submenuToggle.myProjectCalendarView")) {
+    session(["submenuToggle.myProjectCalendarView" => "dayGridMonth"]);
 }
 
 echo $tpl->displayNotification();
@@ -48,10 +48,10 @@ echo $tpl->displayNotification();
 
 
                 <select id="my-select" style="margin-right:5px;" class="right">
-                    <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" <?=$_SESSION['submenuToggle']["myProjectCalendarView"] == 'timeGridDay' ? "selected" : '' ?>>Day</option>
-                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" <?=$_SESSION['submenuToggle']["myProjectCalendarView"] == 'timeGridWeek' ? "selected" : '' ?>>Week</option>
-                    <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?=$_SESSION['submenuToggle']["myProjectCalendarView"] == 'dayGridMonth' ? "selected" : '' ?>>Month</option>
-                    <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=$_SESSION['submenuToggle']["myProjectCalendarView"] == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
+                    <option class="fc-timeGridDay-button fc-button fc-state-default fc-corner-right" value="timeGridDay" <?=session("submenuToggle.myProjectCalendarView") == 'timeGridDay' ? "selected" : '' ?>>Day</option>
+                    <option class="fc-timeGridWeek-button fc-button fc-state-default fc-corner-right" value="timeGridWeek" <?=session("submenuToggle.myProjectCalendarView") == 'timeGridWeek' ? "selected" : '' ?>>Week</option>
+                    <option class="fc-dayGridMonth-button fc-button fc-state-default fc-corner-right" value="dayGridMonth" <?=session("submenuToggle.myProjectCalendarView") == 'dayGridMonth' ? "selected" : '' ?>>Month</option>
+                    <option class="fc-multiMonthYear-button fc-button fc-state-default fc-corner-right" value="multiMonthYear" <?=session("submenuToggle.myProjectCalendarView") == 'multiMonthYear' ? "selected" : '' ?>>Year</option>
                 </select>
 
             </div>
@@ -162,7 +162,7 @@ echo $tpl->displayNotification();
                 timeZone: leantime.i18n.__("usersettings.timezone"),
 
                 height:heightWindow,
-                initialView: '<?=$_SESSION['submenuToggle']["myProjectCalendarView"] ?>',
+                initialView: '<?=session("submenuToggle.myProjectCalendarView") ?>',
                 events: events,
                 editable: true,
                 headerToolbar: false,

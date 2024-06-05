@@ -72,7 +72,7 @@ class ProjectCardProgress extends HtmxController
         $this->reactionService = $reactionService;
 
 
-        $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
+        session(["lastPage" => BASE_URL . "/dashboard/home"]);
     }
 
     public function getProgress() {

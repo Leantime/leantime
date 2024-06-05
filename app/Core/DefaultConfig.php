@@ -173,7 +173,7 @@ class DefaultConfig
     /**
      * @var string Salting sessions. Replace with a strong password
      */
-    public string $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
+    public string $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';
 
     /**
      * @var int How many seconds after inactivity should we logout?  28800seconds = 8hours

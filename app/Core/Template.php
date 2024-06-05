@@ -150,7 +150,7 @@ class Template
         $this->config->set('view.compiled', APP_ROOT . '/cache/views');
 
         // Find Template Paths
-        if (empty($_SESSION['template_paths']) || $this->config->debug) {
+        if (!session()->has("template_paths") || $this->config->debug) {
             $domainPaths = collect(glob(APP_ROOT . '/app/Domain/*'))
                 ->mapWithKeys(fn ($path) => [
                     $basename = strtolower(basename($path)) => [
@@ -171,7 +171,7 @@ class Template
                     if ($domainPaths->has($basename = strtolower($plugin->foldername))) {
                         error_log("Plugin $basename conflicts with domain");
                         //Clear cache, something is up
-                        unset($_SESSION['enabledPlugins']);
+                        session()->forget("enabledPlugins");
                         return [];
                     }
 
@@ -184,15 +184,17 @@ class Template
                     return [$basename => $path];
                 }
 
-                unset($_SESSION['enabledPlugins']);
+                session()->forget("enabledPlugins");
                 return [];
             });
 
-            $_SESSION['template_paths'] = $domainPaths
+           $storePaths = $domainPaths
                 ->merge($pluginPaths)
                 ->merge(['global' => APP_ROOT . '/app/Views/Templates'])
                 ->merge(['__components' => $this->config->get('view.compiled')])
                 ->all();
+
+            session(["template_paths" => $storePaths]);
         }
 
         // Setup Blade Compiler
@@ -205,7 +207,7 @@ class Template
                     $this->config->get('view.compiled'),
                 );
 
-                $namespaces = array_keys($_SESSION['template_paths']);
+                $namespaces = array_keys(session("template_paths"));
                 array_map(
                     [$bladeCompiler, 'anonymousComponentNamespace'],
                     array_map(fn ($namespace) => "$namespace::components", $namespaces),
@@ -236,7 +238,7 @@ class Template
             ViewFinderInterface::class,
             function ($app) {
                 $viewFinder = $app->make(FileViewFinder::class, ['paths' => []]);
-                array_map([$viewFinder, 'addNamespace'], array_keys($_SESSION['template_paths']), array_values($_SESSION['template_paths']));
+                array_map([$viewFinder, 'addNamespace'], array_keys(session("template_paths")), array_values(session("template_paths")));
                 return $viewFinder;
             }
         );
@@ -271,7 +273,7 @@ class Template
      */
     public function attachComposers(): void
     {
-        if (empty($_SESSION['composers']) || $this->config->debug) {
+        if (!session()->has("composers") || $this->config->debug) {
             $customComposerClasses = collect(glob(APP_ROOT . '/custom/Views/Composers/*.php'))
                 ->concat(glob(APP_ROOT . '/custom/Domain/*/Composers/*.php'));
 
@@ -288,7 +290,7 @@ class Template
                 ->concat($pluginComposerClasses)
                 ->filter(fn ($composerClass) => ! $testers->contains($composerClass));
 
-            $_SESSION['composers'] = $customComposerClasses
+            $storeComposers = $customComposerClasses
                 ->concat($stockComposerClasses)
                 ->map(fn ($filepath) => Str::of($filepath)
                     ->replace([APP_ROOT . '/app/', APP_ROOT . '/custom/', '.php'], ['', '', ''])
@@ -296,9 +298,11 @@ class Template
                     ->start(app()->getNamespace())
                     ->toString())
                 ->all();
+
+            session(["composers" => $storeComposers]);
         }
 
-        foreach ($_SESSION['composers'] as $composerClass) {
+        foreach (session("composers") as $composerClass) {
             if (
                 is_subclass_of($composerClass, Composer::class) &&
                 ! (new ReflectionClass($composerClass))->isAbstract()
@@ -399,9 +403,9 @@ class Template
      */
     public function setNotification(string $msg, string $type, string $event_id = ''): void
     {
-        $_SESSION['notification'] = $msg;
-        $_SESSION['notificationType'] = $type;
-        $_SESSION['event_id'] = $event_id;
+        session(["notification" => $msg]);
+        session(["notificationType" => $type]);
+        session(["event_id" => $event_id]);
     }
 
     /**
@@ -412,7 +416,7 @@ class Template
      */
     public function sendConfetti()
     {
-        $_SESSION['confettiInYourFace'] = true;
+        session(["confettiInYourFace" => true]);
     }
 
     /**
@@ -604,9 +608,9 @@ class Template
      */
     public function getNotification(): array
     {
-        if (isset($_SESSION['notificationType']) && isset($_SESSION['notification'])) {
-            $event_id = $_SESSION['event_id'] ?? '';
-            return array('type' => $_SESSION['notificationType'], 'msg' => $_SESSION['notification'], 'event_id' => $event_id);
+        if (session()->exists("notificationType") && session()->exists("notification")) {
+            $event_id = session("event_id") ?? '';
+            return array('type' => session("notificationType"), 'msg' => session("notification"), 'event_id' => $event_id);
         } else {
             return array('type' => "", 'msg' => "", 'event_id' => "");
         }
@@ -669,18 +673,18 @@ class Template
 
             self::dispatch_event("notification_displayed", $note);
 
-            $_SESSION['notification'] = "";
-            $_SESSION['notificationType'] = "";
-            $_SESSION['event_id'] = "";
+            session(["notification" => ""]);
+            session(["notificationType" => ""]);
+            session(["event_id" => ""]);
         }
 
-        if (isset($_SESSION['confettiInYourFace']) && $_SESSION['confettiInYourFace'] === true) {
+        if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
             $notification .= app('blade.compiler')::render(
                 '<script type="text/javascript">confetti.start();</script>',
                 []
             );
 
-            $_SESSION['confettiInYourFace'] = false;
+            session(["confettiInYourFace" => false]);
         }
 
         return $notification;
@@ -695,8 +699,8 @@ class Template
      */
     public function getToggleState(string $name): string
     {
-        if (isset($_SESSION['submenuToggle'][$name])) {
-            return $_SESSION['submenuToggle'][$name];
+        if (session()->exists("submenuToggle".$name)) {
+            return session("submenuToggle".$name);
         }
 
         return false;
@@ -743,18 +747,18 @@ class Template
 
             self::dispatch_event("notification_displayed", $note);
 
-            $_SESSION['notification'] = "";
-            $_SESSION['notificationType'] = "";
-            $_SESSION['event_id'] = "";
+            session(["notification" => ""]);
+            session(["notificationType" => ""]);
+            session(["event_id" => ""]);
         }
 
-        if (isset($_SESSION['confettiInYourFace']) && $_SESSION['confettiInYourFace'] === true) {
+        if (session()->exists("confettiInYourFace") && session("confettiInYourFace") === true) {
             $notification .= app('blade.compiler')::render(
                 '<script type="text/javascript">confetti.start();</script>',
                 []
             );
 
-            $_SESSION['confettiInYourFace'] = false;
+            session(["confettiInYourFace" => false]);
         }
 
         return $notification;

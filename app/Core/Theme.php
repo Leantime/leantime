@@ -192,8 +192,8 @@ class Theme
         // Reset .ini data
         $this->iniData = [];
 
-        if (isset($_SESSION['usersettings.theme']) &&  Auth::isLoggedIn()) {
-            return $_SESSION['usersettings.theme'];
+        if (session()->exists("usersettings.theme") &&  Auth::isLoggedIn()) {
+            return session("usersettings.theme");
         }
 
         // Return user specific theme, if active
@@ -201,7 +201,7 @@ class Theme
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
-            $theme = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".theme");
+            $theme = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".theme");
             if ($theme !== false) {
                 $this->setActive($theme);
                 return $theme;
@@ -236,14 +236,14 @@ class Theme
     {
 
         //Return generic theme
-        if (isset($_SESSION['usersettings.colorMode']) &&  Auth::isLoggedIn()) {
-            return $_SESSION['usersettings.colorMode'];
+        if (session()->exists("usersettings.colorMode") &&  Auth::isLoggedIn()) {
+            return session("usersettings.colorMode");
         }
 
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
-            $colorMode = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".colorMode");
+            $colorMode = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorMode");
             if ($colorMode !== false) {
                 $this->setColorMode($colorMode);
                 return $colorMode;
@@ -257,7 +257,7 @@ class Theme
         }
 
         //Return default
-        $_SESSION['usersettings.colorMode'] = 'light';
+        session(["usersettings.colorMode" => 'light']);
         return 'light';
     }
 
@@ -273,15 +273,15 @@ class Theme
     {
 
         //Return generic theme
-        if (isset($_SESSION['usersettings.colorScheme']) && Auth::isLoggedIn()) {
-            $this->setAccentColors($_SESSION['usersettings.colorScheme']);
-            return $_SESSION['usersettings.colorScheme'];
+        if (session()->exists("usersettings.colorScheme") && Auth::isLoggedIn()) {
+            $this->setAccentColors(session("usersettings.colorScheme"));
+            return session("usersettings.colorScheme");
         }
 
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
-            $colorScheme = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".colorScheme");
+            $colorScheme = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".colorScheme");
             if ($colorScheme !== false) {
                 $this->setColorScheme($colorScheme);
                 return $colorScheme;
@@ -308,15 +308,15 @@ class Theme
     {
 
         //Return generic theme
-        if (isset($_SESSION['usersettings.themeFont']) && Auth::isLoggedIn()) {
-            $this->setFont($_SESSION['usersettings.themeFont']);
-            return $_SESSION['usersettings.themeFont'];
+        if (session()->exists("usersettings.themeFont") && Auth::isLoggedIn()) {
+            $this->setFont(session("usersettings.themeFont"));
+            return session("usersettings.themeFont");
         }
 
         if (Auth::isLoggedIn()) {
             //User is logged in, we don't have a theme yet, check settings
             $settingsRepo = app()->make(Setting::class);
-            $themeFont = $settingsRepo->getSetting("usersettings." . $_SESSION["userdata"]["id"] . ".themeFont");
+            $themeFont = $settingsRepo->getSetting("usersettings." . session("userdata.id") . ".themeFont");
             if ($themeFont !== false) {
                 $this->setFont($themeFont);
                 return $themeFont;
@@ -357,7 +357,7 @@ class Theme
 
         //Only set if user is logged in
         if (Auth::isLoggedIn()) {
-            $_SESSION['usersettings.theme'] = $id;
+            session(["usersettings.theme" => $id]);
         }
 
         Events::add_filter_listener(
@@ -388,7 +388,7 @@ class Theme
 
         //Only store colors in session for logged in users
         if (Auth::isLoggedIn()) {
-            $_SESSION['usersettings.colorMode'] = $colorMode;
+            session(["usersettings.colorMode" => $colorMode]);
         }
 
         Events::add_filter_listener(
@@ -419,7 +419,7 @@ class Theme
         }
 
         if (Auth::isLoggedIn()) {
-            $_SESSION['usersettings.themeFont'] = $font;
+            session(["usersettings.themeFont" => $font]);
         }
 
         Events::add_filter_listener(
@@ -450,7 +450,7 @@ class Theme
         }
 
         if (Auth::isLoggedIn()) {
-            $_SESSION['usersettings.colorScheme'] = $colorScheme;
+            session(["usersettings.colorScheme" => $colorScheme]);
             $this->setAccentColors($colorScheme);
         }
 
@@ -699,7 +699,7 @@ class Theme
         //Logo will be in there. Session will be renewed when new logo is updated or theme is changed
 
         $logoPath = false;
-        if (isset($_SESSION["companysettings.logoPath"]) === false || $_SESSION["companysettings.logoPath"] == '') {
+        if (session()->exists("companysettings.logoPath") === false || session("companysettings.logoPath") == '') {
             $settingsRepo = app()->make(Setting::class);
             $logoPath = $settingsRepo->getSetting("companysettings.logoPath");
 
@@ -708,16 +708,16 @@ class Theme
                 (file_exists(ROOT . $logoPath) || str_starts_with($logoPath, "http"))
             ) {
                 if (str_starts_with($logoPath, "http")) {
-                    $_SESSION["companysettings.logoPath"] = $logoPath;
+                    session(["companysettings.logoPath" => $logoPath]);
                 } else {
-                    $_SESSION["companysettings.logoPath"] = BASE_URL . $logoPath;
+                    session(["companysettings.logoPath" => BASE_URL . $logoPath]);
                 }
 
-                return $_SESSION["companysettings.logoPath"];
+                return session("companysettings.logoPath");
             }
 
             //If we can't find a logo in the db, the company doesn't have a logo. Stop trying
-            $_SESSION["companysettings.logoPath"] = false;
+            session(["companysettings.logoPath" => false]);
         }
 
         return false;
@@ -750,8 +750,8 @@ class Theme
     public function setThemeDefaultColors()
     {
         //Using default css values
-        $_SESSION["usersettings.colorScheme.primaryColor"] = false;
-        $_SESSION["usersettings.colorScheme.secondaryColor"] = false;
+        session(["usersettings.colors.primaryColor" => false]);
+        session(["usersettings.colors.secondaryColor" => false]);
     }
 
     /**
@@ -771,21 +771,21 @@ class Theme
     public function setCompanyColors()
     {
 
-        if (! isset($_SESSION["usersettings.colorScheme.primaryColor"])) {
+        if (! session()->exists("usersettings.colors.primaryColor")) {
             $settingsRepo = app()->make(Setting::class);
             $primaryColor = $settingsRepo->getSetting("companysettings.primarycolor");
 
             if ($primaryColor !== false) {
-                $_SESSION["usersettings.colorScheme.primaryColor"] = $primaryColor;
-                $_SESSION["usersettings.colorScheme.secondaryColor"] = $primaryColor;
+                session(["usersettings.colors.primaryColor" => $primaryColor]);
+                session(["usersettings.colors.secondaryColor" => $primaryColor]);
             } else {
-                $_SESSION["usersettings.colorScheme.primaryColor"] = $this->config->primaryColor;
-                $_SESSION["usersettings.colorScheme.secondaryColor"] = $this->config->secondaryColor;
+                session(["usersettings.colors.primaryColor" => $this->config->primaryColor]);
+                session(["usersettings.colors.secondaryColor" => $this->config->secondaryColor]);
             }
 
             $secondaryColor = $settingsRepo->getSetting("companysettings.secondaryColor");
             if ($secondaryColor !== false) {
-                $_SESSION["usersettings.colorScheme.secondaryColor"] = $secondaryColor;
+                session(["usersettings.colors.secondaryColor" => $secondaryColor]);
             }
         }
     }
@@ -802,12 +802,12 @@ class Theme
         $colorSchemes = $this->getAvailableColorSchemes();
         if (isset($colorSchemes[$colorscheme]["primaryColor"])) {
             $primary = $colorSchemes[$colorscheme]["primaryColor"];
-            $_SESSION["usersettings.colorScheme.primaryColor"] = $primary;
+            session(["usersettings.colors.primaryColor" => $primary]);
         }
 
         if (isset($colorSchemes[$colorscheme]["secondaryColor"])) {
             $secondary = $colorSchemes[$colorscheme]["secondaryColor"];
-            $_SESSION["usersettings.colorScheme.secondaryColor"] = $secondary;
+            session(["usersettings.colors.secondaryColor" => $secondary]);
         }
 
         return;
@@ -822,11 +822,11 @@ class Theme
     {
 
         if (
-            isset($_SESSION["usersettings.colorScheme.primaryColor"])
-            && $_SESSION["usersettings.colorScheme.primaryColor"] != ''
+            session()->exists("usersettings.colors.primaryColor")
+            && session("usersettings.colors.primaryColor") != ''
             &&  Auth::isLoggedIn()
         ) {
-            return $_SESSION["usersettings.colorScheme.primaryColor"];
+            return session("usersettings.colors.primaryColor");
         }
 
         $currentColorScheme = $this->getColorScheme();
@@ -834,7 +834,7 @@ class Theme
         $colorSchemes = $this->getAvailableColorSchemes();
 
         if (Auth::isLoggedIn()) {
-            $_SESSION["usersettings.colorScheme.primaryColor"] = $colorSchemes[$currentColorScheme]['primaryColor'];
+            session(["usersettings.colors.primaryColor" => $colorSchemes[$currentColorScheme]['primaryColor']]);
         }
 
         return $colorSchemes[$currentColorScheme]['primaryColor'];
@@ -856,18 +856,18 @@ class Theme
     {
 
         if (
-            isset($_SESSION["usersettings.colorScheme.secondaryColor"])
-            && $_SESSION["usersettings.colorScheme.secondaryColor"] != ''
+            session()->exists("usersettings.colors.secondaryColor")
+            && session("usersettings.colors.secondaryColor") != ''
             &&  Auth::isLoggedIn()
         ) {
-            return $_SESSION["usersettings.colorScheme.secondaryColor"];
+            return session("usersettings.colors.secondaryColor");
         }
 
         $colorSchemes = $this->getAvailableColorSchemes();
         $currentColorScheme = $this->getColorScheme();
 
         if (Auth::isLoggedIn()) {
-            $_SESSION["usersettings.colorScheme.secondaryColor"] = $colorSchemes[$currentColorScheme]['secondaryColor'];
+            session(["usersettings.colors.secondaryColor" => $colorSchemes[$currentColorScheme]['secondaryColor']]);
         }
 
         return $colorSchemes[$currentColorScheme]['secondaryColor'];
@@ -899,11 +899,11 @@ class Theme
 
     public static function clearCache(): void
     {
-        unset($_SESSION["usersettings.colorScheme.primaryColor"]);
-        unset($_SESSION["usersettings.colorScheme.secondarycolor"]);
-        unset($_SESSION["usersettings.colorMode"]);
-        unset($_SESSION["usersettings.colorScheme"]);
-        unset($_SESSION["usersettings.themeFont"]);
-        unset($_SESSION["usersettings.theme"]);
+        session()->forget("usersettings.colors.primaryColor");
+        session()->forget("usersettings.colors.secondarycolor");
+        session()->forget("usersettings.colorMode");
+        session()->forget("usersettings.colorScheme");
+        session()->forget("usersettings.themeFont");
+        session()->forget("usersettings.theme");
     }
 }

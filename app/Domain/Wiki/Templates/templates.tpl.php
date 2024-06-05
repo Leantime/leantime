@@ -6,7 +6,7 @@ foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }
 $today = date($tpl->__('language.dateformat'));
-$author = $_SESSION['userdata']['name'] . ' (' . $_SESSION['userdata']['mail'] . ')';
+$author = session("userdata.name") . ' (' . session("userdata.mail") . ')';
 
     //Templates for tinymce templates
     //All Templates require title, description, content

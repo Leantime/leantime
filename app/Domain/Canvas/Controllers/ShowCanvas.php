@@ -46,21 +46,21 @@ namespace Leantime\Domain\Canvas\Controllers {
         public function run()
         {
 
-            $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+            $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
 
             //Create default canvas.
             if (!$allCanvas || count($allCanvas) == 0) {
                 $values = [
                     'title' => $this->language->__("label.board"),
-                    'author' => $_SESSION['userdata']['id'],
-                    'projectId' => $_SESSION['currentProject'],
+                    'author' => session("userdata.id"),
+                    'projectId' => session("currentProject"),
                 ];
                 $currentCanvasId = $this->canvasRepo->addCanvas($values);
-                $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+                $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
             }
 
-            if (isset($_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'])) {
-                $currentCanvasId = $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+            if (session()->exists("current' . strtoupper(static::CANVAS_NAME) . 'Canvas")) {
+                $currentCanvasId = session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
                 //Ensure canvas id is in the list of currentCanvases (could be old value after project select
 
                 $found = false;
@@ -73,51 +73,51 @@ namespace Leantime\Domain\Canvas\Controllers {
 
                 if (!$found) {
                     $currentCanvasId = -1;
-                    $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = '';
+                    session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => '']);
                 }
             } else {
                 $currentCanvasId = -1;
-                $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = '';
+                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => '']);
             }
 
-            if (count($allCanvas) > 0 && $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] == '') {
+            if (count($allCanvas) > 0 && session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas") == '') {
                 $currentCanvasId = $allCanvas[0]['id'];
-                $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
             }
 
             if (isset($_GET['id']) === true) {
                 $currentCanvasId = (int)$_GET['id'];
-                $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
             }
 
             if (isset($_REQUEST['searchCanvas']) === true) {
                 $currentCanvasId = (int)$_REQUEST['searchCanvas'];
-                $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
                 return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
             }
 
             // Add Canvas
             if (isset($_POST['newCanvas'])) {
                 if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
-                    if (!$this->canvasRepo->existCanvas($_SESSION['currentProject'], $_POST['canvastitle'])) {
+                    if (!$this->canvasRepo->existCanvas(session("currentProject"), $_POST['canvastitle'])) {
                         $values = [
                             'title' => $_POST['canvastitle'],
-                            'author' => $_SESSION['userdata']['id'],
-                            'projectId' => $_SESSION['currentProject'],
+                            'author' => session("userdata.id"),
+                            'projectId' => session("currentProject"),
                         ];
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
-                        $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+                        $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
 
                         $mailer = app()->make(MailerCore::class);
                         $this->projectService = app()->make(ProjectService::class);
-                        $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
+                        $users = $this->projectService->getUsersToNotify(session("currentProject"));
 
                         $mailer->setSubject($this->language->__('notification.board_created'));
 
                         $actual_link = CURRENT_URL;
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_created_message'),
-                            $_SESSION['userdata']['name'],
+                            session("userdata.name"),
                             "<a href='" . $actual_link . "'>" . $values['title'] . '</a>'
                         );
                         $mailer->setHtml($message);
@@ -128,12 +128,12 @@ namespace Leantime\Domain\Canvas\Controllers {
                             $users,
                             $message,
                             $this->language->__('notification.board_created'),
-                            $_SESSION['currentProject']
+                            session("currentProject")
                         );
 
                         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
 
-                        $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
@@ -146,7 +146,7 @@ namespace Leantime\Domain\Canvas\Controllers {
             // Edit Canvas
             if (isset($_POST['editCanvas']) && $currentCanvasId > 0) {
                 if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
-                    if (!$this->canvasRepo->existCanvas($_SESSION['currentProject'], $_POST['canvastitle'])) {
+                    if (!$this->canvasRepo->existCanvas(session("currentProject"), $_POST['canvastitle'])) {
                         $values = array('title' => $_POST['canvastitle'], 'id' => $currentCanvasId);
                         $currentCanvasId = $this->canvasRepo->updateCanvas($values);
 
@@ -163,18 +163,18 @@ namespace Leantime\Domain\Canvas\Controllers {
             // Clone canvas
             if (isset($_POST['cloneCanvas']) && $currentCanvasId > 0) {
                 if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
-                    if (!$this->canvasRepo->existCanvas($_SESSION['currentProject'], $_POST['canvastitle'])) {
+                    if (!$this->canvasRepo->existCanvas(session("currentProject"), $_POST['canvastitle'])) {
                         $currentCanvasId = $this->canvasRepo->copyCanvas(
-                            $_SESSION['currentProject'],
+                            session("currentProject"),
                             $currentCanvasId,
-                            $_SESSION['userdata']['id'],
+                            session("userdata.id"),
                             $_POST['canvastitle']
                         );
-                        $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+                        $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
 
                         $this->tpl->setNotification($this->language->__('notification.board_copied'), 'success');
 
-                        $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/' . static::CANVAS_NAME . 'canvas/showCanvas/');
                     } else {
                         $this->tpl->setNotification($this->language->__('notification.board_exists'), 'error');
@@ -211,26 +211,26 @@ namespace Leantime\Domain\Canvas\Controllers {
                         $importCanvasId = $services->import(
                             $uploadfile,
                             static::CANVAS_NAME . 'canvas',
-                            projectId: $_SESSION['currentProject'],
-                            authorId: $_SESSION['userdata']['id']
+                            projectId: session("currentProject"),
+                            authorId: session("userdata.id")
                         );
                         unlink($uploadfile);
 
                         if ($importCanvasId !== false) {
                             $currentCanvasId = $importCanvasId;
-                            $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
-                            $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                            $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
+                            session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
 
                             $mailer = app()->make(MailerCore::class);
                             $this->projectService = app()->make(ProjectService::class);
-                            $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
+                            $users = $this->projectService->getUsersToNotify(session("currentProject"));
                             $canvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
                             $mailer->setSubject($this->language->__('notification.board_imported'));
 
                             $actual_link = CURRENT_URL;
                             $message = sprintf(
                                 $this->language->__('email_notifications.canvas_imported_message'),
-                                $_SESSION['userdata']['name'],
+                                session("userdata.name"),
                                 "<a href='" . $actual_link . "'>" . $canvas[0]['title'] . '</a>'
                             );
                             $mailer->setHtml($message);
@@ -241,7 +241,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                                 $users,
                                 $message,
                                 $this->language->__('notification.board_imported'),
-                                $_SESSION['currentProject']
+                                session("currentProject")
                             );
 
                             $this->tpl->setNotification($this->language->__('notification.board_imported'), 'success');
@@ -264,7 +264,7 @@ namespace Leantime\Domain\Canvas\Controllers {
             $this->tpl->assign('disclaimer', $this->canvasRepo->getDisclaimer());
             $this->tpl->assign('allCanvas', $allCanvas);
             $this->tpl->assign('canvasItems', $this->canvasRepo->getCanvasItemsById($currentCanvasId));
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION['currentProject']));
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
 
             if (!isset($_GET['raw'])) {
                 return $this->tpl->display(static::CANVAS_NAME . 'canvas.showCanvas');

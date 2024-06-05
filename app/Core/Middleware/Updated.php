@@ -22,18 +22,18 @@ class Updated
      **/
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        $dbVersion = $_SESSION['dbVersion'] ?? app()->make(SettingRepository::class)->getSetting('db-version');
+        $dbVersion = session("dbVersion") ?? app()->make(SettingRepository::class)->getSetting('db-version');
         $settingsDbVersion = app()->make(AppSettings::class)->dbVersion;
 
         if ($dbVersion !== false) {
             //Setting dbVersion only if there is one in the db
             //Otherwise leave dbVersion unset so we can recheck every time the settings db returns false.
-            $_SESSION['dbVersion'] = $dbVersion;
+            session(["dbVersion" => $dbVersion]);
         }
 
-        $_SESSION['isUpdated'] = $dbVersion == $settingsDbVersion;
+        session(["isUpdated" => $dbVersion == $settingsDbVersion]);
 
-        if ($_SESSION['isUpdated']) {
+        if (session("isUpdated")) {
             return $next($request);
         }
 

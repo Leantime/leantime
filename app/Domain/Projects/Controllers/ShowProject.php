@@ -77,8 +77,8 @@ namespace Leantime\Domain\Projects\Controllers {
             $this->commentsRepo = $commentsRepo;
             $this->menuRepo = $menuRepo;
 
-            if (!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = CURRENT_URL;
+            if (!session()->exists("lastPage")) {
+                session(["lastPage" => CURRENT_URL]);
             }
         }
 
@@ -101,7 +101,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     return FrontcontrollerCore::redirect(BASE_URL . "/error/error404");
                 }
 
-                if($_SESSION['currentProject'] != $project['id'] ){
+                if(session("currentProject") != $project['id'] ){
                     $this->projectService->changeCurrentSessionProject($project['id']);
                 }
 
@@ -181,7 +181,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     $this->tpl->assign('discordWebhookURL' . $i, $discordWebhook);
                 }
 
-                $_SESSION['lastPage'] = BASE_URL . "/projects/showProject/" . $id;
+                session(["lastPage" => BASE_URL . "/projects/showProject/" . $id]);
 
 
                 $project['assignedUsers'] = $this->projectRepo->getProjectUserRelation($id);
@@ -249,7 +249,7 @@ namespace Leantime\Domain\Projects\Controllers {
                             $subject = sprintf($this->language->__("email_notifications.project_update_subject"), $id, $values['name']);
                             $message = sprintf(
                                 $this->language->__("email_notifications.project_update_message"),
-                                $_SESSION["userdata"]["name"],
+                                session("userdata.name"),
                                 $values['name']
                             );
 
@@ -264,9 +264,9 @@ namespace Leantime\Domain\Projects\Controllers {
                             );
                             $notification->entity = $project;
                             $notification->module = "projects";
-                            $notification->projectId = $_SESSION['currentProject'];
+                            $notification->projectId = session("currentProject");
                             $notification->subject = $subject;
-                            $notification->authorId = $_SESSION['userdata']['id'];
+                            $notification->authorId = session("userdata.id");
                             $notification->message = $message;
 
                             $this->projectService->notifyProjectUsers($notification);
@@ -297,7 +297,7 @@ namespace Leantime\Domain\Projects\Controllers {
                 $this->tpl->assign('projectTypes', $projectTypes);
 
                 $this->tpl->assign('state', $this->projectRepo->state);
-                $this->tpl->assign('role', $_SESSION['userdata']['role']);
+                $this->tpl->assign('role', session("userdata.role"));
 
                 return $this->tpl->display('projects.showProject');
             } else {

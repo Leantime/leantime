@@ -95,7 +95,7 @@ class Language
         $this->langlist = $this->getLanguageList();
 
         //Get language that was set in middleware
-        $language =  $_SESSION["usersettings.language"] ?? $this->config->language;
+        $language =  session("usersettings.language") ?? $this->config->language;
 
         //Start checking if the user has a language set
         if (!$this->setLanguage($language)) {
@@ -117,7 +117,7 @@ class Language
 
         $this->language = $lang;
 
-        $_SESSION['usersettings.language'] = $lang;
+        session(["usersettings.language" => $lang]);
 
         if (! isset($_COOKIE['language']) || $_COOKIE['language'] !== $lang) {
             Events::add_filter_listener(
@@ -167,14 +167,14 @@ class Language
      */
     public function readIni(): array
     {
-        if (isset($_SESSION['cache.language_resources_' . $this->language]) && $this->config->debug == 0) {
-            $this->ini_array = $_SESSION['cache.language_resources_' . $this->language] = self::dispatch_filter(
+        if (session()->exists('cache.language_resources_' . $this->language) && $this->config->debug == 0) {
+            $this->ini_array = session(['cache.language_resources_' . $this->language => self::dispatch_filter(
                 'language_resources',
-                $_SESSION['cache.language_resources_' . $this->language],
+                session('cache.language_resources_' . $this->language),
                 [
                     'language' => $this->language,
                 ]
-            );
+            )]);
             return $this->ini_array;
         }
 
@@ -206,7 +206,7 @@ class Language
             ]
         );
 
-        $_SESSION['cache.language_resources_' . $this->language] = $this->ini_array;
+        session(['cache.language_resources_' . $this->language => $this->ini_array]);
 
         return $this->ini_array;
     }
@@ -254,8 +254,8 @@ class Language
      */
     public function getLanguageList(): bool|array
     {
-        if (isset($_SESSION['cache.langlist'])) {
-            return $_SESSION['cache.langlist'];
+        if (session()->exists("cache.langlist")) {
+            return session("cache.langlist");
         }
 
         $langlist = false;
@@ -276,9 +276,9 @@ class Language
         }
 
         $parsedLangList = self::dispatch_filter('languages', $langlist);
-        $_SESSION['cache.langlist'] = $parsedLangList;
+        session(["cache.langlist" => $parsedLangList]);
 
-        return $_SESSION['cache.langlist'];
+        return session("cache.langlist");
     }
 
     /**
@@ -304,8 +304,8 @@ class Language
         }
 
         $returnValue = match (trim($index)) {
-            'language.dateformat' => $_SESSION['usersettings.language.date_format'] ?? $this->ini_array['language.dateformat'],
-            'language.timeformat' => $_SESSION['usersettings.language.time_format'] ?? $this->ini_array['language.timeformat'],
+            'language.dateformat' => session("usersettings.date_format") ?? $this->ini_array['language.dateformat'],
+            'language.timeformat' => session("usersettings.time_format") ?? $this->ini_array['language.timeformat'],
             default => $this->ini_array[$index],
         };
 

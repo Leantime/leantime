@@ -72,7 +72,7 @@ class ProjectCard extends HtmxController
         $this->reactionService = $reactionService;
 
 
-        $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
+        session(["lastPage" => BASE_URL . "/dashboard/home"]);
     }
 
     public function get()
@@ -91,14 +91,14 @@ class ProjectCard extends HtmxController
 
         if ($isFavorite) {
             $this->reactionService->removeReaction(
-                userId: $_SESSION['userdata']['id'],
+                userId: session("userdata.id"),
                 module: "project",
                 moduleId: $projectId,
                 reaction: "favorite"
             );
         } else {
             $this->reactionService->addReaction(
-                userId: $_SESSION['userdata']['id'],
+                userId: session("userdata.id"),
                 module: "project",
                 moduleId: $projectId,
                 reaction: "favorite"

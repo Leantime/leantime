@@ -18,7 +18,7 @@ $fullReportLatest = $tpl->get('fullReportLatest');
     <div class="pagetitle">
         <div class="row">
             <div class="col-lg-8">
-                <h5><?php $tpl->e($_SESSION["currentProjectClient"] . " // " . $_SESSION['currentProjectName']); ?></h5>
+                <h5><?php $tpl->e(session("currentProjectClient") . " // " . session("currentProjectName")); ?></h5>
                 <h1><?php echo $tpl->__("headlines.reports"); ?></h1>
             </div>
         </div>

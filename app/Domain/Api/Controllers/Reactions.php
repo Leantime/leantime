@@ -54,7 +54,7 @@ class Reactions extends Controller
     public function post(array $params): Response
     {
         if ($params["action"] == "add") {
-            if (! $this->reactionService->addReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
+            if (! $this->reactionService->addReaction(session("userdata.id"), $params['module'], $params['moduleId'], $params['reaction'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 
@@ -62,7 +62,7 @@ class Reactions extends Controller
         }
 
         if ($params["action"] == "remove") {
-            if (! $this->reactionService->removeReaction($_SESSION['userdata']['id'], $params['module'], $params['moduleId'], $params['reaction'])) {
+            if (! $this->reactionService->removeReaction(session("userdata.id"), $params['module'], $params['moduleId'], $params['reaction'])) {
                 return $this->tpl->displayJson(['status' => 'failure'], 500);
             }
 

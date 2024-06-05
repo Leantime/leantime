@@ -41,7 +41,7 @@ class I18n extends Controller
         }
 
         //Fullcalendar and other scripts can handle local to use the browser timezone
-        $languageIni["usersettings.timezone"] = $_SESSION['usersettings.timezone'] ?? "local";
+        $languageIni["usersettings.timezone"] = session("usersettings.timezone") ?? "local";
 
         $decodedString = json_encode($languageIni);
 

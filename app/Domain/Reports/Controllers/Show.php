@@ -59,7 +59,7 @@ namespace Leantime\Domain\Reports\Controllers {
             $this->userService = $userService;
             $this->timesheetService = $timesheetService;
 
-            $_SESSION['lastPage'] = BASE_URL . "/reports/show";
+            session(["lastPage" => BASE_URL . "/reports/show"]);
 
             $this->reportService = $reportService;
             $this->reportService->dailyIngestion();
@@ -73,17 +73,17 @@ namespace Leantime\Domain\Reports\Controllers {
         {
 
             //Project Progress
-            $progress = $this->projectService->getProjectProgress($_SESSION['currentProject']);
+            $progress = $this->projectService->getProjectProgress(session("currentProject"));
 
             $this->tpl->assign('projectProgress', $progress);
             $this->tpl->assign(
                 "currentProjectName",
-                $this->projectService->getProjectName($_SESSION['currentProject'])
+                $this->projectService->getProjectName(session("currentProject"))
             );
 
             //Sprint Burndown
 
-            $allSprints = $this->sprintService->getAllSprints($_SESSION['currentProject']);
+            $allSprints = $this->sprintService->getAllSprints(session("currentProject"));
 
             $sprintChart = false;
 
@@ -93,7 +93,7 @@ namespace Leantime\Domain\Reports\Controllers {
                     $sprintChart = $this->sprintService->getSprintBurndown($sprintObject);
                     $this->tpl->assign('currentSprint', (int)$_GET['sprint']);
                 } else {
-                    $currentSprint = $this->sprintService->getCurrentSprintId($_SESSION['currentProject']);
+                    $currentSprint = $this->sprintService->getCurrentSprintId(session("currentProject"));
 
                     if ($currentSprint !== false && $currentSprint != "all") {
                         $sprintObject = $this->sprintService->getSprint($currentSprint);
@@ -107,20 +107,20 @@ namespace Leantime\Domain\Reports\Controllers {
             }
 
             $this->tpl->assign('sprintBurndown', $sprintChart);
-            $this->tpl->assign('backlogBurndown', $this->sprintService->getCummulativeReport($_SESSION['currentProject']));
+            $this->tpl->assign('backlogBurndown', $this->sprintService->getCummulativeReport(session("currentProject")));
 
-            $this->tpl->assign('allSprints', $this->sprintService->getAllSprints($_SESSION['currentProject']));
+            $this->tpl->assign('allSprints', $this->sprintService->getAllSprints(session("currentProject")));
 
-            $fullReport =  $this->reportService->getFullReport($_SESSION['currentProject']);
+            $fullReport =  $this->reportService->getFullReport(session("currentProject"));
 
             $this->tpl->assign("fullReport", $fullReport);
-            $this->tpl->assign("fullReportLatest", $this->reportService->getRealtimeReport($_SESSION['currentProject'], ""));
+            $this->tpl->assign("fullReportLatest", $this->reportService->getRealtimeReport(session("currentProject"), ""));
 
             $this->tpl->assign('states', $this->ticketService->getStatusLabels());
 
             //Milestones
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             return $this->tpl->display('reports.show');

@@ -81,7 +81,7 @@ class Calendar
             return true;
         } else {
             $event = $this->calendarRepo->getEvent($eventId);
-            if ($event && $event["userId"] == $_SESSION['userdata']['id']) {
+            if ($event && $event["userId"] == session("userdata.id")) {
                 return true;
             }
         }

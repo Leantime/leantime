@@ -5,6 +5,7 @@ namespace Leantime\Core;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Session\Middleware\StartSession;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
@@ -145,6 +146,7 @@ class HttpKernel implements HttpKernelContract
     public function getMiddleware(): array
     {
         return self::dispatch_filter('http_middleware', [
+            Middleware\StartSession::class,
             Middleware\TrustProxies::class,
             Middleware\InitialHeaders::class,
             Middleware\Installed::class,

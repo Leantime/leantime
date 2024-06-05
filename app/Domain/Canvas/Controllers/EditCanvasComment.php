@@ -121,11 +121,11 @@ namespace Leantime\Domain\Canvas\Controllers {
             if (isset($params['changeItem'])) {
                 if (isset($params['itemId']) && $params['itemId'] != '') {
                     if (isset($params['description']) && !empty($params['description'])) {
-                        $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                        $currentCanvasId = (int)session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
 
                         $canvasItem = array(
                             'box' => $params['box'],
-                            'author' => $_SESSION['userdata']['id'],
+                            'author' => session("userdata.id"),
                             'description' => $params['description'],
                             'status' => $params['status'],
                             'relates' => $params['relates'],
@@ -158,12 +158,12 @@ namespace Leantime\Domain\Canvas\Controllers {
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = static::CANVAS_NAME . 'canvas';
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $this->language->__('email_notifications.canvas_board_edited');
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = sprintf(
                             $this->language->__('email_notifications.canvas_item_update_message'),
-                            $_SESSION['userdata']['name'],
+                            session("userdata.name"),
                             $canvasItem['description']
                         );
 
@@ -175,11 +175,11 @@ namespace Leantime\Domain\Canvas\Controllers {
                     }
                 } else {
                     if (isset($_POST['description']) && !empty($_POST['description'])) {
-                        $currentCanvasId = (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                        $currentCanvasId = (int)session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
 
                         $canvasItem = array(
                             'box' => $params['box'],
-                            'author' => $_SESSION['userdata']['id'],
+                            'author' => session("userdata.id"),
                             'description' => $params['description'],
                             'status' => $params['status'],
                             'relates' => $params['relates'],
@@ -205,12 +205,12 @@ namespace Leantime\Domain\Canvas\Controllers {
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = static::CANVAS_NAME . 'canvas';
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $this->language->__('email_notifications.canvas_board_item_created');
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = sprintf(
                             $this->language->__('email_notifications.canvas_item_created_message'),
-                            $_SESSION['userdata']['name'],
+                            session("userdata.name"),
                             $canvasItem['description']
                         );
 
@@ -229,7 +229,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                 $values = array(
                     'text' => $params['text'],
                     'date' => date('Y-m-d H:i:s'),
-                    'userId' => ($_SESSION['userdata']['id']),
+                    'userId' => (session("userdata.id")),
                     'moduleId' => $_GET['id'],
                     'commentParent' => ($params['father']),
                 );
@@ -244,12 +244,12 @@ namespace Leantime\Domain\Canvas\Controllers {
                 );
                 $notification->entity = $values;
                 $notification->module = static::CANVAS_NAME . 'canvas';
-                $notification->projectId = $_SESSION['currentProject'];
+                $notification->projectId = session("currentProject");
                 $notification->subject = $this->language->__('email_notifications.canvas_board_comment_created');
-                $notification->authorId = $_SESSION['userdata']['id'];
+                $notification->authorId = session("userdata.id");
                 $notification->message = sprintf(
                     $this->language->__('email_notifications.canvas_item__comment_created_message'),
-                    $_SESSION['userdata']['name']
+                    session("userdata.name")
                 );
 
                 $this->projectService->notifyProjectUsers($notification);

@@ -49,8 +49,8 @@ class RequestRateLimiter
 
         //Key
         $keyModifier = "-1";
-        if(isset($_SESSION['userdata'])){
-            $keyModifier =  $_SESSION['userdata']['id'];
+        if(session()->exists("userdata")){
+            $keyModifier =  session("userdata.id");
         }
 
         $key = $request->getClientIp()."-".$keyModifier;

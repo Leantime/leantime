@@ -7,8 +7,11 @@ use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
+use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Log;
 use Leantime\Domain\Auth\Services\Auth as AuthService;
@@ -136,17 +139,14 @@ class Bootloader
 
         Events::discover_listeners();
 
-        self::dispatch_event('config_initialized');
-
-        $app->instance(Session::class, $app->make(Session::class));
-
-        self::dispatch_event('session_initialized');
-
         $app = self::dispatch_filter("initialized", $app, ['bootloader' => $this]);
 
         $config = $app->make(Environment::class);
 
         $this->setErrorHandler($config->debug ?? 0);
+
+        self::dispatch_event('config_initialized');
+
 
         $request = $app->make(IncomingRequest::class);
 
@@ -212,6 +212,52 @@ class Bootloader
         $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
         $this->app->singleton(\Illuminate\Filesystem\Filesystem::class, fn () => new \Illuminate\Filesystem\Filesystem());
 
+        $this->app->singleton(\Illuminate\Encryption\Encrypter::class, function ($app) {
+
+            $configKey = app()->make(Environment::class)->sessionPassword;
+
+            if (strlen($configKey) > 32) {
+                $configKey = substr($configKey, 0, 32);
+            }
+
+            if (strlen($configKey) < 32) {
+                $configKey =  str_pad($configKey, 32, "x", STR_PAD_BOTH);
+            }
+
+            $app['config']['app_key'] = $configKey;
+
+            $encrypter = new \Illuminate\Encryption\Encrypter($app['config']['app_key'], "AES-256-CBC");
+            return $encrypter;
+        });
+
+        $this->app->singleton(\Illuminate\Session\SessionManager::class, function ($app) {
+
+            $app['config']['session'] = array(
+                'driver' => "file",
+                'lifetime' => app()->make(Environment::class)->sessionExpiration,
+                'expire_on_close' => false,
+                'encrypt' => true,
+                'files' => APP_ROOT . '/cache/sessions',
+                'store' => null,
+                'lottery' => [2, 100],
+                'cookie' => "ltid",
+                'path' => '/',
+                'domain' => is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null,
+                'secure' => true,
+                'http_only' => true,
+                'same_site' => "Strict",
+            );
+
+            $sessionManager = new \Illuminate\Session\SessionManager($app);
+            $sessionManager->setDefaultDriver("file");
+
+            return $sessionManager;
+        });
+
+        $this->app->singleton('session.store', fn($app) => $app['session']->driver());
+
+
+
         /**
          * @todo the following should eventually automatically turn caches into redis if available,
          *  then memcached if available,
@@ -219,11 +265,13 @@ class Bootloader
          **/
         $this->app->singleton(\Illuminate\Cache\CacheManager::class, function ($app) {
 
+            //installation cache is per server
             $app['config']['cache.stores.installation'] = [
                 'driver' => 'file',
                 'path' => APP_ROOT . '/cache/installation',
             ];
 
+            //Instance is per company id
             $instanceStore = fn () =>
                 $app['config']['cache.stores.instance'] = [
                     'driver' => 'file',
@@ -237,21 +285,22 @@ class Bootloader
 
                 $instanceStore();
             } else {
+                //Initialize instance cache store only after install was successfull
                 Events::add_event_listener(
                     'leantime.core.middleware.installed.handle.after_install',
                     function () use ($instanceStore) {
-                        if (! $_SESSION['isInstalled']) {
+                        if (! session("isInstalled")) {
                             return;
                         }
-
                         $instanceStore();
                     }
                 );
-
             }
 
             $cacheManager = new \Illuminate\Cache\CacheManager($app);
-
+            //Setting the default does not mean that is exists already.
+            //Installation store is always available
+            //Instance store is only available post after_install event
             $cacheManager->setDefaultDriver('instance');
 
             return $cacheManager;
@@ -271,8 +320,13 @@ class Bootloader
         $this->app->alias(\Illuminate\Filesystem\Filesystem::class, 'files');
         $this->app->alias(ConsoleKernel::class, ConsoleKernelContract::class);
         $this->app->alias(HttpKernel::class, HttpKernelContract::class);
+
         $this->app->alias(\Illuminate\Cache\CacheManager::class, 'cache');
         $this->app->alias(\Illuminate\Cache\CacheManager::class, \Illuminate\Contracts\Cache\Factory::class);
+
+        $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
+
+        $this->app->alias(\Illuminate\Encryption\Encrypter::class, "encrypter");
     }
 
     private function clearCache(): void
@@ -336,7 +390,6 @@ class Bootloader
         }
 
         Debug::enable();
-
     }
 
     /**

@@ -28,12 +28,12 @@
                     <div id="myProfile">
                         <form action="" method="post">
 
-                            <input type="hidden" name="{{ $_SESSION['formTokenName'] }}" value="{{ $_SESSION['formTokenValue'] }}" />
+                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="firstname" >{{ __('label.firstname') }}</label>
                                     <span>
-                                        <input type="text" class="input" name="firstname" id="firstname" {{ $_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : '' }}
+                                        <input type="text" class="input" name="firstname" id="firstname" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
                                                value="{{ $values['firstname'] }}"/><br/>
                                     </span>
                                 </div>
@@ -41,7 +41,7 @@
                                 <div class="form-group">
                                     <label for="lastname" >{{ __('label.lastname') }}</label>
                                     <span>
-                                        <input type="text" name="lastname" class="input" id="lastname" {{ $_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : '' }}
+                                        <input type="text" name="lastname" class="input" id="lastname" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
                                                value="{{ $values['lastname']  }}"/><br/>
                                     </span>
                                 </div>
@@ -49,7 +49,7 @@
                                 <div class="form-group">
                                     <label for="user" >{{ __('label.email') }}</label>
                                     <span>
-                                        <input type="text" name="user" class="input" id="user" {{ $_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : '' }}
+                                        <input type="text" name="user" class="input" id="user" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
                                                value="{{ $values['user']  }}"/><br/>
                                     </span>
                                 </div>
@@ -57,7 +57,7 @@
                                 <div class="form-group">
                                     <label for="phone" >{{ __('label.phone') }}</label>
                                     <span>
-                                        <input type="text" name="phone" class="input" id="phone" {{ $_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : '' }}
+                                        <input type="text" name="phone" class="input" id="phone" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
                                                value="{{ $values['phone']  }}"/><br/>
                                     </span>
                                 </div>
@@ -76,16 +76,16 @@
                         <h4 class="widgettitle title-light">
                             {!! __('headlines.change_password') !!}
                         </h4>
-                        @if ($_SESSION['userdata']['isLdap'] )
+                        @if (session("userdata.isLdap") );
                             <strong> {{  __("text.account_managed_ldap") }}</strong><br /><br />
                         @endif
                         <form method="post">
-                            <input type="hidden" name="{{ $_SESSION['formTokenName'] }}" value="{{ $_SESSION['formTokenValue'] }}" />
+                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="currentPassword" >{{ __('label.old_password') }}</label>
                                     <span>
-                                        <input type='password' value="" name="currentPassword" class="input" {{ $_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : '' }}
+                                        <input type='password' value="" name="currentPassword" class="input" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
                                                id="currentPassword"/><br/>
                                     </span>
                                 </div>
@@ -93,7 +93,7 @@
                                 <div class="form-group">
                                     <label for="newPassword" >{{ __('label.new_password') }}</label>
                                     <span>
-                                        <input type='password' value="" name="newPassword" class="input" {{ $_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : '' }}
+                                        <input type='password' value="" name="newPassword" class="input" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
                                                id="newPassword"/>
                                         <span id="pwStrength"></span>
 
@@ -103,16 +103,16 @@
                                 <div class="form-group">
                                     <label for="confirmPassword" >{{ __('label.password_repeat') }}</label>
                                     <span>
-                                        <input type="password" value="" name="confirmPassword" class="input" {{ $_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : '' }}
+                                        <input type="password" value="" name="confirmPassword" class="input" {{ session("userdata.isLdap") ? "disabled='disabled'" : '' }}
                                                id="confirmPassword"/><br/>
-                                        @if (!$_SESSION['userdata']['isLdap'] )
+                                        @if (!session("userdata.isLdap") );
                                         <small>{{ __('label.passwordRequirements') }}</small>
                                        @endif
                                     </span>
 
                                 </div>
                             </div>
-                            @if (!$_SESSION['userdata']['isLdap'] )
+                            @if (!session("userdata.isLdap") );
                                 <input type="hidden" name="savepw" value="1" />
                                 <input type="submit" name="save" id="savePw" value="{{ __('buttons.save') }}" class="button"/>
                             @endif
@@ -131,7 +131,7 @@
 
                     <div id="settings">
                         <form action="" method="post">
-                            <input type="hidden" name="{{ $_SESSION['formTokenName'] }}" value="{{ $_SESSION['formTokenValue'] }}" />
+                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="language" >{{ __('label.language') }}</label>
@@ -207,7 +207,7 @@
 
                     <div id="theme">
                         <form action="" method="post">
-                            <input type="hidden" name="{{ $_SESSION['formTokenName'] }}" value="{{ $_SESSION['formTokenValue'] }}" />
+                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="themeSelect" >{{ __('label.theme') }}</label>
@@ -283,7 +283,7 @@
 
                     <div id="notifications">
                         <form action="" method="post">
-                            <input type="hidden" name="{{ $_SESSION['formTokenName'] }}" value="{{ $_SESSION['formTokenValue'] }}" />
+                            <input type="hidden" name="{{ session("formTokenName") }}" value="{{ session("formTokenValue") }}" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="notifications" >{{ __('label.receive_notifications') }}</label>

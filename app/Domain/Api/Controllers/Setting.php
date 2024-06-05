@@ -63,8 +63,8 @@ class Setting extends Controller
 
         $this->settingService->setLogo($_FILES);
 
-        $_SESSION['msg'] = "PICTURE_CHANGED";
-        $_SESSION['msgT'] = "success";
+        session(["msg" => "PICTURE_CHANGED"]);
+        session(["msgT" => "success"]);
 
         return $this->tpl->displayJson(['status' => 'ok']);
     }

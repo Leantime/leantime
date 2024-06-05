@@ -72,7 +72,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
 
                 //Ensure this ticket belongs to the current project
-                if ($_SESSION["currentProject"] != $milestone->projectId) {
+                if (session("currentProject") != $milestone->projectId) {
                     $this->projectService->changeCurrentSessionProject($milestone->projectId);
                     return Frontcontroller::redirect(BASE_URL . "/tickets/editMilestone/" . $milestone->id);
                 }
@@ -94,16 +94,16 @@ namespace Leantime\Domain\Tickets\Controllers {
                 $comments = [];
             }
 
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session("userdata.id"), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
 
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
             $this->tpl->assign('comments', $comments);
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject($_SESSION['currentProject']));
+            $this->tpl->assign('users', $this->projectRepo->getUsersAssignedToProject(session("currentProject")));
             $this->tpl->assign('milestone', $milestone);
             return $this->tpl->displayPartial('tickets.milestoneDialog');
         }
@@ -125,7 +125,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $values = array(
                         'text' => $params['text'],
                         'date' => date("Y-m-d H:i:s"),
-                        'userId' => ($_SESSION['userdata']['id']),
+                        'userId' => (session("userdata.id")),
                         'moduleId' => $params['id'],
                         'father' => ($params['father']),
                     );
@@ -138,7 +138,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                         $subject = $this->language->__("email_notifications.new_comment_milestone_subject");
                         $actual_link = BASE_URL . "/tickets/editMilestone/" . (int)$_GET['id'];
-                        $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), $_SESSION["userdata"]["name"]);
+                        $message = sprintf($this->language->__("email_notifications.new_comment_milestone_message"), session("userdata.name"));
 
 
                         $notification = app()->make(NotificationModel::class);
@@ -148,9 +148,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                         );
                         $notification->entity = $values;
                         $notification->module = "comments";
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $subject;
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
@@ -167,7 +167,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                         $subject = $this->language->__("email_notifications.milestone_update_subject");
                         $actual_link = BASE_URL . "/tickets/editMilestone/" . (int)$_GET['id'];
-                        $message = sprintf($this->language->__("email_notifications.milestone_update_message"), $_SESSION["userdata"]["name"]);
+                        $message = sprintf($this->language->__("email_notifications.milestone_update_message"), session("userdata.name"));
 
                         $notification = app()->make(NotificationModel::class);
                         $notification->url = array(
@@ -176,9 +176,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                         );
                         $notification->entity = $params;
                         $notification->module = "tickets";
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $subject;
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
@@ -199,7 +199,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     $subject = $this->language->__("email_notifications.milestone_created_subject");
                     $actual_link = BASE_URL . "/tickets/editMilestone/" . $result;
-                    $message = sprintf($this->language->__("email_notifications.milestone_created_message"), $_SESSION["userdata"]["name"]);
+                    $message = sprintf($this->language->__("email_notifications.milestone_created_message"), session("userdata.name"));
 
                     $notification = app()->make(NotificationModel::class);
                     $notification->url = array(
@@ -208,9 +208,9 @@ namespace Leantime\Domain\Tickets\Controllers {
                     );
                     $notification->entity = $params;
                     $notification->module = "tickets";
-                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->projectId = session("currentProject");
                     $notification->subject = $subject;
-                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->authorId = session("userdata.id");
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -222,7 +222,7 @@ namespace Leantime\Domain\Tickets\Controllers {
                 }
             }
 
-            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+            $allAssignedprojects = $this->projectService->getProjectsAssignedToUser(session("userdata.id"), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());

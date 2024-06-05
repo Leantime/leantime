@@ -8,7 +8,7 @@ $timelineTasks = $tpl->get("timelineTasks");
 
 echo $tpl->displayNotification();
 
-$roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
+$roadmapView = session("userdata.settings.views.roadmap", "Month");
 ?>
 <?php $tpl->displaySubmodule('tickets-timelineHeader') ?>
 

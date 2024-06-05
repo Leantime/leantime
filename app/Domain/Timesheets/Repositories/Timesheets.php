@@ -722,7 +722,7 @@ class Timesheets extends Repository
             $invEmplCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_empl']);
             $invEmplCall->prepare($query);
             $invEmplCall->bindValue(':id', $row1);
-            $invEmplCall->bindValue(':date', Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
+            $invEmplCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
             $invEmplCall->execute();
 
             unset($invEmplCall);
@@ -737,7 +737,7 @@ class Timesheets extends Repository
             $invCompCall = $this->dbcall(func_get_args(), ['dbcall_key' => 'inv_comp']);
             $invCompCall->prepare($query2);
             $invCompCall->bindValue(':id', $row2);
-            $invCompCall->bindValue(':date', Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
+            $invCompCall->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
             $invCompCall->execute();
 
             unset($invCompCall);
@@ -752,7 +752,7 @@ class Timesheets extends Repository
             $paidCol = $this->dbcall(func_get_args(), ['dbcall_key' => 'paid']);
             $paidCol->prepare($query3);
             $paidCol->bindValue(':id', $row3);
-            $paidCol->bindValue(':date', Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
+            $paidCol->bindValue(':date', Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
             $paidCol->execute();
 
             unset($paidCol);
@@ -777,7 +777,7 @@ class Timesheets extends Repository
         $call->prepare($query);
 
         $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+        $call->bindValue(':sessionId', session("userdata.id"));
         // Unix timestamp is by default UTC.
         $call->bindValue(':time', time());
 
@@ -804,7 +804,7 @@ class Timesheets extends Repository
         $call->prepare($query);
 
         $call->bindValue(':ticketId', $ticketId, PDO::PARAM_INT);
-        $call->bindValue(':sessionId', $_SESSION['userdata']['id'], PDO::PARAM_INT);
+        $call->bindValue(':sessionId', session("userdata.id"), PDO::PARAM_INT);
 
         $result = $call->fetch();
         unset($call);
@@ -827,7 +827,7 @@ class Timesheets extends Repository
         $call->prepare($query);
 
         $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+        $call->bindValue(':sessionId', session("userdata.id"));
 
         $call->execute();
 
@@ -848,7 +848,7 @@ class Timesheets extends Repository
         $call = $this->dbcall(func_get_args(), ['dbcall_key' => 'insert']);
         $call->prepare($query);
         $call->bindValue(':ticketId', $ticketId);
-        $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+        $call->bindValue(':sessionId', session("userdata.id"));
         $call->bindValue(':hoursWorked', $hoursWorked);
         $call->bindValue(':workDate', $userStartOfDay->formatDateTimeForDb());
 
@@ -866,7 +866,7 @@ class Timesheets extends Repository
      */
     public function isClocked(int $id): false|array
     {
-        if (!isset($_SESSION['userdata'])) {
+        if (!session()->exists("userdata")) {
             return false;
         }
 
@@ -885,7 +885,7 @@ class Timesheets extends Repository
 
         $call = $this->dbcall(func_get_args());
         $call->prepare($query);
-        $call->bindValue(':sessionId', $_SESSION['userdata']['id']);
+        $call->bindValue(':sessionId', session("userdata.id"));
 
         $results = $call->fetchAll();
 
@@ -895,7 +895,7 @@ class Timesheets extends Repository
             $onTheClock["since"] = $results[0]["punchIn"];
             $onTheClock["headline"] = $results[0]["headline"];
             $start_date = new Carbon($results[0]["punchIn"], 'UTC');
-            $since_start = $start_date->diff(Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'));
+            $since_start = $start_date->diff(Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'));
 
             $r = $since_start->format('%H:%I');
 

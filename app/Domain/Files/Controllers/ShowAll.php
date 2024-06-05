@@ -44,7 +44,7 @@ class ShowAll extends Controller
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
-                $this->filesRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
+                $this->filesRepo->upload($_FILES, 'project', session("currentProject"));
                 $this->tpl->setNotification('notifications.file_upload_success', 'success', "file_uploaded");
             } else {
                 $this->tpl->setNotification('notifications.file_upload_error', 'error');
@@ -63,9 +63,9 @@ class ShowAll extends Controller
         }
 
         $this->tpl->assign('currentModule', $currentModule);
-        $this->tpl->assign('modules', $this->filesRepo->getModules($_SESSION['userdata']['id']));
+        $this->tpl->assign('modules', $this->filesRepo->getModules(session("userdata.id")));
         $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
-        $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", $_SESSION['currentProject'], $_SESSION['userdata']['id']));
+        $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", session("currentProject"), session("userdata.id")));
         return $this->tpl->displayPartial('files.showAll');
     }
 }

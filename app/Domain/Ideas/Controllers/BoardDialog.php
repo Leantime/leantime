@@ -46,7 +46,7 @@ namespace Leantime\Domain\Ideas\Controllers {
         public function run()
         {
 
-            $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+            $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
             $currentCanvasId = '';
 
             $canvasTitle = "";
@@ -55,7 +55,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                 $currentCanvasId = (int)$_GET['id'];
                 $singleCanvas = $this->canvasRepo->getSingleCanvas($currentCanvasId);
                 $canvasTitle = $singleCanvas[0]["title"] ?? "";
-                $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
             }
 
             // Add Canvas
@@ -63,22 +63,22 @@ namespace Leantime\Domain\Ideas\Controllers {
                 if (isset($_POST['canvastitle']) && !empty($_POST['canvastitle'])) {
                         $values = [
                             'title' => $_POST['canvastitle'],
-                            'author' => $_SESSION['userdata']['id'],
-                            'projectId' => $_SESSION['currentProject'],
+                            'author' => session("userdata.id"),
+                            'projectId' => session("currentProject"),
                         ];
                         $currentCanvasId = $this->canvasRepo->addCanvas($values);
-                        $allCanvas = $this->canvasRepo->getAllCanvas($_SESSION['currentProject']);
+                        $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
 
                         $mailer = app()->make(MailerCore::class);
                         $this->projectService = app()->make(ProjectService::class);
-                        $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
+                        $users = $this->projectService->getUsersToNotify(session("currentProject"));
 
                         $mailer->setSubject($this->language->__('notification.board_created'));
 
                         $actual_link = CURRENT_URL;
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_created_message'),
-                            $_SESSION['userdata']['name'],
+                            session("userdata.name"),
                             "<a href='" . $actual_link . "'>" . $values['title'] . '</a>'
                         );
                         $mailer->setHtml($message);
@@ -89,12 +89,12 @@ namespace Leantime\Domain\Ideas\Controllers {
                             $users,
                             $message,
                             $this->language->__('notification.board_created'),
-                            $_SESSION['currentProject']
+                            session("currentProject")
                         );
 
                         $this->tpl->setNotification($this->language->__('notification.board_created'), 'success', static::CANVAS_NAME . "board_created");
 
-                        $_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'] = $currentCanvasId;
+                        session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
                         return Frontcontroller::redirect(BASE_URL . '/ideas/boardDialog/'.$currentCanvasId);
 
                 } else {
@@ -120,7 +120,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->tpl->assign('currentCanvas', $currentCanvasId);
             $this->tpl->assign('canvasname', "idea");
 
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION['currentProject']));
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
 
             if (!isset($_GET['raw'])) {
                 return $this->tpl->displayPartial('ideas.boardDialog');

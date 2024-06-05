@@ -29,8 +29,8 @@ namespace Leantime\Domain\Ideas\Controllers {
             $this->ideaRepo = $ideaRepo;
             $this->projectService = $projectService;
 
-            $_SESSION['lastPage'] = CURRENT_URL;
-            $_SESSION['lastIdeaView'] = "kanban";
+            session(["lastPage" => CURRENT_URL]);
+            session(["lastIdeaView" => "kanban"]);
         }
 
         /**
@@ -41,54 +41,54 @@ namespace Leantime\Domain\Ideas\Controllers {
         public function run()
         {
 
-            $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
+            $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
 
-            if (isset($_SESSION['currentIdeaCanvas'])) {
-                $currentCanvasId = $_SESSION['currentIdeaCanvas'];
+            if (session()->exists("currentIdeaCanvas")) {
+                $currentCanvasId = session("currentIdeaCanvas");
             } else {
                 $currentCanvasId = -1;
-                $_SESSION['currentIdeaCanvas'] = "";
+                session(["currentIdeaCanvas" => ""]);
             }
 
-            if (count($allCanvas) > 0 && $_SESSION['currentIdeaCanvas'] == '') {
+            if (count($allCanvas) > 0 && session("currentIdeaCanvas") == '') {
                 $currentCanvasId = $allCanvas[0]['id'];
-                $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
+                session(["currentIdeaCanvas" => $currentCanvasId]);
             }
 
             if (isset($_GET["id"]) === true) {
                 $currentCanvasId = (int)$_GET["id"];
-                $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
+                session(["currentIdeaCanvas" => $currentCanvasId]);
             }
 
             if (isset($_POST["searchCanvas"]) === true) {
                 $currentCanvasId = (int)$_POST["searchCanvas"];
-                $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
+                session(["currentIdeaCanvas" => $currentCanvasId]);
             }
 
             //Add Canvas
             if (isset($_POST["newCanvas"]) === true) {
                 if (isset($_POST['canvastitle']) === true) {
-                    $values = array("title" => $_POST['canvastitle'], "author" => $_SESSION['userdata']["id"], "projectId" => $_SESSION["currentProject"]);
+                    $values = array("title" => $_POST['canvastitle'], "author" => session("userdata.id"), "projectId" => session("currentProject"));
                     $currentCanvasId = $this->ideaRepo->addCanvas($values);
-                    $allCanvas = $this->ideaRepo->getAllCanvas($_SESSION['currentProject']);
+                    $allCanvas = $this->ideaRepo->getAllCanvas(session("currentProject"));
 
                     $this->tpl->setNotification($this->language->__('notification.idea_board_created'), 'success', "ideaboard_created");
 
                     $mailer = app()->make(MailerCore::class);
                     $mailer->setContext('idea_board_created');
-                    $users = $this->projectService->getUsersToNotify($_SESSION['currentProject']);
+                    $users = $this->projectService->getUsersToNotify(session("currentProject"));
 
                     $mailer->setSubject($this->language->__('email_notifications.idea_board_created_subject'));
-                    $message = sprintf($this->language->__('email_notifications.idea_board_created_message'), $_SESSION["userdata"]["name"], "<a href='" . CURRENT_URL . "'>" . $values['title'] . "</a>.<br />");
+                    $message = sprintf($this->language->__('email_notifications.idea_board_created_message'), session("userdata.name"), "<a href='" . CURRENT_URL . "'>" . $values['title'] . "</a>.<br />");
 
                     $mailer->setHtml($message);
-                    //$mailer->sendMail($users, $_SESSION["userdata"]["name"]);
+                    //$mailer->sendMail($users, session("userdata.name"));
 
                     // NEW Queuing messaging system
                     $queue = app()->make(QueueRepository::class);
-                    $queue->queueMessageToUsers($users, $message, $this->language->__('email_notifications.idea_board_created_subject'), $_SESSION["currentProject"]);
+                    $queue->queueMessageToUsers($users, $message, $this->language->__('email_notifications.idea_board_created_subject'), session("currentProject"));
 
-                    $_SESSION['currentIdeaCanvas'] = $currentCanvasId;
+                    session(["currentIdeaCanvas" => $currentCanvasId]);
                     return Frontcontroller::redirect(BASE_URL . "/ideas/advancedBoards/");
                 } else {
                     $this->tpl->setNotification($this->language->__('notification.please_enter_title'), 'error');
@@ -110,7 +110,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
             $this->tpl->assign('currentCanvas', $currentCanvasId);
 
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
             $this->tpl->assign('allCanvas', $allCanvas);
             $this->tpl->assign('canvasItems', $this->ideaRepo->getCanvasItemsById($currentCanvasId));
             $this->tpl->assign('canvasLabels', $this->ideaRepo->getCanvasLabels());

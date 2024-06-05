@@ -124,16 +124,16 @@ class ConsoleKernel implements ConsoleKernelContract
 
         $customCommands = $customPluginCommands = null;
 
-        $_SESSION['commands']['core'] ??= collect(glob(APP_ROOT . '/app/Command/*.php') ?? [])
+        session(["commands.core" => collect(glob(APP_ROOT . '/app/Command/*.php') ?? [])
             ->filter(function ($command) use (&$customCommands) {
                 return ! Arr::has(
                     $customCommands ??= collect(glob(APP_ROOT . '/custom/Command/*.php') ?? []),
                     str_replace(APP_ROOT . '/app', APP_ROOT . '/custom', $command)
                 );
             })
-            ->concat($customCommands ?? []);
+            ->concat($customCommands ?? [])]);
 
-        $_SESSION['commands']['plugins'] ??= collect(glob(APP_ROOT . '/app/Plugins/*/Command/*.php') ?? [])
+        session(["commands.plugins" => collect(glob(APP_ROOT . '/app/Plugins/*/Command/*.php') ?? [])
             ->filter(function ($command) use (&$customPluginCommands) {
                 return ! in_array(
                     str_replace(APP_ROOT . '/app', APP_ROOT . '/custom', $command),
@@ -145,9 +145,9 @@ class ConsoleKernel implements ConsoleKernelContract
             ->filter(fn ($command) => in_array(
                 Str::of($command)->after('Plugins/')->before('/Command')->toString(),
                 array_map(fn ($plugin) => $plugin->foldername, $this->getApplication()->make(PluginsService::class)->getAllPlugins(enabledOnly: true)),
-            ));
+            ))]);
 
-        $commands = collect(Arr::flatten($_SESSION['commands']))
+        $commands = collect(Arr::flatten(session("commands")))
             ->map(fn ($path) => $this->getApplication()->getNamespace() . Str::of($path)->remove([APP_ROOT . '/app/', APP_ROOT . '/custom/'])->replace(['/', '.php'], ['\\', ''])->toString());
 
         /**

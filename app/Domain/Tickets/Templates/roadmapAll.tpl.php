@@ -18,7 +18,7 @@ foreach ($clients as $client) {
     $htmlDropdownClients .= "<li><a href='$href' $labelActive> {$client['name']} </a></li>";
 }
 
-$roadmapView = $_SESSION['userdata']['settings']['views']['roadmap'] ?? "Month";
+$roadmapView = session("userdata.settings.views.roadmap", "Month");
 ?>
 <?php $tpl->displaySubmodule('tickets-portfolioHeader') ?>
 

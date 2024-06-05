@@ -14,7 +14,7 @@ $projects = $tpl->get('relations');
 <?php echo $tpl->displayNotification() ?>
 
 <form action="<?=BASE_URL?>/api/apiKey/<?=(int)$_GET['id'] ?>" method="post" class="stdform formModal" >
-        <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+        <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
         <input type="hidden" name="save" value="1" />
 
         <div class="row" >

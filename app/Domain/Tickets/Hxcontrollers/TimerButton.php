@@ -40,7 +40,7 @@ class TimerButton extends HtmxController
 
         $params =  $this->incomingRequest->query->all();
 
-        $onTheClock = isset($_SESSION['userdata']) ? $this->timesheetService->isClocked($_SESSION["userdata"]["id"]) : false;
+        $onTheClock = session()->exists("userdata") ? $this->timesheetService->isClocked(session("userdata.id")) : false;
         $this->tpl->assign("onTheClock", $onTheClock);
         $this->tpl->assign("parentTicketId", $params['request_parts'] ?? false);
     }

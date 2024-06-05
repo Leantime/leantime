@@ -9,6 +9,7 @@ use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Leantime\Config\Config;
+use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -42,6 +43,11 @@ class Environment implements ArrayAccess, ConfigContract
     public array $config = [];
 
     /**
+     * @var bool $configCached
+     */
+    public bool $configCached = false;
+
+    /**
      * @var array list of legacy mappings
      * @todo remove this after deprecating configuration.php
      */
@@ -49,7 +55,6 @@ class Environment implements ArrayAccess, ConfigContract
         'printLogoUrl' => 'LEAN_PRINT_LOGO_URL',
         'primarycolor' => 'LEAN_PRIMARY_COLOR',
         'secondarycolor' => 'LEAN_SECONDARY_COLOR',
-        'sessionpassword' => 'LEAN_SESSION_PASSWORD',
         'email' => 'LEAN_EMAIL_RETURN',
         'useSMTP' => 'LEAN_EMAIL_USE_SMTP',
         'smtpHosts' => 'LEAN_EMAIL_SMTP_HOSTS',
@@ -82,13 +87,6 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function __construct(DefaultConfig $defaultConfiguration)
     {
-        if (
-            isset($_SESSION)
-            && (! empty($_SESSION['mainconfig']) && ! $_SESSION['mainconfig']['debug'])
-        ) {
-            $this->config = $_SESSION['mainconfig'];
-            return $this;
-        }
 
         /* PHP */
         $this->phpConfig = null;
@@ -125,11 +123,14 @@ class Environment implements ArrayAccess, ConfigContract
             );
         }
 
+        //Cache is not available until after install.
         Events::add_event_listener(
-            'leantime.core.bootloader.boot.session_initialized',
+            'leantime.core.middleware.installed.handle.after_install',
             function () {
-                $_SESSION['mainconfig'] = $this->config;
-            }
+                Cache::set("mainconfig", $this->config);
+                $this->configCached = true;
+            },
+            20
         );
     }
 
@@ -242,7 +243,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function has($key): bool
     {
-        return Arr::has($_SESSION['mainconfig'] ?? [], $key) || Arr::has($this->config, $key);
+        return Arr::has([], $key) || Arr::has($this->config, $key);
     }
 
     /**
@@ -258,7 +259,7 @@ class Environment implements ArrayAccess, ConfigContract
             return $this->getMany($key);
         }
 
-        return Arr::get($_SESSION['mainconfig'] ?? [], $key, Arr::get(
+        return Arr::get([], $key, Arr::get(
             $this->config,
             $key,
             $default
@@ -300,10 +301,10 @@ class Environment implements ArrayAccess, ConfigContract
         foreach ($keys as $key => $value) {
             Arr::set($this->config, $key, $value);
 
-            # this basically checks to see if the session is initialized
-            if (isset($_SESSION['mainconfig'])) {
-                Arr::set($_SESSION['mainconfig'], $key, $value);
+            if($this->configCached === true && Cache::has("mainconfig")){
+                Cache::set("mainconfig.".$key, $value);
             }
+
         }
     }
 

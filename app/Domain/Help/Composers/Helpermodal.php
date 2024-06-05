@@ -48,14 +48,16 @@ class Helpermodal extends Composer
         if (
             $completedOnboarding == "1"
             && $currentModal !== 'notfound'
-            && (isset($_SESSION['userdata']['settings']["modals"][$currentModal]) === false || $_SESSION['userdata']['settings']["modals"][$currentModal] == 0)
+            && (
+                session()->exists("userdata.settings.modals.".$currentModal) === false
+                || session("userdata.settings.modals.".$currentModal) == 0)
         ) {
-            if (!isset($_SESSION['userdata']['settings']["modals"])) {
-                $_SESSION['userdata']['settings']["modals"] = array();
+            if (!session()->exists("userdata.settings.modals")) {
+                session(["userdata.settings.modals" => [] ]);
             }
 
-            if (!isset($_SESSION['userdata']['settings']["modals"][$currentModal])) {
-                $_SESSION['userdata']['settings']["modals"][$currentModal] = 1;
+            if (!session()->exists("userdata.settings.modals.".$currentModal)) {
+                session(["userdata.settings.modals".$currentModal => 1]);
                 $showHelperModal = true;
             }
         }
