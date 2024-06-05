@@ -225,6 +225,7 @@
       <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/stripe/stripe-php" />
       <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/illuminate/encryption" />
+      <path value="$PROJECT_DIR$/vendor/illuminate/redis" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

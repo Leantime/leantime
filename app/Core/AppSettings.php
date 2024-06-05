@@ -40,24 +40,6 @@ class AppSettings
             ini_set('display_errors', 0);
         }
 
-        /*
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            if (filter_var($config->useRedis, FILTER_VALIDATE_BOOL) && (!defined("LEAN_CLI") || !LEAN_CLI)) {
-                ini_set('session.save_handler', 'redis');
-                ini_set('session.save_path', $config->redisUrl);
-            }
-
-            //ini_set('session.use_cookies', 1);
-            ini_set('session.use_only_cookies', 1);
-            ini_set('session.cookie_httponly', 1);
-            ini_set('session.use_trans_sid', 0);
-
-        }
-
-        ini_set('session.cache_limiter', '');
-
-        }*/
-
         ini_set("log_errors", 1);
 
         if ($config->logPath != '' && $config->logPath != 'null') {

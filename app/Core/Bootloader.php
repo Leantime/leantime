@@ -9,6 +9,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as IlluminateContainerContract;
 use Illuminate\Contracts\Encryption\Encrypter;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
+use Illuminate\Redis\RedisManager;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
@@ -211,9 +212,7 @@ class Bootloader
         $this->app->singleton(OidcService::class, OidcService::class);
         $this->app->singleton(ModulemanagerService::class, ModulemanagerService::class);
         $this->app->singleton(\Illuminate\Filesystem\Filesystem::class, fn () => new \Illuminate\Filesystem\Filesystem());
-
         $this->app->singleton(\Illuminate\Encryption\Encrypter::class, function ($app) {
-
             $configKey = app()->make(Environment::class)->sessionPassword;
 
             if (strlen($configKey) > 32) {
@@ -234,7 +233,8 @@ class Bootloader
 
             $app['config']['session'] = array(
                 'driver' => "file",
-                'lifetime' => app()->make(Environment::class)->sessionExpiration,
+                'connection' => 'default',
+                'lifetime' =>  $app['config']->sessionExpiration,
                 'expire_on_close' => false,
                 'encrypt' => true,
                 'files' => APP_ROOT . '/cache/sessions',
@@ -249,7 +249,6 @@ class Bootloader
             );
 
             $sessionManager = new \Illuminate\Session\SessionManager($app);
-            $sessionManager->setDefaultDriver("file");
 
             return $sessionManager;
         });
@@ -268,6 +267,7 @@ class Bootloader
             //installation cache is per server
             $app['config']['cache.stores.installation'] = [
                 'driver' => 'file',
+                'connection' => 'default',
                 'path' => APP_ROOT . '/cache/installation',
             ];
 
@@ -275,6 +275,7 @@ class Bootloader
             $instanceStore = fn () =>
                 $app['config']['cache.stores.instance'] = [
                     'driver' => 'file',
+                    'connection' => 'default',
                     'path' => APP_ROOT . "/cache/" . $app->make(SettingsService::class)->getCompanyId(),
                 ];
 
@@ -327,7 +328,9 @@ class Bootloader
         $this->app->alias(\Illuminate\Session\SessionManager::class, 'session');
 
         $this->app->alias(\Illuminate\Encryption\Encrypter::class, "encrypter");
+
     }
+
 
     private function clearCache(): void
     {
