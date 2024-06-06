@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\IncomingRequest;
@@ -63,15 +64,38 @@ class StartSession
 
         self::dispatch_event('session_initialized');
 
-        /* Handle blocking sessions
-        if (
-            $this->manager->shouldBlock() ||
-            ($request->route() instanceof Route && $request->route()->locksFor())
-        ) {
-            return $this->handleRequestWhileBlocking($request, $session, $next);
+        //Enable session locking by default
+        //We have too many async requests with session write requests creating all sorts of odd behavior
+        //if session locking is not enabled
+        return $this->handleRequestWhileBlocking($request, $session, $next);
+    }
+
+    /**
+     * Handle the given request within session state.
+     *
+     * @param  IncomingRequest  $request
+     * @param  \Illuminate\Contracts\Session\Session  $session
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next) {
+
+
+        $lockFor = $this->manager->defaultRouteBlockLockSeconds();
+
+        $lock = Cache::store($this->manager->blockDriver())
+            ->lock('session:'.$session->getId(), $lockFor)
+            ->betweenBlockedAttemptsSleepFor(50);
+
+        try {
+            $lock->block(
+                $this->manager->defaultRouteBlockWaitSeconds()
+            );
+
+            return $this->handleStatefulRequest($request, $session, $next);
+        } finally {
+            $lock?->release();
         }
-*/
-        return $this->handleStatefulRequest($request, $session, $next);
     }
 
 
