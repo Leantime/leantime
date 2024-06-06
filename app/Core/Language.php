@@ -3,6 +3,7 @@
 namespace Leantime\Core;
 
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -167,14 +168,14 @@ class Language
      */
     public function readIni(): array
     {
-        if (session()->exists('cache.language_resources_' . $this->language) && $this->config->debug == 0) {
-            $this->ini_array = session(['cache.language_resources_' . $this->language => self::dispatch_filter(
+        if (Cache::store('installation')->has('cache.language_resources_' . $this->language) && $this->config->debug == 0) {
+            $this->ini_array =  Cache::store('installation')->set('cache.language_resources_' . $this->language,  self::dispatch_filter(
                 'language_resources',
-                session('cache.language_resources_' . $this->language),
+                Cache::store('installation')->get('cache.language_resources_' . $this->language),
                 [
                     'language' => $this->language,
                 ]
-            )]);
+            ));
             return $this->ini_array;
         }
 
@@ -206,7 +207,7 @@ class Language
             ]
         );
 
-        session(['cache.language_resources_' . $this->language => $this->ini_array]);
+        Cache::store("installation")->set('cache.language_resources_' . $this->language, $this->ini_array);
 
         return $this->ini_array;
     }
@@ -254,8 +255,8 @@ class Language
      */
     public function getLanguageList(): bool|array
     {
-        if (session()->exists("cache.langlist")) {
-            return session("cache.langlist");
+        if (Cache::store('installation')->has("cache.langlist")) {
+            return Cache::store('installation')->get("cache.langlist");
         }
 
         $langlist = false;
@@ -276,9 +277,9 @@ class Language
         }
 
         $parsedLangList = self::dispatch_filter('languages', $langlist);
-        session(["cache.langlist" => $parsedLangList]);
+        Cache::store('installation')->set("cache.langlist", $parsedLangList);
 
-        return session("cache.langlist");
+        return $parsedLangList;
     }
 
     /**
