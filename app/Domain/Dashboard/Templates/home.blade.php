@@ -44,7 +44,7 @@ jQuery(document).ready(function() {
         leantime.helperController.firstLoginModal();
     @endif
 
-    @php(session(["userdata.settings.modals.homeDashboardTour" => 1]));
+    @php(session(["usersettings.modals.homeDashboardTour" => 1]));
 
 });
 </script>

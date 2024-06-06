@@ -66,7 +66,7 @@ class ProjectSelector extends HtmxController
             "client" => (int)$_POST['client'] ?? null,
         );
 
-        session(["userdata.projectSelectFilter"=> $projectSelectFilter]);
+        session(["usersettings.projectSelectFilter"=> $projectSelectFilter]);
 
         if (session()->exists("userdata")) {
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)

@@ -9,7 +9,6 @@ use Illuminate\Contracts\Config\Repository as ConfigContract;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Leantime\Config\Config;
-use Illuminate\Support\Facades\Cache;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -41,11 +40,6 @@ class Environment implements ArrayAccess, ConfigContract
      * @var array The Config
      */
     public array $config = [];
-
-    /**
-     * @var bool $configCached
-     */
-    public bool $configCached = false;
 
     /**
      * @var array list of legacy mappings
@@ -88,6 +82,7 @@ class Environment implements ArrayAccess, ConfigContract
     public function __construct(DefaultConfig $defaultConfiguration)
     {
 
+
         /* PHP */
         $this->phpConfig = null;
         if (file_exists($phpConfigFile = APP_ROOT . "/config/configuration.php")) {
@@ -123,17 +118,21 @@ class Environment implements ArrayAccess, ConfigContract
             );
         }
 
+        $end = microtime(true);
+
         //Cache is not available until after install.
         Events::add_event_listener(
             'leantime.core.middleware.installed.handle.after_install',
             function () {
-                Cache::set("mainconfig", $this->config);
-                $this->configCached = true;
+                //
             },
             20
         );
     }
 
+    public function updateCache() {
+        file_put_contents(APP_ROOT . "/cache/configCache", serialize($this->config));
+    }
     /**
      * getBool - get a boolean value from the environment
      *
@@ -243,7 +242,7 @@ class Environment implements ArrayAccess, ConfigContract
      */
     public function has($key): bool
     {
-        return Cache::has($key) || Arr::has($this->config, $key);
+        return Arr::has($this->config, $key);
     }
 
     /**
@@ -259,11 +258,11 @@ class Environment implements ArrayAccess, ConfigContract
             return $this->getMany($key);
         }
 
-        return Arr::get([], $key, Arr::get(
+        return Arr::get(
             $this->config,
             $key,
             $default
-        ));
+        );
     }
 
     /**
@@ -300,12 +299,8 @@ class Environment implements ArrayAccess, ConfigContract
 
         foreach ($keys as $key => $value) {
             Arr::set($this->config, $key, $value);
-
-            if($this->configCached === true && Cache::has("mainconfig")){
-                Cache::set("mainconfig.".$key, $value);
-            }
-
         }
+
     }
 
     /**

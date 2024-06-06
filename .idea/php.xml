@@ -178,13 +178,9 @@
       <path value="$PROJECT_DIR$/vendor/zebra-north/phpcs-short-types" />
       <path value="$PROJECT_DIR$/vendor/squizlabs/php_codesniffer" />
       <path value="$PROJECT_DIR$/vendor/codeception/codeception" />
-      <path value="$PROJECT_DIR$/vendor/spatie/ignition" />
       <path value="$PROJECT_DIR$/vendor/codeception/lib-web" />
-      <path value="$PROJECT_DIR$/vendor/spatie/flare-client-php" />
       <path value="$PROJECT_DIR$/vendor/codeception/lib-asserts" />
-      <path value="$PROJECT_DIR$/vendor/spatie/laravel-ignition" />
       <path value="$PROJECT_DIR$/vendor/codeception/module-db" />
-      <path value="$PROJECT_DIR$/vendor/spatie/backtrace" />
       <path value="$PROJECT_DIR$/vendor/codeception/module-asserts" />
       <path value="$PROJECT_DIR$/vendor/codeception/module-webdriver" />
       <path value="$PROJECT_DIR$/vendor/codeception/module-phpbrowser" />
@@ -213,7 +209,6 @@
       <path value="$PROJECT_DIR$/vendor/phpcsstandards/phpcsextra" />
       <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/vendor/psy/psysh" />
-      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
       <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
@@ -226,6 +221,7 @@
       <path value="$PROJECT_DIR$/app/Plugins/Billing/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor/illuminate/encryption" />
       <path value="$PROJECT_DIR$/vendor/illuminate/redis" />
+      <path value="$PROJECT_DIR$/vendor/laravel/prompts" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

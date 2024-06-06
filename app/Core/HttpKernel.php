@@ -21,6 +21,12 @@ class HttpKernel implements HttpKernelContract
      */
     protected $requestStartedAt = null;
 
+    protected Application $app;
+
+    public function __construct(Application $app) {
+        $this->app = $app;
+    }
+
     /**
      * Bootstrap the application if it has not been previously bootstrapped.
      *
@@ -28,11 +34,11 @@ class HttpKernel implements HttpKernelContract
      */
     public function bootstrap()
     {
-        if ($this->getApplication()->hasBeenBootstrapped()) {
+        if ($this->app->hasBeenBootstrapped()) {
             return;
         }
 
-        $this->getApplication()->boot();
+        $this->app->boot();
     }
 
     /**
@@ -50,18 +56,20 @@ class HttpKernel implements HttpKernelContract
 
         try {
 
-            $response = (new Pipeline($this->getApplication()))
+            //Main Pipeline
+            $response = (new Pipeline($this->app))
                 ->send($request)
                 ->through($this->getMiddleware())
                 ->then(fn ($request) =>
-                (new Pipeline($this->getApplication()))
-                    ->send($request)
-                    ->through(self::dispatch_filter(
-                        hook: 'plugins_middleware',
-                        payload: [],
-                        function: 'handle',
-                    ))
-                    ->then(fn () => Frontcontroller::dispatch())
+                    //Then run through plugin pipeline
+                    (new Pipeline($this->app))
+                        ->send($request)
+                        ->through(self::dispatch_filter(
+                            hook: 'plugins_middleware',
+                            payload: [],
+                            function: 'handle',
+                        ))
+                    ->then(fn () => Frontcontroller::dispatch_request($request))
                 );
 
             return self::dispatch_filter('beforeSendResponse', $response);
@@ -102,8 +110,8 @@ class HttpKernel implements HttpKernelContract
     public function terminate($request, $response)
     {
 
-        if (method_exists($this->getApplication(), 'terminate')) {
-            $this->getApplication()->terminate();
+        if (method_exists($this->app, 'terminate')) {
+            $this->app->terminate();
         }
 
         if (is_null($this->requestStartedAt)) {
@@ -136,7 +144,7 @@ class HttpKernel implements HttpKernelContract
      */
     public function getApplication(): \Leantime\Core\Application
     {
-        return app();
+        return $this->app;
     }
 
     /**
@@ -152,7 +160,7 @@ class HttpKernel implements HttpKernelContract
             Middleware\Installed::class,
             Middleware\Updated::class,
             Middleware\RequestRateLimiter::class,
-            app()->make(IncomingRequest::class) instanceof ApiRequest
+            $this->app->make(IncomingRequest::class) instanceof ApiRequest
                 ? Middleware\ApiAuth::class
                 : Middleware\Auth::class,
             Middleware\Localization::class,

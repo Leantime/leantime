@@ -582,7 +582,7 @@
             leantime.helperController.firstLoginModal();
         @endif
 
-        @php(session(["userdata.settings.modals.projectDashboardTour" => 1]));
+        @php(session(["usersettings.modals.projectDashboardTour" => 1]));
     });
 
     @dispatchEvent('scripts.beforeClose')

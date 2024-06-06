@@ -7,14 +7,14 @@
     @foreach($projects as $project)
 
         @php
-            $parentState = session("submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['clientId'], 'closed');
+            $parentState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['clientId'], 'closed');
         @endphp
 
         @if(
-           !session()->exists("userdata.projectSelectFilter.client")
-            || session("userdata.projectSelectFilter.client") == $project["clientId"]
-            || session("userdata.projectSelectFilter.client") == 0
-            || session("userdata.projectSelectFilter.client") == ""
+           !session()->exists("usersettings.projectSelectFilter.client")
+            || session("usersettings.projectSelectFilter.client") == $project["clientId"]
+            || session("usersettings.projectSelectFilter.client") == 0
+            || session("usersettings.projectSelectFilter.client") == ""
            )
 
             @if ($lastClient != $project['clientName'])

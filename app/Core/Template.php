@@ -699,8 +699,8 @@ class Template
      */
     public function getToggleState(string $name): string
     {
-        if (session()->exists("submenuToggle".$name)) {
-            return session("submenuToggle".$name);
+        if (session()->exists("usersettings.submenuToggle.".$name)) {
+            return session("usersettings.submenuToggle.".$name);
         }
 
         return false;

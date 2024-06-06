@@ -57,7 +57,7 @@ class Menu extends Composer
         $projectType = '';
         $menuType = 'default';
 
-        $projectSelectFilter = session("userdata.projectSelectFilter") ?? array(
+        $projectSelectFilter = session("usersettings.projectSelectFilter") ?? array(
             "groupBy" => "structure",
             "client" => null,
         );

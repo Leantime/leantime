@@ -2,10 +2,10 @@
     @foreach($projects as $project)
 
         @if(
-           !session()->exists("userdata.projectSelectFilter.client")
-            || session("userdata.projectSelectFilter.client") == $project["clientId"]
-            || session("userdata.projectSelectFilter.client") == 0
-            || session("userdata.projectSelectFilter.client") == ""
+           !session()->exists("usersettings.projectSelectFilter.client")
+            || session("usersettings.projectSelectFilter.client") == $project["clientId"]
+            || session("usersettings.projectSelectFilter.client") == 0
+            || session("usersettings.projectSelectFilter.client") == ""
            )
 
             <li class="projectLineItem hasSubtitle {{ session("currentProject") ?? 0  == $project['id'] ? "active" : '' }}" >

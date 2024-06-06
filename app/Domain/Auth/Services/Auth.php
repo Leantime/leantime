@@ -331,9 +331,9 @@ class Auth
 
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
 
-        $this->session->put('userdata', $currentUser);
+        session(['userdata' => $currentUser]);
 
-        $this->updateUserSessionDB($currentUser['id'], $this->session->getId());
+        $this->updateUserSessionDB($currentUser['id'], session()->getId());
 
         //Clear user theme cache on login
         Theme::clearCache();
@@ -361,7 +361,7 @@ class Auth
     public function loggedIn(): bool
     {
         // Check if we actually have a php session available
-        if ($this->session->exists("userdata")) {
+        if (session()->exists("userdata")) {
             return true;
             // If the session doesn't have any session data we are out of sync. Start again
         } else {
@@ -390,7 +390,7 @@ class Auth
      */
     public function getSessionId(): ?string
     {
-        return $this->session->getSid();
+        return session()->getSid();
     }
 
     /**

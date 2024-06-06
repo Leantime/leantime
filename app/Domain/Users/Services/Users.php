@@ -162,9 +162,9 @@ namespace Leantime\Domain\Users\Services {
             $filteredInput = htmlspecialchars($setting);
             $filteredValue = htmlspecialchars($value);
 
-            session(["userdata.settings.".$category.".".$filteredInput => $filteredValue]);
+            session(["usersettings.".$category.".".$filteredInput => $filteredValue]);
 
-            $serializeSettings = serialize(session("userdata.settings"));
+            $serializeSettings = serialize(session("usersettings"));
 
             return $this->userRepo->patchUser(session("userdata.id"), array("settings" => $serializeSettings));
         }
