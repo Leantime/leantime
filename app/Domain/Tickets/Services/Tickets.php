@@ -780,6 +780,48 @@ namespace Leantime\Domain\Tickets\Services {
             return $tickets;
         }
 
+        /**
+         * @param $userId
+         * @param $projectId
+         * @return array
+         */
+        public function getOpenUserTicketsByPriority($userId, $projectId): array
+        {
+
+            $searchCriteria = $this->prepareTicketSearchArray(array("users" => $userId, "status" => "", "sprint" => ""));
+            $allTickets = $this->ticketRepository->getAllBySearchCriteria($searchCriteria, "priority");
+
+            $statusLabels = $this->getAllStatusLabelsByUserId($userId);
+
+            $tickets = array();
+
+            foreach ($allTickets as $row) {
+                //Only include todos that are not done
+                if (
+                    isset($statusLabels[$row['projectId']]) &&
+                    isset($statusLabels[$row['projectId']][$row['status']]) &&
+                    $statusLabels[$row['projectId']][$row['status']]['statusType'] != "DONE"
+                ) {
+                    $label = $this->ticketRepository->priority[$row['priority']];
+                    if (isset($tickets[$row['priority']])) {
+                        $tickets[$row['priority']]['tickets'][] = $row;
+                    } else {
+                        // If the priority is not set, the label for priority not defined is used.
+                        if (empty($this->ticketRepository->priority[$row['priority']])) {
+                            $label =$this->language->__("label.priority_not_defined");
+                        }
+                        $tickets[$row['priority']] = array(
+                            "labelName" =>$label,
+                            "tickets" => array($row),
+                            "groupValue" => $row['time'],
+                        );
+                    }
+                }
+            }
+
+            return $tickets;
+        }
+
 
         /**
          * @param $userId
@@ -1941,6 +1983,8 @@ namespace Leantime\Domain\Tickets\Services {
                 $tickets = $this->getOpenUserTicketsThisWeekAndLater($_SESSION["userdata"]["id"], $projectFilter);
             } elseif ($groupBy == "project") {
                 $tickets = $this->getOpenUserTicketsByProject($_SESSION["userdata"]["id"], $projectFilter);
+            } elseif ($groupBy == "priority") {
+                $tickets = $this->getOpenUserTicketsByPriority($_SESSION["userdata"]["id"], $projectFilter);
             } elseif ($groupBy == "sprint") {
                 $tickets = $this->getOpenUserTicketsBySprint($_SESSION["userdata"]["id"], $projectFilter);
             }
