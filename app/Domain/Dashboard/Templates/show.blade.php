@@ -247,11 +247,16 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="row">
+                                    <div class="col-7">
+                                        {{ __('label.editor') }} {{$row['editorFirstname']}} {{$row['editorLastname']}}
+                                    </div>
+                                </div>
                             </div>
                         </li>
                     @endforeach
                 </ul>
+
             </div>
 
             <div class="maincontentinner">
