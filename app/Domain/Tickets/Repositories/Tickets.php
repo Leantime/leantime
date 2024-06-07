@@ -413,6 +413,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     t1.lastname AS authorLastname,
                     t1.firstname AS authorFirstname,
                     t1.profileId AS authorProfileId,
+                    t2.id AS editorId,
                     t2.firstname AS editorFirstname,
                     t2.lastname AS editorLastname,
                     t2.profileId AS editorProfileId,
