@@ -120,14 +120,6 @@ class Environment implements ArrayAccess, ConfigContract
 
         $end = microtime(true);
 
-        //Cache is not available until after install.
-        Events::add_event_listener(
-            'leantime.core.middleware.installed.handle.after_install',
-            function () {
-                //
-            },
-            20
-        );
     }
 
     public function updateCache() {

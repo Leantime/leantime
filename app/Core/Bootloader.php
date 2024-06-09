@@ -126,35 +126,7 @@ class Bootloader
 
         $this->app = new Application();
 
-        $test = 1;
-
-        $this->app->make(AppSettings::class)->loadSettings();
-
-        $this->app->clearCache();
-
-        Events::discover_listeners();
-
         $this->app = self::dispatch_filter("initialized", $this->app, ['bootloader' => $this]);
-
-        $config = $this->app['config'];
-
-        $this->setErrorHandler($config->debug ?? 0);
-
-        self::dispatch_event('config_initialized');
-
-        $request = $this->app->make(IncomingRequest::class);
-
-        if (! defined('BASE_URL')) {
-            if (isset($config->appUrl) && !empty($config->appUrl)) {
-                define('BASE_URL', $config->appUrl);
-            } else {
-                define('BASE_URL', $request->getSchemeAndHttpHost());
-            }
-        }
-
-        if (! defined('CURRENT_URL')) {
-            define('CURRENT_URL', BASE_URL . $request->getRequestUri());
-        }
 
         self::dispatch_event("beginning", ['bootloader' => $this]);
 
@@ -204,25 +176,7 @@ class Bootloader
         }
     }
 
-    /**
-     * @param int $debug
-     * @return void
-     */
-    private function setErrorHandler(int $debug): void
-    {
-        $incomingRequest = app(IncomingRequest::class);
-        app()->bind(\Illuminate\Contracts\Debug\ExceptionHandler::class, \Leantime\Core\ExceptionHandler::class);
 
-        if (
-            $debug == 0
-            || $incomingRequest instanceof HtmxRequest
-            || $incomingRequest instanceof ApiRequest
-        ) {
-            return;
-        }
-
-        Debug::enable();
-    }
 
 
 }

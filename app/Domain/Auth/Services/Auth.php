@@ -403,7 +403,7 @@ class Auth
     public function logout(): void
     {
 
-        $this->authRepo->invalidateSession($this->session);
+        $this->authRepo->invalidateSession($this->session->getId());
 
         $sessionsToDestroy = self::dispatch_filter('sessions_vars_to_destroy', [
                     'userdata',

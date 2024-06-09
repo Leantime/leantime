@@ -3,6 +3,7 @@
 namespace Leantime\Core\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Cache;
 use Leantime\Core\Eventhelpers;
 use Leantime\Core\Frontcontroller;
 use Leantime\Core\IncomingRequest;
@@ -49,8 +50,6 @@ class Installed
         }
 
         self::dispatch_event('after_install');
-
-        \Illuminate\Support\Facades\Cache::set('installed', true);
 
         $route = Frontcontroller::getCurrentRoute();
 

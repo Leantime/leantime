@@ -81,9 +81,9 @@ class HttpKernel implements HttpKernelContract
 
             error_log($e);
 
-            if (! app()->make(Environment::class)->debug) {
+            if (! $this->app->make(Environment::class)->debug) {
 
-                return app()->make(Template::class)->display('errors.error500', 'error');
+                return $this->app->make(Template::class)->display('errors.error500', 'error');
             }
 
             if ($request instanceof HtmxRequest) {
@@ -127,7 +127,7 @@ class HttpKernel implements HttpKernelContract
                 continue;
             }
 
-            app()->make($middleware)->terminate($request, $response);
+            $this->app->make($middleware)->terminate($request, $response);
         }
 
         //error_log("Before Request Terminated");
