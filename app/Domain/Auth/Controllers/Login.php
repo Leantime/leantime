@@ -56,7 +56,10 @@ class Login extends Controller
             $url = urldecode($_GET['redirect']);
 
             //Check for open redirects, don't allow redirects to external sites.
-            if (filter_var($url, FILTER_VALIDATE_URL) === false) {
+            if (
+                filter_var($url, FILTER_VALIDATE_URL) === false &&
+                !in_array($url, ["/auth/logout"])
+            ) {
                 $redirectUrl = BASE_URL ."/" . $url;
             }
         }
