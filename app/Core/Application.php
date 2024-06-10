@@ -201,6 +201,7 @@ class Application extends Container
 
         $this->register(new \Leantime\Core\Providers\Auth($this));
 
+        $this->register(new \Leantime\Core\Providers\RateLimiter($this));
         $this->register(new \Leantime\Core\Providers\Db($this));
         $this->register(new \Leantime\Core\Providers\Language($this));
     }

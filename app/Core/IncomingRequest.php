@@ -65,7 +65,7 @@ class IncomingRequest extends Request
                 break;
         };
 
-       $this->query->set('act', $act);
+        $this->query->set('act', $act);
         isset($id) && $this->query->set('id', $id);
         isset($request_parts) && $this->query->set('request_parts', $request_parts);
     }
@@ -138,6 +138,13 @@ class IncomingRequest extends Request
         };
     }
 
+    /**
+     * Set the Laravel session instance.
+     *
+     * @param \Illuminate\Contracts\Session\Session $session The Laravel session instance.
+     *
+     * @return void
+     */
     public function setLaravelSession(\Illuminate\Contracts\Session\Session $session)
     {
         $this->session = new SymfonySessionDecorator($session);
