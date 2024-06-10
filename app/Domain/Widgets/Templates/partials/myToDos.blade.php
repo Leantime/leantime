@@ -54,6 +54,22 @@
                                     <label for="groupByProject">{!! __("label.project") !!}</label>
                                 </span>
                             </li>
+                            <li>
+                                <span class="radio">
+                                    <input type="radio"
+                                           name="groupBy"
+                                           @if($groupBy == "priority") checked='checked' @endif
+                                           value="priority" id="groupByPriority"
+                                           hx-get="{{BASE_URL}}/widgets/myToDos/get"
+                                           hx-trigger="click"
+                                           hx-target="#yourToDoContainer"
+                                           hx-swap="outerHTML"
+                                           hx-indicator="#todos .htmx-indicator"
+                                           hx-vals='{"projectFilter": {{ $projectFilter }}, "groupBy": "priority" }'
+                                    />
+                                    <label for="groupByPriority">{!! __("label.priority") !!}</label>
+                                </span>
+                            </li>
 
                         </ul>
                     </div>

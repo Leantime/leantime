@@ -635,6 +635,7 @@ namespace Leantime\Domain\Tickets\Repositories {
                     IF(zp_tickets.type <> "", zp_tickets.type, "task") AS type,
                     zp_tickets.status,
                     zp_tickets.tags,
+                    zp_tickets.userId,
                     zp_tickets.editorId,
                     zp_tickets.dependingTicketId,
                     zp_tickets.milestoneid,
