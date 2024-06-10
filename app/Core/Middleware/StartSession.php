@@ -83,7 +83,7 @@ class StartSession
 
         $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
-        $lock = Cache::store($this->manager->blockDriver())
+        $lock = Cache::store("installation")
             ->lock('session:'.$session->getId(), $lockFor)
             ->betweenBlockedAttemptsSleepFor(50);
 

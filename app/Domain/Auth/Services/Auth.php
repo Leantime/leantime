@@ -326,7 +326,7 @@ class Auth
             "twoFASecret" => $user['twoFASecret'] ?? '',
             "isLdap" => $isLdap,
             "createdOn" => dtHelper()->parseDbDateTime($user['createdOn']) ?? dtHelper()->userNow(),
-            "modified" => dtHelper()->parseDbDateTime($user['modified']) ?? dtHelper()->userNow()
+            "modified" => !empty($user['modified']) ? dtHelper()->parseDbDateTime($user['modified']) : dtHelper()->userNow()
         );
 
         $currentUser = self::dispatch_filter('user_session_vars', $currentUser);
