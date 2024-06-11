@@ -60,7 +60,7 @@ class RequestRateLimiter
         //Configurable rate limits
         $rateLimitGeneral = $this->config->ratelimitGeneral ?? 2000;
         $rateLimitApi = $this->config->ratelimitApi ?? 10;
-        $rateLimitAuth = $this->config->rateLimitAuth ?? 20;
+        $rateLimitAuth = $this->config->ratelimitAuth ?? 20;
 
         //Key
         $keyModifier = "-1";
