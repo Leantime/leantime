@@ -490,5 +490,5 @@ class DefaultConfig
     /**
      * @var int rate limit on auth requests
      */
-    public int $rateLimitAuth = 20;
+    public int $ratelimitAuth = 20;
 }
