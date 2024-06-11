@@ -88,7 +88,7 @@ class RequestRateLimiter
         }
 
         $key = self::dispatch_filter(
-            "rateLimit",
+            "rateLimitKey",
             $key,
             [
                 "bootloader" => $this,
