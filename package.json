@@ -6,7 +6,7 @@
     "@assuradeurengilde/fontawesome-iconpicker": "^3.2.3",
     "@fortawesome/fontawesome-free": "^6.5.2",
     "@fullcalendar/google-calendar": "^6.1.11",
-    "@fullcalendar/icalendar": "^6.1.11",
+    "@fullcalendar/icalendar": "^6.1.13",
     "@fullcalendar/luxon3": "^6.1.11",
     "@lottiefiles/lottie-player": "^2.0.4",
     "@popperjs/core": "^2.11.8",
