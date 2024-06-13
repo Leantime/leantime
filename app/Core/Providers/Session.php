@@ -54,7 +54,7 @@ class Session extends ServiceProvider
                 'domain' => is_array(parse_url(BASE_URL)) ? parse_url(BASE_URL)['host'] : null,
                 'secure' => true,
                 'http_only' => true,
-                'same_site' => "Strict",
+                'same_site' => "Lax",
             );
 
             $sessionManager = new \Illuminate\Session\SessionManager($app);
