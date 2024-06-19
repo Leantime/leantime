@@ -18,8 +18,8 @@ use Illuminate\Encryption\Encrypter;
 
 class StartSession
 {
-
     use Eventhelpers;
+
     /**
      * The session manager.
      *
@@ -73,19 +73,20 @@ class StartSession
     /**
      * Handle the given request within session state.
      *
-     * @param  IncomingRequest  $request
-     * @param  \Illuminate\Contracts\Session\Session  $session
-     * @param  \Closure  $next
+     * @param  IncomingRequest                       $request
+     * @param  \Illuminate\Contracts\Session\Session $session
+     * @param  \Closure                              $next
      * @return mixed
      */
-    protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next) {
+    protected function handleRequestWhileBlocking(IncomingRequest $request, $session, Closure $next)
+    {
 
 
         $lockFor = $this->manager->defaultRouteBlockLockSeconds();
 
         $lock = Cache::store("installation")
-            ->lock('session:'.$session->getId(), $lockFor)
-            ->betweenBlockedAttemptsSleepFor(50);
+            ->lock('session:' . $session->getId(), $lockFor)
+            ->betweenBlockedAttemptsSleepFor(100);
 
         try {
             $lock->block(

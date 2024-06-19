@@ -38,7 +38,8 @@ abstract class HtmxController
         protected IncomingRequest $incomingRequest,
 
         /** @var Template $tpl */
-        protected Template $tpl,
+        public Template $tpl,
+
     ) {
         self::dispatch_event('begin');
 
