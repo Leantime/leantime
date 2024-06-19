@@ -169,7 +169,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session("userdata.id"), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
-            $response = $this->tpl->displayPartial('tickets.showTicketModal');
+            $response = $this->tpl->displayPartial('tickets.showTicket');
             $response->headers->set('HX-Trigger', 'ticketUpdate');
 
             return $response;
@@ -206,15 +206,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
 
             //Add a comment
-            if (isset($params['comment']) === true && isset($params['text']) && $params['text'] != '') {
-                if ($this->commentService->addComment($_POST, "ticket", $id, $ticket)) {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_success"), "success");
-                } else {
-                    $this->tpl->setNotification($this->language->__("notifications.comment_create_error"), "error");
-                }
 
-                $tab = "#comment";
-            }
 
             //Log time
             if (isset($params['saveTimes']) === true) {

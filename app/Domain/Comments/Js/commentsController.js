@@ -19,23 +19,26 @@ leantime.commentsController = (function () {
 
     };
 
-    var toggleCommentBoxes = function (id) {
-
+    var toggleCommentBoxes = function (id, formHash) {
 
         if (id == 0) {
-            jQuery('#mainToggler').hide();
+            jQuery('.mainToggler-'+formHash).hide();
         } else {
-            jQuery('#mainToggler').show();
+            jQuery('.mainToggler-'+formHash).show();
         }
-        jQuery('.commentBox textarea').remove();
+        jQuery('.commentBox-'+formHash+' textarea').remove();
 
-        jQuery('.commentBox').hide('fast', function () {});
+        jQuery('.commentBox-'+formHash+'').hide();
 
-        jQuery('#comment' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" class="tinymceSimple"></textarea>');
+        jQuery('#comment-'+formHash+'-' + id + ' .commentReply').prepend('<textarea rows="5" cols="75" name="text" id="editor-'+formHash+'-' + id + '" class="tinymceSimple"></textarea>');
         leantime.editorController.initSimpleEditor();
 
-        jQuery('#comment' + id + '').show('fast');
-        jQuery('#father').val(id);
+        jQuery('#comment-'+formHash+'-' + id + '').show();
+        jQuery('#father-'+formHash).val(id);
+
+        setTimeout(function () {                         // you may not need the timeout
+            tinyMCE.get('editor-'+formHash+'-' + id + '').focus();
+        }, 50);
 
     };
 

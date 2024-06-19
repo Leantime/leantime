@@ -82,8 +82,6 @@ if (str_contains($formUrl, '?delComment=')) {
                             <div class="text mce-content-body" id="commentText-<?=$formHash ?>-<?=$row['id']?>">
                                 <?php echo $tpl->escapeMinimal($row['text']); ?>
                             </div>
-
-
                         </div>
 
                         <div class="commentLinks">

@@ -46,7 +46,6 @@ namespace Leantime\Domain\Comments\Repositories {
 					comment.id,
 					comment.text,
 					comment.date,
-					DATE_FORMAT(comment.date, '%Y,%m,%e') AS timelineDate,
 					comment.moduleId,
 					comment.userId,
 					comment.commentParent,
@@ -54,10 +53,23 @@ namespace Leantime\Domain\Comments\Repositories {
 					user.firstname,
 					user.lastname,
 					user.profileId,
-					user.modified AS userModified
+					user.modified AS userModified,
+                    replies.id AS repliesId,
+					replies.text AS repliesText,
+					replies.date AS repliesDate,
+					replies.moduleId AS repliesModuleId,
+					replies.userId AS repliesUserId,
+					replies.commentParent AS repliesCommentParent,
+                    replies.status AS repliesStatus,
+					replyUser.firstname AS repliesFirstname,
+					replyUser.lastname AS repliesLastname,
+					replyUser.profileId AS repliesProfileId,
+					replyUser.modified AS repliesUserModified
 				FROM zp_comment as comment
-					INNER JOIN zp_user as user ON comment.userId = user.id
-				WHERE moduleId = :moduleId AND module = :module AND commentParent = :parent
+				LEFT JOIN zp_user as user ON comment.userId = user.id
+				LEFT JOIN zp_comment as replies ON comment.id = replies.commentParent
+				LEFT JOIN zp_user as replyUser ON replies.userId = replyUser.id
+				WHERE comment.moduleId = :moduleId AND comment.module = :module AND comment.commentParent = :parent
 				ORDER BY comment.date " . $orderBy;
 
             $stmn = $this->db->database->prepare($sql);

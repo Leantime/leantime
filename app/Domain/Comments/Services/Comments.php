@@ -3,10 +3,13 @@
 namespace Leantime\Domain\Comments\Services {
 
     use Illuminate\Contracts\Container\BindingResolutionException;
+    use Leantime\Core\Exceptions\MissingParameterException;
     use Leantime\Core\Language as LanguageCore;
+    use Leantime\Domain\Comments\Models\Comment;
     use Leantime\Domain\Notifications\Models\Notification;
     use Leantime\Domain\Comments\Repositories\Comments as CommentRepository;
     use Leantime\Domain\Projects\Services\Projects as ProjectService;
+    use Leantime\Domain\Tickets\Services\Tickets;
 
 
     /**
@@ -18,6 +21,8 @@ namespace Leantime\Domain\Comments\Services {
         private ProjectService $projectService;
         private LanguageCore $language;
 
+        private Tickets $ticketService;
+
         /**
          * @param CommentRepository $commentRepository
          * @param ProjectService    $projectService
@@ -26,10 +31,12 @@ namespace Leantime\Domain\Comments\Services {
         public function __construct(
             CommentRepository $commentRepository,
             ProjectService $projectService,
+            Tickets $ticketService,
             LanguageCore $language
         ) {
             $this->commentRepository = $commentRepository;
             $this->projectService = $projectService;
+            $this->ticketService = $ticketService;
             $this->language = $language;
         }
 
@@ -45,23 +52,62 @@ namespace Leantime\Domain\Comments\Services {
          * @param int      $commentOrder
          * @return array|false
          */
-        public function getComments($module, $entityId, int $commentOrder = 0): false|array
+        public function getComments(string $module, int $moduleId, int $commentOrder = 0, int $parent = 0): false|array
         {
-            return $this->commentRepository->getComments($module, $entityId, 0, $commentOrder);
+
+            if ($module == "") {
+                throw new MissingParameterException("Module is required parameter");
+            }
+
+            if ($moduleId == "" || $moduleId == 0) {
+                throw new MissingParameterException("Module Id is required parameter and greater than 0");
+            }
+
+            //Todo check that user is allowed to load data from this entity
+
+            //Comes back as flat list
+            $comments = $this->commentRepository->getComments($module, $moduleId, $parent, $commentOrder);
+
+            /* @var array<comments> */
+            $commentsArray = [];
+
+            //Create an array of comment parents
+            foreach ($comments as $comment) {
+
+                $commentObject = app()->make(Comment::class);
+                $commentObject->mapRootDbArray($comment);
+
+                if ($comment['commentParent'] == $parent && !isset($commentsArray[$commentObject->id])) {
+
+                    $commentsArray[$commentObject->id] = $commentObject;
+                }
+            }
+
+            //Now add replies
+            foreach ($comments as $comment) {
+
+                $commentObject = app()->make(Comment::class);
+                $commentObject->mapRepliesDbArray($comment);
+                if($commentObject !== false){
+                    $commentsArray[$commentObject->commentParent]->replies[] = $commentObject;
+                }
+
+            }
+
+            return $commentsArray;
         }
 
         /**
          * @param $values
          * @param $module
-         * @param $entityId
          * @param $entity
          * @return bool
          * @throws BindingResolutionException
          */
-        public function addComment($values, $module, $entityId, $entity): bool
+        public function addComment($values, $module, $entityId): bool
         {
 
-            if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId) &&  isset($entity)) {
+            if (isset($values['text']) && $values['text'] != '' && isset($values['father']) && isset($module) &&  isset($entityId)) {
                 $mapper = array(
                     'text' => $values['text'],
                     'date' => $values["date"] ?? dtHelper()->dbNow()->formatDateTimeForDb(),
@@ -80,11 +126,13 @@ namespace Leantime\Domain\Comments\Services {
 
                     switch ($module) {
                         case "ticket":
+                            $entity = $this->ticketService->getTicket($entityId);
                             $subject = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_subject"), $this->language->__("label." . strtolower($entity->type)), $entity->id, $entity->headline);
                             $message = sprintf($this->language->__("email_notifications.new_comment_todo_with_type_message"), session("userdata.name"), $this->language->__("label." . strtolower($entity->type)), $entity->headline, $values['text']);
                             $linkLabel = $this->language->__("email_notifications.new_comment_todo_cta");
                             break;
                         case "project":
+                            $entity = $this->projectService->getProject($entityId);
                             $subject = sprintf($this->language->__("email_notifications.new_comment_project_subject"), $entityId, $entity['name']);
                             $message = sprintf($this->language->__("email_notifications.new_comment_project_message"), session("userdata.name"), $entity['name']);
                             $linkLabel = $this->language->__("email_notifications.new_comment_project_cta");
