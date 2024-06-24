@@ -62,8 +62,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $allCanvas = $this->canvasRepo->getAllCanvas(session("currentProject"));
             }
 
-            if (session()->exists("current' . strtoupper(static::CANVAS_NAME) . 'Canvas")) {
-                $currentCanvasId = session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
+            if (session()->exists("current" . strtoupper(static::CANVAS_NAME) . "Canvas")) {
+                $currentCanvasId = session("current" . strtoupper(static::CANVAS_NAME) . "Canvas");
                 //Ensure canvas id is in the list of currentCanvases (could be old value after project select
 
                 $found = false;
@@ -83,7 +83,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => '']);
             }
 
-            if (count($allCanvas) > 0 && session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas") == '') {
+            if (count($allCanvas) > 0 && session("current" . strtoupper(static::CANVAS_NAME) . "Canvas") == '') {
                 $currentCanvasId = $allCanvas[0]['id'];
                 session(["current' . strtoupper(static::CANVAS_NAME) . 'Canvas" => $currentCanvasId]);
             }

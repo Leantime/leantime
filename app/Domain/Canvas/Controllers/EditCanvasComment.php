@@ -121,7 +121,7 @@ namespace Leantime\Domain\Canvas\Controllers {
             if (isset($params['changeItem'])) {
                 if (isset($params['itemId']) && $params['itemId'] != '') {
                     if (isset($params['description']) && !empty($params['description'])) {
-                        $currentCanvasId = (int)session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
+                        $currentCanvasId = (int)session("current" . strtoupper(static::CANVAS_NAME) . "Canvas");
 
                         $canvasItem = array(
                             'box' => $params['box'],
@@ -175,7 +175,7 @@ namespace Leantime\Domain\Canvas\Controllers {
                     }
                 } else {
                     if (isset($_POST['description']) && !empty($_POST['description'])) {
-                        $currentCanvasId = (int)session("current' . strtoupper(static::CANVAS_NAME) . 'Canvas");
+                        $currentCanvasId = (int)session("current" . strtoupper(static::CANVAS_NAME) . "Canvas");
 
                         $canvasItem = array(
                             'box' => $params['box'],
