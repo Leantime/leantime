@@ -35,12 +35,12 @@ class Browse extends Controller
      */
     public function run(): Response
     {
-        $currentModule = $_SESSION['currentProject'];
+        $currentModule = session("currentProject");
 
 
         if (isset($_POST['upload']) || isset($_FILES['file'])) {
             if (isset($_FILES['file'])) {
-                $this->filesRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
+                $this->filesRepo->upload($_FILES, 'project', session("currentProject"));
                 $this->tpl->setNotification('notifications.file_upload_success', 'success', "file_created");
             } else {
                 $this->tpl->setNotification('notifications.file_upload_error', 'error');
@@ -59,9 +59,9 @@ class Browse extends Controller
         }
 
         $this->tpl->assign('currentModule', $currentModule);
-        $this->tpl->assign('modules', $this->filesRepo->getModules($_SESSION['userdata']['id']));
+        $this->tpl->assign('modules', $this->filesRepo->getModules(session("userdata.id")));
         $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv', 'webpe'));
-        $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", $_SESSION['currentProject']));
+        $this->tpl->assign('files', $this->filesRepo->getFilesByModule("project", session("currentProject")));
         return $this->tpl->display('files.browse');
     }
 }

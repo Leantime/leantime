@@ -56,7 +56,7 @@ class TicketCard extends HtmxController
         $allProjectMilestones = $this->ticketService->getAllMilestones([
             "sprint" => '',
             "type" => "milestone",
-            "currentProject" => $_SESSION["currentProject"],
+            "currentProject" => session("currentProject"),
         ]);
         $this->tpl->assign('milestones', $allProjectMilestones);
 

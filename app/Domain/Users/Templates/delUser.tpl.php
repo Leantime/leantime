@@ -23,7 +23,7 @@ $user = $tpl->get('user');
         <div class="widgetcontent">
 
             <form method="post">
-                <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                 <p><?php echo $tpl->__('text.confirm_user_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
                 <a class="btn btn-primary" href="<?=BASE_URL ?>/users/showAll"><?php echo $tpl->__('buttons.back'); ?></a>

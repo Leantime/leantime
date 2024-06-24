@@ -8,7 +8,7 @@
         @if ($menuType == 'project' || $menuType == 'default')
             <div class="head">
                 <span class="sub">{{ __("menu.current_project") }}</span><br />
-                <span class="title">{{ $_SESSION['currentProjectName'] }}</span>
+                <span class="title">{{ session("currentProjectName") }}</span>
             </div>
         @else
             <div class="projectSelectorFooter" style="border:none; border-bottom:1px solid var(--main-border-color)">

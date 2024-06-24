@@ -32,7 +32,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
          */
         public function run(): Response
         {
-            $userId = $_SESSION['userdata']['id'];
+            $userId = session("userdata.id");
 
             $user = $this->userRepo->getUser($userId);
 
@@ -61,7 +61,7 @@ namespace Leantime\Domain\TwoFA\Controllers {
             $secret = $user['twoFASecret'];
 
             if (isset($_POST['disable'])) {
-                if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+                if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
                     $this->userRepo->patchUser($userId, [
                         "twoFAEnabled" => 0,
                         "twoFASecret" => null,
@@ -120,8 +120,8 @@ namespace Leantime\Domain\TwoFA\Controllers {
 
             //Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-            $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
-            $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
+            session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
 
             return $this->tpl->display('twofa.edit');
         }

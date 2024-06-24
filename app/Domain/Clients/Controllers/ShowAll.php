@@ -40,7 +40,7 @@ namespace Leantime\Domain\Clients\Controllers {
 
             Auth::authOrRedirect([Roles::$owner, Roles::$admin], true);
 
-            if ($_SESSION['userdata']['role'] == 'admin') {
+            if (session("userdata.role") == 'admin') {
                 $this->tpl->assign('admin', true);
             }
 

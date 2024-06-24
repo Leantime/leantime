@@ -254,7 +254,7 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn = $this->db->database->prepare($query);
 
             if ($userId == '') {
-                $stmn->bindValue(':id', $_SESSION['userdata']['id'], PDO::PARAM_STR);
+                $stmn->bindValue(':id', session("userdata.id"), PDO::PARAM_STR);
             } else {
                 $stmn->bindValue(':id', $userId, PDO::PARAM_STR);
             }
@@ -736,8 +736,8 @@ namespace Leantime\Domain\Projects\Repositories {
             $stmn->closeCursor();
 
             //Add author to project
-            if (isset($_SESSION["userdata"]["id"])) {
-                $this->addProjectRelation($_SESSION["userdata"]["id"], $projectId, "");
+            if (session()->exists("userdata.id")) {
+                $this->addProjectRelation(session("userdata.id"), $projectId, "");
             }
 
             //Add users to relation

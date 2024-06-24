@@ -2,10 +2,10 @@
 
 <div class="userinfo">
     @dispatchEvent('afterUserinfoMenuOpen')
-    @if(isset($_SESSION["companysettings.logoPath"]) && $_SESSION["companysettings.logoPath"] !== false)
+    @if(session()->exists("companysettings.logoPath") && session("companysettings.logoPath") !== false)
         <a href='{{ BASE_URL }}/users/editOwn/' class="dropdown-toggle profileHandler includeLogo" data-toggle="dropdown">
             <img src="{{ BASE_URL }}/api/users?profileImage={{ $user['id'] ?? -1 }}&v={{ format($user['modified'] ?? -1)->timestamp() }}" class="profilePicture"/>
-            <img src="{{ $_SESSION["companysettings.logoPath"] }}" class="logo"/>
+            <img src="{{ session("companysettings.logoPath") }}" class="logo"/>
             <i class="fa fa-caret-down" aria-hidden="true"></i>
         </a>
     @else

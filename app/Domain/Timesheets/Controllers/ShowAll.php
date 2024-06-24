@@ -54,7 +54,7 @@ class ShowAll extends Controller
         //Only admins and employees
         Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-        $_SESSION['lastPage'] = BASE_URL . "/timesheets/showAll";
+        session(["lastPage" => BASE_URL . "/timesheets/showAll"]);
 
         if (isset($_POST['saveInvoice']) === true) {
             $invEmpl = [];

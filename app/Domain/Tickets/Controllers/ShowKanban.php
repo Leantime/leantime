@@ -39,9 +39,9 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->timesheetService = $timesheetService;
 
-            $_SESSION['lastPage'] = CURRENT_URL;
-            $_SESSION['lastTicketView'] = "kanban";
-            $_SESSION['lastFilterdTicketKanbanView'] = CURRENT_URL;
+            session(["lastPage" => CURRENT_URL]);
+            session(["lastTicketView" => "kanban"]);
+            session(["lastFilterdTicketKanbanView" => CURRENT_URL]);
         }
 
         /**

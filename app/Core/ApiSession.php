@@ -120,13 +120,16 @@ class ApiSession
             } else {
                 $middleware_params[] = new ClientCredentials($client, $creds);
             }
+
+            if ($usesRefresh) {
+                $middleware_params[] = new RefreshToken($client, $creds);
+            }
+
         } else {
             $middleware_params[] = $customGrantType;
         }
 
-        if ($usesRefresh) {
-            $middleware_params[] = new RefreshToken($client, $creds);
-        }
+
 
         $stack = HandlerStack::create();
         $oauth = new OAuth2Middleware(...$middleware_params);

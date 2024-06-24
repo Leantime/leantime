@@ -83,17 +83,17 @@ class ShowMy extends Controller
             $this->saveTimeSheet($_POST);
         }
 
-        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, $_SESSION['userdata']['id']);
+        $myTimesheets = $this->timesheetService->getWeeklyTimesheets(-1, $fromDate, session("userdata.id"));
 
         $this->tpl->assign('dateFrom', $fromDate);
         $this->tpl->assign('actKind', $kind);
         $this->tpl->assign('kind', $this->timesheetRepo->kind);
         $this->tpl->assign('allProjects', $this->projects->getUserProjects(
-            userId: $_SESSION["userdata"]["id"],
+            userId: session("userdata.id"),
             projectTypes: "project"
         ));
         $this->tpl->assign('allTickets', $this->tickets->getUsersTickets(
-            id: $_SESSION["userdata"]["id"],
+            id: session("userdata.id"),
             limit: -1
         ));
         $this->tpl->assign('allTimesheets', $myTimesheets);
@@ -129,7 +129,7 @@ class ShowMy extends Controller
                 }
 
                 $values = array(
-                    "userId" => $_SESSION["userdata"]["id"],
+                    "userId" => session("userdata.id"),
                     "ticket" => $ticketId,
                     "date" => $date,
                     "timestamp" => $timestamp,

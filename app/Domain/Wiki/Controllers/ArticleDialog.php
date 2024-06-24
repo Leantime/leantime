@@ -41,7 +41,7 @@ namespace Leantime\Domain\Wiki\Controllers {
             $article->data = "far fa-file-alt";
 
             if (isset($params['id'])) {
-                $article = $this->wikiService->getArticle($params['id'], $_SESSION['currentProject']);
+                $article = $this->wikiService->getArticle($params['id'], session("currentProject"));
             }
 
             //Delete milestone relationship
@@ -55,13 +55,13 @@ namespace Leantime\Domain\Wiki\Controllers {
                 }
             }
 
-            if ($_SESSION['currentWiki'] != '') {
-                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
+            if (session("currentWiki") != '') {
+                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session("currentWiki"), session("userdata.id"));
             } else {
                 $wikiHeadlines = array();
             }
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign("wikiHeadlines", $wikiHeadlines);
             $this->tpl->assign("article", $article);
@@ -80,7 +80,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
             if (isset($_GET["id"])) {
                 $id = $_GET["id"];
-                $article = $this->wikiService->getArticle($id, $_SESSION['currentProject']);
+                $article = $this->wikiService->getArticle($id, session("currentProject"));
 
                 $article->title = $params['title'];
 
@@ -114,8 +114,8 @@ namespace Leantime\Domain\Wiki\Controllers {
             } else {
                 //New
                 $article->title = $params['title'];
-                $article->author = $_SESSION['userdata']['id'];
-                $article->canvasId = $_SESSION['currentWiki'];
+                $article->author = session("userdata.id");
+                $article->canvasId = session("currentWiki");
                 $article->data = $params['articleIcon'];
                 $article->tags = $params['tags'];
                 $article->status = $params['status'];

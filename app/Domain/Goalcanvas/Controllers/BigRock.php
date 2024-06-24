@@ -95,8 +95,8 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
             } else {
                 //New
                 $bigrock['title'] = $params['title'];
-                $bigrock['projectId'] = $_SESSION['currentProject'];
-                $bigrock['author'] = $_SESSION['userdata']['id'];
+                $bigrock['projectId'] = session("currentProject");
+                $bigrock['author'] = session("userdata.id");
 
                 $id = $this->goalService->createGoalboard($bigrock);
 

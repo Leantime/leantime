@@ -39,11 +39,11 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->timesheetService = $timesheetService;
 
-            $_SESSION['lastPage'] = CURRENT_URL;
-            $_SESSION['lastTicketView'] = "table";
-            $_SESSION['lastFilterdTicketTableView'] = CURRENT_URL;
+            session(["lastPage" => CURRENT_URL]);
+            session(["lastTicketView" => "table"]);
+            session(["lastFilterdTicketTableView" => CURRENT_URL]);
 
-            if (!isset($_SESSION['currentProjectName'])) {
+            if (!session()->exists("currentProjectName")) {
                 Frontcontroller::redirect(BASE_URL . "/");
             }
         }

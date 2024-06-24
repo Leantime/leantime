@@ -11,7 +11,7 @@
         </a>
     @endif
 
-    <h5>{{ $_SESSION['currentProjectClient'] }}</h5>
+    <h5>{{ session("currentProjectClient") }}</h5>
     <h1>{!! __('headlines.project_dashboard') !!}</h1>
 </x-global::pageheader>
 
@@ -73,7 +73,7 @@
 
 
 
-                <h3>{{ $_SESSION['currentProjectClient'] }}</h3>
+                <h3>{{ session("currentProjectClient") }}</h3>
 
                 <h1 class="articleHeadline">{{ $currentProjectName }}</h1>
 
@@ -374,7 +374,7 @@
                                                         </a>
 
                                                         <ul class="dropdown-menu">
-                                                            @if ($row['userId'] == $_SESSION['userdata']['id'])
+                                                            @if ($row['userId'] == session("userdata.id"));
                                                                 <li>
                                                                     <a href="{!! $delUrlBase . $row['id'] !!}" class="deleteComment">
                                                                         <span class="fa fa-trash"></span> {{ __('links.delete') }}
@@ -424,7 +424,7 @@
                                                     <x-comments::reply :comment="$comment" :iteration="$loop->iteration" />
                                                 @endforeach
                                             @endif
-                                            <x-comments::input :commentId="$row['id']" :user="$_SESSION['userdata']" />
+                                            <x-comments::input :commentId="$row['id']" :user="session("userdata")" />
                                         </div>
                                     </div>
                                 </div>
@@ -582,7 +582,7 @@
             leantime.helperController.firstLoginModal();
         @endif
 
-        @php($_SESSION['userdata']['settings']["modals"]['projectDashboardTour'] = 1)
+        @php(session(["usersettings.modals.projectDashboardTour" => 1]));
     });
 
     @dispatchEvent('scripts.beforeClose')

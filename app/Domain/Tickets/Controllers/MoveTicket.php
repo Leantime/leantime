@@ -45,7 +45,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $ticket = $this->ticketService->getTicket($ticketId);
 
-            $projects = $this->projectService->getProjectsAssignedToUser($_SESSION['userdata']['id']);
+            $projects = $this->projectService->getProjectsAssignedToUser(session("userdata.id"));
 
             $this->tpl->assign('ticket', $ticket);
             $this->tpl->assign('projects', $projects);

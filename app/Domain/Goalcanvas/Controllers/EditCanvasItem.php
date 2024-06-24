@@ -102,7 +102,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     'relates' => '',
                     'startValue' => '',
                     'currentValue' => '',
-                    'canvasId' => $_GET["canvasId"] ?? (int)$_SESSION['currentGOALCanvas'],
+                    'canvasId' => $_GET["canvasId"] ?? (int)session("currentGOALCanvas"),
                     'endValue' => '',
                     'kpi' => '',
                     'startDate' => '',
@@ -120,7 +120,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
 
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $this->tpl->assign('currentCanvas', $canvasItem['canvasId']);
@@ -144,7 +144,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $values = array(
                     'text' => $params['text'],
                     'date' => date('Y-m-d H:i:s'),
-                    'userId' => ($_SESSION['userdata']['id']),
+                    'userId' => (session("userdata.id")),
                     'moduleId' => $_GET['id'],
                     'commentParent' => ($params['father']),
                 );
@@ -158,7 +158,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$_GET['id'];
                     $message = sprintf(
                         $this->language->__('email_notifications.canvas_item__comment_created_message'),
-                        $_SESSION['userdata']['name']
+                        session("userdata.name")
                     );
 
                     $notification = app()->make(NotificationModel::class);
@@ -168,9 +168,9 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     );
                     $notification->entity = $values;
                     $notification->module = 'goalcanvas';
-                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->projectId = session("currentProject");
                     $notification->subject = $subject;
-                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->authorId = session("userdata.id");
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -181,13 +181,13 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
 
             if (isset($params['changeItem'])) {
-                $currentCanvasId = $params["canvasId"] ?? (int)$_SESSION['current' . strtoupper(static::CANVAS_NAME) . 'Canvas'];
+                $currentCanvasId = $params["canvasId"] ?? (int)session("current" . strtoupper(static::CANVAS_NAME) . "Canvas");
 
                 if (isset($params['itemId']) && !empty($params['itemId'])) {
                     if (isset($params['title']) && !empty($params['title'])) {
                         $canvasItem = array(
                             'box' => $params['box'],
-                            'author' => $_SESSION['userdata']['id'],
+                            'author' => session("userdata.id"),
                             'title' => $params['title'],
                             'description' => $params['description'] ?? '',
                             'status' => $params['status'] ?? '',
@@ -239,7 +239,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$params['itemId'];
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_update_message'),
-                            $_SESSION['userdata']['name'],
+                            session("userdata.name"),
                             $canvasItem['description']
                         );
 
@@ -250,9 +250,9 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = 'goalcanvas';
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $subject;
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
@@ -266,7 +266,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     if (isset($_POST['title']) && !empty($_POST['title'])) {
                         $canvasItem = array(
                             'box' => $params['box'],
-                            'author' => $_SESSION['userdata']['id'],
+                            'author' => session("userdata.id"),
                             'title' => $params['title'],
                             'description' => $params['description'] ?? '',
                             'status' => $params['status'] ?? '',
@@ -293,7 +293,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                         $actual_link = BASE_URL . '/goalcanvas/editCanvasItem/' . (int)$params['itemId'];
                         $message = sprintf(
                             $this->language->__('email_notifications.canvas_item_created_message'),
-                            $_SESSION['userdata']['name'],
+                            session("userdata.name"),
                             $canvasItem['description']
                         );
 
@@ -305,9 +305,9 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
 
                         $notification->entity = $canvasItem;
                         $notification->module = 'goalcanvas';
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $subject;
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
@@ -336,7 +336,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                 $value = array(
                     'id' => '',
                     'box' => $params['box'],
-                    'author' => $_SESSION['userdata']['id'],
+                    'author' => session("userdata.id"),
                     'title' => '',
                     'description' => '',
                     'status' => array_key_first($this->canvasRepo->getStatusLabels()),
@@ -349,7 +349,7 @@ namespace Leantime\Domain\Goalcanvas\Controllers {
                     'endDate' => '',
                     'setting ' => '',
                     'metricType' =>  '',
-                    'assignedTo' => $_SESSION['userdata']['id'],
+                    'assignedTo' => session("userdata.id"),
                 );
                 $comments = array();
                 $this->tpl->assign('canvasItem', $value);

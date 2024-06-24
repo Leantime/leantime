@@ -66,7 +66,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
                     if ($result === true) {
                         $this->tpl->setNotification($this->language->__("notification.todo_deleted"), "success");
-                        return Frontcontroller::redirect($_SESSION['lastPage']);
+                        return Frontcontroller::redirect(session("lastPage"));
                     } else {
                         $this->tpl->setNotification($this->language->__($result['msg']), "error");
                         $this->tpl->assign('ticket', $this->ticketService->getTicket($id));

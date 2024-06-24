@@ -62,7 +62,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $this->reactionsService = $reactionsService;
             $this->settingRepo = $settingRepo;
 
-            $_SESSION['lastPage'] = BASE_URL . "/dashboard/show";
+            session(["lastPage" => BASE_URL . "/dashboard/show"]);
         }
 
         /**
@@ -93,7 +93,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
             $project['assignedUsers'] = $this->projectService->getProjectUserRelation($currentProjectId);
             $this->tpl->assign('project', $project);
 
-            $userReaction = $this->reactionsService->getUserReactions($_SESSION['userdata']['id'], 'project', $currentProjectId, Reactions::$favorite);
+            $userReaction = $this->reactionsService->getUserReactions(session("userdata.id"), 'project', $currentProjectId, Reactions::$favorite);
             if ($userReaction && is_array($userReaction) && count($userReaction) > 0) {
                 $this->tpl->assign("isFavorite", true);
             } else {
@@ -109,7 +109,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             //Milestones
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
 
             $comments = app()->make(CommentRepository::class);
@@ -141,7 +141,7 @@ namespace Leantime\Domain\Dashboard\Controllers {
 
             // TICKETS
             $this->tpl->assign('tickets', $this->ticketService->getLastTickets($currentProjectId));
-            $this->tpl->assign("onTheClock", $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
+            $this->tpl->assign("onTheClock", $this->timesheetService->isClocked(session("userdata.id")));
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
             $this->tpl->assign("types", $this->ticketService->getTicketTypes());

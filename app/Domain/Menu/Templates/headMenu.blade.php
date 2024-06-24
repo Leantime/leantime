@@ -121,7 +121,7 @@
                                 </span>
                                 <span class="notificationDate">
                                     {{ format($notif['datetime'])->date() }}
-                                    {{  format($notif['datetime'])->time() }}
+                                    {{ format($notif['datetime'])->time() }}
                                 </span>
                                 <span class="notificationTitle">{!! $tpl->convertRelativePaths($notif['message']) !!}</span>
                             </a>

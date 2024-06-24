@@ -128,7 +128,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
         public function checkIfInstalled(): bool
         {
 
-            if (isset($_SESSION['isInstalled']) && $_SESSION['isInstalled']) {
+            if (session()->exists("isInstalled") && session("isInstalled")) {
                 return true;
             }
 
@@ -140,7 +140,7 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 $stmn->closeCursor();
 
                 if (!count($values)) {
-                    $_SESSION['isInstalled'] = false;
+                    session(["isInstalled" => false]);
                     return false;
                 }
 
@@ -150,11 +150,11 @@ namespace Leantime\Domain\Entityrelations\Repositories {
                 $values = $stmn->fetchAll();
                 $stmn->closeCursor();
 
-                $_SESSION['isInstalled'] = true;
+                session(["isInstalled" => true]);
                 return true;
             } catch (Exception $e) {
                 error_log($e);
-                $_SESSION['isInstalled'] = false;
+                session(["isInstalled" => false]);
                 return false;
             }
         }

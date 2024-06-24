@@ -66,11 +66,11 @@ class ProjectSelector extends HtmxController
             "client" => (int)$_POST['client'] ?? null,
         );
 
-        $_SESSION['userdata']["projectSelectFilter"] = $projectSelectFilter;
+        session(["usersettings.projectSelectFilter"=> $projectSelectFilter]);
 
-        if (isset($_SESSION['userdata'])) {
+        if (session()->exists("userdata")) {
             //Getting all projects (ignoring client filter, clients are filtered on the frontend)
-            $projectVars = $this->menuService->getUserProjectList($_SESSION['userdata']['id'], $projectSelectFilter["client"]);
+            $projectVars = $this->menuService->getUserProjectList(session("userdata.id"), $projectSelectFilter["client"]);
 
             $allAssignedprojects = $projectVars['assignedProjects'];
             $allAvailableProjects  = $projectVars['availableProjects'];

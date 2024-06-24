@@ -32,9 +32,9 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->ticketService = $ticketService;
 
-            $_SESSION['lastPage'] = CURRENT_URL;
-            $_SESSION['lastMilestoneView'] = "timeline";
-            $_SESSION['lastFilterdMilestonesView'] = CURRENT_URL;
+            session(["lastPage" => CURRENT_URL]);
+            session(["lastMilestoneView" => "timeline"]);
+            session(["lastFilterdMilestonesView" => CURRENT_URL]);
         }
 
         /**

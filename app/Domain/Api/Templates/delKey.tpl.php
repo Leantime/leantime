@@ -22,7 +22,7 @@ $user = $tpl->get('user');
         <h5 class="subtitle"><?php echo $tpl->__("subtitles.delete_key"); ?></h5>
 
             <form method="post">
-                <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                 <p><?php echo $tpl->__('text.confirm_key_deletion'); ?></p><br />
                 <input type="submit" value="<?php echo $tpl->__('buttons.yes_delete'); ?>" name="del" class="button" />
                 <a class="btn btn-primary" href="<?=BASE_URL ?>/setting/editCompanySettings/#apiKeys"><?php echo $tpl->__('buttons.back'); ?></a>

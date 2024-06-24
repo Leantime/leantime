@@ -49,7 +49,7 @@ class Config
     public $s3EndPoint = null;                            //S3 EndPoint S3 Compatible (https://sfo2.digitaloceanspaces.com)
 
     /* Sessions */
-    public $sessionpassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  //Salting sessions. Replace with a strong password
+    public $sessionPassword = '3evBlq9zdUEuzKvVJHWWx3QzsQhturBApxwcws2m';  //Salting sessions. Replace with a strong password
     public $sessionExpiration = 28800;                    //How many seconds after inactivity should we logout?  28800seconds = 8hours
 
     /* Email */

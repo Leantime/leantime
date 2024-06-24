@@ -68,7 +68,7 @@ class ProjectHubProjects extends HtmxController
         $this->menuService = $menuService;
 
 
-        $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
+        session(["lastPage" => BASE_URL . "/dashboard/home"]);
     }
 
     public function get()
@@ -84,7 +84,7 @@ class ProjectHubProjects extends HtmxController
             }
         }
 
-        $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+        $allprojects = $this->projectsService->getProjectsAssignedToUser(session("userdata.id"), 'open');
         $clients = array();
 
         $projectResults = array();

@@ -50,17 +50,17 @@ class Header extends Composer
         $themeFont = $this->themeCore->getFont();
 
         // Set colors to use
-        if (! isset($_SESSION["companysettings.sitename"])) {
+        if (! session()->exists("companysettings.sitename")) {
             $sitename = $this->settingsRepo->getSetting("companysettings.sitename");
             if ($sitename !== false) {
-                $_SESSION["companysettings.sitename"] = $sitename;
+                session(["companysettings.sitename" => $sitename]);
             } else {
-                $_SESSION["companysettings.sitename"] = $this->config->sitename;
+                session(["companysettings.sitename" => $this->config->sitename]);
             }
         }
 
         return [
-            'sitename' => $_SESSION['companysettings.sitename'] ?? '',
+            'sitename' => session("companysettings.sitename") ?? '',
             'primaryColor' => $this->themeCore->getPrimaryColor(),
             'theme' => $theme,
             'version' => $this->appSettings->appVersion ?? '',
