@@ -9,7 +9,7 @@
 
     @include('global::sections.appAnnouncement')
 
-    <div class="mainwrapper menu{{ $_SESSION['menuState'] ?? "closed" }}">
+    <div class="mainwrapper menu{{ session("menuState") ?? "closed" }}">
 
         <div class="header">
 

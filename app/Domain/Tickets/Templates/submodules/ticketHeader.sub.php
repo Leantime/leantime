@@ -43,7 +43,7 @@ if (is_array($tpl->get('sprints'))) {
         <span class="fa fa-fw fa-thumb-tack"></span>
     </div>
     <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] ?? '' . " // " . $_SESSION['currentProjectName'] ?? ''); ?></h5>
+        <h5><?php $tpl->e(session("currentProjectClient") ?? '' . " // " . session("currentProjectName") ?? ''); ?></h5>
 
         <?php  if (
             ($tpl->get('currentSprint') !== false)

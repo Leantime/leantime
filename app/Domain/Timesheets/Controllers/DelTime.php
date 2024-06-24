@@ -46,8 +46,8 @@ class DelTime extends Controller
 
                 $this->tpl->setNotification("notifications.time_deleted_successfully", "success");
 
-                if (isset($_SESSION['lastPage'])) {
-                    return Frontcontroller::redirect($_SESSION['lastPage']);
+                if (session()->exists("lastPage")) {
+                    return Frontcontroller::redirect(session("lastPage"));
                 } else {
                     return Frontcontroller::redirect(BASE_URL . "/timsheets/showMyList");
                 }

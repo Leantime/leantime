@@ -10,12 +10,12 @@ $ticket = $tpl->get('ticket');
 <div class="pageheader">
 
     <div class="pull-right padding-top">
-        <a href="<?php echo $_SESSION['lastPage'] ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$tpl->__("links.go_back") ?></a>
+        <a href="<?php echo session("lastPage") ?>" class="backBtn"><i class="far fa-arrow-alt-circle-left"></i> <?=$tpl->__("links.go_back") ?></a>
     </div>
 
     <div class="pageicon"><span class="fa <?php echo $tpl->getModulePicture() ?>"></span></div>
     <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+        <h5><?php $tpl->e(session("currentProjectClient") . " // " . session("currentProjectName")); ?></h5>
         <h1><?=$tpl->__("headlines.new_to_do") ?></h1>
     </div>
 </div><!--pageheader-->

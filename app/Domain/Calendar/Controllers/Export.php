@@ -47,7 +47,7 @@ class Export extends Controller
     public function run(): Response
     {
         if (isset($_GET['remove'])) {
-            $this->settingsRepo->deleteSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret");
+            $this->settingsRepo->deleteSetting("usersettings." . session("userdata.id") . ".icalSecret");
 
             $this->tpl->setNotification("notifications.ical_removed_success", "success");
         }
@@ -57,13 +57,13 @@ class Export extends Controller
             $uuid = Uuid::uuid4();
             $icalHash = $uuid->toString();
 
-            $this->settingsRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret", $icalHash);
+            $this->settingsRepo->saveSetting("usersettings." . session("userdata.id") . ".icalSecret", $icalHash);
 
             $this->tpl->setNotification("notifications.ical_success", "success");
         }
 
-        $icalHash = $this->settingsRepo->getSetting("usersettings." . $_SESSION['userdata']['id'] . ".icalSecret");
-        $userHash = hash('sha1', $_SESSION['userdata']['id'] . $this->config->sessionpassword);
+        $icalHash = $this->settingsRepo->getSetting("usersettings." . session("userdata.id") . ".icalSecret");
+        $userHash = hash('sha1', session("userdata.id") . $this->config->sessionpassword);
 
         if (!$icalHash) {
             $icalUrl = "";

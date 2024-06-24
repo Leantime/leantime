@@ -88,7 +88,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
             $this->tpl->assign('comments', $comments);
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             $this->tpl->assign('canvasTypes', $this->ideaRepo->canvasTypes);
             $this->tpl->assign('canvasItem', $canvasItem);
@@ -109,7 +109,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $values = array(
                         'text' => $params['text'],
                         'date' => date("Y-m-d H:i:s"),
-                        'userId' => ($_SESSION['userdata']['id']),
+                        'userId' => (session("userdata.id")),
                         'moduleId' => (int)$_GET['id'],
                         'commentParent' => ($params['father']),
                     );
@@ -122,7 +122,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                     $actual_link = BASE_URL . "/ideas/ideaDialog/" . (int)$_GET['id'];
                     $message = sprintf(
                         $this->language->__('email_notifications.new_comment_idea_message'),
-                        $_SESSION["userdata"]["name"]
+                        session("userdata.name")
                     );
 
 
@@ -133,9 +133,9 @@ namespace Leantime\Domain\Ideas\Controllers {
                     );
                     $notification->entity = $values;
                     $notification->module = "comments";
-                    $notification->projectId = $_SESSION['currentProject'];
+                    $notification->projectId = session("currentProject");
                     $notification->subject = $subject;
-                    $notification->authorId = $_SESSION['userdata']['id'];
+                    $notification->authorId = session("userdata.id");
                     $notification->message = $message;
 
                     $this->projectService->notifyProjectUsers($notification);
@@ -148,11 +148,11 @@ namespace Leantime\Domain\Ideas\Controllers {
             if (isset($params['changeItem'])) {
                 if (isset($params['itemId']) && $params['itemId'] != '') {
                     if (isset($params['description']) === true) {
-                        $currentCanvasId = (int)$_SESSION['currentIdeaCanvas'];
+                        $currentCanvasId = (int)session("currentIdeaCanvas");
 
                         $canvasItem = array(
                             "box" => $params['box'],
-                            "author" => $_SESSION['userdata']["id"],
+                            "author" => session("userdata.id"),
                             "description" => $params['description'],
                             "status" => $params['status'],
                             "assumptions" => "",
@@ -196,7 +196,7 @@ namespace Leantime\Domain\Ideas\Controllers {
                         $actual_link = BASE_URL . "/ideas/ideaDialog/" . (int)$params['itemId'];
                         $message = sprintf(
                             $this->language->__('notification.idea_edited'),
-                            $_SESSION["userdata"]["name"],
+                            session("userdata.name"),
                             $params['description']
                         );
 
@@ -209,9 +209,9 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $notification->entity = $canvasItem;
                         $notification->module = "ideas";
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $subject;
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);
@@ -222,11 +222,11 @@ namespace Leantime\Domain\Ideas\Controllers {
                     }
                 } else {
                     if (isset($_POST['description']) === true) {
-                        $currentCanvasId = (int)$_SESSION['currentIdeaCanvas'];
+                        $currentCanvasId = (int)session("currentIdeaCanvas");
 
                         $canvasItem = array(
                             "box" => $params['box'],
-                            "author" => $_SESSION['userdata']["id"],
+                            "author" => session("userdata.id"),
                             "description" => $params['description'],
                             "status" => $params['status'],
                             "assumptions" => "",
@@ -240,7 +240,7 @@ namespace Leantime\Domain\Ideas\Controllers {
 
                         $subject = $this->language->__('email_notifications.idea_created_subject');
                         $actual_link = BASE_URL . "/ideas/ideaDialog/" . $id;
-                        $message = sprintf($this->language->__('email_notifications.idea_created_message'), $_SESSION["userdata"]["name"], $params['description']);
+                        $message = sprintf($this->language->__('email_notifications.idea_created_message'), session("userdata.name"), $params['description']);
 
 
                         $notification = app()->make(NotificationModel::class);
@@ -250,9 +250,9 @@ namespace Leantime\Domain\Ideas\Controllers {
                         );
                         $notification->entity = $canvasItem;
                         $notification->module = "ideas";
-                        $notification->projectId = $_SESSION['currentProject'];
+                        $notification->projectId = session("currentProject");
                         $notification->subject = $subject;
-                        $notification->authorId = $_SESSION['userdata']['id'];
+                        $notification->authorId = session("userdata.id");
                         $notification->message = $message;
 
                         $this->projectService->notifyProjectUsers($notification);

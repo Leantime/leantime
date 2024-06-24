@@ -88,7 +88,7 @@ class Upload extends Controller
 
         //Temporarily store results in meta
 
-        $_SESSION['csv_records'] = iterator_to_array($records);
+        session(["csv_records" => iterator_to_array($records)]);
 
         $integrationService = app()->make(Integrations::class);
         $id = $integrationService->create($integration);

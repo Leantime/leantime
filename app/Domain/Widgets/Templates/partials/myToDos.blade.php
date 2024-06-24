@@ -141,7 +141,7 @@
                                 @if($groupBy == 'sprint')
                                     {{ explode("-", $ticketGroup["groupValue"])[1] == $project['id'] ? 'selected' : '' }}
                                     @else
-                                    {{ $_SESSION['currentProject'] == $project['id'] ? 'selected' : '' }}
+                                    {{ session("currentProject") == $project['id'] ? 'selected' : '' }}
                                     @endif
                                 >{{ $project["name"]  }}</option>
                             @endforeach
@@ -187,7 +187,7 @@
                             $ticketCreationDueDate = $ticketGroup['tickets'][0]['dateToFinish'];
                         }
 
-                        $groupProjectId = $_SESSION['currentProject'];
+                        $groupProjectId = session("currentProject");
 
                         if ($groupBy == 'project' && isset($ticketGroup['tickets'][0])) {
                             $groupProjectId = $ticketGroup['tickets'][0]['projectId'];

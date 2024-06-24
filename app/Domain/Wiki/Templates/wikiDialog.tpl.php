@@ -1,4 +1,12 @@
 <?php
+
+/** @var \Leantime\Core\Template $tpl */
+/** @var string BASE_URL */
+/** @var array $__data */
+/** @var \Leantime\Domain\Auth\Services\Auth $login */
+/** @var \Leantime\Domain\Auth\Models\Roles $roles */
+
+
 foreach ($__data as $var => $val) {
     $$var = $val; // necessary for blade refactor
 }

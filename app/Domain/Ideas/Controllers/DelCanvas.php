@@ -41,7 +41,7 @@ namespace Leantime\Domain\Ideas\Controllers {
             if (isset($_POST['del']) && isset($id)) {
                 $this->ideaRepo->deleteCanvas($id);
 
-                unset($_SESSION['currentIdeaCanvas']);
+                session()->forget("currentIdeaCanvas");
                 $this->tpl->setNotification($this->language->__("notification.idea_board_deleted"), "success", "ideaboard_deleted");
                 return Frontcontroller::redirect(BASE_URL . "/ideas/showBoards");
             }

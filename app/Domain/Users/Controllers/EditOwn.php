@@ -46,7 +46,7 @@ namespace Leantime\Domain\Users\Controllers {
             $this->settingsService = $settingsService;
             $this->userService = $userService;
 
-            $this->userId = $_SESSION['userdata']['id'];
+            $this->userId = session("userdata.id");
         }
 
 
@@ -111,10 +111,10 @@ namespace Leantime\Domain\Users\Controllers {
             }
 
             $permitted_chars = '123456789abcdefghijklmnopqrstuvwxyz';
-            $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
-            $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
+            session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
 
-            $this->tpl->assign('profilePic', $this->userRepo->getProfilePicture($_SESSION['userdata']['id']));
+            $this->tpl->assign('profilePic', $this->userRepo->getProfilePicture(session("userdata.id")));
             $this->tpl->assign('values', $values);
 
             $this->tpl->assign('userLang', $userLang);
@@ -147,7 +147,7 @@ namespace Leantime\Domain\Users\Controllers {
             //Save Profile Info
             $tab = '';
 
-            if (isset($_SESSION['formTokenName']) && isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+            if (session()->exists("formTokenName") && isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
                 $row = $this->userRepo->getUser($this->userId);
 
                 //profile Info
@@ -273,11 +273,11 @@ namespace Leantime\Domain\Users\Controllers {
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".time_format", $timeFormat);
                     $this->settingsService->saveSetting("usersettings." . $this->userId . ".timezone", $tz);
 
-                    unset($_SESSION['cache.language_resources_' . $this->language->getCurrentLanguage()]);
+                    session()->forget("cache.language_resources_" . $this->language->getCurrentLanguage());
 
-                    $_SESSION['usersettings.language.date_format'] = $dateFormat;
-                    $_SESSION['usersettings.language.time_format'] = $timeFormat;
-                    $_SESSION['usersettings.timezone'] = $tz;
+                    session(["usersettings.date_format" => $dateFormat]);
+                    session(["usersettings.time_format" => $timeFormat]);
+                    session(["usersettings.timezone" => $tz]);
 
                     $this->language->setLanguage($postLang);
 

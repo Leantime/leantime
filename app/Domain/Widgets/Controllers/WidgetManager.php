@@ -55,7 +55,7 @@ namespace Leantime\Domain\Widgets\Controllers {
         public function get(array $params): HttpFoundation\Response
         {
             $availableWidgets = $this->widgetService->getAll();
-            $activeWidgets = $this->widgetService->getActiveWidgets($_SESSION['userdata']['id']);
+            $activeWidgets = $this->widgetService->getActiveWidgets(session("userdata.id"));
 
             $this->tpl->assign("availableWidgets", $availableWidgets);
             $this->tpl->assign("activeWidgets", $activeWidgets);
@@ -72,7 +72,7 @@ namespace Leantime\Domain\Widgets\Controllers {
         public function post(array $params): HttpFoundation\Response
         {
             if (isset($params['action']) && isset($params['data']) && $params['action'] == 'saveGrid' && $params['data'] != '') {
-                $this->settingRepo->saveSetting("usersettings." . $_SESSION['userdata']['id'] . ".dashboardGrid", serialize($params['data']));
+                $this->settingRepo->saveSetting("usersettings." . session("userdata.id") . ".dashboardGrid", serialize($params['data']));
             }
             return new \Symfony\Component\HttpFoundation\Response();
         }

@@ -45,7 +45,7 @@ foreach ($__data as $var => $val) {
                         <?php } else { ?>
                             <form action="" method="post" class='stdform'>
                                 <h5><?php echo $tpl->__('text.twoFA_already_enabled'); ?></h5>
-                                <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                                <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                                 <p class='stdformbutton'>
                                     <input type="submit" name="disable" id="disable"
                                            value="<?php echo $tpl->__('buttons.remove'); ?>" class="button"/>

@@ -68,7 +68,7 @@ class AddTime extends Controller
         //Only admins and employees
         if (Auth::userIsAtLeast(Roles::$editor)) {
             $values = array(
-                'userId' => $_SESSION['userdata']['id'],
+                'userId' => session("userdata.id"),
                 'ticket' => '',
                 'project' => '',
                 'date' => '',
@@ -98,7 +98,7 @@ class AddTime extends Controller
                 }
 
                 if (!empty($_POST['date'])) {
-                    $values['date'] = (new Carbon($_POST['date'], $_SESSION['usersettings.timezone']))->setTimezone('UTC');
+                    $values['date'] = (new Carbon($_POST['date'], session("usersettings.timezone")))->setTimezone('UTC');
                 }
 
                 if (!empty($_POST['hours'])) {
@@ -111,7 +111,7 @@ class AddTime extends Controller
                     }
 
                     if (!empty($_POST['invoicedEmplDate'])) {
-                        $values['invoicedEmplDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
+                        $values['invoicedEmplDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
                     }
                 }
 
@@ -122,7 +122,7 @@ class AddTime extends Controller
                         }
 
                         if (!empty($_POST['invoicedCompDate'])) {
-                            $values['invoicedCompDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
+                            $values['invoicedCompDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
                         }
                     }
                 }
@@ -134,7 +134,7 @@ class AddTime extends Controller
                         }
 
                         if (!empty($_POST['paidDate'])) {
-                            $values['paidDate'] = Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC');
+                            $values['paidDate'] = Carbon::now(session("usersettings.timezone"))->setTimezone('UTC');
                         }
                     }
                 }
@@ -168,7 +168,7 @@ class AddTime extends Controller
                     $this->tpl->assign('values', $values);
                 } elseif (isset($_POST['saveNew']) === true) {
                     $values = array(
-                        'userId' => $_SESSION['userdata']['id'],
+                        'userId' => session("userdata.id"),
                         'ticket' => '',
                         'project' => '',
                         'date' => '',

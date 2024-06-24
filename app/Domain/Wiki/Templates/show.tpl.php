@@ -56,7 +56,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
     <div class="pageicon"><span class="fa fa-book"></span></div>
     <div class="pagetitle">
 
-        <h5><?php $tpl->e($_SESSION["currentProjectClient"]); ?></h5>
+        <h5><?php $tpl->e(session("currentProjectClient")); ?></h5>
 
         <?php if (count($wikis) > 0) {?>
             <span class="dropdown dropdownWrapper headerEditDropdown">
@@ -180,7 +180,7 @@ function createTreeView($array, $currentParent, int $currLevel = 0, int $prevLev
                                 <?php  if ($login::userIsAtLeast($roles::$editor)) { ?>
                                     <div class="right">
                                         <a class="btn btn-default round-button" href="#/wiki/articleDialog/<?=$currentArticle->id; ?>" ><i class='fa fa-edit'></i></a>
-                                        <a class="dropdown-toggle btn btn-default round-button" data-toggle="dropdown" href="javascript:void(0)" onclick="leantime.snippets.copyToClipboard('<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=$_SESSION["currentProject"]; ?>')"><i class="fa fa-link"></i></a>
+                                        <a class="dropdown-toggle btn btn-default round-button" data-toggle="dropdown" href="javascript:void(0)" onclick="leantime.snippets.copyToClipboard('<?=BASE_URL?>/wiki/show/<?=$currentArticle->id; ?>&projectId=<?=session("currentProject"); ?>')"><i class="fa fa-link"></i></a>
 
 
                                     </div>

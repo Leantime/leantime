@@ -55,13 +55,13 @@ class MyProjects extends HtmxController
         $this->calendarRepo = $calendarRepo;
         $this->menuService = $menuService;
 
-        $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
+        session(["lastPage" => BASE_URL . "/dashboard/home"]);
     }
 
     public function get()
     {
 
-        $allprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+        $allprojects = $this->projectsService->getProjectsAssignedToUser(session("userdata.id"), 'open');
         $clients = array();
 
         $projectResults = array();

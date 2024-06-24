@@ -58,7 +58,7 @@ class DelAPIKey extends Controller
 
             // Delete User
             if (isset($_POST['del']) === true) {
-                if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+                if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
                     $this->userRepo->deleteUser($id);
                     $this->tpl->setNotification($this->language->__("notifications.key_deleted"), "success", "apikey_deleted");
 
@@ -70,8 +70,8 @@ class DelAPIKey extends Controller
 
             // Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-            $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
-            $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
+            session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
 
             //Assign variables
             $this->tpl->assign('user', $user);

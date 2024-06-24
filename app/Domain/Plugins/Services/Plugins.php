@@ -156,18 +156,18 @@ namespace Leantime\Domain\Plugins\Services {
         public function getEnabledPlugins(): mixed
         {
 
-            if (isset($_SESSION['enabledPlugins'])) {
-                $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
+            if (session()->exists("enabledPlugins")) {
+                $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", session("enabledPlugins"), array("enabledOnly" => true));
                 return $enabledPlugins;
             }
 
-            $_SESSION['enabledPlugins'] = $this->getAllPlugins(enabledOnly: true);
+            session(["enabledPlugins" => $this->getAllPlugins(enabledOnly: true)]);
 
             /**
              * Filters session array of enabled plugins before returning
              * @var array $enabledPlugins
              */
-            $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", $_SESSION['enabledPlugins'], array("enabledOnly" => true));
+            $enabledPlugins = static::dispatch_filter("beforeReturnCachedPlugins", session("enabledPlugins"), array("enabledOnly" => true));
             return $enabledPlugins;
         }
 
@@ -563,7 +563,10 @@ namespace Leantime\Domain\Plugins\Services {
         public function clearCache()
         {
 
-            unset($_SESSION['commands']['plugins'], $_SESSION['enabledPlugins'], $_SESSION['template_paths'], $_SESSION['composers']);
+            session()->forget("commands.plugins");
+            session()->forget("enabledPlugins");
+            session()->forget("template_paths");
+            session()->forget("composers");
         }
     }
 }

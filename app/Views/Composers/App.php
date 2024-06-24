@@ -37,8 +37,8 @@ class App extends Composer
     public function with(): array
     {
         // These needs to live in the main app since the menu open or closed changes the entire html layout
-        if (isset($_SESSION["userdata"]["id"])) {
-            $_SESSION['menuState'] = $this->menuRepo->getSubmenuState('mainMenu') ?: 'open';
+        if (session()->exists("userdata")) {
+            session(["menuState" => $this->menuRepo->getSubmenuState('mainMenu') ?: 'open']);
         }
 
         $menuType = $this->menuRepo->getSectionMenuType(FrontcontrollerCore::getCurrentRoute(), "project");

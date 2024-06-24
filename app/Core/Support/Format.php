@@ -175,7 +175,7 @@ class Format
             //users timezone.
 
             //Date was falsly parsed as UTC but is actually user date. Shift timezone.
-            $userTimezone = $_SESSION['usersettings.timezone'];
+            $userTimezone = session("usersettings.timezone");
             //Carbon shift timezone will change timezone without actually changing the numbers
             $this->value->shiftTimezone($userTimezone);
         }

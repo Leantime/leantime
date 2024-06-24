@@ -48,10 +48,10 @@ class Checklist extends HtmxController
         // update project progress
         $projectProgress = $this->incomingRequest->request->all();
 
-        $this->projectService->updateProjectProgress($projectProgress, $_SESSION['currentProject']);
+        $this->projectService->updateProjectProgress($projectProgress, session("currentProject"));
 
         // return view with new data
-        [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist($_SESSION['currentProject']);
+        [$progressSteps, $percentDone] = $this->projectService->getProjectSetupChecklist(session("currentProject"));
         $this->tpl->assign("progressSteps", $progressSteps);
         $this->tpl->assign("percentDone", $percentDone);
         $this->tpl->assign("includeTitle", false);

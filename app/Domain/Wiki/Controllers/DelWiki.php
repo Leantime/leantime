@@ -42,7 +42,7 @@ namespace Leantime\Domain\Wiki\Controllers {
             if (isset($_POST['del']) && isset($id)) {
                 $this->wikiRepo->delWiki($id);
 
-                unset($_SESSION['currentIdeaCanvas']);
+                session()->forget("currentIdeaCanvas");
                 $this->tpl->setNotification($this->language->__("notification.wiki_deleted"), "success", "wiki_deleted");
                 return Frontcontroller::redirect(BASE_URL . "/wiki/show");
             }

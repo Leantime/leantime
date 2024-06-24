@@ -56,8 +56,8 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->timesheetService = $timesheetService;
             $this->userService = $userService;
 
-            if (isset($_SESSION['lastPage']) === false) {
-                $_SESSION['lastPage'] = BASE_URL . "/tickets/showKanban";
+            if (session()->exists("lastPage") === false) {
+                session(["lastPage" => BASE_URL . "/tickets/showKanban"]);
             }
         }
 
@@ -80,7 +80,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             }
 
             //Ensure this ticket belongs to the current project
-            if ($_SESSION["currentProject"] != $ticket->projectId) {
+            if (session("currentProject") != $ticket->projectId) {
                 $this->projectService->changeCurrentSessionProject($ticket->projectId);
 
                 return Frontcontroller::redirect(BASE_URL . "/tickets/showTicket/" . $id);
@@ -127,19 +127,19 @@ namespace Leantime\Domain\Tickets\Controllers {
              $allProjectMilestones = $this->ticketService->getAllMilestones([
             "sprint" => '',
              "type" => "milestone",
-             "currentProject" => $_SESSION["currentProject"],
+             "currentProject" => session("currentProject"),
              ]);
             $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
+            $this->tpl->assign('sprints', $this->sprintService->getAllSprints(session("currentProject")));
 
             $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
             $this->tpl->assign('ticketHours', $this->timesheetService->getLoggedHoursForTicketByDate($id));
-            $this->tpl->assign('userHours', $this->timesheetService->getUsersTicketHours($id, $_SESSION['userdata']['id']));
+            $this->tpl->assign('userHours', $this->timesheetService->getUsersTicketHours($id, session("userdata.id")));
 
             $this->tpl->assign('timesheetsAllHours', $this->timesheetService->getSumLoggedHoursForTicket($id));
             $this->tpl->assign('remainingHours', $this->timesheetService->getRemainingHours($ticket));
 
-            $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
+            $this->tpl->assign('userInfo', $this->userService->getUser(session("userdata.id")));
             $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($ticket->projectId));
 
             $projectData = $this->projectService->getProject($ticket->projectId);
@@ -154,11 +154,11 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('numFiles', count($files));
             $this->tpl->assign('files', $files);
 
-            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked($_SESSION["userdata"]["id"]));
+            $this->tpl->assign('onTheClock', $this->timesheetService->isClocked(session("userdata.id")));
 
             $this->tpl->assign("timesheetValues", array(
                 "kind" => "",
-                "date" => Carbon::now($_SESSION['usersettings.timezone'])->setTimezone('UTC'),
+                "date" => Carbon::now(session("usersettings.timezone"))->setTimezone('UTC'),
                 "hours" => "",
                 "description" => "",
             ));
@@ -166,7 +166,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             //TODO: Refactor thumbnail generation in file manager
             $this->tpl->assign('imgExtensions', array('jpg', 'jpeg', 'png', 'gif', 'psd', 'bmp', 'tif', 'thm', 'yuv'));
 
-            $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open');
+            $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session("userdata.id"), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             $response = $this->tpl->displayPartial('tickets.showTicketModal');

@@ -78,7 +78,7 @@ class ApiKey extends Controller
             );
 
             if (isset($_POST['save'])) {
-                if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+                if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
                     $values = array(
                         'firstname' => ($_POST['firstname'] ?? $row['firstname']),
                         'lastname' => '',
@@ -133,8 +133,8 @@ class ApiKey extends Controller
 
             // Sensitive Form, generate form tokens
             $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-            $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
-            $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
+            session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
+            session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
 
             $this->tpl->assign('values', $values);
             $this->tpl->assign('relations', $projectrelation);

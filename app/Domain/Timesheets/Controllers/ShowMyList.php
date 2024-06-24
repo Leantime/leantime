@@ -26,7 +26,7 @@ class ShowMyList extends Controller
     public function init(TimesheetService $timesheetService): void
     {
         $this->timesheetService = $timesheetService;
-        $_SESSION['lastPage'] = BASE_URL . "/timesheets/showMyList";
+        session(["lastPage" => BASE_URL . "/timesheets/showMyList"]);
     }
 
     /**
@@ -69,7 +69,7 @@ class ShowMyList extends Controller
             dateTo: $dateTo,
             projectId: -1,
             kind: $kind,
-            userId: $_SESSION['userdata']['id'],
+            userId: session("userdata.id"),
             invEmpl: 0,
             invComp: 0,
             paid: 0

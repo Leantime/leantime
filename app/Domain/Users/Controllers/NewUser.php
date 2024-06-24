@@ -74,7 +74,7 @@ namespace Leantime\Domain\Users\Controllers {
                         'jobTitle' => ($_POST['jobTitle']),
                         'jobLevel' => ($_POST['jobLevel']),
                         'department' => ($_POST['department']),
-                        'clientId' => Auth::userHasRole(Roles::$manager) ? $_SESSION['userdata']['clientId'] : $_POST['client'],
+                        'clientId' => Auth::userHasRole(Roles::$manager) ? session("userdata.clientId") : $_POST['client'],
                     );
                     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
                         foreach ($_POST['projects'] as $project) {

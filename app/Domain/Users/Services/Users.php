@@ -162,11 +162,11 @@ namespace Leantime\Domain\Users\Services {
             $filteredInput = htmlspecialchars($setting);
             $filteredValue = htmlspecialchars($value);
 
-            $_SESSION['userdata']['settings'][$category][$filteredInput] =  $filteredValue;
+            session(["usersettings.".$category.".".$filteredInput => $filteredValue]);
 
-            $serializeSettings = serialize($_SESSION['userdata']['settings']);
+            $serializeSettings = serialize(session("usersettings"));
 
-            return $this->userRepo->patchUser($_SESSION['userdata']['id'], array("settings" => $serializeSettings));
+            return $this->userRepo->patchUser(session("userdata.id"), array("settings" => $serializeSettings));
         }
 
         /**
@@ -244,7 +244,7 @@ namespace Leantime\Domain\Users\Services {
 
             $message = sprintf(
                 $this->language->__("email_notifications.user_invite_message"),
-                $_SESSION["userdata"]["name"] ?? "Leantime",
+                session("userdata.name") ?? "Leantime",
                 $actual_link,
                 $user
             );
@@ -253,7 +253,7 @@ namespace Leantime\Domain\Users\Services {
 
             $to = array($user);
 
-            $mailer->sendMail($to, $_SESSION["userdata"]["name"] ?? "Leantime");
+            $mailer->sendMail($to, session("userdata.name") ?? "Leantime");
         }
 
 

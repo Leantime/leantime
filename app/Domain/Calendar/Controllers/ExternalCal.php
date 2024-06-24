@@ -51,20 +51,20 @@ class ExternalCal extends Controller
 
         $calId = $_GET['id'];
 
-        if (!isset($_SESSION['calendarCache'])) {
-            $_SESSION['calendarCache'] = [];
+        if (!session()->exists("calendarCache")) {
+            session(["calendarCache" => []]);
         }
 
         $content = '';
-        if (isset($_SESSION['calendarCache'][$calId]) && $_SESSION['calendarCache'][$calId]['lastUpdate'] > time() - $this->cacheTime) {
-            $content = $_SESSION['calendarCache'][$calId]["content"];
+        if (session()->exists("calendarCache.".$calId) && session()->exits("calendarCache.".$calId.".lastUpdate") > time() - $this->cacheTime) {
+            $content = session("calendarCache.".$calId.".content");
         } else {
-            $cal = $this->calendarRepo->getExternalCalendar($calId, $_SESSION['userdata']['id']);
+            $cal = $this->calendarRepo->getExternalCalendar($calId, session("userdata.id"));
 
             if (isset($cal["url"])) {
                 $content = $this->loadIcalUrl($cal["url"]);
-                $_SESSION['calendarCache'][$calId]["lastUpdate"] = time();
-                $_SESSION['calendarCache'][$calId]["content"] = $content;
+                session(["calendarCache.".$calId.".lastUpdate" => time()]);
+                session(["calendarCache.".$calId."content" => $content]);
             }
         }
 

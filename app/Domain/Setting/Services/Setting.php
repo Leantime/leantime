@@ -33,7 +33,7 @@ namespace Leantime\Domain\Setting\Services {
 
             $upload->initFile($file['file']);
 
-            $newname = md5($_SESSION['userdata']['id'] . time());
+            $newname = md5(session("userdata.id") . time());
             $upload->renameFile($newname);
 
             if ($upload->error == '') {
@@ -43,9 +43,9 @@ namespace Leantime\Domain\Setting\Services {
                     $this->settingsRepo->saveSetting("companysettings.logoPath", $url);
 
                     if (str_starts_with($url, 'http')) {
-                        $_SESSION["companysettings.logoPath"] = $url;
+                        session(["companysettings.logoPath" => $url]);
                     } else {
-                        $_SESSION["companysettings.logoPath"] = BASE_URL . $url;
+                        session(["companysettings.logoPath" => BASE_URL . $url]);
                     }
 
                     return true;
@@ -62,8 +62,8 @@ namespace Leantime\Domain\Setting\Services {
         {
 
             $this->settingsRepo->deleteSetting("companysettings.logoPath");
-            unset($_SESSION["companysettings.logoPath"]);
-            $_SESSION["companysettings.logoPath"] = "";
+            session()->forget("companysettings.logoPath");
+            session(["companysettings.logoPath" => ""]);
         }
 
         /**
