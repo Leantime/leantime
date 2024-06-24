@@ -27,8 +27,9 @@ if (isset($currentSprint->id)) {
                     <?php
                     if(isset($currentSprint)) {
                         if($currentSprint->projectId == $project['id']) {
-                        echo "selected";
-                    }else if( session("currentProject") == $project['id']){
+                            echo "selected";
+                        }
+                    }elseif( session("currentProject") == $project['id']){
                         echo "selected";
                     }
                     ?>

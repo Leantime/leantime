@@ -40,8 +40,18 @@ class Application extends Container
      */
     protected $deferredServices = [];
 
+    /**
+     * Array to store laravel service providers
+     *
+     * @var array
+     */
     protected $serviceProviders = [];
 
+    /**
+     * Array to store already loaded providers
+     *
+     * @var array
+     */
     protected $loadedProviders = [];
 
     /**
@@ -50,7 +60,6 @@ class Application extends Container
      * @var bool
      */
     protected $booted = false;
-
 
     /**
      * Constructor method for the class.
