@@ -54,10 +54,10 @@ class DateTimeHelper extends CarbonImmutable
         $this->dbTimezone = "UTC";
 
         // Session is set in middleware, unlikely to not be set but just in case set defaults.
-        $this->userTimezone = $_SESSION['usersettings.timezone'] ?? $this->config->defaultTimezone;
-        $this->userLanguage = $_SESSION['usersettings.language'] ?? $this->config->language;
-        $this->userDateFormat = $_SESSION['usersettings.language.date_format'] ?? $this->language->__("language.dateformat");
-        $this->userTimeFormat = $_SESSION['usersettings.language.time_format'] ?? $this->language->__("language.timeformat");
+        $this->userTimezone = session("usersettings.timezone") ?? $this->config->defaultTimezone;
+        $this->userLanguage = session("usersettings.language") ?? $this->config->language;
+        $this->userDateFormat = session("usersettings.date_format") ?? $this->language->__("language.dateformat");
+        $this->userTimeFormat = session("usersettings.time_format") ?? $this->language->__("language.timeformat");
     }
 
     /**

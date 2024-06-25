@@ -85,7 +85,7 @@ namespace Leantime\Domain\Queue\Services {
                     subject: $subject,
                     message: $message,
                     projectId: $projectId,
-                    userId: $_SESSION['userdata']['id']);
+                    userId: session("userdata.id"));
 
         }
     }

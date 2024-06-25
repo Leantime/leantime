@@ -60,8 +60,8 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->timesheetService = $timesheetService;
             $this->userService = $userService;
 
-            if (!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL . "/tickets/showKanban/";
+            if (!session()->exists("lastPage")) {
+                session(["lastPage" => BASE_URL . "/tickets/showKanban/"]);
             }
         }
 
@@ -75,11 +75,11 @@ namespace Leantime\Domain\Tickets\Controllers {
             $ticket = app()->make(TicketModel::class, [
             "values" =>
                 [
-                    "userLastname" => $_SESSION['userdata']["name"],
+                    "userLastname" => session("userdata.name"),
                     "status" => 3,
-                    "projectId" => $_SESSION['currentProject'],
-                    "sprint" => $_SESSION['currentSprint'] ?? '',
-                    "editorId" => $_SESSION['userdata']['id']
+                    "projectId" => session("currentProject"),
+                    "sprint" => session("currentSprint") ?? '',
+                    "editorId" => session("userdata.id")
                 ],
             ]);
 
@@ -92,9 +92,9 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
             $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
 
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
-            $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
+            $this->tpl->assign('sprints', $this->sprintService->getAllSprints(session("currentProject")));
 
             $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
             $this->tpl->assign('ticketHours', 0);
@@ -103,10 +103,10 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('timesheetsAllHours', 0);
             $this->tpl->assign('remainingHours', 0);
 
-            $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
-            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+            $this->tpl->assign('userInfo', $this->userService->getUser(session("userdata.id")));
+            $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
 
-            $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open');
+            $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session("userdata.id"), 'open');
             $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
             return $this->tpl->displayPartial('tickets.newTicketModal');
@@ -139,15 +139,15 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->setNotification($this->language->__($result["msg"]), "error");
 
                     $ticket = app()->makeWith(TicketModel::class, ["values"=>$params]);
-                    $ticket->userLastname = $_SESSION['userdata']["name"];
+                    $ticket->userLastname = session("userdata.name");
 
                     $this->tpl->assign('ticket', $ticket);
                     $this->tpl->assign('statusLabels', $this->ticketService->getStatusLabels());
                     $this->tpl->assign('ticketTypes', $this->ticketService->getTicketTypes());
                     $this->tpl->assign('efforts', $this->ticketService->getEffortLabels());
                     $this->tpl->assign('priorities', $this->ticketService->getPriorityLabels());
-                    $this->tpl->assign('milestones', $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]));
-                    $this->tpl->assign('sprints', $this->sprintService->getAllSprints($_SESSION["currentProject"]));
+                    $this->tpl->assign('milestones', $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]));
+                    $this->tpl->assign('sprints', $this->sprintService->getAllSprints(session("currentProject")));
 
                     $this->tpl->assign('kind', $this->timesheetService->getLoggableHourTypes());
                     $this->tpl->assign('ticketHours', 0);
@@ -156,10 +156,10 @@ namespace Leantime\Domain\Tickets\Controllers {
                     $this->tpl->assign('timesheetsAllHours', 0);
                     $this->tpl->assign('remainingHours', 0);
 
-                    $this->tpl->assign('userInfo', $this->userService->getUser($_SESSION['userdata']['id']));
-                    $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject($_SESSION["currentProject"]));
+                    $this->tpl->assign('userInfo', $this->userService->getUser(session("userdata.id")));
+                    $this->tpl->assign('users', $this->projectService->getUsersAssignedToProject(session("currentProject")));
 
-                    $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo($_SESSION['userdata']['id'], 'open');
+                    $allAssignedprojects = $this->projectService->getProjectsUserHasAccessTo(session("userdata.id"), 'open');
                     $this->tpl->assign('allAssignedprojects', $allAssignedprojects);
 
                     return $this->tpl->displayPartial('tickets.newTicketModal');

@@ -22,16 +22,16 @@ namespace Leantime\Domain\Notifications\Controllers {
 
 
             $jsonEncoded = false;
-            if($_SESSION['notification'] != ''){
+            if(session("notification") != ''){
                 $notificationArray = array(
-                    "notification" => $_SESSION['notification'] ?? '',
-                    "type" => $_SESSION['notificationType'] ?? '',
-                    "eventId" => $_SESSION['eventId'] ?? ''
+                    "notification" => session("notification") ?? '',
+                    "type" => session("notificationType") ?? '',
+                    "eventId" => session("eventId") ?? ''
                 );
 
-                $_SESSION['notification'] = '';
-                $_SESSION['notificationType'] = '';
-                $_SESSION['eventId'] = '';
+                session(["notification" => '']);
+                session(["notificationType" => '']);
+                session(["eventId" => '']);
 
                 $jsonEncoded = json_encode($notificationArray);
             }

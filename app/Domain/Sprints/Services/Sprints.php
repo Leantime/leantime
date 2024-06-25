@@ -76,18 +76,18 @@ namespace Leantime\Domain\Sprints\Services {
         public function getCurrentSprintId($projectId): bool|int
         {
 
-            if (isset($_SESSION["currentSprint"]) && $_SESSION["currentSprint"] != "") {
-                return $_SESSION["currentSprint"];
+            if (session()->exists("currentSprint") && session("currentSprint") != "") {
+                return session("currentSprint");
             }
 
             //$sprint = $this->sprintRepository->getCurrentSprint($projectId);
 
             //if ($sprint) {
-            //    $_SESSION["currentSprint"] = $sprint->id;
+            //    session(["currentSprint" => $sprint->id]);
             //    return $sprint->id;
             //}
 
-            $_SESSION["currentSprint"] = "";
+            session(["currentSprint" => ""]);
 
             return false;
         }
@@ -152,7 +152,7 @@ namespace Leantime\Domain\Sprints\Services {
             $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
             $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
 
-            $sprint->projectId = $params['projectId'] ?? $_SESSION['currentProject'];
+            $sprint->projectId = $params['projectId'] ?? session("currentProject");
 
             $result = $this->sprintRepository->addSprint($sprint);
 
@@ -174,7 +174,7 @@ namespace Leantime\Domain\Sprints\Services {
             $sprint->startDate = format(value: $sprint->startDate, fromFormat: FromFormat::UserDateStartOfDay)->isoDateTime();
             $sprint->endDate = format(value: $sprint->endDate, fromFormat: FromFormat::UserDateEndOfDay)->isoDateTime();
 
-            $sprint->projectId = $params['projectId'] ?? $_SESSION['currentProject'];
+            $sprint->projectId = $params['projectId'] ?? session("currentProject");
 
             $result = $this->sprintRepository->editSprint($sprint);
 

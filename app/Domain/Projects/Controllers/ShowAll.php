@@ -44,28 +44,28 @@ namespace Leantime\Domain\Projects\Controllers {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
             if (Auth::userIsAtLeast(Roles::$manager)) {
-                if (!isset($_SESSION['showClosedProjects'])) {
-                    $_SESSION['showClosedProjects'] = false;
+                if (!session()->exists("showClosedProjects")) {
+                    session(["showClosedProjects" => false]);
                 }
 
                 if (isset($_POST['hideClosedProjects'])) {
-                    $_SESSION['showClosedProjects'] = false;
+                    session(["showClosedProjects" => false]);
                 }
 
                 if (isset($_POST['showClosedProjects'])) {
-                    $_SESSION['showClosedProjects'] = true;
+                    session(["showClosedProjects" => true]);
                 }
 
-                $this->tpl->assign('role', $_SESSION['userdata']['role']);
+                $this->tpl->assign('role', session("userdata.role"));
 
                 if (Auth::userIsAtLeast(Roles::$admin)) {
-                    $this->tpl->assign('allProjects', $this->projectRepo->getAll($_SESSION['showClosedProjects']));
+                    $this->tpl->assign('allProjects', $this->projectRepo->getAll(session("showClosedProjects")));
                 } else {
-                    $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects($_SESSION['userdata']['id'], $_SESSION['userdata']['clientId']));
+                    $this->tpl->assign('allProjects', $this->projectService->getClientManagerProjects(session("userdata.id"), session("userdata.clientId")));
                 }
                 $this->tpl->assign('menuTypes', $this->menuRepo->getMenuTypes());
 
-                $this->tpl->assign('showClosedProjects', $_SESSION['showClosedProjects']);
+                $this->tpl->assign('showClosedProjects', session("showClosedProjects"));
 
                 return $this->tpl->display('projects.showAll');
             } else {

@@ -44,7 +44,7 @@ class MyToDos extends HtmxController
     ) {
         $this->ticketsService = $ticketsService;
         $this->language = $language;
-        $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
+        session(["lastPage" => BASE_URL . "/dashboard/home"]);
     }
 
     /**

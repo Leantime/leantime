@@ -18,7 +18,7 @@ $projects = $tpl->get('relations');
 </div><!--pageheader-->
 
 <form action="" method="post" class="stdform userEditModal">
-        <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+        <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
         <div class="maincontent">
             <div class="row">
                 <div class="col-md-7">

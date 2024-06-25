@@ -62,8 +62,8 @@ class ProjectIntroStep implements OnboardingSteps
     {
 
         if (isset($params['projectname'])) {
-            $this->projectService->patch($_SESSION['currentProject'], array("name" => $_POST['projectname']));
-            $this->projectService->changeCurrentSessionProject($_SESSION['currentProject']);
+            $this->projectService->patch(session("currentProject"), array("name" => $_POST['projectname']));
+            $this->projectService->changeCurrentSessionProject(session("currentProject"));
         }
 
         $this->settingsRepo->saveSetting("companysettings.completedOnboarding", true);

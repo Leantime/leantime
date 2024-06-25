@@ -436,16 +436,12 @@ a.barmenu:hover {
     background: var(--light-layered-background);
 }
 
-
-
-
 .headmenu {
     list-style: none;
 }
 
 .headmenu .dropdown-menu {
     margin: 0;
-    left:-22px;
 }
 
 

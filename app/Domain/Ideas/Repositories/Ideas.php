@@ -94,8 +94,8 @@ namespace Leantime\Domain\Ideas\Repositories {
          */
         public function getCanvasLabels(): mixed
         {
-            if (isset($_SESSION["projectsettings"]["idealabels"])) {
-                return $_SESSION["projectsettings"]["idealabels"];
+            if (session()->exists("projectsettings.idealabels")) {
+                return session("projectsettings.idealabels");
             } else {
                 $sql = "SELECT
 						value
@@ -103,7 +103,7 @@ namespace Leantime\Domain\Ideas\Repositories {
 				LIMIT 1";
 
                 $stmn = $this->db->database->prepare($sql);
-                $stmn->bindvalue(':key', "projectsettings." . $_SESSION['currentProject'] . ".idealabels", PDO::PARAM_STR);
+                $stmn->bindvalue(':key', "projectsettings." . session("currentProject") . ".idealabels", PDO::PARAM_STR);
 
                 $stmn->execute();
                 $values = $stmn->fetch();
@@ -128,7 +128,7 @@ namespace Leantime\Domain\Ideas\Repositories {
                     }
                 }
 
-                $_SESSION["projectsettings"]["idealabels"] = $labels;
+                session(["projectsettings.idealabels" => $labels]);
 
                 return $labels;
             }
@@ -340,7 +340,7 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function getCanvasItemsById($id): false|array
         {
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session("currentProject"));
 
             $sql = "SELECT
 						zp_canvas_items.id,
@@ -390,7 +390,7 @@ namespace Leantime\Domain\Ideas\Repositories {
         public function getSingleCanvasItem($id): mixed
         {
 
-            $statusGroups = $this->ticketRepo->getStatusListGroupedByType($_SESSION['currentProject']);
+            $statusGroups = $this->ticketRepo->getStatusListGroupedByType(session("currentProject"));
 
             $sql = "SELECT
 						zp_canvas_items.id,
@@ -469,7 +469,7 @@ namespace Leantime\Domain\Ideas\Repositories {
             $stmn->bindValue(':data', $values['data'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':conclusion', $values['conclusion'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':box', $values['box'] ?? "idea", PDO::PARAM_STR);
-            $stmn->bindValue(':author', $values['author'] ?? $_SESSION['userdata']['id'], PDO::PARAM_INT);
+            $stmn->bindValue(':author', $values['author'] ?? session("userdata.id"), PDO::PARAM_INT);
             $stmn->bindValue(':canvasId', $values['canvasId'], PDO::PARAM_INT);
             $stmn->bindValue(':status', $values['status'] ?? '', PDO::PARAM_STR);
             $stmn->bindValue(':milestoneId', $values['milestoneId'] ?? "", PDO::PARAM_STR);

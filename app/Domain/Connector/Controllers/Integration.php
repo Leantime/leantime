@@ -62,8 +62,8 @@ namespace Leantime\Domain\Connector\Controllers {
         {
 
             $params = $_REQUEST;
-            if (!isset($_SESSION['currentImportEntity'])) {
-                $_SESSION['currentImportEntity'] = '';
+            if (!session()->exists("currentImportEntity")) {
+                session(["currentImportEntity" => '']);
             }
 
             if (isset($params["provider"])) {
@@ -107,9 +107,9 @@ namespace Leantime\Domain\Connector\Controllers {
                 if ($params["step"] == "fields") {
                     if (isset($_POST['leantimeEntities'])) {
                         $entity = $_POST['leantimeEntities'];
-                        $_SESSION['currentImportEntity'] = $entity;
-                    } else if (isset($_SESSION['currentImportEntity']) && $_SESSION['currentImportEntity'] != "") {
-                        $entity = $_SESSION['currentImportEntity'];
+                        session(["currentImportEntity" => $entity]);
+                    } else if (session()->exists("currentImportEntity") && session("currentImportEntity") != "") {
+                        $entity = session("currentImportEntity");
                     } else {
                         $this->tpl->setNotification("Entity not set", "error");
 
@@ -147,7 +147,7 @@ namespace Leantime\Domain\Connector\Controllers {
                     $this->fields = $this->connectorService->getFieldMappings($_POST);
 
                     $flags = array();
-                    $flags = $this->connectorService->parseValues($this->fields, $this->values, $_SESSION['currentImportEntity']);
+                    $flags = $this->connectorService->parseValues($this->fields, $this->values, session("currentImportEntity"));
 
                     //show the imported data as confirmation
                     $this->tpl->assign("values", $this->values);
@@ -160,11 +160,11 @@ namespace Leantime\Domain\Connector\Controllers {
                 //STEP 6: Do the import
                 if ($params["step"] == "import") {
                     //Store data in DB
-                    $values = unserialize($_SESSION['serValues']);
-                    $fields = unserialize($_SESSION['serFields']);
+                    $values = unserialize(session("serValues"));
+                    $fields = unserialize(session("serFields"));
 
                     //confirm and store in DB
-                    $this->connectorService->importValues($fields, $values, $_SESSION['currentImportEntity']);
+                    $this->connectorService->importValues($fields, $values, session("currentImportEntity"));
 
                     //display stored successfully message
                     return $this->tpl->display('connector.integrationConfirm');

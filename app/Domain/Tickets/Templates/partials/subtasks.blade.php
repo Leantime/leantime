@@ -17,7 +17,7 @@
                 </div>
                 <input type="hidden" name="dateToFinish" id="dateToFinish" value="" />
                 <input type="hidden" name="status" value="3" />
-                <input type="hidden" name="sprint" value="{{ $_SESSION['currentSprint'] }}" />
+                <input type="hidden" name="sprint" value="{{ session("currentSprint") }}" />
                 <a href="javascript:void(0);" onclick="jQuery('#subticket_new').toggle('fast'); jQuery('#subticket_new_link').toggle('fast');">
                     {{ __("links.cancel") }}
                 </a>

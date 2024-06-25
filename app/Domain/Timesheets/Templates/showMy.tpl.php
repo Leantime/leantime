@@ -289,7 +289,9 @@ jQuery(document).ready(function(){
                             ?>
                             <tr class="gradeA timesheetRow">
                                 <td width="14%"><?php $tpl->e($timeRow["clientName"]); ?> // <?php $tpl->e($timeRow["name"]); ?></td>
-                                <td width="14%"><?php $tpl->e($timeRow["headline"]); ?></td>
+                                <td width="14%">
+                                    <a href="#/tickets/showTicket/<?php echo $timeRow['ticketId']; ?>"><?php $tpl->e($timeRow['headline']); ?></a>
+                                </td>
                                 <td width="10%">
                                 <?php echo $tpl->__($tpl->get('kind')[$timeRow['kind']]); ?>
                             <?php if ($timeRow['hasTimesheetOffset']) { ?>

@@ -43,8 +43,8 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->sprintService = $sprintService;
             $this->ticketService = $ticketService;
 
-            $_SESSION['lastPage'] = CURRENT_URL;
-            $_SESSION['lastMilestoneView'] = "calendar";
+            session(["lastPage" => CURRENT_URL]);
+            session(["lastMilestoneView" => "calendar"]);
 
         }
 
@@ -73,7 +73,7 @@ namespace Leantime\Domain\Tickets\Controllers {
          */
         public function post($params)
         {
-            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => $_SESSION["currentProject"]]);
+            $allProjectMilestones = $this->ticketService->getAllMilestones(["sprint" => '', "type" => "milestone", "currentProject" => session("currentProject")]);
             $this->tpl->assign('milestones', $allProjectMilestones);
             return $this->tpl->display('tickets.roadmap');
         }

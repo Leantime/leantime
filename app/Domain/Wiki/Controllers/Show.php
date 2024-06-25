@@ -41,81 +41,81 @@ namespace Leantime\Domain\Wiki\Controllers {
             $wikiHeadlines = array();
 
 
-            $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
+            $wikis = $this->wikiService->getAllProjectWikis(session("currentProject"));
             if (!$wikis || count($wikis) == 0) {
                 $wiki = app()->make(Wiki::class);
                 $wiki->title = $this->language->__("label.default");
-                $wiki->projectId = $_SESSION['currentProject'];
-                $wiki->author = $_SESSION['userdata']['id'];
+                $wiki->projectId = session("currentProject");
+                $wiki->author = session("userdata.id");
 
                 $id = $this->wikiService->createWiki($wiki);
-                $wikis = $this->wikiService->getAllProjectWikis($_SESSION['currentProject']);
+                $wikis = $this->wikiService->getAllProjectWikis(session("currentProject"));
             }
 
             //Option 1: Setting wiki (active action), set wiki, headlines and current Article
             if (isset($_GET['setWiki'])) {
-                unset($_SESSION['lastArticle']);
+                session()->forget("lastArticle");
                 $wikiId = (int)$_GET['setWiki'];
 
                 $wiki = $this->wikiService->getWiki($wikiId);
 
                 if ($wiki) {
-                    $_SESSION['currentWiki'] = $wikiId;
+                    session(["currentWiki" => $wikiId]);
                     $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
                         $wikiId,
-                        $_SESSION['userdata']['id']
+                        session("userdata.id")
                     );
 
 
                     if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
                         $currentArticle = $this->wikiService->getArticle(
                             $wikiHeadlines[0]->id,
-                            $_SESSION['currentProject']
+                            session("currentProject")
                         );
 
-                        $_SESSION['lastArticle'] = $currentArticle->id;
+                        session(["lastArticle" => $currentArticle->id]);
                     } else {
                         $currentArticle = false;
                     }
                 }
             } elseif (isset($params['id'])) {
-                $currentArticle = $this->wikiService->getArticle($params['id'], $_SESSION['currentProject']);
+                $currentArticle = $this->wikiService->getArticle($params['id'], session("currentProject"));
 
                 if ($currentArticle && $currentArticle->id != null) {
-                    $_SESSION['currentWiki'] = $currentArticle->canvasId;
+                    session(["currentWiki" => $currentArticle->canvasId]);
                     $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        $_SESSION['currentWiki'],
-                        $_SESSION['userdata']['id']
+                        session("currentWiki"),
+                        session("userdata.id")
                     );
 
-                    $_SESSION['lastArticle'] = $currentArticle->id;
+                    session(["lastArticle" => $currentArticle->id]);
                 } else {
                     return Frontcontroller::redirect(BASE_URL . "/wiki/show");
                 }
-            } elseif (isset($_SESSION['lastArticle']) && $_SESSION['lastArticle'] != '') {
-                $currentArticle = $this->wikiService->getArticle($_SESSION['lastArticle'], $_SESSION['currentProject']);
+            } elseif (session()->exists("lastArticle") && session("lastArticle") != '') {
+                $currentArticle = $this->wikiService->getArticle(session("lastArticle"), session("currentProject"));
 
                 if ($currentArticle) {
-                    $_SESSION['currentWiki'] = $currentArticle->canvasId;
+                    session(["currentWiki" => $currentArticle->canvasId]);
 
                     $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        $_SESSION['currentWiki'],
-                        $_SESSION['userdata']['id']
+                        session("currentWiki"),
+                        session("userdata.id")
                     );
 
-                    $_SESSION['lastArticle'] = $currentArticle->id;
+                    session(["lastArticle" => $currentArticle->id]);
                     return Frontcontroller::redirect(BASE_URL . "/wiki/show/" . $currentArticle->id);
                 }
-            } elseif (isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] > 0) {
-                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines($_SESSION['currentWiki'], $_SESSION['userdata']['id']);
+            } elseif (session()->exists("currentWiki") && session("currentWiki") > 0) {
+                $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(session("currentWiki"), session("userdata.id"));
 
                 if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
                     $currentArticle = $this->wikiService->getArticle(
                         $wikiHeadlines[0]->id,
-                        $_SESSION['currentProject']
+                        session("currentProject")
                     );
 
-                    $_SESSION['lastArticle'] = $currentArticle->id;
+                    session(["lastArticle" => $currentArticle->id]);
                 } else {
                     $currentArticle = false;
                 }
@@ -127,15 +127,15 @@ namespace Leantime\Domain\Wiki\Controllers {
                 //Nothing is set
             } else {
                 if (is_array($wikis) && count($wikis) > 0) {
-                    $_SESSION['currentWiki'] = $wikis[0]->id;
+                    session(["currentWiki" => $wikis[0]->id]);
                 } else {
-                    $_SESSION['currentWiki'] = '';
+                    session(["currentWiki" => '']);
                 }
 
-                if ($_SESSION['currentWiki'] != '') {
+                if (session("currentWiki") != '') {
                     $wikiHeadlines = $this->wikiService->getAllWikiHeadlines(
-                        $_SESSION['currentWiki'],
-                        $_SESSION['userdata']['id']
+                        session("currentWiki"),
+                        session("userdata.id")
                     );
                 } else {
                     $wikiHeadlines = array();
@@ -144,18 +144,18 @@ namespace Leantime\Domain\Wiki\Controllers {
                 if (is_array($wikiHeadlines) && count($wikiHeadlines) > 0) {
                     $currentArticle = $this->wikiService->getArticle(
                         $wikiHeadlines[0]->id,
-                        $_SESSION['currentProject']
+                        session("currentProject")
                     );
 
-                    $_SESSION['lastArticle'] = $currentArticle->id;
+                    session(["lastArticle" => $currentArticle->id]);
                 } else {
                     $currentArticle = false;
-                    $_SESSION['lastArticle'] = '';
+                    session(["lastArticle" => '']);
                 }
             }
 
-            if (isset($_SESSION['currentWiki']) && $_SESSION['currentWiki'] != '') {
-                $currentWiki = $this->wikiService->getWiki($_SESSION['currentWiki']);
+            if (session()->exists("currentWiki") && session("currentWiki") != '') {
+                $currentWiki = $this->wikiService->getWiki(session("currentWiki"));
             } else {
                 $currentWiki = false;
             }
@@ -204,7 +204,7 @@ namespace Leantime\Domain\Wiki\Controllers {
 
             if (isset($_GET['id']) === true) {
                 $id = (int)($_GET['id']);
-                $currentArticle = $this->wikiService->getArticle($id, $_SESSION['currentProject']);
+                $currentArticle = $this->wikiService->getArticle($id, session("currentProject"));
 
                 if (isset($_POST['comment']) === true) {
                     if ($this->commentService->addComment($_POST, "article", $id, $currentArticle)) {

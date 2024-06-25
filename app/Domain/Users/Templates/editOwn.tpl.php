@@ -40,12 +40,12 @@ $user = $tpl->get('user');
                     <div id="myProfile">
                         <form action="" method="post">
 
-                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="firstname" ><?php echo $tpl->__('label.firstname'); ?></label>
                                     <span>
-                                        <input type="text" class="input" name="firstname" id="firstname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" class="input" name="firstname" id="firstname" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['firstname']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -53,7 +53,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="lastname" ><?php echo $tpl->__('label.lastname'); ?></label>
                                     <span>
-                                        <input type="text" name="lastname" class="input" id="lastname" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" name="lastname" class="input" id="lastname" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['lastname']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -61,7 +61,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="user" ><?php echo $tpl->__('label.email'); ?></label>
                                     <span>
-                                        <input type="text" name="user" class="input" id="user" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" name="user" class="input" id="user" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['user']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -69,7 +69,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="phone" ><?php echo $tpl->__('label.phone'); ?></label>
                                     <span>
-                                        <input type="text" name="phone" class="input" id="phone" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                        <input type="text" name="phone" class="input" id="phone" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
                                                value="<?php $tpl->e($values['phone']) ?>"/><br/>
                                     </span>
                                 </div>
@@ -88,16 +88,16 @@ $user = $tpl->get('user');
                         <h4 class="widgettitle title-light">
                             <?=$tpl->__('headlines.change_password'); ?>
                         </h4>
-                        <?php if ($_SESSION['userdata']['isLdap']) {
+                        <?php if (session("userdata.isLdap")) {
                             echo "<strong>" . $tpl->__("text.account_managed_ldap") . "</strong><br /><br />";
                         } ?>
                         <form method="post">
-                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="currentPassword" ><?php echo $tpl->__('label.old_password') ?></label>
                                     <span>
-                                        <input type='password' value="" name="currentPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                        <input type='password' value="" name="currentPassword" class="input" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
                                                id="currentPassword"/><br/>
                                     </span>
                                 </div>
@@ -105,7 +105,7 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="newPassword" ><?php echo $tpl->__('label.new_password') ?></label>
                                     <span>
-                                        <input type='password' value="" name="newPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                        <input type='password' value="" name="newPassword" class="input" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
                                                id="newPassword"/>
                                         <span id="pwStrength"></span>
 
@@ -115,16 +115,16 @@ $user = $tpl->get('user');
                                 <div class="form-group">
                                     <label for="confirmPassword" ><?php echo $tpl->__('label.password_repeat') ?></label>
                                     <span>
-                                        <input type="password" value="" name="confirmPassword" class="input" <?=$_SESSION['userdata']['isLdap'] ? "disabled='disabled'" : ''; ?>
+                                        <input type="password" value="" name="confirmPassword" class="input" <?=session("userdata.isLdap") ? "disabled='disabled'" : ''; ?>
                                                id="confirmPassword"/><br/>
-                                        <?php if (!$_SESSION['userdata']['isLdap']) {?>
+                                        <?php if (!session("userdata.isLdap")) {?>
                                         <small><?=$tpl->__('label.passwordRequirements') ?></small>
                                         <?php } ?>
                                     </span>
 
                                 </div>
                             </div>
-                            <?php if (!$_SESSION['userdata']['isLdap']) {?>
+                            <?php if (!session("userdata.isLdap")) {?>
                             <input type="hidden" name="savepw" value="1" />
                             <input type="submit" name="save" id="savePw" value="<?php echo $tpl->__('buttons.save'); ?>" class="button"/>
                             <?php }?>
@@ -143,7 +143,7 @@ $user = $tpl->get('user');
 
                     <div id="settings">
                         <form action="" method="post">
-                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="language" ><?php echo $tpl->__('label.language') ?></label>
@@ -216,7 +216,7 @@ $user = $tpl->get('user');
 
                     <div id="theme">
                         <form action="" method="post">
-                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="themeSelect" ><?php echo $tpl->__('label.theme') ?></label>
@@ -295,7 +295,7 @@ $user = $tpl->get('user');
 
                     <div id="notifications">
                         <form action="" method="post">
-                            <input type="hidden" name="<?=$_SESSION['formTokenName']?>" value="<?=$_SESSION['formTokenValue']?>" />
+                            <input type="hidden" name="<?=session("formTokenName")?>" value="<?=session("formTokenValue")?>" />
                             <div class="row-fluid">
                                 <div class="form-group">
                                     <label for="notifications" ><?php echo $tpl->__('label.receive_notifications') ?></label>

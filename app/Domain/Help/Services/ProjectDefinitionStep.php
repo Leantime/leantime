@@ -70,8 +70,8 @@ class ProjectDefinitionStep implements OnboardingSteps
             $description .= "" . $params['whyImportant'];
         }
 
-        $this->projectService->patch($_SESSION['currentProject'], array("details" => $description));
-        $this->projectService->changeCurrentSessionProject($_SESSION['currentProject']);
+        $this->projectService->patch(session("currentProject"), array("details" => $description));
+        $this->projectService->changeCurrentSessionProject(session("currentProject"));
 
         $this->settingsRepo->saveSetting("companysettings.completedOnboarding", true);
 

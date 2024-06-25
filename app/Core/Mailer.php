@@ -145,8 +145,8 @@ class Mailer
             $this->mailAgent->isMail();
         }
 
-        $this->logo = empty($_SESSION["companysettings.logoPath"]) ? "/dist/images/logo_blue.png" : $_SESSION["companysettings.logoPath"];
-        $this->companyColor = empty($_SESSION["companysettings.primarycolor"]) ? "#006c9e" : $_SESSION["companysettings.primarycolor"];
+        $this->logo = !session()->has("companysettings.logoPath") ? "/dist/images/logo_blue.png" : session("companysettings.logoPath");
+        $this->companyColor = !session()->has("companysettings.primarycolor") ? "#006c9e" : session("companysettings.primarycolor");
 
         $this->language = $language;
     }

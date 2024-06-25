@@ -92,7 +92,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                                 <?php
                                 if($ticket->projectId == $project['id']) {
                                     echo "selected";
-                                }else if( $_SESSION['currentProject'] == $project['id']){
+                                }else if( session("currentProject") == $project['id']){
                                     echo "selected";
                                 }
                                 ?>
@@ -294,7 +294,7 @@ $ticketTypes = $tpl->get('ticketTypes');
                                 <?php } ?>
                             </select><br />
                             <?php if ($login::userIsAtLeast($roles::$editor)) {  ?>
-                                <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo $_SESSION['userdata']['id']; ?>).trigger('chosen:updated');"><?php echo $tpl->__('label.assign_to_me'); ?></a></small>
+                                <small style="margin-top:-5px; display:block"><a href="javascript:void(0);" onclick="jQuery('#editorId').val(<?php echo session("userdata.id"); ?>).trigger('chosen:updated');"><?php echo $tpl->__('label.assign_to_me'); ?></a></small>
                             <?php } ?>
                         </div>
                     </div>
