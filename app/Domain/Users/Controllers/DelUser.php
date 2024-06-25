@@ -43,7 +43,7 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Delete User
                 if (isset($_POST['del']) === true) {
-                    if (isset($_POST[$_SESSION['formTokenName']]) && $_POST[$_SESSION['formTokenName']] == $_SESSION['formTokenValue']) {
+                    if (isset($_POST[session("formTokenName")]) && $_POST[session("formTokenName")] == session("formTokenValue")) {
                         $this->userService->deleteUser($id);
 
                         $this->tpl->setNotification($this->language->__("notifications.user_deleted"), "success", "user_deleted");
@@ -56,8 +56,8 @@ namespace Leantime\Domain\Users\Controllers {
 
                 //Sensitive Form, generate form tokens
                 $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-                $_SESSION['formTokenName'] = substr(str_shuffle($permitted_chars), 0, 32);
-                $_SESSION['formTokenValue'] = substr(str_shuffle($permitted_chars), 0, 32);
+                session(["formTokenName" => substr(str_shuffle($permitted_chars), 0, 32)]);
+                session(["formTokenValue" => substr(str_shuffle($permitted_chars), 0, 32)]);
 
                 //Assign variables
                 $this->tpl->assign('user', $user);

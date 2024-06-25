@@ -8,7 +8,7 @@ foreach ($__data as $var => $val) {
 <div class="pageheader">
     <div class="pageicon"><span class="fa fa-trash"></span></div>
     <div class="pagetitle">
-        <h5><?php echo $_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']; ?></h5>
+        <h5><?php echo session("currentProjectClient") . " // " . session("currentProjectName"); ?></h5>
         <h1><?=$tpl->__("headline.delete_board") ?></h1>
     </div>
 </div><!--pageheader-->

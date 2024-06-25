@@ -68,7 +68,7 @@ class Files extends Controller
 
         if (isset($_FILES['file'])) {
             $_FILES['file']['name'] = "pastedImage.png";
-            $file = $this->fileRepo->upload($_FILES, 'project', $_SESSION['currentProject']);
+            $file = $this->fileRepo->upload($_FILES, 'project', session("currentProject"));
 
             return new Response(BASE_URL . '/files/get?'
                 . http_build_query([

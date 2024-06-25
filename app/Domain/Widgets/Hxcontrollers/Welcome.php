@@ -40,7 +40,7 @@ class Welcome extends HtmxController
         $this->projectsService = $projectsService;
         $this->ticketsService = $ticketsService;
         $this->usersService = $usersService;
-        $_SESSION['lastPage'] = BASE_URL . "/dashboard/home";
+        session(["lastPage" => BASE_URL . "/dashboard/home"]);
     }
 
     /**
@@ -61,21 +61,21 @@ class Welcome extends HtmxController
             error_log($e);
         }
 
-        $currentUser = $this->usersService->getUser($_SESSION['userdata']['id']);
+        $currentUser = $this->usersService->getUser(session("userdata.id"));
         $this->tpl->assign('currentUser', $currentUser);
 
 
         //Todo: Write queries.
-        $totalTickets = $this->ticketsService->simpleTicketCounter(userId: $_SESSION["userdata"]["id"], status: "not_done");
+        $totalTickets = $this->ticketsService->simpleTicketCounter(userId: session("userdata.id"), status: "not_done");
 
         $closedTicketsCount = 0;
-        $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser($_SESSION["userdata"]["id"], null);
+        $closedTickets = $this->ticketsService->getRecentlyCompletedTicketsByUser(session("userdata.id"), null);
         if (is_array($closedTickets)) {
             $closedTicketsCount = count($closedTickets);
         }
 
         $ticketsInGoals = 0;
-        $goalTickets = $this->ticketsService->goalsRelatedToWork($_SESSION["userdata"]["id"], null);
+        $goalTickets = $this->ticketsService->goalsRelatedToWork(session("userdata.id"), null);
         if (is_array($goalTickets)) {
             $ticketsInGoals = count($goalTickets);
         }
@@ -84,7 +84,7 @@ class Welcome extends HtmxController
 
         $todayStart = dtHelper()->userNow()->startOfDay();
         $todayEnd = dtHelper()->userNow()->endOfDay();
-        $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, $_SESSION["userdata"]["id"]);
+        $todaysTasks = $this->ticketsService->getScheduledTasks($todayStart, $todayEnd, session("userdata.id"));
         $totalToday = count($todaysTasks['totalTasks'] ?? []);
         $doneToday = count($todaysTasks['doneTasks'] ?? []);
 
@@ -97,7 +97,7 @@ class Welcome extends HtmxController
 
 
 
-        $allAssignedprojects = $this->projectsService->getProjectsAssignedToUser($_SESSION['userdata']['id'], 'open');
+        $allAssignedprojects = $this->projectsService->getProjectsAssignedToUser(session("userdata.id"), 'open');
         if(!is_array($allAssignedprojects)){
             $allAssignedprojects = [];
         }

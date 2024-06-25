@@ -37,7 +37,7 @@ class EditExternal extends Controller
         if (isset($_GET['id']) === true) {
             $id = ($_GET['id']);
 
-            $calendar = $this->calendarService->getExternalCalendar($id, $_SESSION['userdata']['id']);
+            $calendar = $this->calendarService->getExternalCalendar($id, session("userdata.id"));
 
             $values = $calendar;
 

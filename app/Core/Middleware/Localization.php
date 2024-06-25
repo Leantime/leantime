@@ -34,13 +34,13 @@ class Localization
      */
     public function handle(IncomingRequest $request, Closure $next): Response
     {
-        $_SESSION['companysettings.language'] ??= $this->settings->getSetting("companysettings.language") ?: $this->config->language;
+        session()->put("companysettings.language", $this->settings->getSetting("companysettings.language") ?: $this->config->language);
 
-        if (! $userId = $_SESSION['userdata']['id'] ?? false) {
+        if (! $userId = session("userdata.id") ?? false) {
 
             CarbonImmutable::mixin(new CarbonMacros(
                 $this->config->defaultTimezone,
-                $_SESSION["companysettings.language"],
+                session("companysettings.language"),
                 $this->language->__("language.dateformat"),
                 $this->language->__("language.timeformat")
             ));
@@ -48,19 +48,19 @@ class Localization
             return $next($request);
         }
 
-        $_SESSION['usersettings.language'] ??= $this->settings->getSetting("usersettings.$userId.language") ?: $_SESSION["companysettings.language"];
-        $_SESSION['usersettings.timezone'] ??= $this->settings->getSetting("usersettings.$userId.timezone") ?: $this->config->defaultTimezone;
-        date_default_timezone_set($_SESSION['usersettings.timezone']);
+        session()->put("usersettings.language", $this->settings->getSetting("usersettings.$userId.language") ?: session("companysettings.language"));
+        session()->put("usersettings.timezone", $this->settings->getSetting("usersettings.$userId.timezone") ?: $this->config->defaultTimezone);
+        date_default_timezone_set(session("usersettings.timezone"));
 
-        $_SESSION['usersettings.language.date_format'] ??= $this->settings->getSetting("usersettings.$userId.date_format") ?: $this->language->__("language.dateformat");
-        $_SESSION['usersettings.language.time_format'] ??= $this->settings->getSetting("usersettings.$userId.time_format") ?: $this->language->__("language.timeformat");
+        session()->put("usersettings.date_format", $this->settings->getSetting("usersettings.$userId.date_format") ?: $this->language->__("language.dateformat"));
+        session()->put("usersettings.time_format", $this->settings->getSetting("usersettings.$userId.time_format") ?: $this->language->__("language.timeformat"));
 
         // Set macros for CabonImmutable date handling
         CarbonImmutable::mixin(new CarbonMacros(
-            $_SESSION['usersettings.timezone'],
-            $_SESSION['usersettings.language'],
-            $_SESSION['usersettings.language.date_format'],
-            $_SESSION['usersettings.language.time_format']
+            session("usersettings.timezone"),
+            session("usersettings.language"),
+            session("usersettings.date_format"),
+            session("usersettings.time_format")
         ));
 
         return $next($request);

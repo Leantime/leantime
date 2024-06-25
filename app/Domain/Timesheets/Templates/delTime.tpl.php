@@ -10,6 +10,6 @@ foreach ($__data as $var => $val) {
 <form method="post" action="<?=BASE_URL ?>/timesheets/delTime/<?php echo $tpl->get('id') ?>">
     <p><?=$tpl->__("text.confirm_delete_timesheet") ?></p><br />
     <input type="submit" value="<?=$tpl->__("buttons.yes_delete") ?>" name="del" class="button" />
-    <a class="btn btn-secondary" href="<?php echo $_SESSION['lastPage'] ?>"><?=$tpl->__("buttons.back") ?></a>
+    <a class="btn btn-secondary" href="<?php echo session("lastPage") ?>"><?=$tpl->__("buttons.back") ?></a>
 </form>
 

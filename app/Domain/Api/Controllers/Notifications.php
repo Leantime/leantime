@@ -70,7 +70,7 @@ class Notifications extends Controller
     public function patch(array $params): Response
     {
         if (isset($params['action']) && $params['action'] == "read") {
-            $this->notificationService->markNotificationRead($params['id'], $_SESSION['userdata']['id']);
+            $this->notificationService->markNotificationRead($params['id'], session("userdata.id"));
         }
 
         return new Response();

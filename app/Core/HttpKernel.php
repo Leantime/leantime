@@ -5,6 +5,7 @@ namespace Leantime\Core;
 use Illuminate\Contracts\Http\Kernel as HttpKernelContract;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Session\Middleware\StartSession;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\ErrorHandler\ErrorRenderer\HtmlErrorRenderer;
@@ -20,6 +21,12 @@ class HttpKernel implements HttpKernelContract
      */
     protected $requestStartedAt = null;
 
+    protected Application $app;
+
+    public function __construct(Application $app) {
+        $this->app = $app;
+    }
+
     /**
      * Bootstrap the application if it has not been previously bootstrapped.
      *
@@ -27,11 +34,11 @@ class HttpKernel implements HttpKernelContract
      */
     public function bootstrap()
     {
-        if ($this->getApplication()->hasBeenBootstrapped()) {
+        if ($this->app->hasBeenBootstrapped()) {
             return;
         }
 
-        $this->getApplication()->boot();
+        $this->app->boot();
     }
 
     /**
@@ -49,18 +56,20 @@ class HttpKernel implements HttpKernelContract
 
         try {
 
-            $response = (new Pipeline($this->getApplication()))
+            //Main Pipeline
+            $response = (new Pipeline($this->app))
                 ->send($request)
                 ->through($this->getMiddleware())
                 ->then(fn ($request) =>
-                (new Pipeline($this->getApplication()))
-                    ->send($request)
-                    ->through(self::dispatch_filter(
-                        hook: 'plugins_middleware',
-                        payload: [],
-                        function: 'handle',
-                    ))
-                    ->then(fn () => Frontcontroller::dispatch())
+                    //Then run through plugin pipeline
+                    (new Pipeline($this->app))
+                        ->send($request)
+                        ->through(self::dispatch_filter(
+                            hook: 'plugins_middleware',
+                            payload: [],
+                            function: 'handle',
+                        ))
+                    ->then(fn () => Frontcontroller::dispatch_request($request))
                 );
 
             return self::dispatch_filter('beforeSendResponse', $response);
@@ -72,9 +81,9 @@ class HttpKernel implements HttpKernelContract
 
             error_log($e);
 
-            if (! app()->make(Environment::class)->debug) {
+            if (! $this->app->make(Environment::class)->debug) {
 
-                return app()->make(Template::class)->display('errors.error500', 'error');
+                return $this->app->make(Template::class)->display('errors.error500', 'error');
             }
 
             if ($request instanceof HtmxRequest) {
@@ -101,8 +110,8 @@ class HttpKernel implements HttpKernelContract
     public function terminate($request, $response)
     {
 
-        if (method_exists($this->getApplication(), 'terminate')) {
-            $this->getApplication()->terminate();
+        if (method_exists($this->app, 'terminate')) {
+            $this->app->terminate();
         }
 
         if (is_null($this->requestStartedAt)) {
@@ -118,7 +127,7 @@ class HttpKernel implements HttpKernelContract
                 continue;
             }
 
-            app()->make($middleware)->terminate($request, $response);
+            $this->app->make($middleware)->terminate($request, $response);
         }
 
         //error_log("Before Request Terminated");
@@ -135,7 +144,7 @@ class HttpKernel implements HttpKernelContract
      */
     public function getApplication(): \Leantime\Core\Application
     {
-        return app();
+        return $this->app;
     }
 
     /**
@@ -149,8 +158,9 @@ class HttpKernel implements HttpKernelContract
             Middleware\InitialHeaders::class,
             Middleware\Installed::class,
             Middleware\Updated::class,
+            Middleware\StartSession::class,
             Middleware\RequestRateLimiter::class,
-            app()->make(IncomingRequest::class) instanceof ApiRequest
+            $this->app->make(IncomingRequest::class) instanceof ApiRequest
                 ? Middleware\ApiAuth::class
                 : Middleware\Auth::class,
             Middleware\Localization::class,

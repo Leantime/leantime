@@ -33,10 +33,10 @@ $dataLabels = $tpl->get('dataLabels');
 $disclaimer = $tpl->get('disclaimer');
 $canvasItems = $tpl->get('canvasItems');
 
-$filter['status'] = $_GET['filter_status'] ?? ($_SESSION['filter_status'] ?? 'all');
-$_SESSION['filter_status'] = $filter['status'];
-$filter['relates'] = $_GET['filter_relates'] ?? ($_SESSION['filter_relates'] ?? 'all');
-$_SESSION['filter_relates'] = $filter['relates'];
+$filter['status'] = $_GET['filter_status'] ?? (session("filter_status") ?? 'all');
+session(["filter_status" => $filter['status']]);
+$filter['relates'] = $_GET['filter_relates'] ?? (session("filter_relates") ?? 'all');
+session(["filter_relates" => $filter['relates']]);
 
 //get canvas title
 foreach ($tpl->get('allCanvas') as $canvasRow) {
@@ -60,7 +60,7 @@ $goalStats = $tpl->get("goalStats");
     <div class="pageheader">
         <div class="pageicon"><span class='fa <?=$canvasIcon ?>'></span></div>
         <div class="pagetitle">
-            <h5><?php $tpl->e($_SESSION['currentProjectClient'] . " // " . $_SESSION['currentProjectName']); ?></h5>
+            <h5><?php $tpl->e(session("currentProjectClient") . " // " . session("currentProjectName")); ?></h5>
 
             <h1><?=$tpl->__("headline.$canvasName.dashboardboard") ?> //
                 <?php if (count($allCanvas) > 0) {?>

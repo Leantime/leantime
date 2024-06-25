@@ -10,13 +10,13 @@ foreach ($__data as $var => $val) {
 $module = "project";
 $action = Frontcontroller::getActionName('');
 $maxSize = Fileupload::getMaximumFileUploadSize();
-$moduleId = $_SESSION['currentProject'];
+$moduleId = session("currentProject");
 ?>
 <div class="pageheader">
 
     <div class="pageicon"><span class="fa fa-fw fa-file"></span></div>
     <div class="pagetitle">
-        <h5><?php $tpl->e($_SESSION['currentProjectName']); ?></h5>
+        <h5><?php $tpl->e(session("currentProjectName")); ?></h5>
         <h1><?=$tpl->__("headlines.files"); ?></h1>
     </div>
 

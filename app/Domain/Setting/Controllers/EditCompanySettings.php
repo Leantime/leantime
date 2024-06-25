@@ -58,11 +58,11 @@ namespace Leantime\Domain\Setting\Controllers {
             }
 
             $companySettings = array(
-                "logo" => $_SESSION["companysettings.logoPath"] ?? '',
-                "primarycolor" => $_SESSION['companysettings.primarycolor'] ?? '',
-                "secondarycolor" => $_SESSION["companysettings.secondarycolor"] ?? '',
-                "name" => $_SESSION["companysettings.sitename"],
-                "language" => $_SESSION["companysettings.language"],
+                "logo" => session("companysettings.logoPath") ?? '',
+                "primarycolor" => session("companysettings.primarycolor") ?? '',
+                "secondarycolor" => session("companysettings.secondarycolor") ?? '',
+                "name" => session("companysettings.sitename"),
+                "language" => session("companysettings.language"),
                 "telemetryActive" => true,
                 "messageFrequency" => '',
             );
@@ -141,8 +141,8 @@ namespace Leantime\Domain\Setting\Controllers {
                     $this->settingsRepo->deleteSetting("companysettings.mainColor");
                 }
 
-                $_SESSION["companysettings.primarycolor"] = htmlentities(addslashes($params['primarycolor']));
-                $_SESSION["companysettings.secondarycolor"] = htmlentities(addslashes($params['secondarycolor']));
+                session(["companysettings.primarycolor" => htmlentities(addslashes($params['primarycolor']))]);
+                session(["companysettings.secondarycolor" => htmlentities(addslashes($params['secondarycolor']))]);
 
                 $this->tpl->setNotification($this->language->__("notifications.company_settings_edited_successfully"), "success");
             }
@@ -153,8 +153,8 @@ namespace Leantime\Domain\Setting\Controllers {
                 $this->settingsRepo->saveSetting("companysettings.language", htmlentities(addslashes($params['language'])));
                 $this->settingsRepo->saveSetting("companysettings.messageFrequency", (int) $params['messageFrequency']);
 
-                $_SESSION["companysettings.sitename"] = htmlspecialchars(addslashes($params['name']));
-                $_SESSION["companysettings.language"] = htmlentities(addslashes($params['language']));
+                session(["companysettings.sitename" => htmlspecialchars(addslashes($params['name']))]);
+                session(["companysettings.language" => htmlentities(addslashes($params['language']))]);
 
                 if (isset($_POST['telemetryActive'])) {
                     $this->settingsRepo->saveSetting("companysettings.telemetry.active", "true");

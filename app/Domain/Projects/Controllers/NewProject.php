@@ -57,8 +57,8 @@ namespace Leantime\Domain\Projects\Controllers {
         {
             Auth::authOrRedirect([Roles::$owner, Roles::$admin, Roles::$manager], true);
 
-            if (!isset($_SESSION['lastPage'])) {
-                $_SESSION['lastPage'] = BASE_URL . "/projects/showAll";
+            if (!session()->exists("lastPage")) {
+                session(["lastPage" => BASE_URL . "/projects/showAll"]);
             }
 
             $msgKey = '';
@@ -68,7 +68,7 @@ namespace Leantime\Domain\Projects\Controllers {
                 'details' => '',
                 'clientId' => '',
                 'hourBudget' => '',
-                'assignedUsers' => array($_SESSION['userdata']['id']),
+                'assignedUsers' => array(session("userdata.id")),
                 'dollarBudget' => '',
                 'state' => '',
                 'menuType' => MenuRepository::DEFAULT_MENU,
@@ -126,7 +126,7 @@ namespace Leantime\Domain\Projects\Controllers {
                     $mailer->setContext('project_created');
                     $mailer->setSubject($this->language->__('email_notifications.project_created_subject'));
                     $actual_link = BASE_URL . "/projects/showProject/" . $id . "";
-                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, $_SESSION["userdata"]["name"]);
+                    $message = sprintf($this->language->__('email_notifications.project_created_message'), $actual_link, $id, $projectName, session("userdata.name"));
                     $mailer->setHtml($message);
 
                     $to = array();
@@ -137,7 +137,7 @@ namespace Leantime\Domain\Projects\Controllers {
                         }
                     }
 
-                    //$mailer->sendMail($to, $_SESSION["userdata"]["name"]);
+                    //$mailer->sendMail($to, session("userdata.name"));
                     // NEW Queuing messaging system
                     $this->queueRepo->queueMessageToUsers($to, $message, $this->language->__('email_notifications.project_created_subject'), $id);
 

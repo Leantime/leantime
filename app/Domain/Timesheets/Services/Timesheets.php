@@ -84,7 +84,7 @@ class Timesheets
     {
         // @TODO: Change to use value objects for more type safeness.
         $values = array(
-            'userId' => $params["userId"] ?? $_SESSION['userdata']['id'],
+            'userId' => $params["userId"] ?? session("userdata.id"),
             'ticket' => $ticketId,
             'date' => '',
             'kind' => $params['kind'] ?? '',
@@ -150,7 +150,7 @@ class Timesheets
     {
         // @TODO: Change to use value objects for more type safeness.
         $values = array(
-            'userId' => $params["userId"] ?? $_SESSION['userdata']['id'],
+            'userId' => $params["userId"] ?? session("userdata.id"),
             'ticket' => $ticketId,
             'date' => '',
             'kind' => $params['kind'] ?? '',

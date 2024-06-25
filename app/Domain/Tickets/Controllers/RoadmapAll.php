@@ -60,7 +60,7 @@ namespace Leantime\Domain\Tickets\Controllers {
 
             $allProjectMilestones = $this->ticketService->getAllMilestonesOverview(false, "date", false, $clientId);
 
-            $allClients = $this->clientService->getUserClients($_SESSION['userdata']['id']);
+            $allClients = $this->clientService->getUserClients(session("userdata.id"));
 
             $this->tpl->assign("currentClientName", $currentClientName);
             $this->tpl->assign("currentClient", $clientId);

@@ -38,7 +38,7 @@ namespace Leantime\Domain\Projects\Controllers {
 
             if (
                 !isset($params['id']) ||
-                !$this->projectService->isUserAssignedToProject($_SESSION['userdata']['id'], $id) ||
+                !$this->projectService->isUserAssignedToProject(session("userdata.id"), $id) ||
                 ! $project = $this->projectService->getProject($id)
             ) {
                 return Frontcontroller::redirect(BASE_URL . "/errors/error404", 404);

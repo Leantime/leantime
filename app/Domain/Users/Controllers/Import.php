@@ -31,8 +31,8 @@ namespace Leantime\Domain\Users\Controllers {
             $this->userRepo = $userRepo;
             $this->ldapService = $ldapService;
 
-            if (!isset($_SESSION['tmp'])) {
-                $_SESSION['tmp'] = [];
+            if (!session()->exists("tmp")) {
+                session(["tmp" => []]);
             }
         }
 
@@ -51,8 +51,8 @@ namespace Leantime\Domain\Users\Controllers {
             $this->tpl->assign('admin', true);
             $this->tpl->assign('roles', Roles::getRoles());
 
-            if (isset($_SESSION['tmp']["ldapUsers"]) && count($_SESSION['tmp']["ldapUsers"]) > 0) {
-                $this->tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
+            if (session()->exist("tmp.ldapUsers") && count(session("tmp.ldapUsers")) > 0) {
+                $this->tpl->assign('allLdapUsers', session("tmp.ldapUsers"));
                 $this->tpl->assign('confirmUsers', true);
             }
 
@@ -71,13 +71,13 @@ namespace Leantime\Domain\Users\Controllers {
 
             //Password Submit to connect to ldap and retrieve users. Sets tmp session var
             if (isset($params['pwSubmit'])) {
-                $username = $this->ldapService->extractLdapFromUsername($_SESSION["userdata"]["mail"]);
+                $username = $this->ldapService->extractLdapFromUsername(session("userdata.mail"));
 
                 $this->ldapService->connect();
 
                 if ($this->ldapService->bind($username, $params['password'])) {
-                    $_SESSION['tmp']["ldapUsers"] = $this->ldapService->getAllMembers();
-                    $this->tpl->assign('allLdapUsers', $_SESSION['tmp']["ldapUsers"]);
+                    session(["tmp.ldapUsers" => $this->ldapService->getAllMembers()]);
+                    $this->tpl->assign('allLdapUsers', session("tmp.ldapUsers"));
                     $this->tpl->assign('confirmUsers', true);
                 } else {
                     $this->tpl->setNotification($this->language->__("notifications.username_or_password_incorrect"), "error");
@@ -88,7 +88,7 @@ namespace Leantime\Domain\Users\Controllers {
             if (isset($params['importSubmit'])) {
                 if (is_array($params["users"])) {
                     $users = array();
-                    foreach ($_SESSION['tmp']["ldapUsers"] as $user) {
+                    foreach (session("tmp.ldapUsers") as $user) {
                         if (array_search($user['username'], $params["users"])) {
                             $users[] = $user;
                         }

@@ -51,12 +51,12 @@ class Users extends Controller
     {
         if (isset($params['projectUsersAccess'])) {
             if ($params['projectUsersAccess'] == 'current') {
-                $projectId = $_SESSION['currentProject'];
+                $projectId = session("currentProject");
             } else {
                 $projectId = $params['projectUsersAccess'];
             }
 
-            $users = $this->userService->getUsersWithProjectAccess($_SESSION['userdata']['id'], $projectId);
+            $users = $this->userService->getUsersWithProjectAccess(session("userdata.id"), $projectId);
 
             if (isset($params['query'])) {
                 $query = $params['query'];
@@ -113,10 +113,10 @@ class Users extends Controller
         // Updating User Image
         $_FILES['file']['name'] = "userPicture.png";
 
-        $this->userService->setProfilePicture($_FILES, $_SESSION['userdata']['id']);
+        $this->userService->setProfilePicture($_FILES, session("userdata.id"));
 
-        $_SESSION['msg'] = "PICTURE_CHANGED";
-        $_SESSION['msgT'] = "success";
+        session(["msg" => "PICTURE_CHANGED"]);
+        session(["msgT" => "success"]);
 
         return $this->tpl->displayJson(['status' => 'ok']);
     }

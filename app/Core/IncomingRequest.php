@@ -3,6 +3,8 @@
 namespace Leantime\Core;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Session\SessionManager;
+use Illuminate\Session\SymfonySessionDecorator;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -25,6 +27,7 @@ class IncomingRequest extends Request
     public function __construct(array $query = [], array $request = [], array $attributes = [], array $cookies = [], array $files = [], array $server = [], $content = null)
     {
         parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+
 
         $this->setRequestDest();
     }
@@ -62,7 +65,7 @@ class IncomingRequest extends Request
                 break;
         };
 
-        isset($act) && $this->query->set('act', $act);
+        $this->query->set('act', $act);
         isset($id) && $this->query->set('id', $id);
         isset($request_parts) && $this->query->set('request_parts', $request_parts);
     }
@@ -134,5 +137,29 @@ class IncomingRequest extends Request
             default => $this->query->all(),
         };
     }
+
+    /**
+     * Set the Laravel session instance.
+     *
+     * @param \Illuminate\Contracts\Session\Session $session The Laravel session instance.
+     *
+     * @return void
+     */
+    public function setLaravelSession(\Illuminate\Contracts\Session\Session $session)
+    {
+        $this->session = new SymfonySessionDecorator($session);
+    }
+
+    /**
+     * Get the full URL of the current request.
+     * Wrapper for Laravel
+     *
+     * @return string The full URL of the current request.
+     */
+    public function fullUrl()
+    {
+        return $this->getFullUrl();
+    }
+
 
 }

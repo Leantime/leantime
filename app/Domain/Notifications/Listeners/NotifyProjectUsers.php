@@ -33,7 +33,7 @@ class NotifyProjectUsers
                 'message' => $payload['message'],
                 'datetime' => date("Y-m-d H:i:s"),
                 'url' => $payload['url'],
-                'authorId' => $_SESSION['userdata']['id'],
+                'authorId' => session("userdata.id"),
             );
         }
 

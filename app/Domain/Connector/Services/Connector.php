@@ -155,7 +155,7 @@ namespace Leantime\Domain\Connector\Services {
                     }
                 }
             } else {
-                $id = $_SESSION['userdata']['id'];
+                $id = session("userdata.id");
                 foreach ($values as &$row) {
                     $row['editorId'] = $id;
                 }
@@ -375,7 +375,7 @@ namespace Leantime\Domain\Connector\Services {
                     }
                 }
             } else {
-                $id = $_SESSION['userdata']['id'];
+                $id = session("userdata.id");
                 foreach ($values as &$row) {
                     $row['author'] = $id;
                 }
@@ -509,7 +509,7 @@ namespace Leantime\Domain\Connector\Services {
                     }
                 }
             } else {
-                $id = $_SESSION['userdata']['id'];
+                $id = session("userdata.id");
                 foreach ($values as &$row) {
                     $row['editorId'] = $id;
                 }
@@ -696,7 +696,7 @@ namespace Leantime\Domain\Connector\Services {
                 }
                 $values["box"] = "goal";
                 if (!isset($values['author'])) {
-                    $values['author'] = $_SESSION['userdata']['id'];
+                    $values['author'] = session("userdata.id");
                 }
                 if (isset($values["itemId"])) {
                     $this->goalCanvasRepo->editCanvasItem($values);
@@ -735,8 +735,8 @@ namespace Leantime\Domain\Connector\Services {
             $serializedFields = serialize($fields);
             $serializedValues = serialize($values);
 
-            $_SESSION['serFields'] = $serializedFields;
-            $_SESSION['serValues'] = $serializedValues;
+            session(["serFields" => $serializedFields]);
+            session(["serValues" => $serializedValues]);
         }
     }
 }

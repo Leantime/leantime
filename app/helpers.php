@@ -17,7 +17,6 @@ use Leantime\Core\Support\Mix;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-
 if (! function_exists('app')) {
     /**
      * Returns the application instance.
@@ -152,13 +151,15 @@ if (! function_exists('do_once')) {
         $key = "do_once_{$key}";
 
         if ($across_requests) {
-            $_SESSION['do_once'] ??= [];
+            if (session()->exists("do_once") === false) {
+                session(["do_once" => []]);
+            }
 
-            if ($_SESSION['do_once'][$key] ?? false) {
+            if (session("do_once." . $key) ?? false) {
                 return;
             }
 
-            $_SESSION['do_once'][$key] = true;
+            session(["do_once." . $key => true]);
         } else {
             static $do_once;
             $do_once ??= [];
@@ -220,12 +221,12 @@ if (! function_exists('format')) {
      * Returns a format object to format string values
      *
      * @param string|int|float|DateTime|Carbon|null $value
-     * @param string|int|float|DateTime|null $value2
-     * @param FromFormat|null $fromFormat
+     * @param string|int|float|DateTime|null        $value2
+     * @param FromFormat|null                       $fromFormat
      *
      * @return Format|string
      */
-    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 =null, null|FromFormat $fromFormat = FromFormat::DbDate): Format|string
+    function format(string|int|float|null|\DateTime|\Carbon\CarbonInterface $value, string|int|float|null|\DateTime|\Carbon\CarbonInterface $value2 = null, null|FromFormat $fromFormat = FromFormat::DbDate): Format|string
     {
         return new Format($value, $value2, $fromFormat);
     }
@@ -235,17 +236,18 @@ if (! function_exists('cast')) {
     /**
      * Casts a variable to a different type if possible.
      *
-     * @param mixed $obj The object to be cast.
-     * @param string $to_class The class to which the object should be cast.
-     * @param array $construct_params Optional parameters to pass to the constructor.
-     * @param array $mappings Make sure certain sub properties are casted to specific types.
+     * @param mixed  $obj              The object to be cast.
+     * @param string $to_class         The class to which the object should be cast.
+     * @param array  $construct_params Optional parameters to pass to the constructor.
+     * @param array  $mappings         Make sure certain sub properties are casted to specific types.
      *
      * @return mixed The casted object, or throws an exception on failure.
      *
      * @throws \InvalidArgumentException If the class does not exist.
      * @throws \RuntimeException|ReflectionException On serialization errors.
      */
-    function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): mixed {
+    function cast(mixed $source, string $classOrType, array $constructParams = [], array $mappings = []): mixed
+    {
         if (in_array($classOrType, ['int', 'integer', 'float', 'string', 'str', 'bool', 'boolean', 'object', 'stdClass', 'array'])) {
             return Cast::castSimple($source, $classOrType);
         }
@@ -305,4 +307,29 @@ if (! function_exists('dtHelper')) {
 
         return app()->make(DateTimeHelper::class);
     }
+}
+
+if (! function_exists('session')) {
+    /**
+     * Get the path to a versioned Mix file. Customized for Leantime.
+     *
+     * @param string $path
+     * @param string $manifestDirectory
+     * @return Mix|string
+     *
+     * @throws BindingResolutionException
+     */
+    function session($key = null, $default = null)
+    {
+        if (is_null($key)) {
+            return app('session');
+        }
+
+        if (is_array($key)) {
+            return app('session')->put($key);
+        }
+
+        return app('session')->get($key, $default);
+    }
+
 }

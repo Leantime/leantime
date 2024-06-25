@@ -7,14 +7,14 @@
     @foreach($projects as $project)
 
         @php
-            $parentState = isset($_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['clientId']]) ? $_SESSION['submenuToggle'][$prefix.'-projectSelectorlist-group-'.$project['clientId']] : 'closed';
+            $parentState = session("usersettings.submenuToggle.".$prefix.'-projectSelectorlist-group-'.$project['clientId'], 'closed');
         @endphp
 
         @if(
-           !isset($_SESSION['userdata']["projectSelectFilter"]['client'])
-           || $_SESSION['userdata']["projectSelectFilter"]['client'] == $project["clientId"]
-           || $_SESSION['userdata']["projectSelectFilter"]['client'] == 0
-           || $_SESSION['userdata']["projectSelectFilter"]['client'] == ""
+           !session()->exists("usersettings.projectSelectFilter.client")
+            || session("usersettings.projectSelectFilter.client") == $project["clientId"]
+            || session("usersettings.projectSelectFilter.client") == 0
+            || session("usersettings.projectSelectFilter.client") == ""
            )
 
             @if ($lastClient != $project['clientName'])
@@ -44,7 +44,7 @@
                     <ul id="{{ $prefix }}-projectSelectorlist-group-{{ $project['clientId'] }}" class="level-1 projectGroup {{ $parentState }}">
             @endif
 
-            <li class="projectLineItem hasSubtitle {{ $_SESSION['currentProject'] == $project['id'] ? "active" : '' }}" >
+            <li class="projectLineItem hasSubtitle {{ session("currentProject") == $project['id'] ? "active" : '' }}" >
                 @include('menu::partials.projectLink')
                 <div class="clear"></div>
             </li>

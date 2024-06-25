@@ -51,7 +51,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->clientService = $clientService;
             $this->clientRepo = $clientRepo;
 
-            $_SESSION['lastPage'] = CURRENT_URL;
+            session(["lastPage" => CURRENT_URL]);
         }
 
         /**
@@ -90,7 +90,7 @@ namespace Leantime\Domain\Tickets\Controllers {
             $this->tpl->assign('searchCriteria', $searchCriteria);
             $this->tpl->assign('numOfFilters', $this->ticketService->countSetFilters($searchCriteria));
 
-            $allClients = $this->clientService->getUserClients($_SESSION['userdata']['id']);
+            $allClients = $this->clientService->getUserClients(session("userdata.id"));
 
             $this->tpl->assign("clients", $allClients);
             $this->tpl->assign("currentClientName", $currentClientName);
